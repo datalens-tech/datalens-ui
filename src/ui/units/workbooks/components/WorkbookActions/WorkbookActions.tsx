@@ -1,13 +1,20 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen} from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
+import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {Button, DropdownMenu, DropdownMenuItem, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DIALOG_COPY_WORKBOOK, DIALOG_MOVE_WORKBOOK} from 'components/CollectionsStructure';
+import {
+    DIALOG_COPY_WORKBOOK,
+    DIALOG_DELETE_WORKBOOK,
+    DIALOG_MOVE_WORKBOOK,
+} from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {deleteWorkbookInItems} from 'ui/units/collections/store/actions';
+import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
 
 import {Feature} from '../../../../../shared';
 import {WorkbookWithPermissions} from '../../../../../shared/schema';
@@ -127,6 +134,37 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
             });
         }
     }
+
+    const otherActions: DropdownMenuItem[] = [];
+
+    if (workbook.permissions.delete) {
+        otherActions.push({
+            text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_DELETE_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            onSuccessApply: (id) => {
+                                dispatch(deleteWorkbookInItems(id));
+
+                                history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
+                            },
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            theme: 'danger',
+        });
+    }
+
+    dropdownActions.push([...otherActions]);
 
     return (
         <div className={b()}>
