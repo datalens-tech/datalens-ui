@@ -15,6 +15,7 @@ import {
     isMarkupItem,
 } from 'shared';
 
+import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
@@ -34,6 +35,7 @@ export type HeadCell = THead & {
 
 export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
+    const hint = get(th, 'hint');
     const cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
 
     return {
@@ -49,6 +51,7 @@ export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
             return (
                 <span data-qa={ChartKitTableQa.HeadCellContent}>
                     {renderCellContent({cell, column: th, header: true})}
+                    {hint && <MarkdownHelpPopover markdown={hint} />}
                 </span>
             );
         },
