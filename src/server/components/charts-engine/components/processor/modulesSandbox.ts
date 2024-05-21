@@ -83,6 +83,10 @@ const execute = async ({
 
     try {
         const context = runtime.newContext();
+
+        if (!modules) {
+            modules = context.newArray();
+        }
         runtime.setMemoryLimit(1024 * 1024 * 10);
         runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
 
@@ -173,6 +177,6 @@ const processModule = async ({
     });
 };
 
-export const Sandbox = {
+export const ModulesSandbox = {
     processModule,
 };

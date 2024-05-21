@@ -1,9 +1,10 @@
-import {getQuickJS} from 'quickjs-emscripten';
+import {QuickJSHandle, getQuickJS} from 'quickjs-emscripten';
 
 import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
 
+import {ModulesSandbox} from './modulesSandbox';
 import {Sandbox, SandboxExecuteResult} from './sandbox';
 import {ChartBuilder, ChartBuilderResult} from './types';
 
@@ -22,14 +23,14 @@ type SandboxChartBuilderArgs = {
     workbookId?: string;
 };
 
-const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
-    const extracted = Object.keys(modules).reduce<Record<string, object>>((acc, moduleName) => {
-        acc[moduleName] = modules[moduleName].exports as object;
-        return acc;
-    }, {});
+// const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
+//     const extracted = Object.keys(modules).reduce<Record<string, object>>((acc, moduleName) => {
+//         acc[moduleName] = modules[moduleName].exports as object;
+//         return acc;
+//     }, {});
 
-    return extracted;
-};
+//     return extracted;
+// };
 
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
@@ -38,12 +39,14 @@ export const getSandboxChartBuilder = async (
         args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-    const modules: Record<string, unknown> = {};
     const QuickJS = await getQuickJS();
     const runtime = QuickJS.newRuntime();
 
+    let modules: QuickJSHandle;
+
     return {
         dispose: () => {
+            modules.dispose();
             runtime.dispose();
         },
         buildShared: async () => {
@@ -63,23 +66,24 @@ export const getSandboxChartBuilder = async (
             const processedModules: Record<string, SandboxExecuteResult> = {};
             for await (const resolvedModule of resolvedModules) {
                 const name = resolvedModule.key;
-                processedModules[name] = await Sandbox.processModule({
+                const result = await ModulesSandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
-                    modules: extractModules(processedModules),
+                    modules,
                     userLogin,
                     userLang,
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
                     runtime,
                 });
+                modules = result.modules;
                 onModuleBuild(processedModules[name]);
             }
 
-            Object.keys(processedModules).forEach((moduleName) => {
-                const module = processedModules[moduleName];
-                modules[moduleName] = module.exports;
-            });
+            // Object.keys(processedModules).forEach((moduleName) => {
+            //     const module = processedModules[moduleName];
+            //     modules[moduleName] = module.exports;
+            // });
 
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },

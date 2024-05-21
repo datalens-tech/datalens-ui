@@ -49,22 +49,10 @@ type GenerateInstanceParams = {
     context?: {
         ChartEditor?: {};
     };
-    modules?: Record<string, unknown>;
     userLogin: string | null;
     userLang?: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
-};
-
-type ProcessModuleParams = {
-    name: string;
-    code: string;
-    modules: Record<string, object>;
-    userLogin: string | null;
-    userLang: string | null;
-    nativeModules: Record<string, unknown>;
-    isScreenshoter: boolean;
-    runtime: QuickJSRuntime;
 };
 
 type ProcessTabParams = {
@@ -77,7 +65,7 @@ type ProcessTabParams = {
     dataStats?: any;
     timeout: number;
     shared: Record<string, object> | Shared | ServerChartsConfig;
-    modules: Record<string, unknown>;
+    modules: QuickJSHandle;
     hooks: Record<string, any>;
     userLogin: string | null;
     userLang: string | null;
@@ -108,7 +96,6 @@ export class SandboxError extends Error {
 
 const generateInstance = ({
     context = {},
-    modules = {},
     userLogin,
     userLang = DEFAULT_USER_LANG,
     nativeModules,
@@ -141,8 +128,8 @@ const generateInstance = ({
                 }
 
                 return requiredNativeModule;
-            } else if (modules[lowerName]) {
-                return modules[lowerName];
+                // } else if (modules[lowerName]) {
+                //     return modules[lowerName];
             } else {
                 throw new Error(`Module "${lowerName}" is not resolved`);
             }
@@ -164,6 +151,7 @@ const generateInstance = ({
 
 type ExecuteParams = {
     code: string;
+    modules: QuickJSHandle;
     instance: vm.Context;
     filename: string;
     timeout: number;
@@ -195,6 +183,7 @@ export type SandboxExecuteResult = {
 
 const execute = async ({
     code,
+    modules,
     instance,
     filename,
     timeout,
@@ -233,6 +222,8 @@ const execute = async ({
         context.newObject().consume((exports) => context.setProp(module, 'exports', exports));
         context.setProp(context.global, 'module', module);
         module.dispose();
+
+        context.setProp(context.global, 'modules', modules);
 
         const ChartEditor = getChartEditorApi({
             name: filename,
@@ -306,6 +297,8 @@ const execute = async ({
                         OPERATIONS: _libsDatasetV2.OPERATIONS,
                         ORDERS: _libsDatasetV2.ORDERS,
                     }
+               } else if (modules[lowerName]) {
+                   return modules[lowerName];     
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
@@ -377,7 +370,7 @@ const processTab = async ({
     dataStats,
     timeout = DEFAULT_PROCESSING_TIMEOUT,
     shared = {},
-    modules = {},
+    modules,
     hooks,
     userLogin,
     userLang,
@@ -401,9 +394,9 @@ const processTab = async ({
 
     const result = await execute({
         code,
+        modules,
         instance: generateInstance({
             context,
-            modules,
             userLogin,
             userLang,
             nativeModules,
@@ -739,34 +732,6 @@ function getLibsDatasetV2({
     return libsDatasetV2;
 }
 
-const MODULE_PROCESSING_TIMEOUT = 500;
-
-const processModule = async ({
-    name,
-    code,
-    modules,
-    userLogin,
-    userLang,
-    nativeModules,
-    isScreenshoter,
-    runtime,
-}: ProcessModuleParams) => {
-    return execute({
-        code,
-        instance: generateInstance({
-            modules,
-            userLogin,
-            userLang,
-            nativeModules,
-            isScreenshoter,
-        }),
-        filename: name,
-        timeout: MODULE_PROCESSING_TIMEOUT,
-        runtime,
-    });
-};
-
 export const Sandbox = {
     processTab,
-    processModule,
 };
