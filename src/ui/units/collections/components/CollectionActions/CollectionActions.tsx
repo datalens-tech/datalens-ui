@@ -139,12 +139,7 @@ export const CollectionActions = React.memo<Props>(
         if (collection && collection.permissions?.move) {
             dropdownActions.push({
                 action: onMoveClick,
-                text: (
-                    <React.Fragment>
-                        <Icon data={ArrowRight} className={b('icon-action')} />
-                        {i18n('action_move')}
-                    </React.Fragment>
-                ),
+                text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
             });
         }
 

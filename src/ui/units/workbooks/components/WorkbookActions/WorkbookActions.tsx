@@ -73,9 +73,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
-    const classNameIconAction = b('icon-action');
 
-    const additionalActions = useAdditionalWorkbookActions(workbook, classNameIconAction);
+    const additionalActions = useAdditionalWorkbookActions(workbook);
 
     const dropdownActions = [...additionalActions];
 
@@ -98,12 +97,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     }),
                 );
             },
-            text: (
-                <React.Fragment>
-                    <Icon data={ArrowRight} className={classNameIconAction} />
-                    {i18n('action_move')}
-                </React.Fragment>
-            ),
+            text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
         });
 
         if (workbook.permissions.copy) {
@@ -125,12 +119,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                         }),
                     );
                 },
-                text: (
-                    <React.Fragment>
-                        <Icon data={Copy} className={classNameIconAction} />
-                        {i18n('action_copy')}
-                    </React.Fragment>
-                ),
+                text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
             });
         }
     }
