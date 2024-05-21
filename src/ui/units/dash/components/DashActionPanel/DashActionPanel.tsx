@@ -45,6 +45,7 @@ import {
 import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {
     selectDashAccessDescription,
+    selectDashShowOpenedDescription,
     selectLoadingEditMode,
     selectRenameWithoutReload,
     selectStateMode,
@@ -161,6 +162,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onAccessClick={this.openDialogAccess}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isWorkbook={Boolean(entry && entry.workbookId)}
+                showOpenedDescription={this.props.showOpenedDescription}
             />
         );
     }
@@ -337,6 +339,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         isRenameWithoutReload: selectRenameWithoutReload(state),
         isSelectStateMode: selectStateMode(state),
         accessDescription: selectDashAccessDescription(state),
+        showOpenedDescription: selectDashShowOpenedDescription(state),
     };
 };
 

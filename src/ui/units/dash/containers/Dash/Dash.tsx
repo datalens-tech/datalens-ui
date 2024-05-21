@@ -42,6 +42,7 @@ import {
     setErrorMode,
     setLock,
     setPageTab,
+    updateDashOpenedDesc,
 } from '../../store/actions/dashTyped';
 import {
     canEdit,
@@ -120,6 +121,17 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         const revId = currentSearchParams.get(URL_QUERY.REV_ID);
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID);
+
+        const showOpenedDescription = currentSearchParams.get(URL_QUERY.OPEN_DASH_INFO);
+        const prevShowOpenedDescription = prevSearchParams.get(URL_QUERY.OPEN_DASH_INFO);
+
+        const showOpenedDescriptionChanged =
+            (showOpenedDescription || prevShowOpenedDescription) &&
+            showOpenedDescription !== prevShowOpenedDescription;
+
+        if (showOpenedDescriptionChanged) {
+            this.props.updateDashOpenedDesc(showOpenedDescription === '1');
+        }
 
         const tabId =
             currentSearchParams.get(URL_QUERY.TAB_ID) ||
@@ -436,6 +448,7 @@ const mapDispatchToProps = {
     showToast,
     openWarningDialog,
     closeDialog,
+    updateDashOpenedDesc,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);
