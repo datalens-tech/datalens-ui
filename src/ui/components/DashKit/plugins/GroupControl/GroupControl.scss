@@ -1,12 +1,13 @@
 .dashkit-plugin-group-control {
     $class: &;
 
-    display: block;
     height: 100%;
     width: 100%;
     min-height: 44px;
     background-color: var(--g-color-base-float);
     border-radius: 3px;
+    display: grid;
+    align-items: center;
 
     &__container {
         padding: 0 5px 0 15px;
