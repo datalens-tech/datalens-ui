@@ -1,24 +1,29 @@
 import React from 'react';
 
 import {ConfigLayout} from '@gravity-ui/dashkit';
+import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
-import {i18n} from 'i18n';
+import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import {ResolveThunks, connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router-dom';
-import {Feature} from 'shared';
+import {DashTabItemType, Feature} from 'shared';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
 import {DL, URL_QUERY} from 'ui/constants';
-import {DatalensGlobalState} from 'ui/index';
+import {DatalensGlobalState, Interpolate} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
 import {registry} from 'ui/registry';
+import {closeDialog, openWarningDialog} from 'ui/store/actions/dialog';
+import {showToast} from 'ui/store/actions/toaster';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
-import Utils from 'ui/utils';
+import Utils, {formDocsEndpointDL} from 'ui/utils';
+
+const i18n = I18n.keyset('dash.main.view');
 
 import {
     cleanRevisions,
@@ -52,6 +57,8 @@ import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
+
+const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -220,7 +227,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     unloadConfirmation = (event: BeforeUnloadEvent) => {
-        const message = i18n('dash.main.view', 'toast_unsaved');
+        const message = i18n('toast_unsaved');
         // in particular, we bypass the case when the dashboard scheme has been updated, but there are no editing rights
         // TODO: isEditMode should suffice instead of CanEdit
         if (this.props.isEditMode && this.props.isDraft && this.props.canEdit) {
@@ -297,7 +304,62 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditDash();
     };
 
-    private onPasteItem = (itemData: CopiedConfigData, newLayout?: ConfigLayout[]) => {
+    private isItemPasteAllowed(itemData: CopiedConfigData) {
+        if (
+            CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
+            (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
+        ) {
+            return true;
+        }
+
+        return itemData.copyContext?.workbookId === this.props.entry.workbookId;
+    }
+
+    private showErrorPasteItemFromWorkbook() {
+        const message = (
+            <Interpolate
+                text={i18n('warning_paste-invalid-workbook-entry')}
+                matches={{
+                    link(match) {
+                        return (
+                            <Link
+                                view="normal"
+                                target="_blank"
+                                href={formDocsEndpointDL('/workbooks-collections/migrations')}
+                            >
+                                {match}
+                            </Link>
+                        );
+                    },
+                }}
+            />
+        );
+
+        this.props.showToast({
+            title: i18n('toast_paste-invalid-workbook-entry'),
+            type: 'danger',
+            actions: [
+                {
+                    label: i18n('label_details'),
+                    onClick: () => {
+                        this.props.openWarningDialog({
+                            closeOnEnterPress: true,
+                            message,
+                            buttonView: 'normal',
+                            onApply: this.props.closeDialog,
+                        });
+                    },
+                },
+            ],
+        });
+    }
+
+    private onPasteItem = (itemData: CopiedConfigData, updateLayout?: ConfigLayout[]) => {
+        if (!this.isItemPasteAllowed(itemData)) {
+            this.showErrorPasteItemFromWorkbook();
+            return;
+        }
+
         const pastedItemData = itemData.data;
 
         if (itemData.type === ITEM_TYPE.WIDGET) {
@@ -321,7 +383,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                 layout: itemData?.layout,
             },
             options: {
-                updateLayout: newLayout,
+                updateLayout,
             },
         });
     };
@@ -377,6 +439,9 @@ const mapDispatchToProps = {
     setCopiedItemData,
     addWorkbookInfo,
     resetWorkbookPermissions,
+    showToast,
+    openWarningDialog,
+    closeDialog,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);

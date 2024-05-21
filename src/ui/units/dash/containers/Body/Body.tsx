@@ -58,6 +58,7 @@ import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
 import {
+    CopiedConfigContext,
     CopiedConfigData,
     getLayoutMap,
     getPastedWidgetData,
@@ -341,10 +342,19 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    getPreparedCopyItemOptions = (itemToCopy: PreparedCopyItemOptions, tabData: DashTab | null) => {
+    getPreparedCopyItemOptions = (
+        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+        tabData: DashTab | null,
+        copyContext?: CopiedConfigContext,
+    ) => {
+        if (copyContext) {
+            itemToCopy.copyContext = copyContext;
+        }
+
         if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
             return itemToCopy;
         }
+
         const copyItemTabsWidgetParams: Record<string, StringParams> = {};
         itemToCopy.data.tabs.forEach((copiedTabItem) => {
             const {id, params} = copiedTabItem;
@@ -442,8 +452,12 @@ class Body extends React.PureComponent<BodyProps> {
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 context={{
-                    getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
-                        return this.getPreparedCopyItemOptions(itemToCopy, tabData);
+                    getPreparedCopyItemOptions: (
+                        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+                    ) => {
+                        return this.getPreparedCopyItemOptions(itemToCopy, tabData, {
+                            workbookId: this.props.workbookId ?? null,
+                        });
                     },
                     workbookId: this.props.workbookId,
                 }}

@@ -18,6 +18,7 @@ export type ShowToastOptions = {
     name?: string;
     content?: React.ReactNode;
     withReport?: boolean;
+    actions?: ToastAction[];
 };
 
 export const showToast = (opt: ShowToastOptions) => {
@@ -32,7 +33,7 @@ export const showToast = (opt: ShowToastOptions) => {
 
         if (error) {
             type = 'danger';
-            actions = [
+            actions = opt.actions || [
                 {
                     label: i18n('label_details'),
                     onClick() {
@@ -40,6 +41,8 @@ export const showToast = (opt: ShowToastOptions) => {
                     },
                 },
             ];
+        } else {
+            actions = opt.actions;
         }
 
         const titleStr = title.replace(/\s/g, '');

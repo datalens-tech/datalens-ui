@@ -1,4 +1,4 @@
-.dl-dialog-confirm {
+.dl-dialog-common {
     &_medium {
         width: 520px;
     }
@@ -18,11 +18,11 @@
     &__body-container {
         width: 292px;
         padding: 16px 12px;
+    }
 
-        &_warning {
-            padding: 20px 0;
-            width: auto;
-        }
+    &__body-container_warning {
+        padding: 20px 0;
+        width: auto;
     }
 
     &__body {
@@ -39,47 +39,52 @@
     &__message {
         padding: 0 12px;
         line-height: 26px;
+    }
 
-        &_no-icon {
-            padding: 0;
-        }
+    &__message_no-icon {
+        padding: 0;
+    }
 
-        &_warning {
-            line-height: 1.3;
-        }
+    &__message_warning {
+        line-height: 1.3;
     }
 
     &__footer {
         display: flex;
         align-items: center;
         margin-top: 8px;
-        &_warning {
-            justify-content: flex-end;
-        }
+    }
+
+    &__footer_warning {
+        justify-content: flex-end;
+    }
+
+    &__icon_warning {
+        margin-right: 5px;
+        color: var(--g-color-text-warning);
     }
 
     &__button {
         display: flex;
         align-items: center;
         flex: 0 0 50%;
-        &_warning {
-            flex: 0;
-            margin-left: 10px;
-        }
+        padding: 0 2px 4px;
     }
 
-    &__button_action_cancel {
-        padding: 0 2px 4px 4px;
+    &__button_warning {
+        flex: 0;
+        margin-left: 10px;
     }
 
-    &__button_action_apply {
-        padding: 0 4px 4px 2px;
+    &__button_first {
+        padding-left: 4px;
     }
 
-    &__icon {
-        &_warning {
-            margin-right: 5px;
-            color: var(--g-color-text-warning);
-        }
+    &__button_last {
+        padding-right: 4px;
+    }
+
+    &__button_first#{&}__button_last:not(&__button_warning) {
+        flex: 1;
     }
 }

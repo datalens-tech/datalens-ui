@@ -10,11 +10,6 @@
         padding: 10px 0;
     }
 
-    &__icon-widget {
-        color: var(--g-color-text-hint);
-        margin-right: 8px;
-    }
-
     &__info {
         color: var(--g-color-text-hint);
     }
@@ -22,8 +17,7 @@
     &__content {
         margin-bottom: 16px;
         max-height: 160px;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden auto;
     }
 
     &__error {

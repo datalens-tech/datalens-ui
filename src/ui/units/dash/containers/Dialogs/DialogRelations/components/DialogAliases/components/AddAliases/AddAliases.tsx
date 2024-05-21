@@ -228,7 +228,7 @@ export const AddAliases = ({
             <div className={b('row')}>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={leftAliasSubTitle}>
-                        {widgetIcon}
+                        <div className={b('icon')}>{widgetIcon}</div>
                         {leftAliasSubTitle}
                     </div>
                     <Select
@@ -248,7 +248,7 @@ export const AddAliases = ({
                 <span className={b('eq')}>=</span>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={rightAliasSubTitle}>
-                        {rowIcon}
+                        <div className={b('icon')}>{rowIcon}</div>
                         {rightAliasSubTitle}
                     </div>
                     <Select
