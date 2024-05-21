@@ -222,15 +222,17 @@ export type DataTableData = Record<string, TableCell>;
 
 export type ChartKitDataTable = DataTable<DataTableData>;
 
+// data: {} when there is no data
+export type TableData = {
+    head?: TableHead[];
+    rows?: TableRow[];
+    footer?: TableRow[];
+};
+
 export type TableWidget = WidgetBaseWithData &
     WithControls & {
         type: 'table';
-        // data: {} when there is no data
-        data: {
-            head?: TableHead[];
-            rows?: TableRow[];
-            footer?: TableRow[];
-        };
+        data: TableData;
         config?: {
             title?: string | TableTitle;
             sort?: string;

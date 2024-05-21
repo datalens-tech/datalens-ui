@@ -9,6 +9,7 @@ import {Table} from '../../../../../../components/Table/Table';
 import type {TData, TableProps} from '../../../../../../components/Table/types';
 import Paginator from '../../../components/Widget/components/Table/Paginator/Paginator';
 import {camelCaseCss} from '../../../components/Widget/components/Table/utils';
+import {SNAPTER_HTML_CLASSNAME} from '../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {i18n} from '../../../modules/i18n/i18n';
@@ -16,7 +17,7 @@ import Performance from '../../../modules/perfomance';
 import {useTableEvents} from '../hooks';
 import type {TableWidgetProps} from '../types';
 
-import {getCellCss, getCurrentActionParams} from './utils';
+import {getCellCss, getCurrentActionParams, mapTableData} from './utils';
 import {getDrillDownOptions} from './utils/drill-down';
 import {mapHeadCell} from './utils/renderer';
 
@@ -35,10 +36,11 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             id,
             onChange,
             onLoad,
-            data: {data, config, params: currentParams, unresolvedParams},
+            data: {data: originalData, config, params: currentParams, unresolvedParams},
         } = props;
+        const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
-        const ref = React.useRef<HTMLDivElement>(null);
+        const ref = React.useRef<HTMLDivElement | null>(null);
         const titleText = typeof config?.title === 'string' ? config.title : config?.title?.text;
         const shouldHighlightRows = get(config, 'settings.highlightRows', true);
         const isPaginationEnabled = Boolean(config?.paginator?.enabled);
@@ -127,24 +129,26 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
         return (
             <div
-                className={[b(), CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' ')}
+                className={b(null, CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
                 data-qa={ChartKitTableQa.Widget}
                 ref={ref}
             >
-                {titleText && <div className={b('title')}>{titleText}</div>}
-                <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
-                    {dimensions?.width && (
-                        <Table
-                            data={tableData}
-                            noData={{text: i18n('chartkit-table', 'message-no-data')}}
-                            onCellClick={onCellClick}
-                            header={{
-                                sticky: true,
-                            }}
-                            manualSorting={isPaginationEnabled}
-                            onSortingChange={isPaginationEnabled ? onSortingChange : undefined}
-                        />
-                    )}
+                <div className={b('snapter-container', SNAPTER_HTML_CLASSNAME)}>
+                    {titleText && <div className={b('title')}>{titleText}</div>}
+                    <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
+                        {dimensions?.width && (
+                            <Table
+                                data={tableData}
+                                noData={{text: i18n('chartkit-table', 'message-no-data')}}
+                                onCellClick={onCellClick}
+                                header={{
+                                    sticky: true,
+                                }}
+                                manualSorting={isPaginationEnabled}
+                                onSortingChange={isPaginationEnabled ? onSortingChange : undefined}
+                            />
+                        )}
+                    </div>
                 </div>
                 {isPaginationEnabled && (
                     <Paginator
