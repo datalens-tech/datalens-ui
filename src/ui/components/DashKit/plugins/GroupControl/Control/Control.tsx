@@ -441,6 +441,7 @@ export const Control = ({
             hasValidationError: Boolean(currentValidationError),
             style,
             renderOverlay,
+            hint: controlData.source.showHint ? controlData.source.hint : undefined,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 

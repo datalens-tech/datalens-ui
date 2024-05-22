@@ -141,7 +141,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 cb: adjustWidgetLayout,
             });
         },
-        [widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],
+        [layout, widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],
     );
 
     /**

@@ -12,7 +12,7 @@ export const QlQueries = {
         limit 10
     `,
     salesBySalesFloat: `
-        select sales::float, sales::float as sales_copy 
+        select sales::float, sales::float as sales_copy
         from public.sales
         limit 10
     `,
@@ -23,6 +23,7 @@ export const QlQa = {
         VisualizationsQa.BarD3,
         VisualizationsQa.ScatterD3,
         VisualizationsQa.PieD3,
+        VisualizationsQa.DonutD3,
         VisualizationsQa.Metric,
         VisualizationsQa.FlatTable,
     ],

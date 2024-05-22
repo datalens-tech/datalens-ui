@@ -20,6 +20,7 @@ import {
     COLUMN_100P_VISUALIZATION,
     COLUMN_VISUALIZATION,
     COMBINED_CHART_VISUALIZATION,
+    DONUT_D3_VISUALIZATION,
     DONUT_VISUALIZATION,
     FLAT_TABLE_VISUALIZATION,
     GEOLAYER_VISUALIZATION,
@@ -137,6 +138,10 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
             enabled: isHighchartsEnabled,
         },
         {
+            value: {...DONUT_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
+        },
+        {
             value: METRIC_VISUALIZATION,
             enabled: true,
         },
@@ -191,6 +196,7 @@ const highchartsD3Map = [
     [WizardVisualizationId.Column, WizardVisualizationId.BarXD3],
     [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
     [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
+    [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3],
 ];
 
 export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {

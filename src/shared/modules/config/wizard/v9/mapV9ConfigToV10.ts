@@ -12,6 +12,7 @@ export const mapV9ConfigToV10 = (config: V9ChartsConfig): V10ChartsConfig => {
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,
         WizardVisualizationId.PieD3,
+        WizardVisualizationId.DonutD3,
     ];
 
     let visualization = config.visualization;

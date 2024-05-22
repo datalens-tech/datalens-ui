@@ -12,6 +12,7 @@ export const enum VisualizationsQa {
     Pie = 'visualization-item-pie',
     PieD3 = 'visualization-item-pie-d3',
     Donut = 'visualization-item-donut',
+    DonutD3 = 'visualization-item-donut-d3',
     Metric = 'visualization-item-metric',
     Treemap = 'visualization-item-treemap',
     FlatTable = 'visualization-item-flatTable',
