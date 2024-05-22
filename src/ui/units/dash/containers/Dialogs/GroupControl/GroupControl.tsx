@@ -40,6 +40,7 @@ export const GroupControl = () => {
             body={<GroupControlBody />}
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
             contentClassMixin={b('content')}
+            bodyClassMixin={b('body')}
             sidebarClassMixin={b('sidebar-content')}
             qa={ControlQA.dialogControl}
         />

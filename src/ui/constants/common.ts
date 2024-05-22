@@ -310,6 +310,7 @@ export const URL_QUERY = {
     TAB_ID: 'tab',
     CONNECTION_FORM: '_form',
     DEBUG: '_debug',
+    OPEN_DASH_INFO: '_opened_info',
 };
 
 const GRADIENT_ICONS = {

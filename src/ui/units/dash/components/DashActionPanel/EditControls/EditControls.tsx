@@ -108,7 +108,11 @@ export const EditControls = (props: EditControlsProps) => {
             >
                 <Icon data={Gear} height={18} width={18} />
             </Button>
-            <Description canEdit={true} entryDialoguesRef={entryDialoguesRef} />
+            <Description
+                canEdit={true}
+                entryDialoguesRef={entryDialoguesRef}
+                showOpenedDescription={false}
+            />
             {!Utils.isEnabledFeature(Feature.HideOldRelations) && (
                 <Button
                     view="normal"
