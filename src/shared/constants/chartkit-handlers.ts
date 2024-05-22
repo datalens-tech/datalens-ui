@@ -29,7 +29,7 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
         let value: string | number = row.originalValue;
 
         if (typeof value === 'number') {
-            if (value === parseInt(value.toString(), 10)) {
+            if (Number.isInteger(value)) {
                 const numberFormat = new Intl.NumberFormat('ru-RU', {
                     maximumFractionDigits: 0,
                     minimumFractionDigits: 0,
