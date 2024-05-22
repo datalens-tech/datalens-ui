@@ -1,28 +1,29 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
+import {DatePicker} from '@gravity-ui/date-components';
+import type {DatePickerProps} from '@gravity-ui/date-components';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import {TriangleExclamationFill} from '@gravity-ui/icons';
 import {Checkbox, Icon, RadioGroup, Select, TextInput} from '@gravity-ui/uikit';
 import type {RadioGroupProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DateTime} from 'luxon';
 import {RelativeDatepickerQa, getParsedRelativeDate} from 'shared';
 import type {FilterValue} from 'shared';
 import {SCALES} from 'shared/constants/datepicker/relative-datepicker';
-import {registry} from 'ui/registry';
+import {getDefaultDateFormat} from 'ui/utils';
 
 import {
     CONTROLS,
     DATE_TYPES,
     INTERVAL_PREFIX,
-    LUXON_FORMATS,
     RANGE_PARTS,
     SCALE_DAY,
     SIGNS,
     TOOLTIP_DELAY_CLOSING,
 } from './constants';
-import type {DatepickerOutput, Props, State} from './types';
+import type {Props, State} from './types';
 import {
     computeRelativeDate,
     createISODateTimeFromRelative,
@@ -39,8 +40,8 @@ import './RelativeDatesPicker.scss';
 
 const b = block('dl-relative-dates-picker');
 const i18n = I18n.keyset('component.relative-dates-picker.view');
-const MIN_VALID_DATE = DateTime.utc().plus({years: -100});
-const MAX_VALID_DATE = DateTime.utc().plus({years: 100});
+const MIN_VALID_DATE = dateTimeUtc().add(-100, 'year');
+const MAX_VALID_DATE = dateTimeUtc().add(100, 'year');
 const signs = cretateSelectItems(Object.values(SIGNS), 'label_sign');
 
 class RelativeDatesPicker extends React.Component<Props, State> {
@@ -122,7 +123,7 @@ class RelativeDatesPicker extends React.Component<Props, State> {
 
         if (!invalidRelativeStart) {
             if (start === DATE_TYPES.ABSOLUTE) {
-                startDateTime = absoluteStart ? DateTime.fromISO(absoluteStart) : null;
+                startDateTime = absoluteStart ? dateTimeUtc({input: absoluteStart}) : null;
             } else {
                 startDateTime = createISODateTimeFromRelative(relativeStart, RANGE_PARTS.START);
             }
@@ -130,7 +131,7 @@ class RelativeDatesPicker extends React.Component<Props, State> {
 
         if (!invalidRelativeEnd) {
             if (end === DATE_TYPES.ABSOLUTE) {
-                endDateTime = absoluteEnd ? DateTime.fromISO(absoluteEnd) : null;
+                endDateTime = absoluteEnd ? dateTimeUtc({input: absoluteEnd}) : null;
             } else {
                 endDateTime = createISODateTimeFromRelative(relativeEnd, RANGE_PARTS.END);
             }
@@ -342,10 +343,13 @@ class RelativeDatesPicker extends React.Component<Props, State> {
         };
     };
 
-    private getDatepickerHandler = (dateKey: keyof State) => {
-        return ({from}: DatepickerOutput) => {
+    private getDatepickerHandler = (dateKey: keyof State): DatePickerProps['onUpdate'] => {
+        return (value) => {
             // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/26635#issuecomment-486108542
-            const updates = {[dateKey]: from, preset: null} as unknown as Pick<State, keyof State>;
+            const updates = {
+                [dateKey]: value?.toISOString(),
+                preset: null,
+            } as unknown as Pick<State, keyof State>;
             this.setState(updates, this.onChangeHandler);
         };
     };
@@ -479,6 +483,19 @@ class RelativeDatesPicker extends React.Component<Props, State> {
         this.setState(state, this.onChangeHandler);
     };
 
+    private isAbsoluteDateValid = (dateString?: unknown) => {
+        if (typeof dateString !== 'string') {
+            return false;
+        }
+
+        const {minDate, maxDate} = this.props;
+        const dateTime = dateTimeUtc({input: dateString});
+        const min = minDate ? dateTimeUtc({input: minDate}) : MIN_VALID_DATE;
+        const max = minDate ? dateTimeUtc({input: maxDate}) : MAX_VALID_DATE;
+
+        return !isDateTimeInvalid({dateTime, min, max});
+    };
+
     private isStateValid = () => {
         const {range} = this.props;
         const {
@@ -492,8 +509,13 @@ class RelativeDatesPicker extends React.Component<Props, State> {
         } = this.state;
 
         const isStartValid =
-            start === DATE_TYPES.ABSOLUTE ? Boolean(absoluteStart) : !invalidRelativeStart;
-        const isEndValid = end === DATE_TYPES.ABSOLUTE ? Boolean(absoluteEnd) : !invalidRelativeEnd;
+            start === DATE_TYPES.ABSOLUTE
+                ? this.isAbsoluteDateValid(absoluteStart)
+                : !invalidRelativeStart;
+        const isEndValid =
+            end === DATE_TYPES.ABSOLUTE
+                ? this.isAbsoluteDateValid(absoluteEnd)
+                : !invalidRelativeEnd;
 
         if (range) {
             return isStartValid && isEndValid && !invalidRange;
@@ -534,7 +556,7 @@ class RelativeDatesPicker extends React.Component<Props, State> {
     };
 
     private renderControl = (controlType: (typeof CONTROLS)[keyof typeof CONTROLS]) => {
-        const {minDate, maxDate, datepickerScale, range, withTime} = this.props;
+        const {minDate, maxDate, range, withTime} = this.props;
         const absoluteDateKey = getFieldKey('absolute', controlType);
         const relativeDateKey = getFieldKey('relative', controlType);
         const amountKey = getFieldKey('amount', controlType);
@@ -558,7 +580,10 @@ class RelativeDatesPicker extends React.Component<Props, State> {
             relativeDate as FilterValue,
             rangePart,
         );
-        const {Datepicker} = registry.common.components.getAll();
+        const value = typeof absoluteDate === 'string' ? dateTimeUtc({input: absoluteDate}) : null;
+        const minValue = minDate ? dateTimeUtc({input: minDate}) : MIN_VALID_DATE;
+        const maxValue = minDate ? dateTimeUtc({input: maxDate}) : MAX_VALID_DATE;
+
         return (
             <div className={b('control')}>
                 <div className={b('control-title')}>
@@ -581,19 +606,15 @@ class RelativeDatesPicker extends React.Component<Props, State> {
                             className={b('absolute-calendar')}
                             data-qa={`datepicker-${controlType}`}
                         >
-                            <Datepicker
-                                from={absoluteDate as string}
-                                min={minDate}
-                                max={maxDate}
-                                format={withTime ? LUXON_FORMATS.DATE_TIME : LUXON_FORMATS.DATE}
-                                scale={
-                                    datepickerScale as 'day' | 'week' | 'month' | 'quarter' | 'year'
-                                }
-                                timezoneOffset={0}
-                                range={false}
-                                hasClear={false}
+                            <DatePicker
+                                value={value}
+                                minValue={minValue}
+                                maxValue={maxValue}
                                 disabled={isRelative}
                                 onUpdate={this.getDatepickerHandler(absoluteDateKey)}
+                                format={getDefaultDateFormat({withTime})}
+                                timeZone="utc"
+                                placeholderValue={dateTimeUtc().startOf('day')}
                             />
                         </div>
                     </RadioGroup.Option>
@@ -653,9 +674,7 @@ class RelativeDatesPicker extends React.Component<Props, State> {
                             >
                                 {invalidRelativeDate
                                     ? i18n('label_invalid-date')
-                                    : `= ${resolvedRelativeDateTime.toFormat(
-                                          LUXON_FORMATS.DATE_TIME,
-                                      )}`}
+                                    : `= ${resolvedRelativeDateTime.format(getDefaultDateFormat({withTime: true}))}`}
                             </span>
                         </div>
                     </div>

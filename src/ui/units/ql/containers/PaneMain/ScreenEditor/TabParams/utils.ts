@@ -1,14 +1,13 @@
-import {DateTime} from 'luxon';
-
-import {QLParamInterval, QLParamType, resolveRelativeDate} from '../../../../../../../shared';
-import {LUXON_FORMATS} from '../../../../../../components/RelativeDatesPicker/constants';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
+import {QLParamType, resolveRelativeDate} from 'shared';
+import type {QLParamInterval} from 'shared';
+import {getDefaultDateFormat} from 'ui/utils';
 
 export const resolveAndFormatDate = (date: string, type: QLParamType) => {
-    const resolvedDate = resolveRelativeDate(date);
+    const input = resolveRelativeDate(date) || date;
+    const format = getDefaultDateFormat({withTime: type === QLParamType.Datetime});
 
-    return DateTime.fromISO(resolvedDate || date, {
-        zone: 'utc',
-    }).toFormat(type === QLParamType.Datetime ? LUXON_FORMATS.DATE_TIME : LUXON_FORMATS.DATE);
+    return dateTimeUtc({input}).format(format);
 };
 
 type ValidIntervalValue = {
