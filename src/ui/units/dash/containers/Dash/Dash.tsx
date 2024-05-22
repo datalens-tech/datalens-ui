@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ConfigLayout} from '@gravity-ui/dashkit';
 import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
@@ -365,7 +366,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         });
     }
 
-    private onPasteItem = (itemData: CopiedConfigData) => {
+    private onPasteItem = (itemData: CopiedConfigData, updateLayout?: ConfigLayout[]) => {
         if (!this.isItemPasteAllowed(itemData)) {
             this.showErrorPasteItemFromWorkbook();
             return;
@@ -386,11 +387,16 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const data = update(pastedItemData, {$unset: ['id']});
 
         this.props.setCopiedItemData({
-            data,
-            type: itemData.type,
-            defaults: itemData.defaults,
-            namespace: itemData.namespace,
-            layout: itemData?.layout,
+            item: {
+                data,
+                type: itemData.type,
+                defaults: itemData.defaults,
+                namespace: itemData.namespace,
+                layout: itemData?.layout,
+            },
+            options: {
+                updateLayout,
+            },
         });
     };
 

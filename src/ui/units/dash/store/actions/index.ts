@@ -21,6 +21,7 @@ import {
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
+    SetItemDataAction,
     type SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
@@ -69,6 +70,7 @@ export type DashAction<T = unknown> =
     | EntryContentAction
     | SetDashUpdateStatusAction
     | SetNewRelationsAction
+    | SetItemDataAction
     | SetDashKeyAction
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
