@@ -103,7 +103,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams: this.props.params,
             needReload: false,
-            forceUpdate: true,
         };
     }
 
@@ -124,13 +123,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
 
-        const hasChanged = hasDataChanged || hasParamsChanged;
-
-        if (this.state.forceUpdate && hasChanged) {
+        if (hasDataChanged) {
             this.setState({
                 status: LOAD_STATUS.PENDING,
                 needReload: true,
                 silentLoading: true,
+                stateParams: this.props.params,
+            });
+            return;
+        }
+
+        if (hasParamsChanged) {
+            this.setState({
                 stateParams: this.props.params,
             });
         }
