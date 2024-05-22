@@ -214,12 +214,10 @@ const execute = async ({
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
     let quickJSResult: any;
-
+    runtime.setMemoryLimit(1024 * 1024 * 10);
+    runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
+    const context = runtime.newContext();
     try {
-        const context = runtime.newContext();
-        runtime.setMemoryLimit(1024 * 1024 * 10);
-        runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
-
         const logHandle = context.newFunction('log', (...args) => {
             const nativeArgs = args.map(context.dump);
             instance.console.log(...nativeArgs);
@@ -323,7 +321,6 @@ const execute = async ({
         context.unwrapResult(ok).dispose();
         quickJSResult = context.getProp(context.global, 'module').consume(context.dump);
 
-        context.dispose();
         // vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
@@ -336,6 +333,7 @@ const execute = async ({
             errorStackTrace = 'Empty stack trace';
         }
     } finally {
+        context.dispose();
         executionTiming = process.hrtime(timeStart);
     }
 
