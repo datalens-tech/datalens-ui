@@ -273,6 +273,10 @@ export function visualization(
                         break;
                     }
 
+                    case 'pie-d3-pie':
+                    case 'pie-pie-d3':
+                    case 'donut-d3-donut':
+                    case 'donut-donut-d3':
                     case 'pie-d3-donut-d3':
                     case 'donut-d3-pie-d3':
                     case 'pie-donut':
