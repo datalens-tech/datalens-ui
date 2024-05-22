@@ -245,9 +245,7 @@ class Body extends React.PureComponent<BodyProps> {
                 className: b('edit-panel-item'),
                 qa: DashboardAddWidgetQa.AddControl,
                 dragProps: {
-                    type: Utils.isEnabledFeature(Feature.GroupControls)
-                        ? DashTabItemType.GroupControl
-                        : DashTabItemType.Control,
+                    type: DashTabItemType.Control,
                 },
             },
             {
