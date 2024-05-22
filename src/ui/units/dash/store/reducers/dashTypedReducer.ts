@@ -21,6 +21,7 @@ import {
     SET_DASH_DESCRIPTION,
     SET_DASH_DESC_VIEW_MODE,
     SET_DASH_KEY,
+    SET_DASH_OPENED_DESC,
     SET_DASH_SUPPORT_DESCRIPTION,
     SET_DASH_UPDATE_STATUS,
     SET_DASH_VIEW_MODE,
@@ -84,6 +85,7 @@ export type DashState = {
     // contains widgetId: currentTabId to open widget dialog with current tab
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
+    openInfoOnLoad?: boolean;
 };
 
 // eslint-disable-next-line complexity
@@ -419,6 +421,13 @@ export function dashTypedReducer(
                     ...state.data,
                     supportDescription: action.payload || '',
                 },
+            };
+        }
+
+        case SET_DASH_OPENED_DESC: {
+            return {
+                ...state,
+                openInfoOnLoad: Boolean(action.payload),
             };
         }
 

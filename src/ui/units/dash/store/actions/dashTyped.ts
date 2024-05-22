@@ -926,6 +926,18 @@ export const renameDash = (key: string): SetDashKeyAction => ({
     payload: key,
 });
 
+export const SET_DASH_OPENED_DESC = Symbol('dash/SET_DASH_OPENED_DESC');
+export type SetDashOpenedDescKeyAction = {
+    type: typeof SET_DASH_OPENED_DESC;
+    payload: boolean;
+};
+export const updateDashOpenedDesc = (
+    payload: SetDashOpenedDescKeyAction['payload'],
+): SetDashOpenedDescKeyAction => ({
+    type: SET_DASH_OPENED_DESC,
+    payload,
+});
+
 export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');
 export type SetRenameWithoutReloadAction = {
     type: typeof SET_RENAME_WITHOUT_RELOAD;

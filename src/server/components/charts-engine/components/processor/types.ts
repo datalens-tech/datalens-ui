@@ -11,6 +11,7 @@ import type {
 
 import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {Console} from './console';
+import type {LogItem} from './console';
 import {DataFetcherResult} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 
@@ -82,8 +83,8 @@ export type ProcessorFiles =
     | 'Config'
     | 'JavaScript'
     | 'UI';
-export type ProcessorLogs = {modules: {type: string; value: string | number}[][]} & Partial<
-    Record<ProcessorFiles | 'failed', {type: string; value: string | number}[][]>
+export type ProcessorLogs = {modules: LogItem[][]} & Partial<
+    Record<ProcessorFiles | 'failed', LogItem[][]>
 >;
 
 export type UserConfig = {
@@ -131,7 +132,7 @@ export type ChartBuilderResult = {
     executionTiming: [number, number];
     runtimeMetadata: RuntimeMetadata;
     name: string;
-    logs?: {type: string; value: string | number}[][];
+    logs?: LogItem[][];
 };
 
 export type ChartBuilder = {

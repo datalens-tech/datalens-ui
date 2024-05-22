@@ -13,7 +13,7 @@ import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/W
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import Loader from '../../components/Loader/Loader';
-import {ENTRY_TYPE} from '../../modules/constants';
+import {EntryTypeNode} from '../../modules/constants';
 import {getPersonalFolderPath} from '../../modules/helpers';
 import {changeNavigationPath} from '../../store/actions/dashTyped';
 
@@ -48,8 +48,8 @@ class DropdownNavigation extends React.PureComponent {
         onUpdate: PropTypes.func,
         onClick: PropTypes.func.isRequired,
         scope: PropTypes.oneOf(Object.values(EntryScope)).isRequired,
-        includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
-        excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        includeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
+        excludeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
         size: PropTypes.string,
         navigationPath: PropTypes.string.isRequired,
         changeNavigationPath: PropTypes.func.isRequired,

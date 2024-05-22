@@ -20,6 +20,7 @@ type ViewControlsProps = {
     onAccessClick: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     isWorkbook?: boolean;
+    showOpenedDescription: boolean;
 };
 
 export const ViewControls = (props: ViewControlsProps) => {
@@ -31,6 +32,7 @@ export const ViewControls = (props: ViewControlsProps) => {
         onAccessClick,
         entryDialoguesRef,
         isWorkbook,
+        showOpenedDescription,
     } = props;
 
     if (isEmbeddedMode()) {
@@ -45,6 +47,7 @@ export const ViewControls = (props: ViewControlsProps) => {
                 canEdit={canEdit}
                 entryDialoguesRef={entryDialoguesRef}
                 onEditClick={onEditClick}
+                showOpenedDescription={showOpenedDescription}
             />
             <EntryDialogues ref={entryDialoguesRef} />
             {canEdit && !DL.IS_MOBILE && (
