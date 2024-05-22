@@ -25,21 +25,11 @@ export interface GraphTooltipLine {
 }
 
 function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
-    const configCollator = new Intl.Collator(undefined, {
-        numeric: true,
-        sensitivity: 'base',
-    });
-
-    const rowHash: Record<string, GraphTooltipLine> = {};
-    const rowKeys = config.lines.map((row) => {
+    const mappedLines = config.lines.map((row) => {
         let value: string | number = row.originalValue;
 
-        let stringifiedValue;
-
         if (typeof value === 'number') {
-            stringifiedValue = value.toFixed(20);
-
-            if (value === parseInt(value.toString(), 10)) {
+            if (Number.isInteger(value)) {
                 const numberFormat = new Intl.NumberFormat('ru-RU', {
                     maximumFractionDigits: 0,
                     minimumFractionDigits: 0,
@@ -54,25 +44,18 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
 
                 value = numberFormat.format(value);
             }
-        } else {
-            stringifiedValue = value;
         }
 
-        const key = `${stringifiedValue}-${row.seriesName}`;
-
-        rowHash[key] = {
+        return {
             ...row,
             value,
         };
-
-        return key;
     });
 
-    rowKeys.sort(configCollator.compare).reverse();
-
-    config.lines = rowKeys.map((key) => rowHash[key]);
-
-    return config;
+    return {
+        ...config,
+        lines: mappedLines,
+    };
 }
 
 function wizardLabelFormatter(this: any) {
