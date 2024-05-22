@@ -1,3 +1,5 @@
+import {getQuickJS} from 'quickjs-emscripten';
+
 import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
 import {ResolvedConfig} from '../storage/types';
@@ -37,8 +39,13 @@ export const getSandboxChartBuilder = async (
     const type = config.meta.stype;
     let shared: Record<string, any>;
     const modules: Record<string, unknown> = {};
+    const QuickJS = await getQuickJS();
+    const runtime = QuickJS.newRuntime();
 
     return {
+        dispose: () => {
+            runtime.dispose();
+        },
         buildShared: async () => {
             shared = JSON.parse(config.data.shared || '{}');
         },
@@ -53,23 +60,21 @@ export const getSandboxChartBuilder = async (
                 workbookId,
             })) as ResolvedConfig[];
 
-            const processedModules = resolvedModules.reduce<Record<string, SandboxExecuteResult>>(
-                (modules, resolvedModule) => {
-                    const name = resolvedModule.key;
-                    modules[name] = Sandbox.processModule({
-                        name,
-                        code: resolvedModule.data.js,
-                        modules: extractModules(modules),
-                        userLogin,
-                        userLang,
-                        nativeModules: chartsEngine.nativeModules,
-                        isScreenshoter,
-                    });
-                    onModuleBuild(modules[name]);
-                    return modules;
-                },
-                {},
-            );
+            const processedModules: Record<string, SandboxExecuteResult> = {};
+            for await (const resolvedModule of resolvedModules) {
+                const name = resolvedModule.key;
+                processedModules[name] = await Sandbox.processModule({
+                    name,
+                    code: resolvedModule.data.js,
+                    modules: extractModules(processedModules),
+                    userLogin,
+                    userLang,
+                    nativeModules: chartsEngine.nativeModules,
+                    isScreenshoter,
+                    runtime,
+                });
+                onModuleBuild(processedModules[name]);
+            }
 
             Object.keys(processedModules).forEach((moduleName) => {
                 const module = processedModules[moduleName];
@@ -80,7 +85,7 @@ export const getSandboxChartBuilder = async (
         },
 
         buildParams: async (options) => {
-            const tabResult = Sandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
                 timeout: ONE_SECOND,
@@ -94,6 +99,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -102,7 +108,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildUrls: async (options) => {
-            const tabResult = Sandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Urls',
                 code: config.data.url,
                 timeout: ONE_SECOND,
@@ -116,6 +122,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -129,7 +136,7 @@ export const getSandboxChartBuilder = async (
             if (config.data.graph) {
                 const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
                 // Highcharts tab
-                tabResult = Sandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: tabName,
                     code: config.data.graph,
                     timeout: ONE_SECOND,
@@ -144,10 +151,11 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
-                tabResult = Sandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: 'Highmaps',
                     code: config.data.map,
                     timeout: ONE_SECOND,
@@ -162,10 +170,11 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
-                tabResult = Sandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: 'Yandex.Maps',
                     code: config.data.ymap,
                     timeout: ONE_SECOND,
@@ -180,6 +189,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    runtime,
                 });
             }
 
@@ -195,7 +205,7 @@ export const getSandboxChartBuilder = async (
         buildChartConfig: async (options) => {
             const data = options.data as Record<string, any> | undefined;
             const configTab = EDITOR_TYPE_CONFIG_TABS[type as keyof typeof EDITOR_TYPE_CONFIG_TABS];
-            const tabResult = Sandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Config',
                 code: config.data[configTab as keyof typeof config.data] || '',
                 timeout: ONE_SECOND,
@@ -210,6 +220,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -219,7 +230,7 @@ export const getSandboxChartBuilder = async (
         },
         buildChart: async (options) => {
             const data = options.data as Record<string, any> | undefined;
-            const tabResult = Sandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'JavaScript',
                 code: config.data.js || 'module.exports = {};',
                 timeout: JS_EXECUTION_TIMEOUT,
@@ -235,6 +246,7 @@ export const getSandboxChartBuilder = async (
                 userLang,
                 hooks: options.hooks,
                 isScreenshoter,
+                runtime,
             });
 
             return {
@@ -244,7 +256,7 @@ export const getSandboxChartBuilder = async (
         },
         buildUI: async (options) => {
             const data = options.data as Record<string, any> | undefined;
-            const tabResult = Sandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
                 timeout: ONE_SECOND,
@@ -259,6 +271,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                runtime,
             });
 
             return {

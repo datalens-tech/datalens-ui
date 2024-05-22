@@ -121,7 +121,7 @@ const mapColumnsToRequestFields = (columns: string[]): ApiV2RequestField[] => {
     }));
 };
 
-type BuildSourcePayload = {
+export type BuildSourcePayload = {
     id: string;
     columns: string[];
     where?: {
