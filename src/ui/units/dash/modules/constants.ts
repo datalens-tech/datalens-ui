@@ -10,15 +10,10 @@ export const STATUS = {
     FAIL: 'fail',
     DONE: 'done',
 };
-/** @deprecated use EntryScope from shared */
-export const ENTRY_SCOPE = {
-    WIDGET: 'widget',
-    DATASET: 'dataset',
-};
 
-export const ENTRY_TYPE = {
-    CONTROL_NODE: 'control_node',
-};
+export enum EntryTypeNode {
+    CONTROL_NODE = 'control_node',
+}
 
 export const CONNECTION_KIND = {
     IGNORE: 'ignore',
