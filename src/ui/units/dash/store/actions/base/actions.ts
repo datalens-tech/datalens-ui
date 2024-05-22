@@ -415,6 +415,7 @@ export const load = ({
                     stateHashId: hash,
                     currentRevId: entry.revId,
                     widgetsCurrentTab,
+                    openInfoOnLoad: searchParams.get(URL_QUERY.OPEN_DASH_INFO) === '1',
                 },
             });
 

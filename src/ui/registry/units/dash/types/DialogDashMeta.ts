@@ -1,4 +1,4 @@
-import {EntryDialogProps} from 'ui/components/EntryDialogues';
+import type {EntryDialogProps} from 'ui/components/EntryDialogues';
 
 export type DialogDashMetaProps = EntryDialogProps & {
     title: string;
@@ -11,4 +11,5 @@ export type DialogDashMetaProps = EntryDialogProps & {
     onEdit?: (text: string) => void;
     onCancel?: () => void;
     onContactService?: () => void;
+    onCloseCallback?: () => void;
 };

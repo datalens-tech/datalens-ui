@@ -4,11 +4,11 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {NavigationInputQA} from 'shared';
+import {EntryScope, NavigationInputQA} from 'shared';
 import {Utils} from 'ui';
 
 import DropdownNavigation from '../../containers/DropdownNavigation/DropdownNavigation';
-import {ENTRY_SCOPE, ENTRY_TYPE} from '../../modules/constants';
+import {EntryTypeNode} from '../../modules/constants';
 import {getChartEditLink} from '../../modules/helpers';
 
 import InputLink from './InputLink/InputLink';
@@ -23,10 +23,12 @@ class NavigationInput extends React.PureComponent {
         workbookId: PropTypes.string,
         onUpdate: PropTypes.func,
         onChange: PropTypes.func.isRequired,
-        includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
-        excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        includeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
+        excludeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
         linkMixin: PropTypes.string,
         navigationMixin: PropTypes.string,
+        scope: PropTypes.oneOf(Object.values(EntryScope)),
+        isInvalid: PropTypes.bool,
     };
 
     static getDerivedStateFromProps({entryId}, {prevEntryId}) {
@@ -60,9 +62,11 @@ class NavigationInput extends React.PureComponent {
             workbookId,
             navigationMixin,
             linkMixin,
+            scope = EntryScope.Widget,
+            isInvalid,
         } = this.props;
         const {showInput, isValidEntry} = this.state;
-        const showOpenButton = isValidEntry && entryId;
+        const showOpenButton = isValidEntry && entryId && !isInvalid;
 
         return (
             <React.Fragment>
@@ -70,11 +74,12 @@ class NavigationInput extends React.PureComponent {
                     <DropdownNavigation
                         size="m"
                         entryId={entryId}
-                        scope={ENTRY_SCOPE.WIDGET}
+                        scope={scope}
                         onClick={this.onChange}
                         onUpdate={this.onEntryUpdate}
                         includeClickableType={includeClickableType}
                         excludeClickableType={excludeClickableType}
+                        error={isInvalid}
                     />
                     {showOpenButton && (
                         <Button
@@ -98,6 +103,7 @@ class NavigationInput extends React.PureComponent {
                             includeType={includeClickableType}
                             excludeType={excludeClickableType}
                             workbookId={workbookId}
+                            scope={scope}
                         />
                     ) : (
                         <Button

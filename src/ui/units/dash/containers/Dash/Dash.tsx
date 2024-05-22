@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ConfigLayout} from '@gravity-ui/dashkit';
 import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
@@ -42,6 +43,7 @@ import {
     setErrorMode,
     setLock,
     setPageTab,
+    updateDashOpenedDesc,
 } from '../../store/actions/dashTyped';
 import {
     canEdit,
@@ -120,6 +122,17 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
         const revId = currentSearchParams.get(URL_QUERY.REV_ID);
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID);
+
+        const showOpenedDescription = currentSearchParams.get(URL_QUERY.OPEN_DASH_INFO);
+        const prevShowOpenedDescription = prevSearchParams.get(URL_QUERY.OPEN_DASH_INFO);
+
+        const showOpenedDescriptionChanged =
+            (showOpenedDescription || prevShowOpenedDescription) &&
+            showOpenedDescription !== prevShowOpenedDescription;
+
+        if (showOpenedDescriptionChanged) {
+            this.props.updateDashOpenedDesc(showOpenedDescription === '1');
+        }
 
         const tabId =
             currentSearchParams.get(URL_QUERY.TAB_ID) ||
@@ -353,7 +366,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         });
     }
 
-    private onPasteItem = (itemData: CopiedConfigData) => {
+    private onPasteItem = (itemData: CopiedConfigData, updateLayout?: ConfigLayout[]) => {
         if (!this.isItemPasteAllowed(itemData)) {
             this.showErrorPasteItemFromWorkbook();
             return;
@@ -374,11 +387,16 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const data = update(pastedItemData, {$unset: ['id']});
 
         this.props.setCopiedItemData({
-            data,
-            type: itemData.type,
-            defaults: itemData.defaults,
-            namespace: itemData.namespace,
-            layout: itemData?.layout,
+            item: {
+                data,
+                type: itemData.type,
+                defaults: itemData.defaults,
+                namespace: itemData.namespace,
+                layout: itemData?.layout,
+            },
+            options: {
+                updateLayout,
+            },
         });
     };
 
@@ -436,6 +454,7 @@ const mapDispatchToProps = {
     showToast,
     openWarningDialog,
     closeDialog,
+    updateDashOpenedDesc,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);
