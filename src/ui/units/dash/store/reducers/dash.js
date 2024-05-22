@@ -166,6 +166,8 @@ export function getSelectorGroupDialogFromData(data) {
             placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
             width: item.width || '',
             namespace: item.namespace,
+            showHint: item.source.showHint,
+            hint: item.source.hint,
         }))
         .sort((a, b) => a.index - b.index);
 
