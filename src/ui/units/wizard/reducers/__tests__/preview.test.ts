@@ -33,6 +33,7 @@ describe('Preview reducer', () => {
             [VISUALIZATION_IDS.PIE]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.PIE_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.DONUT]: WizardType.GraphWizardNode,
+            [VISUALIZATION_IDS.DONUT_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.TREEMAP]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.SCATTER]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.SCATTER_D3]: WizardType.D3WizardNode,

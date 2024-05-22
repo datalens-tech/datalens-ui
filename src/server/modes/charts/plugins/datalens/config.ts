@@ -120,6 +120,7 @@ function getActionParamsEvents(
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.PieD3:
         case WizardVisualizationId.Donut:
+        case WizardVisualizationId.DonutD3:
         case WizardVisualizationId.CombinedChart: {
             return {
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
