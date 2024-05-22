@@ -4,9 +4,9 @@ import {Button, Popup, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {NavigationInputQA} from 'shared';
+import {EntryScope, NavigationInputQA} from 'shared';
 import {KeyCodes} from 'ui';
-import {ENTRY_TYPE} from 'units/dash/modules/constants';
+import {EntryTypeNode} from 'units/dash/modules/constants';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -58,9 +58,10 @@ class InputLink extends React.PureComponent {
     static propTypes = {
         onApply: PropTypes.func.isRequired,
         onCancel: PropTypes.func.isRequired,
-        includeType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
-        excludeType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        includeType: PropTypes.oneOf(Object.values(EntryTypeNode)),
+        excludeType: PropTypes.oneOf(Object.values(EntryTypeNode)),
         workbookId: PropTypes.string.isRequired,
+        scope: PropTypes.oneOf(Object.values(EntryScope)),
     };
 
     state = {
@@ -82,7 +83,7 @@ class InputLink extends React.PureComponent {
     applyButtonRef = React.createRef();
 
     onApply = async () => {
-        const {includeType, excludeType, workbookId} = this.props;
+        const {includeType, excludeType, workbookId, scope} = this.props;
 
         try {
             this.setState({progress: true});
@@ -94,11 +95,11 @@ class InputLink extends React.PureComponent {
                 this.setState({error: ERROR.INPUT_LINK_WRONG_WORKBOOK_ID.key});
             } else if (includeType && entry.type !== includeType) {
                 const errorKey =
-                    includeType === ENTRY_TYPE.CONTROL_NODE
+                    includeType === EntryTypeNode.CONTROL_NODE
                         ? ERROR.INPUT_LINK_NOT_SELECTOR.key
                         : ERROR.INPUT_LINK_INCORRECT_SOURCE.key;
                 this.setState({error: errorKey});
-            } else if (excludeType && entry.type === excludeType) {
+            } else if ((excludeType && entry.type === excludeType) || scope !== entry.scope) {
                 this.setState({error: ERROR.INPUT_LINK_INCORRECT_SOURCE.key});
             } else {
                 this.props.onApply({entry, params});
