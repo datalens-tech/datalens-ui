@@ -157,7 +157,7 @@ export const CollectionActions = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                {Boolean(dropdownActions.length) && (
+                {collection && Boolean(dropdownActions.length) && (
                     <DropdownMenu
                         defaultSwitcherProps={{view: 'normal'}}
                         switcherWrapperClassName={b('dropdown-btn')}
