@@ -1,4 +1,3 @@
-import {cloneDeep} from 'lodash';
 import {Dispatch} from 'redux';
 import {batch} from 'react-redux';
 
@@ -123,7 +122,7 @@ export function addEditHistoryPoint({unitId, newState}: {unitId: string; newStat
                 diff = jdp.diff(oldState, newState);
             }
 
-            dispatch(_addEditHistoryPoint({unitId, diff, state: cloneDeep(newState)}));
+            dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
         } catch (error) {
             console.warn(error);
         }
@@ -161,7 +160,7 @@ export function goBack({unitId}: {unitId: string}) {
         const jdp = createJDP(unit.options);
 
         // Unapply last diff
-        const targetState = jdp.unpatch(cloneDeep(pointState), targetDiff);
+        const targetState = jdp.unpatch(pointState, targetDiff);
 
         batch(() => {
             dispatch(
@@ -200,7 +199,7 @@ export function goForward({unitId}: {unitId: string}) {
         const jdp = createJDP(unit.options);
 
         // Apply next diff
-        const targetState = jdp.patch(cloneDeep(pointState), targetDiff);
+        const targetState = jdp.patch(pointState, targetDiff);
 
         batch(() => {
             dispatch(
