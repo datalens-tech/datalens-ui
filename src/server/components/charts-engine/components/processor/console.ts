@@ -3,8 +3,14 @@ import util from 'util';
 import {cloneDeepWith} from 'lodash';
 
 const MAX_LOGS_ROWS = 1000;
+
+export type LogItem = {
+    type: string;
+    value: string;
+};
+
 export class Console {
-    private logs: unknown[];
+    private logs: LogItem[][];
     private isScreenshoter: boolean;
     constructor(settings: {isScreenshoter?: boolean} = {}) {
         this.logs = [];
@@ -18,7 +24,7 @@ export class Console {
         if (this.logs.length >= MAX_LOGS_ROWS) {
             return;
         }
-        const rowLogs: unknown[] = [];
+        const rowLogs: LogItem[] = [];
 
         args.forEach((input) => {
             const linkSet = new Set();
@@ -56,10 +62,12 @@ export class Console {
 
     getLogs() {
         if (this.logs.length >= MAX_LOGS_ROWS) {
-            this.logs.push({
-                type: 'string',
-                value: 'Too much logs',
-            });
+            this.logs.push([
+                {
+                    type: 'string',
+                    value: 'Too much logs',
+                },
+            ]);
         }
 
         try {
@@ -67,10 +75,12 @@ export class Console {
             return this.logs;
         } catch (e) {
             return [
-                {
-                    type: 'string',
-                    value: (e as Error).message,
-                },
+                [
+                    {
+                        type: 'string',
+                        value: (e as Error).message,
+                    },
+                ],
             ];
         }
     }

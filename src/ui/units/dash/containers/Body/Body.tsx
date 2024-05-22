@@ -1,8 +1,14 @@
 import React from 'react';
 
-import {DashKit as DashKitComponent, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import {
+    DashKit as DashKitComponent,
+    DashKitDnDWrapper,
+    ActionPanel as DashkitActionPanel,
+    ItemDropProps,
+} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
+    ConfigLayout,
     DashKitProps,
     ActionPanelItem as DashkitActionPanelItem,
     PreparedCopyItemOptions,
@@ -34,6 +40,7 @@ import {
     DashEntryQa,
     DashTab,
     DashTabItem,
+    DashTabItemType,
     DashboardAddWidgetQa,
     Feature,
     StringParams,
@@ -52,6 +59,7 @@ import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
 import {
+    CopiedConfigContext,
     CopiedConfigData,
     getLayoutMap,
     getPastedWidgetData,
@@ -99,11 +107,12 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
     handlerEditClick: () => void;
-    onPasteItem: (data: CopiedConfigData) => void;
+    onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
     isEditModeLoading: boolean;
 };
 
 type DashBodyState = {
+    isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
 };
 
@@ -112,6 +121,14 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 // TODO: add issue
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
+
+const TYPES_TO_DIALOGS_MAP = {
+    [DashTabItemType.Widget]: DIALOG_TYPE.WIDGET,
+    [DashTabItemType.GroupControl]: DIALOG_TYPE.GROUP_CONTROL,
+    [DashTabItemType.Control]: DIALOG_TYPE.CONTROL,
+    [DashTabItemType.Text]: DIALOG_TYPE.TEXT,
+    [DashTabItemType.Title]: DIALOG_TYPE.TITLE,
+};
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -161,6 +178,7 @@ class Body extends React.PureComponent<BodyProps> {
     });
 
     state: DashBodyState = {
+        isGlobalDragging: false,
         hasCopyInBuffer: null,
     };
 
@@ -211,10 +229,10 @@ class Body extends React.PureComponent<BodyProps> {
                 icon: <Icon data={ChartColumn} />,
                 title: i18n('dash.main.view', 'button_edit-panel-chart'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.WIDGET);
-                },
                 qa: DashboardAddWidgetQa.AddWidget,
+                dragProps: {
+                    type: DashTabItemType.Widget,
+                },
             },
             {
                 id: 'selector',
@@ -225,30 +243,30 @@ class Body extends React.PureComponent<BodyProps> {
                     ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                     : i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.CONTROL);
-                },
                 qa: DashboardAddWidgetQa.AddControl,
+                dragProps: {
+                    type: DashTabItemType.Control,
+                },
             },
             {
                 id: 'text',
                 icon: <Icon data={TextAlignLeft} />,
                 title: i18n('dash.main.view', 'button_edit-panel-text'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TEXT);
-                },
                 qa: DashboardAddWidgetQa.AddText,
+                dragProps: {
+                    type: DashTabItemType.Text,
+                },
             },
             {
                 id: 'header',
                 icon: <Icon data={Heading} />,
                 title: i18n('dash.main.view', 'button_edit-panel-title'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.TITLE);
-                },
                 qa: DashboardAddWidgetQa.AddTitle,
+                dragProps: {
+                    type: DashTabItemType.Title,
+                },
             },
         ];
 
@@ -262,32 +280,79 @@ class Body extends React.PureComponent<BodyProps> {
                 onClick: () => {
                     this.props.onPasteItem(copiedData);
                 },
+                dragProps: {
+                    type: copiedData.type,
+                    layout: copiedData.layout,
+                    extra: copiedData,
+                },
             });
         }
+
         if (Utils.isEnabledFeature(Feature.GroupControls)) {
             items.splice(1, 0, {
                 id: 'group-selector',
                 icon: <Icon data={Sliders} />,
                 title: i18n('dash.main.view', 'button_edit-panel-selector'),
                 className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.openDialog(DIALOG_TYPE.GROUP_CONTROL);
-                },
                 qa: DashboardAddWidgetQa.AddGroupControl,
+                dragProps: {
+                    type: DashTabItemType.GroupControl,
+                },
             });
         }
-        return items;
+
+        return items.map((item) => {
+            if (item.dragProps?.type && !item.onClick) {
+                item.onClick = () =>
+                    this.props.openDialog(
+                        TYPES_TO_DIALOGS_MAP[
+                            item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                        ],
+                    );
+            }
+
+            return item;
+        });
     }
+
+    onDropElement = (dropProps: ItemDropProps) => {
+        if (dropProps.dragProps.extra) {
+            this.props.onPasteItem(
+                {
+                    ...dropProps.dragProps.extra,
+                    layout: dropProps.itemLayout,
+                },
+                dropProps.newLayout,
+            );
+            dropProps.commit();
+        } else {
+            this.props.openDialog(
+                TYPES_TO_DIALOGS_MAP[
+                    dropProps?.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                ],
+                dropProps,
+            );
+        }
+    };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
         this.props.setHashState(hashStates, config);
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    getPreparedCopyItemOptions = (itemToCopy: PreparedCopyItemOptions, tabData: DashTab | null) => {
+    getPreparedCopyItemOptions = (
+        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+        tabData: DashTab | null,
+        copyContext?: CopiedConfigContext,
+    ) => {
+        if (copyContext) {
+            itemToCopy.copyContext = copyContext;
+        }
+
         if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
             return itemToCopy;
         }
+
         const copyItemTabsWidgetParams: Record<string, StringParams> = {};
         itemToCopy.data.tabs.forEach((copiedTabItem) => {
             const {id, params} = copiedTabItem;
@@ -327,6 +392,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     private renderDashkit = () => {
+        const {isGlobalDragging} = this.state;
         const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading} = this.props;
 
         let tabDataConfig = tabData as DashKitProps['config'] | null;
@@ -367,7 +433,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        return isEmptyTab ? (
+        return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
                 canEdit={this.props.canEdit}
                 isEditMode={mode === Mode.Edit}
@@ -381,10 +447,15 @@ class Body extends React.PureComponent<BodyProps> {
                 config={tabDataConfig as DashKitProps['config']}
                 editMode={mode === Mode.Edit}
                 focusable={true}
+                onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 context={{
-                    getPreparedCopyItemOptions: (itemToCopy: PreparedCopyItemOptions) => {
-                        return this.getPreparedCopyItemOptions(itemToCopy, tabData);
+                    getPreparedCopyItemOptions: (
+                        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+                    ) => {
+                        return this.getPreparedCopyItemOptions(itemToCopy, tabData, {
+                            workbookId: this.props.workbookId ?? null,
+                        });
                     },
                     workbookId: this.props.workbookId,
                 }}
@@ -420,7 +491,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const showEditActionPanel = mode === Mode.Edit;
 
-        return (
+        const content = (
             <div className={b('content-wrapper')}>
                 <div
                     className={b('content-container', {
@@ -459,6 +530,23 @@ class Body extends React.PureComponent<BodyProps> {
                 </div>
             </div>
         );
+
+        if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
+            return (
+                <DashKitDnDWrapper
+                    onDragStart={() => {
+                        this.setState({isGlobalDragging: true});
+                    }}
+                    onDragEnd={() => {
+                        this.setState({isGlobalDragging: false});
+                    }}
+                >
+                    {content}
+                </DashKitDnDWrapper>
+            );
+        }
+
+        return content;
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {

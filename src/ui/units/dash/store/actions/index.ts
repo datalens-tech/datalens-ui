@@ -14,12 +14,14 @@ import {
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
+    SetDashOpenedDescKeyAction,
     SetDashUpdateStatusAction,
     SetDescViewModeAction,
     SetDescriptionAction,
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
+    SetItemDataAction,
     type SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
@@ -63,10 +65,12 @@ export type DashAction<T = unknown> =
     | SetDescriptionAction
     | SetAccessDescriptionAction
     | SetSupportDescriptionAction
+    | SetDashOpenedDescKeyAction
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
     | SetNewRelationsAction
+    | SetItemDataAction
     | SetDashKeyAction
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction

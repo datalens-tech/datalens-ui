@@ -32,7 +32,14 @@ export const TagInput: React.FC<TagInputProps> = ({
     onUpdate,
     onRemove,
 }: TagInputProps) => {
-    const [isEdit, setIsEdit] = React.useState(Boolean(defaultEditMode));
+    const [isEdit, setIsEdit] = React.useState(() => {
+        // default edit mode by prop
+        if (defaultEditMode !== undefined) {
+            return Boolean(defaultEditMode);
+        }
+        // or by empty value
+        return value === '';
+    });
     const [tagValue, setTagValue] = React.useState(value);
     const [labelRect, setLabelRect] = React.useState<DOMRect>();
     const labelRef: React.Ref<HTMLDivElement> = React.useRef(null);
@@ -75,7 +82,6 @@ export const TagInput: React.FC<TagInputProps> = ({
             }
 
             event.preventDefault();
-            event.stopPropagation();
 
             if (event.key === 'Escape') {
                 handleReset();

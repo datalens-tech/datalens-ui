@@ -77,6 +77,7 @@ export enum Feature {
      * When specify the text, an icon with a hint is added. */
     FieldHint = 'FieldHint',
     EnableFooter = 'EnableFooter',
+    EnableDashDNDPanel = 'EnableDashDNDPanel',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -6,6 +6,8 @@ import {
     DialogConfirmApplyStatus,
     DialogConfirmProps,
 } from '../../components/DialogConfirm/DialogConfirm';
+
+import {DIALOG_WARNING, DialogWarningProps} from 'ui/components/DialogWarning/DialogWarning';
 import {i18n} from 'i18n';
 import {AppDispatch} from '../index';
 import {
@@ -118,6 +120,22 @@ export const openDialogConfirm = (commonProps: OpenDialogConfirmArguments) => {
     };
 };
 
+export type OpenWarningAlertArguments = Omit<DialogWarningProps, 'visible'>;
+
+export const openWarningDialog = (commonProps: OpenWarningAlertArguments) => {
+    return function (dispatch: AppDispatch) {
+        dispatch(
+            openDialog({
+                id: DIALOG_WARNING,
+                props: {
+                    ...commonProps,
+                    visible: true,
+                },
+            }),
+        );
+    };
+};
+
 type OpenDialogSaveChartConfirmArguments = Pick<
     OpenDialogConfirmArguments,
     | 'onApply'
@@ -126,7 +144,6 @@ type OpenDialogSaveChartConfirmArguments = Pick<
     | 'confirmButtonText'
     | 'cancelButtonText'
     | 'widthType'
-    | 'applyBtnLoadingStatus'
 >;
 
 export const openDialogSaveChartConfirm = ({
@@ -136,12 +153,11 @@ export const openDialogSaveChartConfirm = ({
     confirmButtonText,
     cancelButtonText,
     widthType,
-    applyBtnLoadingStatus,
 }: OpenDialogSaveChartConfirmArguments) => {
     return function (dispatch: AppDispatch) {
         const openDialogConfirmParams: OpenDialogConfirmArguments = {
-            onApply: (args) => {
-                onApply(args);
+            onApply: async (args) => {
+                await onApply(args);
                 dispatch(closeDialog());
             },
             message,
@@ -158,7 +174,6 @@ export const openDialogSaveChartConfirm = ({
                 confirmButtonText ||
                 i18n('component.dl-dialog-confirm.view', 'button-save-chart_apply'),
             widthType,
-            applyBtnLoadingStatus,
         };
         dispatch(openDialogConfirm(openDialogConfirmParams));
     };

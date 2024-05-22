@@ -227,6 +227,9 @@ export const selectDashDescription = (state: DatalensGlobalState) =>
 export const selectDashDescMode = (state: DatalensGlobalState) =>
     state.dash.descriptionMode || Mode.View;
 
+export const selectDashShowOpenedDescription = (state: DatalensGlobalState) =>
+    Boolean(state.dash?.openInfoOnLoad);
+
 export const selectDashAccessDescription = (state: DatalensGlobalState) =>
     state.dash?.data?.accessDescription || '';
 
@@ -372,6 +375,22 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
             [] as DashTabItem[],
         );
 });
+
+export const selectCurrentTabRelationDataItems = createSelector(
+    [selectCurrentTab],
+    (currentTab) => {
+        if (!currentTab) {
+            return undefined;
+        }
+
+        return currentTab.items.filter(
+            ({type}) =>
+                type === ITEM_TYPE.CONTROL ||
+                type === ITEM_TYPE.WIDGET ||
+                type === ITEM_TYPE.GROUP_CONTROL,
+        );
+    },
+);
 
 export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],
