@@ -123,7 +123,7 @@ export function addEditHistoryPoint({unitId, newState}: {unitId: string; newStat
                 diff = jdp.diff(oldState, newState);
             }
 
-            dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
+            dispatch(_addEditHistoryPoint({unitId, diff, state: cloneDeep(newState)}));
         } catch (error) {
             console.warn(error);
         }
