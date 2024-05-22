@@ -297,3 +297,15 @@ export const openTestPage = async (page: Page, url: string, queryMap?: Record<st
 
     await goto(page, fullUrl, {isRetry: false});
 };
+
+export const fillDatePicker = async (args: {page: Page; selector: string; value?: string}) => {
+    const {page, selector, value = ''} = args;
+    const datePicker = await page.waitForSelector(selector);
+    const valueParts = value.split(/\.| |:/).filter(Boolean);
+
+    // date parts should be entered one by one,
+    // otherwise playwright cannot fill date field in properly way
+    for (const part of valueParts) {
+        await datePicker.fill(part);
+    }
+};
