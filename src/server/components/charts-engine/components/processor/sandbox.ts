@@ -204,7 +204,7 @@ const execute = async ({
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
     let quickJSResult: any;
-    runtime.setMemoryLimit(1024 * 1024 * 10);
+    runtime.setMemoryLimit(1024 * 1024 * 200);
     runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
     const context = runtime.newContext();
     try {
