@@ -1,4 +1,4 @@
-import {QuickJSHandle, getQuickJS} from 'quickjs-emscripten';
+import {getQuickJS} from 'quickjs-emscripten';
 
 import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
@@ -42,11 +42,13 @@ export const getSandboxChartBuilder = async (
     const QuickJS = await getQuickJS();
     const runtime = QuickJS.newRuntime();
 
-    let modules: QuickJSHandle;
+    const modulesContext = runtime.newContext();
+    const modules = modulesContext.newArray();
 
     return {
         dispose: () => {
             modules.dispose();
+            modulesContext.dispose();
             runtime.dispose();
         },
         buildShared: async () => {
@@ -66,7 +68,7 @@ export const getSandboxChartBuilder = async (
             const processedModules: Record<string, SandboxExecuteResult> = {};
             for await (const resolvedModule of resolvedModules) {
                 const name = resolvedModule.key;
-                const result = await ModulesSandbox.processModule({
+                await ModulesSandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
                     modules,
@@ -75,8 +77,8 @@ export const getSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
                     runtime,
+                    context: modulesContext,
                 });
-                modules = result.modules;
                 onModuleBuild(processedModules[name]);
             }
 

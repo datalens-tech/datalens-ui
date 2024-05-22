@@ -1,4 +1,9 @@
-import {QuickJSHandle, QuickJSRuntime, shouldInterruptAfterDeadline} from 'quickjs-emscripten';
+import {
+    QuickJSContext,
+    QuickJSHandle,
+    QuickJSRuntime,
+    shouldInterruptAfterDeadline,
+} from 'quickjs-emscripten';
 
 import {config} from '../../constants';
 
@@ -24,6 +29,7 @@ type ProcessModuleParams = {
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
     runtime: QuickJSRuntime;
+    context: QuickJSContext;
 };
 
 export class SandboxError extends Error {
@@ -52,6 +58,7 @@ type ExecuteParams = {
     name: string;
     timeout: number;
     runtime: QuickJSRuntime;
+    context: QuickJSContext;
     modules: QuickJSHandle;
 };
 
@@ -69,10 +76,11 @@ const execute = async ({
     isScreenshoter,
     timeout,
     runtime,
+    context,
     modules,
 }: ExecuteParams): Promise<ModulesSandboxExecuteResult> => {
-    if (!runtime) {
-        throw new Error('Sandbox runtime is not initialized');
+    if (!context) {
+        throw new Error('Sandbox context is not initialized');
     }
 
     const timeStart = process.hrtime();
@@ -82,11 +90,6 @@ const execute = async ({
     const console = new Console({isScreenshoter});
 
     try {
-        const context = runtime.newContext();
-
-        if (!modules) {
-            modules = context.newArray();
-        }
         runtime.setMemoryLimit(1024 * 1024 * 10);
         runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
 
@@ -166,6 +169,7 @@ const processModule = async ({
     modules,
     isScreenshoter,
     runtime,
+    context,
 }: ProcessModuleParams) => {
     return execute({
         code,
@@ -173,6 +177,7 @@ const processModule = async ({
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,
         runtime,
+        context,
         modules,
     });
 };
