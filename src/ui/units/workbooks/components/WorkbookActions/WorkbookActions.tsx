@@ -98,29 +98,29 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
             },
             text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
         });
+    }
 
-        if (workbook.permissions.copy) {
-            dropdownActions.push({
-                action: () => {
-                    dispatch(
-                        openDialog({
-                            id: DIALOG_COPY_WORKBOOK,
-                            props: {
-                                open: true,
-                                workbookId: workbook.workbookId,
-                                workbookTitle: workbook.title,
-                                initialCollectionId: workbook.collectionId,
-                                onApply: onApplyCopy,
-                                onClose: () => {
-                                    dispatch(closeDialog());
-                                },
+    if (workbook.permissions.copy) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_COPY_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            initialCollectionId: workbook.collectionId,
+                            onApply: onApplyCopy,
+                            onClose: () => {
+                                dispatch(closeDialog());
                             },
-                        }),
-                    );
-                },
-                text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
-            });
-        }
+                        },
+                    }),
+                );
+            },
+            text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
+        });
     }
 
     const otherActions: DropdownMenuItem[] = [];
