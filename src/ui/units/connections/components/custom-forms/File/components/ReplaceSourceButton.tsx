@@ -1,14 +1,11 @@
 import React from 'react';
 
-import block from 'bem-cn-lite';
-import {ButtonAttach} from 'components/ButtonAttach/ButtonAttach';
+import {useFileInput} from '@gravity-ui/uikit';
 
 import {useFileContext} from '../context';
-
-const b = block('conn-form-file');
+import {getAcceptedExtensions} from '../utils';
 
 export const ReplaceSourceButton = () => {
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
     const {
         handleReplaceSource,
         handleReplaceSourceActionData,
@@ -24,22 +21,15 @@ export const ReplaceSourceButton = () => {
         },
         [handleReplaceSource, replaceSourceId],
     );
+    const {controlProps, triggerProps} = useFileInput({onUpdate: handleUpdate});
+    const accept = getAcceptedExtensions();
 
     React.useEffect(() => {
         if (replaceSourceId && showFileSelection) {
-            // In the UI, the button is hidden (has no height due to lack of content), so to open
-            // for the native file selection dialog, the dispatcher clicks on the dom element of the button
-            buttonRef.current?.click();
+            triggerProps.onClick();
             handleReplaceSourceActionData({showFileSelection: false});
         }
-    }, [handleReplaceSourceActionData, replaceSourceId, showFileSelection]);
+    }, [handleReplaceSourceActionData, replaceSourceId, showFileSelection, triggerProps]);
 
-    return (
-        <ButtonAttach
-            ref={buttonRef}
-            className={b('action-replace')}
-            multiple={false}
-            onUpdate={handleUpdate}
-        />
-    );
+    return <input {...controlProps} accept={accept} multiple={false} />;
 };
