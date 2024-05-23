@@ -19,17 +19,7 @@
     }
 
     &__add-file-button {
-        display: inline-flex;
         margin-right: 5px;
-    }
-
-    &__add-file-button-content {
-        display: flex;
-        align-items: center;
-    }
-
-    &__add-file-button-icon {
-        margin-right: 8px;
     }
 
     &__list {
@@ -128,10 +118,6 @@
 
     &__list-item-description {
         color: var(--g-color-text-secondary);
-    }
-
-    &__action-replace {
-        position: absolute;
     }
 
     &__workspace {

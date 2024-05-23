@@ -4,7 +4,9 @@ import {Column} from '@gravity-ui/react-data-table';
 import type {ListItemData, ListProps} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {flow, get} from 'lodash';
-import {DATASET_FIELD_TYPES, type NonNullableBy} from 'shared';
+import {DATASET_FIELD_TYPES, Feature} from 'shared';
+import type {NonNullableBy} from 'shared';
+import Utils from 'utils';
 
 import type {DataLensApiError} from '../../../../../typings';
 import type {FileSourceItem, ListItemProps} from '../../../store';
@@ -15,6 +17,7 @@ import type {FileListItem, HandleFileSourceUpdate} from './types';
 const i18n = I18n.keyset('connections.file.view');
 const ITEM_HEIGHT = 52;
 const GROUP_TITLE_HEIGHT = 38;
+const ACCEPTED_EXTENTIONS = '.csv,.txt';
 
 const isTitleMatchedByFilter = (title: string, filter: string) => {
     const lowerTitle = title.toLocaleLowerCase();
@@ -245,4 +248,14 @@ export const getCreatingSourceItemDescription = (args: {
     }
 
     return undefined;
+};
+
+export const getAcceptedExtensions = () => {
+    let acceptedExtensions = ACCEPTED_EXTENTIONS;
+
+    if (Utils.isEnabledFeature(Feature.XlsxFilesEnabled)) {
+        acceptedExtensions += ',.xlsx';
+    }
+
+    return acceptedExtensions;
 };
