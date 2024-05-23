@@ -13,7 +13,6 @@ import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {deleteWorkbookInItems} from 'ui/units/collections/store/actions';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
 
 import {Feature} from '../../../../../shared';
@@ -137,9 +136,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                             open: true,
                             workbookId: workbook.workbookId,
                             workbookTitle: workbook.title,
-                            onSuccessApply: (id) => {
-                                dispatch(deleteWorkbookInItems(id));
-
+                            onSuccessApply: () => {
                                 if (workbook.collectionId) {
                                     history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
                                 } else {

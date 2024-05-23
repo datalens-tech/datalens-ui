@@ -153,7 +153,9 @@ export const CollectionActions = React.memo<Props>(
             });
         }
 
-        dropdownActions.push([...otherActions]);
+        if (otherActions.length > 0) {
+            dropdownActions.push([...otherActions]);
+        }
 
         return (
             <div className={b(null, className)}>

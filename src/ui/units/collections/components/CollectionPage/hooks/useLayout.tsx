@@ -42,7 +42,7 @@ import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
-import {deleteCollectionInItems, setCollection} from '../../../store/actions';
+import {setCollection} from '../../../store/actions';
 import {
     selectCollection,
     selectCollectionError,
@@ -184,9 +184,7 @@ export const useLayout = ({
                                                 open: true,
                                                 collectionId: curCollectionId,
                                                 collectionTitle: collection.title,
-                                                onSuccessApply: (id) => {
-                                                    dispatch(deleteCollectionInItems(id));
-
+                                                onSuccessApply: () => {
                                                     if (collection.parentId) {
                                                         history.push(
                                                             `${COLLECTIONS_PATH}/${collection.parentId}`,
