@@ -8,7 +8,6 @@ import {connect} from 'react-redux';
 import {Dispatch, bindActionCreators} from 'redux';
 import {
     CommonSharedExtraSettings,
-    Feature,
     HintSettings,
     Placeholder,
     PlaceholderId,
@@ -38,7 +37,6 @@ import {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {Utils} from '../../../../../../ui';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -389,17 +387,12 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
     private renderHintSettings() {
         const {item, placeholderId} = this.props;
-        const canSetHint = Utils.isEnabledFeature(Feature.FieldHint);
         const availablePlaceholders = [
             PlaceholderId.FlatTableColumns,
             PlaceholderId.PivotTableRows,
         ];
 
-        if (
-            !item ||
-            !availablePlaceholders.includes(placeholderId as PlaceholderId) ||
-            !canSetHint
-        ) {
+        if (!item || !availablePlaceholders.includes(placeholderId as PlaceholderId)) {
             return null;
         }
 
