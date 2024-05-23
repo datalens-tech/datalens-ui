@@ -116,6 +116,8 @@ export const Control = ({
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
 
+    const [prevParams, setPrevParams] = React.useState<StringParams | null>(params);
+
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
     const setErrorState = (newErrorData: ErrorData, errorStatus: LoadStatus) => {
@@ -243,6 +245,11 @@ export const Control = ({
         if (needReload) {
             reload();
         }
+    }
+
+    if (control?.param && !isEqual(prevParams, params)) {
+        setPrevParams(params);
+        reload();
     }
 
     if (!isInit && status === LOAD_STATUS.INITIAL) {
@@ -441,6 +448,7 @@ export const Control = ({
             hasValidationError: Boolean(currentValidationError),
             style,
             renderOverlay,
+            hint: controlData.source.showHint ? controlData.source.hint : undefined,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 

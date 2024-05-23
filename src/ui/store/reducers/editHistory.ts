@@ -1,3 +1,4 @@
+import {cloneDeep} from 'lodash';
 import {AnyAction} from 'redux';
 import {Delta as JDPDelta} from 'jsondiffpatch';
 
@@ -85,7 +86,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         // Remove all missed diffs
                         diffs: [...prevDiffs, diff],
 
-                        pointState: newState,
+                        pointState: cloneDeep(newState),
                     },
                 },
             };
@@ -115,7 +116,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                     ...state.units,
                     [unitId]: {
                         ...editHistoryUnit,
-                        pointState,
+                        pointState: cloneDeep(pointState),
                     },
                 },
             };

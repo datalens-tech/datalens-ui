@@ -128,12 +128,13 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         });
 
         return (
-            <div
-                className={b(null, CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
-                data-qa={ChartKitTableQa.Widget}
-                ref={ref}
-            >
-                <div className={b('snapter-container', SNAPTER_HTML_CLASSNAME)}>
+            <div className={b()} data-qa={ChartKitTableQa.Widget} ref={ref}>
+                <div
+                    className={b(
+                        'snapter-container',
+                        [SNAPTER_HTML_CLASSNAME, CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' '),
+                    )}
+                >
                     {titleText && <div className={b('title')}>{titleText}</div>}
                     <div className={b('table-wrapper', {'highlight-rows': shouldHighlightRows})}>
                         {dimensions?.width && (

@@ -58,6 +58,7 @@ function withWrapForControls(WrappedComponent) {
                     </span>
                 )}
                 <WrappedComponent {...props} />
+                {hint && !showLabel && <MarkdownHelpPopover markdown={hint} />}
             </div>
         );
     }

@@ -100,9 +100,11 @@ export default {
                     return QL_TYPE.METRIC_QL_NODE;
                 }
             }
+            case WizardVisualizationId.LineD3:
             case WizardVisualizationId.ScatterD3:
             case WizardVisualizationId.BarXD3:
-            case WizardVisualizationId.PieD3: {
+            case WizardVisualizationId.PieD3:
+            case WizardVisualizationId.DonutD3: {
                 return QL_TYPE.D3_QL_NODE;
             }
             default:
