@@ -54,19 +54,19 @@ export const getSandboxChartBuilder = async (
             })) as ResolvedConfig[];
 
             const processedModules = resolvedModules.reduce<Record<string, SandboxExecuteResult>>(
-                (modules, resolvedModule) => {
+                (acc, resolvedModule) => {
                     const name = resolvedModule.key;
-                    modules[name] = Sandbox.processModule({
+                    acc[name] = Sandbox.processModule({
                         name,
                         code: resolvedModule.data.js,
-                        modules: extractModules(modules),
+                        modules: extractModules(acc),
                         userLogin,
                         userLang,
                         nativeModules: chartsEngine.nativeModules,
                         isScreenshoter,
                     });
-                    onModuleBuild(modules[name]);
-                    return modules;
+                    onModuleBuild(acc[name]);
+                    return acc;
                 },
                 {},
             );
@@ -124,7 +124,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildChartLibraryConfig: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             let tabResult;
             if (config.data.graph) {
                 const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
@@ -193,7 +193,7 @@ export const getSandboxChartBuilder = async (
             return null;
         },
         buildChartConfig: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const configTab = EDITOR_TYPE_CONFIG_TABS[type as keyof typeof EDITOR_TYPE_CONFIG_TABS];
             const tabResult = Sandbox.processTab({
                 name: 'Config',
@@ -218,7 +218,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildChart: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const tabResult = Sandbox.processTab({
                 name: 'JavaScript',
                 code: config.data.js || 'module.exports = {};',
@@ -243,7 +243,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildUI: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const tabResult = Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
