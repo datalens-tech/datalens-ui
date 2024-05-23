@@ -31,6 +31,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
+    updateControlsOnChange: false,
     autoHeight: false,
 };
 
@@ -125,6 +126,15 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const handleChangeUpdateControls = (value: boolean) => {
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                updateControlsOnChange: value,
+            }),
+        );
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
 
@@ -141,6 +151,23 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
+                {selectorsGroup.buttonApply && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_update-controls-on-change')}</span>
+                            <HelpPopover
+                                className={b('help-icon')}
+                                htmlContent={i18n('context_update-controls-on-change')}
+                            />
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.updateControlsOnChange}
+                            onUpdate={handleChangeUpdateControls}
+                            size="l"
+                            qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
+                        />
+                    </div>
+                )}
                 {showAutoHeight && (
                     <div className={b('settings-container')}>
                         <div>

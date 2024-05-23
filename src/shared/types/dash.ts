@@ -260,6 +260,9 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+
+    updateControlsOnChange?: boolean;
+
     group: DashTabItemControlSingle[];
 }
 

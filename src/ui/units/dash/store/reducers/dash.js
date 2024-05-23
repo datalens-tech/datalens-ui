@@ -176,6 +176,8 @@ export function getSelectorGroupDialogFromData(data) {
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
 
+        updateControlsOnChange: data.updateControlsOnChange,
+
         group: items,
     };
 }
@@ -226,6 +228,9 @@ function dash(state = initialState, action) {
                     autoHeight: Boolean(selectorDialog.autoHeight),
                     buttonApply: Boolean(selectorDialog.buttonApply),
                     buttonReset: Boolean(selectorDialog.buttonReset),
+
+                    updateControlsOnChange: Boolean(selectorDialog.updateControlsOnChange),
+
                     defaults: selectorDialog.defaults,
                 },
                 activeSelectorIndex: 0,
@@ -455,6 +460,7 @@ function dash(state = initialState, action) {
                     autoHeight: Boolean(data.autoHeight),
                     buttonApply: false,
                     buttonReset: false,
+                    updateControlsOnChange: false,
                     group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;

@@ -52,6 +52,7 @@ export const DialogGroupControlQa = {
     autoHeightCheckbox: 'autoheight-checkbox',
     applyButtonCheckbox: 'apply-button-checkbox',
     resetButtonCheckbox: 'reset-button-checkbox',
+    updateControlOnChangeCheckbox: 'update-controls-button-checkbox',
     placementButton: 'selectors-placement-button',
     placementControlList: 'selectors-placement-control-list',
     placementApplyButton: 'selectors-placement-apply-button',
