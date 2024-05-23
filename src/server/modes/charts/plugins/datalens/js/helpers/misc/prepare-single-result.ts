@@ -168,6 +168,7 @@ export default ({
             break;
 
         case WizardVisualizationId.PieD3:
+        case WizardVisualizationId.DonutD3:
             prepare = prepareD3Pie;
             rowsLimit = 1000;
             break;

@@ -1,3 +1,5 @@
+import type {ItemDropProps} from '@gravity-ui/dashkit';
+
 import {Operations} from '../modules';
 
 import {ClientChartsConfig, Dictionary, Entry, EntryScope, Params, StringParams} from './index';
@@ -77,6 +79,8 @@ export interface DashData {
     accessDescription?: string;
     supportDescription?: string;
 }
+
+export type DashDragOptions = ItemDropProps;
 
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server

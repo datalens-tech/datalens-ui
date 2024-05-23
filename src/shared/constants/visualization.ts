@@ -13,6 +13,7 @@ export enum WizardVisualizationId {
     Pie = 'pie',
     PieD3 = 'pie-d3',
     Donut = 'donut',
+    DonutD3 = 'donut-d3',
     Metric = 'metric',
     Treemap = 'treemap',
     FlatTable = 'flatTable',

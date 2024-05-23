@@ -79,6 +79,7 @@ function prepareColors(visualization: any, colors: Field[]): PrepareColorsItems 
         WizardVisualizationId.Donut,
         WizardVisualizationId.Pie,
         WizardVisualizationId.PieD3,
+        WizardVisualizationId.DonutD3,
     ].includes(visualization?.id);
 
     // Historically, the Pie Chart and the Ring Chart had their own placeholders for colors
