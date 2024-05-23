@@ -5,6 +5,7 @@ import {
     DEFAULT_CHART_LINES_LIMIT,
     DashWidgetConfig,
     Feature,
+    FeatureConfig,
     GraphTooltipLine,
     GraphWidgetEventScope,
     PlaceholderId,
@@ -15,7 +16,7 @@ import {
     WidgetEvent,
     WizardVisualizationId,
     getIsNavigatorEnabled,
-    isEnabledServerFeature,
+    getServerFeatures,
     isTreeField,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
@@ -143,40 +144,21 @@ function canUseActionParams(shared: ServerChartsConfig) {
     return !hasDrillDownEvents && !hasTreeFields;
 }
 
+type BuildChartConfigArgs = {
+    shared: ServerChartsConfig;
+    params: StringParams;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
+};
+
 // eslint-disable-next-line complexity
-export const buildChartsConfig = (
-    ...options: [
-        (
-            | {
-                  shared: ServerChartsConfig;
-                  params: StringParams;
-                  widgetConfig?: DashWidgetConfig['widgetConfig'];
-              }
-            | ServerChartsConfig
-        ),
-        StringParams,
-    ]
+export const buildChartsConfigPrivate = (
+    args: BuildChartConfigArgs & {features: FeatureConfig},
 ) => {
-    let shared;
-    let params: StringParams;
-    let widgetConfig: DashWidgetConfig['widgetConfig'];
-
-    if ('shared' in options[0]) {
-        shared = options[0].shared;
-        params = options[0].params as StringParams;
-        widgetConfig = options[0].widgetConfig;
-    } else {
-        shared = options[0];
-        params = options[1];
-    }
-
-    shared = mapChartsConfigToServerConfig(shared);
-
+    const {shared: serverChartConfig, params, widgetConfig, features} = args;
+    const shared = mapChartsConfigToServerConfig(serverChartConfig);
     const {visualization} = shared;
-    const app = registry.getApp();
 
-    let hideHolidaysBands = !isEnabledServerFeature(app.nodekit.ctx, Feature.HolidaysOnChart);
-
+    let hideHolidaysBands = !features[Feature.HolidaysOnChart];
     if (!hideHolidaysBands) {
         hideHolidaysBands = [visualization].concat(visualization.layers || []).some((layer) => {
             return layer.placeholders.some((placeholder) => {
@@ -188,7 +170,7 @@ export const buildChartsConfig = (
         });
     }
 
-    const config: Config = {
+    const config: Partial<Config> = {
         title: shared.title,
         hideHolidaysBands,
         linesLimit: DEFAULT_CHART_LINES_LIMIT,
@@ -299,4 +281,30 @@ export const buildChartsConfig = (
     log(config);
 
     return config;
+};
+
+export const buildChartsConfig = (
+    args: BuildChartConfigArgs | ServerChartsConfig,
+    _params?: StringParams,
+) => {
+    let shared;
+    let params: StringParams;
+    let widgetConfig: DashWidgetConfig['widgetConfig'];
+
+    if ('shared' in args) {
+        shared = args.shared;
+        params = args.params as StringParams;
+        widgetConfig = args.widgetConfig;
+    } else {
+        shared = args;
+        params = _params as StringParams;
+    }
+
+    const app = registry.getApp();
+    return buildChartsConfigPrivate({
+        shared,
+        params,
+        widgetConfig,
+        features: getServerFeatures(app.nodekit.ctx),
+    });
 };
