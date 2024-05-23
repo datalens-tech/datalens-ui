@@ -300,7 +300,7 @@ export const openTestPage = async (page: Page, url: string, queryMap?: Record<st
 
 export const fillDatePicker = async (args: {page: Page; selector: string; value?: string}) => {
     const {page, selector, value = ''} = args;
-    const datePicker = await page.waitForSelector(selector);
+    const datePicker = page.locator(selector).first();
     const valueParts = value.split(/\.| |:/).filter(Boolean);
 
     // date parts should be entered one by one,

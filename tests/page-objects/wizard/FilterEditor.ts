@@ -37,14 +37,14 @@ export default class FilterEditor {
         if (startDate) {
             await fillDatePicker({
                 page: this.page,
-                selector: `.dl-dialog-filter__body ${slct('datepicker-start')} .g-text-input__control`,
+                selector: `${slct('datepicker-start')} input`,
                 value: startDate,
             });
         }
 
         await fillDatePicker({
             page: this.page,
-            selector: `.dl-dialog-filter__body ${slct('datepicker-end')} .g-text-input__control`,
+            selector: `${slct('datepicker-end')} input`,
             value: endDate,
         });
     }
