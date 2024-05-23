@@ -4,8 +4,11 @@ import {SharePopover} from '@gravity-ui/components';
 import {ArrowShapeTurnUpRight, Code} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
+import {Feature} from 'shared/types';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS} from 'ui/constants';
+import Utils from 'ui/utils';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {socialNets} from '../../modules/constants';
@@ -13,19 +16,22 @@ import {socialNets} from '../../modules/constants';
 import './ShareButton.scss';
 
 const b = block('entity-share-button');
+const i18n = I18n.keyset('chartkit.menu');
 
 export const ShareButton = ({
     enablePopover,
     entityId,
     popoverText,
     popoverTitle,
-    popoverButtonText,
+    iconSize = 18,
+    popoverClassName,
 }: {
     enablePopover?: boolean;
     entityId?: string;
     popoverText?: string;
     popoverTitle?: string;
-    popoverButtonText?: string;
+    iconSize?: number;
+    popoverClassName?: string;
 }) => {
     const [showDialogShare, setShowDialogShare] = React.useState(false);
 
@@ -38,19 +44,19 @@ export const ShareButton = ({
     };
 
     const getContent = () => {
-        if (!isMobileView && enablePopover) {
+        if (enablePopover && (!isMobileView || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
             return (
                 <SharePopover
-                    useWebShareApi={false}
+                    useWebShareApi={!isMobileView}
                     url={window.location.href}
                     title={popoverTitle}
                     text={popoverText}
                     shareOptions={socialNets}
                     copyIcon={Code}
                     customIcon={ArrowShapeTurnUpRight}
-                    iconSize={18}
+                    iconSize={iconSize}
                     withCopyLink={Boolean(entityId)}
-                    className={b('share-popover')}
+                    className={popoverClassName}
                     renderCopy={({icon}) => (
                         <Button
                             view="flat-secondary"
@@ -59,7 +65,7 @@ export const ShareButton = ({
                             onClick={handleShareButtonClick}
                         >
                             <Icon data={icon} size={16} />
-                            {popoverButtonText}
+                            {i18n('embedded')}
                         </Button>
                     )}
                 />
