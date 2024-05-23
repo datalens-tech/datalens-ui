@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
+import {ArrowRightFromSquare, CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
 import {
     AsideHeader,
     AsideHeaderProps,
@@ -154,6 +154,16 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 current: pathname.includes(SERVICE_SETTINGS_PATH),
                 itemWrapper: (params, makeItem) => {
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
+                },
+            },
+            {
+                id: 'logout',
+                title: i18n('label_logout'),
+                icon: ArrowRightFromSquare,
+                iconSize: 16,
+                tooltipText: i18n('label_logout'),
+                onItemClick: () => {
+                    window.location.assign('/logout');
                 },
             },
         ],
