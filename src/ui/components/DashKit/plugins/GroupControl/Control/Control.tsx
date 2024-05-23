@@ -116,9 +116,7 @@ export const Control = ({
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
 
-    const [prevParams, setPrevParams] = React.useState<string | string[] | null>(
-        control?.param ? params[control.param] : null,
-    );
+    const [prevParams, setPrevParams] = React.useState<StringParams | null>(params);
 
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
@@ -249,8 +247,8 @@ export const Control = ({
         }
     }
 
-    if (control?.param && isEqual(prevParams, params[control?.param])) {
-        setPrevParams(params[control?.param]);
+    if (control?.param && !isEqual(prevParams, params)) {
+        setPrevParams(params);
         reload();
     }
 
