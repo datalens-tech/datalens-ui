@@ -41,6 +41,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
         if (!isEnabledGroupControls) {
             skipAfterEach = true;
+            // Test is immediately aborted when you call skip, it goes straight to afterEach
             datalensTest.skip();
         }
         const dashboardPage = new DashboardPage({page});

@@ -13,3 +13,5 @@ export * from './icons';
 export * from './colors';
 export * from './collectionFiltersStorage';
 export {getFilteredObject} from './helpers';
+export * from './os';
+export * from './date';

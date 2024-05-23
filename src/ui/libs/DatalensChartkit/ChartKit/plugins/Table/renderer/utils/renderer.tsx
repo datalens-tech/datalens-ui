@@ -15,6 +15,7 @@ import {
     isMarkupItem,
 } from 'shared';
 
+import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
@@ -32,8 +33,13 @@ export type HeadCell = THead & {
     custom?: unknown;
 };
 
-export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
+export function mapHeadCell(
+    th: TableHead,
+    tableWidth: number | undefined,
+    head: TableHead[] | undefined,
+): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
+    const hint = get(th, 'hint');
     const cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
 
     return {
@@ -49,6 +55,7 @@ export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
             return (
                 <span data-qa={ChartKitTableQa.HeadCellContent}>
                     {renderCellContent({cell, column: th, header: true})}
+                    {hint && <MarkdownHelpPopover markdown={hint} />}
                 </span>
             );
         },
@@ -60,6 +67,7 @@ export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
             const contentStyles = getCellContentStyles({
                 cell,
                 column: th,
+                columns: head || [],
             });
             return (
                 <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
@@ -78,18 +86,26 @@ export function mapHeadCell(th: TableHead, tableWidth?: number): HeadCell {
     };
 }
 
-export function getCellContentStyles(args: {cell: TableCommonCell; column: TableHead}) {
-    const {cell, column} = args;
+export function getCellContentStyles(args: {
+    cell: TableCommonCell;
+    column: TableHead;
+    columns: TableHead[];
+}) {
+    const {cell, column, columns} = args;
     const cellType = cell.type ?? get(column, 'type');
     const contentStyles: React.CSSProperties = {};
     if (cellType === 'number') {
         contentStyles.textAlign = 'right';
     }
 
-    const cellWidth = get(cell, 'width', get(column, 'width'));
-    const isPercentWidth = String(cellWidth).slice(-1) === '%';
-    if (!isPercentWidth) {
-        contentStyles.width = cellWidth;
+    // Width of the table should take 100%, so we cannot use the width settings when they are set for all cells
+    const canUseCellWidth = columns.some((col) => !col.width);
+    if (canUseCellWidth) {
+        const cellWidth = get(cell, 'width', get(column, 'width'));
+        const isPercentWidth = String(cellWidth).slice(-1) === '%';
+        if (!isPercentWidth) {
+            contentStyles.width = cellWidth;
+        }
     }
 
     return contentStyles;

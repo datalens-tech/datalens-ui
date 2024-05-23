@@ -103,7 +103,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams: this.props.params,
             needReload: false,
-            forceUpdate: true,
         };
     }
 
@@ -124,13 +123,18 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
 
-        const hasChanged = hasDataChanged || hasParamsChanged;
-
-        if (this.state.forceUpdate && hasChanged) {
+        if (hasDataChanged) {
             this.setState({
                 status: LOAD_STATUS.PENDING,
                 needReload: true,
                 silentLoading: true,
+                stateParams: this.props.params,
+            });
+            return;
+        }
+
+        if (hasParamsChanged) {
+            this.setState({
                 stateParams: this.props.params,
             });
         }
@@ -146,19 +150,22 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.applyLoader;
 
         return (
-            <div ref={this.rootNode} className={b({mobile: isMobileView})}>
+            <div
+                ref={this.rootNode}
+                className={b({mobile: isMobileView, static: !this.props.data.autoHeight})}
+            >
                 <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
                     <DebugInfoTool
                         label="widgetId"
                         value={this.props.id}
                         modType="bottom-right-corner"
                     />
+                    {this.renderControls()}
                     {isLoading && (
                         <div className={b('loader', {silent: this.applyLoader})}>
                             <Loader size="s" />
                         </div>
                     )}
-                    {this.renderControls()}
                 </div>
             </div>
         );

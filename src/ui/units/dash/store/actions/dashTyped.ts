@@ -7,6 +7,7 @@ import type {
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
+    SetNewItemOptions,
 } from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
 import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
@@ -362,10 +363,21 @@ export type SetItemDataArgs = {
     type?: string;
 };
 
-export const setItemData = (data: SetItemDataArgs) => ({
-    type: actionTypes.SET_ITEM_DATA,
-    payload: data,
-});
+export type SetItemDataAction = {
+    type: typeof actionTypes.SET_ITEM_DATA;
+    payload: SetItemDataArgs;
+};
+
+export const setItemData = (data: SetItemDataArgs) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        dispatch({
+            type: actionTypes.SET_ITEM_DATA,
+            payload: data,
+        });
+
+        getState().dash.dragOperationProps?.commit();
+    };
+};
 
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
 
@@ -892,11 +904,9 @@ export const setSettings = (settings: DashSettings): SetSettingsAction => ({
     payload: settings,
 });
 
-export const setCopiedItemData = (data: AddConfigItem) => ({
+export const setCopiedItemData = (payload: {item: AddConfigItem; options: SetNewItemOptions}) => ({
     type: actionTypes.SET_COPIED_ITEM_DATA,
-    payload: {
-        data,
-    },
+    payload,
 });
 
 export const setDefaultViewState = () => {
@@ -914,6 +924,18 @@ export type SetDashKeyAction = {
 export const renameDash = (key: string): SetDashKeyAction => ({
     type: SET_DASH_KEY,
     payload: key,
+});
+
+export const SET_DASH_OPENED_DESC = Symbol('dash/SET_DASH_OPENED_DESC');
+export type SetDashOpenedDescKeyAction = {
+    type: typeof SET_DASH_OPENED_DESC;
+    payload: boolean;
+};
+export const updateDashOpenedDesc = (
+    payload: SetDashOpenedDescKeyAction['payload'],
+): SetDashOpenedDescKeyAction => ({
+    type: SET_DASH_OPENED_DESC,
+    payload,
 });
 
 export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');

@@ -3,7 +3,6 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
 
 import logger from '../../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../../libs/schematic-sdk';
@@ -21,19 +20,20 @@ import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 import {prepareConnectionData} from './helpers';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
-const getConnectionLink = (connectionId: string) => `/connections/${connectionId}`;
 export const ConnectionSelector = () => {
     const dispatch = useDispatch();
     const {connectionId} = useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectDashWorkbookId);
 
-    const [isValidConnection, setIsValidConnection] = React.useState(false);
+    const [isInvalid, setIsInvalid] = React.useState(false);
     const [unsupportedConnectionError, setUnsupportedConnectionError] = React.useState<
         string | undefined
     >();
 
     const fetchConnection = React.useCallback(
         async (updatedConnectionId: string) => {
+            setIsInvalid(false);
+
             return getSdk()
                 .bi.getConnection({
                     connectionId: updatedConnectionId,
@@ -43,11 +43,10 @@ export const ConnectionSelector = () => {
                     const {error, queryTypes} = prepareConnectionData(connection);
 
                     setUnsupportedConnectionError(error);
-                    setIsValidConnection(true);
                     return queryTypes;
                 })
                 .catch((error) => {
-                    setIsValidConnection(false);
+                    setIsInvalid(true);
                     logger.logError('Connection selector: load connection failed', error);
                     return undefined;
                 });
@@ -62,8 +61,8 @@ export const ConnectionSelector = () => {
             });
         }
     }, []);
-    const handleEntryChange = (data: {entry: GetEntryResponse}) => {
-        const updatedConnectionId = data.entry.entryId;
+    const handleEntryChange = ({entryId}: {entryId: string}) => {
+        const updatedConnectionId = entryId;
         if (updatedConnectionId === connectionId) {
             return;
         }
@@ -73,7 +72,7 @@ export const ConnectionSelector = () => {
         fetchConnection(updatedConnectionId).then((connectionQueryTypes) => {
             dispatch(
                 setSelectorDialogItem({
-                    connectionId: data.entry.entryId,
+                    connectionId: entryId,
                     elementType: ELEMENT_TYPE.SELECT,
                     defaultValue: undefined,
                     useDefaultValue: false,
@@ -85,16 +84,17 @@ export const ConnectionSelector = () => {
         });
     };
 
+    const isEntryInvalid = !isInvalid || Boolean(unsupportedConnectionError);
+
     return (
         <EntrySelector
             label={i18n('field_connection')}
             entryId={connectionId}
             scope={EntryScope.Connection}
-            handleEntryChange={handleEntryChange}
-            isValidEntry={isValidConnection}
-            getEntryLink={getConnectionLink}
-            error={Boolean(unsupportedConnectionError)}
+            onChange={handleEntryChange}
+            isInvalid={isEntryInvalid}
             errorText={unsupportedConnectionError}
+            workbookId={workbookId}
         />
     );
 };

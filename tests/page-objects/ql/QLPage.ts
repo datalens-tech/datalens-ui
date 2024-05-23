@@ -1,4 +1,4 @@
-import {slct, waitForCondition} from '../../utils';
+import {slct, waitForCondition, fillDatePicker} from '../../utils';
 import {BasePageProps} from '../BasePage';
 import {ChartPage, ChartType} from '../ChartPage';
 import ChartKit from '../wizard/ChartKit';
@@ -185,12 +185,11 @@ class QLPage extends ChartPage {
     }
 
     async selectDate(dateValue: string) {
-        await this.page.fill(
-            `${slct(DialogQLParameterQA.Dialog)} .g-text-input__control`,
-            dateValue,
-        );
-
-        await this.closeDatepickerPopup();
+        await fillDatePicker({
+            page: this.page,
+            selector: `${slct(DialogQLParameterQA.Dialog)} .g-text-input__control`,
+            value: dateValue,
+        });
     }
 
     async selectRangeDate(dateValue: [string | null, string]) {
@@ -198,29 +197,22 @@ class QLPage extends ChartPage {
         const endDate = dateValue[1];
 
         if (startDate) {
-            await this.page.fill(
-                `${slct(DialogQLParameterQA.Dialog)} ${slct(
+            await fillDatePicker({
+                page: this.page,
+                selector: `${slct(DialogQLParameterQA.Dialog)} ${slct(
                     DialogQLParameterQA.DatepickerStart,
                 )} .g-text-input__control`,
-                startDate,
-            );
+                value: startDate,
+            });
         }
 
-        await this.closeDatepickerPopup();
-
-        await this.page.fill(
-            `${slct(DialogQLParameterQA.Dialog)} ${slct(
+        await fillDatePicker({
+            page: this.page,
+            selector: `${slct(DialogQLParameterQA.Dialog)} ${slct(
                 DialogQLParameterQA.DatepickerEnd,
             )} .g-text-input__control`,
-            endDate,
-        );
-
-        await this.closeDatepickerPopup();
-    }
-
-    async closeDatepickerPopup() {
-        // position is needed just for click on the left corner of container
-        return this.page.click(slct(DialogQLParameterQA.Dialog), {position: {x: 0, y: 0}});
+            value: endDate,
+        });
     }
 
     waitForSomeSuccessfulRender() {

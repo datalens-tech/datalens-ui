@@ -104,6 +104,7 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.Pie,
             WizardVisualizationId.Donut,
             WizardVisualizationId.PieD3,
+            WizardVisualizationId.DonutD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
         // Checking if order is set (from older versions of ql charts)

@@ -16,6 +16,8 @@ export default {
         ],
         // updateOnChange: true,
         // updateControlsOnChange: true,
+        // required: true,
+        hint: 'description',
     },
     {
         type: 'input',
@@ -24,13 +26,17 @@ export default {
         placeholder: 'Query',
         // updateOnChange: true,
         // updateControlsOnChange: true,
-    }, 
+        // required: true,
+        // hint: 'description',
+    },
     {
         type: 'datepicker',
         param: 'datepicker',
         innerLabel: 'Date',
         // updateOnChange: true,
         // updateControlsOnChange: true,
+        // required: true,
+        // hint: 'description',
     },
     {
         type: 'range-datepicker',
@@ -39,6 +45,8 @@ export default {
         innerLabel: 'Calendar',
         // updateOnChange: true,
         // updateControlsOnChange: true,
+        // required: true,
+        // hint: 'description',
     },
     {
         type: 'checkbox',
@@ -46,6 +54,7 @@ export default {
         label: 'Verify',
         // updateOnChange: true,
         // updateControlsOnChange: true,
+        // hint: 'description',
     },
     {
         type: 'button',

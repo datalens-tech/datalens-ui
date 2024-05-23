@@ -97,6 +97,17 @@ export enum TabMenuQA {
     Add = 'tab-menu-add',
 }
 
+export enum DialogConfirmQA {
+    Dialog = 'dialog-confirm',
+    ApplyButton = 'dialog-confirm-apply-button',
+    CancelButton = 'dialog-confirm-cancel-button',
+}
+
+export enum DialogWarningQA {
+    Dialog = 'dialog-warning',
+    ApplyButton = 'dialog-warning-apply-button',
+}
+
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
     Title = 'dialog_widget-title',

@@ -6,6 +6,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
+    DialogConfirmQA,
     DialogControlDateQa,
     DialogDashWidgetQA,
     DialogQLParameterQA,
@@ -23,6 +24,7 @@ import {
     cssSlct,
     deleteEntity,
     entryDialogFillAndSave,
+    fillDatePicker,
     getAddress,
     getUniqueTimestamp,
     isEnabledFeature,
@@ -112,8 +114,8 @@ class DashboardPage extends BasePage {
         text: 'dashkit-plugin-text',
         dialogWarning: 'dialog-draft-warning',
         dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
-        dialogConfirm: 'dialog-confirm',
-        dialogConfirmApplyBtn: 'dialog-confirm-apply-button',
+        dialogConfirm: DialogConfirmQA.Dialog,
+        dialogConfirmApplyBtn: DialogConfirmQA.ApplyButton,
         mobileModal: '.g-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
@@ -308,14 +310,6 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
 
-    async closeDatepickerPopup() {
-        // position is needed just for click on the left corner of container
-        return this.page.click(slct(ControlQA.dialogControl), {
-            position: {x: 0, y: 0},
-            force: true,
-        });
-    }
-
     async fillSelectorSettingsDialogFields({
         controlTitle,
         controlFieldName,
@@ -386,13 +380,17 @@ class DashboardPage extends BasePage {
 
         await this.page.locator(`${slct(DialogControlDateQa.defaultSelectValue)} label`).click();
 
-        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerStart)} input`, range[0]);
+        await fillDatePicker({
+            page: this.page,
+            selector: `${slct(DialogQLParameterQA.DatepickerStart)} input`,
+            value: range[0],
+        });
 
-        await this.closeDatepickerPopup();
-
-        await this.page.fill(`${slct(DialogQLParameterQA.DatepickerEnd)} input`, range[1]);
-
-        await this.closeDatepickerPopup();
+        await fillDatePicker({
+            page: this.page,
+            selector: `${slct(DialogQLParameterQA.DatepickerEnd)} input`,
+            value: range[1],
+        });
 
         // saving the added possible values
         await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));

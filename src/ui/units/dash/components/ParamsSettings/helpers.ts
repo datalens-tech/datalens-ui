@@ -84,3 +84,15 @@ export const validateParamTitle = (paramTitle: string) => {
 
     return null;
 };
+
+export const convertParamValueToArray = (paramValue?: string | string[]): string[] => {
+    if (paramValue === undefined || paramValue === '') {
+        return [];
+    }
+
+    if (Array.isArray(paramValue)) {
+        return paramValue.map((val) => (val || '').toString().trim()).filter((val) => val !== '');
+    }
+
+    return [(paramValue || '').toString().trim()];
+};

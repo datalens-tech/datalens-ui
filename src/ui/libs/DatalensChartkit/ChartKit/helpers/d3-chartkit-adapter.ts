@@ -1,4 +1,5 @@
 import {ChartKitWidgetData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
+import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
@@ -41,6 +42,19 @@ export function getD3ChartKitData(args: {
         },
         series: getStyledSeries(loadedData),
     };
+
+    chartWidgetData.series?.data.forEach((s) => {
+        switch (s.type) {
+            case 'pie': {
+                const totals = get(s, 'custom.totals');
+                if (typeof totals !== 'undefined') {
+                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals);
+                }
+
+                break;
+            }
+        }
+    });
 
     return merge({}, config, widgetData, chartWidgetData);
 }

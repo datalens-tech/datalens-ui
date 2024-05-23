@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
-import {Icon} from '@gravity-ui/uikit';
+import {Icon, SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
@@ -13,7 +13,6 @@ import {VISUALIZATIONS_BY_ID} from '../../../../../constants/visualizations';
 import {
     DEFAULT_ALIAS_NAMESPACE,
     DEFAULT_ICON_SIZE,
-    DEFAULT_TITLE_ICON_SIZE,
     RELATIONS_CHARTS_ICONS_DICT,
     RELATION_TYPES,
 } from './constants';
@@ -47,66 +46,21 @@ const getIconByVisualizationId = ({
     return visualization ? (
         <IconById
             id={visualization.iconProps.id}
-            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
+            size={iconSize || DEFAULT_ICON_SIZE}
             className={`${className} ${b('icon-visualization')}`}
         />
     ) : (
         <Icon
             data={RELATIONS_CHARTS_ICONS_DICT.widget}
-            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
+            size={iconSize || DEFAULT_ICON_SIZE}
             className={className}
         />
     );
 };
 
-export const getDialogCaptionIcon = ({
-    widget,
-    currentWidgetMeta,
-    iconSize,
-    className,
-}: {
-    widget: DashTabItem;
-    currentWidgetMeta: DashkitMetaDataItem;
-    iconSize?: number;
-    className?: string;
-}) => {
-    let iconData = null;
-
-    const isControl =
-        widget.type === DashTabItemType.Control ||
-        currentWidgetMeta.type === DashTabItemType.Control;
-
-    const isWidget = widget.type === DashTabItemType.Widget;
-
-    if (isControl) {
-        iconData = RELATIONS_CHARTS_ICONS_DICT.control;
-    } else if (isWidget) {
-        if (currentWidgetMeta.visualizationType) {
-            return getIconByVisualizationId({
-                visualizationId: currentWidgetMeta.visualizationType,
-                iconSize,
-                className: className || b('icon-title'),
-            });
-        }
-
-        iconData =
-            RELATIONS_CHARTS_ICONS_DICT[currentWidgetMeta.type as RelationChartType] ||
-            RELATIONS_CHARTS_ICONS_DICT.widget;
-    }
-
-    return iconData ? (
-        <Icon
-            data={iconData}
-            size={iconSize || DEFAULT_TITLE_ICON_SIZE}
-            className={className || b('icon-title')}
-        />
-    ) : null;
-};
-
-export const getDialogRowIcon = (
-    widgetMeta: DashkitMetaDataItem,
-    className: string,
-    iconSize?: number,
+export const getRelationsIcon = (
+    widgetMeta: DashkitMetaDataItem | Omit<DashkitMetaDataItem, 'relations'>,
+    className?: string,
 ) => {
     if (!widgetMeta) {
         return null;
@@ -115,7 +69,6 @@ export const getDialogRowIcon = (
     if (widgetMeta.visualizationType) {
         return getIconByVisualizationId({
             visualizationId: widgetMeta.visualizationType,
-            iconSize,
             className,
         });
     }
@@ -126,7 +79,7 @@ export const getDialogRowIcon = (
             : RELATIONS_CHARTS_ICONS_DICT[widgetMeta.type as RelationChartType] ||
               RELATIONS_CHARTS_ICONS_DICT.widget;
 
-    return <Icon data={iconData} size={iconSize || DEFAULT_ICON_SIZE} className={className} />;
+    return <Icon data={iconData} size={DEFAULT_ICON_SIZE} className={className} />;
 };
 
 const getChangedConnections = ({
@@ -416,4 +369,68 @@ export const getPairedRelationType = (type: RelationType): RelationType => {
     }
 
     return RELATION_TYPES.unknown as RelationType;
+};
+
+export const getWidgetsOptions = (
+    widgetsIconMap: Record<string, JSX.Element | null>,
+    widgets?: DashTabItem[],
+    showDebugInfo?: boolean,
+) => {
+    const options: SelectOption<{
+        widgetId?: string;
+        isItem?: boolean;
+        icon: JSX.Element | null;
+    }>[] = [];
+
+    if (!widgets) {
+        return options;
+    }
+
+    for (let i = 0; i < widgets?.length; i++) {
+        const widgetItem = widgets[i];
+
+        switch (widgetItem.type) {
+            case DashTabItemType.GroupControl:
+                widgetItem.data.group.forEach((item) => {
+                    options.push({
+                        value: item.id,
+                        content: showDebugInfo
+                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                            : item.title,
+                        data: {
+                            widgetId: widgetItem.id,
+                            isItem: true,
+                            icon: widgetsIconMap[widgetItem.id],
+                        },
+                    });
+                });
+                break;
+            case DashTabItemType.Widget:
+                // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
+                widgetItem.data.tabs.forEach((item) => {
+                    options.push({
+                        value: item.id,
+                        content: showDebugInfo
+                            ? `(${widgetItem.id} ${item.id}) ${item.title}`
+                            : item.title,
+                        data: {
+                            widgetId: widgetItem.id,
+                            icon: widgetsIconMap[item.id],
+                        },
+                    });
+                });
+                break;
+            case DashTabItemType.Control:
+                options.push({
+                    value: widgetItem.id,
+                    content: showDebugInfo
+                        ? `(${widgetItem.id}) ${widgetItem.data.title}`
+                        : widgetItem.data.title,
+                    data: {icon: widgetsIconMap[widgetItem.id]},
+                });
+                break;
+        }
+    }
+
+    return options;
 };

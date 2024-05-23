@@ -24,11 +24,6 @@ export const POSTFIXES = {
     END: 'End',
 };
 
-export const LUXON_FORMATS = {
-    DATE: 'dd.MM.yyyy',
-    DATE_TIME: 'dd.MM.yyyy HH:mm:ss',
-};
-
 export const SIGNS = {
     PLUS: '+',
     MINUS: '-',
