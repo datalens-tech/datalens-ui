@@ -21,14 +21,9 @@
 
     &__table-wrapper {
         width: 100%;
-        overflow: auto;
 
         &_highlight-rows {
             --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
         }
-    }
-
-    &__snapter-container {
-        display: contents;
     }
 }
