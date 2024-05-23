@@ -82,7 +82,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             }
 
             return {
-                head: data.head?.map((th) => mapHeadCell(th, dimensions?.width)),
+                head: data.head?.map((th) => mapHeadCell(th, dimensions?.width, data.head)),
                 rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
                     return r.cells.map((c, cellIndex) => {
                         const cell = c as TableCommonCell;
