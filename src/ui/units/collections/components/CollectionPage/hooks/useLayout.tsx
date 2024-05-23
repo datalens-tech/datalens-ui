@@ -20,6 +20,7 @@ import {
 import {
     DIALOG_ADD_DEMO_WORKBOOK,
     DIALOG_CREATE_COLLECTION,
+    DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
 } from '../../../../../components/CollectionsStructure';
@@ -174,6 +175,32 @@ export const useLayout = ({
                 actionsPanelRightBlock: {
                     content: (
                         <CollectionActions
+                            onDeleteClick={() => {
+                                if (curCollectionId && collection) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_DELETE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                collectionId: curCollectionId,
+                                                collectionTitle: collection.title,
+                                                onSuccessApply: () => {
+                                                    if (collection.parentId) {
+                                                        history.push(
+                                                            `${COLLECTIONS_PATH}/${collection.parentId}`,
+                                                        );
+                                                    } else {
+                                                        history.push(COLLECTIONS_PATH);
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                }
+                            }}
                             onCreateCollectionClick={() => {
                                 dispatch(
                                     openDialog({
