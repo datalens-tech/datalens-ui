@@ -4,6 +4,7 @@ import isNumber from 'lodash/isNumber';
 import {DL_EMBED_TOKEN_HEADER, WorkbookId} from '../../../../../shared';
 import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
+import {getHeaders} from '../../../../components/charts-engine/controllers/charts';
 import {registry} from '../../../../registry';
 import {DatalensGatewaySchemas} from '../../../../types/gateway';
 
@@ -29,10 +30,12 @@ export const getDatasetFieldsById = async (
 
     const requestDatasetFieldsByToken = gatewayApi.bi.embedsGetDataSetFieldsById;
     try {
+        const headers = getHeaders(req);
+
         const response = req.headers[DL_EMBED_TOKEN_HEADER]
             ? await requestDatasetFieldsByToken({
                   ctx: req.ctx,
-                  headers: req.headers,
+                  headers,
                   requestId: req.id,
                   args: {
                       dataSetId: datasetId,
@@ -40,7 +43,7 @@ export const getDatasetFieldsById = async (
               })
             : await requestDatasetFields({
                   ctx: req.ctx,
-                  headers: req.headers,
+                  headers,
                   requestId: req.id,
                   authArgs: {iamToken},
                   args: {

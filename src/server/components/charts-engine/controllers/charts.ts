@@ -89,15 +89,15 @@ function prepareChartData(
     return {chart, type, links, template};
 }
 
-export const chartsController = (_chartsEngine: ChartsEngine) => {
-    const getHeaders = (req: Request) => {
-        const headers = {
-            ...req.headers,
-            ...Utils.pickZitadelHeaders(req),
-        };
-        return headers;
+export const getHeaders = (req: Request) => {
+    const headers = {
+        ...req.headers,
+        ...Utils.pickZitadelHeaders(req),
     };
+    return headers;
+};
 
+export const chartsController = (_chartsEngine: ChartsEngine) => {
     return {
         create: async (req: Request, res: Response) => {
             const {ctx} = req;
