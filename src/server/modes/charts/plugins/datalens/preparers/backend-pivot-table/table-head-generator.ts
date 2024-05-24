@@ -2,6 +2,7 @@ import {
     ColorPalette,
     DATASET_FIELD_TYPES,
     MarkupItem,
+    Palette,
     ServerField,
     getFakeTitleOrTitle,
     getFormatOptions,
@@ -64,6 +65,7 @@ type GetHeaderCellMetadataArgs = {
     isTotalHeader?: boolean;
     isPaginatorEnabled?: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 type HeadSortMetaData = {

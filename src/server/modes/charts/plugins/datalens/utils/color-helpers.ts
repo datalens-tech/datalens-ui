@@ -11,7 +11,7 @@ import {
     getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
-import {ChartColorsConfig} from '../js/helpers/colors';
+import {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
 

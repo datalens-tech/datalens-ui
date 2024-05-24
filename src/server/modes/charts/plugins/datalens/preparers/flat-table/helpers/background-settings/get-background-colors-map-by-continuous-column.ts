@@ -6,7 +6,7 @@ import {
     ServerField,
     TableFieldBackgroundSettings,
 } from '../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../../../types';
 import {
     getCurrentGradient,
     getRangeDelta,
@@ -99,7 +99,7 @@ export function colorizeFlatTableColumn({
 export const getBackgroundColorsMapByContinuousColumn = (
     args: GetBackgroundColorsMapByContinuousColumn,
 ) => {
-    const {columns, idToTitle, order, data, loadedColorPalettes} = args;
+    const {columns, idToTitle, order, data, chartColorsConfig} = args;
 
     const columnsWithBackgroundSettings = columns.filter(
         (column): column is ServerField & {backgroundSettings: TableFieldBackgroundSettings} =>
@@ -114,21 +114,25 @@ export const getBackgroundColorsMapByContinuousColumn = (
         (acc, column) => {
             const backgroundColors = column.backgroundSettings;
             const guid = backgroundColors.colorFieldGuid;
-            const colorsConfig = backgroundColors.settings.gradientState;
+            const gradientState = backgroundColors.settings.gradientState;
 
-            const chartColorsConfig: ChartColorsConfig = {
-                ...colorsConfig,
+            const colorsConfig: ChartColorsConfig = {
+                ...gradientState,
                 colors: [],
                 loadedColorPalettes: {},
+                availablePalettes: chartColorsConfig.availablePalettes,
                 gradientColors:
-                    getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes)?.colors || [],
+                    getCurrentBackgroundGradient(
+                        gradientState,
+                        chartColorsConfig.loadedColorPalettes,
+                    )?.colors || [],
             };
 
             const title = idToTitle[guid];
             const index = findIndexInOrder(order, column, title);
 
             const rgbColorValues = colorizeFlatTableColumn({
-                colorsConfig: chartColorsConfig,
+                colorsConfig: colorsConfig,
                 index,
                 data,
             });
