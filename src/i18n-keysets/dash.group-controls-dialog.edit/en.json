@@ -5,7 +5,7 @@
   "button_selectors-placement": "Selector placement",
   "context_apply-button": "This option enables a button for applying selectors",
   "context_reset-button": "This option enables a button for resetting selectors",
-  "context_update-controls-on-change": "Selectors will be able to update each other before clicking the 'Apply' button",
+  "context_update-controls-on-change": "Once you enable this option, the dependent selectors will have influence on each other before you click Apply.",
   "label_apply-button-checkbox": "Apply button",
   "label_autoheight-checkbox": "Autoheight",
   "label_default-tab": "Selector {{index}}",
@@ -13,5 +13,5 @@
   "label_selector-settings": "Selector settings",
   "label_selectors-list": "Selectors",
   "label_source": "Source",
-  "label_update-controls-on-change": "Update controls on change"
+  "label_update-controls-on-change": "Auto-updating dependent selectors"
 }
