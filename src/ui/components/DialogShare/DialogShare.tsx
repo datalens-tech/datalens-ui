@@ -11,7 +11,7 @@ import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-pro
 import URI from 'ui/libs/DatalensChartkit/modules/uri/uri';
 import {Widget} from 'ui/libs/DatalensChartkit/types';
 import {registry} from 'ui/registry';
-import {MOBILE_SIZE} from 'ui/utils/mobile';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import DialogManager from '../DialogManager/DialogManager';
@@ -190,7 +190,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                         </Button>
                     )}
                 </div>
-                {!DL.IS_MOBILE && (
+                {!isMobileView && (
                     <div className={b('links')}>
                         <ShareLink
                             title={i18n('label_link')}
