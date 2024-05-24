@@ -196,6 +196,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         settingsByField,
         isPaginatorEnabled,
         loadedColorPalettes: args.colorsConfig.loadedColorPalettes,
+        availablePalettes: args.colorsConfig.availablePalettes,
         sortSettings,
     });
 
