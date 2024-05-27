@@ -21,6 +21,7 @@ export const CollectionsNavigationApp = () => {
     const [title, setTitle] = React.useState<LayoutBlock>(null);
     const [titleActionsBlock, setTitleActionsBlock] = React.useState<LayoutBlock>(null);
     const [titleRightBlock, setTitleRightBlock] = React.useState<LayoutBlock>(null);
+    const [titleBeforeActionsBlock, setTitleBeforeActionsBlock] = React.useState<LayoutBlock>(null);
     const [description, setDescription] = React.useState<LayoutBlock>(null);
 
     const setLayout = React.useCallback((layout: Partial<Layout>) => {
@@ -38,6 +39,9 @@ export const CollectionsNavigationApp = () => {
         }
         if (layout.titleRightBlock !== undefined) {
             setTitleRightBlock(layout.titleRightBlock);
+        }
+        if (layout.titleBeforeActionsBlock !== undefined) {
+            setTitleBeforeActionsBlock(layout.titleBeforeActionsBlock);
         }
         if (layout.description !== undefined) {
             setDescription(layout.description);
@@ -68,6 +72,7 @@ export const CollectionsNavigationApp = () => {
                     title,
                     titleActionsBlock,
                     titleRightBlock,
+                    titleBeforeActionsBlock,
                     description,
                 }}
                 skeletonsSettings={skeletonsSettings}

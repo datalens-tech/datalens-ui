@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
+import {isMobileView} from 'ui/utils/mobile';
 
 import type {
     CollectionWithPermissions,
@@ -147,7 +148,7 @@ export const CollectionContent: React.FC<Props> = ({
     }
 
     if (items.length === 0) {
-        if (isDefaultFilters) {
+        if (isDefaultFilters || isMobileView) {
             return (
                 <AnimateBlock className={b('empty-state')}>
                     <PlaceholderIllustration
@@ -171,13 +172,19 @@ export const CollectionContent: React.FC<Props> = ({
                 </AnimateBlock>
             );
         }
+        const description = isMobileView ? undefined : i18n('section_incorrect-filters');
+
         return (
             <AnimateBlock className={b('empty-state')}>
                 <PlaceholderIllustration
                     name="notFound"
                     title={i18n('label_not-found')}
-                    description={i18n('section_incorrect-filters')}
+                    description={description}
                     renderAction={() => {
+                        if (isMobileView) {
+                            return null;
+                        }
+
                         return (
                             <Button
                                 className={b('placeholder-controls')}

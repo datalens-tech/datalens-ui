@@ -1,4 +1,8 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-collection-content-table {
+    $class: &;
+
     &__table {
         display: table;
         width: 100%;
@@ -86,5 +90,16 @@
         align-items: center;
         margin-left: 12px;
         min-height: 32px;
+    }
+
+    &_mobile {
+        #{$class}__content-cell {
+            @include text-body-2;
+            padding: 4px;
+        }
+
+        #{$class}__content-cell_title {
+            width: 100%;
+        }
     }
 }

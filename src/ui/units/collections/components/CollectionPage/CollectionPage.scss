@@ -1,4 +1,5 @@
 .dl-collection-page {
+    $class: &;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -28,5 +29,19 @@
         flex: 1;
         align-items: center;
         justify-content: center;
+    }
+
+    &__return-button {
+        margin-right: 8px;
+    }
+
+    &_mobile {
+        #{$class}__filters {
+            margin-bottom: 19px;
+        }
+
+        #{$class}__filters_hidden {
+            margin-bottom: 0;
+        }
     }
 }
