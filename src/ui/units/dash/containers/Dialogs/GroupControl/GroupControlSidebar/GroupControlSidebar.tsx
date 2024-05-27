@@ -31,7 +31,6 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
-    updateControlsOnChange: false,
     autoHeight: false,
 };
 
@@ -137,6 +136,7 @@ export const GroupControlSidebar = () => {
 
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+    const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
         <div className={b('sidebar')}>
@@ -151,7 +151,7 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
-                {selectorsGroup.buttonApply && (
+                {showUpdateControlsOnChange && (
                     <div className={b('settings-container')}>
                         <div>
                             <span>{i18n('label_update-controls-on-change')}</span>

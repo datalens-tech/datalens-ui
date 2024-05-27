@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
@@ -62,6 +63,10 @@ const initialState = {
 
 export function getGroupSelectorDialogInitialState() {
     return {
+        autoHeight: false,
+        buttonApply: false,
+        buttonReset: false,
+        updateControlsOnChange: true,
         group: [],
     };
 }
@@ -84,6 +89,9 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
+        hint: '',
+        showHint: false,
+        draftId: getRandomKey(),
     };
 }
 
@@ -201,6 +209,7 @@ function dash(state = initialState, action) {
             };
         }
         case actionTypes.OPEN_DIALOG: {
+            const selectorGroup = getGroupSelectorDialogInitialState();
             const selectorDialog =
                 action.payload?.openedDialog === DashTabItemType.Control ||
                 action.payload?.openedDialog === DashTabItemType.GroupControl
@@ -224,14 +233,8 @@ function dash(state = initialState, action) {
                 ...action.payload,
                 selectorDialog,
                 selectorsGroup: {
+                    ...selectorGroup,
                     group: [selectorDialog],
-                    autoHeight: Boolean(selectorDialog.autoHeight),
-                    buttonApply: Boolean(selectorDialog.buttonApply),
-                    buttonReset: Boolean(selectorDialog.buttonReset),
-
-                    updateControlsOnChange: Boolean(selectorDialog.updateControlsOnChange),
-
-                    defaults: selectorDialog.defaults,
                 },
                 activeSelectorIndex: 0,
                 dragOperationProps: action.payload.dragOperationProps ?? null,
@@ -457,10 +460,7 @@ function dash(state = initialState, action) {
                 // migration forward to group
                 openedDialog = 'group_control';
                 newState.selectorsGroup = {
-                    autoHeight: Boolean(data.autoHeight),
-                    buttonApply: false,
-                    buttonReset: false,
-                    updateControlsOnChange: false,
+                    ...getGroupSelectorDialogInitialState(),
                     group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;

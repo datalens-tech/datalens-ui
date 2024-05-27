@@ -188,7 +188,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         if (controlId) {
-            if (this.props.data.updateControlsOnChange) {
+            if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 const updatedStateParams: Record<string, StringParams> = {};
                 // update all controls params in case some of them are influenced by the changed params
                 // if their influencing params have changed, the controls will reload on their own
