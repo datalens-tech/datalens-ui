@@ -9,7 +9,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import {MAX_AUTO_HEIGHT_PX} from './constants';
+import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
@@ -161,7 +161,7 @@ export function adjustWidgetLayout({
             fullContentHeight > MAX_AUTO_HEIGHT_PX ? MAX_AUTO_HEIGHT_PX : fullContentHeight;
 
         setNewLayout({
-            contentHeight,
+            contentHeight: Math.max(MIN_AUTO_HEIGHT_PX, contentHeight),
             gridLayout,
             layout,
             cb,
@@ -223,7 +223,7 @@ export function adjustWidgetLayout({
         fullContentHeight > MAX_AUTO_HEIGHT_PX ? MAX_AUTO_HEIGHT_PX : fullContentHeight;
 
     setNewLayout({
-        contentHeight,
+        contentHeight: Math.max(MIN_AUTO_HEIGHT_PX, contentHeight),
         gridLayout,
         layout,
         cb,
