@@ -90,7 +90,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         />
                                         <div className={b('content-cell', {date: true})}>
                                             {dateTime({
-                                                input: item.createdAt,
+                                                input: item.updatedAt,
                                             }).format(DEFAULT_DATE_FORMAT)}
                                         </div>
                                     </CollectionLinkRow>
