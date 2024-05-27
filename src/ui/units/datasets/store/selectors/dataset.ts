@@ -34,6 +34,8 @@ export const rlsSelector = (state: DatalensGlobalState) => state.dataset.content
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;
+export const isLoadPreviewByDefaultSelector = (state: DatalensGlobalState) =>
+    state.dataset.content.load_preview_by_default;
 export const datasetValidationSelector = (state: DatalensGlobalState) => state.dataset.validation;
 export const sourceTemplateSelector = (state: DatalensGlobalState) => state.dataset.sourceTemplate;
 

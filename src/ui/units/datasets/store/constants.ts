@@ -23,6 +23,7 @@ export const initialPreview: DatasetReduxState['preview'] = {
     view: 'bottom',
     data: [],
     error: null,
+    isQueued: false,
 };
 
 export const initialState: DatasetReduxState = {

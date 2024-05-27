@@ -51,6 +51,7 @@ import {
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
+    SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -59,6 +60,7 @@ import {
     SOURCE_UPDATE,
     TOGGLE_ALLOWANCE_SAVE,
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
+    TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
@@ -939,6 +941,24 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 preview: {
                     ...state.preview,
                     view,
+                },
+            };
+        }
+        case SET_QUEUE_TO_LOAD_PREVIEW: {
+            return {
+                ...state,
+                preview: {
+                    ...state.preview,
+                    isQueued: action.payload.enable,
+                },
+            };
+        }
+        case TOGGLE_LOAD_PREVIEW_BY_DEFAULT: {
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    load_preview_by_default: action.payload.enable,
                 },
             };
         }

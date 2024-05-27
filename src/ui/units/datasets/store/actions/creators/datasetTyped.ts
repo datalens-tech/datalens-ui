@@ -12,7 +12,7 @@ import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {TOASTERS_NAMES} from '../../../../../units/datasets/constants';
 import {getFilteredObject} from '../../../../../utils';
-import {workbookIdSelector} from '../../selectors';
+import {isLoadPreviewByDefaultSelector, workbookIdSelector} from '../../selectors';
 import type {
     BaseSource,
     ConnectionEntry,
@@ -24,7 +24,7 @@ import type {
 } from '../../types';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
-import {updateDatasetByValidation} from './dataset';
+import {queuedFetchPreviewDataset, updateDatasetByValidation} from './dataset';
 import {isContendChanged, prepareUpdates} from './utils';
 
 export type DatasetDispatch = ThunkDispatch<DatalensGlobalState, void, DatasetReduxAction>;
@@ -85,6 +85,8 @@ export function openPreview() {
         dispatch({
             type: DATASET_ACTION_TYPES.OPEN_PREVIEW,
         });
+
+        dispatch(queuedFetchPreviewDataset());
     };
 }
 export function closePreview() {
@@ -99,6 +101,32 @@ export function togglePreview() {
         dispatch({
             type: DATASET_ACTION_TYPES.TOGGLE_PREVIEW,
         });
+
+        dispatch(queuedFetchPreviewDataset());
+    };
+}
+
+export function queuePreviewToOpen(enable: boolean) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_QUEUE_TO_LOAD_PREVIEW,
+            payload: {
+                enable,
+            },
+        });
+    };
+}
+
+export function toggleLoadPreviewByDefault(enable: boolean) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        if (isLoadPreviewByDefaultSelector(getState()) !== enable) {
+            dispatch({
+                type: DATASET_ACTION_TYPES.TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
+                payload: {enable},
+            });
+
+            dispatch(enableSaveDataset());
+        }
     };
 }
 

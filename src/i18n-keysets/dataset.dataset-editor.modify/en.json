@@ -41,6 +41,7 @@
   "label_error-404-title": "Error: dataset not found",
   "label_error-500-title": "Error: failed to upload dataset",
   "label_field": "Field",
+  "label_load_preview_by_default": "Show preview by default",
   "label_loading-dataset": "Loading dataset",
   "label_loading-dataset-preview": "Loading data for preview",
   "label_materialization-not-finished": "Материализация данных еще не завершилась, это может занять несколько минут.",

@@ -16,7 +16,9 @@ import * as DATASET_ACTION_TYPES from '../types/dataset';
 import {
     addAvatarPrototypes,
     clearToasters,
+    closePreview,
     disableSaveDataset,
+    queuePreviewToOpen,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
@@ -245,12 +247,19 @@ export function initialFetchDataset({datasetId}) {
 
             const {
                 dataset: {
-                    content: {result_schema: resultSchema},
+                    content: {
+                        result_schema: resultSchema,
+                        load_preview_by_default: loadPreviewByDefault,
+                    },
                     preview: {amountPreviewRows} = {},
                 } = {},
             } = getState();
 
             if (previewEnabled) {
+                if (!loadPreviewByDefault) {
+                    dispatch(closePreview());
+                }
+
                 dispatch(
                     fetchPreviewDataset({
                         datasetId,
@@ -378,19 +387,57 @@ export function fetchPreviewDataset({
     limit = 100,
     debounceEnabled = false,
 }) {
-    return debounceEnabled
-        ? debouncedFetchPreviewDataset.bind(this, {
-              datasetId,
-              workbookId,
-              resultSchema,
-              limit,
-          })
-        : dispatchFetchPreviewDataset.bind(this, {
-              datasetId,
-              workbookId,
-              resultSchema,
-              limit,
-          });
+    return (dispatch, getState) => {
+        if (getState().dataset.preview.isVisible) {
+            return dispatch(
+                debounceEnabled
+                    ? debouncedFetchPreviewDataset.bind(this, {
+                          datasetId,
+                          workbookId,
+                          resultSchema,
+                          limit,
+                      })
+                    : dispatchFetchPreviewDataset.bind(this, {
+                          datasetId,
+                          workbookId,
+                          resultSchema,
+                          limit,
+                      }),
+            );
+        } else {
+            dispatch(queuePreviewToOpen(true));
+        }
+    };
+}
+
+export function queuedFetchPreviewDataset() {
+    return (dispatch, getState) => {
+        if (!getState().dataset.preview.isQueued) {
+            return;
+        }
+
+        dispatch(queuePreviewToOpen(false));
+
+        const {
+            dataset: {
+                id: datasetId,
+                content: {result_schema: resultSchema},
+                preview: {previewEnabled, amountPreviewRows} = {},
+            } = {},
+        } = getState();
+        const workbookId = workbookIdSelector(getState());
+
+        if (previewEnabled) {
+            dispatch(
+                fetchPreviewDataset({
+                    datasetId,
+                    workbookId,
+                    resultSchema,
+                    limit: amountPreviewRows,
+                }),
+            );
+        }
+    };
 }
 
 // There is no key field in the workbooks when creating
