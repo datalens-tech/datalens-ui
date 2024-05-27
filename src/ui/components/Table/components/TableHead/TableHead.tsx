@@ -25,6 +25,9 @@ export const TableHead = (props: Props) => {
                     return null;
                 }
 
+                const canUseFixedColumns = headerGroup.headers.some(
+                    (h) => !h.column.columnDef.meta?.width,
+                );
                 return (
                     <tr key={headerGroup.id} className={b('tr')}>
                         {headerGroup.headers.map((header, index, rowCells) => {
@@ -34,7 +37,7 @@ export const TableHead = (props: Props) => {
 
                             const original = header.column.columnDef.meta?.head;
                             const width = header.column.columnDef.meta?.width;
-                            const isFixedSize = Boolean(width);
+                            const isFixedSize = canUseFixedColumns && Boolean(width);
                             const rowSpan = header.isPlaceholder
                                 ? headers.length - headerGroup.depth
                                 : undefined;

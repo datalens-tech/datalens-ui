@@ -10,16 +10,10 @@ export type PresetItem = {
     title: string;
 };
 
-export type DatepickerOutput = {
-    from: string | null;
-    to: string | null;
-};
-
 export type Props = {
     value?: FilterValue;
     minDate?: string;
     maxDate?: string;
-    datepickerScale?: string;
     range?: boolean;
     withTime?: boolean;
     onChange: (value: string, options: {valid: boolean}) => void;

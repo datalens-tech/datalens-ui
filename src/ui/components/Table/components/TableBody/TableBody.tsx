@@ -38,6 +38,7 @@ export const TableBody = (props: Props) => {
         }
     };
 
+    const canUseFixedColumns = columns.some((col) => !col.meta?.width);
     return (
         <tbody className={b('body')}>
             {rows.map((row) => {
@@ -47,7 +48,9 @@ export const TableBody = (props: Props) => {
                     <tr key={row.id} className={b('tr')}>
                         {visibleCells.map((cell, index) => {
                             const originalHeadData = cell.column.columnDef.meta?.head;
-                            const width = cell.column.columnDef.meta?.width;
+                            const width = canUseFixedColumns
+                                ? cell.column.columnDef.meta?.width
+                                : undefined;
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
                             const pinned = Boolean(originalHeadData?.pinned);

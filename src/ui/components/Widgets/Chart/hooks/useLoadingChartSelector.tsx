@@ -110,7 +110,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 cb: adjustWidgetLayout,
             });
         },
-        [layout, widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],
+        [widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],
     );
 
     /**

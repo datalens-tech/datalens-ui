@@ -156,7 +156,13 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
 
             return customizeCollectionsActions(item, actions);
         },
-        [collectionsAccessEnabled, dispatch, onCloseMoveDialog, fetchCollectionContent],
+        [
+            collectionsAccessEnabled,
+            customizeCollectionsActions,
+            dispatch,
+            fetchCollectionContent,
+            onCloseMoveDialog,
+        ],
     );
 
     const getWorkbookActions = React.useCallback(
@@ -293,7 +299,14 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
 
             return customizeWorkbooksActions(item, actions);
         },
-        [collectionsAccessEnabled, dispatch, onCloseMoveDialog, history, fetchCollectionContent],
+        [
+            collectionsAccessEnabled,
+            customizeWorkbooksActions,
+            dispatch,
+            fetchCollectionContent,
+            onCloseMoveDialog,
+            history,
+        ],
     );
 
     return {
