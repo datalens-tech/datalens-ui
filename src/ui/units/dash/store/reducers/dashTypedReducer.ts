@@ -332,7 +332,8 @@ export function dashTypedReducer(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset} = action.payload;
+            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
+                action.payload;
 
             return {
                 ...state,
@@ -342,6 +343,7 @@ export function dashTypedReducer(
                     autoHeight,
                     buttonApply,
                     buttonReset,
+                    updateControlsOnChange,
                 },
             };
         }

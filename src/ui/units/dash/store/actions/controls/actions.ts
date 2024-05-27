@@ -113,11 +113,16 @@ export const applyGroupControlDialog = () => {
             !isSingleControl || selectorsGroup.buttonApply || selectorsGroup.buttonReset
                 ? selectorsGroup.autoHeight
                 : false;
+        const updateControlsOnChange =
+            !isSingleControl && selectorsGroup.buttonApply
+                ? selectorsGroup.updateControlsOnChange
+                : false;
 
         const data = {
             autoHeight,
             buttonApply: selectorsGroup.buttonApply,
             buttonReset: selectorsGroup.buttonReset,
+            updateControlsOnChange,
             group: selectorsGroup.group.map((selector) => {
                 let hasChangedSourceType = false;
                 if (openedItemId) {
