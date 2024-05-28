@@ -662,9 +662,9 @@ export class DataFetcher {
             Object.assign(headers, {authorization: `Bearer ${req.user.accessToken}`});
         }
 
-        if (req?.serviceUserAccessToken) {
+        if (req.serviceUserAccessToken) {
             Object.assign(headers, {
-                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req?.serviceUserAccessToken,
+                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
             });
         }
 
