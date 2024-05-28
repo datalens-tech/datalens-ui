@@ -198,7 +198,7 @@ const execute = async ({
         throw error;
     }
 
-    const timeStart = process.hrtime();
+    let timeStart;
     let executionTiming;
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
@@ -261,7 +261,7 @@ const execute = async ({
         getLibsDatasetV2({context, chartEditorApi: instance.ChartEditor}).consume((libsDatasetV2) =>
             context.setProp(context.global, '_libsDatasetV2', libsDatasetV2),
         );
-
+        timeStart = process.hrtime();
         const prepare = `
            function require(name) => {
                const lowerName = name.toLowerCase();
@@ -307,13 +307,17 @@ const execute = async ({
             ChartEditor.getActionParams = () => JSON.parse(ChartEditor._actionParams);
             ChartEditor.getWidgetConfig = () => JSON.parse(ChartEditor._widgetConfig);
             ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
-
+            ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData);
             ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
            `;
 
         const ok = context.evalCode(prepare + code);
         context.unwrapResult(ok).dispose();
-        quickJSResult = context.getProp(context.global, 'module').consume(context.dump);
+
+        context.evalCode(`        
+        module = JSON.stringify(module);`);
+        quickJSResult = context.getProp(context.global, 'module').consume(context.getString);
+        quickJSResult = JSON.parse(quickJSResult);
 
         // vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
     } catch (e) {
@@ -327,8 +331,8 @@ const execute = async ({
             errorStackTrace = 'Empty stack trace';
         }
     } finally {
-        context.dispose();
         executionTiming = process.hrtime(timeStart);
+        context.dispose();
     }
 
     const shared = instance.ChartEditor.getSharedData ? instance.ChartEditor.getSharedData() : null;
@@ -464,48 +468,19 @@ function getChartEditorApi({
     }
 
     if (name === 'UI' || name === 'JavaScript') {
-        const getLoadedDataHandle = context.newFunction('getLoadedData', () => {
-            const result = loadedData ? defineVariable(loadedData, context) : context.newObject();
-            return result;
-        });
-        context.setProp(api, 'getLoadedData', getLoadedDataHandle);
-        getLoadedDataHandle.dispose();
+        context
+            .newString(JSON.stringify(loadedData))
+            .consume((handle) => context.setProp(api, '_getLoadedData', handle));
+
+        // const getLoadedDataHandle = context.newFunction('getLoadedData', () => {
+        //     const result = loadedData ? defineVariable(loadedData, context) : context.newObject();
+        //     return result;
+        // });
+        // context.setProp(api, 'getLoadedData', getLoadedDataHandle);
+        // getLoadedDataHandle.dispose();
     }
 
     return api;
-}
-
-function defineVariable(value: unknown, context: QuickJSContext): QuickJSHandle {
-    if (typeof value === 'string') {
-        return context.newString(value);
-    }
-    if (typeof value === 'number') {
-        return context.newNumber(value);
-    }
-    if (typeof value === 'boolean') {
-        return value ? context.true : context.false;
-    }
-    if (value === undefined) {
-        return context.undefined;
-    }
-    if (value === null) {
-        return context.null;
-    }
-    if (Array.isArray(value)) {
-        const arrayHandle = context.newArray();
-        value.forEach((v, i) => {
-            defineVariable(v, context).consume((handle) => context.setProp(arrayHandle, i, handle));
-        });
-        return arrayHandle;
-    }
-    if (typeof value === 'object') {
-        const obj = context.newObject();
-        Object.entries(value).forEach(([key, v]) => {
-            defineVariable(v, context).consume((handle) => context.setProp(obj, key, handle));
-        });
-        return obj;
-    }
-    return context.undefined;
 }
 
 function getLibsDatalensV3({
@@ -527,7 +502,7 @@ function getLibsDatalensV3({
     context
         .newFunction('buildChartsConfig', (arg) => {
             const nativeArg = context.dump(arg);
-            const result = datalensModule.buildChartsConfig({...nativeArg}, {});
+            const result = datalensModule.buildChartsConfig(nativeArg, {});
             return context.newString(JSON.stringify(result));
         })
         .consume((handle) => context.setProp(libsDatalensV3, 'buildChartsConfig', handle));
@@ -535,7 +510,8 @@ function getLibsDatalensV3({
     context
         .newFunction('buildGraph', (arg) => {
             const nativeArg = context.dump(arg);
-            const result = datalensModule.buildGraph({...nativeArg, ChartEditor: chartEditorApi});
+            nativeArg.ChartEditor = chartEditorApi;
+            const result = datalensModule.buildGraph(nativeArg);
             return context.newString(JSON.stringify(result));
         })
         .consume((handle) => context.setProp(libsDatalensV3, 'buildGraph', handle));
@@ -543,14 +519,14 @@ function getLibsDatalensV3({
     context
         .newFunction('buildHighchartsConfig', (arg) => {
             const nativeArg: BuildHighchartsConfigOptions = context.dump(arg);
-            const result = datalensModule.buildHighchartsConfig({...nativeArg});
+            const result = datalensModule.buildHighchartsConfig(nativeArg);
             return context.newString(JSON.stringify(result));
         })
         .consume((handle) => context.setProp(libsDatalensV3, 'buildHighchartsConfig', handle));
     context
         .newFunction('buildD3Config', (arg) => {
             const nativeArg: BuildWizardD3ConfigOptions = context.dump(arg);
-            const result = datalensModule.buildD3Config({...nativeArg});
+            const result = datalensModule.buildD3Config(nativeArg);
             return context.newString(JSON.stringify(result));
         })
         .consume((handle) => context.setProp(libsDatalensV3, 'buildD3Config', handle));
@@ -576,7 +552,8 @@ function getLibsControlV1({
     context
         .newFunction('buildGraph', (arg) => {
             const nativeArg = context.dump(arg);
-            controlModule.buildGraph({...nativeArg, ChartEditor: chartEditorApi});
+            nativeArg.ChartEditor = chartEditorApi;
+            controlModule.buildGraph(nativeArg);
             chartEditorApi.setSharedData(nativeArg.shared);
         })
         .consume((handle) => context.setProp(libsControlV1, 'buildGraph', handle));

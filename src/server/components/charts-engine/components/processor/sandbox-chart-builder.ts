@@ -137,7 +137,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildChartLibraryConfig: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             let tabResult;
             if (config.data.graph) {
                 const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
@@ -209,7 +209,7 @@ export const getSandboxChartBuilder = async (
             return null;
         },
         buildChartConfig: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const configTab = EDITOR_TYPE_CONFIG_TABS[type as keyof typeof EDITOR_TYPE_CONFIG_TABS];
             const tabResult = await Sandbox.processTab({
                 name: 'Config',
@@ -235,7 +235,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildChart: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const tabResult = await Sandbox.processTab({
                 name: 'JavaScript',
                 code: config.data.js || 'module.exports = {};',
@@ -261,7 +261,7 @@ export const getSandboxChartBuilder = async (
             };
         },
         buildUI: async (options) => {
-            const data = options.data as Record<string, any> | undefined;
+            const data = options.data as Record<string, unknown> | undefined;
             const tabResult = await Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
