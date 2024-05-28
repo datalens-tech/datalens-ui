@@ -125,8 +125,18 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const handleChangeUpdateControls = (value: boolean) => {
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                updateControlsOnChange: value,
+            }),
+        );
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+    const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
         <div className={b('sidebar')}>
@@ -141,6 +151,23 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
+                {showUpdateControlsOnChange && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_update-controls-on-change')}</span>
+                            <HelpPopover
+                                className={b('help-icon')}
+                                htmlContent={i18n('context_update-controls-on-change')}
+                            />
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.updateControlsOnChange}
+                            onUpdate={handleChangeUpdateControls}
+                            size="l"
+                            qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
+                        />
+                    </div>
+                )}
                 {showAutoHeight && (
                     <div className={b('settings-container')}>
                         <div>

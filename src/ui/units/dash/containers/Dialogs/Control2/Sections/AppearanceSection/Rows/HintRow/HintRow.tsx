@@ -20,7 +20,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 export const HintRow = () => {
     const dispatch = useDispatch();
-    const {showHint, hint} = useSelector(selectSelectorDialog);
+    const {showHint = false, hint} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
     const datasetField = useSelector(getDatasetField);
     const hintValue = hint ?? datasetField?.description ?? '';

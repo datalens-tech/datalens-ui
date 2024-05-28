@@ -10,7 +10,7 @@ import {
     isNumberField,
     isPseudoField,
 } from '../../../../../../../shared';
-import {ChartColorsConfig} from '../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../types';
 import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {getColor, getMountedColor} from '../../utils/constants';
 import {findIndexInOrder} from '../../utils/misc-helpers';

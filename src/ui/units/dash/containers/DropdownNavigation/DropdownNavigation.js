@@ -177,10 +177,13 @@ class DropdownNavigation extends React.PureComponent {
 
         const width = this.state.entry ? 'max' : undefined;
 
+        const defaultView = this.props.error ? 'outlined-danger' : 'outlined-action';
+        const view = this.state.entry ? 'outlined' : defaultView;
+
         return (
             <div className={b()} ref={this.buttonRef}>
                 <Button
-                    view={this.props.error ? 'outlined-danger' : 'outlined'}
+                    view={view}
                     width={width}
                     size={this.props.size}
                     disabled={this.props.disabled}

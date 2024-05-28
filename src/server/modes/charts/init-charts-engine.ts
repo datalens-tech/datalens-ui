@@ -1,5 +1,7 @@
 import {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
 import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import get from 'lodash/get';
+import sizeof from 'object-sizeof';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import CacheClient from '../../components/cache-client';
@@ -114,9 +116,49 @@ export function initChartsEngine({
         },
 
         onTabsExecuted: ({result, entryId}) => {
-            if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
-                ctx.stats('chartsWithFn', {datetime: Date.now(), entryId: entryId || ''});
+            const {
+                config: chartConfig,
+                highchartsConfig,
+                sources,
+                sourceData,
+                processedData,
+            } = result;
+            const chartEntryId = entryId || '';
+            const datetime = Date.now();
+
+            if (
+                shouldLogChartWithFunction &&
+                (isConfigWithFunction(chartConfig) || isConfigWithFunction(highchartsConfig))
+            ) {
+                ctx.stats('chartsWithFn', {datetime, entryId: chartEntryId});
             }
+
+            let rowsCount = 0;
+            let columnsCount = 0;
+            if (sourceData && typeof sourceData === 'object') {
+                Object.values(sourceData as object).forEach((item) => {
+                    rowsCount += get(item, 'result_data[0].rows.length', 0);
+                    columnsCount = Math.max(
+                        columnsCount,
+                        get(item, 'result_data[0].rows[0].data.length', 0),
+                    );
+                }, 0);
+            }
+
+            ctx.stats('chartSizeStats', {
+                datetime,
+                entryId: chartEntryId,
+                requestedDataSize:
+                    sources && typeof sources === 'object'
+                        ? Object.values(sources as object).reduce<number>(
+                              (sum, item) => sum + get(item, 'size', 0),
+                              0,
+                          )
+                        : 0,
+                requestedDataRowsCount: rowsCount,
+                requestedDataColumnsCount: columnsCount,
+                processedDataSize: sizeof(processedData),
+            });
         },
     };
 

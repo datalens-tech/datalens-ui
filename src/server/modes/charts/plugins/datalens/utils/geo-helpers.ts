@@ -1,5 +1,5 @@
 import {RGBGradient} from '../../../../../../shared';
-import {ChartColorsConfig} from '../js/helpers/colors';
+import type {ChartColorsConfig} from '../types';
 
 import {
     getCurrentGradient,

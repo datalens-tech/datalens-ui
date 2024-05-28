@@ -77,7 +77,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsData: Record<string, ExtendedLoadedData | null> = {};
 
     // a quick loader for click on apply button
-    applyLoader = false;
+    actionLoader = false;
 
     /**
      * can't use it in state because of doubling requests
@@ -147,7 +147,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     render() {
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.applyLoader;
+            this.actionLoader;
 
         return (
             <div
@@ -162,7 +162,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     />
                     {this.renderControls()}
                     {isLoading && (
-                        <div className={b('loader', {silent: this.applyLoader})}>
+                        <div className={b('loader', {silent: this.actionLoader})}>
                             <Loader size="s" />
                         </div>
                     )}
@@ -188,11 +188,30 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         if (controlId) {
-            this.setState({
-                stateParams: {...this.state.stateParams, [controlId]: params as StringParams},
-            });
+            if (controlData.updateControlsOnChange && controlData.buttonApply) {
+                const updatedStateParams: Record<string, StringParams> = {};
+                // update all controls params in case some of them are influenced by the changed params
+                // if their influencing params have changed, the controls will reload on their own
+                Object.keys(this.state.stateParams).forEach((itemId) => {
+                    updatedStateParams[itemId] = {
+                        ...this.state.stateParams[itemId],
+                        ...(params as StringParams),
+                    };
+                });
+                // loader turns off in handleStatusChanged when all controls are loaded
+                this.actionLoader = true;
+                this.setState({
+                    stateParams: updatedStateParams,
+                    status: LOAD_STATUS.PENDING,
+                });
+            } else {
+                this.setState({
+                    stateParams: {...this.state.stateParams, [controlId]: params as StringParams},
+                });
+            }
             return;
         }
+        // if onChange is triggered by button
         this.setState({stateParams: params as Record<string, StringParams>});
     };
 
@@ -380,7 +399,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
 
             this.resolveMetaInControl();
-
+            this.actionLoader = false;
             this.setState({
                 needReload: false,
                 status: LOAD_STATUS.SUCCESS,
@@ -457,9 +476,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.applyLoader = true;
+                this.actionLoader = true;
                 setTimeout(() => {
-                    this.applyLoader = false;
+                    this.actionLoader = false;
                 });
             }
             this.onChange({params: newParams, callChangeByClick});

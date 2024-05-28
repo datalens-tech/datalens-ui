@@ -1,5 +1,6 @@
 import {
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
     ServerChartsConfig,
     ServerColor,
@@ -14,7 +15,7 @@ import {
     ServerTooltip,
 } from '../../../../../../shared';
 import {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
-import type {ChartColorsConfig} from '../js/helpers/colors';
+import type {ChartColorsConfig} from '../types';
 
 export type PrepareFunction = (args: PrepareFunctionArgs) => any;
 
@@ -42,6 +43,7 @@ export type PrepareFunctionArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     disableDefaultSorting?: boolean;
+    features: FeatureConfig;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];
