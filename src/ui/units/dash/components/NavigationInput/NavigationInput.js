@@ -29,6 +29,7 @@ class NavigationInput extends React.PureComponent {
         navigationMixin: PropTypes.string,
         scope: PropTypes.oneOf(Object.values(EntryScope)),
         isInvalid: PropTypes.bool,
+        getEntryLink: PropTypes.func,
     };
 
     static getDerivedStateFromProps({entryId}, {prevEntryId}) {
@@ -64,9 +65,12 @@ class NavigationInput extends React.PureComponent {
             linkMixin,
             scope = EntryScope.Widget,
             isInvalid,
+            getEntryLink,
         } = this.props;
         const {showInput, isValidEntry} = this.state;
         const showOpenButton = isValidEntry && entryId && !isInvalid;
+
+        const href = getEntryLink ? getEntryLink(entryId) : getChartEditLink(entryId);
 
         return (
             <React.Fragment>
@@ -86,7 +90,7 @@ class NavigationInput extends React.PureComponent {
                             className={b('button')}
                             qa={NavigationInputQA.Open}
                             target="_blank"
-                            href={getChartEditLink(entryId)}
+                            href={href}
                         >
                             {i18n('dash.navigation-input.edit', 'button_open')}
                         </Button>

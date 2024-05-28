@@ -30,6 +30,8 @@ import {EntrySelector} from '../EntrySelector/EntrySelector';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
+const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
+
 function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
@@ -141,6 +143,7 @@ function DatasetSelector() {
                 onChange={handleDatasetChange}
                 isInvalid={isInvalid}
                 workbookId={workbookId}
+                getEntryLink={getDatasetLink}
             />
             <FormRow label={i18n('field_field')}>
                 <FieldWrapper error={validation.datasetFieldId}>
