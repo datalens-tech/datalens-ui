@@ -1,8 +1,6 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import _debounce from 'lodash/debounce';
-import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
-import {sdk} from 'ui';
+import {TIMEOUT_65_SEC} from 'shared';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -15,10 +13,11 @@ import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
     addAvatarPrototypes,
+    clearDatasetPreview,
     clearToasters,
     closePreview,
     disableSaveDataset,
-    queuePreviewToOpen,
+    fetchPreviewDataset,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
@@ -111,29 +110,6 @@ export function updateDatasetByValidation({
             updates,
             sourceErrors,
         });
-    };
-}
-
-export function refetchPreviewDataset() {
-    return (dispatch, getState) => {
-        const {
-            dataset: {
-                id: datasetId,
-                content: {result_schema: resultSchema},
-                preview: {amountPreviewRows} = {},
-            } = {},
-        } = getState();
-
-        const workbookId = workbookIdSelector(getState());
-
-        dispatch(
-            fetchPreviewDataset({
-                datasetId,
-                workbookId,
-                resultSchema,
-                limit: amountPreviewRows,
-            }),
-        );
     };
 }
 
@@ -311,131 +287,6 @@ export function fetchDataset({datasetId}) {
                     error,
                 },
             });
-        }
-    };
-}
-
-function clearDatasetPreview() {
-    return (dispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.CLEAR_PREVIEW,
-            payload: {},
-        });
-    };
-}
-
-const dispatchFetchPreviewDataset = async (
-    {datasetId, workbookId, resultSchema, limit},
-    dispatch,
-    getState,
-) => {
-    try {
-        dispatch({
-            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_REQUEST,
-            payload: {},
-        });
-        const {
-            dataset: {
-                content,
-                validation: {isLoading},
-            },
-        } = getState();
-        let previewDataset = {};
-
-        if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview(
-                {
-                    datasetId,
-                    workbookId,
-                    limit,
-                    dataset: content,
-                    version: 'draft',
-                },
-                {timeout: TIMEOUT_100_SEC},
-            );
-        } else {
-            return dispatch(clearDatasetPreview());
-        }
-
-        const {result: {regular, data} = {}} = previewDataset;
-
-        dispatch({
-            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_SUCCESS,
-            payload: {
-                data: data || regular,
-            },
-        });
-    } catch (error) {
-        if (!sdk.isCancel(error)) {
-            logger.logError('dataset: dispatchFetchPreviewDataset failed', error);
-            dispatch({
-                type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_FAILURE,
-                payload: {
-                    error,
-                },
-            });
-        }
-    }
-};
-
-const debouncedFetchPreviewDataset = _debounce(dispatchFetchPreviewDataset, 3000);
-
-export function fetchPreviewDataset({
-    datasetId,
-    workbookId,
-    resultSchema,
-    limit = 100,
-    debounceEnabled = false,
-}) {
-    return (dispatch, getState) => {
-        if (getState().dataset.preview.isVisible) {
-            return dispatch(
-                debounceEnabled
-                    ? debouncedFetchPreviewDataset.bind(this, {
-                          datasetId,
-                          workbookId,
-                          resultSchema,
-                          limit,
-                      })
-                    : dispatchFetchPreviewDataset.bind(this, {
-                          datasetId,
-                          workbookId,
-                          resultSchema,
-                          limit,
-                      }),
-            );
-        } else {
-            dispatch(queuePreviewToOpen(true));
-        }
-    };
-}
-
-export function queuedFetchPreviewDataset() {
-    return (dispatch, getState) => {
-        if (!getState().dataset.preview.isQueued) {
-            return;
-        }
-
-        dispatch(queuePreviewToOpen(false));
-
-        const {
-            dataset: {
-                id: datasetId,
-                content: {result_schema: resultSchema},
-                preview: {previewEnabled, amountPreviewRows} = {},
-            } = {},
-        } = getState();
-        const workbookId = workbookIdSelector(getState());
-
-        if (previewEnabled) {
-            dispatch(
-                fetchPreviewDataset({
-                    datasetId,
-                    workbookId,
-                    resultSchema,
-                    limit: amountPreviewRows,
-                }),
-            );
         }
     };
 }

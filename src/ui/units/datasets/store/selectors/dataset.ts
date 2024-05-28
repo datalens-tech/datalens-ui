@@ -8,6 +8,7 @@ import {BaseSource} from '../types';
 export const typesSelector = (state: DatalensGlobalState) => state.dataset.types.data;
 
 export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.key;
+export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
 
