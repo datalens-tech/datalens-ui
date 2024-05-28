@@ -53,6 +53,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
         const {Footer} = registry.common.components.getAll();
 
         const showTitleActionsBlock = layout.titleActionsBlock && !isMobileView;
+        const showDescription = !isMobileView && layout.description;
 
         return (
             <div className={b({mobile: isMobileView})}>
@@ -158,9 +159,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                             )}
                         </div>
 
-                        {layout.description && (
+                        {showDescription && (
                             <div className={b('header-description')}>
-                                {layout.description.isLoading ? (
+                                {layout.description?.isLoading ? (
                                     <Skeleton
                                         style={
                                             skeletonsSettings.description
@@ -169,7 +170,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         }
                                     />
                                 ) : (
-                                    layout.description.content
+                                    layout.description?.content
                                 )}
                             </div>
                         )}

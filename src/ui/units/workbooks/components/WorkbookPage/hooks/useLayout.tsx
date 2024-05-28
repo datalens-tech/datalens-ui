@@ -1,10 +1,13 @@
 import React from 'react';
 
-import {PencilToLine} from '@gravity-ui/icons';
+import {ArrowLeft, PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18N} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
+import {useHistory} from 'react-router';
+import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
@@ -40,6 +43,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
     const {setLayout} = React.useContext(LayoutContext);
 
     const dispatch = useDispatch<AppDispatch>();
+    const history = useHistory();
 
     const workbook = useSelector(selectWorkbook);
     const filters = useSelector(selectWorkbookFilters);
@@ -54,6 +58,18 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                 (breadcrumbs &&
                     breadcrumbs[breadcrumbs.length - 1]?.collectionId === workbook.collectionId)),
     );
+
+    const goToParentCollection = React.useCallback(() => {
+        if (!workbook) {
+            return;
+        }
+
+        if (workbook.collectionId) {
+            history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
+        } else {
+            history.push(COLLECTIONS_PATH);
+        }
+    }, [history, workbook]);
 
     React.useEffect(() => {
         setLayout({
@@ -152,6 +168,18 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                                 </Button>
                             </div>
                         </Tooltip>
+                    ) : null,
+                },
+                titleBeforeActionsBlock: {
+                    content: isMobileView ? (
+                        <Button
+                            view="flat"
+                            size="l"
+                            onClick={goToParentCollection}
+                            className={b('return-button')}
+                        >
+                            <Icon data={ArrowLeft} size={16} />
+                        </Button>
                     ) : null,
                 },
                 title: {

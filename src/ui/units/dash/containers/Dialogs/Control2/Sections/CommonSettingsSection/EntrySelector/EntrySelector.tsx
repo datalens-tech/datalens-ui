@@ -29,10 +29,11 @@ type EntrySelectorProps = {
     errorText?: string;
     workbookId?: string | null;
     includeClickableType?: EntryTypeNode;
+    getEntryLink?: (entryId: string) => string;
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
-    const {label, errorText, entryId, onChange, scope, workbookId, isInvalid} = props;
+    const {label, errorText, entryId, onChange, scope, workbookId, isInvalid, getEntryLink} = props;
 
     return (
         <FormRow label={label}>
@@ -45,6 +46,7 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
                     linkMixin={b('link')}
                     navigationMixin={b('navigation')}
                     isInvalid={isInvalid}
+                    getEntryLink={getEntryLink}
                 />
             </FieldWrapper>
         </FormRow>

@@ -8,15 +8,17 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {DEFAULT_DATE_FORMAT} from 'shared';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
 import {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
 import {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
-import {defaultRowStyle} from '../constants';
+import {defaultRowStyle, mobileRowStyle} from '../constants';
 
 import './Row.scss';
 
@@ -71,6 +73,33 @@ const Row: React.FC<RowProps> = ({
     };
 
     const {ButtonFavorite} = registry.common.components.getAll();
+
+    if (isMobileView) {
+        return (
+            <Link
+                to={url}
+                className={b({mobile: true})}
+                style={mobileRowStyle}
+                data-qa={WorkbookPage.ListItem}
+            >
+                <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
+                    <div className={b('title-col')}>
+                        <div className={b('icon')}>
+                            <EntryIcon entry={item} entityIconSize="xl" />
+                        </div>
+                        <div className={b('title-col-text')} title={item.name}>
+                            {item.name}
+                        </div>
+                    </div>
+                </div>
+                <div className={b('content-cell', {date: true})}>
+                    {dateTime({
+                        input: item.updatedAt,
+                    }).format(DEFAULT_DATE_FORMAT)}
+                </div>
+            </Link>
+        );
+    }
 
     return (
         <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
@@ -133,6 +162,15 @@ const Row: React.FC<RowProps> = ({
 };
 
 const EmptyRow = ({label}: {label?: React.ReactNode}) => {
+    if (isMobileView) {
+        return (
+            <div className={b('empty-row')} style={defaultRowStyle}>
+                <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
+
+                <div className={b('empty-cell')} />
+            </div>
+        );
+    }
     return (
         <div className={b('empty-row')} style={defaultRowStyle}>
             <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>

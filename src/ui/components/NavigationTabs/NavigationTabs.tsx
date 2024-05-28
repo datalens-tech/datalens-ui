@@ -1,7 +1,9 @@
 import React from 'react';
 
-import {AdaptiveTabs, AdaptiveTabsProps, TabItem} from '@gravity-ui/components';
+import {AdaptiveTabsProps, TabItem, TabsSize} from '@gravity-ui/components';
 import {useHistory, useLocation} from 'react-router-dom';
+
+import Tabs from '../Tabs/Tabs';
 
 export interface NavigationTabsProps {
     items: TabItem<{}>[];
@@ -10,6 +12,7 @@ export interface NavigationTabsProps {
     queryParamName?: string;
     onSelectTab?: AdaptiveTabsProps<{}>['onSelectTab'];
     breakpointsConfig: AdaptiveTabsProps<{}>['breakpointsConfig'];
+    size?: TabsSize;
 }
 
 const getTabRoute = (pathname: string, search: string, queryParamName: string, tabId?: string) => {
@@ -89,16 +92,12 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
                 history.replace(currentTabRouteParams);
             }
         },
+
         [onSelectTab, currentTab, history, queryParamName, pathname, search],
     );
 
     return (
-        <AdaptiveTabs
-            activeTab={currentTab}
-            items={items}
-            onSelectTab={handleSelectTab}
-            {...restProps}
-        />
+        <Tabs activeTab={currentTab} items={items} onSelectTab={handleSelectTab} {...restProps} />
     );
 };
 

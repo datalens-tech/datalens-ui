@@ -1,4 +1,8 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-main-tab-content {
+    $class: &;
+
     display: flex;
     flex-direction: column;
 
@@ -78,5 +82,11 @@
     &__error-text {
         font-size: 15px;
         color: var(--g-color-text-danger);
+    }
+
+    &_mobile {
+        #{$class}__title-text {
+            @include text-body-2;
+        }
     }
 }

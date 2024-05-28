@@ -8,6 +8,7 @@ import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {GetEntryResponse} from '../../../../../../shared/schema';
 import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
@@ -143,20 +144,30 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
 
         const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
+        const isWidgetEmpty = widgetChunk.length === 0;
+        const isDashEmpty = dashChunk.length === 0;
+
+        const clearViewDash = isMobileView && isWidgetEmpty;
+        const clearViewWidget = isMobileView && isDashEmpty;
+
+        const showDataEntities = workbook.permissions.view && !isMobileView;
+
         return (
             <React.Fragment>
                 <div className={b()}>
                     <div className={b('table')}>
-                        <div className={b('header')} style={defaultRowStyle}>
-                            <div className={b('header-cell')}>{i18n('label_title')}</div>
-                            <div className={b('header-cell', {author: true})}>
-                                {i18n('label_author')}
+                        {!isMobileView && (
+                            <div className={b('header')} style={defaultRowStyle}>
+                                <div className={b('header-cell')}>{i18n('label_title')}</div>
+                                <div className={b('header-cell', {author: true})}>
+                                    {i18n('label_author')}
+                                </div>
+                                <div className={b('header-cell', {date: true})}>
+                                    {i18n('label_last-modified')}
+                                </div>
+                                <div className={b('header-cell', {controls: true})} />
                             </div>
-                            <div className={b('header-cell', {date: true})}>
-                                {i18n('label_last-modified')}
-                            </div>
-                            <div className={b('header-cell', {controls: true})} />
-                        </div>
+                        )}
                         {scope &&
                             chunks.map((chunk) => (
                                 <ChunkGroup
@@ -173,15 +184,13 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                 </div>
 
                 {!scope && (
-                    <>
+                    <React.Fragment>
                         <MainTabContent
                             chunk={dashChunk}
                             actionCreateText={i18n('action_create-dashboard')}
                             title={i18n('title_dashboards')}
                             actionType={CreateEntryActionType.Dashboard}
-                            isShowMoreBtn={Boolean(
-                                dashChunk?.length > 0 && mapTokens?.[EntryScope.Dash],
-                            )}
+                            isShowMoreBtn={Boolean(!isDashEmpty && mapTokens?.[EntryScope.Dash])}
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
                             isErrorMessage={mapErrors?.[EntryScope.Dash]}
@@ -191,6 +200,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
+                            clearView={clearViewDash}
                         />
 
                         <MainTabContent
@@ -199,7 +209,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             title={i18n('title_charts')}
                             actionType={CreateEntryActionType.Wizard}
                             isShowMoreBtn={Boolean(
-                                widgetChunk?.length > 0 && mapTokens?.[EntryScope.Widget],
+                                !isWidgetEmpty && mapTokens?.[EntryScope.Widget],
                             )}
                             loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
@@ -213,9 +223,10 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             createEntryBtn={
                                 <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
                             }
+                            clearView={clearViewWidget}
                         />
 
-                        {workbook.permissions.view && (
+                        {showDataEntities && (
                             <MainTabContent
                                 chunk={datasetChunk}
                                 actionCreateText={i18n('action_create-dataset')}
@@ -236,7 +247,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             />
                         )}
 
-                        {workbook.permissions.view && (
+                        {showDataEntities && (
                             <MainTabContent
                                 chunk={connChunk}
                                 actionCreateText={i18n('action_create-connection')}
@@ -256,7 +267,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                 onCopyEntry={onCopyEntry}
                             />
                         )}
-                    </>
+                    </React.Fragment>
                 )}
             </React.Fragment>
         );
