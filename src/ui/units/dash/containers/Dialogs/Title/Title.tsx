@@ -11,9 +11,8 @@ import {
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
-    Feature,
 } from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {setItemData} from '../../../store/actions/dashTyped';
@@ -92,8 +91,6 @@ class TitleComponent extends React.PureComponent<Props, State> {
         const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
             this.state;
 
-        const showBgSetting = Utils.isEnabledFeature(Feature.ShowDashWidgetBg);
-
         return (
             <Dialog
                 open={visible}
@@ -139,25 +136,20 @@ class TitleComponent extends React.PureComponent<Props, State> {
                             {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
                         </Checkbox>
                     </div>
-                    {showBgSetting && (
-                        <div className={b('setting-row')}>
-                            <Checkbox
-                                checked={Boolean(hasBackground)}
-                                onChange={this.handleHasBackgroundChanged}
-                            >
-                                {i18n(
-                                    'dash.dashkit-plugin-common.view',
-                                    'label_background-checkbox',
-                                )}
-                            </Checkbox>
-                            {Boolean(hasBackground) && (
-                                <PaletteBackground
-                                    color={backgroundColor}
-                                    onSelect={this.handleHasBackgroundSelected}
-                                />
-                            )}
-                        </div>
-                    )}
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={Boolean(hasBackground)}
+                            onChange={this.handleHasBackgroundChanged}
+                        >
+                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                        </Checkbox>
+                        {Boolean(hasBackground) && (
+                            <PaletteBackground
+                                color={backgroundColor}
+                                onSelect={this.handleHasBackgroundSelected}
+                            />
+                        )}
+                    </div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
@@ -192,14 +184,10 @@ class TitleComponent extends React.PureComponent<Props, State> {
                     size,
                     showInTOC,
                     autoHeight,
-                    ...(Utils.isEnabledFeature(Feature.ShowDashWidgetBg)
-                        ? {
-                              background: {
-                                  enabled: hasBackground,
-                                  color: backgroundColor,
-                              },
-                          }
-                        : {}),
+                    background: {
+                        enabled: hasBackground,
+                        color: backgroundColor,
+                    },
                 },
             });
             this.props.closeDialog();
