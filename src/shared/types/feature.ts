@@ -32,7 +32,6 @@ export enum Feature {
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
-    ShowDashWidgetBg = 'ShowDashWidgetBg',
     GSheetsV2Enabled = 'GSheetsV2Enabled',
     ShowInspectorDetails = 'ShowInspectorDetails',
     NoJsonFn = 'NoJsonFn',
