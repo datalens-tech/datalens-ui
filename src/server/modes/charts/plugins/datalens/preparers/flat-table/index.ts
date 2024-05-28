@@ -310,7 +310,7 @@ function prepareFlatTable({
 
             if (isActionParamsEnable) {
                 if (item.canUseFieldForFiltering) {
-                    if (isDateField(item)) {
+                    if (item.itemDataType) {
                         const actionParams = {};
                         addActionParamValue(actionParams, item, value);
 
