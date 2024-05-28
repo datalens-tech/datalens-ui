@@ -4,7 +4,7 @@ import {Permissions} from '../types';
 import {CommonUpdate} from './common-update';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export enum DATASET_FIELD_TYPES {
+export const enum DATASET_FIELD_TYPES {
     DATE = 'date',
     GENERICDATETIME = 'genericdatetime',
     DATETIMETZ = 'datetimetz',
@@ -65,7 +65,7 @@ export const COMMON_FIELD_TYPES = [
 export type AvailableFieldType = (typeof AVAILABLE_FIELD_TYPES)[number];
 export type CommonFieldType = (typeof COMMON_FIELD_TYPES)[number];
 
-export enum DatasetFieldAggregation {
+export const enum DatasetFieldAggregation {
     None = 'none',
     Sum = 'sum',
     Avg = 'avg',
@@ -77,7 +77,7 @@ export enum DatasetFieldAggregation {
 
 export type DatasetFieldCalcMode = 'formula' | 'direct' | 'parameter';
 
-export enum DatasetFieldType {
+export const enum DatasetFieldType {
     Dimension = 'DIMENSION',
     Measure = 'MEASURE',
     Pseudo = 'PSEUDO',
