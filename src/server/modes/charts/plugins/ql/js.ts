@@ -10,6 +10,7 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     VISUALIZATION_IDS,
+    getServerFeatures,
     isEnabledServerFeature,
     isMonitoringOrPrometheusChart,
 } from '../../../../../shared';
@@ -42,6 +43,7 @@ import {
 // eslint-disable-next-line complexity
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const app = registry.getApp();
+    const features = getServerFeatures(app.nodekit.ctx);
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -51,6 +53,8 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     let result;
 
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
+    const {getAvailablePalettesMap} = registry.common.functions.getAll();
+    const palettes = getAvailablePalettesMap();
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     const {columns, rows} = getColumnsAndRows({
@@ -255,6 +259,8 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             datasetsIds,
             loadedColorPalettes,
             disableDefaultSorting,
+            palettes,
+            features,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);

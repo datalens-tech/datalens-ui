@@ -5,7 +5,9 @@ import {
     ServerLink,
     ServerVisualization,
     Shared,
+    getServerFeatures,
 } from '../../../../../../shared';
+import {registry} from '../../../../../registry';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
 import {PrepareFunctionDataRow, PrepareFunctionResultData} from '../preparers/types';
@@ -239,7 +241,10 @@ module.exports = (...options: JSTabOptions) => {
     log('LOADED DATA:');
     log(data);
 
+    const {getAvailablePalettesMap} = registry.common.functions.getAll();
+    const palettes = getAvailablePalettesMap();
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
+    const features = getServerFeatures(registry.getApp().nodekit.ctx);
 
     log('LINKS:');
     log(shared.links);
@@ -418,6 +423,8 @@ module.exports = (...options: JSTabOptions) => {
                 ChartEditor,
                 datasetsIds,
                 loadedColorPalettes,
+                palettes,
+                features,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -471,6 +478,8 @@ module.exports = (...options: JSTabOptions) => {
             ChartEditor,
             datasetsIds,
             loadedColorPalettes,
+            palettes,
+            features,
         });
 
         if (result && result[0] && result[0].bounds) {

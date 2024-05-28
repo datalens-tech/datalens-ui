@@ -20,9 +20,9 @@ import {
     isMeasureField,
     isMeasureValue,
 } from '../../../../../../shared';
-import type {ChartColorsConfig} from '../js/helpers/colors';
 import {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
-import {
+import type {
+    ChartColorsConfig,
     ServerFieldWithBackgroundSettings,
     ServerFieldWithBarsSettings,
     ServerFieldWithColumnWidthSettings,

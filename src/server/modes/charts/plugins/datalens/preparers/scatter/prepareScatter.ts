@@ -12,7 +12,7 @@ import {
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
-import {ChartColorsConfig} from '../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../types';
 import {
     ExtendedSeriesScatterOptions,
     mapAndColorizePointsByGradient,
