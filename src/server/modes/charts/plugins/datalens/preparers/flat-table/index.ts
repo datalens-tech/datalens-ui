@@ -188,14 +188,9 @@ function prepareFlatTable({
         );
     }
 
-    const getIColor = () => {
-        if (colors.length) {
-            const actualColorTitle = idToTitle[colors[0].guid];
-            return findIndexInOrder(order, colors[0], actualColorTitle);
-        } else {
-            return -1;
-        }
-    };
+    const iColor = colors.length
+        ? findIndexInOrder(order, colors[0], idToTitle[colors[0].guid])
+        : -1;
 
     const preparedColumns = columns.map((item) => {
         const actualTitle = idToTitle[item.guid] || item.title;
@@ -213,7 +208,6 @@ function prepareFlatTable({
             isUnsupportedDataType: isUnsupportedDataType(itemDataType),
             isTableBarsSettingsEnabled: isTableBarsSettingsEnabled(item),
             isTableFieldBackgroundSettingsEnabled: isTableFieldBackgroundSettingsEnabled(item),
-            iColor: getIColor(),
             canUseFieldForFiltering: isActionParamsEnable && canUseFieldForFiltering(item),
         };
     });
@@ -290,7 +284,7 @@ function prepareFlatTable({
             }
 
             if (colors.length) {
-                const valueColor = values[item.iColor];
+                const valueColor = values[iColor];
                 cell.color = Number(valueColor);
             }
 
