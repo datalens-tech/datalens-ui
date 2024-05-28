@@ -323,8 +323,10 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         ) {
             return true;
         }
+        const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
+        const dashWorkbookId = this.props.entry.workbookId ?? null;
 
-        return itemData.copyContext?.workbookId === this.props.entry.workbookId;
+        return itemWorkbookId === dashWorkbookId;
     }
 
     private showErrorPasteItemFromWorkbook() {
