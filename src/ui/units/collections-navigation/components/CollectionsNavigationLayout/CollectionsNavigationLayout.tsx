@@ -54,6 +54,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
 
         const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
         const showTitleRightBlock = !isMobileView && layout.titleRightBlock;
+        const showDescription = !isMobileView && layout.description;
+
+        const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
 
         return (
             <div className={b({mobile: isMobileView})}>
@@ -110,7 +113,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         <div>{layout.titleBeforeActionsBlock.content}</div>
                                     )}
                                     {layout.title && (
-                                        <h1 className={b('header-title')}>
+                                        <h1 className={b('header-title')} title={title}>
                                             {layout.title.isLoading ? (
                                                 <Skeleton
                                                     style={
@@ -159,9 +162,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                             )}
                         </div>
 
-                        {layout.description && (
+                        {showDescription && (
                             <div className={b('header-description')}>
-                                {layout.description.isLoading ? (
+                                {layout.description?.isLoading ? (
                                     <Skeleton
                                         style={
                                             skeletonsSettings.description
@@ -170,7 +173,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         }
                                     />
                                 ) : (
-                                    layout.description.content
+                                    layout.description?.content
                                 )}
                             </div>
                         )}

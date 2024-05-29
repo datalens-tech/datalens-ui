@@ -108,7 +108,7 @@ export const CollectionContentTable = React.memo<Props>(
                     <div className={b('table')}>
                         <div className={b('header')}>
                             <div className={b('header-row')}>
-                                <div className={b('header-cell')}>
+                                <div className={b('header-cell', {checkbox: true})}>
                                     <Checkbox
                                         size="l"
                                         onUpdate={() => {
@@ -119,11 +119,13 @@ export const CollectionContentTable = React.memo<Props>(
                                         {...checkboxPropsSelected}
                                     />
                                 </div>
-                                <div className={b('header-cell')}>{i18n('label_title')}</div>
+                                <div className={b('header-cell', {title: true})}>
+                                    {i18n('label_title')}
+                                </div>
                                 <div className={b('header-cell')}>
                                     {i18n('label_last-modified')}
                                 </div>
-                                <div className={b('header-cell')} />
+                                <div className={b('header-cell', {controls: true})} />
                             </div>
                         </div>
 

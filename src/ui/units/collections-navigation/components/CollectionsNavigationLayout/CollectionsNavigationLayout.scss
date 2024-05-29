@@ -86,6 +86,7 @@ $class: 'dl-collections-navigation-layout';
 
         .#{$class}__page {
             padding: 0 16px;
+            max-width: 100vw;
         }
 
         .#{$class}__header {
@@ -93,8 +94,17 @@ $class: 'dl-collections-navigation-layout';
             height: $buttonLHeight;
         }
 
+        .#{$class}__header-title-wrapper {
+            max-width: 100%;
+        }
+
         .#{$class}__header-title {
             @include text-header-1;
+            white-space: nowrap;
+            max-width: 100%;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .#{$class}__content {
