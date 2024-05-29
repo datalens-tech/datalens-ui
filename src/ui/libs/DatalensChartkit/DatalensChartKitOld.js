@@ -1,6 +1,8 @@
 import {
     ACCEPT_LANGUAGE_HEADER,
     DASH_INFO_HEADER,
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     ENABLE,
     Feature,
     SUPERUSER_SWITCH_MODE_COOKIE_NAME,
@@ -76,7 +78,10 @@ ChartKit.setDataProviderSettings({
 
         return request;
     },
-    noJsonFn: Utils.isEnabledFeature(Feature.NoJsonFn),
+    noJsonFn:
+        Utils.isEnabledFeature(Feature.NoJsonFn) ||
+        (Utils.getCookie(SUPERUSER_SWITCH_MODE_COOKIE_NAME) === ENABLE &&
+            Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE),
 });
 
 export default ChartKit;

@@ -6,11 +6,15 @@ import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 
 import {ChartsEngine} from '../..';
 import {
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_CONTEXT_HEADER,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
+    ENABLE,
     EntryPublicAuthor,
     Feature,
+    SUPERUSER_SWITCH_MODE_COOKIE_NAME,
     WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
@@ -805,9 +809,12 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const stringify = isEnabledServerFeature(ctx, Feature.NoJsonFn)
-                    ? JSON.stringify
-                    : JSONfn.stringify;
+                const stringify =
+                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    (req.cookies[SUPERUSER_SWITCH_MODE_COOKIE_NAME] === ENABLE &&
+                        req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE)
+                        ? JSON.stringify
+                        : JSONfn.stringify;
 
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;
