@@ -65,7 +65,6 @@ export enum Feature {
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
     EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
-    MarkupMetric = 'MarkupMetric',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
