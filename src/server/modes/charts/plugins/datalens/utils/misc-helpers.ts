@@ -76,8 +76,10 @@ function isMarkupDataType(dataType: string) {
     return dataType === DATASET_FIELD_TYPES.MARKUP;
 }
 
+const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000;
+
 function getTimezoneOffsettedTime(value: Date) {
-    return value.getTime() - value.getTimezoneOffset() * 60 * 1000;
+    return value.getTime() - timezoneOffset;
 }
 
 export function getDefaultDateFormat(valueType?: string | null) {
