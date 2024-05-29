@@ -199,9 +199,11 @@ export const CollectionContent: React.FC<Props> = ({
         );
     }
 
+    const showGridMode = viewMode === CollectionPageViewMode.Grid && !isMobileView;
+
     return (
         <div className={b()}>
-            {viewMode === CollectionPageViewMode.Grid ? (
+            {showGridMode ? (
                 <CollectionContentGrid
                     selectedMap={selectedMap}
                     isOpenSelectionMode={isOpenSelectionMode}

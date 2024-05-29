@@ -52,7 +52,8 @@ export const CollectionsNavigationLayout = React.memo<Props>(
     ({layout, skeletonsSettings, children}) => {
         const {Footer} = registry.common.components.getAll();
 
-        const showTitleActionsBlock = layout.titleActionsBlock && !isMobileView;
+        const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
+        const showTitleRightBlock = !isMobileView && layout.titleRightBlock;
 
         return (
             <div className={b({mobile: isMobileView})}>
@@ -141,9 +142,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                 </div>
                             ) : null}
 
-                            {layout.titleRightBlock && (
+                            {showTitleRightBlock && (
                                 <div className={b('header-right-block')}>
-                                    {layout.titleRightBlock.isLoading ? (
+                                    {layout.titleRightBlock?.isLoading ? (
                                         <Skeleton
                                             style={
                                                 skeletonsSettings.titleRightBlock
@@ -152,7 +153,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                             }
                                         />
                                     ) : (
-                                        layout.titleRightBlock.content
+                                        layout.titleRightBlock?.content
                                     )}
                                 </div>
                             )}
