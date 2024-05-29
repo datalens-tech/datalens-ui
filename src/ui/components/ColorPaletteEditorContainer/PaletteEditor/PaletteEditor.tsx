@@ -25,6 +25,7 @@ import {DatalensGlobalState} from 'ui';
 import {DialogRow} from 'units/wizard/components/Dialogs/components/DialogRow/DialogRow';
 import {isStringWithHex} from 'utils/validation';
 
+import {PaletteEditorQA} from '../../../../shared';
 import ColorPaletteChartkitPreview from '../ColorPaletteCharkitPreview/ColorPaletteChartkitPreview';
 import ColorTextInput from '../ColorTextInput/ColorTextInput';
 
@@ -72,6 +73,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                     textButtonApply={textButtonApply}
                     propsButtonApply={{
                         disabled: isApplyButtonDisabled,
+                        qa: PaletteEditorQA.ApplyButton,
                     }}
                     textButtonCancel={i18n('component.color-palette-editor', 'button_cancel')}
                 >
@@ -125,6 +127,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                                 className={b('name-input')}
                                 value={currentColorPalette.displayName}
                                 onUpdate={this.handleDisplayNameUpdate}
+                                qa={PaletteEditorQA.PaletteNameInput}
                             />
                         </div>
                     }
@@ -184,6 +187,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                                 view="flat"
                                 onClick={this.handleAddColorClick}
                                 disabled={isAddColorButtonDisabled}
+                                qa={PaletteEditorQA.AddColorButton}
                             >
                                 <Icon data={iconPlus} />{' '}
                                 {i18n('component.color-palette-editor', 'label_add-color')}
