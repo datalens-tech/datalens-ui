@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {Feature} from '../../../../../../shared';
@@ -119,11 +120,7 @@ export const useLayout = ({
             return;
         }
 
-        if (collection.parentId) {
-            history.push(`${COLLECTIONS_PATH}/${collection.parentId}`);
-        } else {
-            history.push(COLLECTIONS_PATH);
-        }
+        history.push(getParentCollectionPath(collection));
     }, [history, collection]);
 
     React.useEffect(() => {

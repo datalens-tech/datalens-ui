@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18N} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router';
-import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
@@ -64,11 +64,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
             return;
         }
 
-        if (workbook.collectionId) {
-            history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
-        } else {
-            history.push(COLLECTIONS_PATH);
-        }
+        history.push(getParentCollectionPath(workbook));
     }, [history, workbook]);
 
     React.useEffect(() => {

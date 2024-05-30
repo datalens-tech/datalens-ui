@@ -3,32 +3,23 @@
 // Widget tabs is used as is (approved by designers)
 // Custom Tabs module is used for dashboard tabs only (but gc-adaptive-tabs class - is a part of common module classes)
 
+$adaptiveTabsClass: '.gc-adaptive-tabs';
+
 .dl-tabs {
-    &_size_l .gc-adaptive-tabs {
-        --gc-tabs-space-between: 20px;
-        --gc-tabs-border-width: 2px;
-        --gc-tabs-height: 40px;
-        font-size: 15px;
+    &_size_l {
+        @include text-body-2();
     }
 
     &_size_xl {
         @include text-subheader-3();
     }
 
-    .gc-adaptive-tabs {
+    #{$adaptiveTabsClass} {
         overflow: hidden;
         font-weight: 400;
 
         &__tab {
             padding: 0;
-        }
-
-        &__tab:not(.gc-adaptive-tabs__tab_active) {
-            opacity: 0.7;
-
-            &:hover {
-                opacity: 1;
-            }
         }
 
         &__tab-container {
@@ -54,6 +45,16 @@
         &_active {
             border-bottom-color: var(--gc-tabs-color-border-active);
             color: var(--gc-tabs-color-text-active);
+        }
+    }
+
+    &_opacity {
+        #{$adaptiveTabsClass}__tab:not(#{$adaptiveTabsClass}__tab_active) {
+            opacity: 0.7;
+
+            &:hover {
+                opacity: 1;
+            }
         }
     }
 }

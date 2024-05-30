@@ -162,15 +162,6 @@ const Row: React.FC<RowProps> = ({
 };
 
 const EmptyRow = ({label}: {label?: React.ReactNode}) => {
-    if (isMobileView) {
-        return (
-            <div className={b('empty-row')} style={defaultRowStyle}>
-                <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>
-
-                <div className={b('empty-cell')} />
-            </div>
-        );
-    }
     return (
         <div className={b('empty-row')} style={defaultRowStyle}>
             <div className={b('empty-cell')}>{label || i18n('label_no-data')}</div>

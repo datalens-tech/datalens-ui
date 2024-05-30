@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 import {EntryScope} from 'shared';
 import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {isMobileView} from 'ui/utils/mobile';
@@ -152,6 +153,106 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
 
         const showDataEntities = workbook.permissions.view && !isMobileView;
 
+        const renderTabs = () => {
+            if (scope) {
+                return null;
+            }
+
+            if (isMobileView && isWidgetEmpty && isDashEmpty) {
+                return (
+                    <PlaceholderIllustration
+                        name="template"
+                        title={i18n('label_empty-mobile-workbook')}
+                    />
+                );
+            }
+
+            return (
+                <React.Fragment>
+                    <MainTabContent
+                        chunk={dashChunk}
+                        actionCreateText={i18n('action_create-dashboard')}
+                        title={i18n('title_dashboards')}
+                        actionType={CreateEntryActionType.Dashboard}
+                        isShowMoreBtn={Boolean(!isDashEmpty && mapTokens?.[EntryScope.Dash])}
+                        loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
+                        retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
+                        isErrorMessage={mapErrors?.[EntryScope.Dash]}
+                        isLoading={mapLoaders?.[EntryScope.Dash]}
+                        workbook={workbook}
+                        onRenameEntry={onRenameEntry}
+                        onDeleteEntry={onDeleteEntry}
+                        onDuplicateEntry={onDuplicateEntry}
+                        onCopyEntry={onCopyEntry}
+                        clearView={clearViewDash}
+                    />
+
+                    <MainTabContent
+                        chunk={widgetChunk}
+                        actionCreateText={i18n('action_create-chart')}
+                        title={i18n('title_charts')}
+                        actionType={CreateEntryActionType.Wizard}
+                        isShowMoreBtn={Boolean(!isWidgetEmpty && mapTokens?.[EntryScope.Widget])}
+                        loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
+                        retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
+                        isErrorMessage={mapErrors?.[EntryScope.Widget]}
+                        isLoading={mapLoaders?.[EntryScope.Widget]}
+                        workbook={workbook}
+                        onRenameEntry={onRenameEntry}
+                        onDeleteEntry={onDeleteEntry}
+                        onDuplicateEntry={onDuplicateEntry}
+                        onCopyEntry={onCopyEntry}
+                        createEntryBtn={
+                            <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
+                        }
+                        clearView={clearViewWidget}
+                    />
+
+                    {showDataEntities && (
+                        <MainTabContent
+                            chunk={datasetChunk}
+                            actionCreateText={i18n('action_create-dataset')}
+                            title={i18n('title_datasets')}
+                            actionType={CreateEntryActionType.Dataset}
+                            isShowMoreBtn={Boolean(
+                                datasetChunk?.length > 0 && mapTokens?.[EntryScope.Dataset],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
+                            isErrorMessage={mapErrors?.[EntryScope.Dataset]}
+                            isLoading={mapLoaders?.[EntryScope.Dataset]}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                        />
+                    )}
+
+                    {showDataEntities && (
+                        <MainTabContent
+                            chunk={connChunk}
+                            actionCreateText={i18n('action_create-connection')}
+                            title={i18n('title_connections')}
+                            actionType={CreateEntryActionType.Connection}
+                            isShowMoreBtn={Boolean(
+                                connChunk?.length > 0 && mapTokens?.[EntryScope.Connection],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
+                            isErrorMessage={mapErrors?.[EntryScope.Connection]}
+                            isLoading={mapLoaders?.[EntryScope.Connection]}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                        />
+                    )}
+                </React.Fragment>
+            );
+        };
+
         return (
             <React.Fragment>
                 <div className={b()}>
@@ -182,93 +283,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             ))}
                     </div>
                 </div>
-
-                {!scope && (
-                    <React.Fragment>
-                        <MainTabContent
-                            chunk={dashChunk}
-                            actionCreateText={i18n('action_create-dashboard')}
-                            title={i18n('title_dashboards')}
-                            actionType={CreateEntryActionType.Dashboard}
-                            isShowMoreBtn={Boolean(!isDashEmpty && mapTokens?.[EntryScope.Dash])}
-                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dash)}
-                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dash)}
-                            isErrorMessage={mapErrors?.[EntryScope.Dash]}
-                            isLoading={mapLoaders?.[EntryScope.Dash]}
-                            workbook={workbook}
-                            onRenameEntry={onRenameEntry}
-                            onDeleteEntry={onDeleteEntry}
-                            onDuplicateEntry={onDuplicateEntry}
-                            onCopyEntry={onCopyEntry}
-                            clearView={clearViewDash}
-                        />
-
-                        <MainTabContent
-                            chunk={widgetChunk}
-                            actionCreateText={i18n('action_create-chart')}
-                            title={i18n('title_charts')}
-                            actionType={CreateEntryActionType.Wizard}
-                            isShowMoreBtn={Boolean(
-                                !isWidgetEmpty && mapTokens?.[EntryScope.Widget],
-                            )}
-                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Widget)}
-                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Widget)}
-                            isErrorMessage={mapErrors?.[EntryScope.Widget]}
-                            isLoading={mapLoaders?.[EntryScope.Widget]}
-                            workbook={workbook}
-                            onRenameEntry={onRenameEntry}
-                            onDeleteEntry={onDeleteEntry}
-                            onDuplicateEntry={onDuplicateEntry}
-                            onCopyEntry={onCopyEntry}
-                            createEntryBtn={
-                                <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
-                            }
-                            clearView={clearViewWidget}
-                        />
-
-                        {showDataEntities && (
-                            <MainTabContent
-                                chunk={datasetChunk}
-                                actionCreateText={i18n('action_create-dataset')}
-                                title={i18n('title_datasets')}
-                                actionType={CreateEntryActionType.Dataset}
-                                isShowMoreBtn={Boolean(
-                                    datasetChunk?.length > 0 && mapTokens?.[EntryScope.Dataset],
-                                )}
-                                loadMoreEntries={() => loadMoreEntries?.(EntryScope.Dataset)}
-                                retryLoadEntries={() => retryLoadEntries?.(EntryScope.Dataset)}
-                                isErrorMessage={mapErrors?.[EntryScope.Dataset]}
-                                isLoading={mapLoaders?.[EntryScope.Dataset]}
-                                workbook={workbook}
-                                onRenameEntry={onRenameEntry}
-                                onDeleteEntry={onDeleteEntry}
-                                onDuplicateEntry={onDuplicateEntry}
-                                onCopyEntry={onCopyEntry}
-                            />
-                        )}
-
-                        {showDataEntities && (
-                            <MainTabContent
-                                chunk={connChunk}
-                                actionCreateText={i18n('action_create-connection')}
-                                title={i18n('title_connections')}
-                                actionType={CreateEntryActionType.Connection}
-                                isShowMoreBtn={Boolean(
-                                    connChunk?.length > 0 && mapTokens?.[EntryScope.Connection],
-                                )}
-                                loadMoreEntries={() => loadMoreEntries?.(EntryScope.Connection)}
-                                retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
-                                isErrorMessage={mapErrors?.[EntryScope.Connection]}
-                                isLoading={mapLoaders?.[EntryScope.Connection]}
-                                workbook={workbook}
-                                onRenameEntry={onRenameEntry}
-                                onDeleteEntry={onDeleteEntry}
-                                onDuplicateEntry={onDuplicateEntry}
-                                onCopyEntry={onCopyEntry}
-                            />
-                        )}
-                    </React.Fragment>
-                )}
+                {renderTabs()}
             </React.Fragment>
         );
     },

@@ -2,6 +2,7 @@ import React from 'react';
 
 import {AdaptiveTabsProps, TabItem, TabsSize} from '@gravity-ui/components';
 import {useHistory, useLocation} from 'react-router-dom';
+import {isMobileView} from 'ui/utils/mobile';
 
 import Tabs from '../Tabs/Tabs';
 
@@ -97,7 +98,13 @@ export const NavigationTabs: React.FC<NavigationTabsProps> = ({
     );
 
     return (
-        <Tabs activeTab={currentTab} items={items} onSelectTab={handleSelectTab} {...restProps} />
+        <Tabs
+            activeTab={currentTab}
+            items={items}
+            onSelectTab={handleSelectTab}
+            disableOpacity={!isMobileView}
+            {...restProps}
+        />
     );
 };
 
