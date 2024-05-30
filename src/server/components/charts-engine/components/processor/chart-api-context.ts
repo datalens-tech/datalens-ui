@@ -91,10 +91,16 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
         }
 
+        const fnArgs = Array.isArray(value.args)
+            ? (value.args as unknown[]).map((arg: unknown) =>
+                  typeof arg === 'function' ? arg.toString() : arg,
+              )
+            : value.args;
+
         return {
             [WRAPPED_FN_KEY]: {
                 fn: value.fn.toString(),
-                args: value.args,
+                args: fnArgs,
             },
         };
     };
