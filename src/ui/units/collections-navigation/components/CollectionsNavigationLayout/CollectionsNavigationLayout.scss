@@ -52,6 +52,7 @@ $class: 'dl-collections-navigation-layout';
         display: flex;
         margin-right: 8px;
         white-space: nowrap;
+        align-self: flex-start;
     }
 
     &__header-right-block {
