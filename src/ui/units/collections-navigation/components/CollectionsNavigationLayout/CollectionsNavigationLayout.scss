@@ -1,4 +1,5 @@
 @import '../../../../styles/variables.scss';
+@import '~@gravity-ui/uikit/styles/mixins';
 
 $class: 'dl-collections-navigation-layout';
 
@@ -8,7 +9,7 @@ $class: 'dl-collections-navigation-layout';
 
     &__page-wrapper {
         position: absolute;
-        top: calc($actionPanelHeight + var(--dl-mobile-header-height, 0px));
+        top: calc($actionPanelHeight);
         right: 0;
         bottom: 0;
         left: 0;
@@ -36,13 +37,14 @@ $class: 'dl-collections-navigation-layout';
     &__header-title-wrapper {
         display: flex;
         flex: 1;
+        align-items: center;
     }
 
     &__header-title {
+        @include text-header-2;
+
         display: flex;
         margin: 0;
-        font-size: 24px;
-        line-height: 28px;
         margin-right: 8px;
     }
 
@@ -50,6 +52,7 @@ $class: 'dl-collections-navigation-layout';
         display: flex;
         margin-right: 8px;
         white-space: nowrap;
+        align-self: flex-start;
     }
 
     &__header-right-block {
@@ -70,5 +73,43 @@ $class: 'dl-collections-navigation-layout';
         display: flex;
         flex: 1;
         margin-top: 28px;
+    }
+
+    &_mobile {
+        // there may be a return button with l size in header on mobile
+        // fixed height removes header height jumps
+        $buttonLHeight: 36px;
+
+        .#{$class}__page-wrapper {
+            top: 0;
+            padding-top: 20px;
+        }
+
+        .#{$class}__page {
+            padding: 0 16px;
+            max-width: 100vw;
+        }
+
+        .#{$class}__header {
+            margin-bottom: 10px;
+            height: $buttonLHeight;
+        }
+
+        .#{$class}__header-title-wrapper {
+            max-width: 100%;
+        }
+
+        .#{$class}__header-title {
+            @include text-header-1;
+            white-space: nowrap;
+            max-width: 100%;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .#{$class}__content {
+            margin-top: 8px;
+        }
     }
 }

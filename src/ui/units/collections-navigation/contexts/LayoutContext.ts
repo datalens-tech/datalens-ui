@@ -10,6 +10,7 @@ export type Layout = {
     actionsPanelRightBlock: LayoutBlock;
     title: LayoutBlock;
     titleActionsBlock: LayoutBlock;
+    titleBeforeActionsBlock: LayoutBlock;
     titleRightBlock: LayoutBlock;
     description: LayoutBlock;
 };
