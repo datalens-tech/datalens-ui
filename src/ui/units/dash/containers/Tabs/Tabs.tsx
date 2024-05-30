@@ -60,6 +60,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                         hash: '',
                     });
                 }}
+                moreControlProps={{virtualizationThreshold: 70}}
             />
         </div>
     ) : null;
