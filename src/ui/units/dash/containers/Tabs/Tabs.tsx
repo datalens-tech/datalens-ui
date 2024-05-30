@@ -31,6 +31,8 @@ type OwnPops<T> = {
 
 type TabsProps<T> = OwnPops<T> & StateProps & DispatchProps;
 
+const TABS_VIRTUALIZATION_SELECT_LIMIT = 70;
+
 function TabsComponent<T>(props: TabsProps<T>) {
     const location = useLocation();
     const history = useHistory();
@@ -60,6 +62,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                         hash: '',
                     });
                 }}
+                moreControlProps={{virtualizationThreshold: TABS_VIRTUALIZATION_SELECT_LIMIT}}
             />
         </div>
     ) : null;
