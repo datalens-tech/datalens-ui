@@ -80,8 +80,7 @@ ChartKit.setDataProviderSettings({
     },
     noJsonFn:
         Utils.isEnabledFeature(Feature.NoJsonFn) ||
-        (Utils.getCookie(SUPERUSER_SWITCH_MODE_COOKIE_NAME) === ENABLE &&
-            Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE),
+        Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE,
 });
 
 export default ChartKit;

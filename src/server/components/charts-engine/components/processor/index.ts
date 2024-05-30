@@ -11,10 +11,8 @@ import {
     DL_CONTEXT_HEADER,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
-    ENABLE,
     EntryPublicAuthor,
     Feature,
-    SUPERUSER_SWITCH_MODE_COOKIE_NAME,
     WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
@@ -811,8 +809,7 @@ export class Processor {
 
                 const stringify =
                     isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
-                    (req.cookies[SUPERUSER_SWITCH_MODE_COOKIE_NAME] === ENABLE &&
-                        req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE)
+                    req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE
                         ? JSON.stringify
                         : JSONfn.stringify;
 
