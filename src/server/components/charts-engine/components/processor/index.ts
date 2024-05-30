@@ -795,7 +795,13 @@ export class Processor {
                 );
 
                 onTabsExecuted({
-                    result: {config: resultConfig, highchartsConfig: resultLibraryConfig},
+                    result: {
+                        config: resultConfig,
+                        highchartsConfig: resultLibraryConfig,
+                        processedData,
+                        sources: resolvedSources,
+                        sourceData: data,
+                    },
                     entryId: config.entryId || configId,
                 });
 

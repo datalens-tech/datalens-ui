@@ -1,7 +1,9 @@
 import {
     ColorPalette,
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
+    Palette,
     ServerChartsConfig,
     ServerVisualization,
     ServerVisualizationLayer,
@@ -44,8 +46,10 @@ type PrepareSingleResultArgs = {
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
     ChartEditor: IChartEditor;
     datasetsIds: string[];
+    palettes: Record<string, Palette>;
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
+    features: FeatureConfig;
 };
 
 // eslint-disable-next-line complexity
@@ -59,6 +63,8 @@ export default ({
     datasetsIds,
     loadedColorPalettes = {},
     disableDefaultSorting = false,
+    palettes,
+    features,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -288,6 +294,7 @@ export default ({
     const chartColorsConfig = getChartColorsConfig({
         loadedColorPalettes,
         colorsConfig,
+        availablePalettes: palettes,
     });
 
     const prepareFunctionArgs = {
@@ -313,6 +320,7 @@ export default ({
         segments,
 
         disableDefaultSorting,
+        features,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

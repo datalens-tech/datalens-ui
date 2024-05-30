@@ -52,8 +52,11 @@ export const CollectionsNavigationLayout = React.memo<Props>(
     ({layout, skeletonsSettings, children}) => {
         const {Footer} = registry.common.components.getAll();
 
-        const showTitleActionsBlock = layout.titleActionsBlock && !isMobileView;
+        const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
+        const showTitleRightBlock = !isMobileView && layout.titleRightBlock;
         const showDescription = !isMobileView && layout.description;
+
+        const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
 
         return (
             <div className={b({mobile: isMobileView})}>
@@ -110,7 +113,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         <div>{layout.titleBeforeActionsBlock.content}</div>
                                     )}
                                     {layout.title && (
-                                        <h1 className={b('header-title')}>
+                                        <h1 className={b('header-title')} title={title}>
                                             {layout.title.isLoading ? (
                                                 <Skeleton
                                                     style={
@@ -142,9 +145,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                 </div>
                             ) : null}
 
-                            {layout.titleRightBlock && (
+                            {showTitleRightBlock && (
                                 <div className={b('header-right-block')}>
-                                    {layout.titleRightBlock.isLoading ? (
+                                    {layout.titleRightBlock?.isLoading ? (
                                         <Skeleton
                                             style={
                                                 skeletonsSettings.titleRightBlock
@@ -153,7 +156,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                             }
                                         />
                                     ) : (
-                                        layout.titleRightBlock.content
+                                        layout.titleRightBlock?.content
                                     )}
                                 </div>
                             )}

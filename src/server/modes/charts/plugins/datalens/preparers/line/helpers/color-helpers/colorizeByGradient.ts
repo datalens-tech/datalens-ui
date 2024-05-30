@@ -1,5 +1,5 @@
 import {ExtendedSeriesLineOptions, WizardVisualizationId} from '../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../js/helpers/colors';
+import {ChartColorsConfig} from '../../../../types';
 import {mapAndColorizeGraphsByGradient} from '../../../../utils/color-helpers';
 
 import {ColorizeByGradientOptions} from './types';

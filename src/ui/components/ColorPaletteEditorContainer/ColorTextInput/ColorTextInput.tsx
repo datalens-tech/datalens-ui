@@ -4,6 +4,8 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {PaletteItem} from 'units/wizard/components/Palette/components/PaletteItem/PaletteItem';
 
+import {PaletteEditorQA} from '../../../../shared';
+
 import trashIcon from '@gravity-ui/icons/svgs/trash-bin.svg';
 
 import './ColorTextInput.scss';
@@ -33,9 +35,15 @@ const ColorTextInput = (props: ColorTextInputProps) => {
                 error={error}
                 controlProps={{size: 1}}
                 onUpdate={handleOnUpdate}
+                qa={PaletteEditorQA.ColorTextInput}
             />
             {showRemove ? (
-                <Button className={b('color-remove')} view="flat" onClick={onRemove}>
+                <Button
+                    className={b('color-remove')}
+                    view="flat"
+                    onClick={onRemove}
+                    qa={PaletteEditorQA.RemoveColorButton}
+                >
                     <Icon className={b('icon')} data={trashIcon} size={14} />
                 </Button>
             ) : null}

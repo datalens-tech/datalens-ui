@@ -8,7 +8,7 @@ import {
     isDimensionField,
     isNumberField,
 } from '../../../../../../../shared';
-import {ChartColorsConfig} from '../../js/helpers/colors';
+import {ChartColorsConfig} from '../../types';
 import {getGradientStops} from '../../utils/color-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 
