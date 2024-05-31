@@ -386,6 +386,12 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                 });
         }
 
+        if (itemData.type === ITEM_TYPE.GROUP_CONTROL) {
+            pastedItemData.group = pastedItemData.group?.map((item) => {
+                return update(item, {$unset: ['id']});
+            });
+        }
+
         const data = update(pastedItemData, {$unset: ['id']});
 
         this.props.setCopiedItemData({

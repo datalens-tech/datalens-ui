@@ -4,6 +4,8 @@ import {DL, Scope} from 'ui';
 import {
     ACCEPT_LANGUAGE_HEADER,
     DASH_INFO_HEADER,
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     ENABLE,
     Feature,
     SUPERUSER_SWITCH_MODE_COOKIE_NAME,
@@ -85,6 +87,8 @@ export const initChartKitSettings = () => {
 
             return request;
         },
-        noJsonFn: Utils.isEnabledFeature(Feature.NoJsonFn),
+        noJsonFn:
+            Utils.isEnabledFeature(Feature.NoJsonFn) ||
+            Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE,
     });
 };
