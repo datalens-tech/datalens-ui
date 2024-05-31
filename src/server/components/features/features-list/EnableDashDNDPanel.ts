@@ -8,6 +8,6 @@ export default createFeatureConfig({
     name: Feature.EnableDashDNDPanel,
     state: {
         development: true,
-        production: false,
+        production: true,
     },
 });
