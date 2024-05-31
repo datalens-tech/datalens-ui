@@ -10,13 +10,11 @@ import {
     TableHead,
     isDateField,
     isDateType,
-    isEnabledServerFeature,
     isMarkupDataType,
     isNumberField,
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import {Config} from '../../config';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
@@ -54,14 +52,14 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
+    features,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const treeSet = new Set(getTreeState(ChartEditor.getParams()));
 
-    const app = registry.getApp();
-    const pinnedColumns = isEnabledServerFeature(app.nodekit.ctx, Feature.PinnedColumns)
+    const pinnedColumns = features[Feature.PinnedColumns]
         ? shared.extraSettings?.pinnedColumns || 0
         : 0;
 
@@ -81,7 +79,7 @@ function prepareFlatTable({
         idToTitle,
         order,
         data,
-        loadedColorPalettes: colorsConfig.loadedColorPalettes,
+        chartColorsConfig: colorsConfig,
     });
 
     const columnValuesByColumn = getColumnValuesByColumnWithBarSettings({
@@ -190,15 +188,34 @@ function prepareFlatTable({
         );
     }
 
+    const iColor = colors.length
+        ? findIndexInOrder(order, colors[0], idToTitle[colors[0].guid])
+        : -1;
+
+    const preparedColumns = columns.map((item) => {
+        const actualTitle = idToTitle[item.guid] || item.title;
+        const indexInOrder = findIndexInOrder(order, item, actualTitle);
+        const itemDataType = idToDataType[item.guid] || item.data_type;
+        return {
+            ...item,
+            actualTitle,
+            indexInOrder,
+            itemDataType,
+            isMarkupDataType: isMarkupDataType(itemDataType),
+            isNumericalDataType: isNumericalDataType(itemDataType),
+            isDateType: isDateType(itemDataType),
+            isTreeDataType: isTreeDataType(itemDataType),
+            isUnsupportedDataType: isUnsupportedDataType(itemDataType),
+            isTableBarsSettingsEnabled: isTableBarsSettingsEnabled(item),
+            isTableFieldBackgroundSettingsEnabled: isTableFieldBackgroundSettingsEnabled(item),
+            canUseFieldForFiltering: isActionParamsEnable && canUseFieldForFiltering(item),
+        };
+    });
+
     const rows: TableCellsRow[] = data.map((values, rowIndex) => {
         // eslint-disable-next-line complexity
-        const cells = columns.map((item) => {
-            const actualTitle = idToTitle[item.guid] || item.title;
-
-            const indexInOrder = findIndexInOrder(order, item, actualTitle);
-            const value = values[indexInOrder];
-
-            const itemDataType = idToDataType[item.guid] || item.data_type;
+        const cells = preparedColumns.map((item) => {
+            const value = values[item.indexInOrder];
 
             const cell: TableCommonCell = {value, fieldId: item.guid};
 
@@ -206,13 +223,13 @@ function prepareFlatTable({
                 cell.value = null;
             } else if (Array.isArray(value)) {
                 cell.value = JSON.stringify(value);
-            } else if (isMarkupDataType(itemDataType)) {
+            } else if (item.isMarkupDataType) {
                 cell.value = value;
                 cell.type = 'markup';
-            } else if (isNumericalDataType(itemDataType)) {
+            } else if (item.isNumericalDataType) {
                 cell.type = 'number';
 
-                if (isTableBarsSettingsEnabled(item)) {
+                if (item.isTableBarsSettingsEnabled) {
                     const columnValues = columnValuesByColumn[item.guid];
 
                     const barCellProperties = getBarSettingsValue({
@@ -229,13 +246,13 @@ function prepareFlatTable({
                 } else {
                     cell.value = Number(value);
                 }
-            } else if (isDateType(itemDataType)) {
+            } else if (item.isDateType) {
                 const date = new Date(value);
 
                 cell.value = getTimezoneOffsettedTime(date);
-            } else if (isTreeDataType(itemDataType)) {
+            } else if (item.isTreeDataType) {
                 if (legend?.length) {
-                    const currentLegend = legend[rowIndex][indexInOrder];
+                    const currentLegend = legend[rowIndex][item.indexInOrder];
 
                     const fieldData = fields.find(
                         (field) => field.legend_item_id === currentLegend,
@@ -249,20 +266,16 @@ function prepareFlatTable({
                         cell.value = parsedTreeNode[parsedTreeNode.length - 1];
                     }
                 }
-            } else if (isUnsupportedDataType(itemDataType)) {
+            } else if (item.isUnsupportedDataType) {
                 ChartEditor._setError({
                     code: 'ERR.CHARTS.UNSUPPORTED_DATA_TYPE',
                     details: {
-                        field: actualTitle,
+                        field: item.actualTitle,
                     },
                 });
             }
 
-            if (
-                drillDownData &&
-                !isMarkupDataType(itemDataType) &&
-                currentActiveDrillDownFieldIndex >= 0
-            ) {
+            if (drillDownData && !item.isMarkupDataType && currentActiveDrillDownFieldIndex >= 0) {
                 if (values[currentActiveDrillDownFieldIndex] === null) {
                     cell.drillDownFilterValue = IS_NULL_FILTER_TEMPLATE;
                 } else if (typeof values[currentActiveDrillDownFieldIndex] !== 'object') {
@@ -271,13 +284,11 @@ function prepareFlatTable({
             }
 
             if (colors.length) {
-                const actualColorTitle = idToTitle[colors[0].guid];
-                const iColor = findIndexInOrder(order, colors[0], actualColorTitle);
                 const valueColor = values[iColor];
                 cell.color = Number(valueColor);
             }
 
-            if (isTableFieldBackgroundSettingsEnabled(item)) {
+            if (item.isTableFieldBackgroundSettingsEnabled) {
                 cell.css = getFlatTableBackgroundStyles({
                     column: item,
                     order,
@@ -287,12 +298,13 @@ function prepareFlatTable({
                     currentRowIndex: rowIndex,
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                    availablePalettes: colorsConfig.availablePalettes,
                 });
             }
 
             if (isActionParamsEnable) {
-                if (canUseFieldForFiltering(item)) {
-                    if (isDateField(item)) {
+                if (item.canUseFieldForFiltering) {
+                    if (item.isDateType) {
                         const actionParams = {};
                         addActionParamValue(actionParams, item, value);
 

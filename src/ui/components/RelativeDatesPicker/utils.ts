@@ -1,6 +1,7 @@
+import {dateTimeUtc} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
 import type {SelectOption} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {DateTime} from 'luxon';
 import {getParsedIntervalDates, getParsedRelativeDate, resolveRelativeDate} from 'shared';
 import type {FilterValue, IntervalPart} from 'shared';
 import {SCALES} from 'shared/constants/datepicker/relative-datepicker';
@@ -91,14 +92,14 @@ const resolvePresetToDates = ({
             dates[index] = {} as ResolvedPreset;
         }
 
-        const now = DateTime.utc();
-        const pivot = excludeCurrentDay ? now.plus({days: -1}) : now;
+        const now = dateTimeUtc();
+        const pivot = excludeCurrentDay ? now.add(-1, 'day') : now;
         const days = Number(controlType === CONTROLS.START ? start : end);
 
         dates[index].absolute =
             controlType === CONTROLS.START
-                ? pivot.plus({days}).startOf('day')
-                : pivot.plus({days}).endOf('day');
+                ? pivot.add(days, 'day').startOf('day')
+                : pivot.add(days, 'day').endOf('day');
 
         dates[index].relative =
             controlType === CONTROLS.START
@@ -123,8 +124,8 @@ export const getResolvedDatesData = ({
         {absolute: absoluteEndDate, relative: relativeEndDate},
     ] = resolvePresetToDates({preset, controls, includeCurrentDay});
 
-    const absoluteStart = absoluteStartDate.toString();
-    const absoluteEnd = absoluteEndDate.toString();
+    const absoluteStart = absoluteStartDate.toISOString();
+    const absoluteEnd = absoluteEndDate.toISOString();
     const [signStart, amountStart, scaleStart] = getParsedRelativeDate(relativeStartDate)!;
     const [signEnd, amountEnd, scaleEnd] = getParsedRelativeDate(relativeEndDate)!;
 
@@ -155,13 +156,13 @@ export const isDateTimeInvalid = ({
     min: DateTime;
     max: DateTime;
 }) => {
-    return Boolean(!dateTime.isValid || dateTime < min || dateTime > max);
+    return Boolean(!dateTime.isValid() || dateTime < min || dateTime > max);
 };
 
 export const createISODateTimeFromRelative = (value: FilterValue, rangePart: IntervalPart) => {
     const ISOString = resolveRelativeDate(value, rangePart) || '';
 
-    return DateTime.fromISO(ISOString, {zone: 'utc'});
+    return dateTimeUtc({input: ISOString});
 };
 
 export const getQaAttribute = (qa: {start: string; end: string}, controlType: string) => {

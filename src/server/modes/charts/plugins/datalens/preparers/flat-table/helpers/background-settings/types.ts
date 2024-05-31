@@ -1,6 +1,7 @@
-import {ColorPalette, ServerField} from '../../../../../../../../../shared';
-import {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
+import type {ColorPalette, Palette, ServerField} from '../../../../../../../../../shared';
+import type {TableFieldBackgroundSettings} from '../../../../../../../../../shared/types/wizard/background-settings';
+import type {ChartColorsConfig} from '../../../../types';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
 export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     column: ServerField;
@@ -11,6 +12,7 @@ export interface GetFlatTableCellBackgroundSettingsStylesArgs {
     currentRowIndex: number;
     backgroundColorsByMeasure: Record<string, (null | number)[]>;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 }
 
 export interface GetContinuousBackgroundColorStyle {
@@ -27,6 +29,7 @@ export interface GetDiscreteBackgroundColorStyle {
     values: PrepareFunctionDataRow;
     backgroundSettings: TableFieldBackgroundSettings;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 }
 
 export interface GetBackgroundColorsMapByContinuousColumn {
@@ -34,5 +37,5 @@ export interface GetBackgroundColorsMapByContinuousColumn {
     order: ResultDataOrder;
     data: PrepareFunctionDataRow[];
     idToTitle: Record<string, string>;
-    loadedColorPalettes: Record<string, ColorPalette>;
+    chartColorsConfig: ChartColorsConfig;
 }

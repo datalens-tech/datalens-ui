@@ -110,7 +110,7 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
 
             handleColorUpdate(updateParams);
         },
-        [handleColorUpdate, state.colorSettings.colorType],
+        [handleColorUpdate, state.colorSettings.colorType, colorPalettes],
     );
 
     return (

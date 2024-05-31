@@ -2,8 +2,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared/constants/qa';
+import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
@@ -19,6 +20,7 @@ const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const GroupControl = () => {
+    const {id, draftId} = useSelector(selectSelectorDialog);
     const dispatch = useDispatch();
 
     const handleClose = () => {
@@ -37,7 +39,8 @@ export const GroupControl = () => {
             sidebarHeader={i18n('label_selectors-list')}
             sidebar={<GroupControlSidebar />}
             bodyHeader={i18n('label_selector-settings')}
-            body={<GroupControlBody />}
+            // key for rerendering form on tab change
+            body={<GroupControlBody key={draftId || id} />}
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
             contentClassMixin={b('content')}
             bodyClassMixin={b('body')}

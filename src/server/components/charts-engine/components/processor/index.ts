@@ -6,6 +6,8 @@ import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 
 import {ChartsEngine} from '../..';
 import {
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_CONTEXT_HEADER,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
@@ -795,13 +797,21 @@ export class Processor {
                 );
 
                 onTabsExecuted({
-                    result: {config: resultConfig, highchartsConfig: resultLibraryConfig},
+                    result: {
+                        config: resultConfig,
+                        highchartsConfig: resultLibraryConfig,
+                        processedData,
+                        sources: resolvedSources,
+                        sourceData: data,
+                    },
                     entryId: config.entryId || configId,
                 });
 
-                const stringify = isEnabledServerFeature(ctx, Feature.NoJsonFn)
-                    ? JSON.stringify
-                    : JSONfn.stringify;
+                const stringify =
+                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE
+                        ? JSON.stringify
+                        : JSONfn.stringify;
 
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;

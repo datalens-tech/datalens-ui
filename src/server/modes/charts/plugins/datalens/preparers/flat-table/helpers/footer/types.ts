@@ -1,5 +1,5 @@
 import {ServerField} from '../../../../../../../../../shared';
-import type {ChartColorsConfig} from '../../../../js/helpers/colors';
+import {ChartColorsConfig} from '../../../../types';
 import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
 export type PrepareFooterValueArgs = {

@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {PencilToLine} from '@gravity-ui/icons';
+import {ArrowLeft, PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -20,6 +21,7 @@ import {
 import {
     DIALOG_ADD_DEMO_WORKBOOK,
     DIALOG_CREATE_COLLECTION,
+    DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
 } from '../../../../../components/CollectionsStructure';
@@ -112,6 +114,18 @@ export const useLayout = ({
             (breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.collectionId === curCollectionId),
     );
 
+    const goToParentCollection = React.useCallback(() => {
+        if (!collection) {
+            return;
+        }
+
+        if (collection.parentId) {
+            history.push(`${COLLECTIONS_PATH}/${collection.parentId}`);
+        } else {
+            history.push(COLLECTIONS_PATH);
+        }
+    }, [history, collection]);
+
     React.useEffect(() => {
         let preparedBreadcrumbs = breadcrumbs ?? [];
         if (breadcrumbsError && collection) {
@@ -174,6 +188,24 @@ export const useLayout = ({
                 actionsPanelRightBlock: {
                     content: (
                         <CollectionActions
+                            onDeleteClick={() => {
+                                if (curCollectionId && collection) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_DELETE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                collectionId: curCollectionId,
+                                                collectionTitle: collection.title,
+                                                onSuccessApply: goToParentCollection,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                }
+                            }}
                             onCreateCollectionClick={() => {
                                 dispatch(
                                     openDialog({
@@ -320,6 +352,7 @@ export const useLayout = ({
                     content: i18n('label_root-title'),
                 },
                 description: null,
+                titleBeforeActionsBlock: null,
             });
         } else if (isCorrectCollection && collection) {
             setLayout({
@@ -331,6 +364,18 @@ export const useLayout = ({
                           content: collection.description,
                       }
                     : null,
+                titleBeforeActionsBlock: {
+                    content: isMobileView ? (
+                        <Button
+                            view="flat"
+                            size="l"
+                            onClick={goToParentCollection}
+                            className={b('return-button')}
+                        >
+                            <Icon data={ArrowLeft} size={16} />
+                        </Button>
+                    ) : null,
+                },
             });
         } else {
             setLayout({
@@ -339,7 +384,14 @@ export const useLayout = ({
                 },
             });
         }
-    }, [curCollectionId, collection, setLayout, isRootCollection, isCorrectCollection]);
+    }, [
+        curCollectionId,
+        collection,
+        setLayout,
+        isRootCollection,
+        isCorrectCollection,
+        goToParentCollection,
+    ]);
 
     React.useEffect(() => {
         if (isRootCollection) {

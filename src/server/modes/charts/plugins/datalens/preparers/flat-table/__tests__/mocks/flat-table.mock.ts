@@ -27,9 +27,18 @@ const chartEditorMock = {
     getWidgetConfig: () => undefined,
 };
 
-export const flatTableFormattingIntPrecisionArgs = {
+const baseArgs = {
+    features: {},
     colors: [],
     colorsConfig: {},
+    ChartEditor: chartEditorMock,
+    shared: {
+        sharedData: {},
+    },
+};
+
+export const flatTableFormattingIntPrecisionArgs = {
+    ...baseArgs,
     idToDataType: {'fdddd3b0-5639-11eb-9c8e-41e84ec800f0': 'integer'},
     idToTitle: {'fdddd3b0-5639-11eb-9c8e-41e84ec800f0': 'Sales'},
     placeholders: [
@@ -56,15 +65,10 @@ export const flatTableFormattingIntPrecisionArgs = {
         order: [{title: 'Sales'}],
         totals: [],
     },
-    shared: {
-        sharedData: {},
-    },
-    ChartEditor: chartEditorMock,
 };
 
 export const flatTableFormattingFloatPrecisionArgs = {
-    colors: [],
-    colorsConfig: {},
+    ...baseArgs,
     idToDataType: {'fdddd3b0-5639-11eb-9c8e-41e84ec800f0': 'float'},
     idToTitle: {'fdddd3b0-5639-11eb-9c8e-41e84ec800f0': 'Sales'},
     placeholders: [
@@ -91,13 +95,10 @@ export const flatTableFormattingFloatPrecisionArgs = {
         order: [{title: 'Sales'}],
         totals: [],
     },
-    shared: {
-        sharedData: {},
-    },
-    ChartEditor: chartEditorMock,
 };
 
 export const flatTablePrepareWithTotalsArgs = {
+    ...baseArgs,
     placeholders: [
         {
             items: [
@@ -146,8 +147,6 @@ export const flatTablePrepareWithTotalsArgs = {
             ],
         },
     ],
-    colors: [],
-    colorsConfig: {},
     datasets: ['eqw2uiu7yoe86'],
     resultData: {
         data: [
@@ -247,13 +246,10 @@ export const flatTablePrepareWithTotalsArgs = {
         '61c43c90-cd24-11ec-9505-b3c24ed01959': 'integer',
         'cd7888d0-cd27-11ec-b241-fd02653f897f': 'float',
     },
-    shared: {
-        sharedData: {},
-    },
-    ChartEditor: chartEditorMock,
 };
 
 export const flatTablePrepareForQLArgs = {
+    ...baseArgs,
     placeholders: [
         {
             allowedTypes: {},
@@ -292,7 +288,6 @@ export const flatTablePrepareForQLArgs = {
         },
     ],
     fields: [],
-    colors: [],
     colorsConfig: {
         colors: [
             '#4DA2F1',
@@ -350,10 +345,6 @@ export const flatTablePrepareForQLArgs = {
     shapesConfig: {},
     segments: [],
     disableDefaultSorting: false,
-    shared: {
-        sharedData: {},
-    },
-    ChartEditor: chartEditorMock,
 };
 
 export const flatTablePrepareForQLResult = {

@@ -1,8 +1,8 @@
 import {expect} from '@playwright/test';
 import isArray from 'lodash/isArray';
 
-import WizardPage from '../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../page-objects/wizard/SectionVisualization';
+import WizardPage from '../../page-objects/wizard/WizardPage';
 import {slct} from '../../utils';
 
 /* Check that the field can be dragged to the placeholder */

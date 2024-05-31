@@ -32,7 +32,6 @@ export enum Feature {
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
-    ShowDashWidgetBg = 'ShowDashWidgetBg',
     GSheetsV2Enabled = 'GSheetsV2Enabled',
     ShowInspectorDetails = 'ShowInspectorDetails',
     NoJsonFn = 'NoJsonFn',
@@ -73,9 +72,6 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     CustomAccessDescription = 'CustomAccessDescription',
-    /** An additional field in the settings of the dashboard selectors and in the fields of the d Wizard dataset for table columns.
-     * When specify the text, an icon with a hint is added. */
-    FieldHint = 'FieldHint',
     EnableFooter = 'EnableFooter',
     EnableDashDNDPanel = 'EnableDashDNDPanel',
 }

@@ -1,5 +1,4 @@
-import {Feature, isEnabledServerFeature, isMarkupItem} from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
+import {isMarkupItem} from '../../../../../../../shared';
 import {findIndexInOrder} from '../../utils/misc-helpers';
 import {PrepareFunctionArgs} from '../types';
 
@@ -23,12 +22,9 @@ function prepareMetric({placeholders, resultData, shared, idToTitle}: PrepareFun
         return {};
     }
 
-    const app = registry.getApp();
+    const useMarkup = isMarkupItem(value);
 
-    const useMarkupMetric =
-        isMarkupItem(value) && isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
-
-    if (useMarkupMetric) {
+    if (useMarkup) {
         return prepareMarkupMetricVariant({measure, value, extraSettings: shared.extraSettings});
     } else {
         return prepareBasicMetricVariant({measure, value, extraSettings: shared.extraSettings});

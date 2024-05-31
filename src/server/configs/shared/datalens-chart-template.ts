@@ -1,13 +1,10 @@
 import {
     ExtendedChartsConfig,
-    Feature,
     WizardVisualizationId,
     getDatasetLinks,
     isD3Visualization,
-    isEnabledServerFeature,
     mapChartsConfigToLatestVersion,
 } from '../../../shared';
-import {registry} from '../../registry';
 
 export default {
     module: 'libs/datalens/v3',
@@ -43,15 +40,12 @@ export default {
                 return 'ymap_wizard_node';
             }
             case WizardVisualizationId.Metric: {
-                const app = registry.getApp();
                 const {placeholders} = chart.visualization;
                 // @ts-ignore will be removed after migration to v5
                 const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
-                const useMarkupMetric =
-                    dataType === 'markup' &&
-                    isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+                const useMarkup = dataType === 'markup';
 
-                if (useMarkupMetric) {
+                if (useMarkup) {
                     return 'markup_wizard_node';
                 } else {
                     return 'metric_wizard_node';

@@ -1,4 +1,5 @@
 @import '~@gravity-ui/uikit/styles/mixins';
+@import '../../styles/mixins';
 
 // support yfm dark theme
 
@@ -7,7 +8,7 @@
     --yfm-font-family-monospace: var(--g-font-family-monospace);
 
     font-family: var(--g-font-family-sans);
-    @include text-body-1();
+    @include yfm-text-style();
 
     // override common styles to make it look better with header widgets
     h1,
@@ -19,6 +20,8 @@
         font-weight: 500;
     }
 
+    .g-root .editor-page div.yfm p img,
+    .g-root .app div.yfm p img,
     img {
         background: transparent;
     }

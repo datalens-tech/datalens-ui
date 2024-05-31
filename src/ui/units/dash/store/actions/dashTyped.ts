@@ -421,6 +421,8 @@ export type SelectorDialogState = {
     namespace?: string;
     showHint?: boolean;
     hint?: string;
+    // unique id for manipulating selectors in the creation phase
+    draftId?: string;
 };
 
 export type AcceptableValue = {
