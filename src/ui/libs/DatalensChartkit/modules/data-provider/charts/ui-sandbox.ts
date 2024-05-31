@@ -1,3 +1,4 @@
+import pick from 'lodash/pick';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
@@ -43,6 +44,45 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     logHandle.dispose();
 };
 
+function clearVmProp(prop: unknown) {
+    const forbiddenAttrs = ['chart', 'this', 'renderer', 'container', 'label'];
+    if (prop && typeof prop === 'object') {
+        if ('angular' in prop) {
+            // Remove huge unexpected argument from HC
+            return undefined;
+        }
+
+        const item: Record<string, unknown> = {...(prop as object)};
+        forbiddenAttrs.forEach((attr) => {
+            if (attr in item) {
+                delete item[attr];
+            }
+        });
+
+        if ('series' in item) {
+            const allowedSeriesProps = ['color', 'name', 'userOptions', 'xData'];
+            item.series = pick(item.series, ...allowedSeriesProps);
+        }
+
+        if ('point' in item) {
+            item.point = clearVmProp(item.point);
+        }
+
+        if ('points' in item && Array.isArray(item.points)) {
+            const points = item.points as unknown[];
+            item.points = points.map(clearVmProp);
+        }
+
+        return item;
+    }
+
+    if (prop && typeof prop === 'function') {
+        return prop.toString();
+    }
+
+    return prop;
+}
+
 const defineVmArguments = (vm: QuickJSContext, args: unknown[], userArgs?: unknown) => {
     let preparedUserArgs: unknown[] = [];
 
@@ -50,33 +90,52 @@ const defineVmArguments = (vm: QuickJSContext, args: unknown[], userArgs?: unkno
         preparedUserArgs = Array.isArray(userArgs) ? userArgs : [userArgs];
     }
 
-    const preparedArgs = [...args, ...preparedUserArgs].map((a) => {
-        if (a && typeof a === 'object' && 'angular' in a) {
-            // Remove huge unexpected argument from HC
-            return undefined;
-        }
+    const preparedArgs = [...args, ...preparedUserArgs].map((a) => clearVmProp(a));
 
-        if (a && typeof a === 'object' && 'this' in a) {
-            // Remove this legacy circular structure:
-            // https://github.com/gravity-ui/chartkit/blob/main/src/plugins/highcharts/renderer/helpers/config/config.js#L589
-            // eslint-disable-next-line no-param-reassign
-            delete a.this;
-        }
+    let stringifiedArgs = '[]';
+    try {
+        stringifiedArgs = JSON.stringify(preparedArgs);
+    } catch (e) {
+        console.error(e, {args: preparedArgs});
+    }
 
-        return a;
-    });
-    const stringifiedArgs = JSON.stringify(preparedArgs);
     const vmArgs = vm.newString(stringifiedArgs);
     vm.setProp(vm.global, 'args', vmArgs);
     vmArgs.dispose();
 };
 
+const defineVmContext = (vm: QuickJSContext, context: unknown) => {
+    let stringifiedContext = '';
+    const preparedContext = clearVmProp(context);
+    try {
+        stringifiedContext = JSON.stringify(preparedContext);
+    } catch (e) {
+        console.error(e, {context: preparedContext});
+    }
+
+    const vmFunctionContext = vm.newString(stringifiedContext);
+    vm.setProp(vm.global, 'context', vmFunctionContext);
+    vmFunctionContext.dispose();
+};
+
 const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
-    return function (...args: unknown[]) {
+    return function (this: unknown, ...args: unknown[]) {
         const vm = sandbox.newContext();
         defineVmArguments(vm, args, wrappedFn.args);
+        defineVmContext(vm, this);
         defineVmGlobalAPI(vm);
-        const result = vm.evalCode(`(${wrappedFn.fn})(...(args.length ? JSON.parse(args) : []))`);
+        const result = vm.evalCode(
+            `(${wrappedFn.fn}).call(JSON.parse(context), ...(args.length
+                ? JSON.parse(args).map((arg) => {
+                    if(typeof arg === "string" && arg.startsWith('function')) {
+                        let fn;
+                        eval('fn = ' + arg);
+                        return fn;
+                    }
+                    return arg;
+                })
+                : []))`,
+        );
         let value: unknown | undefined;
 
         if (result.error) {
