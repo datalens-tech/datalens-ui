@@ -44,15 +44,15 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     logHandle.dispose();
 };
 
-function clearVmProp(a: unknown) {
+function clearVmProp(prop: unknown) {
     const forbiddenAttrs = ['chart', 'this', 'renderer', 'container', 'label'];
-    if (a && typeof a === 'object') {
-        if ('angular' in a) {
+    if (prop && typeof prop === 'object') {
+        if ('angular' in prop) {
             // Remove huge unexpected argument from HC
             return undefined;
         }
 
-        const item = {...a};
+        const item: Record<string, unknown> = {...(prop as object)};
         forbiddenAttrs.forEach((attr) => {
             if (attr in item) {
                 delete item[attr];
@@ -68,19 +68,19 @@ function clearVmProp(a: unknown) {
             item.point = clearVmProp(item.point);
         }
 
-        if ('points' in item) {
-            const points = item.points;
+        if ('points' in item && Array.isArray(item.points)) {
+            const points = item.points as unknown[];
             item.points = points.map(clearVmProp);
         }
 
         return item;
     }
 
-    if (a && typeof a === 'function') {
-        return a.toString();
+    if (prop && typeof prop === 'function') {
+        return prop.toString();
     }
 
-    return a;
+    return prop;
 }
 
 const defineVmArguments = (vm: QuickJSContext, args: unknown[], userArgs?: unknown) => {
@@ -119,7 +119,7 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
 };
 
 const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
-    return function (...args: unknown[]) {
+    return function (this: unknown, ...args: unknown[]) {
         const vm = sandbox.newContext();
         defineVmArguments(vm, args, wrappedFn.args);
         defineVmContext(vm, this);
