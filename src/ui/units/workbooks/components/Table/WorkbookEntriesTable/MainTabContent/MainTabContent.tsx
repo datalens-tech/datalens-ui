@@ -88,11 +88,13 @@ const MainTabContent = ({
     };
 
     const getActionBtn = () => {
+        const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : undefined;
+
         if (isErrorMessage) {
             return (
                 <Button
                     onClick={retryLoadEntries}
-                    size={MOBILE_SIZE.BUTTON}
+                    size={buttonSize}
                     className={b('retry-btn')}
                     view="outlined"
                 >
@@ -105,7 +107,7 @@ const MainTabContent = ({
             return (
                 <Button
                     onClick={loadMoreEntries}
-                    size={MOBILE_SIZE.BUTTON}
+                    size={buttonSize}
                     className={b('show-more-btn')}
                     view="outlined"
                 >

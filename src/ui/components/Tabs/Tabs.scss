@@ -6,6 +6,8 @@
 $adaptiveTabsClass: '.gc-adaptive-tabs';
 
 .dl-tabs {
+    $class: &;
+
     &_size_l {
         @include text-body-2();
     }
@@ -49,10 +51,15 @@ $adaptiveTabsClass: '.gc-adaptive-tabs';
     }
 
     &_opacity {
-        #{$adaptiveTabsClass}__tab:not(#{$adaptiveTabsClass}__tab_active) {
+        #{$class}__tab:not(#{$class}__tab_active) {
             opacity: 0.7;
+        }
+    }
 
-            &:hover {
+    &_opacity:not(#{$class}_mobile) {
+        #{$class}__tab:not(#{$class}__tab_active) {
+            &:hover,
+            &:focus {
                 opacity: 1;
             }
         }

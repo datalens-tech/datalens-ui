@@ -41,7 +41,7 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
             : defaultBreakPointsConfig;
 
         return (
-            <div className={b({size, opacity: !disableOpacity})}>
+            <div className={b({size, opacity: !disableOpacity, mobile: isMobileView})}>
                 <Component
                     {...restProps}
                     breakpointsConfig={breakpointsConfig}
@@ -60,7 +60,7 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                                 {node}
                             </Link>
                         ) : (
-                            <React.Fragment>{node}</React.Fragment>
+                            <div className={b('tab', {active: isActive})}>{node}</div>
                         );
                     }}
                 />
