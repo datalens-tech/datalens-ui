@@ -7,6 +7,7 @@ import {Feature, isEnabledServerFeature} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {isConfigWithFunction} from '../../components/charts-engine/components/utils';
+import {getDefaultRunners} from '../../components/charts-engine/runners';
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {startMonitoring} from '../../components/monitoring';
 import {checkValidation} from '../../lib/validation';
@@ -178,6 +179,7 @@ export function initChartsEngine({
         nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
+        runners: getDefaultRunners(ctx),
     });
 }
 

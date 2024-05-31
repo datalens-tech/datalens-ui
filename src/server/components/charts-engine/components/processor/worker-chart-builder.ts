@@ -30,21 +30,21 @@ const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type WizardChartBuilderArgs = {
-    userLang: string;
+    userLogin: string | null;
+    userLang: string | null;
     config: {
         data: {
             shared: string;
         };
     };
-    params: StringParams;
-    actionParams: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
+    isScreenshoter: boolean;
 };
 
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {config, params, actionParams, widgetConfig, userLang} = args;
+    const {config, widgetConfig, userLang} = args;
     let shared: Record<string, any>;
 
     const app = registry.getApp();
@@ -53,26 +53,28 @@ export const getWizardChartBuilder = async (
     const palettes = getAvailablePalettesMap();
 
     // Nothing happens here - just for compatibility with the editor
-    const emptyStep = (name: string) => async () => {
-        const timeStart = process.hrtime();
-        const context = getChartApiContext({
-            name,
-            shared,
-            params,
-            actionParams,
-            widgetConfig,
-            userLang,
-        });
+    const emptyStep =
+        (name: string) => async (options: {params: StringParams; actionParams: StringParams}) => {
+            const {params, actionParams} = options;
+            const timeStart = process.hrtime();
+            const context = getChartApiContext({
+                name,
+                shared,
+                params,
+                actionParams,
+                widgetConfig,
+                userLang,
+            });
 
-        return {
-            exports: {},
-            executionTiming: process.hrtime(timeStart),
-            name,
-            runtimeMetadata: context.__runtimeMetadata,
+            return {
+                exports: {},
+                executionTiming: process.hrtime(timeStart),
+                name,
+                runtimeMetadata: context.__runtimeMetadata,
+            };
         };
-    };
 
-    return {
+    const chartBuilder: ChartBuilder = {
         buildShared: async () => {
             if (typeof config.data.shared === 'string') {
                 shared = JSON.parse(config.data.shared);
@@ -85,7 +87,8 @@ export const getWizardChartBuilder = async (
         },
         buildParams: emptyStep('Params'),
 
-        buildUrls: async () => {
+        buildUrls: async (options) => {
+            const {params, actionParams} = options;
             const timeStart = process.hrtime();
             const worker = await getWorker({timeout: ONE_SECOND});
             const {exports, runtimeMetadata} = await worker.buildSources({
@@ -104,7 +107,8 @@ export const getWizardChartBuilder = async (
             };
         },
 
-        buildChartLibraryConfig: async () => {
+        buildChartLibraryConfig: async (options) => {
+            const {params, actionParams} = options;
             const timeStart = process.hrtime();
             const worker = await getWorker({timeout: ONE_SECOND});
             const {exports, runtimeMetadata} = await worker.buildLibraryConfig({
@@ -123,7 +127,8 @@ export const getWizardChartBuilder = async (
             };
         },
 
-        buildChartConfig: async () => {
+        buildChartConfig: async (options) => {
+            const {params, actionParams} = options;
             const timeStart = process.hrtime();
             const worker = await getWorker({timeout: ONE_SECOND});
             const {exports, runtimeMetadata} = await worker.buildChartConfig({
@@ -143,7 +148,8 @@ export const getWizardChartBuilder = async (
             };
         },
 
-        buildChart: async (data: unknown) => {
+        buildChart: async (options) => {
+            const {data, params, actionParams} = options;
             const timeStart = process.hrtime();
             const worker = await getWorker({timeout: JS_EXECUTION_TIMEOUT});
             const {exports, runtimeMetadata} = await worker.buildChart({
@@ -167,4 +173,6 @@ export const getWizardChartBuilder = async (
 
         buildUI: emptyStep('UI'),
     };
+
+    return chartBuilder;
 };
