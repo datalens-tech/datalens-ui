@@ -42,10 +42,24 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     vm.setProp(consoleHandle, 'log', logHandle);
     consoleHandle.dispose();
     logHandle.dispose();
+
+    const highchartsHandle = vm.newObject();
+    const dateFormatHandle = vm.newFunction('dateFormat', (...args) => {
+        const nativeArgs = args.map(vm.dump);
+        // @ts-ignore
+        const formattedDate = Highcharts.dateFormat(...nativeArgs);
+        return vm.newString(formattedDate);
+    });
+    vm.setProp(vm.global, 'Highcharts', highchartsHandle);
+    vm.setProp(highchartsHandle, 'dateFormat', dateFormatHandle);
+    highchartsHandle.dispose();
+    dateFormatHandle.dispose();
 };
 
+const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'];
+const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
+
 function clearVmProp(prop: unknown) {
-    const forbiddenAttrs = ['chart', 'this', 'renderer', 'container', 'label'];
     if (prop && typeof prop === 'object') {
         if ('angular' in prop) {
             // Remove huge unexpected argument from HC
@@ -53,15 +67,14 @@ function clearVmProp(prop: unknown) {
         }
 
         const item: Record<string, unknown> = {...(prop as object)};
-        forbiddenAttrs.forEach((attr) => {
+        HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
                 delete item[attr];
             }
         });
 
         if ('series' in item) {
-            const allowedSeriesProps = ['color', 'name', 'userOptions', 'xData'];
-            item.series = pick(item.series, ...allowedSeriesProps);
+            item.series = pick(item.series, ...ALLOWED_SERIES_ATTRS);
         }
 
         if ('point' in item) {
