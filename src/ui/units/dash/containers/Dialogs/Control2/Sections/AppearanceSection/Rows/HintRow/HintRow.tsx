@@ -44,14 +44,14 @@ export const HintRow = () => {
                     disabled={isFieldDisabled}
                     onUpdate={handleUpdateEnable}
                     checked={showHint}
-                    size={'l'}
+                    size="l"
                     className={b('operation-checkbox', {top: true})}
                 />
                 {showHint && (
                     <MarkdownControl
                         value={hintValue}
                         onChange={handleUpdateText}
-                        disabled={isFieldDisabled || !showHint}
+                        disabled={isFieldDisabled}
                     />
                 )}
             </div>
