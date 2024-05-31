@@ -18,10 +18,8 @@ type AuthArgsData = {
 };
 
 export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
-    const user = req.user;
-
     return {
-        userAccessToken: user?.accessToken,
+        userAccessToken: req.user?.accessToken,
         serviceUserAccessToken: req.serviceUserAccessToken,
     };
 };

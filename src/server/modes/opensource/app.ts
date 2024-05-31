@@ -160,9 +160,9 @@ function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
 
     beforeAuth.push(
         cookieSession({
+            name: 'zitadelCookie',
             secret: zitadelCookieSecret,
-            signed: true,
-            httpOnly: true,
+            path: '/',
             maxAge: 24 * 60 * 60 * 1000 * 365, // 1 year
         }),
     );

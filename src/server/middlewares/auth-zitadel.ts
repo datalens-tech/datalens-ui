@@ -14,14 +14,17 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     const isAuthenticated = req.isAuthenticated();
 
     if (isAuthenticated) {
-        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx);
+        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.login);
 
-        const accessTokenIntrospected = await introspect(ctx, req.user?.accessToken);
+        const accessToken = req.user.accessToken;
+        const refreshToken = req.user.refreshToken;
+
+        const accessTokenIntrospected = await introspect(ctx, accessToken);
 
         if (accessTokenIntrospected) {
             return next();
         } else {
-            const tokens = await refreshTokens(ctx, req.user?.refreshToken);
+            const tokens = await refreshTokens(ctx, refreshToken);
 
             if (tokens.accessToken && tokens.refreshToken) {
                 req.user.accessToken = tokens.accessToken;
@@ -30,8 +33,10 @@ export default async function (req: Request, res: Response, next: NextFunction) 
                 await saveUserToSesson(req);
 
                 return next();
-            } else {
+            } else if (req.routeInfo?.ui) {
                 return logout(req, res);
+            } else {
+                return res.status(401).send('Unauthorized access');
             }
         }
     }

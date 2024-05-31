@@ -2,7 +2,6 @@ import {Request} from '@gravity-ui/expresskit';
 import {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import NodeCache from 'node-cache';
-import {Issuer, TokenSet} from 'openid-client';
 
 import {
     clientId,
@@ -73,23 +72,30 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     if (!clientSecret) {
         throw new Error('Missing CLIENT_SECRET in env');
     }
-
-    const issuer = await Issuer.discover(zitadelUri);
-
-    const client = new issuer.Client({
-        client_id: clientId,
-        client_secret: clientSecret,
-    });
+    if (!refreshToken) {
+        throw new Error('Token not provided');
+    }
 
     try {
-        if (!refreshToken) {
-            throw new Error('Token not provided');
-        }
+        const axiosInstance = axios.create();
 
-        const tokens: TokenSet = await client.refresh(refreshToken);
+        const response = await axiosInstance({
+            method: 'post',
+            url: `${zitadelUri}/oauth/v2/token`,
+            auth: {
+                username: clientId,
+                password: clientSecret,
+            },
+            params: {
+                refresh_token: refreshToken,
+                grant_type: 'refresh_token',
+                scope: 'openid profile',
+            },
+        });
 
         ctx.log('Tokens refreshed successfully');
-        return {accessToken: tokens.access_token, refreshToken: tokens.refresh_token};
+
+        return {accessToken: response.data.access_token, refreshToken: response.data.refresh_token};
     } catch (e) {
         ctx.logError('Failed to refresh tokens', e);
         return {accessToken: undefined, refreshToken: undefined};
@@ -139,8 +145,9 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
 
 export const generateServiceAccessUserToken = async (
     ctx: AppContext,
+    login: string,
 ): Promise<string | undefined> => {
-    let token: string | undefined = cache.get('token');
+    let token: string | undefined = cache.get(login);
 
     if (token) {
         ctx.log('Service user access token retrieved from cache');
@@ -151,7 +158,7 @@ export const generateServiceAccessUserToken = async (
             const safeTtl = Math.floor(0.9 * expires_in);
             ctx.log('Service user access token created, saving to cache');
 
-            cache.set('token', access_token, safeTtl);
+            cache.set(login, access_token, safeTtl);
             token = access_token;
         }
     }
@@ -163,6 +170,8 @@ export const saveUserToSesson = async (req: Request): Promise<void> => {
     return new Promise((resolve, reject) => {
         const ctx = req.ctx;
         const user = req.user as Express.User;
+
+        ctx.log('save user', {user});
 
         req.logIn(user, (err: unknown) => {
             if (err) {
