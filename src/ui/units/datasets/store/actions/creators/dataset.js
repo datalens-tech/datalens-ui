@@ -18,6 +18,7 @@ import {
     closePreview,
     disableSaveDataset,
     fetchPreviewDataset,
+    queuePreviewToOpen,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
@@ -232,18 +233,19 @@ export function initialFetchDataset({datasetId}) {
             } = getState();
 
             if (previewEnabled) {
-                if (!loadPreviewByDefault) {
+                if (loadPreviewByDefault) {
+                    dispatch(
+                        fetchPreviewDataset({
+                            datasetId,
+                            workbookId,
+                            resultSchema,
+                            limit: amountPreviewRows,
+                        }),
+                    );
+                } else {
                     dispatch(closePreview());
+                    dispatch(queuePreviewToOpen(true));
                 }
-
-                dispatch(
-                    fetchPreviewDataset({
-                        datasetId,
-                        workbookId,
-                        resultSchema,
-                        limit: amountPreviewRows,
-                    }),
-                );
             }
         } catch (error) {
             logger.logError('dataset: initialFetchDataset failed', error);
