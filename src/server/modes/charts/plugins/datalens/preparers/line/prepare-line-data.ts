@@ -347,12 +347,12 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                                 value = 0;
                             }
 
-                            if (typeof value === 'undefined' && nulls === 'ignore') {
-                                value = null;
-                            }
-
                             // We can skip a point only if we put x in each point instead of categories
-                            if (!isXCategoryAxis && typeof value === 'undefined') {
+                            if (
+                                !isXCategoryAxis &&
+                                typeof value === 'undefined' &&
+                                nulls === 'concat'
+                            ) {
                                 return null;
                             }
 
