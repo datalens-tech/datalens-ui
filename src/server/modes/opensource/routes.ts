@@ -81,6 +81,8 @@ function getZitadelRoutes({
             afterAuth,
             route: 'GET /logout',
             handler: logout,
+            authPolicy: AuthPolicy.disabled,
+            ui: true,
         },
     };
 
