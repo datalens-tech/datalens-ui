@@ -2,6 +2,7 @@ import {
     ColorPalette,
     DATASET_FIELD_TYPES,
     MarkupItem,
+    Palette,
     ServerField,
     getFakeTitleOrTitle,
     getFormatOptions,
@@ -51,6 +52,7 @@ type GenerateTableHeadArgs = {
     isTotalsEnabled: boolean;
     isPaginatorEnabled: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
     sortSettings: PivotTableSortSettings;
 };
 
@@ -64,6 +66,7 @@ type GetHeaderCellMetadataArgs = {
     isTotalHeader?: boolean;
     isPaginatorEnabled?: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 type HeadSortMetaData = {
@@ -105,6 +108,7 @@ export const getRowHeaderCellMetadata = (args: GetHeaderCellMetadataArgs): Chart
         cellValue,
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
+        availablePalettes: args.availablePalettes,
     });
 
     if (isMeasureName) {
@@ -193,6 +197,7 @@ export const getHeaderCellMetadata = (
         cellValue: getCellValueForHeader(name, {pivotField, datasetField: field}),
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
+        availablePalettes: args.availablePalettes,
     });
 
     if (isMeasureName) {
@@ -236,6 +241,7 @@ export const generateTableHead = ({
     settingsByField,
     isPaginatorEnabled,
     loadedColorPalettes,
+    availablePalettes,
     sortSettings,
     pivotStructure,
 }: GenerateTableHeadArgs): CharkitTableHead => {
@@ -256,6 +262,7 @@ export const generateTableHead = ({
             measures,
             isPaginatorEnabled,
             loadedColorPalettes,
+            availablePalettes,
         },
         cellId,
         sortMetaData: {

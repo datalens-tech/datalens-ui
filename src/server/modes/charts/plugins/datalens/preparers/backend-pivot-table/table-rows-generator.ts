@@ -11,7 +11,7 @@ import {
     isMeasureField,
 } from '../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../constants/misc';
-import {ChartColorsConfig} from '../../js/helpers/colors';
+import {ChartColorsConfig} from '../../types';
 import {
     chartKitFormatNumberWrapper,
     formatDate,
@@ -232,6 +232,7 @@ export const generateTableRows = ({
                         settingsByField,
                         parents,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        availablePalettes: colorsConfig.availablePalettes,
                     }),
                 };
 
@@ -336,6 +337,7 @@ export const generateTableRows = ({
         fieldDict,
         fieldsItemIdMap,
         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+        availablePalettes: colorsConfig.availablePalettes,
     });
 
     colorizePivotTableByColorField({

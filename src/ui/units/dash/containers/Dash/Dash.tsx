@@ -323,8 +323,10 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         ) {
             return true;
         }
+        const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
+        const dashWorkbookId = this.props.entry.workbookId ?? null;
 
-        return itemData.copyContext?.workbookId === this.props.entry.workbookId;
+        return itemWorkbookId === dashWorkbookId;
     }
 
     private showErrorPasteItemFromWorkbook() {
@@ -382,6 +384,12 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                         $unset: ['id'],
                     });
                 });
+        }
+
+        if (itemData.type === ITEM_TYPE.GROUP_CONTROL) {
+            pastedItemData.group = pastedItemData.group?.map((item) => {
+                return update(item, {$unset: ['id']});
+            });
         }
 
         const data = update(pastedItemData, {$unset: ['id']});

@@ -1,6 +1,12 @@
-import {expect, Page} from '@playwright/test';
-import {slct} from '../utils';
-import {DlNavigationQA, WorkbookNavigationMinimalQa} from '../../src/shared';
+import {Page, expect} from '@playwright/test';
+
+import {
+    DlNavigationQA,
+    PaletteEditorQA,
+    ServiceSettingsQA,
+    WorkbookNavigationMinimalQa,
+} from '../../src/shared';
+import {openTestPage, slct} from '../utils';
 
 export async function selectEntryFromNavigationMenu(page: Page, datasetName: string) {
     const searchInput = page
@@ -16,4 +22,33 @@ export async function selectEntryFromNavigationMenu(page: Page, datasetName: str
 
     await expect(resultsFound).toBeVisible();
     await resultsFound.click();
+}
+
+export async function addCustomPalette(page: Page, palette: {name: string; colors?: string[]}) {
+    const {name, colors = ['4fc4b7', '59abc9', '8ccce3', 'b9e4f3', 'e0f1fa']} = palette;
+
+    await openTestPage(page, '/settings');
+    await page
+        .locator(slct(ServiceSettingsQA.ColorPalettes))
+        .locator(slct(ServiceSettingsQA.AddPaletteButton))
+        .click();
+
+    await page.locator(slct(PaletteEditorQA.PaletteNameInput)).getByRole('textbox').fill(name);
+
+    const removeColorButton = page.locator(slct(PaletteEditorQA.RemoveColorButton)).first();
+    while (await removeColorButton.isVisible()) {
+        await removeColorButton.click();
+    }
+
+    const colorInput = page
+        .locator(slct(PaletteEditorQA.ColorTextInput))
+        .last()
+        .getByRole('textbox');
+    await colorInput.fill(colors[0]);
+    for (let i = 1; i < colors.length; i++) {
+        await page.locator(slct(PaletteEditorQA.AddColorButton)).click();
+        await colorInput.fill(colors[i]);
+    }
+
+    await page.locator(slct(PaletteEditorQA.ApplyButton)).click();
 }

@@ -15,5 +15,16 @@
 
     &_with-color .dashkit-plugin-text {
         padding: 0 10px;
+
+        > .yfm > {
+            ol:first-child,
+            ul:first-child,
+            table:first-child,
+            blockquote:first-child {
+                // Currently markdown in common has margin-top: 0 !important reset for :first-child
+                /* stylelint-disable-next-line declaration-no-important */
+                margin-top: 5px !important;
+            }
+        }
     }
 }

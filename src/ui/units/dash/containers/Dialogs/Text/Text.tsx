@@ -4,8 +4,8 @@ import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {DatalensGlobalState} from 'ui';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
@@ -66,8 +66,6 @@ class Text extends React.PureComponent<TextProps, State> {
         const {id, visible} = this.props;
         const {text, autoHeight, hasBackground, backgroundColor} = this.state;
 
-        const showBgSetting = Utils.isEnabledFeature(Feature.ShowDashWidgetBg);
-
         return (
             <Dialog
                 open={visible}
@@ -87,25 +85,20 @@ class Text extends React.PureComponent<TextProps, State> {
                             {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
                         </Checkbox>
                     </div>
-                    {showBgSetting && (
-                        <div className={b('setting-row')}>
-                            <Checkbox
-                                checked={Boolean(hasBackground)}
-                                onChange={this.handleHasBackgroundChanged}
-                            >
-                                {i18n(
-                                    'dash.dashkit-plugin-common.view',
-                                    'label_background-checkbox',
-                                )}
-                            </Checkbox>
-                            {Boolean(hasBackground) && (
-                                <PaletteBackground
-                                    color={backgroundColor}
-                                    onSelect={this.handleHasBackgroundSelected}
-                                />
-                            )}
-                        </div>
-                    )}
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={Boolean(hasBackground)}
+                            onChange={this.handleHasBackgroundChanged}
+                        >
+                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                        </Checkbox>
+                        {Boolean(hasBackground) && (
+                            <PaletteBackground
+                                color={backgroundColor}
+                                onSelect={this.handleHasBackgroundSelected}
+                            />
+                        )}
+                    </div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
@@ -132,14 +125,10 @@ class Text extends React.PureComponent<TextProps, State> {
             data: {
                 text,
                 autoHeight,
-                ...(Utils.isEnabledFeature(Feature.ShowDashWidgetBg)
-                    ? {
-                          background: {
-                              enabled: hasBackground,
-                              color: backgroundColor,
-                          },
-                      }
-                    : {}),
+                background: {
+                    enabled: hasBackground,
+                    color: backgroundColor,
+                },
             },
         });
         this.props.closeDialog();

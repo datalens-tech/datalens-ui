@@ -1,7 +1,5 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../../utils';
 import {
     ChartKitQa,
     DialogFieldBarsSettingsQa,
@@ -10,12 +8,18 @@ import {
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
-import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {getUniqueTimestamp, openTestPage, slct} from '../../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {addCustomPalette} from '../../../utils';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Pivot table', () => {
+        let customPaletteName: string;
         datalensTest.beforeEach(async ({page, config}) => {
+            customPaletteName = getUniqueTimestamp();
+            await addCustomPalette(page, {name: customPaletteName});
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
 
@@ -24,6 +28,11 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.createNewFieldWithFormula(measureField, 'count([order_id])');
 
             await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'OrdersCount',
+            );
         });
 
         datalensTest('Two colors bar @screenshot', async ({page}) => {
@@ -31,17 +40,12 @@ datalensTest.describe('Wizard', () => {
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
-            // Add rows with totals
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+            // Switch on totals
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Rows, 'Category');
             await wizardPage.page.locator(slct(DialogFieldSubTotalsQa.SubTotalsSwitch)).click();
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
-            // Add measure with bar
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.Measures,
-                'OrdersCount',
-            );
+            // Add bar to measure
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Measures, 'OrdersCount');
             await wizardPage.page.locator(slct(DialogFieldBarsSettingsQa.EnableButton)).click();
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
@@ -60,6 +64,25 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.filterEditor.apply();
 
             // 2. Table with no data
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Custom palette bar @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.visualizationItemDialog.open(PlaceholderName.Measures, 'OrdersCount');
+            await wizardPage.page.locator(slct(DialogFieldBarsSettingsQa.EnableButton)).click();
+            await wizardPage.page
+                .locator(slct(DialogFieldBarsSettingsQa.PositiveColorSelector))
+                .click();
+            await wizardPage.visualizationItemDialog.barsSettings.changePalette(customPaletteName);
+
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });

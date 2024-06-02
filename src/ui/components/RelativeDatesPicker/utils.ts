@@ -124,8 +124,8 @@ export const getResolvedDatesData = ({
         {absolute: absoluteEndDate, relative: relativeEndDate},
     ] = resolvePresetToDates({preset, controls, includeCurrentDay});
 
-    const absoluteStart = absoluteStartDate.toString();
-    const absoluteEnd = absoluteEndDate.toString();
+    const absoluteStart = absoluteStartDate.toISOString();
+    const absoluteEnd = absoluteEndDate.toISOString();
     const [signStart, amountStart, scaleStart] = getParsedRelativeDate(relativeStartDate)!;
     const [signEnd, amountEnd, scaleEnd] = getParsedRelativeDate(relativeEndDate)!;
 

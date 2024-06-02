@@ -1,6 +1,11 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-collection-content-table {
+    $class: &;
+
     &__table {
         display: table;
+        table-layout: fixed;
         width: 100%;
     }
 
@@ -48,11 +53,24 @@
         &:first-child {
             padding-right: 0;
             padding-left: 12px;
-            width: 27px;
         }
 
         &_disabled {
             pointer-events: none;
+        }
+    }
+
+    &__header-cell {
+        &_checkbox {
+            width: 27px;
+        }
+
+        &_title {
+            width: 60%;
+        }
+
+        &_controls {
+            width: 50px;
         }
     }
 
@@ -65,7 +83,8 @@
     }
 
     &__content-cell_title {
-        width: 60%;
+        display: table-cell;
+        vertical-align: middle;
     }
 
     &__content-cell_control {
@@ -75,16 +94,24 @@
     &__title-col {
         display: flex;
         align-items: center;
-    }
-
-    &__title-col-icon {
-        width: 32px;
+        min-height: 32px;
     }
 
     &__title-col-text {
-        display: flex;
-        align-items: center;
         margin-left: 12px;
-        min-height: 32px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &_mobile {
+        #{$class}__content-cell {
+            @include text-body-2;
+            padding: 4px;
+        }
+
+        #{$class}__content-cell_date {
+            width: 80px;
+        }
     }
 }

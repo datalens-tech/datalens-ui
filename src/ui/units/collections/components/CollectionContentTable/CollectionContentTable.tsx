@@ -4,23 +4,21 @@ import {dateTime} from '@gravity-ui/date-utils';
 import {Checkbox, DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {batch, useDispatch, useSelector} from 'react-redux';
-import {Link} from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import {DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {isMobileView} from 'ui/utils/mobile';
 
 import type {
     CollectionWithPermissions,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
-import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../collections-navigation/constants';
-import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
-import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
-import {setWorkbook} from '../../../workbooks/store/actions';
-import {setCollection} from '../../store/actions';
 import {selectCollectionContentItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
+
+import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
+import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
+import {CollectionTitleCell} from './TableComponents/CollectionTitleCell';
 
 import './CollectionContentTable.scss';
 
@@ -50,10 +48,7 @@ export const CollectionContentTable = React.memo<Props>(
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
-        const dispatch = useDispatch();
-
         const items = useSelector(selectCollectionContentItems);
-        const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
         const selectedCount = Object.keys(selectedMap).length;
 
@@ -73,13 +68,47 @@ export const CollectionContentTable = React.memo<Props>(
             }
         }, [selectedCount, itemsAvailableForSelectionCount]);
 
+        if (isMobileView) {
+            return (
+                <div className={b({mobile: true})}>
+                    <AnimateBlock>
+                        <div className={b('table')}>
+                            <div className={b('content')}>
+                                {items.map((item) => (
+                                    <CollectionLinkRow
+                                        key={
+                                            'workbookId' in item
+                                                ? item.workbookId
+                                                : item.collectionId
+                                        }
+                                        item={item}
+                                    >
+                                        <CollectionTitleCell
+                                            isWorkbook={'workbookId' in item}
+                                            title={item.title}
+                                            collectionId={item.collectionId}
+                                        />
+                                        <div className={b('content-cell', {date: true})}>
+                                            {dateTime({
+                                                input: item.updatedAt,
+                                            }).format(DEFAULT_DATE_FORMAT)}
+                                        </div>
+                                    </CollectionLinkRow>
+                                ))}
+                            </div>
+                        </div>
+                    </AnimateBlock>
+                </div>
+            );
+        }
+
         return (
             <div className={b()}>
                 <AnimateBlock>
                     <div className={b('table')}>
                         <div className={b('header')}>
                             <div className={b('header-row')}>
-                                <div className={b('header-cell')}>
+                                <div className={b('header-cell', {checkbox: true})}>
                                     <Checkbox
                                         size="l"
                                         onUpdate={() => {
@@ -90,112 +119,42 @@ export const CollectionContentTable = React.memo<Props>(
                                         {...checkboxPropsSelected}
                                     />
                                 </div>
-                                <div className={b('header-cell')}>{i18n('label_title')}</div>
+                                <div className={b('header-cell', {title: true})}>
+                                    {i18n('label_title')}
+                                </div>
                                 <div className={b('header-cell')}>
                                     {i18n('label_last-modified')}
                                 </div>
-                                <div className={b('header-cell')} />
+                                <div className={b('header-cell', {controls: true})} />
                             </div>
                         </div>
 
                         <div className={b('content')}>
                             {items.map((item) => {
-                                const canMoveItem = item.permissions.move;
-
                                 const actions =
                                     'workbookId' in item
                                         ? getWorkbookActions(item)
                                         : getCollectionActions(item);
 
                                 return (
-                                    <Link
-                                        to={
-                                            'workbookId' in item
-                                                ? `${WORKBOOKS_PATH}/${item.workbookId}`
-                                                : `${COLLECTIONS_PATH}/${item.collectionId}`
-                                        }
+                                    <CollectionLinkRow
                                         key={
                                             'workbookId' in item
                                                 ? item.workbookId
                                                 : item.collectionId
                                         }
-                                        className={b('content-row')}
-                                        onClick={(e) => {
-                                            if (!e.metaKey && !e.ctrlKey) {
-                                                if ('workbookId' in item) {
-                                                    dispatch(setWorkbook(item));
-                                                } else {
-                                                    batch(() => {
-                                                        dispatch(setCollection(item));
-                                                        if (
-                                                            !breadcrumbs.find(
-                                                                (breadcrumb) =>
-                                                                    breadcrumb.collectionId ===
-                                                                    item.collectionId,
-                                                            )
-                                                        ) {
-                                                            dispatch(
-                                                                setCollectionBreadcrumbs([
-                                                                    ...breadcrumbs,
-                                                                    item,
-                                                                ]),
-                                                            );
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                        }}
+                                        item={item}
                                     >
-                                        <div
-                                            className={b('content-cell', {
-                                                disabled: !canMoveItem,
-                                            })}
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <Checkbox
-                                                size="l"
-                                                onUpdate={(checked) => {
-                                                    if ('workbookId' in item) {
-                                                        onUpdateCheckboxClick({
-                                                            entityId: item.workbookId,
-                                                            type: 'workbook',
-                                                            checked,
-                                                        });
-                                                    } else {
-                                                        onUpdateCheckboxClick({
-                                                            entityId: item.collectionId,
-                                                            type: 'collection',
-                                                            checked,
-                                                        });
-                                                    }
-                                                }}
-                                                disabled={!canMoveItem}
-                                                checked={
-                                                    Boolean(
-                                                        selectedMap[
-                                                            'workbookId' in item
-                                                                ? item.workbookId
-                                                                : item.collectionId
-                                                        ],
-                                                    ) && canMoveItem
-                                                }
-                                            />
-                                        </div>
-
-                                        <div className={b('content-cell', {title: true})}>
-                                            <div className={b('title-col')}>
-                                                <div className={b('title-col-icon')}>
-                                                    {'workbookId' in item ? (
-                                                        <WorkbookIcon title={item.title} />
-                                                    ) : (
-                                                        <CollectionIcon />
-                                                    )}
-                                                </div>
-                                                <div className={b('title-col-text')}>
-                                                    {item.title}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <CollectionCheckboxCell
+                                            item={item}
+                                            onUpdateCheckboxClick={onUpdateCheckboxClick}
+                                            selectedMap={selectedMap}
+                                        />
+                                        <CollectionTitleCell
+                                            isWorkbook={'workbookId' in item}
+                                            title={item.title}
+                                            collectionId={item.collectionId}
+                                        />
                                         <div className={b('content-cell', {date: true})}>
                                             {dateTime({
                                                 input: item.updatedAt,
@@ -214,7 +173,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu size="s" items={actions} />
                                             )}
                                         </div>
-                                    </Link>
+                                    </CollectionLinkRow>
                                 );
                             })}
                         </div>
