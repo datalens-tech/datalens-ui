@@ -14,11 +14,11 @@ import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
+import config from 'ui/configs';
 import {DL, PRODUCT_NAME} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import Utils from 'ui/utils';
 
-import {isZitadelEnabled} from '../../../server/app-env';
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import {AsideHeaderData} from '../../store/typings/asideHeader';
 
@@ -157,6 +157,20 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
                 },
             },
+            ...(config.isZitadelEnabled
+                ? [
+                      {
+                          id: 'logout',
+                          title: i18n('label_logout'),
+                          icon: ArrowRightFromSquare,
+                          iconSize: 16,
+                          tooltipText: i18n('label_logout'),
+                          onItemClick: () => {
+                              window.location.assign('/logout');
+                          },
+                      },
+                  ]
+                : []),
         ],
         [pathname],
     );
@@ -236,19 +250,6 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
             </React.Fragment>
         );
     };
-
-    if (isZitadelEnabled) {
-        menuItems.push({
-            id: 'logout',
-            title: i18n('label_logout'),
-            icon: ArrowRightFromSquare,
-            iconSize: 16,
-            tooltipText: i18n('label_logout'),
-            onItemClick: () => {
-                window.location.assign('/logout');
-            },
-        });
-    }
 
     return (
         <AsideHeader
