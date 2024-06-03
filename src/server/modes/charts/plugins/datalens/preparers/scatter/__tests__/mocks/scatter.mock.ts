@@ -259,6 +259,7 @@ export const scatterPrepareForQLArgs = {
     shapesConfig: {},
     segments: [],
     disableDefaultSorting: false,
+    features: [],
 };
 
 export const scatterPrepareForQLResult = {
