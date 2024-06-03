@@ -21,7 +21,7 @@
   "label_author": "Author",
   "label_copy": "copy",
   "label_delete-entry": "Delete",
-  "label_empty-mobile-workbook": "There are no objects available for viewing in this workbook yet",
+  "label_empty-mobile-workbook": "There are no viewable objects in this workbook yet",
   "label_entry-name-already-exists": "That name is already in use, try another one",
   "label_error-load-entities": "Unable to load entities",
   "label_last-modified": "Last modified",
