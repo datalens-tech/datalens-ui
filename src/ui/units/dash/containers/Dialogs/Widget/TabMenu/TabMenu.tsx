@@ -9,7 +9,8 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {TabMenuQA} from 'shared';
 
-import type {TabActionType, TabMenuItemData, TabMenuProps} from './types';
+import {TabActionType} from './types';
+import type {TabMenuItemData, TabMenuProps, UpdateState} from './types';
 
 import './TabMenu.scss';
 
@@ -36,7 +37,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     : this.renderListWithRemove(items, selectedItemIndex)}
                 <div
                     className={b('add-tab')}
-                    onClick={this.onAction({action: 'add'})}
+                    onClick={this.onAction({action: TabActionType.Add})}
                     data-qa={TabMenuQA.Add}
                 >
                     <Icon
@@ -49,7 +50,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                 {onPasteItem && (
                     <div
                         className={b('paste-tab')}
-                        onClick={this.onAction({action: 'paste'})}
+                        onClick={this.onAction({action: TabActionType.Paste})}
                         data-qa={TabMenuQA.Paste}
                     >
                         <Icon
@@ -67,13 +68,13 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
     }
 
     onAction =
-        ({action, index}: {action: TabActionType; index?: number}) =>
+        ({action, index}: {action: Exclude<TabActionType, 'skipped'>; index?: number}) =>
         (event: React.MouseEvent) => {
             event.stopPropagation();
             let data;
 
             if (index === undefined) {
-                data = this[action as Extract<'add' | 'paste', TabActionType>]();
+                data = this[action as TabActionType.Add | TabActionType.Paste]();
             } else {
                 data = this[action](index);
             }
@@ -106,16 +107,14 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
         return {
             items,
             selectedItemIndex: len ? items.length - 1 : 0,
-            action: 'add',
+            action: TabActionType.Add,
         };
     }
 
-    paste() {
+    paste(): UpdateState<T> {
         if (!this.props.onPasteItem) {
             return {
-                items: this.props.items,
-                selectedItemIndex: this.props.selectedItemIndex,
-                action: 'paste',
+                action: TabActionType.Skipped,
             };
         }
 
@@ -124,7 +123,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
         return {
             items,
             selectedItemIndex: this.props.items.length || 0,
-            action: 'paste',
+            action: TabActionType.Paste,
         };
     }
 
@@ -157,7 +156,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
         return {
             items,
             selectedItemIndex: index,
-            action: 'changeChosen',
+            action: TabActionType.ChangeChosen,
         };
     }
 
@@ -265,7 +264,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             <div
                 className={b('item')}
                 onClick={this.onAction({
-                    action: 'changeChosen',
+                    action: TabActionType.ChangeChosen,
                     index: itemIndex,
                 })}
                 key={itemIndex}
@@ -275,7 +274,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     <span
                         className={b('item-star')}
                         onClick={this.onAction({
-                            action: 'changeDefault',
+                            action: TabActionType.ChangeDefault,
                             index: itemIndex,
                         })}
                     >

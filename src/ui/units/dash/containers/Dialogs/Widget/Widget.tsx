@@ -48,8 +48,9 @@ import {
 } from '../../../store/selectors/dashTypedSelectors';
 import {isEntryTypeWithFiltering} from '../utils';
 
-import type {ListState} from './TabMenu/TabMenu';
 import {TabMenu} from './TabMenu/TabMenu';
+import type {UpdateState} from './TabMenu/types';
+import {TabActionType} from './TabMenu/types';
 
 import './Widget.scss';
 
@@ -315,12 +316,17 @@ class Widget extends React.PureComponent<Props, State> {
         });
     };
 
-    updateTabMenu = ({items, selectedItemIndex, action}: ListState<DashTabItemWidgetTab>) => {
+    updateTabMenu = ({items, selectedItemIndex, action}: UpdateState<DashTabItemWidgetTab>) => {
         const {data, tabIndex, tabParams} = this.state;
 
-        const isNeedSaveParams = action === 'changeChosen' || action === 'add';
+        if (action === TabActionType.Skipped) {
+            return;
+        }
 
-        const itemsWithParams: ListState<DashTabItemWidgetTab>['items'] = items.map(
+        const isNeedSaveParams =
+            action === TabActionType.ChangeChosen || action === TabActionType.Add;
+
+        const itemsWithParams: UpdateState<DashTabItemWidgetTab>['items'] = items.map(
             (item, index) => {
                 // fill empty description for correct work of TextArea
                 const description = item.description || '';
@@ -339,7 +345,7 @@ class Widget extends React.PureComponent<Props, State> {
             data: update(data, {tabs: {$set: itemsWithParams}}),
             tabIndex: selectedItemIndex,
             error: false,
-            isManualTitle: action === 'add' ? false : this.isEdit,
+            isManualTitle: action === TabActionType.Add ? false : this.isEdit,
             tabParams: items[selectedItemIndex].params || {},
             legacyChanged: 0,
         });

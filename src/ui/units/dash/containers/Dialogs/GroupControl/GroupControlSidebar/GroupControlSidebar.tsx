@@ -25,7 +25,8 @@ import {
 
 import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
-import type {ListState, TabMenuItemData} from '../../Widget/TabMenu/types';
+import type {TabMenuItemData, UpdateState} from '../../Widget/TabMenu/types';
+import {TabActionType} from '../../Widget/TabMenu/types';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';
@@ -84,11 +85,13 @@ export const GroupControlSidebar = () => {
     const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
-        ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
-            if (action === 'add') {
+        ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
+            if (action === TabActionType.Skipped) {
+                return;
+            } else if (action === TabActionType.Add) {
                 const newSelector = items[items.length - 1];
                 dispatch(addSelectorToGroup(newSelector));
-            } else if (action !== 'changeChosen') {
+            } else if (action !== TabActionType.ChangeChosen) {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,
