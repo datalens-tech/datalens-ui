@@ -48,7 +48,7 @@ class Utils {
 
     static pickZitadelHeaders(req: Request) {
         return {
-            ...{authorization: 'Bearer ' + req.user?.accessToken},
+            authorization: 'Bearer ' + req.user?.accessToken,
             [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
         };
     }
