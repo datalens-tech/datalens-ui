@@ -131,6 +131,12 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         measureColorSortLine[getFakeTitleOrTitle(colorItem)] = {data: {}};
     }
 
+    const defaultNullValue =
+        visualizationId === WizardVisualizationId.Area ||
+        visualizationId === WizardVisualizationId.Area100p
+            ? 'as-0'
+            : 'ignore';
+
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
@@ -260,6 +266,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         const isSortBySegments = Boolean(
             isSortItemExists && segmentField && sortItem.guid === segmentField.guid,
         );
+
         const isSortableXAxis =
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
@@ -327,6 +334,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     nulls = nullsY2;
                 }
 
+                nulls = nulls || defaultNullValue;
+
                 const innerLabels = labelsValues[lineKey];
 
                 const customSeriesData: HighchartsSeriesCustomObject = {};
@@ -340,6 +349,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                         .map((category, i) => {
                             const lineData = line.data[category];
                             const colorValue = lineData?.colorValue;
+
                             let value = lineData?.value;
 
                             if (typeof value === 'undefined' && nulls === 'as-0') {
@@ -350,7 +360,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             if (
                                 !isXCategoryAxis &&
                                 typeof value === 'undefined' &&
-                                nulls === 'concat'
+                                nulls === 'connect'
                             ) {
                                 return null;
                             }

@@ -1,10 +1,15 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-main-tab-content {
+    $class: &;
+
     display: flex;
     flex-direction: column;
 
     &__table {
         display: table;
         width: 100%;
+        table-layout: fixed;
     }
 
     &__header {
@@ -27,6 +32,7 @@
 
     &__table-header-cell {
         padding: 0 10px;
+        box-sizing: content-box;
 
         &_author {
             width: 165px;
@@ -78,5 +84,24 @@
     &__error-text {
         font-size: 15px;
         color: var(--g-color-text-danger);
+    }
+
+    &_mobile {
+        #{$class}__title,
+        #{$class}__content-cell {
+            @include text-body-2;
+        }
+
+        #{$class}__title-text {
+            font-weight: 500;
+        }
+
+        #{$class}__title-col {
+            padding-right: 8px;
+        }
+
+        #{$class}__table-header-cell_date {
+            width: 60px;
+        }
     }
 }
