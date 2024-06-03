@@ -1,18 +1,15 @@
 import moment from 'moment';
 
-import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import type {IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
-import {
-    QLRenderResultTable,
-    formatUnknownTypeValue,
-    isGroup,
-    parseNumberValueForTable,
-} from '../utils/misc-helpers';
+import type {QLRenderResultTable} from '../utils/misc-helpers';
+import {formatUnknownTypeValue, isGroup, parseNumberValueForTable} from '../utils/misc-helpers';
 
 export default ({
     shared,

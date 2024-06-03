@@ -2,9 +2,9 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {StringParams} from 'shared/types';
+import type {StringParams} from 'shared/types';
 import NavigationInput from 'ui/units/dash/components/NavigationInput/NavigationInput';
-import {EntryTypeNode} from 'ui/units/dash/modules/constants';
+import type {EntryTypeNode} from 'ui/units/dash/modules/constants';
 
 import {FieldWrapper} from '../../../../../../../../components/FieldWrapper/FieldWrapper';
 

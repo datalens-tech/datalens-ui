@@ -2,7 +2,8 @@ import React from 'react';
 
 import {Switch} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import {DialogFieldSubTotalsQa, TableSubTotalsSettings} from 'shared';
+import type {TableSubTotalsSettings} from 'shared';
+import {DialogFieldSubTotalsQa} from 'shared';
 
 import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 

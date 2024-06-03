@@ -1,12 +1,12 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import {isObject} from 'lodash';
 
 import Utils from '../../../utils';
-import {ProcessorParams} from '../components/processor';
+import type {ProcessorParams} from '../components/processor';
 import {getDuration} from '../components/utils';
 
-import {RunnerHandlerProps} from '.';
+import type {RunnerHandlerProps} from '.';
 
 const YANDEX_FUNCTIONS_URL = process.env.YANDEX_FUNCTIONS_URL;
 const YANDEX_FUNCTIONS_API_KEY = process.env.YANDEX_FUNCTIONS_API_KEY;

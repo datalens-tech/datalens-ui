@@ -1,14 +1,16 @@
+import type {
+    Field,
+    IChartEditor,
+    QlConfig,
+    ServerChartsConfig,
+    ServerVisualization,
+} from '../../../../../shared';
 import {
     AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
     Feature,
-    Field,
-    IChartEditor,
     PlaceholderId,
-    QlConfig,
-    ServerChartsConfig,
-    ServerVisualization,
     VISUALIZATION_IDS,
     getServerFeatures,
     isEnabledServerFeature,

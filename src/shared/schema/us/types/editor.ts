@@ -1,4 +1,4 @@
-import {EntryFieldData, EntryFieldLinks, EntryFieldMeta, EntryFields} from './fields';
+import type {EntryFieldData, EntryFieldLinks, EntryFieldMeta, EntryFields} from './fields';
 
 export interface CreateEditorChartResponse extends EntryFields {
     links: EntryFieldLinks;

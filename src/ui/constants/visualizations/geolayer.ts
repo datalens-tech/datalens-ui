@@ -1,4 +1,4 @@
-import {VisualizationLayerShared, VisualizationWithLayersShared} from 'shared';
+import type {VisualizationLayerShared, VisualizationWithLayersShared} from 'shared';
 import {createVisualizationLayer} from 'units/wizard/utils/wizard';
 
 export const GEOLAYER_VISUALIZATION: VisualizationWithLayersShared['visualization'] = {

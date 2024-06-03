@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, ButtonProps, TextInput} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

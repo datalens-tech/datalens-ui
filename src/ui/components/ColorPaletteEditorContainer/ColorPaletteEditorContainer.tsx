@@ -2,9 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {ColorPalette} from 'shared';
 import {
-    ColorPalette,
     DEFAULT_PALETTE,
     GradientType,
     ServiceSettingsQA,
@@ -18,7 +19,8 @@ import {
     setCurrentColorPalette,
 } from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
-import {DatalensGlobalState, selectDefaultClientGradient} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {selectDefaultClientGradient} from 'ui';
 
 import ColorPalettesCard from './ColorPalettesCard/ColorPalettesCard';
 import GradientColorPaletteEditor from './GradientPaletteEditor/GradientPaletteEditor';

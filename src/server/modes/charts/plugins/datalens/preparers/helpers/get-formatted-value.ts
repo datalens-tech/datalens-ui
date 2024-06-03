@@ -1,9 +1,5 @@
-import {
-    ServerField,
-    getFormatOptions,
-    isDateField,
-    isNumberField,
-} from '../../../../../../../shared';
+import type {ServerField} from '../../../../../../../shared';
+import {getFormatOptions, isDateField, isNumberField} from '../../../../../../../shared';
 import {chartKitFormatNumberWrapper, formatDate} from '../../utils/misc-helpers';
 
 export function getFormattedValue(field: ServerField, value: unknown) {

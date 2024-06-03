@@ -1,13 +1,12 @@
 import type {ChartKitWidgetAxisType, ChartKitWidgetData} from '@gravity-ui/chartkit';
 
-import {
-    PlaceholderId,
+import type {
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     ServerSort,
     ServerVisualization,
-    isDateField,
 } from '../../../../../../shared';
+import {PlaceholderId, isDateField} from '../../../../../../shared';
 import {getAxisType} from '../preparers/helpers/axis';
 import {getAllVisualizationsIds} from '../preparers/helpers/visualizations';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';

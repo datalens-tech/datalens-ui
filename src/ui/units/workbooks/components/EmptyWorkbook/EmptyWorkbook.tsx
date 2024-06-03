@@ -7,8 +7,8 @@ import {EntryScope} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {isMobileView} from 'ui/utils/mobile';
 
-import {WorkbookWithPermissions} from '../../../../../shared/schema';
-import {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookWithPermissions} from '../../../../../shared/schema';
+import type {WorkbookEntriesFilters} from '../../types';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './EmptyWorkbook.scss';

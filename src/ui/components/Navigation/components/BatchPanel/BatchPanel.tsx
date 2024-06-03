@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {ActionsPanel, ActionsPanelProps} from '@gravity-ui/components';
+import type {ActionsPanelProps} from '@gravity-ui/components';
+import {ActionsPanel} from '@gravity-ui/components';
 import {FolderArrowDown} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
-import {BatchAction} from '../../types';
+import type {BatchAction} from '../../types';
 
 const i18n = I18n.keyset('component.navigation.view');
 

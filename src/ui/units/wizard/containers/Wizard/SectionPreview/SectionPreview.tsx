@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {MenuItemsIds, StringParams, WizardPageQa} from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {StringParams} from 'shared';
+import {MenuItemsIds, WizardPageQa} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
 import {selectDatasetError} from 'units/wizard/selectors/dataset';
@@ -17,22 +20,23 @@ import {
 } from 'units/wizard/selectors/preview';
 
 import {ChartWrapper} from '../../../../../components/Widgets/Chart/ChartWidgetWithProvider';
-import {ChartProviderPropsWithRefProps} from '../../../../../components/Widgets/Chart/types';
+import type {ChartProviderPropsWithRefProps} from '../../../../../components/Widgets/Chart/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {
+import type {
     ChartKitBaseOnLoadProps,
     ChartKitLoadSuccess,
 } from '../../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {
+import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperLoadSuccess,
     ChartKitWrapperOnLoadProps,
 } from '../../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Menu';
-import {ConfigNode} from '../../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Menu';
+import type {ConfigNode} from '../../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {openDialogSaveChartConfirm} from '../../../../../store/actions/dialog';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
-import {HighchartsWidget, setHighchartsWidget} from '../../../actions/preview';
+import type {HighchartsWidget} from '../../../actions/preview';
+import {setHighchartsWidget} from '../../../actions/preview';
 import {updateWizardWidgetAndDoAction} from '../../../actions/widget';
 import {selectWizardWorkbookId} from '../../../selectors/settings';
 import {selectWidget} from '../../../selectors/widget';

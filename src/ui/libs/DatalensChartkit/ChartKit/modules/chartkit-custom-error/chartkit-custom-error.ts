@@ -1,6 +1,6 @@
 import merge from 'lodash/merge';
 
-import {CombinedError} from '../../../types';
+import type {CombinedError} from '../../../types';
 
 export const ERROR_CODE = {
     UNKNOWN: 'ERR.CK.UNKNOWN_ERROR',

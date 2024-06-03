@@ -1,4 +1,4 @@
-import {FileSourceColumnType} from '../../../../../shared/schema';
+import type {FileSourceColumnType} from '../../../../../shared/schema';
 
 export type CreatingSource = {
     id: string;

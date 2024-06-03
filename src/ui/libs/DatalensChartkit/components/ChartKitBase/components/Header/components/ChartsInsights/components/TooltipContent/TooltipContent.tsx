@@ -4,7 +4,7 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {isEmpty} from 'lodash';
-import {ChartsInsightsItem} from 'shared';
+import type {ChartsInsightsItem} from 'shared';
 
 import {ChartsInsightsIcon} from '../ChartsInsightsIcon/ChartsInsightsIcon';
 

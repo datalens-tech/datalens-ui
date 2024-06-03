@@ -1,4 +1,5 @@
-import {Feature, FeatureConfig} from '../../../shared';
+import type {FeatureConfig} from '../../../shared';
+import {Feature} from '../../../shared';
 
 import FEATURES_LIST from './features-list';
 

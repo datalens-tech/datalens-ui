@@ -4,7 +4,7 @@ import {RadioGroup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {ChangeValue} from '../typings';
+import type {ChangeValue} from '../typings';
 
 import './BooleanFilter.scss';
 

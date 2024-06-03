@@ -1,18 +1,18 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
-import {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
-import {Palette} from '../constants/colors';
-import {Endpoints} from '../endpoints';
+import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
+import type {Palette} from '../constants/colors';
+import type {Endpoints} from '../endpoints';
 
-import {ChartkitGlobalSettings} from './chartkit';
-import {DashData, DashStateData} from './dash';
-import {EntryPublicAuthor} from './entry';
-import {FeatureConfig} from './feature';
-import {MenuItemsIds} from './menu';
-import {MetricaCounterConfig} from './metrica';
-import {PushServiceConfig} from './notification';
-import {WidgetType} from './widget';
+import type {ChartkitGlobalSettings} from './chartkit';
+import type {DashData, DashStateData} from './dash';
+import type {EntryPublicAuthor} from './entry';
+import type {FeatureConfig} from './feature';
+import type {MenuItemsIds} from './menu';
+import type {MetricaCounterConfig} from './metrica';
+import type {PushServiceConfig} from './notification';
+import type {WidgetType} from './widget';
 
 export type Dictionary<T = unknown> = Record<string, T>;
 

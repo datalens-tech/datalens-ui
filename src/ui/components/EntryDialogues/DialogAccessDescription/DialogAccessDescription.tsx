@@ -4,11 +4,11 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ErrorContentTypes} from 'shared/constants';
-import {DashData} from 'shared/types/dash';
+import type {DashData} from 'shared/types/dash';
 import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 import './DialogAccessDescription.scss';
 

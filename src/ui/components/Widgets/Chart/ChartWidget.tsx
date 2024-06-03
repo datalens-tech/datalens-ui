@@ -13,7 +13,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useDispatch, useSelector} from 'react-redux';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import {setWidgetCurrentTab} from 'ui/units/dash/store/actions/dashTyped';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -21,7 +21,7 @@ import {getDataProviderData} from '../../../libs/DatalensChartkit/components/Cha
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
-import {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
+import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
@@ -32,7 +32,7 @@ import {
     removeEmptyNDatasetFieldsProperties,
 } from './helpers/helpers';
 import {useLoadingChartWidget} from './hooks/useLoadingChartWidget';
-import {
+import type {
     ChartWidgetData,
     ChartWidgetProps,
     ChartWidgetPropsWithContext,

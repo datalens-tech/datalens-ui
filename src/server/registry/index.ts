@@ -1,17 +1,14 @@
-import {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
-import {ExpressKit, Request, Response} from '@gravity-ui/expresskit';
-import getGatewayControllers, {
-    ApiWithRoot,
-    GatewayConfig,
-    SchemasByScope,
-} from '@gravity-ui/gateway';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {ExpressKit, Request, Response} from '@gravity-ui/expresskit';
+import type {ApiWithRoot, GatewayConfig, SchemasByScope} from '@gravity-ui/gateway';
+import getGatewayControllers from '@gravity-ui/gateway';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
 import {convertConnectionType} from '../modes/charts/plugins/ql/utils/connection';
-import {GetLayoutConfig} from '../types/app-layout';
+import type {GetLayoutConfig} from '../types/app-layout';
 import type {ConvertConnectorTypeToQLConnectionType} from '../types/connections';
-import {XlsxConverterFn} from '../types/xlsxConverter';
+import type {XlsxConverterFn} from '../types/xlsxConverter';
 
 import commonRegistry from './units/common';
 

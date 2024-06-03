@@ -10,7 +10,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 
 import {Interpolate} from '../../../../../../../components/Interpolate';
 import {Veil} from '../../../../../../../components/Veil/Veil';
-import {
+import type {
     FileSourceInfoItem,
     FileSourceItem,
     ListItemProps,

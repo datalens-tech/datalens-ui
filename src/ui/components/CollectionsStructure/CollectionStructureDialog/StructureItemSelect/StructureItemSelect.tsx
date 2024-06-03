@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
+import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Card, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -8,13 +8,13 @@ import {Waypoint} from 'react-waypoint';
 import type {WorkbookId} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
-import {
+import type {
     Collection,
     GetCollectionBreadcrumbsResponse,
     GetCollectionContentArgs,
     GetCollectionContentResponse,
 } from '../../../../../shared/schema/us/types/collections';
-import {Workbook} from '../../../../../shared/schema/us/types/workbooks';
+import type {Workbook} from '../../../../../shared/schema/us/types/workbooks';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
 import {SmartLoader} from '../../../SmartLoader/SmartLoader';
 

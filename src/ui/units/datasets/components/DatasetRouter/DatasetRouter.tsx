@@ -2,11 +2,13 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks/usePrevious';
-import {DatalensGlobalState} from 'index';
-import {SDK} from 'libs';
+import type {DatalensGlobalState} from 'index';
+import type {SDK} from 'libs';
 import {connect} from 'react-redux';
-import {Route, RouteComponentProps, Switch, withRouter} from 'react-router-dom';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {Route, Switch, withRouter} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {registry} from 'ui/registry';

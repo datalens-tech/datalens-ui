@@ -1,6 +1,7 @@
 import {DL} from 'constants/common';
-import {UserState} from '../typings/user';
-import {UserAction, UPDATE_USER_SETTINGS, SET_THEME} from '../actions/user';
+import type {UserState} from '../typings/user';
+import type {UserAction} from '../actions/user';
+import {UPDATE_USER_SETTINGS, SET_THEME} from '../actions/user';
 import {getLocalTheme} from 'ui/components/AsideHeaderAdapter/Settings/utils';
 
 const {theme, themeSettings} = getLocalTheme();

@@ -14,11 +14,12 @@ import {DashCommonQa} from 'shared';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../../constants';
 import {getNormalizedAliases} from '../../helpers';
 import {AliasesContext} from '../../hooks/useRelations';
-import {AliasBase, AliasClickHandlerArgs} from '../../types';
+import type {AliasBase, AliasClickHandlerArgs} from '../../types';
 
 import {AddAliases} from './components/AddAliases/AddAliases';
 import {AliasesDetail} from './components/AliasesDetail/AliasesDetail';
-import {AliasesList, SelectParamArgs} from './components/AliasesList/AliasesList';
+import type {SelectParamArgs} from './components/AliasesList/AliasesList';
+import {AliasesList} from './components/AliasesList/AliasesList';
 
 import './DialogAliases.scss';
 

@@ -1,5 +1,5 @@
 import cloneDeep from 'lodash/cloneDeep';
-import {ChartkitGlobalSettings, Placeholder, Shared} from 'shared';
+import type {ChartkitGlobalSettings, Placeholder, Shared} from 'shared';
 import {DL} from 'ui/constants/common';
 
 import {

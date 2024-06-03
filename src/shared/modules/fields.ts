@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, ServerField, ServerFieldFormatting} from '../types';
+import type {ServerField, ServerFieldFormatting} from '../types';
+import {DATASET_FIELD_TYPES} from '../types';
 
 export const MINIMUM_FRACTION_DIGITS = 2;
 

@@ -1,4 +1,4 @@
-import {ServerField} from '../../../../../../../../../../shared';
+import type {ServerField} from '../../../../../../../../../../shared';
 
 export const COLUMNS = [{guid: '9aa48a4f-cace-4256-bd59-55fc7aa43c4f'}] as ServerField[];
 

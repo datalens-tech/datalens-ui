@@ -8,7 +8,7 @@ import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
-import {ChartApiContext} from './types';
+import type {ChartApiContext} from './types';
 import {isWrapFnArgsValid} from './utils';
 
 function getOrphanedObject() {
@@ -91,10 +91,16 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
         }
 
+        const fnArgs = Array.isArray(value.args)
+            ? (value.args as unknown[]).map((arg: unknown) =>
+                  typeof arg === 'function' ? arg.toString() : arg,
+              )
+            : value.args;
+
         return {
             [WRAPPED_FN_KEY]: {
                 fn: value.fn.toString(),
-                args: value.args,
+                args: fnArgs,
             },
         };
     };

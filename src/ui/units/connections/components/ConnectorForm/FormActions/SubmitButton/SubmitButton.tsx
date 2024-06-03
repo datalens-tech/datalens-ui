@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import {ConnectionsBaseQA} from 'shared';
 
 type SubmitButtonProps = ButtonProps & {text: string};

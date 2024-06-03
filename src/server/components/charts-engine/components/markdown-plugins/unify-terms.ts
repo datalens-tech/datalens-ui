@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
+import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
 
 import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
 

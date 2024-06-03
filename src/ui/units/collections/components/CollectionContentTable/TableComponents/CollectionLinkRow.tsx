@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
+import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
 import {selectCollectionBreadcrumbs} from 'ui/units/collections-navigation/store/selectors';
 import {isMobileView} from 'ui/utils/mobile';
 

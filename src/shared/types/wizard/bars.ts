@@ -1,4 +1,4 @@
-import {BarsAlignValues, BarsColorType, GradientType} from '../../constants';
+import type {BarsAlignValues, BarsColorType, GradientType} from '../../constants';
 
 export interface TableBarsSettings {
     enabled: boolean;

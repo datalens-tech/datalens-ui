@@ -1,10 +1,10 @@
 import {I18n} from 'i18n';
-import {DatasetField} from 'shared';
-import {Filter} from 'ui';
+import type {DatasetField} from 'shared';
+import type {Filter} from 'ui';
 
-import {ObligatoryFilter} from '../../typings/dataset';
+import type {ObligatoryFilter} from '../../typings/dataset';
 import {DatasetFieldListColumnType} from '../DatasetTabFieldList/constants';
-import {ColumnWidth, FieldHeaderColumn, FieldListColumn} from '../DatasetTabFieldList/types';
+import type {ColumnWidth, FieldHeaderColumn, FieldListColumn} from '../DatasetTabFieldList/types';
 
 const i18n = I18n.keyset('dataset.filters-tab.modify');
 const TITLE_HEADER = i18n('label_filter-list-field-th');

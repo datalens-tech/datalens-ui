@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
+import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -15,10 +15,8 @@ import type {
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters';
+import type {CollectionContentFilters} from '../../../../components/CollectionFilters';
+import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
 import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';

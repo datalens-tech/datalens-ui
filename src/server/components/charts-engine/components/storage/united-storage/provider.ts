@@ -1,16 +1,17 @@
-import {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'http';
 
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
-import axios, {AxiosRequestConfig} from 'axios';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
+import type {AxiosRequestConfig} from 'axios';
+import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
+import type {EntryPublicAuthor, WorkbookId} from '../../../../../../shared';
 import {
     AuthHeader,
     DL_COMPONENT_HEADER,
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
-    EntryPublicAuthor,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     SuperuserHeader,
@@ -18,11 +19,10 @@ import {
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
-    WorkbookId,
 } from '../../../../../../shared';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
-import {ResolvedConfig} from '../types';
+import type {ResolvedConfig} from '../types';
 
 const handleError = createErrorHandler({
     meta: {

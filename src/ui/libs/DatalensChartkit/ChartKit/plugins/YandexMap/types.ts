@@ -1,7 +1,7 @@
-import {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
-import {Language} from 'shared';
+import type {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
+import type {Language} from 'shared';
 
-import {OnChangeData} from '../../../types';
+import type {OnChangeData} from '../../../types';
 
 export type YandexMapWidgetDataItem = Record<string, unknown>;
 

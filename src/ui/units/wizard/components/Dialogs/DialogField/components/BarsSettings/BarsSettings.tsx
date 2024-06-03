@@ -1,16 +1,12 @@
 import React from 'react';
 
-import {RadioButtonOption, Switch} from '@gravity-ui/uikit';
+import type {RadioButtonOption} from '@gravity-ui/uikit';
+import {Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {
-    BarsAlignValues,
-    BarsColorType,
-    DialogFieldBarsSettingsQa,
-    Field,
-    TableBarsSettings,
-} from 'shared';
+import type {Field, TableBarsSettings} from 'shared';
+import {BarsAlignValues, BarsColorType, DialogFieldBarsSettingsQa} from 'shared';
 import {selectColorPalettes} from 'ui/store/selectors/colorPaletteEditor';
 import {getPaletteColors} from 'ui/utils';
 

@@ -1,6 +1,6 @@
-import {ResponseError} from '@gravity-ui/gateway';
+import type {ResponseError} from '@gravity-ui/gateway';
 
-import {
+import type {
     ConnectionErrorResponse,
     GetDistinctsApiV2Response,
     GetDistinctsApiV2TransformedResponse,

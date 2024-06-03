@@ -1,4 +1,4 @@
-import {QLEntryDataShared} from '../../../../types';
+import type {QLEntryDataShared} from '../../../../types';
 import {mapUndefinedConfigToV1} from '../v1/mapUndefinedConfigToV1';
 
 describe('mapUndefinedConfigToV1', () => {

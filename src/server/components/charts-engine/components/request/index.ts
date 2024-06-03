@@ -1,7 +1,8 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import {crc32c} from '@node-rs/crc32';
-import {RequiredUriUrl} from 'request';
-import requestPromise, {RequestPromise, RequestPromiseOptions} from 'request-promise-native';
+import type {RequiredUriUrl} from 'request';
+import type {RequestPromise, RequestPromiseOptions} from 'request-promise-native';
+import requestPromise from 'request-promise-native';
 
 import {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';

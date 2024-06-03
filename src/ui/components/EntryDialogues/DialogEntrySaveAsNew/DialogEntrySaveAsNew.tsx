@@ -1,16 +1,17 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
-import {SaveAsNewDashArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {SaveAsNewDashArgs} from 'ui/units/dash/store/actions/dashTyped';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
-import {DataLensApiError} from '../../../typings';
+import type {DataLensApiError} from '../../../typings';
 import {DialogCreateWorkbookEntry} from '../DialogCreateWorkbookEntry/DialogCreateWorkbookEntry';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogEntrySaveAsNewProps extends EntryDialogProps {
     initDestination: string;

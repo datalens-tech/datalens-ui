@@ -2,14 +2,14 @@ import {clone, get} from 'lodash';
 import {batch} from 'react-redux';
 import {ConnectorType} from 'shared';
 
-import {UpdateFileSourceArgs} from '../../../../../shared/schema';
+import type {UpdateFileSourceArgs} from '../../../../../shared/schema';
 import logger from '../../../../libs/logger';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
-import {DataLensApiError} from '../../../../typings';
+import type {DataLensApiError} from '../../../../typings';
 import {DIALOG_CONN_S3_SOURCES} from '../../components/dialogs';
 import {FieldKey} from '../../constants';
-import {FormDict} from '../../typings';
-import {
+import type {FormDict} from '../../typings';
+import type {
     ApplySourceSettings,
     ConnectionsReduxDispatch,
     FileSource,

@@ -8,7 +8,7 @@ import {showToast} from '../../../../store/actions/toaster';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey} from '../../constants';
-import {ConnectionsReduxDispatch, GetState} from '../typings';
+import type {ConnectionsReduxDispatch, GetState} from '../typings';
 
 import {api} from './api';
 import {

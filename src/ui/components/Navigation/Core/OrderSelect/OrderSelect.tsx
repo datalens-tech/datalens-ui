@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Select, SelectProps} from '@gravity-ui/uikit';
+import type {SelectProps} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
 import {ORDER_DIRECTION, ORDER_FIELD} from '../../constants';
-import {FilterOrderByDirection, FilterOrderByField} from '../../types';
+import type {FilterOrderByDirection, FilterOrderByField} from '../../types';
 
 const DELIMITER = '_';
 const i18n = I18n.keyset('component.navigation.view');

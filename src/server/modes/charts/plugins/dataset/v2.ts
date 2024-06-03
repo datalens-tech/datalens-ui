@@ -1,5 +1,5 @@
 import type {IChartEditor, Update} from '../../../../../shared';
-import {
+import type {
     ApiV2Filter,
     ApiV2OrderBy,
     ApiV2Parameter,

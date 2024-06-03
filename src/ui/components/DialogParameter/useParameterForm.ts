@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {DATASET_FIELD_TYPES, DatasetField, isDateField} from 'shared';
+import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import {isDateField} from 'shared';
 
 import {validateParameterName} from '../../utils/validation';
 

@@ -7,8 +7,8 @@ import {useDispatch} from 'react-redux';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 
 import {I18n} from '../../../../../i18n';
-import {DatasetSource} from '../../../../../shared/types';
-import {DataLensApiError} from '../../../../typings';
+import type {DatasetSource} from '../../../../../shared/types';
+import type {DataLensApiError} from '../../../../typings';
 import DatasetUtils from '../../helpers/utils';
 import Source from '../Source/Source';
 import {withDragging} from '../hoc/AvatarDnD';

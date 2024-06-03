@@ -1,7 +1,8 @@
 import get from 'lodash/get';
-import {DLGlobalData, EntryScope, Permissions} from 'shared';
+import type {DLGlobalData, Permissions} from 'shared';
+import {EntryScope} from 'shared';
 
-import {ContextMenuParams} from '../types';
+import type {ContextMenuParams} from '../types';
 import {getEntryContextMenuItems} from '../withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 
 jest.mock('../../../utils/utils', () => {

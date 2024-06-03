@@ -1,8 +1,5 @@
-import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
-import {
-    AxisMode,
-    ChartsConfigVersion,
-    DATASET_FIELD_TYPES,
+import type {PlaceholderId, WizardVisualizationId} from '../../../../constants';
+import type {
     ServerChartsConfig,
     V4ChartsConfig,
     V4Placeholder,
@@ -11,6 +8,7 @@ import {
     V5Placeholder,
     V5Visualization,
 } from '../../../../types';
+import {AxisMode, ChartsConfigVersion, DATASET_FIELD_TYPES} from '../../../../types';
 import {isVisualizationWithLayers} from '../../../../utils';
 import {isMeasureField} from '../../../helpers';
 import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';

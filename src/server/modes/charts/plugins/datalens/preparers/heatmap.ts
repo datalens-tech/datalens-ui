@@ -1,7 +1,7 @@
-import {RGBColor, VisualizationLayerShared} from '../../../../../../shared';
+import type {RGBColor, VisualizationLayerShared} from '../../../../../../shared';
 import {getCurrentGradient, getRgbColors, getThresholdValues} from '../utils/color-helpers';
+import type {Coordinate} from '../utils/geo-helpers';
 import {
-    Coordinate,
     getExtremeValues,
     getFlattenCoordinates,
     getLayerAlpha,
@@ -9,7 +9,7 @@ import {
 } from '../utils/geo-helpers';
 import {getTitleInOrder} from '../utils/misc-helpers';
 
-import {PrepareFunctionArgs} from './types';
+import type {PrepareFunctionArgs} from './types';
 
 type HeatmapPointConfig = {
     type: 'Feature';

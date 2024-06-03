@@ -1,12 +1,13 @@
 import update from 'immutability-helper';
 import {batch} from 'react-redux';
-import {Field, Placeholder, PlaceholderId, Shared, isVisualizationWithLayers} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Field, Placeholder, Shared} from 'shared';
+import {PlaceholderId, isVisualizationWithLayers} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
 
-import {AppDispatch} from '../../../store';
+import type {AppDispatch} from '../../../store';
 import {FILTER_SECTIONS} from '../constants';
-import {VisualizationState} from '../reducers/visualization';
+import type {VisualizationState} from '../reducers/visualization';
 import {getSelectedLayer, getUniqueId} from '../utils/helpers';
 
 import {

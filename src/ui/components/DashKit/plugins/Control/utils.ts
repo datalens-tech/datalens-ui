@@ -1,19 +1,19 @@
 import {I18n} from 'i18n';
-import {
+import type {
     DATASET_FIELD_TYPES,
-    DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlDataset,
     DashTabItemControlSingle,
     DatasetFieldType,
 } from 'shared';
-import {
+import {DATASET_IGNORED_DATA_TYPES} from 'shared';
+import type {
     ChartsData,
     DatasetFieldsListItem,
     ResponseSuccessControls,
 } from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 
 import {LOAD_STATUS} from './constants';
-import {ErrorData, LoadStatus, ValidationErrorData} from './types';
+import type {ErrorData, LoadStatus, ValidationErrorData} from './types';
 
 const i18nError = I18n.keyset('dash.dashkit-control.error');
 

@@ -1,6 +1,6 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {LandingPageSettings} from '../../../shared';
+import type {LandingPageSettings} from '../../../shared';
 import {registry} from '../../registry';
 
 export const getLandingLayout = async (

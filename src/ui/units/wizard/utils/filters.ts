@@ -1,5 +1,5 @@
 import {i18n} from 'i18n';
-import {Field, FilterField} from 'shared';
+import type {Field, FilterField} from 'shared';
 
 type GetChartFiltersWithDisabledProp = {
     dashboardFilters: Field[];

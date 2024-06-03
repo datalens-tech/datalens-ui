@@ -1,5 +1,5 @@
+import type {ExtendedChartsConfig} from '../../../shared';
 import {
-    ExtendedChartsConfig,
     WizardVisualizationId,
     getDatasetLinks,
     isD3Visualization,

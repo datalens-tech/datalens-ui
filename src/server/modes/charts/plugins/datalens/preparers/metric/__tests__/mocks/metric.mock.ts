@@ -1,4 +1,4 @@
-import {IChartEditor} from '../../../../../../../../../shared';
+import type {IChartEditor} from '../../../../../../../../../shared';
 
 export const metricPrepareForQLArgs = {
     placeholders: [

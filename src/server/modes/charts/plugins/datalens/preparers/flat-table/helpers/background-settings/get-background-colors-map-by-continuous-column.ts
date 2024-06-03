@@ -1,7 +1,7 @@
 import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 
-import {
+import type {
     RGBColor,
     ServerField,
     TableFieldBackgroundSettings,
@@ -19,9 +19,9 @@ import {
 } from '../../../../utils/misc-helpers';
 import {getCurrentBackgroundGradient} from '../../../helpers/backgroundSettings/misc';
 import {interpolateRgbBasis} from '../../../helpers/colors';
-import {PrepareFunctionDataRow} from '../../../types';
+import type {PrepareFunctionDataRow} from '../../../types';
 
-import {GetBackgroundColorsMapByContinuousColumn} from './types';
+import type {GetBackgroundColorsMapByContinuousColumn} from './types';
 
 const MAX_COLOR_DELTA_VALUE = 1;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {registry} from 'ui/registry';
-import {IamAccessDialogProps} from 'ui/registry/units/common/types/components/IamAccessDialog';
+import type {IamAccessDialogProps} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
 

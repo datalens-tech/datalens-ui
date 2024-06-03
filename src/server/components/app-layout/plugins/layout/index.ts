@@ -1,6 +1,7 @@
 import path from 'path';
 
-import {RenderHelpers, createLayoutPlugin as createLayoutPluginBase} from '@gravity-ui/app-layout';
+import type {RenderHelpers} from '@gravity-ui/app-layout';
+import {createLayoutPlugin as createLayoutPluginBase} from '@gravity-ui/app-layout';
 
 const filename = 'assets-manifest.json';
 

@@ -1,4 +1,4 @@
-import {
+import type {
     ApiV2Filter,
     ApiV2OrderBy,
     ApiV2Parameter,
@@ -6,10 +6,9 @@ import {
     ApiV2RequestField,
     ServerField,
     StringParams,
-    isDimensionField,
-    isTreeField,
 } from '../../../../../../../shared';
-import {ApiVersion, BaseUrlPayload} from '../../types';
+import {isDimensionField, isTreeField} from '../../../../../../../shared';
+import type {ApiVersion, BaseUrlPayload} from '../../types';
 import {getTreeState, mapParameterToRequestFormat} from '../helpers';
 
 const TREE_ROOT = '[]';

@@ -1,20 +1,24 @@
 import React from 'react';
 
-import {ConnectableElement} from 'react-dnd';
+import type {ConnectableElement} from 'react-dnd';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 
-import {
+import type {
     Field,
     Placeholder,
-    PlaceholderId,
     Shared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
+} from '../../../../../../../shared';
+import {
+    PlaceholderId,
     WizardVisualizationId,
     isYAGRVisualization,
 } from '../../../../../../../shared';
-import {DataLensApiError, DatalensGlobalState, sdk} from '../../../../../../index';
+import type {DataLensApiError, DatalensGlobalState} from '../../../../../../index';
+import {sdk} from '../../../../../../index';
 import {getChartType} from '../../../../../ql/store/reducers/ql';
 import {removeQuickFormula} from '../../../../actions';
 import {selectDatasetError, selectDatasets} from '../../../../selectors/dataset';
@@ -23,7 +27,7 @@ import {
     selectDashboardParameters,
     selectFilters,
 } from '../../../../selectors/visualization';
-import {AddableField} from '../AddField/AddField';
+import type {AddableField} from '../AddField/AddField';
 import VisualizationItem from '../VisualizationItem/VisualizationItem';
 import VisualizationLayersControl from '../VisualizationLayersControl/VisualizationLayersControl';
 

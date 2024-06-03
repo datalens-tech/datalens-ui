@@ -4,7 +4,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import LocationChange from 'components/LocationChange/LocationChange';
-import {Location} from 'history';
+import type {Location} from 'history';
 import {useDispatch} from 'react-redux';
 import {setIsLanding} from 'store/actions/landing';
 import Utils from 'utils';

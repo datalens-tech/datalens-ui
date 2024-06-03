@@ -1,18 +1,16 @@
 import React from 'react';
 
-import {Select, SelectOption, SelectProps} from '@gravity-ui/uikit';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 
 import {SelectStyles} from '../constants/SelectStyles';
 import {useSelectOptionsEnhancer} from '../hooks/useSelectOptionsEnhancer';
-import {
-    UseSelectRenderEmptyOptionsProps,
-    useSelectRenderEmptyOptions,
-} from '../hooks/useSelectRenderEmptyOptions/useSelectRenderEmptyOptions';
-import {UseSelectRenderErrorProps, useSelectRenderError} from '../hooks/useSelectRenderError';
-import {
-    UseSelectRenderFilter,
-    useSelectRenderFilter,
-} from '../hooks/useSelectRenderFilter/useSelectRenderFilter';
+import type {UseSelectRenderEmptyOptionsProps} from '../hooks/useSelectRenderEmptyOptions/useSelectRenderEmptyOptions';
+import {useSelectRenderEmptyOptions} from '../hooks/useSelectRenderEmptyOptions/useSelectRenderEmptyOptions';
+import type {UseSelectRenderErrorProps} from '../hooks/useSelectRenderError';
+import {useSelectRenderError} from '../hooks/useSelectRenderError';
+import type {UseSelectRenderFilter} from '../hooks/useSelectRenderFilter/useSelectRenderFilter';
+import {useSelectRenderFilter} from '../hooks/useSelectRenderFilter/useSelectRenderFilter';
 
 import '../styles/SelectUtil.scss';
 

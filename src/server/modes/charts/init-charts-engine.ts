@@ -1,5 +1,5 @@
-import {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
-import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import get from 'lodash/get';
 import sizeof from 'object-sizeof';
 
@@ -10,7 +10,7 @@ import {isConfigWithFunction} from '../../components/charts-engine/components/ut
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {startMonitoring} from '../../components/monitoring';
 import {checkValidation} from '../../lib/validation';
-import {ExtendedAppRouteDescription} from '../../types/controllers';
+import type {ExtendedAppRouteDescription} from '../../types/controllers';
 
 export function initChartsEngine({
     plugins,

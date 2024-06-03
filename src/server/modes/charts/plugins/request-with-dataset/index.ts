@@ -1,12 +1,12 @@
-import {Request, Response} from '@gravity-ui/expresskit';
-import {ApiWithRoot} from '@gravity-ui/gateway';
+import type {Request, Response} from '@gravity-ui/expresskit';
+import type {ApiWithRoot} from '@gravity-ui/gateway';
 
-import {DatalensGatewaySchemas} from '../../../../types/gateway';
+import type {DatalensGatewaySchemas} from '../../../../types/gateway';
 import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     CONTROL_MIDDLEWARE_URL_TYPE,
 } from '../constants/middleware-urls';
-import {MiddlewareSourceAdapterArgs} from '../types';
+import type {MiddlewareSourceAdapterArgs} from '../types';
 
 import chartsWithDataset from './middlewareAdapters/charts-with-dataset';
 import controlsWithDataset from './middlewareAdapters/controls-with-dataset';

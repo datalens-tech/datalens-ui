@@ -1,4 +1,5 @@
-import {Field, Placeholder, isParameter, isPseudoField} from '../../../../../shared';
+import type {Field, Placeholder} from '../../../../../shared';
+import {isParameter, isPseudoField} from '../../../../../shared';
 
 // eslint-disable-next-line complexity
 export function mutateAndValidateItem<T extends Field>({

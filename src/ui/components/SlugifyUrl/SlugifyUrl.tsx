@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {History} from 'history';
+import type {History} from 'history';
 import {isEntryId, makeSlugName} from 'shared';
 import {registry} from 'ui/registry';
 

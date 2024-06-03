@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {PopupPlacement} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './TitleWithTooltip.scss';

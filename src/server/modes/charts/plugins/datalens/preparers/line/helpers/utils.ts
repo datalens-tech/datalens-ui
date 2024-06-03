@@ -1,11 +1,11 @@
-import {ServerColor, ServerShape} from '../../../../../../../../shared';
+import type {ServerColor, ServerShape} from '../../../../../../../../shared';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     isNumericalDataType,
 } from '../../../utils/misc-helpers';
 
-import {GetItemValuesOptions, GetLineKeyArgs, ItemValues} from './types';
+import type {GetItemValuesOptions, GetLineKeyArgs, ItemValues} from './types';
 
 export const getItemsValues = (
     item: ServerColor | ServerShape,

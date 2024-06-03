@@ -2,7 +2,7 @@ import {SortDirection, isNumberField} from '../../../../../../../../../shared';
 import {collator, numericStringCollator} from '../../../../utils/misc-helpers';
 
 import {getSegmentName} from './getSegmentName';
-import {GetSegmentsList, GetSortedSegmentsList} from './types';
+import type {GetSegmentsList, GetSortedSegmentsList} from './types';
 
 export const getSegmentsList = (args: GetSegmentsList): string[] => {
     const {data, segmentIndexInOrder, segmentField} = args;

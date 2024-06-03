@@ -1,8 +1,8 @@
-import {Toaster} from '@gravity-ui/uikit';
+import type {Toaster} from '@gravity-ui/uikit';
 import type {DatalensGlobalState} from 'index';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
 import type {ValidateDatasetResponse} from 'shared/schema';

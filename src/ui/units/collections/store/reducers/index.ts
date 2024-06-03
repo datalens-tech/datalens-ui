@@ -5,7 +5,7 @@ import type {
     GetRootCollectionPermissionsResponse,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
-import {CollectionsAction} from '../actions';
+import type {CollectionsAction} from '../actions';
 import {
     DELETE_COLLECTION_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,

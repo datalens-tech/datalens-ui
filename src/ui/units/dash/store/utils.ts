@@ -1,13 +1,14 @@
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
-import {DashLoadPriority, FakeDashData} from 'shared/types/dash';
+import type {FakeDashData} from 'shared/types/dash';
+import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
 import {CheckboxControlValue, ELEMENT_TYPE} from '../containers/Dialogs/Control/constants';
 import {Mode} from '../modules/constants';
 
-import {SelectorElementType} from './actions/dashTyped';
+import type {SelectorElementType} from './actions/dashTyped';
 
 const storeI18n = I18n.keyset('dash.store.view');
 const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');

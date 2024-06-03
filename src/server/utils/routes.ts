@@ -1,6 +1,6 @@
 import {api, dlMain, navigate, navigation} from '../controllers';
 import {registry} from '../registry';
-import {BasicControllers, ExtendedAppRouteDescription} from '../types/controllers';
+import type {BasicControllers, ExtendedAppRouteDescription} from '../types/controllers';
 
 export const getConfiguredRoute = (
     controllerName: BasicControllers,

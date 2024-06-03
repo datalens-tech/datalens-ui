@@ -10,11 +10,11 @@ import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {DEFAULT_DATE_FORMAT} from 'shared';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
-import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
+import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
-import {AppDispatch} from 'ui/store';
+import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
-import {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';

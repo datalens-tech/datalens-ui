@@ -6,10 +6,12 @@ import {Button, Icon, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect, useDispatch} from 'react-redux';
-import {DatasetOptions, DatasetPanelQA} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatasetOptions} from 'shared';
+import {DatasetPanelQA} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 
-import {DatasetTab, TAB_DATASET, TAB_SOURCES} from '../../constants';
+import type {DatasetTab} from '../../constants';
+import {TAB_DATASET, TAB_SOURCES} from '../../constants';
 import {editorSetFilter} from '../../store/actions/creators';
 import {UISelector, optionsSelector} from '../../store/selectors';
 

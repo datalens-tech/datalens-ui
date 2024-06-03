@@ -3,7 +3,8 @@ import React from 'react';
 import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {EntryScope, WorkbookId} from 'shared';
+import type {WorkbookId} from 'shared';
+import {EntryScope} from 'shared';
 
 import navigateHelper from '../../../../libs/navigateHelper';
 import {EntryIcon} from '../../../EntryIcon/EntryIcon';

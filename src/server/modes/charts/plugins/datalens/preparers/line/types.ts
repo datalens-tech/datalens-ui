@@ -1,5 +1,5 @@
-import {ServerField, ServerPlaceholderSettings} from '../../../../../../../shared';
-import {ChartKitFormatSettings} from '../types';
+import type {ServerField, ServerPlaceholderSettings} from '../../../../../../../shared';
+import type {ChartKitFormatSettings} from '../types';
 
 export type LinesRecord = {
     [key: string]: LineTemplate;

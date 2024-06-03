@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 export default function (req: Request, _res: Response, next: NextFunction) {
     const logErrorCore = req.ctx.logError;

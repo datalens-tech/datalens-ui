@@ -1,6 +1,6 @@
-import {GetDatalensOperationResponse} from './operations';
-import {OrderBasicField, OrderDirection} from './sort';
-import {Workbook, WorkbookWithPermissions} from './workbooks';
+import type {GetDatalensOperationResponse} from './operations';
+import type {OrderBasicField, OrderDirection} from './sort';
+import type {Workbook, WorkbookWithPermissions} from './workbooks';
 
 export type GetCollectionContentMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 

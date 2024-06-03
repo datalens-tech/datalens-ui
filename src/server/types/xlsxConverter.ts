@@ -1,6 +1,6 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
+import type {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
 
 export type XlsxConverterFn = (
     req: Request,

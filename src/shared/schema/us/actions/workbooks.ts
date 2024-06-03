@@ -2,7 +2,7 @@ import {TIMEOUT_60_SEC} from '../../../constants';
 import {makeUserId} from '../../../modules/user';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer} from '../../utils';
-import {
+import type {
     CopyWorkbookArgs,
     CopyWorkbookResponse,
     CopyWorkbookTemplateArgs,

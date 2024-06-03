@@ -3,13 +3,8 @@ import React from 'react';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
-import {
-    MarkupItem,
-    MarkupItemType,
-    MarkupItemTypes,
-    isMarkupItem,
-    markupToRawString,
-} from '../../../shared';
+import type {MarkupItem, MarkupItemType} from '../../../shared';
+import {MarkupItemTypes, isMarkupItem, markupToRawString} from '../../../shared';
 
 import {UserInfo} from './components/UserInfo/UserInfo';
 import {isNumericCSSValueValid} from './utils';

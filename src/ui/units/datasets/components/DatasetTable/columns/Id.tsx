@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 import {TableTextInput} from '../components';
-import {ColumnItem} from '../types';
+import type {ColumnItem} from '../types';
 import {sortIdColumn} from '../utils';
 
 const b = block('dataset-table');

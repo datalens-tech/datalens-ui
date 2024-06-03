@@ -1,4 +1,4 @@
-import {Theme, ThemeSettings} from '@gravity-ui/uikit';
+import type {Theme, ThemeSettings} from '@gravity-ui/uikit';
 
 export type ThemeSettingsUpdates = {
     theme: Theme;

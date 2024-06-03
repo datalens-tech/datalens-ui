@@ -1,8 +1,8 @@
 import {has, isEmpty, pickBy} from 'lodash';
 import moment from 'moment';
 
-import {ChartsInsightsItem} from '../../../../../../../shared';
-import {ChartsInsightsData, ChartsInsightsLocators} from '../../../../types/widget';
+import type {ChartsInsightsItem} from '../../../../../../../shared';
+import type {ChartsInsightsData, ChartsInsightsLocators} from '../../../../types/widget';
 
 const MAX_DAYS_TO_HIDDEN = 14;
 

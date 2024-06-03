@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {RadioButtonOption} from '@gravity-ui/uikit';
+import type {RadioButtonOption} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import type {Field, NestedPartial, TableFieldBackgroundSettings} from 'shared';
 import {
-    Field,
-    NestedPartial,
     PlaceholderId,
-    TableFieldBackgroundSettings,
     WizardVisualizationId,
     isDimensionField,
     isMeasureField,

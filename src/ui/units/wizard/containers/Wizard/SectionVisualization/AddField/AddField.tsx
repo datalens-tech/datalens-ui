@@ -5,12 +5,8 @@ import {connect} from 'react-redux';
 import {SectionVisualizationAddItemQa, isMeasureName, isMeasureValue} from 'shared';
 import {addFieldContainerFieldsSelector} from 'units/wizard/selectors';
 
-import {
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
-    Field,
-    HierarchyField,
-} from '../../../../../../../shared/types';
+import type {Field, HierarchyField} from '../../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, DatasetFieldType} from '../../../../../../../shared/types';
 import AddField from '../../../../components/AddField/AddField';
 import {getIconForDataType} from '../../../../utils/helpers';
 import {isFieldVisible} from '../../../../utils/wizard';

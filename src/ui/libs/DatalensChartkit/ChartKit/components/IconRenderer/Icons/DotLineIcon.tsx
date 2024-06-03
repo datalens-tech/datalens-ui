@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CommonIconProps} from '../types';
+import type {CommonIconProps} from '../types';
 
 const DotLineIcon: React.FC<CommonIconProps> = ({height, width}: CommonIconProps) => (
     <svg

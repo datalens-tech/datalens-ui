@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
-import {Field, Shared} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Field, Shared} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectDimensionsByDataset} from 'units/wizard/selectors/dataset';
 import {getVisualization} from 'units/wizard/utils/helpers';
 

@@ -1,17 +1,16 @@
-import {DeepNonNullable} from 'utility-types';
+import type {DeepNonNullable} from 'utility-types';
 
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {getEntryVisualizationType} from '../helpers';
+import type {DatasetDictResponse, DatasetFieldsDictResponse} from '../helpers/dash';
 import {
-    DatasetDictResponse,
-    DatasetFieldsDictResponse,
     fetchDataset,
     fetchDatasetFieldsById,
     prepareDatasetData,
     prepareWidgetDatasetData,
 } from '../helpers/dash';
-import {
+import type {
     CollectDashStatsArgs,
     CollectDashStatsResponse,
     GetEntriesDatasetsFieldsArgs,

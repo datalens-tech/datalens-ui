@@ -1,11 +1,7 @@
 import React from 'react';
 
-import OpensourceChartKit, {
-    ChartKitLang,
-    ChartKitProps,
-    ChartKitRef,
-    settings,
-} from '@gravity-ui/chartkit';
+import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartkit';
+import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 
 import {registry} from '../../../registry';

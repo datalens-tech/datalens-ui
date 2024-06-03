@@ -8,7 +8,7 @@ import {getEntryNameByKey} from '../../../../../../shared';
 import navigateHelper from '../../../../../libs/navigateHelper';
 import {EntryIcon} from '../../../../EntryIcon/EntryIcon';
 import AlertTooltip from '../AlertTooltip/AlertTooltip';
-import {EntryRelationExtended} from '../types';
+import type {EntryRelationExtended} from '../types';
 
 import './RelationsList.scss';
 

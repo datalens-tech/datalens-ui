@@ -4,7 +4,7 @@ import {getUrlParamFromStr} from 'ui/utils';
 
 import type {Dataset} from '../../../../shared';
 import {DL, URL_QUERY} from '../../../constants';
-import {ComponentErrorType} from '../constants';
+import type {ComponentErrorType} from '../constants';
 
 const YT_FOLDER_NAME = 'YT';
 const DISALLOWED_SYMBOLS = /[^\wА-Яа-яЁё-]/g;

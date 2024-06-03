@@ -13,14 +13,15 @@ import {
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
-import {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
-import {SelectorDialogState} from '../../../../store/actions/dashTyped';
-import {ListState, TabMenu} from '../../Widget/TabMenu/TabMenu';
+import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
+import type {ListState} from '../../Widget/TabMenu/TabMenu';
+import {TabMenu} from '../../Widget/TabMenu/TabMenu';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';

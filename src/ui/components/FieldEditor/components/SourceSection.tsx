@@ -1,23 +1,24 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Select, SelectOption, SelectProps, TextInput} from '@gravity-ui/uikit';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {
+import type {
     AvailableFieldType,
     DATASET_FIELD_TYPES,
     DatasetField,
-    DatasetFieldAggregation,
     DatasetSource,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetFieldAggregation} from 'shared';
 
-import {DataTypeConfig} from '../../../typings/common';
+import type {DataTypeConfig} from '../../../typings/common';
 import Utils from '../../../utils';
 import DataTypeIcon from '../../DataTypeIcon/DataTypeIcon';
 import {EMPTY_SOURCE, INVALID_ID} from '../constants';
-import {FieldEditorErrors, ModifiedDatasetField, ModifyField} from '../typings';
+import type {FieldEditorErrors, ModifiedDatasetField, ModifyField} from '../typings';
 import {getErrorMessageKey} from '../utils';
 
 const b = block('dl-field-editor');

@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
-import DataTable, {DataTableProps, Settings} from '@gravity-ui/react-data-table';
+import type {DataTableProps, Settings} from '@gravity-ui/react-data-table';
+import DataTable from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import {TableCommonCell, TableHead, TableRow} from 'shared';
+import type {TableCommonCell, TableHead, TableRow} from 'shared';
 
-import {ChartKitDataTable, DataTableData} from '../../../../../types';
+import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../helpers/constants';
 import {getRandomCKId} from '../../../../helpers/getRandomCKId';
 import {i18n} from '../../../../modules/i18n/i18n';
@@ -14,7 +15,7 @@ import {Loader} from '../../../Loader/Loader';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import Paginator from './Paginator/Paginator';
-import {TableProps} from './types';
+import type {TableProps} from './types';
 import {
     camelCaseCss,
     concatStrings,

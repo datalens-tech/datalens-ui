@@ -4,16 +4,13 @@ import type {
     PieSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {
-    ServerField,
-    WizardVisualizationId,
-    formatNumber,
-    getFormatOptions,
-} from '../../../../../../../shared';
+import type {ServerField} from '../../../../../../../shared';
+import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
-import preparePieData, {PieConfig} from './prepare-pie-data';
+import type {PieConfig} from './prepare-pie-data';
+import preparePieData from './prepare-pie-data';
 
 type MapPieSeriesArgs = {
     graph: PieConfig;

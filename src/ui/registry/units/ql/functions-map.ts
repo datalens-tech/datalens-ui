@@ -1,4 +1,4 @@
-import {QLChartType} from 'shared';
+import type {QLChartType} from 'shared';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 

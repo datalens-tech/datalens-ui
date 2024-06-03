@@ -1,13 +1,13 @@
-import {QLParamType} from '../../../../../shared';
-import {
-    DIALOG_QL_PARAMETER,
+import type {QLParamType} from '../../../../../shared';
+import type {
     DialogQLApplyData,
     OpenDialogQLParameterArgs,
 } from '../../../../components/DialogQLParameter/DialogQLParameter';
-import {DatalensGlobalState} from '../../../../index';
-import {AppDispatch} from '../../../../store';
+import {DIALOG_QL_PARAMETER} from '../../../../components/DialogQLParameter/DialogQLParameter';
+import type {DatalensGlobalState} from '../../../../index';
+import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
-import {QLAction} from '../typings/ql';
+import type {QLAction} from '../typings/ql';
 
 type DialogParameterArgs = {
     onApply: (data: DialogQLApplyData) => void;

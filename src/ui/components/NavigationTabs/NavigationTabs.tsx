@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {AdaptiveTabsProps, TabItem, TabsSize} from '@gravity-ui/components';
+import type {AdaptiveTabsProps, TabItem, TabsSize} from '@gravity-ui/components';
 import {useHistory, useLocation} from 'react-router-dom';
 import {isMobileView} from 'ui/utils/mobile';
 

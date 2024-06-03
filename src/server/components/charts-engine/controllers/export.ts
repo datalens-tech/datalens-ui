@@ -1,4 +1,4 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import moment from 'moment';
 
 import {registry} from '../../../registry';

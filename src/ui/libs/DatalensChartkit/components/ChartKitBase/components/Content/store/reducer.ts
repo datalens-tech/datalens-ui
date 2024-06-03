@@ -1,11 +1,10 @@
+import type {Action, State} from './types';
 import {
-    Action,
     CHARTKIT_DL_SET_DATA_PARAMS,
     CHARTKIT_DL_SET_LOADED_DATA,
     CHARTKIT_DL_SET_LOADING,
     CHARTKIT_DL_SET_WIDGET_DATA,
     CHARTKIT_DL_SET_WIDGET_ERROR,
-    State,
 } from './types';
 
 export const getInitialState = (): State => {

@@ -1,4 +1,4 @@
-import {ButtonSaveComponentData, DialogRevisionsComponentData} from '../types';
+import type {ButtonSaveComponentData, DialogRevisionsComponentData} from '../types';
 
 export enum ComponentName {
     ButtonSave = 'buttonSave',

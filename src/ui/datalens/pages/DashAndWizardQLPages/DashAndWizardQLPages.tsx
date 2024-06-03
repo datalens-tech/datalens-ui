@@ -1,6 +1,8 @@
 import React, {lazy} from 'react';
-import {Route, Switch, RouteComponentProps, match} from 'react-router-dom';
-import {bindActionCreators, Dispatch} from 'redux';
+import type {RouteComponentProps, match} from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
 import {deleteLock} from '../../../units/dash/store/actions/dashTyped';

@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {AdaptiveTabs, TabItem} from '@gravity-ui/components';
+import type {TabItem} from '@gravity-ui/components';
+import {AdaptiveTabs} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -10,7 +11,7 @@ import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
-import {CurrentTab} from '../types';
+import type {CurrentTab} from '../types';
 
 import {DASH_WIDGET_CLASSNAME} from './helpers';
 

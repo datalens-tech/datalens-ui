@@ -1,3 +1,4 @@
+import type {RGBColor} from '../constants';
 import {
     DEFAULT_FLOAT_NUMBERS,
     DEFAULT_FORMATTING,
@@ -6,11 +7,10 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     PseudoFieldTitle,
-    RGBColor,
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER,
     WizardVisualizationId,
 } from '../constants';
-import {
+import type {
     CommonNumberFormattingOptions,
     Dataset,
     Field,
@@ -19,10 +19,8 @@ import {
     ServerSort,
     Update,
     V3Label,
-    isDateField,
-    isFloatField,
-    isNumberField,
 } from '../types';
+import {isDateField, isFloatField, isNumberField} from '../types';
 
 import {isMeasureField} from './helpers';
 

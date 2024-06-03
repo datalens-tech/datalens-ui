@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {RowData, SortingFnOption} from '@tanstack/react-table';
 

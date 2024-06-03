@@ -1,14 +1,14 @@
 import querystring from 'querystring';
 import url from 'url';
 
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {ChartsEngine} from '..';
+import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
 import {resolveConfig} from '../components/storage';
-import {ResolveConfigProps} from '../components/storage/base';
+import type {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 type RunControllerExtraSettings = {

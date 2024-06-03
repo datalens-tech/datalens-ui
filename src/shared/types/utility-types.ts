@@ -1,4 +1,4 @@
-import {Falsy} from 'utility-types';
+import type {Falsy} from 'utility-types';
 
 export type EmptyObject = {
     [K in any]: never;

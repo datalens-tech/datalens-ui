@@ -1,5 +1,5 @@
+import type {CommonNumberFormattingOptions} from '../../../../../../../shared';
 import {
-    CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
@@ -18,7 +18,7 @@ import {
     log,
     logTiming,
 } from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 // A secure delimiter that connects keys
 const SPECIAL_DELIMITER = '#$#';

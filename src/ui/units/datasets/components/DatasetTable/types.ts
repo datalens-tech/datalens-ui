@@ -1,6 +1,6 @@
-import {MenuItemProps} from '@gravity-ui/uikit';
+import type {MenuItemProps} from '@gravity-ui/uikit';
 
-import {FieldAction} from './constants';
+import type {FieldAction} from './constants';
 
 export type ColumnItem = {
     index: number;

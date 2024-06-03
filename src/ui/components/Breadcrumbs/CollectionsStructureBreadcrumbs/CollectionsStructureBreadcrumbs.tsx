@@ -1,7 +1,7 @@
 import React from 'react';
 
+import type {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {
-    BreadcrumbsItem,
     FirstDisplayedItemsCount,
     LastDisplayedItemsCount,
     Breadcrumbs as UIKitBreadcrumbs,

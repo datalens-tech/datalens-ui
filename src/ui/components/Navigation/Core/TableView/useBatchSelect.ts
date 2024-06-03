@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HookBatchSelectResult, TableViewProps} from './types';
+import type {HookBatchSelectResult, TableViewProps} from './types';
 
 type HookBatchSelectArgs = Pick<TableViewProps, 'entries' | 'mode' | 'isMobileNavigation'>;
 

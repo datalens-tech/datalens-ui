@@ -1,15 +1,13 @@
 import {pick} from 'lodash';
-import {
+import type {
     ColorsConfig,
     Field,
     ShapesConfig,
     Shared,
     Sort,
     VisualizationLayerShared,
-    WizardVisualizationId,
-    isParameter,
-    isVisualizationWithLayers,
 } from 'shared';
+import {WizardVisualizationId, isParameter, isVisualizationWithLayers} from 'shared';
 
 import {getSelectedLayer} from '../../utils/helpers';
 

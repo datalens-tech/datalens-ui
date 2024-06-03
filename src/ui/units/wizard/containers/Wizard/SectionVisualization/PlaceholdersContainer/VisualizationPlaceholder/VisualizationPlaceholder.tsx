@@ -1,23 +1,27 @@
 import React from 'react';
 
-import {Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatalensGlobalState} from 'ui';
 import {selectPointSizeConfig, selectVisualization} from 'units/wizard/selectors/visualization';
 import {selectExtraSettings} from 'units/wizard/selectors/widget';
 import {getGeolayerGroups} from 'units/wizard/utils/helpers';
 
-import {
+import type {
     Field,
     Placeholder,
+    PointSizeConfig,
+    VisualizationLayerType,
+} from '../../../../../../../../shared';
+import {
     PlaceholderActionQa,
     PlaceholderId,
-    PointSizeConfig,
     PseudoFieldTitle,
-    VisualizationLayerType,
     WizardVisualizationId,
     isFieldHierarchy,
     isMarkupField,
@@ -43,11 +47,11 @@ import {
     updateFieldColumnSettings,
 } from '../../../../../actions/visualization';
 import {forceDisableTotalsAndPagination, setExtraSettings} from '../../../../../actions/widget';
-import {DialogColumnSettingsFields} from '../../../../../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
-import {ColumnSettingsState} from '../../../../../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
+import type {DialogColumnSettingsFields} from '../../../../../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
+import type {ColumnSettingsState} from '../../../../../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
 import {CHART_SETTINGS, ITEM_TYPES, VISUALIZATION_IDS} from '../../../../../constants';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 import {COLUMNS_PLACEHOLDERS, ROWS_PLACEHOLDERS} from './constants';
 

@@ -1,5 +1,5 @@
 import {createAction} from '../../gateway-utils';
-import {EnsurePersonalFolderIsPresentResponse} from '../types';
+import type {EnsurePersonalFolderIsPresentResponse} from '../types';
 
 const PATH_PREFIX = '/private';
 

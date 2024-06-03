@@ -3,7 +3,8 @@ import React from 'react';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import block from 'bem-cn-lite';
 import {get, isEqual, isFunction, omit} from 'lodash';
-import {DashTabItemControlSourceType, StringParams} from 'shared';
+import type {StringParams} from 'shared';
+import {DashTabItemControlSourceType} from 'shared';
 
 import type {WidgetType} from '../../../../units/dash/modules/constants';
 import type {ChartKit} from '../../ChartKit/ChartKit';
@@ -20,20 +21,21 @@ import ExtensionsManager from '../../modules/extensions-manager/extensions-manag
 import settings from '../../modules/settings/settings';
 import type {
     CombinedError,
+    ControlsOnlyWidget,
     DataProvider,
     LoadedWidget,
     LoadedWidgetData,
     OnChangeData,
     Widget as TWidget,
 } from '../../types';
-import {ControlsOnlyWidget} from '../../types';
 import type {MenuItems} from '../../types/menu';
 import DeferredInitializer from '../DeferredInitializer/DeferredInitializer';
 import Drill from '../Drill/Drill';
 import type {ErrorProps} from '../Error/Error';
 import {SideMarkdown} from '../SideMarkdown/SideMarkdown';
 
-import {Header, HeaderProps} from './components/Header/Header';
+import type {HeaderProps} from './components/Header/Header';
+import {Header} from './components/Header/Header';
 import Loader from './components/Loader/Loader';
 import {CHARTKIT_BASE_CLASSNAME, getVisibleItems} from './helpers';
 

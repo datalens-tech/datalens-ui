@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {BarGradientColorSettings, ColorsConfig, Field, TableBarsSettings} from 'shared';
+import type {BarGradientColorSettings, ColorsConfig, Field, TableBarsSettings} from 'shared';
 
 import {PaletteType} from '../../../../../../PaletteIcon/PaletteIcon';
 import {ButtonColorDialog} from '../../../ButtonColorDialog/ButtonColorDialog';

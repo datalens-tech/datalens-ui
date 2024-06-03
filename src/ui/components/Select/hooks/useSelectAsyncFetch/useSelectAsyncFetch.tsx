@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {Loader, SelectProps, SelectRenderOption} from '@gravity-ui/uikit';
-import {
+import type {SelectProps, SelectRenderOption} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
+import type {
     SelectOption,
     SelectRenderOptionViewParams,
 } from '@gravity-ui/uikit/build/esm/components/Select/types';

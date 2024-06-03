@@ -1,7 +1,7 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils/build/typings';
 
-import {ServerDatasetField} from '../types';
+import type {ServerDatasetField} from '../types';
 
 import {isParameter} from './helpers';
 

@@ -1,6 +1,6 @@
-import {ApplyData} from 'components/DialogFilter/DialogFilter';
+import type {ApplyData} from 'components/DialogFilter/DialogFilter';
 
-import {
+import type {
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
@@ -10,7 +10,7 @@ import {
     WorkbookId,
 } from '../../../../../shared';
 import type {ValidateDatasetResponse} from '../../../../../shared/schema';
-import {
+import type {
     ADD_AVATAR_PROTOTYPES,
     ADD_AVATAR_TEMPLATE,
     ADD_CONNECTION,

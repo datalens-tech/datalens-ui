@@ -1,25 +1,22 @@
 import React from 'react';
 
 import {Function, Link as LinkIcon, PencilToSquare} from '@gravity-ui/icons';
-import {DropdownMenu, DropdownMenuItem, Icon, Popover} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import type {DatasetField, Field, HierarchyField, Link, Update} from 'shared';
 import {
     DATASET_FIELD_TYPES,
-    DatasetField,
     DatasetFieldType,
     DatasetItemActionsQa,
-    Field,
-    HierarchyField,
-    Link,
     SectionDatasetQA,
-    Update,
     isParameter,
 } from 'shared';
 import {openDialog, openDialogParameter} from 'store/actions/dialog';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {DIALOG_FIELD_INSPECTOR} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import {
     selectDataset,
@@ -32,7 +29,7 @@ import Utils from 'utils';
 
 import {updateDatasetByValidation} from '../../../../actions';
 import {setUpdates} from '../../../../actions/preview';
-import {WizardDispatch} from '../../../../reducers';
+import type {WizardDispatch} from '../../../../reducers';
 
 import './DatasetItem.scss';
 

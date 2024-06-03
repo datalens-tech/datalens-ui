@@ -2,13 +2,13 @@ import React from 'react';
 
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItem, WorkbookId} from 'shared';
+import type {DashTabItem, WorkbookId} from 'shared';
 
-import {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
+import type {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
-import {
+import type {
     AliasContextProps,
     ConnectionsData,
     DashkitMetaData,

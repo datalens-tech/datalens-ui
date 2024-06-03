@@ -9,7 +9,7 @@ import {
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {CommonFieldType, DATASET_FIELD_TYPES} from 'shared';
+import type {CommonFieldType, DATASET_FIELD_TYPES} from 'shared';
 import {DataTypeIcon} from 'ui';
 
 const b = block('conn-form-file');

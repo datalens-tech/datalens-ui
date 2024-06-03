@@ -4,11 +4,11 @@ import block from 'bem-cn-lite';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {BatchPanel} from '../../components/BatchPanel/BatchPanel';
-import {BatchAction} from '../../types';
+import type {BatchAction} from '../../types';
 
 import {BatchDialog} from './BatchDialog/BatchDialog';
 import {List} from './List/List';
-import {TableViewProps} from './types';
+import type {TableViewProps} from './types';
 import {useBatchSelect} from './useBatchSelect';
 
 import './TableView.scss';

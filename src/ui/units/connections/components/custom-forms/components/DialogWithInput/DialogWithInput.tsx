@@ -1,9 +1,10 @@
 import React from 'react';
 
-import {ButtonProps, Dialog, TextInput} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Dialog, TextInput} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
-import {DialogConnWithInputProps} from './types';
+import type {DialogConnWithInputProps} from './types';
 
 const i18n = I18n.keyset('connections.gsheet.view');
 

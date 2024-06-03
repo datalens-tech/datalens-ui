@@ -3,8 +3,10 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {ActionPanelQA, Feature} from 'shared';
 import {
     cleanRevisions,
@@ -22,9 +24,9 @@ import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 
 import type {GetEntryResponse} from '../../../shared/schema';
-import {DatalensGlobalState} from '../../index';
+import type {DatalensGlobalState} from '../../index';
 import {getSdk} from '../../libs/schematic-sdk';
-import {EntryContextMenuItems} from '../EntryContextMenu/helpers';
+import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';

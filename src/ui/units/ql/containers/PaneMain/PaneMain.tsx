@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {DatalensGlobalState, EntryDialogues} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
 
-import {QLChartType} from '../../../../../shared';
+import type {QLChartType} from '../../../../../shared';
 import {getChartType, getConnection} from '../../store/reducers/ql';
-import {QLConnectionEntry} from '../../store/typings/ql';
+import type {QLConnectionEntry} from '../../store/typings/ql';
 
 import ScreenEditor from './ScreenEditor/ScreenEditor';
 

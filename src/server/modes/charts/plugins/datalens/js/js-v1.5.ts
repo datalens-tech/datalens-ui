@@ -1,16 +1,16 @@
-import {
+import type {
     DATASET_FIELD_TYPES,
     IChartEditor,
     ServerChartsConfig,
     ServerLink,
     ServerVisualization,
     Shared,
-    getServerFeatures,
 } from '../../../../../../shared';
+import {getServerFeatures} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
-import {PrepareFunctionDataRow, PrepareFunctionResultData} from '../preparers/types';
+import type {PrepareFunctionDataRow, PrepareFunctionResultData} from '../preparers/types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
 import {log} from '../utils/misc-helpers';

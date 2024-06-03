@@ -1,19 +1,18 @@
 import React from 'react';
 
-import {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import type {DatasetField, WithRequired} from 'shared';
 import {
     AVAILABLE_FIELD_TYPES,
     DATASET_FIELD_TYPES,
-    DatasetField,
     DatasetFieldAggregation,
     DatasetFieldType,
-    WithRequired,
 } from 'shared';
 import {DataTypeIcon} from 'ui';
 
-import {ParameterFormState} from './useParameterForm';
+import type {ParameterFormState} from './useParameterForm';
 
 const NEW_PARAMETER_FIELD = {
     calc_mode: 'parameter',

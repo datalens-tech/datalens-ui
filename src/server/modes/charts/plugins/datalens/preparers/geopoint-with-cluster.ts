@@ -1,4 +1,4 @@
 import geopoint from './geopoint';
-import {PrepareFunctionArgs} from './types';
+import type {PrepareFunctionArgs} from './types';
 
 export default (options: PrepareFunctionArgs) => geopoint(options, {isClusteredPoints: true});

@@ -1,4 +1,4 @@
-import {DatasetField, VisualizationLayerType} from '../../../../shared';
+import type {DatasetField, VisualizationLayerType} from '../../../../shared';
 
 export interface GeolayerSettings {
     id: string;

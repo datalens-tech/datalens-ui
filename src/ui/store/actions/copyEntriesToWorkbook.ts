@@ -1,4 +1,4 @@
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import type {DatalensGlobalState} from 'index';

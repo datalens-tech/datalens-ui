@@ -1,14 +1,8 @@
 import React from 'react';
 
 import {useSelector} from 'react-redux';
-import {
-    ClientChartsConfig,
-    Field,
-    PlaceholderId,
-    TableFieldBackgroundSettings,
-    isMeasureField,
-    isMeasureName,
-} from 'shared';
+import type {ClientChartsConfig, Field, TableFieldBackgroundSettings} from 'shared';
+import {PlaceholderId, isMeasureField, isMeasureName} from 'shared';
 
 import {selectMeasures} from '../../../../../../selectors/dataset';
 import {selectSort} from '../../../../../../selectors/visualization';

@@ -4,14 +4,12 @@ import {Dialog, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 
-import {
-    CommonSharedExtraSettings,
-    DEFAULT_PALETTE,
-    DialogMetricSettingsQa,
-} from '../../../../../../shared';
-import {DatalensGlobalState} from '../../../../../../ui';
+import type {CommonSharedExtraSettings} from '../../../../../../shared';
+import {DEFAULT_PALETTE, DialogMetricSettingsQa} from '../../../../../../shared';
+import type {DatalensGlobalState} from '../../../../../../ui';
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../../../store/selectors/colorPaletteEditor';

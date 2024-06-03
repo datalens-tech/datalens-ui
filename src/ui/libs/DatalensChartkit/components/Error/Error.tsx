@@ -3,9 +3,9 @@ import React from 'react';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import isEmpty from 'lodash/isEmpty';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 
-import DatalensChartkitCustomError from '../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type DatalensChartkitCustomError from '../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import More from './More/More';
 

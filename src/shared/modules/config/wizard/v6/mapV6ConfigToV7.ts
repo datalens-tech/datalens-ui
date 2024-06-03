@@ -1,9 +1,7 @@
 import {omit} from 'lodash';
 
-import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
-import {
-    AxisMode,
-    ChartsConfigVersion,
+import type {PlaceholderId, WizardVisualizationId} from '../../../../constants';
+import type {
     ServerChartsConfig,
     V6ChartsConfig,
     V6Placeholder,
@@ -11,8 +9,8 @@ import {
     V7ChartsConfig,
     V7Layer,
     V7Placeholder,
-    isFieldHierarchy,
 } from '../../../../types';
+import {AxisMode, ChartsConfigVersion, isFieldHierarchy} from '../../../../types';
 import {isVisualizationWithLayers} from '../../../../utils';
 import {isMeasureField} from '../../../helpers';
 import {isAllAxisModesAvailable, isPlaceholderSupportsAxisMode} from '../../../wizard-helpers';

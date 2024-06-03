@@ -1,4 +1,4 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import merge from 'lodash/merge';
 
 import type {FeatureConfig} from '../types';

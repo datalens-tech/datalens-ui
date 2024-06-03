@@ -1,4 +1,4 @@
-import {Shared, SharedData, V10PlaceholderSettings} from '../../index';
+import type {Shared, SharedData, V10PlaceholderSettings} from '../../index';
 
 import type {
     V10ChartsConfig,
@@ -12,11 +12,11 @@ import type {
     V10HierarchyField,
     V10Layer,
 } from './v10';
-import {V2ChartsConfig} from './v2';
-import {V3ChartsConfig} from './v3';
-import {V4ChartsConfig} from './v4';
-import {V5ChartsConfig} from './v5';
-import {V6ChartsConfig} from './v6';
+import type {V2ChartsConfig} from './v2';
+import type {V3ChartsConfig} from './v3';
+import type {V4ChartsConfig} from './v4';
+import type {V5ChartsConfig} from './v5';
+import type {V6ChartsConfig} from './v6';
 import type {V7ChartsConfig} from './v7';
 import type {V8ChartsConfig} from './v8';
 import type {V9ChartsConfig} from './v9';

@@ -3,7 +3,8 @@ import {I18n} from 'i18n';
 import type {DLUserSettings} from 'shared/types/common';
 import {DARK_THEME, LIGHT_THEME, SYSTEM_THEME} from 'ui/constants';
 
-import {HighcontrastValue, ThemeSettingsUpdates} from './types';
+import type {ThemeSettingsUpdates} from './types';
+import {HighcontrastValue} from './types';
 
 const i18n = I18n.keyset('component.aside-header-settings.view');
 

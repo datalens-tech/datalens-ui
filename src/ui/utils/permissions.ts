@@ -1,8 +1,7 @@
 import {i18n} from 'i18n';
 import _ from 'lodash';
 
-import {
-    DlsAcl,
+import type {
     EmptyObject,
     PermissionAdded,
     PermissionModified,
@@ -10,6 +9,7 @@ import {
     PermissionPendingParticipant,
     PermissionRemoved,
 } from '../../shared';
+import {DlsAcl} from '../../shared';
 import type {
     BatchPermissionsArgs,
     GetPermissionsResponse,

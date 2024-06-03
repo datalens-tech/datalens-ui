@@ -8,12 +8,13 @@ import {PLACE} from 'shared';
 import {DialogSuccessWithAction} from 'ui/components/DialogSuccessWithAction/DialogSuccessWithAction';
 
 import type {NavigationEntry} from '../../../../../shared/schema';
-import {ChangeLocation} from '../../types';
+import type {ChangeLocation} from '../../types';
 
 import {AccessError} from './AccessError/AccessError';
 import {MoveError} from './MoveError/MoveError';
-import {SelectDestination, SelectDestinationProps} from './SelectDestination/SelectDestination';
-import {ErrorItem} from './types';
+import type {SelectDestinationProps} from './SelectDestination/SelectDestination';
+import {SelectDestination} from './SelectDestination/SelectDestination';
+import type {ErrorItem} from './types';
 
 const CONCURRENT_ID = 'batchMoveEntry';
 const i18n = I18n.keyset('component.navigation.view');

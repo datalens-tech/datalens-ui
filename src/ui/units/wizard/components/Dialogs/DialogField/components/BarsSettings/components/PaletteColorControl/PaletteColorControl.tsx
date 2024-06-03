@@ -3,7 +3,7 @@ import React, {useRef} from 'react';
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ColorPalette} from 'shared';
+import type {ColorPalette} from 'shared';
 import {useOutsideClick} from 'ui/hooks/useOutsideClick';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
 import {isValidHexColor} from 'ui/utils';

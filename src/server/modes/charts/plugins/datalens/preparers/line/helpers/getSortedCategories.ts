@@ -1,9 +1,9 @@
 import {getFakeTitleOrTitle, isMeasureField} from '../../../../../../../../shared';
 import {collator, getOriginalTitleOrTitle, numericCollator} from '../../../utils/misc-helpers';
-import {Categories} from '../../types';
-import {LineTemplate} from '../types';
+import type {Categories} from '../../types';
+import type {LineTemplate} from '../types';
 
-import {
+import type {
     GetSortedCategoriesArgs,
     SortCategoriesWithColorsSection,
     SortCategoriesWithYSectionArgs,

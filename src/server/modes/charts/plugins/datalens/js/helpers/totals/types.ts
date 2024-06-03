@@ -1,5 +1,5 @@
-import {ApiV2ResultDataRow} from '../../../../../../../../shared';
-import {PrepareFunctionResultData} from '../../../preparers/types';
+import type {ApiV2ResultDataRow} from '../../../../../../../../shared';
+import type {PrepareFunctionResultData} from '../../../preparers/types';
 
 export type GetMergedTotalsArgs = {
     isFirstDataset: boolean;

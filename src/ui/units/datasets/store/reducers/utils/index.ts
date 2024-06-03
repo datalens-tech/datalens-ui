@@ -1,5 +1,5 @@
-import {DatasetAvatarRelation, DatasetSource} from '../../../../../../shared';
-import {FreeformSource} from '../../types';
+import type {DatasetAvatarRelation, DatasetSource} from '../../../../../../shared';
+import type {FreeformSource} from '../../types';
 
 export const isSourceTypeConteinesInFreeformSources = (
     freeformSources: FreeformSource[],

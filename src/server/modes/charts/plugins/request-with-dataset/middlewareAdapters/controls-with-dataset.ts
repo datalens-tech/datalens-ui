@@ -1,7 +1,7 @@
-import Cache from '../../../../../components/cache-client';
-import {ControlShared} from '../../control/types';
+import type Cache from '../../../../../components/cache-client';
+import type {ControlShared} from '../../control/types';
 import {getDistinctsRequestBody} from '../../control/url/distincts/build-distincts-body';
-import {MiddlewareSourceAdapterArgs} from '../../types';
+import type {MiddlewareSourceAdapterArgs} from '../../types';
 import type {ConfigurableRequestWithDatasetPluginOptions} from '../index';
 import {getDatasetFields} from '../request-dataset';
 

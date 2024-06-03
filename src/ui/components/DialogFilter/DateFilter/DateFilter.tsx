@@ -2,10 +2,11 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 
-import {DATASET_FIELD_TYPES, DatasetField} from '../../../../shared';
+import type {DatasetField} from '../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../shared';
 import RelativeDatesPicker from '../../RelativeDatesPicker/RelativeDatesPicker';
-import {Operation} from '../constants';
-import {ChangeValue} from '../typings';
+import type {Operation} from '../constants';
+import type {ChangeValue} from '../typings';
 
 const b = block('dl-dialog-filter');
 

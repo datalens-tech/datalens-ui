@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Popover, PopupPlacement, Switch} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import {Popover, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './SettingSwitcher.scss';

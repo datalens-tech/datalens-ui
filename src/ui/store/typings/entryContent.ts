@@ -1,5 +1,5 @@
 import type {GetEntryResponse, GetRevisionsEntry} from '../../../shared/schema';
-import {EntryContentState} from '../reducers/entryContent';
+import type {EntryContentState} from '../reducers/entryContent';
 
 export enum RevisionsMode {
     Opened = 'opened',

@@ -1,4 +1,4 @@
-import {PayloadFilter} from '../../../../../../../shared';
+import type {PayloadFilter} from '../../../../../../../shared';
 
 type GetMergedChartAndParamsFiltersArgs = {
     paramsFilters: PayloadFilter[];

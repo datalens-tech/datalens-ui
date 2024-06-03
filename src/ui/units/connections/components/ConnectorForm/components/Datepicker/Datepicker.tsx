@@ -7,7 +7,8 @@ import type {DateTime} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {DatepickerItem} from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
 

@@ -2,21 +2,23 @@
 
 import {DL} from 'constants/common';
 
-import axios, {AxiosRequestConfig, CancelTokenSource} from 'axios';
-import {
-    ACCEPT_LANGUAGE_HEADER,
-    DashData,
-    EntryUpdateMode,
-    TIMEZONE_OFFSET_HEADER,
-    oldSchema,
-} from 'shared';
+import type {AxiosRequestConfig, CancelTokenSource} from 'axios';
+import axios from 'axios';
+import type {DashData, EntryUpdateMode} from 'shared';
+import {ACCEPT_LANGUAGE_HEADER, TIMEZONE_OFFSET_HEADER, oldSchema} from 'shared';
 
 import type {CreateWidgetArgs} from '../../../shared/old-schema/charts';
 import {registry} from '../../registry';
-import {Entry} from '../../typings';
+import type {Entry} from '../../typings';
 import axiosInstance from '../axios/axios';
 
-import {ConfigSdk, DataMethodGateway, HeadersSdk, OptionsMethodGateway, SendRequest} from './types';
+import type {
+    ConfigSdk,
+    DataMethodGateway,
+    HeadersSdk,
+    OptionsMethodGateway,
+    SendRequest,
+} from './types';
 
 interface IMakeRequestCancelable {
     method?: string;

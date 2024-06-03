@@ -2,9 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';

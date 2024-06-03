@@ -1,13 +1,15 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 
-import {
+import type {
     ApiV2Filter,
     ApiV2Parameter,
     ApiV2RequestBody,
-    DatasetFieldType,
     FiltersOperationFromURL,
-    Operations,
     StringParams,
+} from '../../../../../../../shared';
+import {
+    DatasetFieldType,
+    Operations,
     resolveIntervalDate,
     resolveOperation,
     resolveRelativeDate,
@@ -15,8 +17,8 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
-import {PartialDatasetField} from '../../../../../../../shared/schema';
-import {ControlShared} from '../../types';
+import type {PartialDatasetField} from '../../../../../../../shared/schema';
+import type {ControlShared} from '../../types';
 
 function buildDistinctsBodyRequest({
     where,

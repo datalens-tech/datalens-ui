@@ -2,9 +2,9 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch} from 'store';
+import type {AppDispatch} from 'store';
 
-import {CreateWorkbookResponse} from '../../../shared/schema';
+import type {CreateWorkbookResponse} from '../../../shared/schema';
 import {createWorkbook} from '../../store/actions/collectionsStructure';
 import {selectCreateWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';

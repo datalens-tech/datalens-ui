@@ -1,6 +1,6 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
-import {BaseStorageInitParams, ResolveConfigProps} from './base';
+import type {BaseStorageInitParams, ResolveConfigProps} from './base';
 import {UnitedStorage} from './united-storage';
 import {USProvider} from './united-storage/provider';
 

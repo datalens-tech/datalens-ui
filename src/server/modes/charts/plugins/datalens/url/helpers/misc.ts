@@ -1,4 +1,4 @@
-import {StringParams} from '../../../../../../../shared';
+import type {StringParams} from '../../../../../../../shared';
 import {getParam} from '../../../../../../components/charts-engine/components/processor/paramsUtils';
 
 export const isParamValid = (value: unknown) => {

@@ -1,14 +1,12 @@
 import _isEmpty from 'lodash/isEmpty';
 
+import type {Field, ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
-    Field,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
-    ServerField,
-    WizardVisualizationId,
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
@@ -28,7 +26,7 @@ import {
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsYAxis} from './helpers';
 import {getAxisFormattingByField} from './helpers/axis/getAxisFormattingByField';

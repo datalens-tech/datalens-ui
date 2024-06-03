@@ -3,12 +3,12 @@ import {
     DashTabItemControlSourceType,
     DatasetFieldType,
 } from '../../../../../../shared';
-import {ControlShared} from '../types';
+import type {ControlShared} from '../types';
 
 import {prepareDistinctsRequest} from './distincts';
 import {prepareFieldsRequest} from './fields';
 import {prepareTypedQueryRequest} from './typed-query';
-import {SourceControlArgs, SourceControlRequests} from './types';
+import type {SourceControlArgs, SourceControlRequests} from './types';
 
 const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, never> => {
     if (shared.source.elementType === DashTabItemControlElementType.Select) {

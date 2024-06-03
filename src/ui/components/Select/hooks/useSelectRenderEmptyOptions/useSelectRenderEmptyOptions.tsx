@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Flex, SelectProps} from '@gravity-ui/uikit';
+import type {SelectProps} from '@gravity-ui/uikit';
+import {Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

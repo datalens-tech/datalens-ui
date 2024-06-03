@@ -1,8 +1,8 @@
 import {i18n} from 'i18n';
 import moment from 'moment';
-import {QLConfigQuery, QlConfigParam} from 'shared/types/config/ql';
+import type {QLConfigQuery, QlConfigParam} from 'shared/types/config/ql';
 
-import {MonitoringPreset, MonitoringPresetV1, MonitoringPresetV2} from '../../../../../shared';
+import type {MonitoringPreset, MonitoringPresetV1, MonitoringPresetV2} from '../../../../../shared';
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../../utils/visualization';
 
 export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {

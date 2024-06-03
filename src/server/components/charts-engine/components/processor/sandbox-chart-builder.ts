@@ -1,9 +1,11 @@
-import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
-import {ChartsEngine} from '../../index';
-import {ResolvedConfig} from '../storage/types';
+import type {DashWidgetConfig} from '../../../../../shared';
+import {EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
+import type {ChartsEngine} from '../../index';
+import type {ResolvedConfig} from '../storage/types';
 
-import {Sandbox, SandboxExecuteResult} from './sandbox';
-import {ChartBuilder, ChartBuilderResult} from './types';
+import type {SandboxExecuteResult} from './sandbox';
+import {Sandbox} from './sandbox';
+import type {ChartBuilder, ChartBuilderResult} from './types';
 
 import {Processor} from './index';
 

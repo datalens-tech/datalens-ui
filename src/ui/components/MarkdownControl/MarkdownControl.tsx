@@ -3,7 +3,7 @@ import React from 'react';
 import {TextArea} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {MarkdownControlProps} from '../../registry/units/common/types/components/MarkdownControl';
+import type {MarkdownControlProps} from '../../registry/units/common/types/components/MarkdownControl';
 
 import './MarkdownControl.scss';
 

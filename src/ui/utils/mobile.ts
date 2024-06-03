@@ -1,7 +1,7 @@
-import {TabsSize} from '@gravity-ui/components';
-import {ButtonSize, CheckboxSize, SelectSize} from '@gravity-ui/uikit';
+import type {TabsSize} from '@gravity-ui/components';
+import type {ButtonSize, CheckboxSize, SelectSize} from '@gravity-ui/uikit';
 import {Feature} from 'shared';
-import {EntityIconSize} from 'ui/components/EntityIcon/EntityIcon';
+import type {EntityIconSize} from 'ui/components/EntityIcon/EntityIcon';
 import {DL} from 'ui/constants';
 
 import Utils from './utils';

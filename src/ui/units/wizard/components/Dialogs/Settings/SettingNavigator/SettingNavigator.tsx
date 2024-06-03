@@ -6,9 +6,8 @@ import {i18n} from 'i18n';
 import {CHART_SETTINGS} from '../../../../constants';
 import SettingSwitcher from '../SettingSwitcher/SettingSwitcher';
 
-import NavigatorSubSettings, {
-    NavigatorSubSettingsProps,
-} from './NavigatorSubSettings/NavigatorSubSettings';
+import type {NavigatorSubSettingsProps} from './NavigatorSubSettings/NavigatorSubSettings';
+import NavigatorSubSettings from './NavigatorSubSettings/NavigatorSubSettings';
 
 type Props = NavigatorSubSettingsProps & {
     navigatorValue: string;

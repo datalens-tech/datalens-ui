@@ -2,14 +2,15 @@ import React from 'react';
 
 import {LayoutRows3} from '@gravity-ui/icons';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Field, Shared} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, Shared} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectAvailable} from 'units/wizard/selectors/visualization';
 
 import {updateAvailable} from '../../../../../actions/placeholder';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type PropsState = ReturnType<typeof mapStateToProps>;
 type PropsDispatch = ReturnType<typeof mapDispatchToProps>;

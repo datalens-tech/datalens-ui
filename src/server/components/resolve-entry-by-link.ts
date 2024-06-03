@@ -2,8 +2,8 @@ import {parse} from 'querystring';
 
 import {AppError} from '@gravity-ui/nodekit';
 
-import {StringParams} from '../../shared';
-import {
+import type {StringParams} from '../../shared';
+import type {
     GetEntryByKeyResponse,
     GetEntryMetaResponse,
     ResolveEntryByLinkComponentArgs,

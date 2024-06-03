@@ -5,7 +5,7 @@ import neutral from './common/neutral-20';
 import oceanic from './common/oceanic-20';
 import trafficLight from './common/traffic-light-9';
 import defaultScheme from './default';
-import {Palette} from './types';
+import type {Palette} from './types';
 
 export * from './types';
 
