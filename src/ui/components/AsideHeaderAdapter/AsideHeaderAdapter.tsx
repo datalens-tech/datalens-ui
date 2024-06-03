@@ -3,7 +3,6 @@ import React from 'react';
 import {ArrowRightFromSquare, CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
 import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
-
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as baseI18n} from 'i18n';
