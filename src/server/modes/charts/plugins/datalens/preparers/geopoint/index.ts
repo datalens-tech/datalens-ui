@@ -5,6 +5,7 @@ import type {
     ServerFieldFormatting,
     VisualizationLayerShared,
 } from '../../../../../../../shared';
+import {Feature, MINIMUM_FRACTION_DIGITS} from '../../../../../../../shared';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
