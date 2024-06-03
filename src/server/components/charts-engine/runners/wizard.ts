@@ -1,14 +1,15 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {chartGenerator} from '../components/chart-generator';
-import {Processor, ProcessorParams} from '../components/processor';
+import type {ProcessorParams} from '../components/processor';
+import {Processor} from '../components/processor';
 import {getWizardChartBuilder} from '../components/processor/worker-chart-builder';
-import {ResolvedConfig} from '../components/storage/types';
+import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
-import {RunnerHandler, RunnerHandlerProps} from '.';
+import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runWizardChart: RunnerHandler = async (
     cx: AppContext,

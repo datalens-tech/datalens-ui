@@ -1,11 +1,7 @@
 import workerPool from 'workerpool';
 
-import {
-    ServerChartsConfig,
-    Shared,
-    WizardVisualizationId,
-    isD3Visualization,
-} from '../../../../../shared';
+import type {ServerChartsConfig, Shared} from '../../../../../shared';
+import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
 import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';

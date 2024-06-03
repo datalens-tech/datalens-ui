@@ -2,15 +2,15 @@ import path from 'path';
 
 import workerpool from 'workerpool';
 
-import {
+import type {
     DashWidgetConfig,
     ServerChartsConfig,
     Shared,
     StringParams,
-    getServerFeatures,
 } from '../../../../../shared';
+import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
-import {WizardWorker} from '../worker/types';
+import type {WizardWorker} from '../worker/types';
 
 import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder} from './types';
