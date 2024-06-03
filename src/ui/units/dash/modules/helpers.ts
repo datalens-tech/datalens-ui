@@ -100,7 +100,9 @@ export function wrapToArray<T = unknown>(value: T | T[]): T[] {
 // get values from arrays in 1 element, otherwise execute distinct/uniq to remove empty values
 export function unwrapFromArray(array: unknown) {
     if (Array.isArray(array)) {
-        return array.length === 1 ? array[0] : [...new Set(array.filter(Boolean))];
+        return array.length === 1
+            ? array[0]
+            : [...new Set(array.filter((value) => Boolean(value) || value === 0))];
     }
     return array;
 }

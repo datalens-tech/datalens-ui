@@ -318,6 +318,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         orderedLineKeys.forEach((lineKeys, lineKeysIndex) => {
             lineKeys.forEach((lineKey) => {
                 let line: LineTemplate;
+
                 let nulls: any;
                 if (lineKeysIndex === 0) {
                     line = lines1[lineKey];
@@ -347,7 +348,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             }
 
                             // We can skip a point only if we put x in each point instead of categories
-                            if (!isXCategoryAxis && typeof value === 'undefined') {
+                            if (
+                                !isXCategoryAxis &&
+                                typeof value === 'undefined' &&
+                                nulls === 'concat'
+                            ) {
                                 return null;
                             }
 
