@@ -6,9 +6,7 @@ import {
     PointSizeConfig,
     ServerFieldFormatting,
     VisualizationLayerShared,
-    isEnabledServerFeature,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import {
@@ -146,7 +144,6 @@ const setPointTooltip = ({
 
 // eslint-disable-next-line complexity
 function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
-    const app = registry.getApp();
     const {
         colors,
         colorsConfig,
@@ -157,6 +154,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         idToTitle,
         shared,
         idToDataType,
+        features,
     } = options;
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const layerSettings = (options.layerSettings ||
@@ -178,10 +176,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
-    const shouldEscapeUserValue = isEnabledServerFeature(
-        app.nodekit.ctx,
-        Feature.EscapeUserHtmlInDefaultHcTooltip,
-    );
+    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const label = labels[0];
 

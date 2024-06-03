@@ -63,12 +63,17 @@ export function getDefaultRunners(ctx: AppContext) {
                 'ymap_wizard_node',
                 'metric_wizard_node',
                 'markup_wizard_node',
-                'control_dash',
                 'timeseries_wizard_node',
                 'd3_wizard_node',
             ]),
             safeConfig: true,
             handler: wizardHandler,
+        },
+        {
+            name: 'dashControls',
+            trigger: new Set(['control_dash']),
+            safeConfig: true,
+            handler: runChart,
         },
     ];
 

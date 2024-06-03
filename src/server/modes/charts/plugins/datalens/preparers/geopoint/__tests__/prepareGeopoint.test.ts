@@ -13,14 +13,6 @@ import {
     PREPARE_FUNCTION_ARGS,
 } from './mocks/geopoints.mock';
 
-jest.mock('../../../../../../../registry', () => ({
-    registry: {
-        getApp() {
-            return {nodekit: {ctx: {config: {features: {}}}}};
-        },
-    },
-}));
-
 function getPrepareFunctionArgs(options: Partial<PrepareFunctionArgs> = {}) {
     return merge(cloneDeep(PREPARE_FUNCTION_ARGS), options) as unknown as PrepareFunctionArgs;
 }

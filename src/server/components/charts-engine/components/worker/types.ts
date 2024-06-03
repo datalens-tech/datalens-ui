@@ -15,6 +15,7 @@ export type BuildSourceArgs = {
     params: StringParams;
     actionParams: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
+    palettes: Record<string, Palette>;
 };
 
 export type BuildLibraryConfigArgs = {
@@ -23,6 +24,7 @@ export type BuildLibraryConfigArgs = {
     params: StringParams;
     actionParams: StringParams;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
+    features: FeatureConfig;
 };
 
 export type BuildChartConfigArgs = {

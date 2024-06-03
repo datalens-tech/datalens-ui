@@ -13,14 +13,6 @@ import {
     shapeField,
 } from './mocks/scatter.mock';
 
-jest.mock('../../../../../../../registry', () => ({
-    registry: {
-        getApp() {
-            return {nodekit: {ctx: {config: {features: {}}}}};
-        },
-    },
-}));
-
 function getPrepareFunctionArgs(options: Partial<PrepareFunctionArgs> = {}) {
     return merge(cloneDeep(scatterPrepareBaseArgs), options) as unknown as PrepareFunctionArgs;
 }

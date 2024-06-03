@@ -1,12 +1,6 @@
 import escape from 'lodash/escape';
 
-import {
-    Feature,
-    MINIMUM_FRACTION_DIGITS,
-    isDateField,
-    isEnabledServerFeature,
-} from '../../../../../../shared';
-import {registry} from '../../../../../registry';
+import {Feature, MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../shared';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -39,8 +33,8 @@ function prepareTreemap({
     colorsConfig,
     idToTitle,
     idToDataType,
+    features,
 }: PrepareFunctionArgs) {
-    const app = registry.getApp();
     // Dimensions
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
@@ -63,10 +57,7 @@ function prepareTreemap({
     const hashTable: Record<string, {value: string | null; label: string}> = {};
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
     const isFloat = m[0] && m[0].data_type === 'float';
-    const shouldEscapeUserValue = isEnabledServerFeature(
-        app.nodekit.ctx,
-        Feature.EscapeUserHtmlInDefaultHcTooltip,
-    );
+    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
     let multimeasure = false;
     let measureNamesLevel: number;
     let colorData: Record<string, {backgroundColor: string}> = {};

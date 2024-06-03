@@ -31,7 +31,7 @@ const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type WizardChartBuilderArgs = {
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     config: {
         data: {
             shared: string;
@@ -97,6 +97,7 @@ export const getWizardChartBuilder = async (
                 actionParams,
                 widgetConfig,
                 userLang,
+                palettes,
             });
 
             return {
@@ -117,6 +118,7 @@ export const getWizardChartBuilder = async (
                 actionParams,
                 widgetConfig,
                 userLang,
+                features,
             });
 
             return {

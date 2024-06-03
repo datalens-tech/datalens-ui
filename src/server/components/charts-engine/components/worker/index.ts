@@ -1,11 +1,18 @@
 import workerPool from 'workerpool';
 
-import {ServerChartsConfig, Shared, WizardVisualizationId} from '../../../../../shared';
+import {
+    ServerChartsConfig,
+    Shared,
+    WizardVisualizationId,
+    isD3Visualization,
+} from '../../../../../shared';
+import {getTranslationFn} from '../../../../../shared/modules/language';
 import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
 import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
-import {buildHighchartsConfig} from '../../../../modes/charts/plugins/datalens/highcharts';
+import {buildHighchartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/highcharts';
 import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
-import {buildSources} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {buildSourcesPrivate} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {createI18nInstance} from '../../../../utils/language';
 import {getChartApiContext} from '../processor/chart-api-context';
 
 import type {
@@ -18,7 +25,7 @@ import type {
 
 const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, palettes} = args;
         const context = getChartApiContext({
             name: 'Urls',
             shared,
@@ -29,16 +36,17 @@ const worker: WizardWorker = {
         });
 
         return {
-            exports: buildSources({
+            exports: buildSourcesPrivate({
                 apiVersion: '2',
                 shared: shared as Shared,
                 params,
+                palettes,
             }),
             runtimeMetadata: context.__runtimeMetadata,
         };
     },
     buildLibraryConfig: async (args: BuildLibraryConfigArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, features} = args;
         const context = getChartApiContext({
             name: 'Highcharts',
             shared,
@@ -56,19 +64,17 @@ const worker: WizardWorker = {
                 result = {};
                 break;
             }
-            case WizardVisualizationId.PieD3:
-            case WizardVisualizationId.LineD3:
-            case WizardVisualizationId.ScatterD3:
-            case WizardVisualizationId.BarXD3: {
-                result = buildWizardD3Config({
-                    shared: shared,
-                });
-                break;
-            }
             default: {
-                result = buildHighchartsConfig({
-                    shared: shared,
-                });
+                if (isD3Visualization(visualizationId as WizardVisualizationId)) {
+                    result = buildWizardD3Config({
+                        shared: shared,
+                    });
+                } else {
+                    result = buildHighchartsConfigPrivate({
+                        shared: shared,
+                        features,
+                    });
+                }
             }
         }
 
@@ -111,6 +117,9 @@ const worker: WizardWorker = {
             widgetConfig,
             userLang,
         });
+
+        const i18n = createI18nInstance({lang: userLang});
+        context.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
         const result = buildGraphPrivate({
             data,
