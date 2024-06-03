@@ -6,8 +6,8 @@ import type {PassportStatic} from 'passport';
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import {isChartsMode, isDatalensMode, isFullMode, isZitadelEnabled} from '../../app-env';
 import type {ChartsEngine} from '../../components/charts-engine';
+import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
-import {logout} from '../../controllers/zitadel';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -46,46 +46,6 @@ export function getRoutes({
     if (isFullMode || isChartsMode) {
         routes = {...routes, ...getChartsRoutes({chartsEngine, beforeAuth, afterAuth})};
     }
-
-    return routes;
-}
-
-function getZitadelRoutes({
-    passport,
-    beforeAuth,
-    afterAuth,
-}: {
-    passport: PassportStatic;
-    beforeAuth: AppMiddleware[];
-    afterAuth: AppMiddleware[];
-}) {
-    const routes: Record<string, ExtendedAppRouteDescription> = {
-        auth: {
-            beforeAuth,
-            afterAuth,
-            authHandler: passport.authenticate('openidconnect'),
-            route: 'GET /auth',
-            handler: () => {},
-        },
-        authCallback: {
-            beforeAuth,
-            afterAuth,
-            authHandler: passport.authenticate('openidconnect', {
-                successRedirect: '/',
-                failureRedirect: '/auth',
-            }),
-            route: 'GET /api/auth/callback',
-            handler: () => {},
-        },
-        logout: {
-            beforeAuth,
-            afterAuth,
-            route: 'GET /logout',
-            handler: logout,
-            authPolicy: AuthPolicy.disabled,
-            ui: true,
-        },
-    };
 
     return routes;
 }

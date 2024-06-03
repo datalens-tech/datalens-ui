@@ -7,6 +7,7 @@ declare global {
             refreshToken: string;
 
             login: string;
+            userId: string;
             userName: string;
             email?: string;
         }

@@ -1,12 +1,12 @@
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
-import {logout} from '../controllers/zitadel';
 import {
     generateServiceAccessUserToken,
     introspect,
     refreshTokens,
     saveUserToSesson,
-} from '../utils/zitadel';
+} from '../components/zitadel/utils';
+import {logout} from '../controllers/zitadel';
 
 export default async function (req: Request, res: Response, next: NextFunction) {
     const {ctx} = req;
@@ -14,7 +14,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     const isAuthenticated = req.isAuthenticated();
 
     if (isAuthenticated) {
-        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.login);
+        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.userId);
 
         const accessToken = req.user.accessToken;
         const refreshToken = req.user.refreshToken;
@@ -34,7 +34,11 @@ export default async function (req: Request, res: Response, next: NextFunction) 
 
                 return next();
             } else if (req.routeInfo?.ui) {
-                return logout(req, res);
+                try {
+                    return logout(req, res);
+                } catch (e) {
+                    ctx.logError('logout', e);
+                }
             } else {
                 return res.status(401).send('Unauthorized access');
             }

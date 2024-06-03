@@ -10,8 +10,8 @@ import {
     serviceClientSecret,
     zitadelProjectId,
     zitadelUri,
-} from '../app-env';
-import {getDuration} from '../components/charts-engine/components/utils';
+} from '../../app-env';
+import {getDuration} from '../charts-engine/components/utils';
 
 const cache = new NodeCache();
 
@@ -145,9 +145,9 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
 
 export const generateServiceAccessUserToken = async (
     ctx: AppContext,
-    login: string,
+    userId: string,
 ): Promise<string | undefined> => {
-    let token: string | undefined = cache.get(login);
+    let token: string | undefined = cache.get(userId);
 
     if (token) {
         ctx.log('Service user access token retrieved from cache');
@@ -158,7 +158,7 @@ export const generateServiceAccessUserToken = async (
             const safeTtl = Math.floor(0.9 * expires_in);
             ctx.log('Service user access token created, saving to cache');
 
-            cache.set(login, access_token, safeTtl);
+            cache.set(userId, access_token, safeTtl);
             token = access_token;
         }
     }
@@ -170,8 +170,6 @@ export const saveUserToSesson = async (req: Request): Promise<void> => {
     return new Promise((resolve, reject) => {
         const ctx = req.ctx;
         const user = req.user as Express.User;
-
-        ctx.log('save user', {user});
 
         req.logIn(user, (err: unknown) => {
             if (err) {

@@ -17,7 +17,7 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
-import {isOpensourceInstallation} from '../app-env';
+import {isOpensourceInstallation, isZitadelEnabled} from '../app-env';
 
 import {isGatewayError} from './gateway';
 
@@ -48,7 +48,7 @@ class Utils {
 
     static pickZitadelHeaders(req: Request) {
         return {
-            ...{authorization: 'Bearer ' + req.user?.accessToken},
+            authorization: 'Bearer ' + req.user?.accessToken,
             [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
         };
     }
@@ -71,7 +71,7 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            ...Utils.pickZitadelHeaders(req),
+            ...(isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };
     }

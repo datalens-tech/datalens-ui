@@ -1,5 +1,11 @@
 import type {AppEnvironment} from '../../../shared';
-import {AppInstallation, DL_CONTEXT_HEADER, Language, isTrueArg} from '../../../shared';
+import {
+    AppInstallation,
+    DL_CONTEXT_HEADER,
+    Language,
+    SERVICE_USER_ACCESS_TOKEN_HEADER,
+    isTrueArg,
+} from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import {SERVICE_NAME_DATALENS} from '../../constants';
@@ -193,4 +199,7 @@ export default {
             enabled: isTrueArg(process.env.YANDEX_MAP_ENABLED),
         },
     },
+
+    appSensitiveKeys: [SERVICE_USER_ACCESS_TOKEN_HEADER],
+    appSensitiveHeaders: [SERVICE_USER_ACCESS_TOKEN_HEADER],
 };
