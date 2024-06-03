@@ -3,7 +3,7 @@ import React from 'react';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 import {parseError} from 'utils/errors/parse';
 
 import './ErrorView.scss';

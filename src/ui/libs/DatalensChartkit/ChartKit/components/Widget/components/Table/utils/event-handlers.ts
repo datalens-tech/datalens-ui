@@ -8,7 +8,7 @@ import type {TableProps} from '../types';
 
 import {getActionParams} from './action-params';
 import {getCellOnClick} from './misc';
-import {ActionParamsData} from './types';
+import type {ActionParamsData} from './types';
 
 export const getCellClickArgs = (row: DataTableData | undefined, columnName: string) => {
     const onClick = getCellOnClick(row, columnName);

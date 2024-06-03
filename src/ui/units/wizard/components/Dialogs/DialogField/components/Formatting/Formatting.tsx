@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CommonNumberFormattingOptions, Field} from 'shared';
+import type {CommonNumberFormattingOptions, Field} from 'shared';
 
 import Number, {isFloatNumberFormatting, isIntegerNumberFormatting} from './Number/Number';
 

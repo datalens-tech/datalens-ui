@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 
-import {YandexMapWidgetProps} from '../types';
+import type {YandexMapWidgetProps} from '../types';
 
 import {YandexMapComponent} from './YandexMapComponent';
 

@@ -1,7 +1,7 @@
 import {MAX_SEGMENTS_NUMBER} from '../../../../../../../../../shared';
 import {getSegmentsIndexInOrder, getSegmentsList} from '../../../../preparers/line/helpers';
 
-import {IsSegmentsOversizeError} from './types';
+import type {IsSegmentsOversizeError} from './types';
 
 export const isDefaultOversizeError = (
     rowsLength: number | undefined,

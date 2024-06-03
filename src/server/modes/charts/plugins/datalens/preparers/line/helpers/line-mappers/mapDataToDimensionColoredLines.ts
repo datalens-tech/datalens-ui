@@ -1,11 +1,12 @@
-import {ColorMode, DATASET_FIELD_TYPES, getDistinctValue} from '../../../../../../../../../shared';
+import type {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {ColorMode, getDistinctValue} from '../../../../../../../../../shared';
 import {COLOR_SHAPE_SEPARATOR} from '../../../../utils/constants';
 import {formatDate, getFieldTitle} from '../../../../utils/misc-helpers';
-import {ItemValues} from '../types';
+import type {ItemValues} from '../types';
 import {getItemsValues, getLineKey} from '../utils';
 
 import {getColoredLineLegendTitle} from './getColoredLineLegendTitle';
-import {
+import type {
     ColorAndShapesValues,
     GetColorAndShapeValuesArgs,
     GetFieldTitleForValueArgs,

@@ -1,4 +1,4 @@
-import {RGBGradient} from '../../../../../../shared';
+import type {RGBGradient} from '../../../../../../shared';
 import type {ChartColorsConfig} from '../types';
 
 import {

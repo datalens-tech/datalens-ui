@@ -1,6 +1,6 @@
-import {ServerField} from '../../../../../../../../../shared';
+import type {ServerField} from '../../../../../../../../../shared';
 import {findIndexInOrder} from '../../../../utils/misc-helpers';
-import {ResultDataOrder} from '../../../types';
+import type {ResultDataOrder} from '../../../types';
 
 export const getSegmentsIndexInOrder = (
     order: ResultDataOrder,

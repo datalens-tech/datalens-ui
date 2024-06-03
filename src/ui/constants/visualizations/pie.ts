@@ -1,5 +1,6 @@
 import {BucketPaint, ChartPie, LayoutColumns3} from '@gravity-ui/icons';
-import {Field, GraphShared, Placeholder, PlaceholderId, WizardVisualizationId} from 'shared';
+import type {Field, GraphShared, Placeholder} from 'shared';
+import {PlaceholderId, WizardVisualizationId} from 'shared';
 import {
     prepareFieldToDimensionTransformation,
     prepareFieldToMeasureTransformation,

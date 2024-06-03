@@ -1,16 +1,18 @@
 import escape from 'lodash/escape';
 
+import type {
+    DATASET_FIELD_TYPES,
+    FeatureConfig,
+    ServerChartsConfig,
+    ServerPlaceholder,
+} from '../../../../../shared';
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
-    DATASET_FIELD_TYPES,
     Feature,
-    FeatureConfig,
     LabelsPositions,
     LegendDisplayMode,
     PlaceholderId,
-    ServerChartsConfig,
-    ServerPlaceholder,
     VISUALIZATIONS_WITH_LABELS_POSITION,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
@@ -19,7 +21,8 @@ import {
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 
-import {IgnoreProps, applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
+import type {IgnoreProps} from './utils/axis-helpers';
+import {applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from './utils/config-helpers';
 import {getFieldTitle, isNumericalDataType, log} from './utils/misc-helpers';
 

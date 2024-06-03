@@ -1,10 +1,9 @@
+import type {Field, TableBarsSettings} from 'shared';
 import {
     BarsAlignValues,
     BarsColorType,
     DEFAULT_PALETTE,
-    Field,
     PlaceholderId,
-    TableBarsSettings,
     WizardVisualizationId,
     isMeasureType,
     isNumberField,

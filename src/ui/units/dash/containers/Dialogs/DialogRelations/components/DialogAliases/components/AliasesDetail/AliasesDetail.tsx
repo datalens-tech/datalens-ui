@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 
 import {getRelationsIcon} from '../../../../helpers';
 import {AliasesContext} from '../../../../hooks/useRelations';
-import {DashkitMetaDataItem} from '../../../../types';
+import type {DashkitMetaDataItem} from '../../../../types';
 
 import './AliasesDetail.scss';
 

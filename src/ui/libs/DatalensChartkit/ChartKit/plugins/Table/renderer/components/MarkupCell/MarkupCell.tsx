@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {MarkupItem, TableCommonCell} from 'shared';
+import type {MarkupItem, TableCommonCell} from 'shared';
 import {Markup} from 'ui/components/Markup';
 
 type MarkupCellProps = {

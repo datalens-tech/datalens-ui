@@ -4,7 +4,7 @@ import {PlaceholderContainer} from '@gravity-ui/components';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {PlaceholderIllustrationProps} from './types';
+import type {PlaceholderIllustrationProps} from './types';
 
 export const PlaceholderIllustration = ({
     name,

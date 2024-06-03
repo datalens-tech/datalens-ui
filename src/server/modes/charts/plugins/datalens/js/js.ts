@@ -1,15 +1,13 @@
 import moment from 'moment';
 
-import {
+import type {
     ApiV2RequestField,
     ApiV2ResultDataRow,
     ApiV2ResultField,
     ChartsInsight,
     ColorPalette,
-    DATASET_FIELD_TYPES,
     FeatureConfig,
     IChartEditor,
-    MAX_SEGMENTS_NUMBER,
     Palette,
     ServerChartsConfig,
     ServerField,
@@ -19,6 +17,10 @@ import {
     ServerVisualization,
     ServerVisualizationLayer,
     Shared,
+} from '../../../../../../shared';
+import {
+    DATASET_FIELD_TYPES,
+    MAX_SEGMENTS_NUMBER,
     WizardVisualizationId,
     getServerFeatures,
     isDateType,
@@ -30,7 +32,7 @@ import {registry} from '../../../../../registry';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
-import {PivotData} from '../preparers/backend-pivot-table/types';
+import type {PivotData} from '../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../preparers/bar-x';
 import {prepareHighchartsBarY} from '../preparers/bar-y';
 import prepareFlatTableData from '../preparers/flat-table';
@@ -45,7 +47,7 @@ import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
 import preparePolylineData from '../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../preparers/scatter';
 import prepareTreemapData from '../preparers/treemap';
-import {
+import type {
     LayerChartMeta,
     PrepareFunction,
     PrepareFunctionArgs,

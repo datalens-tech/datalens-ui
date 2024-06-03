@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {withHiddenUnmount} from 'ui';
 
-import {GeolayerSettings} from '../../../typings';
+import type {GeolayerSettings} from '../../../typings';
 
 import './DialogGeolayer.scss';
 

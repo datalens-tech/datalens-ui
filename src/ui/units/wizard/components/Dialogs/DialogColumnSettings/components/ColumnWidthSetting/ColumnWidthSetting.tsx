@@ -1,9 +1,10 @@
 import React from 'react';
 
-import {RadioButtonOption, TextInput} from '@gravity-ui/uikit';
+import type {RadioButtonOption} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ColumnSettings} from 'shared';
+import type {ColumnSettings} from 'shared';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
 

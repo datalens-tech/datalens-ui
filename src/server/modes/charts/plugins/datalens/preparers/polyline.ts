@@ -8,7 +8,7 @@ import {
 } from '../utils/geo-helpers';
 import {findIndexInOrder, formatDate, isGradientMode} from '../utils/misc-helpers';
 
-import {PrepareFunctionArgs, PrepareFunctionDataRow, ResultDataOrder} from './types';
+import type {PrepareFunctionArgs, PrepareFunctionDataRow, ResultDataOrder} from './types';
 
 type YMapItemConfig = {
     feature: {

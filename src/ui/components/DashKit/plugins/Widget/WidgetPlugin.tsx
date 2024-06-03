@@ -6,7 +6,7 @@ import MarkdownProvider from '../../../../modules/markdownProvider';
 import {ChartWrapper} from '../../../Widgets/Chart/ChartWidgetWithProvider';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
-import {WidgetPluginProps} from './types';
+import type {WidgetPluginProps} from './types';
 
 const plugin = {
     type: 'widget',

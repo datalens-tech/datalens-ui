@@ -3,13 +3,14 @@ import React from 'react';
 import {useDispatch} from 'react-redux';
 import {Route, Switch} from 'react-router-dom';
 
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {CollectionPage} from '../../../collections/components/CollectionPage';
 import {resetState as resetCollectionsState} from '../../../collections/store/actions';
 import {WorkbookPage} from '../../../workbooks/components/WorkbookPage/WorkbookPage';
 import {resetWorkbookState as resetWorkbooksState} from '../../../workbooks/store/actions';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../constants';
-import {Layout, LayoutBlock, LayoutContext, SkeletonsSettings} from '../../contexts/LayoutContext';
+import type {Layout, LayoutBlock, SkeletonsSettings} from '../../contexts/LayoutContext';
+import {LayoutContext} from '../../contexts/LayoutContext';
 import {resetState as resetCollectionsNavigationState} from '../../store/actions';
 import {CollectionsNavigationLayout} from '../CollectionsNavigationLayout';
 

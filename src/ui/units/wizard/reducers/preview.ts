@@ -1,7 +1,7 @@
 // @ts-ignore
 import sha1 from 'js-sha1';
 import isEmpty from 'lodash/isEmpty';
-import {
+import type {
     ClientChartsConfigWithDataset,
     ColorsConfig,
     Dataset,
@@ -17,8 +17,10 @@ import {
     TableShared,
     Update,
     VisualizationWithLayersShared,
-    WizardType,
     WizardVisualizationId,
+} from 'shared';
+import {
+    WizardType,
     isD3Visualization,
     isDimensionField,
     isMeasureField,
@@ -26,10 +28,9 @@ import {
     isVisualizationWithLayers,
 } from 'shared';
 
-import {ResetWizardStoreAction} from '../actions';
+import type {ResetWizardStoreAction} from '../actions';
+import type {HighchartsWidget, PreviewAction} from '../actions/preview';
 import {
-    HighchartsWidget,
-    PreviewAction,
     SET_HIGHCHARTS_WIDGET,
     SET_UPDATES,
     UPDATE_CLIENT_CHARTS_CONFIG,

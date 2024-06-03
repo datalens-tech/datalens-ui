@@ -1,18 +1,17 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
+import type {PointSizeConfig, ServerField} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
-    PointSizeConfig,
-    ServerField,
     getFormatOptions,
     isDateField,
 } from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
+import type {ExtendedSeriesScatterOptions} from '../../utils/color-helpers';
 import {
-    ExtendedSeriesScatterOptions,
     mapAndColorizePointsByGradient,
     mapAndColorizePointsByPalette,
 } from '../../utils/color-helpers';
@@ -28,10 +27,10 @@ import {
     isNumericalDataType,
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {mapPointsByShape} from './helpers/shape';
-import {ScatterPoint} from './types';
+import type {ScatterPoint} from './types';
 
 export type ScatterGraph = {
     name?: string;

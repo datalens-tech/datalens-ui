@@ -4,7 +4,7 @@ import {HelpPopover} from '@gravity-ui/components';
 import {Icon, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Lang} from 'shared';
+import type {Lang} from 'shared';
 import {DL} from 'ui';
 
 import {ButtonLogout} from '../../../components';

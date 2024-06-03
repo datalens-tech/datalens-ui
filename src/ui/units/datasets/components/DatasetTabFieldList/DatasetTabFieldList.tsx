@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {List, ListItemData, Loader} from '@gravity-ui/uikit';
+import type {ListItemData} from '@gravity-ui/uikit';
+import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 import {FieldRow} from './components/FieldRow/FieldRow';
 import {getFieldRowColumns} from './helpers';
-import {FieldColumn, FieldListColumn, FieldRowControlSettings} from './types';
+import type {FieldColumn, FieldListColumn, FieldRowControlSettings} from './types';
 
 import './DatasetTabFieldList.scss';
 

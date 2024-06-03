@@ -1,6 +1,6 @@
-import {ServerField} from '../../../../../../../../shared';
+import type {ServerField} from '../../../../../../../../shared';
 import {findIndexInOrder, isTableBarsSettingsEnabled} from '../../../utils/misc-helpers';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../types';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../types';
 
 export const getColumnValuesByColumnWithBarSettings = ({
     idToTitle,

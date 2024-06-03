@@ -1,7 +1,8 @@
-import {PlaceholderId, ServerPlaceholder, StringParams} from '../../../../../../../shared';
+import type {ServerPlaceholder, StringParams} from '../../../../../../../shared';
+import {PlaceholderId} from '../../../../../../../shared';
 import {getPivotTableSubTotals} from '../../utils/pivot-table/totals';
 import {addActionParamValue} from '../helpers/action-params';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {
     getActualizedPlaceholderItem,
@@ -12,7 +13,7 @@ import {isSortByRoleAllowed} from './helpers/sort';
 import {getGrandTotalsRowIndex, setTotalsHeaders} from './helpers/totals';
 import {generateTableHead} from './table-head-generator';
 import {generateTableRows} from './table-rows-generator';
-import {
+import type {
     CharkitTableHead,
     ChartkitTableRows,
     PivotData,

@@ -4,7 +4,7 @@ import {getFormattedValue} from '../../../helpers/get-formatted-value';
 import {getLineKey} from '../utils';
 
 import {getColorShapeMappingValue} from './helpers';
-import {MapDataToLinesArgs} from './types';
+import type {MapDataToLinesArgs} from './types';
 
 export const mapDataToLines = ({
     x2,

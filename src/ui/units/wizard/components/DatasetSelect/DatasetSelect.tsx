@@ -1,11 +1,14 @@
 import React from 'react';
 
 import {ChevronDown, CirclesIntersection, Plus} from '@gravity-ui/icons';
-import {Button, DropdownMenuItemMixed, Icon} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {Dataset, DatasetApiError, Feature, SectionDatasetQA} from 'shared';
-import {DataLensApiError, Utils} from 'ui';
+import type {Dataset, DatasetApiError} from 'shared';
+import {Feature, SectionDatasetQA} from 'shared';
+import type {DataLensApiError} from 'ui';
+import {Utils} from 'ui';
 
 import DatasetSelectItem from './DatasetSelectItem';
 

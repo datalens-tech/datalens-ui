@@ -1,16 +1,16 @@
 import React from 'react';
 
-import {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {EntryUpdateMode} from 'shared';
+import type {EntryUpdateMode} from 'shared';
 import {DL} from 'ui/constants/common';
 
 import NavigationPrompt from '../../../NavigationPrompt/NavigationPrompt';
 
 import {SaveButton} from './components/SaveButton/SaveButton';
 import {SaveDropdown} from './components/SaveDropdown/SaveDropdown';
-import {AdditionalButtonTemplate} from './types';
+import type {AdditionalButtonTemplate} from './types';
 import {useAdditionalItems} from './useAdditionalItems';
 
 import './ChartSaveControl.scss';

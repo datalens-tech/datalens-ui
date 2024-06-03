@@ -13,10 +13,8 @@ import {CHARTKIT_ERROR_NODE_CLASSNAME} from '../../../libs/DatalensChartkit/Char
 import {CHARTS_ERROR_CODE} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
 import dlLogger, {CHARTKIT_LOGGER} from '../../../libs/logger';
 import {openDialogErrorWithTabs} from '../../../store/actions/dialog';
-import {
-    ERROR_CODE,
-    ExtraParams,
-} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type {ExtraParams} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {ERROR_CODE} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {getEndpointForNavigation} from '../modules/navigation';
 
 import errorCharts from '../../../assets/icons/error-chart.svg';

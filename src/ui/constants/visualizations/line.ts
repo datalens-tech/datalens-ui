@@ -1,12 +1,6 @@
 import {ArrowDown, ArrowRight, ArrowUp} from '@gravity-ui/icons';
-import {
-    Field,
-    GraphShared,
-    Placeholder,
-    Shared,
-    WizardVisualizationId,
-    isMeasureValue,
-} from 'shared';
+import type {Field, GraphShared, Placeholder, Shared} from 'shared';
+import {WizardVisualizationId, isMeasureValue} from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
 import {
     prepareFieldToDimensionTransformation,

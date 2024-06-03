@@ -4,16 +4,17 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import _isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {I18n} from '../../../../../i18n';
-import {DatasetComponentError} from '../../../../../shared';
+import type {DatasetComponentError} from '../../../../../shared';
 import DialogConfirm from '../../../../components/DialogConfirm/DialogConfirm';
-import {FormValidationError, VALIDATION_ERROR} from '../../helpers/validation';
-import {FormOptions, StandaloneSource, Update} from '../../store/types';
+import type {FormValidationError} from '../../helpers/validation';
+import {VALIDATION_ERROR} from '../../helpers/validation';
+import type {FormOptions, StandaloneSource, Update} from '../../store/types';
 
 import {Form, InputFormItem, SourceError, SourceSwitcher} from './components';
-import {EditedSource, OnSourceUpdate} from './types';
+import type {EditedSource, OnSourceUpdate} from './types';
 import {
     BASE_TITLE_FORM_OPTIONS,
     TITLE_INPUT,

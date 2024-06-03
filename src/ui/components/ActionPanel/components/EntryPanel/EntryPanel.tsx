@@ -1,15 +1,19 @@
 import React from 'react';
 
 import {Ellipsis, NodesRight} from '@gravity-ui/icons';
-import {BreadcrumbsItem, Button, Icon, Link} from '@gravity-ui/uikit';
+import type {BreadcrumbsItem} from '@gravity-ui/uikit';
+import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {ActionPanelQA} from 'shared';
-import {DatalensGlobalState, EntryDialogues, sdk} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import {sdk} from 'ui';
 import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
 import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
@@ -19,13 +23,14 @@ import {DL} from '../../../../constants/common';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import Utils from '../../../../utils';
-import EntryContextMenu, {EntryContextMenuProps} from '../../../EntryContextMenu/EntryContextMenu';
+import type {EntryContextMenuProps} from '../../../EntryContextMenu/EntryContextMenu';
+import EntryContextMenu from '../../../EntryContextMenu/EntryContextMenu';
 import {
     ICONS_ENTRY_MENU_DEFAULT_CLASSNAME,
     ICONS_ENTRY_MENU_DEFAULT_SIZE,
 } from '../../../EntryContextMenu/EntryContextMenuBase/EntryContextMenuBase';
-import {EntryContextMenuItems} from '../../../EntryContextMenu/helpers';
-import {DialogSwitchPublicProps} from '../../../EntryDialogues/DialogSwitchPublic';
+import type {EntryContextMenuItems} from '../../../EntryContextMenu/helpers';
+import type {DialogSwitchPublicProps} from '../../../EntryDialogues/DialogSwitchPublic';
 import NavigationModal from '../../../Navigation/NavigationModal';
 
 import './EntryPanel.scss';

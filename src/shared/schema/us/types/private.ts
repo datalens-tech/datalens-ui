@@ -1,3 +1,3 @@
-import {EntryFields} from './fields';
+import type {EntryFields} from './fields';
 
 export type EnsurePersonalFolderIsPresentResponse = EntryFields;

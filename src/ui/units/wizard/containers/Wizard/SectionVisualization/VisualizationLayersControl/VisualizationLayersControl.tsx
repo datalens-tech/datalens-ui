@@ -4,15 +4,16 @@ import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {
     Placeholder,
     VisualizationLayerShared,
     VisualizationLayerType,
     VisualizationWithLayersShared,
-    isVisualizationWithLayers,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import {isVisualizationWithLayers} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {setSelectedLayerId} from 'units/wizard/actions';
 import {updatePreviewAndClientChartsConfig} from 'units/wizard/actions/preview';
@@ -23,7 +24,7 @@ import {selectHighchartsWidget} from 'units/wizard/selectors/preview';
 import {selectSort, selectVisualization} from 'units/wizard/selectors/visualization';
 import {createVisualizationLayer} from 'units/wizard/utils/wizard';
 
-import {LoadedWidget} from '../../../../../../libs/DatalensChartkit/types';
+import type {LoadedWidget} from '../../../../../../libs/DatalensChartkit/types';
 import logger from '../../../../../../libs/logger';
 import GeolayersSelect from '../../../../components/GeolayersSelect/GeolayersSelect';
 

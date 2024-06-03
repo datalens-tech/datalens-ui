@@ -1,7 +1,7 @@
 import {DeveloperModeCheckStatus} from '../../../types';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
-import {
+import type {
     CreateEditorChartArgs,
     CreateEditorChartResponse,
     UpdateEditorChartArgs,

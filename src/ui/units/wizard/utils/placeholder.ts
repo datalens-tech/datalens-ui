@@ -1,13 +1,12 @@
-import {
+import type {
     Field,
     Placeholder,
     PlaceholderSettings,
     ServerSort,
     Shared,
     WizardVisualizationId,
-    getActualAxisModeForField,
-    isFieldHierarchy,
 } from 'shared';
+import {getActualAxisModeForField, isFieldHierarchy} from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {

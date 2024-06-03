@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 
-import {SelectFormOptions} from '../../../store/types';
-import {OnSourceUpdate} from '../types';
+import type {SelectFormOptions} from '../../../store/types';
+import type {OnSourceUpdate} from '../types';
 import {getTranslate} from '../utils';
 
 import {SourceHelpTooltip} from './SourceHelpTooltip';

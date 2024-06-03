@@ -1,13 +1,16 @@
-import {AxiosError} from 'axios';
+import type {AxiosError} from 'axios';
 import {batch} from 'react-redux';
-import {ClientChartsConfig, Feature} from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {ClientChartsConfig} from 'shared';
+import {Feature} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {Utils} from 'ui';
 
 import {setActualChart} from '../../../../store/actions/chartWidget';
 import {resetEditHistoryUnit} from '../../../../store/actions/editHistory';
 import {setEntryContent, setRevisionsMode} from '../../../../store/actions/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
-import {SetDefaultsArgs, resetWizardStore, setDefaults} from '../../actions';
+import type {SetDefaultsArgs} from '../../actions';
+import {resetWizardStore, setDefaults} from '../../actions';
 import {
     onErrorWizardWidgetUpdate,
     onSuccessWizardWidgetUpdate,
@@ -15,7 +18,7 @@ import {
 } from '../../actions/widget';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
 import {mapClientConfigToChartsConfig} from '../../utils/mappers/mapClientToChartsConfig';
-import {WizardDispatch} from '../index';
+import type {WizardDispatch} from '../index';
 
 export function onSuccessSetActualWizardChart() {
     return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {

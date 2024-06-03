@@ -1,6 +1,6 @@
 import {createContext} from 'react';
 
-import {SDK} from 'ui';
+import type {SDK} from 'ui';
 
 export interface DatasetPageContext {
     sdk: SDK;

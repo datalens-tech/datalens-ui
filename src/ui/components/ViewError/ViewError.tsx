@@ -9,7 +9,7 @@ import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {ErrorContent, Utils} from 'ui';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
-import {DataLensApiError} from '../../typings';
+import type {DataLensApiError} from '../../typings';
 
 import './ViewError.scss';
 

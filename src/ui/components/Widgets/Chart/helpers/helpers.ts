@@ -1,35 +1,44 @@
 import {DL, URL_OPTIONS} from 'constants/common';
 
-import {AxiosResponse} from 'axios';
-import {History} from 'history';
+import type {AxiosResponse} from 'axios';
+import type {History} from 'history';
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, StringParams, isTrueArg} from 'shared';
-import DatalensChartkitCustomError, {
-    ERROR_CODE,
-} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type {StringParams} from 'shared';
+import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, isTrueArg} from 'shared';
+import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
-import {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {
+import type {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import type {
     ChartsData,
     ChartsStats,
     ResponseError,
     ResponseSourcesSuccess,
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {CombinedError, LoadedWidgetData, Widget} from '../../../../libs/DatalensChartkit/types';
+import type {
+    CombinedError,
+    LoadedWidgetData,
+    Widget,
+} from '../../../../libs/DatalensChartkit/types';
 import Utils from '../../../../utils';
 import {isWidgetTypeDoNotNeedOverlay} from '../../../DashKit/plugins/Widget/components/helpers';
-import {CurrentTab, WidgetPluginDataWithTabs} from '../../../DashKit/plugins/Widget/types';
-import {
+import type {CurrentTab, WidgetPluginDataWithTabs} from '../../../DashKit/plugins/Widget/types';
+import type {
     DashkitMetaDataItemBase,
     DashkitOldMetaDataItemBase,
     DatasetsData,
     DatasetsFieldsListData,
 } from '../../../DashKit/plugins/types';
-import {AdjustWidgetLayoutProps, adjustWidgetLayout} from '../../../DashKit/utils';
-import {State as ChartState} from '../store/types';
-import {ChartContentProps, ChartWithProviderProps, ResolveWidgetControlDataRefArgs} from '../types';
+import type {AdjustWidgetLayoutProps} from '../../../DashKit/utils';
+import {adjustWidgetLayout} from '../../../DashKit/utils';
+import type {State as ChartState} from '../store/types';
+import type {
+    ChartContentProps,
+    ChartWithProviderProps,
+    ResolveWidgetControlDataRefArgs,
+} from '../types';
 
 export const COMPONENT_CLASSNAME = 'dl-widget';
 

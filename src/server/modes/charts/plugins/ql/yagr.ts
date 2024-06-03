@@ -1,12 +1,7 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 
-import {
-    IChartEditor,
-    LegendDisplayMode,
-    QlVisualizationId,
-    ServerVisualization,
-} from '../../../../../shared';
-import type {QlConfig} from '../../../../../shared';
+import {LegendDisplayMode, QlVisualizationId} from '../../../../../shared';
+import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 
 const applyPlaceholderSettingsToYAxis = ({

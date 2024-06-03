@@ -1,4 +1,4 @@
-import {ChartKitOnLoadData} from '@gravity-ui/chartkit';
+import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
 
 export type Diff = {
     value?: number | string | null;

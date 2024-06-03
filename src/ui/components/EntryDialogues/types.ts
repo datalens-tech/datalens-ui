@@ -1,6 +1,6 @@
-import SDK from '../../libs/sdk';
+import type SDK from '../../libs/sdk';
 
-import {EntryDialogResolveStatus} from './constants';
+import type {EntryDialogResolveStatus} from './constants';
 
 export interface EntryDialogOnCloseArg {
     status: EntryDialogResolveStatus;

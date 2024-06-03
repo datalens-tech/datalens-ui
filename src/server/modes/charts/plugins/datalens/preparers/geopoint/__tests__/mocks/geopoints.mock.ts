@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, ServerColor} from '../../../../../../../../../shared';
+import type {ServerColor} from '../../../../../../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
 
 const DATASET_ID = 'j43msj9o23ge9';
 

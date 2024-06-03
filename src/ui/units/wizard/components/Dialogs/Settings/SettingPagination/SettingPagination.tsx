@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {PopupPlacement} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 
 import {CHART_SETTINGS} from '../../../../constants';

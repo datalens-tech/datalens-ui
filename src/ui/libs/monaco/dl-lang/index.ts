@@ -8,7 +8,7 @@ import {
     FORMULA_LANGUAGE_ID,
 } from '../../../constants/common';
 import {mapDlMonacoThemeToMonacoTheme} from '../theme-mappers';
-import {DlMonacoTheme, MonacoTypes} from '../types';
+import type {DlMonacoTheme, MonacoTypes} from '../types';
 import {createCompletionItem, escapeFieldName, isLanguageAlreadyRegister} from '../utils';
 
 import {COLOR_THEME_RULES, COMPLEX_KEYWORDS, KEYWORDS, OPERATORS, TOKENS} from './constants';

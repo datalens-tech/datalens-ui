@@ -1,15 +1,18 @@
 import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
-import {Button, DropdownMenu, DropdownMenuItem, Icon} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {IconById} from 'components/IconById/IconById';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import {batch, connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Shared, VisualizationIconProps, VisualizationWithLayersShared, WizardPageQa} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Shared, VisualizationIconProps, VisualizationWithLayersShared} from 'shared';
+import {WizardPageQa} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectExtraSettings, selectWidget} from 'units/wizard/selectors/widget';

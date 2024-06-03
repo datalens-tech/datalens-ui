@@ -1,7 +1,7 @@
-import {ApiV2RequestPivotTotals} from '../../../../../../../../../shared';
+import type {ApiV2RequestPivotTotals} from '../../../../../../../../../shared';
 import {getPivotTableSubTotals} from '../../../../utils/pivot-table/totals';
 
-import {GetTotalsForPivotArgs} from './types';
+import type {GetTotalsForPivotArgs} from './types';
 
 export const getTotalsForPivot = ({
     rowsFields,

@@ -1,6 +1,6 @@
 import {endpoints} from '../constants';
 
-import {SourceDeclaration} from './types';
+import type {SourceDeclaration} from './types';
 
 const CONNECTIONS_PATH = '/api/data/v1/connections';
 const DATASETS_PATH = '/api/data/v2/datasets';

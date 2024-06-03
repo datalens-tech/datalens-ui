@@ -5,7 +5,8 @@ import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {DatalensGlobalState, EntryDialogProps, EntryDialogResolveStatus} from 'ui';
+import type {DatalensGlobalState, EntryDialogProps} from 'ui';
+import {EntryDialogResolveStatus} from 'ui';
 
 import {DashUpdateStatus} from '../../../units/dash/typings/dash';
 

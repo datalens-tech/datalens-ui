@@ -1,4 +1,4 @@
-import {
+import type {
     ApiV2BackgroundSettingsGuids,
     ApiV2RequestField,
     ApiV2RequestPivotTotals,

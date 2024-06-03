@@ -1,4 +1,5 @@
-import {create as jdpCreate, DiffContext as JDPDiffContext} from 'jsondiffpatch';
+import type {DiffContext as JDPDiffContext} from 'jsondiffpatch';
+import {create as jdpCreate} from 'jsondiffpatch';
 
 // Plugin for jsondiffpatch to diff functions by its' references
 const functionDiffFilter = (context: any) => {

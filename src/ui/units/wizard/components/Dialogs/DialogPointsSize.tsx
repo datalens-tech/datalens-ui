@@ -5,7 +5,7 @@ import {Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {PointSizeConfig} from 'shared';
+import type {PointSizeConfig} from 'shared';
 import {registry} from 'ui/registry';
 
 import './DialogPointsSize.scss';

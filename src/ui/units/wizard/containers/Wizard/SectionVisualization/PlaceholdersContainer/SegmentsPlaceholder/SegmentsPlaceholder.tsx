@@ -3,16 +3,18 @@ import React from 'react';
 import {LayoutRows} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatalensGlobalState} from 'ui';
 
-import {Field, isDimensionField, isMarkupField} from '../../../../../../../../shared';
+import type {Field} from '../../../../../../../../shared';
+import {isDimensionField, isMarkupField} from '../../../../../../../../shared';
 import {BetaMark} from '../../../../../../../components/BetaMark/BetaMark';
 import {updateSegments} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {selectSegments} from '../../../../../selectors/visualization';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

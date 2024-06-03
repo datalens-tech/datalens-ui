@@ -1,12 +1,11 @@
+import type {Palette, ServerChartsConfig} from '../../../../../shared';
 import {
-    Palette,
-    ServerChartsConfig,
     isEntryId,
     isSystemGradientPaletteId,
     isSystemPaletteId,
     isVisualizationWithLayers,
 } from '../../../../../shared';
-import {SourceRequest} from '../datalens/url/build-sources/types';
+import type {SourceRequest} from '../datalens/url/build-sources/types';
 
 type GetColorPalettesRequestArgs = {
     config: ServerChartsConfig;

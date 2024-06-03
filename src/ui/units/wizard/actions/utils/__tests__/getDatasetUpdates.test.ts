@@ -1,5 +1,6 @@
-import {Update} from '../../../../../../shared';
-import {UpdateDatasetArgs, getDatasetUpdates} from '../getDatasetUpdates';
+import type {Update} from '../../../../../../shared';
+import type {UpdateDatasetArgs} from '../getDatasetUpdates';
+import {getDatasetUpdates} from '../getDatasetUpdates';
 
 const DATASET_ID = 'ds_id';
 

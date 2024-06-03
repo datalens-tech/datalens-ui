@@ -1,4 +1,4 @@
-import {ColorPalette} from '../../types/color-palettes';
+import type {ColorPalette} from '../../types/color-palettes';
 
 import {
     THREE_POINT_DEFAULT_GRADIENT,

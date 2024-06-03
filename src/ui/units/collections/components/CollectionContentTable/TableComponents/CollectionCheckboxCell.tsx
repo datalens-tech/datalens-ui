@@ -2,9 +2,9 @@ import React from 'react';
 
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
+import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
 
-import {SelectedMap, UpdateCheckboxArgs} from '../../CollectionPage/hooks/useSelection';
+import type {SelectedMap, UpdateCheckboxArgs} from '../../CollectionPage/hooks/useSelection';
 
 import '../CollectionContentTable.scss';
 

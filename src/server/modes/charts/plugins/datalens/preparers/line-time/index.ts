@@ -1,16 +1,16 @@
-import {
+import type {
     CommonNumberFormattingOptions,
-    DATALENS_QL_TYPES,
     ExtendedSeriesLineOptions,
-    getUtcDateTime,
-    isDateField,
 } from '../../../../../../../shared';
+import {DATALENS_QL_TYPES, getUtcDateTime, isDateField} from '../../../../../../../shared';
 import {getLineTimeDistinctValue} from '../../../../../../../shared/modules/colors/distincts-helpers';
 import {getColorsForNames} from '../../../ql/utils/colors';
-import {
+import type {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
     QLValue,
+} from '../../../ql/utils/misc-helpers';
+import {
     formatUnknownTypeValue,
     parseNumberValue,
     renderValue,
@@ -21,7 +21,7 @@ import {
     getFormatOptionsFromFieldFormatting,
     isLegendEnabled,
 } from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
 

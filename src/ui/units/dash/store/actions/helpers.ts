@@ -1,5 +1,6 @@
-import {History} from 'history';
-import {DashEntry, DashTabItemType} from 'shared';
+import type {History} from 'history';
+import type {DashEntry} from 'shared';
+import {DashTabItemType} from 'shared';
 
 import {registry} from '../../../../registry';
 

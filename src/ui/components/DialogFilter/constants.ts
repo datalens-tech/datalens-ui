@@ -9,7 +9,7 @@ import {
     BASE_STRING_OPERATIONS,
 } from 'constants/operations';
 
-import {Operations} from 'shared';
+import type {Operations} from 'shared';
 
 export interface Operation {
     title: string;

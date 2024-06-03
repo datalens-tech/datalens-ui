@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatasetField, DatasetFieldAggregation, DatasetOptionFieldItem} from 'shared';
+import type {DatasetField, DatasetFieldAggregation, DatasetOptionFieldItem} from 'shared';
 
 import {AggregationSelect} from '../components';
 import {sortAggregationColumn} from '../utils';

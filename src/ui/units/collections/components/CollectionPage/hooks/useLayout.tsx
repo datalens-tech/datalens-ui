@@ -14,10 +14,8 @@ import type {
     CreateCollectionResponse,
     WorkbookWithPermissions,
 } from '../../../../../../shared/schema';
-import {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../../components/CollectionFilters';
+import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
     DIALOG_ADD_DEMO_WORKBOOK,
     DIALOG_CREATE_COLLECTION,
@@ -29,7 +27,7 @@ import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
-import {AppDispatch} from '../../../../../store';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import Utils from '../../../../../utils';
 import {
@@ -51,7 +49,7 @@ import {
 } from '../../../store/selectors';
 import {CollectionActions} from '../../CollectionActions';
 
-import {SelectedMap} from './useSelection';
+import type {SelectedMap} from './useSelection';
 
 const b = block('dl-collection-page');
 

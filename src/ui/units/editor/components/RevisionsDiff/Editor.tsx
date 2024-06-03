@@ -2,15 +2,16 @@ import React from 'react';
 
 import {i18n} from 'i18n';
 import get from 'lodash/get';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
 import {ViewAsync} from 'ui/components/ViewAsync/ViewAsync';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {Status} from '../../constants/common';
-import {EditorEntry, EditorEntryDataApi} from '../../types/common';
-import {ScriptsValues, TabData} from '../../types/store';
+import type {EditorEntry, EditorEntryDataApi} from '../../types/common';
+import type {ScriptsValues, TabData} from '../../types/store';
 
 import {EditorDiffRevisions} from './EditorDiffRevisions/EditorDiffRevisions';
 import {CURRENT, b} from './constants';

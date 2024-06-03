@@ -1,11 +1,5 @@
-import {
-    BarGradientColorSettings,
-    BarOneColorSettings,
-    BarTwoColorSettings,
-    BarsColorType,
-    DEFAULT_PALETTE,
-    GradientType,
-} from 'shared';
+import type {BarGradientColorSettings, BarOneColorSettings, BarTwoColorSettings} from 'shared';
+import {BarsColorType, DEFAULT_PALETTE, GradientType} from 'shared';
 import {selectDefaultClientGradient} from 'ui';
 
 export const getDefaultGradientColorSettings = (): BarGradientColorSettings => {

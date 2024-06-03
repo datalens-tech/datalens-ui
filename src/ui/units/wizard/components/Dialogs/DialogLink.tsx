@@ -1,10 +1,12 @@
 import React from 'react';
 
 import {CirclesIntersection} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Button, Dialog, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {Dataset, DialogLinkQa, Field, Link, getResultSchemaFromDataset} from 'shared';
+import type {Dataset, Field, Link} from 'shared';
+import {DialogLinkQa, getResultSchemaFromDataset} from 'shared';
 import {withHiddenUnmount} from 'ui';
 
 import {isFieldVisible} from '../../utils/wizard';

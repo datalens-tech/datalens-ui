@@ -1,5 +1,5 @@
-import {GetCollectionContentMode} from 'shared/schema';
-import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import type {GetCollectionContentMode} from 'shared/schema';
+import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import {Utils} from 'ui';
 
 const KEY = 'collectionPageFilters';

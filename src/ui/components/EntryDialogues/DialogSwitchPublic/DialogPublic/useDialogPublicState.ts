@@ -6,7 +6,7 @@ import groupBy from 'lodash/groupBy';
 import {useDispatch} from 'react-redux';
 import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
 import {showToast} from 'store/actions/toaster';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 import Utils from 'utils';
 
 import {useRefMounted} from '../../../../hooks/useRefMounted';
@@ -15,8 +15,17 @@ import {getSdk} from '../../../../libs/schematic-sdk';
 
 import {DIALOG_STATUS} from './constants';
 import {getTextNoPermission} from './helpers';
-import {
+import type {
     Action,
+    DialogPublicCloseCallback,
+    EntryData,
+    EntryDataExtended,
+    EntryRelation,
+    EntryRelationExtended,
+    EntryUnversionedData,
+    State,
+} from './types';
+import {
     DIALOG_PUBLIC_CHANGE_ENTRY_AUTHOR,
     DIALOG_PUBLIC_CHANGE_RELATIONS_ENTRIES,
     DIALOG_PUBLIC_CHANGE_STATE,
@@ -26,13 +35,6 @@ import {
     DIALOG_PUBLIC_SET_PUBLISH_UNPUBLISH_ONCE,
     DIALOG_PUBLIC_SET_REFETCH,
     DIALOG_PUBLIC_SET_SUCCESS,
-    DialogPublicCloseCallback,
-    EntryData,
-    EntryDataExtended,
-    EntryRelation,
-    EntryRelationExtended,
-    EntryUnversionedData,
-    State,
 } from './types';
 
 const toaster = new Toaster();

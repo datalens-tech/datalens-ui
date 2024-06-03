@@ -1,15 +1,17 @@
 import isEmpty from 'lodash/isEmpty';
-import {DashTabItemControlData, DashTabItemGroupControlData, DashTabItemType} from 'shared/types';
-import {DatalensGlobalState} from 'ui/index';
-import {AppDispatch} from 'ui/store';
+import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared/types';
+import {DashTabItemType} from 'shared/types';
+import type {DatalensGlobalState} from 'ui/index';
+import type {AppDispatch} from 'ui/store';
 
 import {selectOpenedItemData} from '../../selectors/dashTypedSelectors';
-import {SetSelectorDialogItemArgs, setItemData, setSelectorDialogItem} from '../dashTyped';
+import type {SetSelectorDialogItemArgs} from '../dashTyped';
+import {setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
 
 import {getControlDefaultsForField, getControlValidation, getItemDataSource} from './helpers';
-import {SelectorsGroupDialogState} from './types';
+import type {SelectorsGroupDialogState} from './types';
 
 export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
 

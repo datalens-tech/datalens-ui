@@ -1,11 +1,11 @@
-import {Request} from '@gravity-ui/expresskit';
-import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
 import type {WorkbookId} from '../../../../../shared';
-import {TelemetryCallbacks} from '../../types';
+import type {TelemetryCallbacks} from '../../types';
 
-import {ResolvedConfig} from './types';
-import {EmbeddingInfo, USProvider} from './united-storage/provider';
+import type {ResolvedConfig} from './types';
+import type {EmbeddingInfo, USProvider} from './united-storage/provider';
 
 const DEFAULT_PRELOAD_FETCHING_INTERVAL = 120e3;
 

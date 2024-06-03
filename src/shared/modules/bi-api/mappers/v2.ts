@@ -1,4 +1,4 @@
-import {
+import type {
     ApiV2Filter,
     ApiV2Parameter,
     ApiV2RequestField,

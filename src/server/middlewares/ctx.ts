@@ -1,5 +1,5 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
-import {AppContextParams} from '@gravity-ui/nodekit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {AppContextParams} from '@gravity-ui/nodekit';
 
 import {checkRequestForDeveloperModeAccess} from '../components/chart-editor-developer-mode-access-check';
 import {renderHTML} from '../components/charts-engine/components/markdown';

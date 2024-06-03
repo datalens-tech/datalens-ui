@@ -1,6 +1,6 @@
 import React from 'react';
 
-import History from 'history';
+import type History from 'history';
 import {i18n} from 'i18n';
 import {Prompt, useLocation} from 'react-router-dom';
 

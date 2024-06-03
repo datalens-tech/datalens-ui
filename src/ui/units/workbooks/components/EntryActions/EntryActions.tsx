@@ -1,10 +1,11 @@
 import React from 'react';
 
 import {Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
-import {DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import {ConnectorType} from 'shared/constants/connections';
+import type {ConnectorType} from 'shared/constants/connections';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';

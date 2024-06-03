@@ -2,14 +2,12 @@
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
-import {
+import type {
     ApiV2RequestBody,
     DatasetFieldCalcMode,
     DrillDownData,
-    Feature,
     IntervalPart,
     Link,
-    Operations,
     ParameterDefaultValue,
     PayloadFilter,
     ServerChartsConfig,
@@ -19,6 +17,10 @@ import {
     SharedData,
     StringParams,
     V4Layer,
+} from '../../../../../../../shared';
+import {
+    Feature,
+    Operations,
     WizardVisualizationId,
     filterUpdatesByDatasetId,
     getItemLinkWithDatasets,
@@ -34,7 +36,7 @@ import {
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
-import {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
+import type {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT, SORT_ORDER} from '../../utils/constants';
 import {preprocessHierarchies} from '../../utils/hierarchy-helpers';

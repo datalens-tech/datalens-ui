@@ -1,3 +1,4 @@
+import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
@@ -6,7 +7,6 @@ import {
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
     GradientType,
-    LineShapeType,
     THREE_POINT_DEFAULT_ID,
     TWO_POINT_DEFAULT_ID,
     getAvailablePalettesMap,
@@ -16,9 +16,9 @@ import {
     selectPaletteById,
     selectShapes,
 } from '../../shared';
-import {Gradient, GradientPalettes} from '../../shared/constants';
-import {ColorPalette} from '../../shared/types/color-palettes';
-import {DatalensGlobalState} from '../index';
+import type {Gradient, GradientPalettes} from '../../shared/constants';
+import type {ColorPalette} from '../../shared/types/color-palettes';
+import type {DatalensGlobalState} from '../index';
 
 import blueGrayRedIcon from '../assets/icons/gradients/blue-gray-red.svg';
 import blueYellowRedIcon from '../assets/icons/gradients/blue-yellow-red.svg';

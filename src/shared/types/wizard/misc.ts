@@ -1,4 +1,4 @@
-import {CommonPlaceholders} from '../config/wizard';
+import type {CommonPlaceholders} from '../config/wizard';
 
 export type CommonPlaceholdersKeys = keyof CommonPlaceholders;
 

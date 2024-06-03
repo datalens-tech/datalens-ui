@@ -1,5 +1,6 @@
 import mergeWith from 'lodash/mergeWith';
-import {QlVisualizationId, Shared, WizardVisualizationId} from 'shared';
+import type {Shared} from 'shared';
+import {QlVisualizationId, WizardVisualizationId} from 'shared';
 
 import {getAvailableQlVisualizations, getDefaultQlVisualization} from '../visualization';
 

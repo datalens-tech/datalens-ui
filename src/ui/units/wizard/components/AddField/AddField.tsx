@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Plus} from '@gravity-ui/icons';
-import {Popover as CommonTooltip, Icon, IconData, Select, SelectOption} from '@gravity-ui/uikit';
+import type {IconData, SelectOption} from '@gravity-ui/uikit';
+import {Popover as CommonTooltip, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {AddFieldQA} from 'shared';
 

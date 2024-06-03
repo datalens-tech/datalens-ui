@@ -1,18 +1,17 @@
 import _unionBy from 'lodash/unionBy';
 
-import {
-    PlaceholderId,
+import type {
     ServerCommonSharedExtraSettings,
     ServerField,
     ServerVisualization,
     StringParams,
-    WizardVisualizationId,
 } from '../../../../../../../shared';
+import {PlaceholderId, WizardVisualizationId} from '../../../../../../../shared';
 import {
     getCurrentPage,
     getSortParams,
 } from '../../../../../../components/charts-engine/components/processor/paramsUtils';
-import {BaseUrlPayload} from '../../types';
+import type {BaseUrlPayload} from '../../types';
 import {SORT_ORDER} from '../../utils/constants';
 import {getSortData} from '../../utils/misc-helpers';
 

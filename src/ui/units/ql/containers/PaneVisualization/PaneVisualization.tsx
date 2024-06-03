@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {drawPreview} from 'units/ql/store/actions/ql';
 import SectionVisualization from 'units/wizard/containers/Wizard/SectionVisualization/SectionVisualization';
 

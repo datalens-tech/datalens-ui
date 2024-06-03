@@ -1,4 +1,4 @@
-import {DatasetsListData} from '../../../../types';
+import type {DatasetsListData} from '../../../../types';
 
 /**
  * Check if new alias is in current aliases row,

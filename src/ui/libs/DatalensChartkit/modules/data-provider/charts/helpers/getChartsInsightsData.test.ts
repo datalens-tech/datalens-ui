@@ -1,4 +1,4 @@
-import {ChartsInsightsItem} from '../../../../../../../shared';
+import type {ChartsInsightsItem} from '../../../../../../../shared';
 
 import {
     filterItemsByLocators,

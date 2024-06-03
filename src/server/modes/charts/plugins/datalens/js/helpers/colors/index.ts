@@ -1,13 +1,11 @@
+import type {ColorPalette, Palette, ServerColorsConfig} from '../../../../../../../../shared';
 import {
-    ColorPalette,
     GradientType,
-    Palette,
-    ServerColorsConfig,
     TWO_POINT_DEFAULT_ID,
     selectAvailableGradientsColors,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
-import {ChartColorsConfig} from '../../../types';
+import type {ChartColorsConfig} from '../../../types';
 
 type GetChartColorsArgs = {
     colorsConfig?: ServerColorsConfig;

@@ -1,7 +1,8 @@
-import {Plugin, createRenderFunction} from '@gravity-ui/app-layout';
+import type {Plugin} from '@gravity-ui/app-layout';
+import {createRenderFunction} from '@gravity-ui/app-layout';
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
-import {AppLayoutSettings} from '../types/app-layout';
+import type {AppLayoutSettings} from '../types/app-layout';
 
 type CreateAppLayoutMiddlewareArgs = {
     plugins: Plugin[];

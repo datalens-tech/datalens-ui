@@ -1,6 +1,6 @@
-import {DashTabItemControlSourceType, DashTabItemType, StringParams} from 'shared';
+import type {DashTabItemControlSourceType, DashTabItemType, StringParams} from 'shared';
 
-import {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
+import type {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
 
 export type DashkitMetaDataItemBase = {
     layoutId: string;

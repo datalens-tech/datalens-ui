@@ -1,10 +1,7 @@
-import {HierarchyField} from '../../../../shared/types/wizard';
-import {ResetWizardStoreAction} from '../actions';
-import {
-    CLOSE_HIERARCHY_EDITOR,
-    HierarchyEditorAction,
-    OPEN_HIERARCHY_EDITOR,
-} from '../actions/hierarchyEditor';
+import type {HierarchyField} from '../../../../shared/types/wizard';
+import type {ResetWizardStoreAction} from '../actions';
+import type {HierarchyEditorAction} from '../actions/hierarchyEditor';
+import {CLOSE_HIERARCHY_EDITOR, OPEN_HIERARCHY_EDITOR} from '../actions/hierarchyEditor';
 
 export interface HierarchyEditorState {
     hierarchy: HierarchyField | undefined;

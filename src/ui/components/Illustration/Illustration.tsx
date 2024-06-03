@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {IllustrationProps} from './types';
+import type {IllustrationProps} from './types';
 import {createIllustration} from './utils';
 
 export const Illustration = ({illustrationStore, ...props}: IllustrationProps) => {

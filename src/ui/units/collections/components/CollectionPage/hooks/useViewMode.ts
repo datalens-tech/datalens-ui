@@ -7,7 +7,7 @@ import {
 import Utils from '../../../../../utils';
 import {getUserDefaultCollectionPageViewMode} from '../utils';
 
-import {SelectedMap} from './useSelection';
+import type {SelectedMap} from './useSelection';
 
 type UseViewModeArgs = {
     selectedMap: SelectedMap;

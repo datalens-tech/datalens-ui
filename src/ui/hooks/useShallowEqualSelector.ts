@@ -1,4 +1,4 @@
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {shallowEqual, useSelector} from 'react-redux';
 
 export function useShallowEqualSelector<TSelected>(

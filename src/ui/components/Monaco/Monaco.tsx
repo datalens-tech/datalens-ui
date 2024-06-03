@@ -4,13 +4,11 @@ import {withTheme, withThemeValue} from '@gravity-ui/uikit';
 import type {RealTheme, Theme} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {
-    MonacoTypes,
-    mapUIKitThemeToDlMonacoTheme,
-    mapUIKitThemeToMonacoTheme,
-} from '../../libs/monaco';
+import type {MonacoTypes} from '../../libs/monaco';
+import {mapUIKitThemeToDlMonacoTheme, mapUIKitThemeToMonacoTheme} from '../../libs/monaco';
 
-import {LazyMonacoEditor, MonacoEditorProps} from './LazyMonaco';
+import type {MonacoEditorProps} from './LazyMonaco';
+import {LazyMonacoEditor} from './LazyMonaco';
 
 import './Monaco.scss';
 

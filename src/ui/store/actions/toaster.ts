@@ -1,10 +1,12 @@
-import React from 'react';
-import {AnyAction} from 'redux';
-import {ThunkDispatch} from 'redux-thunk';
-import {Toaster, ToastTheme, ToastAction} from '@gravity-ui/uikit';
+import type React from 'react';
+import type {AnyAction} from 'redux';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {ToastTheme, ToastAction} from '@gravity-ui/uikit';
+import {Toaster} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {DatalensGlobalState, Utils} from '../../';
-import {DataLensApiError} from '../../typings';
+import type {DatalensGlobalState} from '../../';
+import {Utils} from '../../';
+import type {DataLensApiError} from '../../typings';
 import {openDialogErrorWithTabs} from './dialog';
 import {Feature} from 'shared';
 

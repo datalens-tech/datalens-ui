@@ -1,24 +1,27 @@
 import React from 'react';
 
-import {Button, Dialog, Icon, Loader, Select, SelectOption, SelectProps} from '@gravity-ui/uikit';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {Button, Dialog, Icon, Loader, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import _ from 'lodash';
-import {
+import type {
     ApiV2Filter,
     DatasetField,
     DatasetOptions,
     DatasetUpdate,
-    Feature,
     Field,
+    WorkbookId,
+} from 'shared';
+import {
+    Feature,
     Operations,
     TIMEOUT_90_SEC,
-    WorkbookId,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
-import {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
+import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 
 import {NO_SELECTED_VALUES_OPERATION} from '../../constants/operations';
 import {withHiddenUnmount} from '../../hoc';
@@ -33,8 +36,10 @@ import BooleanFilter from './BooleanFilter/BooleanFilter';
 import DateFilter from './DateFilter/DateFilter';
 import InputFilter from './InputFilter/InputFilter';
 import SelectFilter from './SelectFilter/SelectFilter';
-import {LIST_ITEM_HEIGHT, Operation} from './constants';
-import {ChangeValue, ViewMode} from './typings';
+import type {Operation} from './constants';
+import {LIST_ITEM_HEIGHT} from './constants';
+import type {ChangeValue} from './typings';
+import {ViewMode} from './typings';
 import {CommonDataType, getAvailableOperations, getCommonDataType} from './utils';
 
 import iconArrow from '../../assets/icons/arrow-left.svg';

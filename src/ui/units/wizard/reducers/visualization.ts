@@ -1,14 +1,12 @@
 import update from 'immutability-helper';
-import {
+import type {
     ColorsConfig,
     CommonNumberFormattingOptions,
-    DATASET_FIELD_TYPES,
     Field,
     FilterField,
     GraphShared,
     HierarchyField,
     Placeholder,
-    PlaceholderId,
     PlaceholderSettings,
     PointSizeConfig,
     ShapesConfig,
@@ -17,6 +15,10 @@ import {
     TableShared,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    PlaceholderId,
     WizardVisualizationId,
     isDimensionField,
     isFieldHierarchy,
@@ -27,8 +29,9 @@ import {
 } from 'shared';
 import {isSharedPlaceholder} from 'ui/units/wizard/actions/utils';
 
-import {ResetWizardStoreAction} from '../actions';
+import type {ResetWizardStoreAction} from '../actions';
 import {SET_HIERARCHIES} from '../actions/dataset';
+import type {VisualizationAction} from '../actions/visualization';
 import {
     SET_AVAILABLE,
     SET_COLORS,
@@ -50,7 +53,6 @@ import {
     SET_VISUALIZATION_PLACEHOLDER_ITEMS,
     UPDATE_LAYERS,
     UPDATE_PLACEHOLDER_SETTINGS,
-    VisualizationAction,
 } from '../actions/visualization';
 import {getSelectedLayer, getSelectedLayerId} from '../utils/helpers';
 import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';

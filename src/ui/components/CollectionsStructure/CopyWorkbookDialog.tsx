@@ -5,7 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
-import {CollectionsStructureDispatch, copyWorkbook} from '../../store/actions/collectionsStructure';
+import type {CollectionsStructureDispatch} from '../../store/actions/collectionsStructure';
+import {copyWorkbook} from '../../store/actions/collectionsStructure';
 import {selectCopyWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 
 import {CollectionStructureDialog, ResourceType} from './CollectionStructureDialog';

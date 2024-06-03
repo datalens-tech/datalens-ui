@@ -1,11 +1,11 @@
-import {Request, Response} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
-import {ChartsEngine} from '..';
+import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
-import {ResolvedConfig} from '../components/storage/types';
+import type {ResolvedConfig} from '../components/storage/types';
 
 import {runChart} from './chart';
 import {runEditor} from './editor';

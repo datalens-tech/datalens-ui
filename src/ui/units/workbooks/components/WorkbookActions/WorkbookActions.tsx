@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
-import {Button, DropdownMenu, DropdownMenuItem, Icon, Tooltip} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {
     DIALOG_COPY_WORKBOOK,
@@ -16,7 +17,7 @@ import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
 
 import {Feature} from '../../../../../shared';
-import {WorkbookWithPermissions} from '../../../../../shared/schema';
+import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';

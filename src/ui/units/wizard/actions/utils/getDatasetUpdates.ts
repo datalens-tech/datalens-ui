@@ -1,6 +1,6 @@
 import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
 
-import {
+import type {
     ColorsConfig,
     Dataset,
     DatasetField,
@@ -13,9 +13,8 @@ import {
     Sort,
     Update,
     VisualizationLayerShared,
-    getResultSchemaFromDataset,
-    isParameter,
 } from '../../../../../shared';
+import {getResultSchemaFromDataset, isParameter} from '../../../../../shared';
 import {VISUALIZATION_IDS} from '../../../../constants/visualizations';
 import type {VisualizationState} from '../../reducers/visualization';
 import {fieldMerge, getVisualization, transformSchema} from '../../utils/helpers';

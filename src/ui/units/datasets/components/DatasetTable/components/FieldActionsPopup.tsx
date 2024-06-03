@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {CopyToClipboard, DropdownMenu, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {CopyToClipboard, DropdownMenu} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 import {FieldAction, GROUPED_ITEMS} from '../constants';
-import {MenuItem} from '../types';
+import type {MenuItem} from '../types';
 
 export type FieldActionsPopupProps = {
     field: DatasetField;

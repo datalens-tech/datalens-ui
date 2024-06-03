@@ -1,6 +1,8 @@
-import React, {FC} from 'react';
+import type {FC} from 'react';
+import React from 'react';
 
-import {YCSelect, YCSelectDefaultProps, YCSelectProps} from './YCSelect';
+import type {YCSelectProps} from './YCSelect';
+import {YCSelect, YCSelectDefaultProps} from './YCSelect';
 
 export * from './YCSelect';
 

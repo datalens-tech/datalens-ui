@@ -3,7 +3,8 @@ import React from 'react';
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {ChartKitTableQa, TableCellsRow, TableCommonCell} from 'shared';
+import type {TableCellsRow, TableCommonCell} from 'shared';
+import {ChartKitTableQa} from 'shared';
 
 import {Table} from '../../../../../../components/Table/Table';
 import type {TData, TableProps} from '../../../../../../components/Table/types';

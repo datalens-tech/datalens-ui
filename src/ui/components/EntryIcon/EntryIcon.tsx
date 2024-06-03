@@ -1,15 +1,12 @@
 import React from 'react';
 
-import {Icon, IconData, IconProps} from '@gravity-ui/uikit';
+import type {IconData, IconProps} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import {ConnectorType, ENTRY_TYPES, Feature} from 'shared';
 import Utils from 'ui/utils';
 
-import {
-    EntityIcon,
-    EntityIconSize,
-    EntityIconType,
-    defaultIconSize,
-} from '../EntityIcon/EntityIcon';
+import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
+import {EntityIcon, defaultIconSize} from '../EntityIcon/EntityIcon';
 
 import iconFilesBroken from '../../assets/icons/broken.svg';
 import iconMonitoring from '../../assets/icons/connections/monitoring-mini.svg';

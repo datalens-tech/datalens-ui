@@ -1,4 +1,5 @@
-import {Placeholder, Shared, isVisualizationWithLayers} from 'shared';
+import type {Placeholder, Shared} from 'shared';
+import {isVisualizationWithLayers} from 'shared';
 import {getAvailableVisualizations} from 'ui/units/wizard/utils/visualization';
 
 import {getSelectedLayer} from '../../../utils/helpers';

@@ -1,4 +1,5 @@
-import axios, {CancelToken} from 'axios';
+import type {CancelToken} from 'axios';
+import axios from 'axios';
 
 import logger from '../libs/logger';
 import {getSdk} from '../libs/schematic-sdk';

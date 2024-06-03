@@ -1,4 +1,4 @@
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {createSelector} from 'reselect';
 
 const selectGetWorkbook = (state: DatalensGlobalState) => state.workbooks.getWorkbook;

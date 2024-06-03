@@ -54,7 +54,7 @@ import {
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
 } from '../constants/collectionsStructure';
-import {CollectionsStructureAction} from '../actions/collectionsStructure';
+import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
     GetRootCollectionPermissionsResponse,
     GetCollectionBreadcrumbsResponse,

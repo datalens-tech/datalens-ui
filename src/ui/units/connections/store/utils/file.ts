@@ -1,8 +1,14 @@
 import {cloneDeep, unionBy} from 'lodash';
 
-import {FileSourceColumnType} from '../../../../../shared/schema';
+import type {FileSourceColumnType} from '../../../../../shared/schema';
 import logger from '../../../../libs/logger';
-import {CreatedSource, CreatingSource, FileSource, FileSourceItem, ReplaceSource} from '../typings';
+import type {
+    CreatedSource,
+    CreatingSource,
+    FileSource,
+    FileSourceItem,
+    ReplaceSource,
+} from '../typings';
 
 export const mapSourcesToAPIFormat = (sources: FileSource[]) => {
     return sources.reduce(

@@ -6,7 +6,7 @@ import {Alert, Button, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {GetEntryResponse, GetRelationsGraphResponse} from '../../../../../shared/schema';
+import type {GetEntryResponse, GetRelationsGraphResponse} from '../../../../../shared/schema';
 import {Scope} from '../../../../constants';
 import Utils from '../../../../utils';
 import {YfmWrapperContent as YfmWrapper} from '../../../YfmWrapper/YfmWrapperContent';

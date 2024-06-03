@@ -1,4 +1,4 @@
-import {AxiosRequestConfig} from 'axios';
+import type {AxiosRequestConfig} from 'axios';
 import {DL, Scope} from 'ui';
 
 import {
@@ -20,7 +20,7 @@ import {getStore} from '../../../store';
 import Utils from '../../../utils';
 import ChartKit from '../DatalensChartKitOld';
 import Error from '../Error/Error';
-import {ChartKitDataProvider} from '../components/ChartKitBase/types';
+import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import renderControl from '../extensions/control';
 import renderMarkdown from '../extensions/markdown';
 import renderTable from '../extensions/table';

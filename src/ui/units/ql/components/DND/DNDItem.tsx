@@ -2,17 +2,16 @@ import React from 'react';
 
 import {debounce} from 'lodash';
 import flow from 'lodash/flow';
-import {
+import type {
     ConnectDragPreview,
     ConnectDragSource,
     ConnectDropTarget,
     ConnectableElement,
-    DragSource,
     DragSourceConnector,
     DragSourceMonitor,
-    DropTarget,
     DropTargetMonitor,
 } from 'react-dnd';
+import {DragSource, DropTarget} from 'react-dnd';
 import {getEmptyImage} from 'react-dnd-html5-backend';
 import {findDOMNode} from 'react-dom';
 import type {
@@ -21,7 +20,7 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from 'shared/types/config/ql';
 
-import {DNDContainerState} from './DNDContainer';
+import type {DNDContainerState} from './DNDContainer';
 
 interface DNDItemProps {
     key: string;

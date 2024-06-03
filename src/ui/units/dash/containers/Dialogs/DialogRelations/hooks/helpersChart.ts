@@ -1,12 +1,10 @@
 import intersection from 'lodash/intersection';
 import {getDefaultTypeByIgnore} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/helpers';
-import {
-    DASH_FILTERING_CHARTS_WIDGET_TYPES,
-    FilteringWidgetType,
-} from 'ui/units/dash/modules/constants';
+import type {FilteringWidgetType} from 'ui/units/dash/modules/constants';
+import {DASH_FILTERING_CHARTS_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 
 import {FULL_RELATIONS, INPUT_RELATIONS, OUTPUT_RELATIONS, RELATION_TYPES} from '../constants';
-import {DashkitMetaDataItemNoRelations, Datasets, RelationType, RelationsData} from '../types';
+import type {DashkitMetaDataItemNoRelations, Datasets, RelationType, RelationsData} from '../types';
 
 import {
     hasCommonUsedParamsWithDefaults,

@@ -1,4 +1,5 @@
-import {ChartsConfigVersion, V8ChartsConfig, V8Color} from '../../../../types';
+import type {V8ChartsConfig, V8Color} from '../../../../types';
+import {ChartsConfigVersion} from '../../../../types';
 import {mapV8ConfigToV9} from '../v8/mapV8ConfigToV9';
 
 describe('mapV8ConfigToV9', () => {

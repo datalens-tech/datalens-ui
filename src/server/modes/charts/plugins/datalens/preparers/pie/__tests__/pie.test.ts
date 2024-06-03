@@ -1,4 +1,4 @@
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import {preparePieData} from '../prepare-pie-data';
 
 import {

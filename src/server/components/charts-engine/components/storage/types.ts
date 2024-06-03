@@ -1,10 +1,10 @@
-import {
+import type {
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
     EntryScope,
     WorkbookId,
 } from '../../../../../shared';
-import {ChartTemplates} from '../chart-generator';
+import type {ChartTemplates} from '../chart-generator';
 
 export type PublicAuthorData = {text?: string; link?: string};
 

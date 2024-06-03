@@ -1,6 +1,6 @@
 import {I18N} from '@gravity-ui/i18n';
 
-import {Lang} from '../../../types';
+import type {Lang} from '../../../types';
 
 type KeysetData = Parameters<InstanceType<typeof I18N>['registerKeysets']>[1];
 

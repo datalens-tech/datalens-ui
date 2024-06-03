@@ -1,4 +1,4 @@
-import {ApiV2RequestPivotTotals, ServerField} from '../../../../../../../../../shared';
+import type {ApiV2RequestPivotTotals, ServerField} from '../../../../../../../../../shared';
 import {getTotalsForPivot} from '../helpers/totals';
 
 import {MOCKED_DIMENSION_FIELD} from './mocks/common.mock';

@@ -1,14 +1,8 @@
 import React from 'react';
 
 import {ChevronDown} from '@gravity-ui/icons';
-import {
-    Button,
-    ButtonSize,
-    ButtonView,
-    DropdownMenu,
-    DropdownMenuItemMixed,
-    Icon,
-} from '@gravity-ui/uikit';
+import type {ButtonSize, ButtonView, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';

@@ -1,8 +1,9 @@
 import React from 'react';
 
-import {Icon, IconProps} from '@gravity-ui/uikit';
+import type {IconProps} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 
-import {IconId} from '../../../shared';
+import type {IconId} from '../../../shared';
 import {registry} from '../../registry';
 
 export type IconByIdProps = Omit<IconProps, 'data'> & {

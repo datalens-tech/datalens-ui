@@ -1,18 +1,15 @@
 import React from 'react';
 
-import {Button, ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import {connect, useDispatch} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import {ConnectionsBaseQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import {
-    DIALOG_CONN_CREATE_CONNECTION,
-    DIALOG_CONN_CREATE_IN_WB_CONNECTION,
-    DialogCreateConnectionInWbProps,
-    DialogCreateConnectionProps,
-} from '../..';
+import type {DialogCreateConnectionInWbProps, DialogCreateConnectionProps} from '../..';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_CONNECTION} from '../..';
 import {
     connectionTypeSelector,
     createS3BasedConnection,

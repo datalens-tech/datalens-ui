@@ -3,7 +3,7 @@ import React from 'react';
 import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {YfmWrapper} from 'components/YfmWrapper/YfmWrapper';
-import {EntryPublicAuthor} from 'shared';
+import type {EntryPublicAuthor} from 'shared';
 
 import {COMPONENT_CLASSNAME} from '../helpers/helpers';
 

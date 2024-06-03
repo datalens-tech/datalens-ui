@@ -5,12 +5,16 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import {getFakeTitleOrTitle} from '../../../../../../../shared';
-import {PointCustomData, ScatterSeriesCustomData} from '../../../../../../../shared/types/chartkit';
+import type {
+    PointCustomData,
+    ScatterSeriesCustomData,
+} from '../../../../../../../shared/types/chartkit';
 import {getAxisType} from '../helpers/axis';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
-import {ScatterGraph, prepareScatter} from './prepareScatter';
+import type {ScatterGraph} from './prepareScatter';
+import {prepareScatter} from './prepareScatter';
 
 type MapScatterSeriesArgs = {
     xAxisType?: string;

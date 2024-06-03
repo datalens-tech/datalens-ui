@@ -1,13 +1,13 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
-import {DatasetField, DatasetOptions} from 'shared';
-import {ApplyData} from 'ui';
+import type {DatasetField, DatasetOptions} from 'shared';
+import type {ApplyData} from 'ui';
 
-import {ObligatoryFilter} from '../../typings/dataset';
+import type {ObligatoryFilter} from '../../typings/dataset';
 import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
 
-import {FilterType} from './types';
+import type {FilterType} from './types';
 import {useFilterSection} from './useFilterSection';
 
 const i18n = I18n.keyset('dataset.filters-tab.modify');

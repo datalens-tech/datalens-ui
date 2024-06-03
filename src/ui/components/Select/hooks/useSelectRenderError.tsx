@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {ManualError} from 'ui/utils/errors/manual';
+import type {ManualError} from 'ui/utils/errors/manual';
 
 import '../styles/SelectUtil.scss';
 

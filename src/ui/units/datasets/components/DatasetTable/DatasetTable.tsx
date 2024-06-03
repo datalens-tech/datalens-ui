@@ -6,7 +6,7 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
-import {
+import type {
     DATASET_FIELD_TYPES,
     DatasetField,
     DatasetFieldAggregation,
@@ -14,10 +14,10 @@ import {
     DatasetRls,
     DatasetSourceAvatar,
 } from 'shared';
-import {Permissions} from 'shared/types/dls';
+import type {Permissions} from 'shared/types/dls';
 
-import {openDialog} from '../../../../store/actions/dialog';
-import {EditorItemToDisplay} from '../../store/types';
+import type {openDialog} from '../../../../store/actions/dialog';
+import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';

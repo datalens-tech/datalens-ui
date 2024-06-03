@@ -1,10 +1,10 @@
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import {DEFAULT_ICON_COLOR} from '../constants';
 import prepareGeopoint from '../index';
-import {GeopointPointConfig} from '../types';
+import type {GeopointPointConfig} from '../types';
 
 import {
     COORDINATES_FIELD,

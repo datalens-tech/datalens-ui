@@ -1,4 +1,4 @@
-import {AppEnvironment, AppInstallation} from '../../constants';
+import type {AppEnvironment, AppInstallation} from '../../constants';
 
 import {opensourceSources} from './opensource';
 

@@ -1,20 +1,20 @@
-import {OpenDialogArgs} from 'store/actions/openDialogTypes';
+import type {OpenDialogArgs} from 'store/actions/openDialogTypes';
 import {DIALOG_ERROR_WITH_TABS} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
-import {DataLensApiError, DIALOG_FILTER, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
-import {
-    DIALOG_CONFIRM,
+import type {DataLensApiError, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
+import {DIALOG_FILTER} from 'ui';
+import type {
     DialogConfirmApplyStatus,
     DialogConfirmProps,
 } from '../../components/DialogConfirm/DialogConfirm';
+import {DIALOG_CONFIRM} from '../../components/DialogConfirm/DialogConfirm';
 
-import {DIALOG_WARNING, DialogWarningProps} from 'ui/components/DialogWarning/DialogWarning';
+import type {DialogWarningProps} from 'ui/components/DialogWarning/DialogWarning';
+import {DIALOG_WARNING} from 'ui/components/DialogWarning/DialogWarning';
 import {i18n} from 'i18n';
-import {AppDispatch} from '../index';
-import {
-    DIALOG_PARAMETER,
-    DialogParameterProps,
-} from '../../components/DialogParameter/DialogParameter';
-import {PartialBy} from 'shared';
+import type {AppDispatch} from '../index';
+import type {DialogParameterProps} from '../../components/DialogParameter/DialogParameter';
+import {DIALOG_PARAMETER} from '../../components/DialogParameter/DialogParameter';
+import type {PartialBy} from 'shared';
 
 export const OPEN_DIALOG = Symbol('dialog/OPEN_DIALOG');
 export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');

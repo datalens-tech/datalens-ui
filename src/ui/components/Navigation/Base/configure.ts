@@ -13,7 +13,7 @@ import memoize from 'lodash/memoize';
 import {NavigationMinimalPlaceSelectQa} from 'shared';
 
 import {PLACE, QUICK_ITEMS} from '../constants';
-import {PlaceParameterItem} from '../types';
+import type {PlaceParameterItem} from '../types';
 
 import './NavigationBase.scss';
 

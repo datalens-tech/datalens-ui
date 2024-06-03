@@ -6,7 +6,7 @@ import {Feature} from 'shared';
 
 import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 import Utils from '../../../../../../../../../../../../utils';
-import {
+import type {
     SourcesConfig,
     SourceError as TSourceError,
 } from '../../../../../../../../../../modules/data-provider/charts';

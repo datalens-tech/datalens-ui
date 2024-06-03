@@ -1,29 +1,29 @@
 import React from 'react';
 
-import {AxiosResponse} from 'axios';
+import type {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashSettings, DashTabItemControl} from 'shared';
+import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
-import {
+import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {
     selectCurrentTab,
     selectIsNewRelations,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
+import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
 import {
     getPreparedConstants,
     getWidgetSelectorMeta,
     getWidgetSelectorMetaOld,
     pushStats,
 } from '../helpers/helpers';
-import {
+import type {
     ChartWidgetProps,
     ResolveMetaDataRef,
     ResolveWidgetControlDataRef,
@@ -31,7 +31,8 @@ import {
 } from '../types';
 
 import {useResizeObserver} from './useAutoHeightResizeObserver';
-import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
+import type {LoadingChartHookProps} from './useLoadingChart';
+import {useLoadingChart} from './useLoadingChart';
 
 type LoadingChartSelectorHookProps = Pick<
     WidgetPluginProps,

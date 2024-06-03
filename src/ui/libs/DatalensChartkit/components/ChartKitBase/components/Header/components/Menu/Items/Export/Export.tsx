@@ -6,7 +6,7 @@ import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {Feature, MenuItemsIds} from 'shared';
 import {URL_OPTIONS} from 'ui/constants/common';
-import {
+import type {
     MenuActionComponent,
     MenuItemConfig,
     MenuItemModalProps,
@@ -19,16 +19,14 @@ import {
     ICONS_MENU_DEFAULT_SIZE,
     type MenuItemArgs,
 } from '../../../../../../../../menu/MenuItems';
-import {
-    EXPORT_FORMATS,
-    ExportFormatsType,
-} from '../../../../../../../../modules/constants/constants';
+import type {ExportFormatsType} from '../../../../../../../../modules/constants/constants';
+import {EXPORT_FORMATS} from '../../../../../../../../modules/constants/constants';
 import exportWidget from '../../../../../../../../modules/export/export';
-import {ChartKitDataProvider} from '../../../../../../types';
+import type {ChartKitDataProvider} from '../../../../../../types';
 import {DownloadCsv} from '../DownloadCsv/DownloadCsv';
 
 import {setLoadingToast, updateLoadingToast} from './ToastContent/ToastContent';
-import {ExportActionArgs, ExportChartArgs, ExportResultType} from './types';
+import type {ExportActionArgs, ExportChartArgs, ExportResultType} from './types';
 import {getFileName, isExportVisible, setErrorToast, setSuccessToast} from './utils';
 
 const i18n = I18n.keyset('chartkit.menu.export');

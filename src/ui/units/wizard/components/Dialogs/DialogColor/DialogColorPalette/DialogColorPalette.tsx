@@ -3,14 +3,14 @@ import React from 'react';
 import {RadioButton, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ColorPalette, DatasetOptions, Field, FilterField, Update} from 'shared';
+import type {ColorPalette, DatasetOptions, Field, FilterField, Update} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 
 import {PaletteTypes} from '../../../../constants';
 import {getPaletteSelectorItems} from '../../../../utils/palette';
 import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
-import {ExtraSettings} from '../DialogColor';
+import type {ExtraSettings} from '../DialogColor';
 
 import './DialogColorPalette.scss';
 

@@ -6,12 +6,15 @@ import {Button, Checkbox, Icon, RadioButton, Select, TextInput} from '@gravity-u
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DialogColorQa, Field, GradientPalettes, GradientType, isMeasureValue} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, GradientPalettes} from 'shared';
+import {DialogColorQa, GradientType, isMeasureValue} from 'shared';
 import {selectAvailableClientGradients, selectDefaultClientGradient} from 'ui';
-import {GradientState, setDialogColorGradientState} from 'units/wizard/actions/dialogColor';
+import type {GradientState} from 'units/wizard/actions/dialogColor';
+import {setDialogColorGradientState} from 'units/wizard/actions/dialogColor';
 import {GradientPalettePreview} from 'units/wizard/components/GradientPalettePreview/GradientPalettePreview';
 
 import {SelectOptionWithIcon} from '../../../../../../components/SelectComponents';

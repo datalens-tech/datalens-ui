@@ -1,10 +1,10 @@
 import {I18n} from 'i18n';
-import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 
 import {LOAD_STATUS} from '../../../Control/constants';
 
+import type {Action, State} from './types';
 import {
-    Action,
     CONTROL_SET_ERROR_DATA,
     CONTROL_SET_IS_INIT,
     CONTROL_SET_LOADED_DATA,
@@ -12,7 +12,6 @@ import {
     CONTROL_SET_SILENT_LOADER,
     CONTROL_SET_STATUS,
     CONTROL_SET_VALIDATION_ERROR,
-    State,
 } from './types';
 
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');

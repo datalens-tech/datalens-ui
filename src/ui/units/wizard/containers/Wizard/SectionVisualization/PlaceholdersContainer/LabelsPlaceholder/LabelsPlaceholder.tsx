@@ -2,15 +2,15 @@ import React from 'react';
 
 import {Font} from '@gravity-ui/icons';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, WizardVisualizationId} from 'shared';
 import {
     DATASET_FIELD_TYPES,
-    Field,
     SectionVisualizationAddItemQa,
     VISUALIZATIONS_WITH_LABELS,
-    WizardVisualizationId,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {openDialogLabelSettings} from 'ui/units/wizard/actions/dialog';
 import {updateLabels} from 'units/wizard/actions/placeholder';
 import {selectLabels} from 'units/wizard/selectors/visualization';
@@ -19,7 +19,7 @@ import {transformVisualizationItem} from '../../../../../actions';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {prepareFieldToMeasureTransformation} from '../../../../../utils/visualization';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

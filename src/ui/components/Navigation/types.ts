@@ -1,11 +1,11 @@
 import type {ReactNode} from 'react';
 
-import {IconData} from '@gravity-ui/uikit';
-import {DLUserSettings} from 'shared';
+import type {IconData} from '@gravity-ui/uikit';
+import type {DLUserSettings} from 'shared';
 
 import type {EntryFields, NavigationEntry} from '../../../shared/schema';
 
-import {MODE_FULL, MODE_MINIMAL, MODE_MODAL} from './constants';
+import type {MODE_FULL, MODE_MINIMAL, MODE_MODAL} from './constants';
 
 export type Mode = typeof MODE_MINIMAL | typeof MODE_FULL | typeof MODE_MODAL;
 

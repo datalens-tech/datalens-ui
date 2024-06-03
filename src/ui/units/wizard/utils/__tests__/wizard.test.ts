@@ -1,4 +1,5 @@
-import {Field, Operations} from 'shared';
+import type {Field} from 'shared';
+import {Operations} from 'shared';
 
 import {parseFilterDate} from '../wizard';
 

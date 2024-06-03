@@ -1,7 +1,8 @@
 import type {WorkbooksAction} from '../actions';
 import {RESET_WORKBOOK_STATE} from '../constants';
 
-import {WorkbooksState, workbooksReducer} from './workbook-page';
+import type {WorkbooksState} from './workbook-page';
+import {workbooksReducer} from './workbook-page';
 
 export type {WorkbooksState};
 

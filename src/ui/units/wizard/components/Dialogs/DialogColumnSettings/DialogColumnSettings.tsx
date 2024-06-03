@@ -4,7 +4,8 @@ import {Button, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
-import {DialogColumnSettingsQa, Feature, Field, WizardVisualizationId} from 'shared';
+import type {Field} from 'shared';
+import {DialogColumnSettingsQa, Feature, WizardVisualizationId} from 'shared';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import Utils from '../../../../../utils';
@@ -12,10 +13,8 @@ import {DialogRow} from '../components/DialogRow/DialogRow';
 
 import {ColumnWidthSettingsSection} from './components/ColumnWidthSettingsSection/ColumnWidthSettingsSection';
 import {Subheader} from './components/Subheader/Subheader';
-import {
-    ColumnSettingsState,
-    useDialogColumnSettingsState,
-} from './hooks/useDialogColumnSettingsState';
+import type {ColumnSettingsState} from './hooks/useDialogColumnSettingsState';
+import {useDialogColumnSettingsState} from './hooks/useDialogColumnSettingsState';
 
 import './DialogColumnSettings.scss';
 

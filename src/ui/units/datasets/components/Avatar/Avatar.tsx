@@ -2,8 +2,9 @@ import React from 'react';
 
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {ConnectDropTarget} from 'react-dnd';
-import {AvatarQA, DatasetSource, DatasetSourceAvatar} from 'shared';
+import type {ConnectDropTarget} from 'react-dnd';
+import type {DatasetSource, DatasetSourceAvatar} from 'shared';
+import {AvatarQA} from 'shared';
 
 import DatasetUtils from '../../helpers/utils';
 import {withDroppingOnSourceReplaceArea} from '../hoc/AvatarDnD';

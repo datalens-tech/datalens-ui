@@ -1,36 +1,40 @@
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import JSONfn from 'json-fn';
 import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 
-import {ChartsEngine} from '../..';
+import type {ChartsEngine} from '../..';
+import type {
+    DashWidgetConfig,
+    EDITOR_TYPE_CONFIG_TABS,
+    EntryPublicAuthor,
+    WorkbookId,
+} from '../../../../../shared';
 import {
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_CONTEXT_HEADER,
-    DashWidgetConfig,
-    EDITOR_TYPE_CONFIG_TABS,
-    EntryPublicAuthor,
     Feature,
-    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {config as configConstants} from '../../constants';
-import {Source} from '../../types';
+import type {Source} from '../../types';
 import {renderHTML} from '../markdown';
 import * as Storage from '../storage';
-import {ResolvedConfig} from '../storage/types';
+import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
 
-import {CommentsFetcher, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
+import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
+import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import {DataFetcher, DataFetcherResult} from './data-fetcher';
+import type {DataFetcherResult} from './data-fetcher';
+import {DataFetcher} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
-import {SandboxError} from './sandbox';
+import type {SandboxError} from './sandbox';
 import {StackTracePreparer} from './stack-trace-prepaper';
-import {
+import type {
     ChartBuilder,
     ChartBuilderResult,
     ProcessorErrorResponse,

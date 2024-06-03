@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
 import {CollectionFiltersStorage} from '../../../../../utils';
 import {getUserDefaultFilters} from '../utils';
 

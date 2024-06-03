@@ -1,9 +1,9 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {Utils} from '../components';
 import {registry} from '../registry';
-import {DatalensGatewaySchemas} from '../types/gateway';
-import {GatewayApiErrorResponse} from '../utils/gateway';
+import type {DatalensGatewaySchemas} from '../types/gateway';
+import type {GatewayApiErrorResponse} from '../utils/gateway';
 
 export default {
     deleteLock: async (req: Request, res: Response) => {

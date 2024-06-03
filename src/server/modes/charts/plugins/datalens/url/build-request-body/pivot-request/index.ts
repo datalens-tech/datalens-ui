@@ -1,16 +1,16 @@
-import {
+import type {
     ApiV2BackgroundSettingsGuids,
     ApiV2Filter,
     ApiV2OrderBy,
     ApiV2RequestBodyPivot,
     ApiV2RequestField,
     ApiV2RequestPivot,
-    PseudoFieldTitle,
     ServerColor,
     ServerPlaceholder,
 } from '../../../../../../../../shared';
+import {PseudoFieldTitle} from '../../../../../../../../shared';
 import {mapParameterToRequestFormat} from '../../helpers';
-import {BuildDefaultRequestArgs} from '../default-request';
+import type {BuildDefaultRequestArgs} from '../default-request';
 
 import {getAnnotations, getPivotStructure, getRegularFields} from './helpers';
 import {getTotalsForPivot} from './helpers/totals';

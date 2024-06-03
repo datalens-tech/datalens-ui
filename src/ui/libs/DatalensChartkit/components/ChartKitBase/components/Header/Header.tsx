@@ -2,16 +2,16 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {isEmpty} from 'lodash';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 
-import {
+import type {
     ChartsInsightsData,
     CombinedError,
     LoadedWidget,
     LoadedWidgetData,
     OnChangeData,
 } from '../../../../types';
-import {MenuItems} from '../../../../types/menu';
+import type {MenuItems} from '../../../../types/menu';
 import {CHARTKIT_BASE_CLASSNAME} from '../../helpers';
 
 import {ChartsInsights, MenuWithErrorBoundary} from './components';

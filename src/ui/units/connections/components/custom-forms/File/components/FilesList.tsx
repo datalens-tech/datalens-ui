@@ -1,14 +1,15 @@
 import React from 'react';
 
-import {List, ListItemData} from '@gravity-ui/uikit';
+import type {ListItemData} from '@gravity-ui/uikit';
+import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ConnectorType} from 'shared';
 
 import {FormTitle} from '../../../';
-import {ListItemProps} from '../../../../store';
+import type {ListItemProps} from '../../../../store';
 import {getConnectorTitle} from '../../../../utils';
 import {useFileContext} from '../context';
-import {FileListItem} from '../types';
+import type {FileListItem} from '../types';
 import {
     getGroupedItems,
     getListItemById,

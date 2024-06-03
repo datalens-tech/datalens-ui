@@ -1,7 +1,7 @@
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 
 import type {GetCollectionBreadcrumbsResponse} from '../../../../../shared/schema';
 import {

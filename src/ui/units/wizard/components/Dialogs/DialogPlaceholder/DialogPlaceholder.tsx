@@ -3,27 +3,23 @@ import {AREA_OR_AREA100P} from 'constants/misc';
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {
-    Dialog,
-    Icon,
-    Popover,
-    PopoverInstanceProps,
-    RadioButtonOption,
-    TextInput,
-} from '@gravity-ui/uikit';
+import type {PopoverInstanceProps, RadioButtonOption} from '@gravity-ui/uikit';
+import {Dialog, Icon, Popover, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {
-    DialogPlaceholderQa,
-    Feature,
+import type {
     Field,
     Placeholder,
-    PlaceholderId,
     PlaceholderSettings,
     ServerPlaceholderSettings,
     ServerSort,
     WizardVisualizationId,
+} from 'shared';
+import {
+    DialogPlaceholderQa,
+    Feature,
+    PlaceholderId,
     getAxisMode,
     isContinuousAxisModeDisabled,
     isFieldHierarchy,

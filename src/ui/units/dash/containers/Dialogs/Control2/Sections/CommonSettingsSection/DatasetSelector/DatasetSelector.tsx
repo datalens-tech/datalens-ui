@@ -5,20 +5,19 @@ import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
+import type {Dataset} from 'shared';
 import {
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
-    Dataset,
     DatasetFieldType,
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
-import {
+import type {
     SelectorElementType,
     SetSelectorDialogItemArgs,
-    setLastUsedDatasetId,
-    setSelectorDialogItem,
 } from 'units/dash/store/actions/dashTyped';
+import {setLastUsedDatasetId, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,

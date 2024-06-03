@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 
 import {changeFilters} from '../../store/actions';
 import {selectWorkbook, selectWorkbookFilters} from '../../store/selectors';

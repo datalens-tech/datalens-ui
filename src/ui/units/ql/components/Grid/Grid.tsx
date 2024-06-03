@@ -4,10 +4,11 @@ import ViewLoader from 'components/ViewLoader/ViewLoader';
 import debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
-import {DatalensGlobalState, EntryDialogues, SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import {SPLIT_PANE_RESIZER_CLASSNAME} from 'ui';
 
 import {getCurrentSchemeId, getGridPanesIds, getGridSchemes} from '../../store/reducers/ql';
-import {QLGridScheme, QLGridSchemes} from '../../store/typings/ql';
+import type {QLGridScheme, QLGridSchemes} from '../../store/typings/ql';
 
 import GridPane from './GridPane/GridPane';
 

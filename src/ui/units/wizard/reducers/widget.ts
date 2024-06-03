@@ -1,16 +1,12 @@
-import {AxiosError} from 'axios';
+import type {AxiosError} from 'axios';
 // @ts-ignore
 import sha1 from 'js-sha1';
-import {LabelsPositions, Shared, getSortedData} from 'shared';
+import type {Shared} from 'shared';
+import {LabelsPositions, getSortedData} from 'shared';
 
-import {ResetWizardStoreAction} from '../actions';
-import {
-    RECEIVE_WIDGET,
-    SET_EXTRA_SETTINGS,
-    SET_WIDGET_LOAD_STATUS,
-    WidgetAction,
-    WidgetData,
-} from '../actions/widget';
+import type {ResetWizardStoreAction} from '../actions';
+import type {WidgetAction, WidgetData} from '../actions/widget';
+import {RECEIVE_WIDGET, SET_EXTRA_SETTINGS, SET_WIDGET_LOAD_STATUS} from '../actions/widget';
 import {versionExtractor} from '../utils/helpers';
 
 export interface WidgetState {

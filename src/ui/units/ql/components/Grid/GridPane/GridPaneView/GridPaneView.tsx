@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {DatalensGlobalState, EntryDialogues} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {PANE_VIEWS} from 'units/ql/constants';
 import {
     getEntry,
@@ -10,7 +10,7 @@ import {
     makeGetPaneTabs,
     makeGetPaneView,
 } from 'units/ql/store/reducers/ql';
-import {QLPaneView} from 'units/ql/store/typings/ql';
+import type {QLPaneView} from 'units/ql/store/typings/ql';
 
 import GridPaneViewContent from './GridPaneViewContent';
 

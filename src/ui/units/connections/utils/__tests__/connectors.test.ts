@@ -1,6 +1,6 @@
 import {ConnectorType} from 'shared';
 
-import {ConnectorItem} from '../../../../../shared/schema/types';
+import type {ConnectorItem} from '../../../../../shared/schema/types';
 import {getConnItemByType} from '../connectors';
 
 const CONNECTORS = [

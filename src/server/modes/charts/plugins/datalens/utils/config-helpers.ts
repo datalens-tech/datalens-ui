@@ -1,8 +1,5 @@
-import {
-    ExtendedChartsConfig,
-    ServerChartsConfig,
-    mapChartsConfigToLatestVersion,
-} from '../../../../../../shared';
+import type {ExtendedChartsConfig, ServerChartsConfig} from '../../../../../../shared';
+import {mapChartsConfigToLatestVersion} from '../../../../../../shared';
 
 export const mapChartsConfigToServerConfig = (
     config: ExtendedChartsConfig & {sharedData: ServerChartsConfig['sharedData']},

@@ -13,7 +13,7 @@ import {
     MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
     MIGRATE_ENTRIES_TO_WORKBOOK_FAILED,
 } from '../constants/migrationToWorkbook';
-import {MigrationToWorkbookAction} from '../actions/migrationToWorkbook';
+import type {MigrationToWorkbookAction} from '../actions/migrationToWorkbook';
 import type {
     GetEntryResponse,
     GetRelationsGraphResponse,

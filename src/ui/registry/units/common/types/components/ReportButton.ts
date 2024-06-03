@@ -1,5 +1,5 @@
-import {ButtonSize, ButtonView} from '@gravity-ui/uikit';
-import {DataLensApiError} from 'ui/typings';
+import type {ButtonSize, ButtonView} from '@gravity-ui/uikit';
+import type {DataLensApiError} from 'ui/typings';
 
 export type ReportButtonProps = {
     error: DataLensApiError;
