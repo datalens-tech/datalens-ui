@@ -24,8 +24,8 @@ import {
 } from 'units/dash/store/selectors/controls/selectors';
 
 import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
-import type {ListState, TabMenuItemData} from '../../Widget/TabMenu/TabMenu';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
+import type {ListState, TabMenuItemData} from '../../Widget/TabMenu/types';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';

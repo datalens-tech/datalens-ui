@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {CopyPlus, Plus, Star, StarFill} from '@gravity-ui/icons';
-import type {ListItemData} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ListWithMenu} from 'components/ListWithMenu/ListWithMenu';
@@ -10,32 +9,11 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {TabMenuQA} from 'shared';
 
+import type {TabActionType, TabMenuItemData, TabMenuProps} from './types';
+
 import './TabMenu.scss';
 
 const b = block('tab-menu');
-
-export type TabMenuItemData<T> = ListItemData<T> & {title?: string; isDefault?: boolean};
-
-type TabMenuProps<T> = {
-    items: TabMenuItemData<T>[];
-    selectedItemIndex: number;
-    update: ({items, selectedItemIndex, action}: ListState<T>) => void;
-    enableActionMenu?: boolean;
-    addButtonText?: string;
-    pasteButtonText?: string;
-    defaultTabText?: () => string;
-    tabIconMixin?: string;
-    allowPaste?: boolean;
-    onPasteItem?: (() => TabMenuItemData<T>[]) | null;
-};
-
-export type ListState<T> = {
-    items: TabMenuItemData<T>[];
-    selectedItemIndex: number;
-    action?: TabActionType;
-};
-
-export type TabActionType = 'add' | 'delete' | 'changeChosen' | 'changeDefault' | 'paste';
 
 const ADD_BUTTON_DEFAULT_SIZE = 16;
 
