@@ -1,4 +1,4 @@
-import {cloneDeep} from 'lodash';
+import _ from 'lodash';
 import type {AnyAction} from 'redux';
 import type {Delta as JDPDelta} from 'jsondiffpatch';
 
@@ -29,6 +29,25 @@ export interface EditHistoryState {
 
 const initialState: EditHistoryState = {
     units: {},
+};
+
+const cloneStateForHistory = (state: unknown, pathIgnoreList: any) => {
+    const deepOmitBy = (value: unknown, path: string, iteratee: (key: string) => boolean) => {
+        if (_.isObject(value)) {
+            return _.transform(value, (result: any, val, key) => {
+                const itemPath = `${path}/${key}`;
+
+                if (!iteratee(itemPath)) {
+                    // eslint-disable-next-line no-param-reassign
+                    result[key] = deepOmitBy(val, itemPath, iteratee);
+                }
+            });
+        }
+
+        return value;
+    };
+
+    return deepOmitBy(state, '', (path: string) => pathIgnoreList.includes(path));
 };
 
 export function editHistory(state = initialState, action: EditHistoryAction): EditHistoryState {
@@ -74,6 +93,11 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
 
             const prevDiffs = diffs.slice(0, pointIndex + 1);
 
+            const storedNewState = cloneStateForHistory(
+                newState,
+                editHistoryUnit.options.pathIgnoreList,
+            );
+
             return {
                 units: {
                     ...state.units,
@@ -86,7 +110,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         // Remove all missed diffs
                         diffs: [...prevDiffs, diff],
 
-                        pointState: cloneDeep(newState),
+                        pointState: storedNewState,
                     },
                 },
             };
@@ -111,12 +135,17 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
 
             const editHistoryUnit = state.units[unitId];
 
+            const storedPointState = cloneStateForHistory(
+                pointState,
+                editHistoryUnit.options.pathIgnoreList,
+            );
+
             return {
                 units: {
                     ...state.units,
                     [unitId]: {
                         ...editHistoryUnit,
-                        pointState: cloneDeep(pointState),
+                        pointState: storedPointState,
                     },
                 },
             };
