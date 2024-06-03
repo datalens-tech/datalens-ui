@@ -12,7 +12,8 @@ $addTabButtonHeight: 40px;
         padding: $listItemPadding;
     }
 
-    &__add-tab {
+    &__add-tab,
+    &__paste-tab {
         color: var(--g-color-text-secondary);
         display: flex;
         padding: $listItemPadding;
@@ -20,7 +21,8 @@ $addTabButtonHeight: 40px;
         cursor: pointer;
         height: 40px;
 
-        &:hover {
+        &:hover,
+        &:focus {
             background-color: var(--g-color-base-simple-hover);
         }
     }
@@ -68,7 +70,9 @@ $addTabButtonHeight: 40px;
     &__list {
         height: calc(100% - $addTabButtonHeight);
         overflow-y: auto;
-        // TODO: remove after https://github.com/gravity-ui/uikit/pull/1479
-        overflow-x: hidden;
+
+        &_with-paste {
+            height: calc(100% - 2 * $addTabButtonHeight);
+        }
     }
 }

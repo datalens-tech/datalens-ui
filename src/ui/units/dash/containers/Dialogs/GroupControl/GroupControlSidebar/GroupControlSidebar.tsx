@@ -6,21 +6,25 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DialogGroupControlQa} from 'shared';
+import {DashTabItemType, DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import {getPastedWidgetData, isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import {getSelectorDialogSpecificFields} from 'ui/units/dash/store/reducers/dash';
+import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
 import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
-import type {ListState} from '../../Widget/TabMenu/TabMenu';
+import type {ListState, TabMenuItemData} from '../../Widget/TabMenu/TabMenu';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
@@ -35,9 +39,42 @@ const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     autoHeight: false,
 };
 
+const getPasteItemHandler = (workbookId: string | null) => {
+    const pasteConfig = getPastedWidgetData() as CopiedConfigData;
+
+    if (
+        pasteConfig &&
+        isItemPasteAllowed(pasteConfig, workbookId) &&
+        (pasteConfig.type === DashTabItemType.Control ||
+            pasteConfig.type === DashTabItemType.GroupControl)
+    ) {
+        return () => {
+            // remove old ids, add specific for dialog fields, part of important fields is in config sources
+            const pasteItems = pasteConfig?.data.group
+                ? pasteConfig?.data.group.map((groupItem) => {
+                      const controlSources =
+                          typeof groupItem.source === 'object' ? groupItem.source : {};
+
+                      return {
+                          ...groupItem,
+                          ...controlSources,
+                          id: undefined,
+                          ...getSelectorDialogSpecificFields(),
+                      };
+                  })
+                : [{...pasteConfig, id: undefined, ...getSelectorDialogSpecificFields()}];
+
+            return pasteItems as TabMenuItemData<SelectorDialogState>[];
+        };
+    }
+
+    return null;
+};
+
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
+    const workbookId = useSelector(selectWorkbookId);
     const dispatch = useDispatch();
 
     const initialTabIndex =
@@ -139,6 +176,8 @@ export const GroupControlSidebar = () => {
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
+    const handlePasteItem = getPasteItemHandler(workbookId);
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
@@ -147,8 +186,10 @@ export const GroupControlSidebar = () => {
                     selectedItemIndex={activeSelectorIndex}
                     update={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
+                    pasteButtonText={i18n('button_paste-selector')}
                     defaultTabText={getDefaultTabText}
                     enableActionMenu={true}
+                    onPasteItem={handlePasteItem}
                 />
             </div>
             <div className={b('settings')}>

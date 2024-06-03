@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Plus, Star, StarFill} from '@gravity-ui/icons';
+import {CopyPlus, Plus, Star, StarFill} from '@gravity-ui/icons';
 import type {ListItemData} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -14,7 +14,7 @@ import './TabMenu.scss';
 
 const b = block('tab-menu');
 
-type TabMenuItemData<T> = ListItemData<T> & {title?: string; isDefault?: boolean};
+export type TabMenuItemData<T> = ListItemData<T> & {title?: string; isDefault?: boolean};
 
 type TabMenuProps<T> = {
     items: TabMenuItemData<T>[];
@@ -22,8 +22,11 @@ type TabMenuProps<T> = {
     update: ({items, selectedItemIndex, action}: ListState<T>) => void;
     enableActionMenu?: boolean;
     addButtonText?: string;
+    pasteButtonText?: string;
     defaultTabText?: () => string;
     tabIconMixin?: string;
+    allowPaste?: boolean;
+    onPasteItem?: (() => TabMenuItemData<T>[]) | null;
 };
 
 export type ListState<T> = {
@@ -32,12 +35,21 @@ export type ListState<T> = {
     action?: TabActionType;
 };
 
-export type TabActionType = 'add' | 'delete' | 'changeChosen' | 'changeDefault';
+export type TabActionType = 'add' | 'delete' | 'changeChosen' | 'changeDefault' | 'paste';
+
+const ADD_BUTTON_DEFAULT_SIZE = 16;
 
 export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
     render() {
-        const {enableActionMenu, addButtonText, items, selectedItemIndex, tabIconMixin} =
-            this.props;
+        const {
+            enableActionMenu,
+            addButtonText,
+            items,
+            selectedItemIndex,
+            tabIconMixin,
+            pasteButtonText,
+            onPasteItem,
+        } = this.props;
 
         return (
             <div className={b()}>
@@ -49,11 +61,29 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     onClick={this.onAction({action: 'add'})}
                     data-qa={TabMenuQA.Add}
                 >
-                    <Icon data={Plus} className={b('add-tab-icon', tabIconMixin)} width={16} />
-                    <span>
-                        {addButtonText || i18n('dash.widget-dialog.edit', 'button_add', {index: 1})}
-                    </span>
+                    <Icon
+                        data={Plus}
+                        className={b('add-tab-icon', tabIconMixin)}
+                        width={ADD_BUTTON_DEFAULT_SIZE}
+                    />
+                    <span>{addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}</span>
                 </div>
+                {onPasteItem && (
+                    <div
+                        className={b('paste-tab')}
+                        onClick={this.onAction({action: 'paste'})}
+                        data-qa={TabMenuQA.Paste}
+                    >
+                        <Icon
+                            data={CopyPlus}
+                            className={b('add-tab-icon', tabIconMixin)}
+                            width={ADD_BUTTON_DEFAULT_SIZE}
+                        />
+                        <span>
+                            {pasteButtonText || i18n('dash.widget-dialog.edit', 'button_add')}
+                        </span>
+                    </div>
+                )}
             </div>
         );
     }
@@ -65,7 +95,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             let data;
 
             if (index === undefined) {
-                data = this[action as Extract<'add', TabActionType>]();
+                data = this[action as Extract<'add' | 'paste', TabActionType>]();
             } else {
                 data = this[action](index);
             }
@@ -99,6 +129,24 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             items,
             selectedItemIndex: len ? items.length - 1 : 0,
             action: 'add',
+        };
+    }
+
+    paste() {
+        if (!this.props.onPasteItem) {
+            return {
+                items: this.props.items,
+                selectedItemIndex: this.props.selectedItemIndex,
+                action: 'paste',
+            };
+        }
+
+        const items = [...this.props.items, ...this.props.onPasteItem()];
+
+        return {
+            items,
+            selectedItemIndex: this.props.items.length || 0,
+            action: 'paste',
         };
     }
 
@@ -202,7 +250,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     virtualized: false,
                     deactivateOnLeave: true,
                     selectedItemIndex,
-                    className: b('list'),
+                    className: b('list', {'with-paste': Boolean(this.props.onPasteItem)}),
                     onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
                     itemClassName: b('list-item'),
                 }}

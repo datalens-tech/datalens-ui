@@ -71,6 +71,14 @@ export function getGroupSelectorDialogInitialState() {
     };
 }
 
+// fields needed only in the dialog, not in the final config
+export function getSelectorDialogSpecificFields() {
+    return {
+        validation: {},
+        draftId: getRandomKey(),
+    };
+}
+
 export function getSelectorDialogInitialState(args = {}) {
     const sourceType =
         Utils.isEnabledFeature(Feature.GroupControls) &&
@@ -81,7 +89,6 @@ export function getSelectorDialogInitialState(args = {}) {
     return {
         elementType: ELEMENT_TYPE.SELECT,
         sourceType,
-        validation: {},
         defaults: {},
         datasetId: args.lastUsedDatasetId,
         connectionId: args.lastUsedConnectionId,
@@ -91,7 +98,7 @@ export function getSelectorDialogInitialState(args = {}) {
         required: false,
         hint: '',
         showHint: false,
-        draftId: getRandomKey(),
+        ...getSelectorDialogSpecificFields(),
     };
 }
 

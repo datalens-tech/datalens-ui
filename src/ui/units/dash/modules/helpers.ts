@@ -14,12 +14,13 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {Feature, resolveOperation} from 'shared';
+import {DashTabItemType, Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import type {TabsHashStates} from '../store/actions/dashTyped';
 
+import {CROSS_PASTE_ITEMS_ALLOWED} from './constants';
 import {PostMessage} from './postMessage';
 
 export type CopiedConfigContext = {
@@ -44,6 +45,19 @@ export const getPastedWidgetData: () => CopiedConfigData | null = () => {
         return null;
     }
     return itemData;
+};
+
+export const isItemPasteAllowed = (itemData: CopiedConfigData, workbookId?: string | null) => {
+    if (
+        CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
+        (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
+    ) {
+        return true;
+    }
+    const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
+    const dashWorkbookId = workbookId ?? null;
+
+    return itemWorkbookId === dashWorkbookId;
 };
 
 export function getTabTitleById({

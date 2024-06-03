@@ -1,6 +1,7 @@
 {
   "button_add-selector": "Add selector",
   "button_cancel": "Cancel",
+  "button_paste-selector": "Paste selector",
   "button_save": "Save",
   "button_selectors-placement": "Selector placement",
   "context_apply-button": "This option enables a button for applying selectors",
