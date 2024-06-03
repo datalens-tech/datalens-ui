@@ -38,6 +38,7 @@ export const buildHighchartsConfigPrivate = (args: {
     shared: ServerChartsConfig;
     features: FeatureConfig;
 }) => {
+    const {features} = args;
     const shared = mapChartsConfigToServerConfig(args.shared);
 
     if (

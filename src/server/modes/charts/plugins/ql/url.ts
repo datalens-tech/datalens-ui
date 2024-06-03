@@ -12,6 +12,7 @@ import {
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
+import {registry} from '../../../../registry';
 import {getColorPalettesRequests} from '../helpers/color-palettes';
 
 import {buildSource, iterateThroughVisibleQueries, log, prepareQuery} from './utils/misc-helpers';
@@ -37,6 +38,8 @@ const prepareDefaultDate = (date: string) => {
 };
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
+    const {getAvailablePalettesMap} = registry.common.functions.getAll();
+    const palettes = getAvailablePalettesMap();
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const urlParams = ChartEditor.getParams();
@@ -211,7 +214,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         Object.assign(
             sources,
-            getColorPalettesRequests({config: config as unknown as ServerChartsConfig}),
+            getColorPalettesRequests({config: config as unknown as ServerChartsConfig, palettes}),
         );
     } catch (error) {
         ChartEditor._setError({
