@@ -15,7 +15,7 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
             return escape(item);
         }
 
-        const {tag, attributes = {}, style, content} = item;
+        const {tag, attributes = {}, style = {}, content} = item;
 
         if (!ALLOWED_TAGS.includes(tag)) {
             throw new ChartKitCustomError(null, {
@@ -24,9 +24,7 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
         }
 
         const elem = document.createElement(tag);
-        Object.entries(style).forEach(([key, value]) => {
-            elem.style[key] = value;
-        });
+        Object.assign(elem.style, style);
 
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key)) {
