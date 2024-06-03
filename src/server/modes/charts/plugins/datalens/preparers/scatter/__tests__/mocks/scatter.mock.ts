@@ -96,6 +96,7 @@ export const scatterPrepareBaseArgs = {
         order: [xField, yField, shapeField, colorField],
         totals: [],
     },
+    features: [],
 };
 
 export const scatterPrepareForQLArgs = {
