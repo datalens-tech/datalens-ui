@@ -1,11 +1,14 @@
 import React from 'react';
 
-import {Button, ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {ConnectionsActionPanelControls, Feature, RawSQLLevel, WorkbookId} from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {WorkbookId} from 'shared';
+import {ConnectionsActionPanelControls, Feature, RawSQLLevel} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {Utils} from 'ui';
 
 import {FieldKey} from '../../../constants';
 

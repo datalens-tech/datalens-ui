@@ -1,4 +1,5 @@
-import {EditorType, WidgetType, WizardType, WizardVisualizationId} from '../../../../../shared';
+import type {WidgetType} from '../../../../../shared';
+import {EditorType, WizardType, WizardVisualizationId} from '../../../../../shared';
 
 export function isEntryTypeWithFiltering(
     entryType?: WidgetType,

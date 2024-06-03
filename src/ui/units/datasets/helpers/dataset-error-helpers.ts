@@ -1,5 +1,5 @@
 import {I18n} from 'i18n';
-import {DatasetError} from 'units/datasets/store/types';
+import type {DatasetError} from 'units/datasets/store/types';
 
 const i18n = I18n.keyset('dataset.notifications.view');
 

@@ -1,11 +1,10 @@
+import type {ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
-    ServerField,
-    WizardVisualizationId,
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
@@ -24,7 +23,7 @@ import {
 import {getYPlaceholders} from '../helpers/layers';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 

@@ -1,5 +1,6 @@
-import {AppMiddleware, AppRoutes, AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
-import {NodeKit} from '@gravity-ui/nodekit';
+import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
+import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
+import type {NodeKit} from '@gravity-ui/nodekit';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
 import OpenIDConnectStrategy, {VerifyCallback} from 'passport-openidconnect';
@@ -18,7 +19,7 @@ import {
 } from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
-import {ChartsEngine} from '../../components/charts-engine';
+import type {ChartsEngine} from '../../components/charts-engine';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
 import {
     beforeAuthDefaults,

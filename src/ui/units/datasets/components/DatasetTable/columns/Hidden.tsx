@@ -1,11 +1,13 @@
 import React from 'react';
 
 import {EyeSlash} from '@gravity-ui/icons';
-import DataTable, {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
+import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
+import {DATASET_FIELD_TYPES} from 'shared';
 
 const b = block('dataset-table');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');

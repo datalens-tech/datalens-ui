@@ -1,4 +1,4 @@
-import {
+import type {
     AddFavoriteResponse,
     DeleteEntryResponse,
     DeleteFavoriteResponse,
@@ -11,9 +11,9 @@ import {
     WorkbookWithPermissions,
 } from 'shared/schema';
 
-import {CreateEntryActionType} from '../../constants';
-import {WorkbookEntriesFilters} from '../../types';
-import {WorkbooksAction} from '../actions';
+import type {CreateEntryActionType} from '../../constants';
+import type {WorkbookEntriesFilters} from '../../types';
+import type {WorkbooksAction} from '../actions';
 import {
     ADD_WORKBOOK_INFO,
     CHANGE_FAVORITE_ENTRY_FAILED,

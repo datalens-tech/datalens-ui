@@ -1,5 +1,5 @@
 import {I18n} from 'i18n';
-import {OpenDialogConfirmArguments} from 'ui/store/actions/dialog';
+import type {OpenDialogConfirmArguments} from 'ui/store/actions/dialog';
 
 const i18n = I18n.keyset('dash.action-panel.view');
 

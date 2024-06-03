@@ -4,7 +4,7 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {ChangeValue} from '../typings';
+import type {ChangeValue} from '../typings';
 
 import iconCross from '../../../assets/icons/cross.svg';
 import iconPlus from '../../../assets/icons/plus.svg';

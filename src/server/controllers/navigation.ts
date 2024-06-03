@@ -1,10 +1,10 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {TENANT_ID_HEADER} from '../../shared';
 import {registry} from '../registry';
-import {DatalensGatewaySchemas} from '../types/gateway';
+import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
-import {GatewayApiErrorResponse} from '../utils/gateway';
+import type {GatewayApiErrorResponse} from '../utils/gateway';
 
 export default async (req: Request, res: Response): Promise<void> => {
     const {query, ctx} = req;

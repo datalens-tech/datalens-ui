@@ -5,16 +5,12 @@ import React from 'react';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {
-    DashTab,
-    DashTabItem,
-    DialogTabsQA,
-    ENABLE,
-    SUPERUSER_SWITCH_MODE_COOKIE_NAME,
-} from 'shared';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashTab, DashTabItem} from 'shared';
+import {DialogTabsQA, ENABLE, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
 import Utils from 'ui/utils';
-import {Optional} from 'utility-types';
+import type {Optional} from 'utility-types';
 
 import {setInitialPageTabsItems} from '../../../store/actions/dashTyped';
 

@@ -1,7 +1,7 @@
-import moment from 'moment';
+import type moment from 'moment';
 import type {compose} from 'redux';
 
-import {AvailableYMActions, DLGlobalData} from '../shared';
+import type {AvailableYMActions, DLGlobalData} from '../shared';
 
 declare global {
     interface Window {

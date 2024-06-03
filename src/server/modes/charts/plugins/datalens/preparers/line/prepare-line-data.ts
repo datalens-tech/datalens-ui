@@ -1,9 +1,8 @@
 import _isEmpty from 'lodash/isEmpty';
 
+import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../shared';
 import {
     AxisMode,
-    Field,
-    HighchartsSeriesCustomObject,
     PlaceholderId,
     WizardVisualizationId,
     getActualAxisModeForField,
@@ -30,12 +29,12 @@ import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsIndexInOrder, getSortedCategories, getXAxisValue, prepareLines} from './helpers';
 import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from './helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
 
 // eslint-disable-next-line complexity
 export function prepareLineData(args: PrepareFunctionArgs) {

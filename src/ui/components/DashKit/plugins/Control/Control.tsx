@@ -2,27 +2,26 @@ import React from 'react';
 
 import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
-import {AxiosResponse} from 'axios';
+import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
     DashTabItemControlSingle,
-    DashTabItemControlSourceType,
     StringParams,
     WorkbookId,
 } from 'shared';
+import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {isMobileView} from 'ui/utils/mobile';
 
@@ -33,11 +32,11 @@ import {
     ControlInput,
     ControlRangeDatepicker,
 } from '../../../../libs/DatalensChartkit/components/Control/Items/Items';
-import {
+import type {
     ResponseError,
     ResponseSuccessControls,
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {
     addOperationForValue,
@@ -54,7 +53,7 @@ import {ControlItemSelect} from './ControlItems/ControlItemSelect';
 import {Error} from './Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS, TYPE} from './constants';
 import {prerenderMiddleware} from './prerenderMiddleware';
-import {
+import type {
     ChartControlRef,
     ControlSettings,
     ErrorData,

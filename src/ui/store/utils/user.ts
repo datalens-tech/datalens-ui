@@ -1,4 +1,5 @@
-import {DLUserSettings, USER_SETTINGS_KEY} from 'shared';
+import type {DLUserSettings} from 'shared';
+import {USER_SETTINGS_KEY} from 'shared';
 import Utils from 'ui/utils';
 
 export const getUpdatedUserSettings = async (

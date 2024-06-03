@@ -1,4 +1,4 @@
-import {VisualizationWithLayersShared} from 'shared';
+import type {VisualizationWithLayersShared} from 'shared';
 import {createVisualizationLayer} from 'units/wizard/utils/wizard';
 
 export const COMBINED_CHART_VISUALIZATION: VisualizationWithLayersShared['visualization'] = {

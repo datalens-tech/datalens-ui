@@ -4,7 +4,7 @@ import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import _debounce from 'lodash/debounce';
 
-import {ColumnItem} from '../types';
+import type {ColumnItem} from '../types';
 
 const b = block('dataset-table');
 

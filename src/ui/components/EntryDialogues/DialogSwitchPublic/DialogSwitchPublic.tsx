@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {GetEntryResponse} from 'shared/schema';
+import type {GetEntryResponse} from 'shared/schema';
 
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 import DialogPublic from './DialogPublic/DialogPublic';
 

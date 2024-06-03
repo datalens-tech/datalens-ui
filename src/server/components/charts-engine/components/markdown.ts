@@ -8,7 +8,7 @@ import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import MarkdownIt from 'markdown-it';
+import type MarkdownIt from 'markdown-it';
 import MarkdownItColor from 'markdown-it-color';
 import Mila from 'markdown-it-link-attributes';
 import uuid from 'uuid';

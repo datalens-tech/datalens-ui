@@ -1,6 +1,6 @@
 import MockDate from 'mockdate';
 
-import {Field} from '../../types';
+import type {Field} from '../../types';
 import {
     Operations,
     OperationsWithoutValue,

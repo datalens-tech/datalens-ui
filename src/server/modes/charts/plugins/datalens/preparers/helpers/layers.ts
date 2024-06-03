@@ -1,11 +1,7 @@
-import {
-    PlaceholderId,
-    ServerPlaceholder,
-    Shared,
-    isVisualizationWithLayers,
-} from '../../../../../../../shared';
+import type {ServerPlaceholder, Shared} from '../../../../../../../shared';
+import {PlaceholderId, isVisualizationWithLayers} from '../../../../../../../shared';
 import {getLayerPlaceholderWithItems} from '../line/helpers/axis/getLayerPlaceholderWithItems';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 export function getYPlaceholders(args: PrepareFunctionArgs) {
     const {shared, placeholders, layerSettings} = args;

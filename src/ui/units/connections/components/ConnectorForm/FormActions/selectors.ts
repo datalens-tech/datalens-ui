@@ -1,4 +1,4 @@
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
     const apiSchema = state.connections.schema?.apiSchema;

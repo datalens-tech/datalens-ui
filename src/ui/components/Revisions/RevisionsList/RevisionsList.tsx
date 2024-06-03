@@ -13,7 +13,7 @@ import {
     isPublishedVersion,
     prepareRevisionListItems,
 } from '../helpers';
-import {RevisionsListItems} from '../types';
+import type {RevisionsListItems} from '../types';
 
 import './RevisionsList.scss';
 

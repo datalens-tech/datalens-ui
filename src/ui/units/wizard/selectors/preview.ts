@@ -1,9 +1,9 @@
 import {createSelector, createStructuredSelector} from 'reselect';
-import {Update} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Update} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectWidgetHash} from 'units/wizard/selectors/widget';
 
-import {ConfigDataState} from '../reducers/preview';
+import type {ConfigDataState} from '../reducers/preview';
 import {getConfigData} from '../reducers/utils/getConfigData';
 
 export const selectPreviewEntryId = (state: DatalensGlobalState) =>

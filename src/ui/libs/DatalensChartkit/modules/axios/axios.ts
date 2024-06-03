@@ -1,9 +1,11 @@
-import axios, {AxiosError} from 'axios';
+import type {AxiosError} from 'axios';
+import axios from 'axios';
 import axiosRetry, {isRetryableError} from 'axios-retry';
 import isNumber from 'lodash/isNumber';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
-import {ConcurrencyManagerInstance, concurrencyManager} from './axiosConcurrency';
+import type {ConcurrencyManagerInstance} from './axiosConcurrency';
+import {concurrencyManager} from './axiosConcurrency';
 
 let concurrencyManagerInstance: ConcurrencyManagerInstance;
 

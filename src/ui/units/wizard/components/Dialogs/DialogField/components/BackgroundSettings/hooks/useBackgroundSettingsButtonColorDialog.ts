@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ColorsConfig, NestedPartial, TableFieldBackgroundSettings} from 'shared';
+import type {ColorsConfig, NestedPartial, TableFieldBackgroundSettings} from 'shared';
 
 import {PaletteType} from '../../../../../PaletteIcon/PaletteIcon';
 import {extractGradientSettings, extractPaletteSettings} from '../../../utils/backgroundSettings';

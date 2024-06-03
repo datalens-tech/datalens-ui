@@ -2,13 +2,8 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants';
-import {
-    DashData,
-    DashTab,
-    DashTabConnectionKind,
-    DashTabItemControlElementType,
-    DashTabItemType,
-} from '../types';
+import type {DashData, DashTab} from '../types';
+import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 

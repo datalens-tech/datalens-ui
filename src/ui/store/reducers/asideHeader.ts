@@ -1,10 +1,10 @@
-import {AsideHeaderSettings, AsideHeaderState} from '../typings/asideHeader';
+import type {AsideHeaderSettings, AsideHeaderState} from '../typings/asideHeader';
 
+import type {AsideHeaderAction} from '../actions/asideHeader';
 import {
     OPEN_NAVIGATION,
     CLOSE_NAVIGATION,
     SET_ASIDE_HEADER_DATA,
-    AsideHeaderAction,
     SET_CURRENT_PAGE_ENTRY,
     SET_ASIDE_HEADER_SETTINGS,
     RESET_ASIDE_HEADER_SETTINGS,

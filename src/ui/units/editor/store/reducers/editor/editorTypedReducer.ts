@@ -1,19 +1,20 @@
 import _ from 'lodash';
 
 import {PANE_VIEWS, Status} from '../../../constants/common';
-import {EditorEntry, EditorFakeEntry} from '../../../types/common';
+import type {EditorEntry, EditorFakeEntry} from '../../../types/common';
 import {swapArrayElements} from '../../../utils';
+import type {EditorActions} from '../../actions';
 import {
     CHART_SET_LOADED_DATA,
     EDITOR_CODE_CHANGE,
-    EditorActions,
     GRID_SCHEME_SELECT,
     PANES_SWITCH,
     PANE_TAB_SELECT,
     PANE_VIEW_SELECT,
     PREVIEW_DRAW,
 } from '../../actions';
-import {AutoExtendCommand, imm} from '../../update';
+import type {AutoExtendCommand} from '../../update';
+import {imm} from '../../update';
 
 import {GridStorage} from './gridStorage';
 import {Helper} from './helper';

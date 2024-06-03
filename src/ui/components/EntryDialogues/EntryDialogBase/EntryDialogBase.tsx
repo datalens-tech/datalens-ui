@@ -3,12 +3,13 @@ import React from 'react';
 import {Alert, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 
 import {EntryDialogQA, normalizeDestination} from '../../../../shared';
 import logger from '../../../libs/logger';
 import Utils from '../../../utils';
-import PathSelect, {PathSelectProps} from '../../PathSelect/PathSelect';
+import type {PathSelectProps} from '../../PathSelect/PathSelect';
+import PathSelect from '../../PathSelect/PathSelect';
 
 import './EntryDialogBase.scss';
 

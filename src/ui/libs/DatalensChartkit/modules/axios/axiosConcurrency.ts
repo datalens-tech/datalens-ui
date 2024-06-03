@@ -1,6 +1,6 @@
 // based on https://github.com/bernawil/axios-concurrency/
 
-import {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import type {AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 
 type Handler = {
     request: InternalAxiosRequestConfig;

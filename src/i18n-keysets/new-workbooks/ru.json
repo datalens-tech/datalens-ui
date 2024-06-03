@@ -21,6 +21,7 @@
   "label_author": "Автор",
   "label_copy": "копия",
   "label_delete-entry": "Удаление",
+  "label_empty-mobile-workbook": "В этом воркбуке пока нет доступных для просмотра объектов",
   "label_entry-name-already-exists": "Название уже используется, придумайте другое",
   "label_error-load-entities": "Не удалось загрузить сущности",
   "label_last-modified": "Последнее изменение",

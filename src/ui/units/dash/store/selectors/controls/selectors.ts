@@ -1,6 +1,6 @@
-import {DatalensGlobalState} from 'ui/index';
+import type {DatalensGlobalState} from 'ui/index';
 
-import {DashState} from '../../reducers/dashTypedReducer';
+import type {DashState} from '../../reducers/dashTypedReducer';
 
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorsGroup;

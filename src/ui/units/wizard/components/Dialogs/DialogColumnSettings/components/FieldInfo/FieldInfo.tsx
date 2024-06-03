@@ -2,7 +2,8 @@ import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DATASET_FIELD_TYPES, DatasetFieldType, isMeasureName, isMeasureValue} from 'shared';
+import type {DATASET_FIELD_TYPES} from 'shared';
+import {DatasetFieldType, isMeasureName, isMeasureValue} from 'shared';
 
 import {getIconForDataType} from '../../../../../utils/helpers';
 

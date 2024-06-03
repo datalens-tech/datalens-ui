@@ -1,19 +1,20 @@
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'constants/misc';
 
-import {AxiosError} from 'axios';
-import {
+import type {AxiosError} from 'axios';
+import type {
     ChartsConfig,
     ClientChartsConfig,
     CommonSharedExtraSettings,
     EntryUpdateMode,
     Shared,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {updateClientChartsConfig} from 'ui/units/wizard/actions/preview';
 
-import {SaveWidgetArgs, saveWidget} from '../../../store/actions/chartWidget';
+import type {SaveWidgetArgs} from '../../../store/actions/chartWidget';
+import {saveWidget} from '../../../store/actions/chartWidget';
 import {CHART_SETTINGS} from '../constants';
-import {WizardDispatch} from '../reducers';
+import type {WizardDispatch} from '../reducers';
 import {mapClientConfigToChartsConfig} from '../utils/mappers/mapClientToChartsConfig';
 import {removeUrlParameter} from '../utils/wizard';
 

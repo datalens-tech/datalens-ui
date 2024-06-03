@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Dialog, DialogProps} from '@gravity-ui/uikit';
+import type {DialogProps} from '@gravity-ui/uikit';
+import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './TwoColumnDialog.scss';

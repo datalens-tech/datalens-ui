@@ -1,4 +1,4 @@
-import {RenderParams} from '@gravity-ui/app-layout';
+import type {RenderParams} from '@gravity-ui/app-layout';
 
 declare global {
     namespace Express {

@@ -1,4 +1,4 @@
-import {ServerVisualizationLayer} from '../../../../../../../../shared';
+import type {ServerVisualizationLayer} from '../../../../../../../../shared';
 
 export interface ExtendCombinedChartGraphsArgs {
     graphs: any[];

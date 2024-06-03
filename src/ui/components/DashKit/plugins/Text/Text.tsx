@@ -1,14 +1,10 @@
 import React from 'react';
 
-import {
-    PluginText,
-    PluginTextObjectSettings,
-    PluginTextProps,
-    pluginText,
-} from '@gravity-ui/dashkit';
+import type {PluginTextObjectSettings, PluginTextProps} from '@gravity-ui/dashkit';
+import {PluginText, pluginText} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {DashTabItemText} from 'shared';
+import type {DashTabItemText} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 

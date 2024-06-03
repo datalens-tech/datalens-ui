@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {ColumnDef, Row} from '@tanstack/react-table';
+import type {ColumnDef, Row} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
+import type {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
 
 const b = block('dl-table');
 

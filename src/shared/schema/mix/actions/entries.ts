@@ -1,12 +1,12 @@
 import keyBy from 'lodash/keyBy';
-import {Required} from 'utility-types';
+import type {Required} from 'utility-types';
 
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
-import {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
+import type {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
 import {escapeStringForLike, filterDatasetsIdsForCheck} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
-import {
+import type {
     DeleteEntryArgs,
     DeleteEntryResponse,
     GetEntriesInFolderArgs,

@@ -1,6 +1,6 @@
-import {MenuItemsIds} from 'shared';
-import {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
-import {MenuItemConfig, MenuType} from 'ui/libs/DatalensChartkit/menu/Menu';
+import type {MenuItemsIds} from 'shared';
+import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {MenuItemConfig, MenuType} from 'ui/libs/DatalensChartkit/menu/Menu';
 
 export type GetChartkitMenuByType = GetChartkitMenuItems & {
     onExportLoading?: (isLoading: boolean) => void;

@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, Field} from '../../../../../../shared';
+import type {Field} from '../../../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../../../shared';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {isGroup} from './misc-helpers';

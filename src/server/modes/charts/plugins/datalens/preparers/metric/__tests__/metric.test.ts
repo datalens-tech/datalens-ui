@@ -1,4 +1,4 @@
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import prepareMetric from '../index';
 
 import {metricPrepareForQLArgs, metricPrepareForQLResult} from './mocks/metric.mock';

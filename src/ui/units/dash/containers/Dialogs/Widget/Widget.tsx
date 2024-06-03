@@ -4,24 +4,23 @@ import {HelpPopover} from '@gravity-ui/components';
 import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import update, {Context, CustomCommands, Spec} from 'immutability-helper';
-import {ResolveThunks, connect} from 'react-redux';
-import {
-    DashCommonQa,
+import type {CustomCommands, Spec} from 'immutability-helper';
+import update, {Context} from 'immutability-helper';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
-    DialogDashWidgetQA,
-    EntryScope,
-    Feature,
     HierarchyField,
-    ParamsSettingsQA,
     StringParams,
     WidgetKind,
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
+import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
 import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import {DL, DatalensGlobalState, Interpolate} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL, Interpolate} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
@@ -49,7 +48,8 @@ import {
 } from '../../../store/selectors/dashTypedSelectors';
 import {isEntryTypeWithFiltering} from '../utils';
 
-import {ListState, TabMenu} from './TabMenu/TabMenu';
+import type {ListState} from './TabMenu/TabMenu';
+import {TabMenu} from './TabMenu/TabMenu';
 
 import './Widget.scss';
 

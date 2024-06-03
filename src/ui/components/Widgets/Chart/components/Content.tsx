@@ -2,17 +2,18 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
 import Loader from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
-import Drill, {Props as DrillProps} from '../../../../libs/DatalensChartkit/components/Drill/Drill';
+import type {Props as DrillProps} from '../../../../libs/DatalensChartkit/components/Drill/Drill';
+import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
-import {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
-import {ChartContentProps, ChartControlsType} from '../types';
+import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
+import type {ChartContentProps, ChartControlsType} from '../types';
 
 import {Header as ChartHeader} from './Header';
 

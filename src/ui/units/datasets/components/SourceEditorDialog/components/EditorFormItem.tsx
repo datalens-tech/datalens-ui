@@ -5,8 +5,8 @@ import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 
 import {I18n} from '../../../../../../i18n';
 import Monaco from '../../../../../components/Monaco/Monaco';
-import {FormOptions} from '../../../store/types';
-import {OnSourceUpdate} from '../types';
+import type {FormOptions} from '../../../store/types';
+import type {OnSourceUpdate} from '../types';
 import {getTranslate} from '../utils';
 
 import {SourceHelpTooltip} from './SourceHelpTooltip';

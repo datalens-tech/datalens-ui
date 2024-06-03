@@ -1,5 +1,5 @@
-import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
-import {
+import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {
     AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,

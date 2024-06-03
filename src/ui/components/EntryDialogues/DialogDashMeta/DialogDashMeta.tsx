@@ -5,7 +5,7 @@ import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {TextEditor} from 'ui/components/TextEditor/TextEditor';
-import {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
+import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
 
 import {DashMetaQa} from '../../../../shared/constants/qa/dash';
 import logger from '../../../libs/logger';

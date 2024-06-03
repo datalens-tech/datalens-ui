@@ -5,8 +5,7 @@ import _ from 'lodash';
 
 import {I18N_DEST_PATH} from '../../i18n/constants';
 import {readKeysets} from '../../i18n/read-keysets';
-import type {Keysets, TypedI18n} from '../../i18n/types';
-import {ServerI18n} from '../../i18n/types';
+import type {Keysets, ServerI18n, TypedI18n} from '../../i18n/types';
 import {initI18n} from '../../i18n/utils';
 import {Language} from '../../shared/constants';
 

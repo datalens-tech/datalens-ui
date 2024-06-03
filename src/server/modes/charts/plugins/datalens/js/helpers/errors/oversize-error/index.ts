@@ -1,6 +1,6 @@
 import {OversizeErrorType} from '../../../constants/errors';
 
-import {GetOversizeErrorArgs} from './types';
+import type {GetOversizeErrorArgs} from './types';
 
 export function getOversizeError({type, limit, current}: GetOversizeErrorArgs) {
     let code = '';

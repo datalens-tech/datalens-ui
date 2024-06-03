@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {ChevronRight} from '@gravity-ui/icons';
-import {Button, Icon, PopupPlacement, TextInput, TextInputProps} from '@gravity-ui/uikit';
+import type {PopupPlacement, TextInputProps} from '@gravity-ui/uikit';
+import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryDialogQA, PLACE} from 'shared';

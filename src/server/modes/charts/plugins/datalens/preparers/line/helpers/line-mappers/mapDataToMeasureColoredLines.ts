@@ -1,7 +1,7 @@
 import {findIndexInOrder, formatDate} from '../../../../utils/misc-helpers';
 import {getLineKey} from '../utils';
 
-import {GetColorValueFromColorFieldArgs, MapDataToMeasureColoredLinesArgs} from './types';
+import type {GetColorValueFromColorFieldArgs, MapDataToMeasureColoredLinesArgs} from './types';
 
 const getColorValueFromColorField = ({
     idToTitle,

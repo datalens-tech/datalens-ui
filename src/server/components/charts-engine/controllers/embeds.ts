@@ -1,10 +1,10 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
 
-import {ChartsEngine} from '..';
+import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import {ResolveConfigProps} from '../components/storage/base';
+import type {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {

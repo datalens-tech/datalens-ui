@@ -1,15 +1,18 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Button as CommonButton, Icon, List, ListItemData, TextInput} from '@gravity-ui/uikit';
+import type {ListItemData} from '@gravity-ui/uikit';
+import {Button as CommonButton, Icon, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
-import {DatalensGlobalState} from 'ui/index';
-import {AcceptableValue, setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
+import type {DatalensGlobalState} from 'ui/index';
+import type {AcceptableValue} from 'ui/units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import Dialog from '../../../../../Control/Dialog/Dialog';

@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
-import {DL, DatalensGlobalState, URL_QUERY} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL, URL_QUERY} from 'ui';
 
 import {selectDataset} from './dataset';
 import {selectWidget} from './widget';

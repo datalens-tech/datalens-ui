@@ -1,6 +1,6 @@
-import {SchemasByScope} from '@gravity-ui/gateway';
+import type {SchemasByScope} from '@gravity-ui/gateway';
 
-import {DatalensSdk} from '../../../libs/schematic-sdk';
+import type {DatalensSdk} from '../../../libs/schematic-sdk';
 
 let datalensSdk: DatalensSdk<any> | undefined;
 

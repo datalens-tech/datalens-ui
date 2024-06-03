@@ -2,11 +2,10 @@ import React from 'react';
 
 import {useThemeValue} from '@gravity-ui/uikit';
 
-import {
-    LazyMonacoDiffEditor,
-    MonacoDiffEditorProps as MonacoDiffEditorBaseProps,
-} from '../../../../components/Monaco/LazyMonaco';
-import {MonacoTypes, mapUIKitThemeToMonacoTheme} from '../../../../libs/monaco';
+import type {MonacoDiffEditorProps as MonacoDiffEditorBaseProps} from '../../../../components/Monaco/LazyMonaco';
+import {LazyMonacoDiffEditor} from '../../../../components/Monaco/LazyMonaco';
+import type {MonacoTypes} from '../../../../libs/monaco';
+import {mapUIKitThemeToMonacoTheme} from '../../../../libs/monaco';
 
 import './MonacoEditor.scss';
 

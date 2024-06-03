@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Plus, Star, StarFill} from '@gravity-ui/icons';
-import {Button, Icon, ListItemData} from '@gravity-ui/uikit';
+import type {ListItemData} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ListWithMenu} from 'components/ListWithMenu/ListWithMenu';
 import {ListWithRemove} from 'components/ListWithRemove/ListWithRemove';

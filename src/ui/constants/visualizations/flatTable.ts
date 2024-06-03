@@ -1,5 +1,5 @@
 import {LayoutColumns3} from '@gravity-ui/icons';
-import {Field, Shared, Sort, TableShared} from 'shared';
+import type {Field, Shared, Sort, TableShared} from 'shared';
 
 import {ITEM_TYPES} from '../misc';
 

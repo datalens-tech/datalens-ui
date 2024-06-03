@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {cleanup, render} from '@testing-library/react';
-import {DateTableColumn, NumberTableColumn} from 'shared';
+import type {DateTableColumn, NumberTableColumn} from 'shared';
 import {i18nInstance} from 'shared/modules/format-units/i18n/i18n';
 
 import {MiscQA, valueFormatter} from '../utils/render';

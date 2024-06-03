@@ -1,5 +1,10 @@
-import {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/types';
-import {CommonSharedExtraSettings, QLChartType, QlConfigPreviewTableData, Shared} from 'shared';
+import type {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {
+    CommonSharedExtraSettings,
+    QLChartType,
+    QlConfigPreviewTableData,
+    Shared,
+} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import type {
     QLConfigQuery,
@@ -7,10 +12,10 @@ import type {
     QlConfigParam,
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
-import {DatasetAction} from 'units/wizard/actions/dataset';
-import {VisualizationAction} from 'units/wizard/actions/visualization';
+import type {DatasetAction} from 'units/wizard/actions/dataset';
+import type {VisualizationAction} from 'units/wizard/actions/visualization';
 
-import {AppStatus, ConnectionStatus, VisualizationStatus} from '../../constants';
+import type {AppStatus, ConnectionStatus, VisualizationStatus} from '../../constants';
 
 // QLEntry - chart created in QL
 export interface QLEntry extends GetEntryResponse {

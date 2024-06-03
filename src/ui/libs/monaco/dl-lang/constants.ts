@@ -1,4 +1,4 @@
-import {MonacoTypes} from '../types';
+import type {MonacoTypes} from '../types';
 import {getTokenColor} from '../utils';
 
 import '../../../styles/dl-monaco.scss';

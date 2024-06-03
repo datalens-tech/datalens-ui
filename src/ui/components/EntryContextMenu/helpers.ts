@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 
-import {IconData} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 
 import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
@@ -11,7 +11,8 @@ import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
-import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from '../EntryDialogues';
+import type {EntryDialogues} from '../EntryDialogues';
+import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
 interface MenuEntry {
     entryId: string;

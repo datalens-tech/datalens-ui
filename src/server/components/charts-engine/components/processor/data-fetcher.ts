@@ -1,13 +1,14 @@
 /* eslint-disable complexity */
-import {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 import querystring from 'querystring';
 import url from 'url';
 
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
 
+import type {WorkbookId} from '../../../../../shared';
 import {
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
@@ -15,13 +16,12 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
-    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
-import {ChartsEngine} from '../../index';
-import {Source} from '../../types';
+import type {ChartsEngine} from '../../index';
+import type {Source} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 

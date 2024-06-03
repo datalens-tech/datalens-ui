@@ -1,5 +1,8 @@
-import {GetEntryResponse} from '../../../../shared/schema';
-import {OrderDirection, OrderWorkbookEntriesField} from '../../../../shared/schema/us/types/sort';
+import type {GetEntryResponse} from '../../../../shared/schema';
+import type {
+    OrderDirection,
+    OrderWorkbookEntriesField,
+} from '../../../../shared/schema/us/types/sort';
 
 export type WorkbookEntriesFilters = {
     orderField: OrderWorkbookEntriesField;

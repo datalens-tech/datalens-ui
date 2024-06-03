@@ -2,7 +2,7 @@ import type {Config} from '@gravity-ui/dashkit';
 
 import {RELATION_TYPES} from '../constants';
 import {addAlias, getNormalizedAliases, getUpdatedRelations} from '../helpers';
-import {RelationType} from '../types';
+import type {RelationType} from '../types';
 
 jest.mock('ui', () => {
     return {

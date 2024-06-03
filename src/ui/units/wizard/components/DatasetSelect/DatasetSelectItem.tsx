@@ -1,12 +1,13 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
-import {Button, DropdownMenu, DropdownMenuItemMixed, Icon, Popover} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {SectionDatasetQA} from 'shared';
-import {DataLensApiError} from 'ui';
+import type {DataLensApiError} from 'ui';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 
 import iconError from 'ui/assets/icons/error.svg';

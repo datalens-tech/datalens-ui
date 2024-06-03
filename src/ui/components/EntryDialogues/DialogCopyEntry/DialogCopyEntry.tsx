@@ -1,13 +1,16 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {DashData, EntryScope, WorkbookId} from 'shared';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashData, WorkbookId} from 'shared';
+import {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
-import {DataLensApiError} from 'typings';
-import {DatalensGlobalState, DialogCreateWorkbookEntry} from 'ui';
+import type {DataLensApiError} from 'typings';
+import type {DatalensGlobalState} from 'ui';
+import {DialogCreateWorkbookEntry} from 'ui';
 import {selectEntryContent} from 'ui/store/selectors/entryContent';
-import {EntryGlobalState} from 'ui/store/typings/entryContent';
+import type {EntryGlobalState} from 'ui/store/typings/entryContent';
 import {copyDash} from 'ui/units/dash/store/actions/dashTyped';
 import {isDeprecatedDashData} from 'ui/units/dash/store/actions/helpers';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -15,7 +18,7 @@ import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 interface CopiedEntry {
     entryId: string;

@@ -1,11 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import {
-    Field,
-    PlaceholderId,
-    ServerVisualization,
-    WizardVisualizationId,
-} from '../../../../../../shared';
+import type {Field, ServerVisualization} from '../../../../../../shared';
+import {PlaceholderId, WizardVisualizationId} from '../../../../../../shared';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {

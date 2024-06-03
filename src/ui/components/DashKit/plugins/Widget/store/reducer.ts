@@ -1,4 +1,5 @@
-import {Action, PLUGIN_WIDGET_SET_DATA, WidgetState} from './actions';
+import type {Action, WidgetState} from './actions';
+import {PLUGIN_WIDGET_SET_DATA} from './actions';
 
 export const getInitialState = (): WidgetState => {
     return {

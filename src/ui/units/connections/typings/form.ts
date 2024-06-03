@@ -1,6 +1,6 @@
-import {ConnectionData} from 'shared';
+import type {ConnectionData} from 'shared';
 
-import {ValidationErrorType} from '../constants';
+import type {ValidationErrorType} from '../constants';
 
 export type FormDict = ConnectionData;
 

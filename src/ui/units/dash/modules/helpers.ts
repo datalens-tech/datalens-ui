@@ -1,25 +1,24 @@
-import React from 'react';
+import type React from 'react';
 
 import type {Config, ConfigItem, ConfigItemData, ConfigLayout} from '@gravity-ui/dashkit';
 import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
-import {
+import type {
     DashData,
     DashTab,
     DashTabItem,
     DashTabItemBase,
     DashTabLayout,
-    Feature,
     StringParams,
     WorkbookId,
-    resolveOperation,
 } from 'shared';
+import {Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
-import {TabsHashStates} from '../store/actions/dashTyped';
+import type {TabsHashStates} from '../store/actions/dashTyped';
 
 import {PostMessage} from './postMessage';
 

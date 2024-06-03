@@ -3,15 +3,16 @@ import React from 'react';
 import {Shapes4} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field} from 'shared';
 import {
-    Field,
     PlaceholderId,
     SectionVisualizationAddItemQa,
     WizardVisualizationId,
     isFieldHierarchy,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {PaletteTypes} from 'ui/units/wizard/constants';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
@@ -24,9 +25,9 @@ import {openDialogShapes} from '../../../../../actions/dialog';
 import {updateShapes} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {getDialogItem} from '../../../../../utils/helpers';
-import {AddableField} from '../../AddField/AddField';
+import type {AddableField} from '../../AddField/AddField';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

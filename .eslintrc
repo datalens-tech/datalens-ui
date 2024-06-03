@@ -10,6 +10,7 @@
         "jest": true
     },
     "rules": {
+        "@typescript-eslint/consistent-type-imports": "error",
         "security/detect-child-process": 0,
         "security/detect-non-literal-fs-filename": 0,
         "camelcase": 0,

@@ -1,10 +1,10 @@
-import {
+import type {
     PlaceholderId,
     ServerPlaceholder,
     ServerVisualization,
 } from '../../../../../../../../../shared';
 
-import {GetLayerPlaceholderWithItemsOptions} from './types';
+import type {GetLayerPlaceholderWithItemsOptions} from './types';
 
 export const getLayerPlaceholderWithItems = (
     visualization: ServerVisualization,

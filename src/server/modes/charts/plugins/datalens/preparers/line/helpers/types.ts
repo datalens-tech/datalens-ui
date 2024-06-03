@@ -1,11 +1,11 @@
-import {
+import type {
     ServerColor,
     ServerField,
     ServerSort,
     WizardVisualizationId,
 } from '../../../../../../../../shared';
-import {Categories, ResultDataOrder} from '../../types';
-import {LineTemplate, LinesRecord} from '../types';
+import type {Categories, ResultDataOrder} from '../../types';
+import type {LineTemplate, LinesRecord} from '../types';
 
 export interface GetXAxisValueArgs {
     categories: (number | string)[];

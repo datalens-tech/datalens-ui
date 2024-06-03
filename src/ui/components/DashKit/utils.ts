@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 
-import {PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 
 import {DL} from '../../constants';
 import {

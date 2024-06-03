@@ -2,13 +2,15 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {Button, Loader, Tabs, TabsItemProps} from '@gravity-ui/uikit';
+import type {TabsItemProps} from '@gravity-ui/uikit';
+import {Button, Loader, Tabs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import {DataLensApiError, SHEET_IDS} from 'ui';
+import type {DataLensApiError} from 'ui';
+import {SHEET_IDS} from 'ui';
 import {registry} from 'ui/registry';
-import {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
+import type {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import Utils from 'ui/utils';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 

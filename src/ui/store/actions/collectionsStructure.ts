@@ -1,15 +1,15 @@
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {waitOperation} from '../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
 
+import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../constants/collectionsStructure';
 import {
     RESET_STATE,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
-    GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     RESET_COLLECTION_BREADCRUMBS,
     GET_COLLECTION_BREADCRUMBS_LOADING,
     GET_COLLECTION_BREADCRUMBS_SUCCESS,

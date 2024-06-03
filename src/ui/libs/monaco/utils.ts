@@ -1,4 +1,4 @@
-import {MonacoTypes} from './types';
+import type {MonacoTypes} from './types';
 
 interface CompletionItemConfig {
     monaco: typeof MonacoTypes;

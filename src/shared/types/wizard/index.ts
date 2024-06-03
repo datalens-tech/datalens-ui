@@ -1,6 +1,13 @@
 import type {IconProps} from '@gravity-ui/uikit';
 
-import {ChartsConfig, Dataset, FilterField, HierarchyField, Link, ServerDatasetField} from '../';
+import type {
+    ChartsConfig,
+    Dataset,
+    FilterField,
+    HierarchyField,
+    Link,
+    ServerDatasetField,
+} from '../';
 import type {
     ColorMode,
     GradientType,
@@ -8,13 +15,13 @@ import type {
     NavigatorPeriod,
     WizardVisualizationId,
 } from '../../constants';
-import {CommonUpdate, CommonUpdateField} from '../common-update';
-import {IconId} from '../configs';
-import {DatasetField} from '../dataset';
+import type {CommonUpdate, CommonUpdateField} from '../common-update';
+import type {IconId} from '../configs';
+import type {DatasetField} from '../dataset';
 
-import {Field} from './field';
-import {Placeholder} from './placeholder';
-import {ChartsConfigVersion} from './versions';
+import type {Field} from './field';
+import type {Placeholder} from './placeholder';
+import type {ChartsConfigVersion} from './versions';
 
 export * from './formatting';
 export * from './field';

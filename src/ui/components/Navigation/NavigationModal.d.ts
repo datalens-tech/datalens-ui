@@ -1,9 +1,8 @@
 import React from 'react';
 
-import SDK from '../../libs/sdk';
+import type SDK from '../../libs/sdk';
 
-import {ResolvePathMode} from './types';
-import type {CurrentPageEntry} from './types';
+import type {CurrentPageEntry, ResolvePathMode} from './types';
 
 export interface NavigationModalProps {
     sdk: SDK;

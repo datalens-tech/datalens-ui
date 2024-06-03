@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {Field} from 'shared';
+import type {Field} from 'shared';
 
 import './VisualizationItemTitleWithAggregation.scss';
 

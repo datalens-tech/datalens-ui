@@ -2,19 +2,20 @@ import React from 'react';
 
 import {Funnel} from '@gravity-ui/icons';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Field, FilterField, VisualizationLayerShared} from 'shared';
-import {ApplyData, DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, FilterField, VisualizationLayerShared} from 'shared';
+import type {ApplyData, DatalensGlobalState} from 'ui';
 import {selectFilters} from 'units/wizard/selectors/visualization';
 
 import {openWizardDialogFilter} from '../../../../../actions/dialog';
-import {PlaceholderAction} from '../../../../../actions/dndItems';
+import type {PlaceholderAction} from '../../../../../actions/dndItems';
 import {updateLayerFilters} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {setLayerFilters} from '../../../../../actions/visualization';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../../../../../constants';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

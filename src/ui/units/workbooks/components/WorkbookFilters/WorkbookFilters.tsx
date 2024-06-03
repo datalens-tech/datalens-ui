@@ -4,9 +4,9 @@ import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput/DebouncedInput';
 import {I18n} from 'i18n';
-import {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
+import type {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
 
-import {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters} from '../../types';
 
 import './WorkbookFilters.scss';
 

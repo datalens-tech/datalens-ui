@@ -1,7 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import {prepareHighchartsScatter} from '../highcharts';
 import {prepareScatter} from '../prepareScatter';
 

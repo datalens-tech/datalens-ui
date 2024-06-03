@@ -11,7 +11,7 @@ import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
 import {Feature, WizardPageQa} from '../../../../../../shared';
-import {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import Utils from '../../../../../utils';

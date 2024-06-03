@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Icon, Popover, PopupPlacement} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import {Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import alertIcon from '../../../../../assets/icons/alert.svg';

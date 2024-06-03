@@ -1,4 +1,4 @@
-import {GetMergedTotalsArgs} from './types';
+import type {GetMergedTotalsArgs} from './types';
 
 export const getMergedTotals = (args: GetMergedTotalsArgs): (string | null)[] => {
     const {mergedOrder, isFirstDataset, lastResultRow, totals, currentOrder, resultDataRows} = args;

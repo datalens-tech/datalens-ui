@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {HighchartsReact} from '@gravity-ui/chartkit/highcharts';
-import Highcharts, {ChartCallbackFunction, Options} from 'highcharts';
+import type {ChartCallbackFunction, Options} from 'highcharts';
+import Highcharts from 'highcharts';
 import highmaps from 'highcharts/modules/map';
 import get from 'lodash/get';
 
@@ -9,7 +10,7 @@ import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {getMap} from '../../../modules/map/map';
 import {withSplitPane} from '../../components';
-import {HighchartsMapWidgetProps} from '../types';
+import type {HighchartsMapWidgetProps} from '../types';
 
 highmaps(Highcharts);
 

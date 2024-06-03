@@ -1,4 +1,4 @@
-import {IconData} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import {ConnectorType} from 'shared';
 
 import {ConnectorAlias} from '../../constants';

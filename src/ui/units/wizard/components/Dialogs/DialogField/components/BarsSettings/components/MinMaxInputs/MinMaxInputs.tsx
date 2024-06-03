@@ -4,7 +4,7 @@ import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
-import {ThresholdsValidationStatus} from '../../../../../../../typings';
+import type {ThresholdsValidationStatus} from '../../../../../../../typings';
 import {validateThresholds} from '../../../../../../../utils/wizard';
 
 import './MinMaxInputs.scss';

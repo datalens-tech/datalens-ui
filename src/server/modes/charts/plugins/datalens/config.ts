@@ -1,18 +1,20 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 
-import {
-    ChartkitHandlers,
-    DEFAULT_CHART_LINES_LIMIT,
+import type {
     DashWidgetConfig,
-    Feature,
     GraphTooltipLine,
     GraphWidgetEventScope,
-    PlaceholderId,
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     StringParams,
     TableWidgetEventScope,
     WidgetEvent,
+} from '../../../../../shared';
+import {
+    ChartkitHandlers,
+    DEFAULT_CHART_LINES_LIMIT,
+    Feature,
+    PlaceholderId,
     WizardVisualizationId,
     getIsNavigatorEnabled,
     isEnabledServerFeature,

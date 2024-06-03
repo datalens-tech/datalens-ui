@@ -1,6 +1,6 @@
 import type {GetEntryResponse, GetPublicationPreviewEntry} from 'shared/schema';
 
-import {DIALOG_STATUS} from './constants';
+import type {DIALOG_STATUS} from './constants';
 
 export type EntryData = GetEntryResponse;
 export type EntryRelation = GetPublicationPreviewEntry;

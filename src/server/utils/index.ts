@@ -1,9 +1,11 @@
 import fs from 'fs';
-import {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'http';
 
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
-import axios, {AxiosResponse} from 'axios';
+import type {Request} from 'express';
+import type {AppContext} from '@gravity-ui/nodekit';
+import type {AxiosResponse} from 'axios';
+import axios from 'axios';
+
 import pick from 'lodash/pick';
 
 import {

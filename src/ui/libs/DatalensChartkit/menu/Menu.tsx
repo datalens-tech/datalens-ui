@@ -1,15 +1,15 @@
-import React from 'react';
+import type React from 'react';
 
-import {MenuItemsIds} from 'shared';
+import type {MenuItemsIds} from 'shared';
 import {registry} from 'ui/registry';
-import {GetChartkitMenuItems} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {GetChartkitMenuItems} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
 import {
     type EntryContextMenuItems,
     getGroupedMenu,
 } from '../../../components/EntryContextMenu/helpers';
 import type {ChartsData} from '../modules/data-provider/charts';
-import {GraphWidget} from '../types';
+import type {GraphWidget} from '../types';
 
 import type {MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';

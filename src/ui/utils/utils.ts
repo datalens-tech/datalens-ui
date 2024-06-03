@@ -1,17 +1,19 @@
 import {settings as settingsChartKit} from '@gravity-ui/chartkit';
 import {settings as settingsDateUtils} from '@gravity-ui/date-utils';
-import {ThemeSettings, configure as configureUikit} from '@gravity-ui/uikit';
+import type {ThemeSettings} from '@gravity-ui/uikit';
+import {configure as configureUikit} from '@gravity-ui/uikit';
 import {I18N} from 'i18n';
 import _get from 'lodash/get';
 import _isEmpty from 'lodash/isEmpty';
 import _mapKeys from 'lodash/mapKeys';
 import _snakeCase from 'lodash/snakeCase';
 import moment from 'moment';
-import {ENABLE, SUPERUSER_SWITCH_MODE_COOKIE_NAME, StringParams} from 'shared';
+import type {StringParams} from 'shared';
+import {ENABLE, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
 
 import {DL, SYSTEM_THEME, URL_OPTIONS} from '../constants';
 import {getSdk} from '../libs/schematic-sdk';
-import {DataLensApiError} from '../typings';
+import type {DataLensApiError} from '../typings';
 
 import {parseError} from './errors/parse';
 

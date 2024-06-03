@@ -3,10 +3,11 @@ import React from 'react';
 import {BarsDescendingAlignLeft} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field} from 'shared';
 import {
     DatasetFieldType,
-    Field,
     PlaceholderId,
     WizardVisualizationId,
     isFieldHierarchy,
@@ -15,7 +16,7 @@ import {
     isMeasureValue,
     isVisualizationWithLayers,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {
     selectColors,
     selectSegments,
@@ -27,7 +28,7 @@ import {getSelectedLayer} from 'units/wizard/utils/helpers';
 import {updateSort} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

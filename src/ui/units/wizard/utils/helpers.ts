@@ -12,13 +12,10 @@ import {
 } from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {
-    ChartsConfigVersion,
+import type {
     CommonNumberFormattingOptions,
     CommonPlaceholders,
-    DATASET_FIELD_TYPES,
     Dataset,
-    DatasetFieldType,
     Field,
     FilterField,
     GeoLayerType,
@@ -31,12 +28,17 @@ import {
     Update,
     VisualizationLayerShared,
     VisualizationWithLayersShared,
+} from 'shared';
+import {
+    ChartsConfigVersion,
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
     getResultSchemaFromDataset,
     getSortedData,
     isVisualizationWithLayers,
 } from 'shared';
 
-import {
+import type {
     CommonPlaceholdersKeys,
     CommonPlaceholdersKeysWithoutConfigs,
 } from '../../../../shared/types/wizard/misc';

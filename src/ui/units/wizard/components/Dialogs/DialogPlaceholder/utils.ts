@@ -1,8 +1,5 @@
-import {
-    AxisModeDisabledReason,
-    WizardVisualizationId,
-    isD3Visualization,
-} from '../../../../../../shared';
+import type {WizardVisualizationId} from '../../../../../../shared';
+import {AxisModeDisabledReason, isD3Visualization} from '../../../../../../shared';
 
 export function isAxisScaleEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);

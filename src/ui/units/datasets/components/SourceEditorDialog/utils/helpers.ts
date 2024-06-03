@@ -1,9 +1,10 @@
 import {DL} from '../../../../../';
 import {I18n} from '../../../../../../i18n';
-import {FormValidationError, VALIDATION_ERROR} from '../../../helpers/validation';
-import {FreeformSource, TranslatedItem} from '../../../store/types';
-import {InputFormItemProps} from '../components';
-import {EditedSource} from '../types';
+import type {FormValidationError} from '../../../helpers/validation';
+import {VALIDATION_ERROR} from '../../../helpers/validation';
+import type {FreeformSource, TranslatedItem} from '../../../store/types';
+import type {InputFormItemProps} from '../components';
+import type {EditedSource} from '../types';
 
 const i18n = I18n.keyset('dataset.sources-tab.modify');
 const i18nValidation = I18n.keyset('dataset.validation');

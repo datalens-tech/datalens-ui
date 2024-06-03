@@ -1,4 +1,4 @@
-import {LocationChangeProps} from '../components/LocationChange/LocationChange';
+import type {LocationChangeProps} from '../components/LocationChange/LocationChange';
 import {CounterName, fireMetricaHit} from '../libs/metrica';
 
 export const locationChangeHandler: LocationChangeProps['onLocationChanged'] = (

@@ -4,8 +4,8 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {EditorEntry} from '../../../types/common';
-import {ScriptsValues, TabData} from '../../../types/store';
+import type {EditorEntry} from '../../../types/common';
+import type {ScriptsValues, TabData} from '../../../types/store';
 import {RevisionsDiffDialog} from '../../RevisionsDiff/RevisionsDiff';
 
 const i18n = I18n.keyset('component.dialog-revisions.view');

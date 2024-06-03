@@ -1,6 +1,6 @@
-import React from 'react';
+import type React from 'react';
 
-import {WidgetLoadedData} from '../types';
+import type {WidgetLoadedData} from '../types';
 
 export type WidgetState = {
     loadedData: WidgetLoadedData | null;

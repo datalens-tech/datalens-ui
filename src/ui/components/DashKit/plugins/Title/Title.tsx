@@ -1,14 +1,10 @@
 import React from 'react';
 
-import {
-    PLUGIN_ROOT_ATTR_NAME,
-    PluginTitle,
-    PluginTitleProps,
-    pluginTitle,
-} from '@gravity-ui/dashkit';
+import type {PluginTitleProps} from '@gravity-ui/dashkit';
+import {PLUGIN_ROOT_ATTR_NAME, PluginTitle, pluginTitle} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {DashTabItemTitle} from 'shared';
+import type {DashTabItemTitle} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';

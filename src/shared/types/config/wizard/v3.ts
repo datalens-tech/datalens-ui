@@ -1,4 +1,4 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode, ParameterDefaultValue} from '../../index';
+import type {ChartsConfigVersion, DatasetFieldCalcMode, ParameterDefaultValue} from '../../index';
 
 export type V3ChartsConfig = {
     title?: string;

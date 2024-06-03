@@ -1,13 +1,13 @@
-import {AxiosError} from 'axios';
-import {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
+import type {AxiosError} from 'axios';
+import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {ExportFormatsType} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {WidgetBase} from 'ui/libs/DatalensChartkit/types';
 
-import {ChartKitProps} from '../../../../../../ChartKitBase';
-import {LoadedChartInfo} from '../../../../../../types';
+import type {ChartKitProps} from '../../../../../../ChartKitBase';
+import type {LoadedChartInfo} from '../../../../../../types';
 
 export type ExportResultType = {
     status: string;

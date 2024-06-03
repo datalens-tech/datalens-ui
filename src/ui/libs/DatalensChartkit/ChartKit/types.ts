@@ -9,7 +9,7 @@ import type {
     TableWidget,
 } from '../types';
 
-import YandexMap from './modules/yandex-map/yandex-map';
+import type YandexMap from './modules/yandex-map/yandex-map';
 import type {
     HighchartsMapWidgetData,
     MarkupWidgetData,

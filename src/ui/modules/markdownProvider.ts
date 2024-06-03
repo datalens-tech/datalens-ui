@@ -1,4 +1,5 @@
-import {DashData, DashTabItemType, Dictionary} from 'shared';
+import type {DashData, Dictionary} from 'shared';
+import {DashTabItemType} from 'shared';
 
 import {DL} from '../constants';
 import logger from '../libs/logger';

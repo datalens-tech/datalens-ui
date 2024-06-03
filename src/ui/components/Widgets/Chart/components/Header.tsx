@@ -2,9 +2,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
-import {StringParams} from 'shared';
-import {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
-import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {StringParams} from 'shared';
+import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
 
 import {
@@ -15,12 +15,12 @@ import {
     ChartsInsights,
     MenuWithErrorBoundary,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components';
-import {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {getChartkitMenu} from '../../../../libs/DatalensChartkit/modules/menu/menu';
 import settings from '../../../../libs/DatalensChartkit/modules/settings/settings';
-import {ChartsInsightsData, GraphWidget} from '../../../../libs/DatalensChartkit/types';
+import type {ChartsInsightsData, GraphWidget} from '../../../../libs/DatalensChartkit/types';
 import {registry} from '../../../../registry';
-import {ChartContentProps} from '../types';
+import type {ChartContentProps} from '../types';
 
 import '../ChartWidget.scss';
 

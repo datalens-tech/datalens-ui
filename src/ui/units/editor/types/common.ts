@@ -1,4 +1,4 @@
-import {Required} from 'utility-types';
+import type {Required} from 'utility-types';
 
 import type {EntryFieldData, EntryFieldMeta, GetEntryResponse} from '../../../../shared/schema';
 

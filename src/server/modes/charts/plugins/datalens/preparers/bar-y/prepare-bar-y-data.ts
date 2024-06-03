@@ -1,10 +1,12 @@
-import {
-    AxisMode,
+import type {
     Field,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
+} from '../../../../../../../shared';
+import {
+    AxisMode,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
@@ -29,8 +31,8 @@ import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSortedCategories, getXAxisValue, prepareLines} from '../line/helpers';
 import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
-import {PrepareFunctionArgs} from '../types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
+import type {PrepareFunctionArgs} from '../types';
 
 export function prepareBarYData({
     ChartEditor,

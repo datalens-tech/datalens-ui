@@ -1,5 +1,5 @@
-import type {CommonSharedExtraSettings} from 'shared';
-import {Feature, QLChartType, isMonitoringOrPrometheusChart} from 'shared';
+import type {CommonSharedExtraSettings, QLChartType} from 'shared';
+import {Feature, isMonitoringOrPrometheusChart} from 'shared';
 
 import Utils from '../../../utils';
 

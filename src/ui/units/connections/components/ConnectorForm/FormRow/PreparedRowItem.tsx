@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {PreparedRow} from 'shared/schema/types';
-import {PreparedRowItemProps} from 'ui/registry/units/connections/types/PreparedRowItem';
+import type {PreparedRowItemProps} from 'ui/registry/units/connections/types/PreparedRowItem';
 
 import logger from '../../../../../libs/logger';
 import {CacheTtlRow, CollapseRow} from '../preparedRows';

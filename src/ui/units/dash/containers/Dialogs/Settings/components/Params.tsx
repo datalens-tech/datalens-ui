@@ -2,7 +2,8 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {DashSettingsGlobalParams, ParamsSettingsQA, StringParams} from 'shared';
+import type {DashSettingsGlobalParams, StringParams} from 'shared';
+import {ParamsSettingsQA} from 'shared';
 
 import {Collapse} from '../../../../../../components/Collapse/Collapse';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';

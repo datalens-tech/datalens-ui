@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {Dialog, Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Dialog, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {EXPORT_FORMATS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 
-import {ExportActionArgs, ExportChartArgs} from '../Export/types';
+import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
 
 import './DownloadCsv.scss';
 

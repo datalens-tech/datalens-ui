@@ -1,11 +1,11 @@
-import {ConnectorType} from '../../../constants';
-import {
+import type {ConnectorType} from '../../../constants';
+import type {
     ConnectionData,
-    type ConnectionTypedQueryApiRequest,
-    type ConnectionTypedQueryApiResponse,
+    ConnectionTypedQueryApiRequest,
+    ConnectionTypedQueryApiResponse,
 } from '../../../types';
 
-import {WorkbookIdArg} from './common';
+import type {WorkbookIdArg} from './common';
 
 type BICounter = {
     id: string;

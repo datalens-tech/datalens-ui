@@ -1,7 +1,8 @@
 import React from 'react';
 
 import debounce from 'lodash/debounce';
-import {ConnectableElement, DragLayer} from 'react-dnd';
+import type {ConnectableElement} from 'react-dnd';
+import {DragLayer} from 'react-dnd';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from 'shared/types/config/ql';
 
 const getItemStyles = debounce(({initialOffset, currentOffset, containerRef}) => {

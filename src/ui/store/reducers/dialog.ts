@@ -1,4 +1,5 @@
-import {DialogAction, OPEN_DIALOG, CLOSE_DIALOG, UPDATE_DIALOG_PROPS} from '../actions/dialog';
+import type {DialogAction} from '../actions/dialog';
+import {OPEN_DIALOG, CLOSE_DIALOG, UPDATE_DIALOG_PROPS} from '../actions/dialog';
 
 export interface DialogState {
     dialogs: {id: symbol; props: any}[];

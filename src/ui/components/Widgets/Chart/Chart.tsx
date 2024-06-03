@@ -7,7 +7,7 @@ import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -22,7 +22,7 @@ import {
     removeEmptyNDatasetFieldsProperties,
 } from './helpers/helpers';
 import {useLoadingChart} from './hooks/useLoadingChart';
-import {
+import type {
     ChartNoWidgetProps,
     ChartWidgetData,
     ChartWidgetPropsWithContext,

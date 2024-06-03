@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Calendar, FontCursor, ListUl, SquareCheck} from '@gravity-ui/icons';
-import {Icon, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {DialogControlQa} from 'shared/constants/qa';
 

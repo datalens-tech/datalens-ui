@@ -2,11 +2,16 @@ import React from 'react';
 
 import {Button, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatasetField, DatasetTabSectionQA} from 'shared';
+import type {DatasetField} from 'shared';
+import {DatasetTabSectionQA} from 'shared';
 import {Interpolate} from 'ui';
 
 import {DatasetTabFieldList} from '../DatasetTabFieldList/DatasetTabFieldList';
-import {FieldColumn, FieldListColumn, FieldRowControlSettings} from '../DatasetTabFieldList/types';
+import type {
+    FieldColumn,
+    FieldListColumn,
+    FieldRowControlSettings,
+} from '../DatasetTabFieldList/types';
 
 import './DatasetTabSection.scss';
 

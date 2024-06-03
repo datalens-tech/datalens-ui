@@ -1,13 +1,11 @@
-import {
-    DATASET_FIELD_TYPES,
+import type {
     HierarchyField,
-    PlaceholderId,
     ServerChartsConfig,
     ServerField,
     SharedData,
     StringParams,
-    isMarkupField,
 } from '../../../../../../shared';
+import {DATASET_FIELD_TYPES, PlaceholderId, isMarkupField} from '../../../../../../shared';
 
 import {getDrillDownData} from './misc-helpers';
 

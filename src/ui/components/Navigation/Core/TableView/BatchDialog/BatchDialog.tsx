@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {BatchMove} from '../../../dialogs/BatchMove/BatchMove';
-import {BatchAction} from '../../../types';
-import {HookBatchSelectResult, TableViewProps} from '../types';
+import type {BatchAction} from '../../../types';
+import type {HookBatchSelectResult, TableViewProps} from '../types';
 
 type Props = {
     action: BatchAction;

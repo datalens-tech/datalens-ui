@@ -1,6 +1,6 @@
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {ChartKitFormatNumberSettings} from '../../types';
+import type {ChartKitFormatNumberSettings} from '../../types';
 
 export const getChartKitFormattedValue = (
     chartKitFormatSettings: ChartKitFormatNumberSettings,

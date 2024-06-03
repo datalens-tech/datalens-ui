@@ -1,8 +1,10 @@
-import {
-    AxisMode,
+import type {
     ServerPlaceholderSettings,
     ServerSort,
     WizardVisualizationId,
+} from '../../../../../../../shared';
+import {
+    AxisMode,
     getActualAxisModeForField,
     isDateField,
     isNumberField,

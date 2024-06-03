@@ -4,9 +4,10 @@ import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {CollapseRowItem} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import type {CollapseProps} from 'ui/components/Collapse/types';
 
 import {changeInnerForm} from '../../../../store';

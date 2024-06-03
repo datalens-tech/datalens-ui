@@ -1,4 +1,5 @@
-import {CommonSharedExtraSettings, Dataset, Shared, WizardType} from 'shared';
+import type {CommonSharedExtraSettings, Dataset, Shared} from 'shared';
+import {WizardType} from 'shared';
 
 import {VISUALIZATION_IDS} from '../../../../constants/visualizations';
 import {UPDATE_CLIENT_CHARTS_CONFIG, UPDATE_PREVIEW} from '../../actions/preview';

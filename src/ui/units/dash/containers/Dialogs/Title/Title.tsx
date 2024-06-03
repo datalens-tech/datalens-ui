@@ -4,15 +4,16 @@ import {Checkbox, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashTabItemTitle} from 'shared';
 import {
-    DashTabItemTitle,
     DashTabItemTitleSize,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {setItemData} from '../../../store/actions/dashTyped';

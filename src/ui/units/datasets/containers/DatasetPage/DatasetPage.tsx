@@ -3,10 +3,11 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Feature} from 'shared';
-import {SDK, Utils} from 'ui';
+import type {SDK} from 'ui';
+import {Utils} from 'ui';
 import {registry} from 'ui/registry';
 
-import {AsideHeaderData} from '../../../../store/typings/asideHeader';
+import type {AsideHeaderData} from '../../../../store/typings/asideHeader';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../../constants';
 import {ActionQueryParam, QueryParam, mapYTClusterToConnId} from '../../constants/datasets';
 import DatasetUtils from '../../helpers/utils';

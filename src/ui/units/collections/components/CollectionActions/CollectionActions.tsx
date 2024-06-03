@@ -1,14 +1,8 @@
 import React from 'react';
 
 import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuItemMixed,
-    Icon,
-    Tooltip,
-} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';

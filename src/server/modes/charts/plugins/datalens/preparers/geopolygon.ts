@@ -1,14 +1,13 @@
-import {
-    DATASET_FIELD_TYPES,
-    MINIMUM_FRACTION_DIGITS,
+import type {
     ServerFieldFormatting,
     ServerTooltip,
     VisualizationLayerShared,
 } from '../../../../../../shared';
+import {DATASET_FIELD_TYPES, MINIMUM_FRACTION_DIGITS} from '../../../../../../shared';
 import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
+import type {Coordinate} from '../utils/geo-helpers';
 import {
-    Coordinate,
     colorizeGeoByGradient,
     colorizeGeoByPalette,
     getFlattenCoordinates,
@@ -23,7 +22,7 @@ import {
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
-import {PrepareFunctionArgs} from './types';
+import type {PrepareFunctionArgs} from './types';
 
 type GeopolygonConfig = {
     geometry: {

@@ -1,9 +1,5 @@
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QlConfigPreviewTableData,
-    formatNumber,
-} from '../../../../../../shared';
+import type {IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, formatNumber} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
@@ -11,12 +7,8 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 import {prepareMetricObject} from '../../datalens/utils/markup-helpers';
-import {
-    QLRenderResultMetric,
-    formatUnknownTypeValue,
-    isGroup,
-    parseNumberValue,
-} from '../utils/misc-helpers';
+import type {QLRenderResultMetric} from '../utils/misc-helpers';
+import {formatUnknownTypeValue, isGroup, parseNumberValue} from '../utils/misc-helpers';
 
 export default ({
     shared,

@@ -5,7 +5,8 @@ import {parseError} from 'ui/utils/errors/parse';
 
 import {ConverterErrorCode} from '../../../../../constants';
 import type {UploadedGSheet} from '../../../../../store';
-import {ListItem, ListItemAction} from '../../../components';
+import type {ListItemAction} from '../../../components';
+import {ListItem} from '../../../components';
 import type {HandleItemClick} from '../../types';
 
 const i18n = I18n.keyset('connections.gsheet.view');

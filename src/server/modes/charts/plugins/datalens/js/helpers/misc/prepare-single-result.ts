@@ -1,4 +1,4 @@
-import {
+import type {
     ColorPalette,
     DATASET_FIELD_TYPES,
     FeatureConfig,
@@ -7,11 +7,10 @@ import {
     ServerChartsConfig,
     ServerVisualization,
     ServerVisualizationLayer,
-    WizardVisualizationId,
-    isMonitoringOrPrometheusChart,
 } from '../../../../../../../../shared';
+import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
-import {PivotData} from '../../../preparers/backend-pivot-table/types';
+import type {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
 import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
@@ -27,7 +26,7 @@ import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import prepareTreemapData from '../../../preparers/treemap';
-import {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';

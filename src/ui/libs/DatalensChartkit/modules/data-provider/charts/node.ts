@@ -1,28 +1,25 @@
-import Highcharts, {Chart, Series, SeriesClickEventObject} from 'highcharts';
+import type {Chart, Series, SeriesClickEventObject} from 'highcharts';
+import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
-import {Optional} from 'utility-types';
+import type {Optional} from 'utility-types';
 
-import {
-    EDITOR_CHART_NODE,
-    QL_CHART_NODE,
-    StringParams,
-    WIZARD_CHART_NODE,
-} from '../../../../../../shared';
+import type {StringParams} from '../../../../../../shared';
+import {EDITOR_CHART_NODE, QL_CHART_NODE, WIZARD_CHART_NODE} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
 } from '../../../../../../shared/constants/chartkit-handlers';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
+import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {getChartsInsightsData} from './helpers';
-import {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
+import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {getUISandbox, shouldUseUISandbox, unwrapPossibleFunctions} from './ui-sandbox';
 
 import {CHARTS_ERROR_CODE} from '.';

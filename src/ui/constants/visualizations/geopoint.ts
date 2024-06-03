@@ -1,6 +1,7 @@
 import {ChevronsExpandUpRight, GeoDots} from '@gravity-ui/icons';
 import cloneDeep from 'lodash/cloneDeep';
-import {Field, VisualizationLayerShared, isMeasureValue} from 'shared';
+import type {Field, VisualizationLayerShared} from 'shared';
+import {isMeasureValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';

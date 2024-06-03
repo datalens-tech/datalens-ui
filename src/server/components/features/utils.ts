@@ -1,4 +1,4 @@
-import {Feature} from '../../../shared';
+import type {Feature} from '../../../shared';
 
 export type FeatureState = {
     development: boolean;

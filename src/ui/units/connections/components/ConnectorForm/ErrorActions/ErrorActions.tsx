@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
 import {openDialogErrorWithTabs} from '../../../../../store/actions/dialog';
-import {DataLensApiError} from '../../../../../typings';
+import type {DataLensApiError} from '../../../../../typings';
 import {PlainText} from '../components';
 
 import './ErrorActions.scss';

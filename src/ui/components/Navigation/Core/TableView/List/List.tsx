@@ -2,13 +2,14 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import {VariableSizeList, VariableSizeListProps} from 'react-window';
+import type {VariableSizeListProps} from 'react-window';
+import {VariableSizeList} from 'react-window';
 import {DlNavigationQA} from 'shared';
 
 import type {NavigationEntry} from '../../../../../../shared/schema';
 import {Row, RowLoaderMore} from '../Row/Row';
 import {RowHeader} from '../Row/RowHeader';
-import {HookBatchSelectResult, TableViewProps} from '../types';
+import type {HookBatchSelectResult, TableViewProps} from '../types';
 
 const b = block('dl-core-navigation-table-view');
 const ROW_HEIGHT = 40;

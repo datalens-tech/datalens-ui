@@ -1,9 +1,9 @@
-import {Request, Response} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import {QL_TYPE} from '../../../../../shared';
-import {ChartsEngine} from '../../../../components/charts-engine';
-import {ResolvedConfig} from '../../../../components/charts-engine/components/storage/types';
+import type {ChartsEngine} from '../../../../components/charts-engine';
+import type {ResolvedConfig} from '../../../../components/charts-engine/components/storage/types';
 import {runChart} from '../../../../components/charts-engine/runners/chart';
 import type {Plugin} from '../../../../components/charts-engine/types';
 

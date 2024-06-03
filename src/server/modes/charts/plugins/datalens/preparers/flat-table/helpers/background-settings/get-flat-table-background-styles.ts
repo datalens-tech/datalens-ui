@@ -1,9 +1,10 @@
-import {MarkupItem, getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
+import type {MarkupItem} from '../../../../../../../../../shared';
+import {getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../../constants';
 import {getColor} from '../../../../utils/constants';
 import {findIndexInOrder} from '../../../../utils/misc-helpers';
 
-import {
+import type {
     GetContinuousBackgroundColorStyle,
     GetDiscreteBackgroundColorStyle,
     GetFlatTableCellBackgroundSettingsStylesArgs,

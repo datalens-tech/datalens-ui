@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa} from 'shared';
 
-import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+import type {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
 import {Row} from './Row';
 

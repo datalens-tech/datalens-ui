@@ -2,6 +2,7 @@ import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
 import {DL} from 'ui/constants/common';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {TAB_ALL} from './constants';
 import type {Item} from './types';
@@ -12,7 +13,9 @@ export const getWorkbookTabs = (workbook: WorkbookWithPermissions): Item[] => {
     const iamResources = DL.IAM_RESOURCES;
     const isLimitedViewerMode = Boolean(iamResources?.workbook.roles.limitedViewer);
 
-    const showDataTabs = !isLimitedViewerMode || (isLimitedViewerMode && workbook.permissions.view);
+    const showDataTabs =
+        (!isLimitedViewerMode || (isLimitedViewerMode && workbook.permissions.view)) &&
+        !isMobileView;
 
     const result: Item[] = [];
 

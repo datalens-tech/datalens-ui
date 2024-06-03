@@ -1,7 +1,7 @@
-import {AppMiddleware} from '@gravity-ui/expresskit';
-import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {AppMiddleware} from '@gravity-ui/expresskit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
-import CacheClient from '../cache-client';
+import type CacheClient from '../cache-client';
 
 import {CommentsFetcher} from './components/processor/comments-fetcher';
 import {Console} from './components/processor/console';
@@ -22,8 +22,10 @@ const defaultControllers = {
     charts: chartsController,
     embeds: embedsController,
 };
-import defaultRunners, {Runner} from './runners';
-import {MiddlewareStage, Plugin, SourceConfig, TelemetryCallbacks} from './types';
+import type {Runner} from './runners';
+import defaultRunners from './runners';
+import type {Plugin, SourceConfig, TelemetryCallbacks} from './types';
+import {MiddlewareStage} from './types';
 
 type Controllers = {
     export: ReturnType<typeof exportController>;

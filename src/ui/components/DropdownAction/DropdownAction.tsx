@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
-import {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
+import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 
 import './DropdownAction.scss';

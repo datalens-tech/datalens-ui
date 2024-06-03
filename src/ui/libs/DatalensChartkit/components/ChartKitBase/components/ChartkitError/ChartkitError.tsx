@@ -1,12 +1,11 @@
 import React from 'react';
 
-import DatalensChartkitCustomError, {
-    formatError,
-} from '../../../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type DatalensChartkitCustomError from '../../../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {formatError} from '../../../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import settings from '../../../../modules/settings/settings';
-import {CombinedError, OnChangeData} from '../../../../types';
-import {ErrorProps} from '../../../Error/Error';
-import {ChartKitBaseWrapperProps, ChartKitWrapperState} from '../../types';
+import type {CombinedError, OnChangeData} from '../../../../types';
+import type {ErrorProps} from '../../../Error/Error';
+import type {ChartKitBaseWrapperProps, ChartKitWrapperState} from '../../types';
 
 type ChartkitErrorProps = {
     onRetry?: (data?: OnChangeData['data']) => void;

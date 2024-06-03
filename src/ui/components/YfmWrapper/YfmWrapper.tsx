@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import {YFM_LATEX_CLASSNAME} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
+import type {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
     (props, forwardedRef) => {

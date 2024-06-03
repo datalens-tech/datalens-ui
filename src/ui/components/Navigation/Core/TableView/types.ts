@@ -1,7 +1,13 @@
 import type {NavigationEntry} from '../../../../../shared/schema';
-import {ChangeLocation, CurrentPageEntry, LinkWrapperArgs, MenuClickArgs, Mode} from '../../types';
-import {checkEntryActivity} from '../../util';
-import {EntryContextButtonProps} from '../EntryContextButton/EntryContextButton';
+import type {
+    ChangeLocation,
+    CurrentPageEntry,
+    LinkWrapperArgs,
+    MenuClickArgs,
+    Mode,
+} from '../../types';
+import type {checkEntryActivity} from '../../util';
+import type {EntryContextButtonProps} from '../EntryContextButton/EntryContextButton';
 
 export type ParentFolderEntry = {
     scope: 'folder';

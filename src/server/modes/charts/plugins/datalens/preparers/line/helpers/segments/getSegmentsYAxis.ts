@@ -1,11 +1,12 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import sortBy from 'lodash/sortBy';
 
-import {AxisLabelFormatMode, ServerPlaceholder} from '../../../../../../../../../shared';
+import type {ServerPlaceholder} from '../../../../../../../../../shared';
+import {AxisLabelFormatMode} from '../../../../../../../../../shared';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
 import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
 
-import {SegmentsMap} from './types';
+import type {SegmentsMap} from './types';
 
 const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
 

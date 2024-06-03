@@ -1,10 +1,5 @@
-import {
-    CommonUpdate,
-    DATASET_FIELD_TYPES,
-    DatasetFieldAggregation,
-    DatasetFieldType,
-    WizardDatasetField,
-} from 'shared';
+import type {CommonUpdate, WizardDatasetField} from 'shared';
+import {DATASET_FIELD_TYPES, DatasetFieldAggregation, DatasetFieldType} from 'shared';
 
 import {LINE_VISUALIZATION} from '../../../../../constants/visualizations';
 

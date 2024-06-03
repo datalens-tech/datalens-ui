@@ -1,4 +1,4 @@
-import {RGBColor} from '../../../../../../../shared';
+import type {RGBColor} from '../../../../../../../shared';
 
 // the algorithm is taken almost as is from d3.interpolateRgb Basis
 // (https://d3js.org/d3-interpolate/color#interpolateRgbBasis)

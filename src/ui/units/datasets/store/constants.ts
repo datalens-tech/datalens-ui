@@ -1,6 +1,6 @@
-import {Dataset} from '../../../../shared';
+import type {Dataset} from '../../../../shared';
 
-import {DatasetReduxState} from './types';
+import type {DatasetReduxState} from './types';
 
 const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     avatar_relations: [],

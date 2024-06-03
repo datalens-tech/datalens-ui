@@ -1,12 +1,13 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import isNumber from 'lodash/isNumber';
 
-import {DL_EMBED_TOKEN_HEADER, WorkbookId} from '../../../../../shared';
-import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
+import type {WorkbookId} from '../../../../../shared';
+import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
+import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
 import {getHeaders} from '../../../../components/charts-engine/controllers/charts';
 import {registry} from '../../../../registry';
-import {DatalensGatewaySchemas} from '../../../../types/gateway';
+import type {DatalensGatewaySchemas} from '../../../../types/gateway';
 
 import type {ConfigurableRequestWithDatasetPluginOptions} from './index';
 

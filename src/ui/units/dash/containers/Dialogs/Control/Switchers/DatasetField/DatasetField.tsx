@@ -1,20 +1,19 @@
 import React from 'react';
 
-import {Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import sortBy from 'lodash/sortBy';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 
 import {DataTypeIcon} from '../../../../../../..';
 import {i18n} from '../../../../../../../../i18n';
-import {
+import type {
     DATASET_FIELD_TYPES,
     DatasetFieldCalcMode,
-    DatasetFieldType,
-    DialogControlQa,
     WorkbookId,
-    isParameter,
 } from '../../../../../../../../shared';
+import {DatasetFieldType, DialogControlQa, isParameter} from '../../../../../../../../shared';
 import logger from '../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../libs/schematic-sdk';
 

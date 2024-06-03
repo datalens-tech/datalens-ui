@@ -4,13 +4,13 @@ import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 
 import {ChartKitAdapter} from '../../../../ChartKit/ChartKitAdapter';
 import settings from '../../../../modules/settings/settings';
-import {
+import type {
     ChartKitBaseWrapperWithRefProps,
     ChartKitWrapperParams,
     ChartKitWrapperState,
 } from '../../types';
 import {ChartkitError} from '../ChartkitError/ChartkitError';
-import {State} from '../Content/store/types';
+import type {State} from '../Content/store/types';
 
 type ChartProps = Pick<
     ChartKitBaseWrapperWithRefProps,

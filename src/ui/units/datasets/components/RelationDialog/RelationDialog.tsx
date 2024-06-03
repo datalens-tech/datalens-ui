@@ -7,16 +7,16 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import _get from 'lodash/get';
 import _merge from 'lodash/merge';
-import {
+import type {
     DATASET_FIELD_TYPES,
     DatasetAvatarRelation,
     DatasetAvatarRelationCondition,
-    DatasetDialogRelationQA,
     DatasetOptions,
     DatasetRawSchema,
     DatasetSource,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetDialogRelationQA} from 'shared';
 import {DataTypeIcon, withHiddenUnmount} from 'ui';
 
 import {

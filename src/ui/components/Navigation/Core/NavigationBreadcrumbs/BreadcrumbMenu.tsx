@@ -6,13 +6,18 @@ import {Ellipsis} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ENTRY_CONTEXT_MENU_ACTION, EntryContextMenuBase} from 'components/EntryContextMenu';
-import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from 'components/EntryDialogues';
+import type {EntryDialogues} from 'components/EntryDialogues';
+import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
 import Utils from 'utils';
 
-import {EntryFields, GetEntryResponse, ListDirectoryBreadCrumb} from '../../../../../shared/schema';
-import {ChangeLocation, CurrentPageEntry} from '../../types';
+import type {
+    EntryFields,
+    GetEntryResponse,
+    ListDirectoryBreadCrumb,
+} from '../../../../../shared/schema';
+import type {ChangeLocation, CurrentPageEntry} from '../../types';
 
 import './BreadcrumbMenu.scss';
 

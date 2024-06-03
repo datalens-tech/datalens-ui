@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 import {selectParameters} from 'units/wizard/selectors/dataset';
 
 import {SectionDatasetQA} from '../../../../../../../../shared/constants/qa/wizard';
-import {CommonContainerProps} from '../FieldsContainer';
+import type {CommonContainerProps} from '../FieldsContainer';
 import {SectionContainer} from '../components/SectionContainer/SectionContainer';
 
 type ParametersContainerProps = CommonContainerProps;

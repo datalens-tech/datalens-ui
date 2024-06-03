@@ -1,13 +1,15 @@
-import {
+import type {
     BarTableCell,
-    DATASET_FIELD_TYPES,
-    Feature,
     Field,
-    IS_NULL_FILTER_TEMPLATE,
-    MINIMUM_FRACTION_DIGITS,
     TableCellsRow,
     TableCommonCell,
     TableHead,
+} from '../../../../../../../shared';
+import {
+    DATASET_FIELD_TYPES,
+    Feature,
+    IS_NULL_FILTER_TEMPLATE,
+    MINIMUM_FRACTION_DIGITS,
     isDateField,
     isDateType,
     isMarkupDataType,
@@ -15,7 +17,7 @@ import {
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import {Config} from '../../config';
+import type {Config} from '../../config';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
 import {
@@ -33,7 +35,7 @@ import {
 import {addActionParamValue, canUseFieldForFiltering} from '../helpers/action-params';
 import {getBarSettingsValue, getBarSettingsViewOptions} from '../helpers/barsSettings';
 import {getColumnWidthValue} from '../helpers/columnSettings';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {
     getBackgroundColorsMapByContinuousColumn,

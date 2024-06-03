@@ -9,7 +9,7 @@ import {useDispatch} from 'react-redux';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 
 import type {NavigationEntry} from '../../../../../../shared/schema';
-import {ErrorItem} from '../types';
+import type {ErrorItem} from '../types';
 
 import './MoveError.scss';
 

@@ -2,17 +2,12 @@ import React from 'react';
 
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
-    Field,
-    HierarchyField,
-    PlaceholderId,
-    WizardVisualizationId,
-    isPlaceholderSupportsAxisMode,
-} from 'shared';
-import {DatalensGlobalState, withHiddenUnmount} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, HierarchyField, PlaceholderId, WizardVisualizationId} from 'shared';
+import {DATASET_FIELD_TYPES, DatasetFieldType, isPlaceholderSupportsAxisMode} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {withHiddenUnmount} from 'ui';
 import {setDrillDownLevel, updatePlaceholderSettings} from 'ui/units/wizard/actions/visualization';
 import {getAxisModePlaceholderSettings} from 'ui/units/wizard/utils/placeholder';
 import HierarchyEditor from 'units/wizard/components/HierarchyEditor/HierarchyEditor';

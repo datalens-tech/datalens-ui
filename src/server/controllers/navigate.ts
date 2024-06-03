@@ -1,10 +1,10 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {ENTRY_TYPES, TENANT_ID_HEADER, isEntryId} from '../../shared';
 import {registry} from '../registry';
-import {DatalensGatewaySchemas} from '../types/gateway';
+import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
-import {GatewayApiErrorResponse} from '../utils/gateway';
+import type {GatewayApiErrorResponse} from '../utils/gateway';
 
 function navigateDefault(reqPath: string, res: Response) {
     return res.redirect(302, reqPath.replace('navigate', 'navigation'));

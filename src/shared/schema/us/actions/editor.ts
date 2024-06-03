@@ -1,6 +1,6 @@
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
-import {
+import type {
     CreateEditorChartArgs,
     CreateEditorChartResponse,
     UpdateEditorChartArgs,

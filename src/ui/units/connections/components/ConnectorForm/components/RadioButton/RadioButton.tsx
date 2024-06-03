@@ -1,12 +1,14 @@
 import React from 'react';
 
-import {RadioButton as CommonRadioButton, RadioButtonProps} from '@gravity-ui/uikit';
+import type {RadioButtonProps} from '@gravity-ui/uikit';
+import {RadioButton as CommonRadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {RadioButtonItem, RadioButtonItemOption} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {changeForm, changeInnerForm} from '../../../../store';
 import {withControlWrap} from '../withControlWrap/withControlWrap';

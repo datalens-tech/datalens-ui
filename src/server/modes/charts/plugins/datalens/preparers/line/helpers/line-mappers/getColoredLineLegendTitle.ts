@@ -1,10 +1,9 @@
-import {
+import type {
     ServerColor,
     ServerField,
     ServerVisualizationLayer,
-    getFakeTitleOrTitle,
-    isDimensionField,
 } from '../../../../../../../../../shared';
+import {getFakeTitleOrTitle, isDimensionField} from '../../../../../../../../../shared';
 
 interface GetColoredLineLegendTitleArgs {
     formattedValue: string;

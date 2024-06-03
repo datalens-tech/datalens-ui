@@ -1,4 +1,4 @@
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 export const selectAsideHeaderData = (state: DatalensGlobalState) =>
     state.asideHeader.asideHeaderData;
