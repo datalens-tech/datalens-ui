@@ -298,6 +298,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             if (typeof item === 'string') {
                 return !isEmpty(item);
             }
+            if (typeof item === 'number') {
+                return true;
+            }
             return !isEmpty(item.filter((paramItem) => !isEmpty(paramItem.trim())));
         }),
     );
