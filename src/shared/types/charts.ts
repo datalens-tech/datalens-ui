@@ -135,7 +135,7 @@ export interface IChartEditor {
 
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
-    generateHtml(value: unknown): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
+    generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
 }
 
 export interface Link {
