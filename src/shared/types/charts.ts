@@ -1,10 +1,18 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
+import type {WRAPPED_HTML_KEY} from '../constants';
 import type {WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {ChartsInsight, IntervalPart} from '../modules';
 
 import type {StringParams} from './common';
 import type {UISandboxWrappedFunction} from './ui-sandbox';
+
+export type ChartKitHtmlItem = {
+    tag: string;
+    style?: Record<string, string | number>;
+    attributes?: Record<string, string | number>;
+    content?: ChartKitHtmlItem | ChartKitHtmlItem[] | string;
+};
 
 export interface IChartEditor {
     /**
@@ -126,6 +134,8 @@ export interface IChartEditor {
     setErrorTransform(errorTransformer: (error: unknown) => unknown): unknown;
 
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
+
+    generateHtml(value: unknown): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
 }
 
 export interface Link {

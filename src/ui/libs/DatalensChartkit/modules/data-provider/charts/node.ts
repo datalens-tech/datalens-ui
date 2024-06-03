@@ -8,7 +8,12 @@ import {omit, partial, partialRight} from 'lodash';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
-import {EDITOR_CHART_NODE, QL_CHART_NODE, WIZARD_CHART_NODE} from '../../../../../../shared';
+import {
+    EDITOR_CHART_NODE,
+    QL_CHART_NODE,
+    WIZARD_CHART_NODE,
+    WRAPPED_HTML_KEY,
+} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
@@ -17,6 +22,7 @@ import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {generateHtml} from '../../html-generator';
 
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
@@ -277,6 +283,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 unwrapPossibleFunctions(uiSandbox, result.libraryConfig);
             }
 
+            // TODO: escape html
+            generateSafeHtml(result.data);
+            generateSafeHtml(result.libraryConfig);
+
             applyChartkitHandlers(result.config, result.libraryConfig);
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
@@ -387,6 +397,28 @@ function applyChartkitHandlers(
         (configRef as GraphWidget['config']).manageTooltipConfig =
             ChartkitHandlersDict[ChartkitHandlers.WizardManageTooltipConfig];
     }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ItemValue = any;
+
+function generateSafeHtml(target: ItemValue) {
+    if (!target || typeof target !== 'object') {
+        return;
+    }
+
+    Object.keys(target).forEach((key) => {
+        const value = target[key];
+
+        if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
+            // eslint-disable-next-line no-param-reassign
+            target[key] = generateHtml(value[WRAPPED_HTML_KEY]);
+        } else if (Array.isArray(value)) {
+            value.forEach(generateSafeHtml);
+        } else if (value && typeof value === 'object') {
+            generateSafeHtml(value);
+        }
+    });
 }
 
 export default processNode;

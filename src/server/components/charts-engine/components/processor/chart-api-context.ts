@@ -4,6 +4,7 @@ import type {
     ServerChartsConfig,
     Shared,
 } from '../../../../../shared';
+import {WRAPPED_HTML_KEY} from '../../../../../shared';
 import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
@@ -102,6 +103,12 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
                 fn: value.fn.toString(),
                 args: fnArgs,
             },
+        };
+    };
+
+    api.generateHtml = (value) => {
+        return {
+            [WRAPPED_HTML_KEY]: value,
         };
     };
 
