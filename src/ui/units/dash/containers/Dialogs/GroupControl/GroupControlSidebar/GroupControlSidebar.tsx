@@ -16,8 +16,11 @@ import {
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
-import {getSelectorDialogSpecificFields} from 'ui/units/dash/store/reducers/dash';
-import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
+import {
+    getSelectorDialogFromData,
+    getSelectorGroupDialogFromData,
+} from 'ui/units/dash/store/reducers/dash';
+import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
@@ -50,20 +53,9 @@ const getPasteItemHandler = (workbookId: string | null) => {
             pasteConfig.type === DashTabItemType.GroupControl)
     ) {
         return () => {
-            // remove old ids, add specific for dialog fields, part of important fields is in config sources
             const pasteItems = pasteConfig?.data.group
-                ? pasteConfig?.data.group.map((groupItem) => {
-                      const controlSources =
-                          typeof groupItem.source === 'object' ? groupItem.source : {};
-
-                      return {
-                          ...groupItem,
-                          ...controlSources,
-                          id: undefined,
-                          ...getSelectorDialogSpecificFields(),
-                      };
-                  })
-                : [{...pasteConfig, id: undefined, ...getSelectorDialogSpecificFields()}];
+                ? getSelectorGroupDialogFromData(pasteConfig?.data).group
+                : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
 
             return pasteItems as TabMenuItemData<SelectorDialogState>[];
         };
@@ -75,7 +67,7 @@ const getPasteItemHandler = (workbookId: string | null) => {
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
-    const workbookId = useSelector(selectWorkbookId);
+    const workbookId = useSelector(selectDashWorkbookId);
     const dispatch = useDispatch();
 
     const initialTabIndex =

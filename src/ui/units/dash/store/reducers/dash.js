@@ -71,14 +71,6 @@ export function getGroupSelectorDialogInitialState() {
     };
 }
 
-// fields needed only in the dialog, not in the final config
-export function getSelectorDialogSpecificFields() {
-    return {
-        validation: {},
-        draftId: getRandomKey(),
-    };
-}
-
 export function getSelectorDialogInitialState(args = {}) {
     const sourceType =
         Utils.isEnabledFeature(Feature.GroupControls) &&
@@ -88,6 +80,7 @@ export function getSelectorDialogInitialState(args = {}) {
 
     return {
         elementType: ELEMENT_TYPE.SELECT,
+        validation: {},
         sourceType,
         defaults: {},
         datasetId: args.lastUsedDatasetId,
@@ -98,7 +91,7 @@ export function getSelectorDialogInitialState(args = {}) {
         required: false,
         hint: '',
         showHint: false,
-        ...getSelectorDialogSpecificFields(),
+        draftId: getRandomKey(),
     };
 }
 
@@ -154,36 +147,7 @@ export function getSelectorDialogFromData(data, defaults) {
 
 export function getSelectorGroupDialogFromData(data) {
     const items = Object.values(data.group)
-        .map((item) => ({
-            validation: {},
-            isManualTitle: true,
-
-            title: item.title,
-            sourceType: item.sourceType,
-
-            datasetId: item.source.datasetId,
-            elementType: item.source.elementType || ELEMENT_TYPE.SELECT,
-            defaultValue: item.source.defaultValue,
-            datasetFieldId: item.source.datasetFieldId,
-            showTitle: item.source.showTitle,
-            multiselectable: item.source.multiselectable,
-            isRange: item.source.isRange,
-            fieldName: item.source.fieldName,
-            fieldType: item.source.fieldType,
-            datasetFieldType: item.source.datasetFieldType,
-            acceptableValues: item.source.acceptableValues,
-            chartId: item.source.chartId,
-            operation: item.source.operation,
-            innerTitle: item.source.innerTitle,
-            showInnerTitle: item.source.showInnerTitle,
-            id: item.id,
-            required: item.source.required,
-            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
-            width: item.width || '',
-            namespace: item.namespace,
-            showHint: item.source.showHint,
-            hint: item.source.hint,
-        }))
+        .map((item) => getSelectorDialogFromData(item))
         .sort((a, b) => a.index - b.index);
 
     return {
