@@ -1,4 +1,4 @@
-import {CollectionWithOptionalPermissions, WorkbookWithPermissions} from 'shared/schema';
+import type {CollectionWithOptionalPermissions, WorkbookWithPermissions} from 'shared/schema';
 
 import {COLLECTIONS_PATH} from '../constants';
 
