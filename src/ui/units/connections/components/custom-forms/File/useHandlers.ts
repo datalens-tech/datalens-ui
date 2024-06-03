@@ -4,10 +4,8 @@ import {I18n} from 'i18n';
 import {batch, useDispatch} from 'react-redux';
 
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
+import type {FileSource, ReplaceSource, UploadedFile} from '../../../store';
 import {
-    FileSource,
-    ReplaceSource,
-    UploadedFile,
     applySourceSettings,
     openS3SourcesDialog,
     setBeingDeletedSourceId,
@@ -24,7 +22,7 @@ import {
 } from '../../../store';
 import {DIALOG_CONN_WITH_INPUT} from '../components';
 
-import {
+import type {
     DeleteFileSource,
     DeleteUploadedFile,
     HandleFileColumnFilterUpdate,

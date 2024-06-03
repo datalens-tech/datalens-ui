@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Palette, PaletteOption, Popover} from '@gravity-ui/uikit';
+import type {PaletteOption} from '@gravity-ui/uikit';
+import {Palette, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './PaletteBackground.scss';

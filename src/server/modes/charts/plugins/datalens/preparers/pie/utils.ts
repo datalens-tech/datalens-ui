@@ -1,6 +1,6 @@
+import type {ServerField} from '../../../../../../../shared';
 import {
     PlaceholderId,
-    ServerField,
     getFormatOptions,
     isDateField,
     isNumberField,
@@ -11,7 +11,7 @@ import {
     isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 export function getFormattedValue(value: string | null, field: ServerField) {
     if (isDateField(field)) {

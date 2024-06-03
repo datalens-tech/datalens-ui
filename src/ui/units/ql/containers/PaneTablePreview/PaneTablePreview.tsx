@@ -5,9 +5,9 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import {connect} from 'react-redux';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
-import {QlConfigPreviewTableData} from '../../../../../shared';
+import type {QlConfigPreviewTableData} from '../../../../../shared';
 import {getTablePreviewData} from '../../store/reducers/ql';
 
 import './PaneTablePreview.scss';

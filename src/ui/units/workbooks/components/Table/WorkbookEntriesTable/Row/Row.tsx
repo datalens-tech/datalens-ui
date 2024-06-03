@@ -9,11 +9,11 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {WorkbookPage} from 'shared/constants/qa/workbooks';
-import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
+import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
-import {AppDispatch} from 'ui/store';
+import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
-import {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
 import {defaultRowStyle} from '../constants';

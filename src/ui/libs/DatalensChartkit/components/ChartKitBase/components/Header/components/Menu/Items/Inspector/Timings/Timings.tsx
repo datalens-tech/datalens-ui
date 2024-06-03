@@ -7,7 +7,7 @@ import {ChartkitMenuDialogsQA} from 'shared';
 import {formatDuration} from 'shared/modules/format-units/formatUnit';
 
 import {DL} from '../../../../../../../../../../../constants/common';
-import {ChartsStats} from '../../../../../../../../../modules/data-provider/charts';
+import type {ChartsStats} from '../../../../../../../../../modules/data-provider/charts';
 
 import './Timings.scss';
 

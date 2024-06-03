@@ -1,4 +1,4 @@
-import {ExtendedSeriesLineOptions} from '../../../../../../../../../shared';
+import type {ExtendedSeriesLineOptions} from '../../../../../../../../../shared';
 import type {ChartColorsConfig} from '../../../../types';
 
 export type ColorizeByGradientOptions = {

@@ -1,5 +1,5 @@
-import {DatasetField} from './dataset';
-import {Field} from './wizard';
+import type {DatasetField} from './dataset';
+import type {Field} from './wizard';
 
 export type UpdateAction =
     | 'add_field'

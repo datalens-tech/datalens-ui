@@ -1,10 +1,10 @@
-import React from 'react';
+import type React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {MenuItemsIds, StringParams} from 'shared';
+import type {MenuItemsIds, StringParams} from 'shared';
 
-import {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
-import DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
+import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import type {Widget as TWidget} from './widget';
 

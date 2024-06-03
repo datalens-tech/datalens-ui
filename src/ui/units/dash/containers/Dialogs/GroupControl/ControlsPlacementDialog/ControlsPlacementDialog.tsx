@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa} from 'shared';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
 import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions';
-import {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
+import type {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/controls/selectors';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants';

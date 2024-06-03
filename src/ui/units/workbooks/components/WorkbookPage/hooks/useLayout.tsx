@@ -9,7 +9,7 @@ import {batch, useDispatch, useSelector} from 'react-redux';
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import {AppDispatch} from '../../../../../store';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {setCollection} from '../../../../collections/store/actions';
 import {

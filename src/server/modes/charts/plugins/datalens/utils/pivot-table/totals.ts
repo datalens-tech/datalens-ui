@@ -1,4 +1,4 @@
-import {ServerField} from '../../../../../../../shared';
+import type {ServerField} from '../../../../../../../shared';
 
 type PivotDataTotal = {
     level: number;

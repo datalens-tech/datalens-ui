@@ -1,4 +1,4 @@
-import {
+import type {
     AxisLabelFormatMode,
     ChartsConfigVersion,
     ColumnSettings,
@@ -8,7 +8,7 @@ import {
     ParameterDefaultValue,
     TableBarsSettings,
 } from '../../index';
-import {TableFieldBackgroundSettings} from '../../wizard';
+import type {TableFieldBackgroundSettings} from '../../wizard';
 
 export type V4ChartsConfig = {
     title?: string;

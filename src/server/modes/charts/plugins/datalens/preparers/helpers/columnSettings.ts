@@ -1,4 +1,4 @@
-import {ColumnSettings} from '../../../../../../../shared';
+import type {ColumnSettings} from '../../../../../../../shared';
 
 export const getColumnWidthValue = (
     width: ColumnSettings['width'] | undefined,

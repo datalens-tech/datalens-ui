@@ -1,8 +1,8 @@
 import {I18n} from 'i18n';
 import {getEntryNameByKey} from 'shared';
-import {EntryFields} from 'shared/schema';
+import type {EntryFields} from 'shared/schema';
 
-import {NavigationMinimalProps} from './NavigationMinimal';
+import type {NavigationMinimalProps} from './NavigationMinimal';
 import {PLACE, QUICK_ITEMS} from './constants';
 
 const i18n = I18n.keyset('component.navigation.view');

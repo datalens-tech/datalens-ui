@@ -3,7 +3,7 @@ import moment from 'moment';
 import type {GetRevisionsEntry} from '../../../shared/schema';
 
 import {REVISIONS_STATUSES_TEXTS} from './RevisionsList/RevisionsList';
-import {RevisionEntry, RevisionsGroupedDates, RevisionsListItems} from './types';
+import type {RevisionEntry, RevisionsGroupedDates, RevisionsListItems} from './types';
 
 export const REVISIONS_LIST_PART_SIZE = 100;
 export const REVISIONS_LIST_DEBOUNCE_DELAY = 100;

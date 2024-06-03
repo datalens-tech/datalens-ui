@@ -1,4 +1,9 @@
-import {DATASET_FIELD_TYPES, Field, ServerPlaceholder, Shared} from '../../../../../../../shared';
+import type {
+    DATASET_FIELD_TYPES,
+    Field,
+    ServerPlaceholder,
+    Shared,
+} from '../../../../../../../shared';
 import {getSortedColumnId, isNeedToCalcClosestPointManually} from '../misc-helpers';
 
 type ChartType = Shared['visualization']['id'];

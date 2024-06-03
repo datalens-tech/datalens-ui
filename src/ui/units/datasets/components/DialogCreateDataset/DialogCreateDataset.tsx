@@ -1,13 +1,12 @@
 import React from 'react';
 
 import {I18n} from '../../../../../i18n';
-import {CreateDatasetResponse} from '../../../../../shared/schema/types';
-import {
-    DialogCreateWorkbookEntry,
+import type {CreateDatasetResponse} from '../../../../../shared/schema/types';
+import type {
     DialogCreateWorkbookEntryProps,
-    EntryDialogBase,
     EntryDialogBaseProps,
 } from '../../../../components/EntryDialogues';
+import {DialogCreateWorkbookEntry, EntryDialogBase} from '../../../../components/EntryDialogues';
 import {URL_QUERY} from '../../../../constants';
 import DatasetUtils from '../../helpers/utils';
 

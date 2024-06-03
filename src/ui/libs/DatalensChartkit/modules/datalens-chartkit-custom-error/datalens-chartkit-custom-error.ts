@@ -3,8 +3,8 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
 import {i18n} from '../../../../../i18n';
-import {StringParams} from '../../../../../shared';
-import {CombinedError} from '../../types';
+import type {StringParams} from '../../../../../shared';
+import type {CombinedError} from '../../types';
 import {isAxiosError} from '../axios/axios';
 import {
     REQUEST_ID_HEADER,

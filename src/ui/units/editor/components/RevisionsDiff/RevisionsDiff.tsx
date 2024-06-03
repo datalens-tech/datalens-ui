@@ -2,24 +2,25 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {Checkbox, Dialog, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import {keyBy} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import {filterUsersIds} from 'shared';
-import {GetRevisionsEntry} from 'shared/schema';
+import type {GetRevisionsEntry} from 'shared/schema';
 import {showToast} from 'store/actions/toaster';
 import {getResolveUsersByIdsAction} from 'store/actions/usersByIds';
-import {RevisionEntry} from 'ui/components/Revisions/types';
+import type {RevisionEntry} from 'ui/components/Revisions/types';
 import {SelectAsync} from 'ui/components/Select/wrappers/SelectAsync';
 import {registry} from 'ui/registry';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {DEFAULT_TAB_ID, TIMESTAMP_FORMAT} from '../../constants/common';
-import {EditorEntry} from '../../types/common';
-import {ScriptsValues, TabData} from '../../types/store';
+import type {EditorEntry} from '../../types/common';
+import type {ScriptsValues, TabData} from '../../types/store';
 import PaneTabs from '../PaneTabs/PaneTabs';
 
 import {ButtonNewWindow} from './ButtonNewWindow/ButtonNewWindow';

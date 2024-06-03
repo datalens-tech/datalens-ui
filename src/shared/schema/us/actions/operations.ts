@@ -1,5 +1,5 @@
 import {createAction} from '../../gateway-utils';
-import {GetDatalensOperationArgs, GetDatalensOperationResponse} from '../types';
+import type {GetDatalensOperationArgs, GetDatalensOperationResponse} from '../types';
 
 const OPERATIONS_PATH_PREFIX = '/v1/operation';
 

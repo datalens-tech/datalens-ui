@@ -1,6 +1,6 @@
-import {Request, Response} from '@gravity-ui/expresskit';
-import {ApiServiceActionConfig} from '@gravity-ui/gateway';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request, Response} from '@gravity-ui/expresskit';
+import type {ApiServiceActionConfig} from '@gravity-ui/gateway';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 export const getAuthHeadersNone = () => undefined;
 

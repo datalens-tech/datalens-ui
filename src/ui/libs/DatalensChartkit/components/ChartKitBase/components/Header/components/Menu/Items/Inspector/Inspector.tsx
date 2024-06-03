@@ -10,20 +10,20 @@ import {DL} from 'ui/constants/common';
 import ChartKitIcon from 'ui/libs/DatalensChartkit/components/ChartKitIcon/ChartKitIcon';
 import {registry} from 'ui/registry';
 
-import {ChartWidgetDataRef} from '../../../../../../../../../../components/Widgets/Chart/types';
+import type {ChartWidgetDataRef} from '../../../../../../../../../../components/Widgets/Chart/types';
 import {
     ICONS_MENU_DEFAULT_CLASSNAME,
     type MenuItemArgs,
 } from '../../../../../../../../menu/MenuItems';
-import {
+import type {
     ChartsData,
-    ChartsDataProvider,
     ChartsProps,
     ResponseSourcesError,
     ResponseSourcesSuccess,
 } from '../../../../../../../../modules/data-provider/charts';
+import {ChartsDataProvider} from '../../../../../../../../modules/data-provider/charts';
 import type DatalensChartkitCustomError from '../../../../../../../../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import {Widget as TWidget} from '../../../../../../../../types';
+import type {Widget as TWidget} from '../../../../../../../../types';
 import type {MenuItemActionArgs} from '../../../../../../../../types/menu';
 
 import Sources from './Sources/Sources';

@@ -1,6 +1,6 @@
 import {ConnectorType, Feature} from 'shared';
 
-import {ConnectorItem} from '../../../../shared/schema/types';
+import type {ConnectorItem} from '../../../../shared/schema/types';
 import Utils from '../../../utils';
 
 export const isConnectorInList = (connectors: ConnectorItem[], connType?: string) => {

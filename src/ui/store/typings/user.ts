@@ -1,6 +1,6 @@
-import {Theme, ThemeSettings} from '@gravity-ui/uikit';
-import {DLUserSettings} from 'shared';
-import {DataLensApiError} from 'typings';
+import type {Theme, ThemeSettings} from '@gravity-ui/uikit';
+import type {DLUserSettings} from 'shared';
+import type {DataLensApiError} from 'typings';
 
 export type UserState = {
     settings: {

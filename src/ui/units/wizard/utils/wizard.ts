@@ -20,18 +20,20 @@ import {
 import {I18n} from 'i18n';
 import lodash from 'lodash';
 import moment from 'moment';
-import {
+import type {
     CommonSharedExtraSettings,
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
-    Feature,
     Field,
     FilterField,
-    NavigatorModes,
-    Operations,
     PointSizeConfig,
     VisualizationLayerShared,
     VisualizationLayerType,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
+    Feature,
+    NavigatorModes,
+    Operations,
     isDateField,
     resolveIntervalDate,
     resolveOperation,
@@ -42,7 +44,7 @@ import uuid from 'uuid/v1';
 import history from '../../../utils/history';
 import Utils from '../../../utils/utils';
 import {getPlaceholdersWithMergedSettings} from '../reducers/utils';
-import {ThresholdsValidationStatus} from '../typings';
+import type {ThresholdsValidationStatus} from '../typings';
 
 import {getChartFiltersWithDisabledProp} from './filters';
 

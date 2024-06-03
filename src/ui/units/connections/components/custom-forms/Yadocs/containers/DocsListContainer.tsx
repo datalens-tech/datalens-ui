@@ -24,7 +24,7 @@ import {
     yadocsSelectedItemIdSelector,
 } from '../../../../store';
 import {DocsList} from '../components';
-import {HandleItemClick} from '../types';
+import type {HandleItemClick} from '../types';
 
 import {useYadocsDialogs} from './useYadocsDialogs';
 

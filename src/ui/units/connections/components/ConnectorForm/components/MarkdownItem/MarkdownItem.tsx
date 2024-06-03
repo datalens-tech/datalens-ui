@@ -1,8 +1,9 @@
 import React from 'react';
 
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatalensGlobalState} from 'ui';
 
 import {YfmWrapper} from '../../../../../../components/YfmWrapper/YfmWrapper';
 import {api, setCachedHtmlItem} from '../../../../store';

@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 
 import {Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {ConnectDropTarget, ConnectableElement, DropTarget, DropTargetMonitor} from 'react-dnd';
-import {Field} from 'shared';
+import type {ConnectDropTarget, ConnectableElement, DropTargetMonitor} from 'react-dnd';
+import {DropTarget} from 'react-dnd';
+import type {Field} from 'shared';
 
 import DNDItem from './DNDItem';
 import DragAndDrop from './DragAndDrop';

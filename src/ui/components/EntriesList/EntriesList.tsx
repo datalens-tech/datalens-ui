@@ -3,8 +3,9 @@ import React from 'react';
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {Item, ItemProps} from './Item/Item';
-import {EntryItem} from './types';
+import type {ItemProps} from './Item/Item';
+import {Item} from './Item/Item';
+import type {EntryItem} from './types';
 
 import './EntriesList.scss';
 

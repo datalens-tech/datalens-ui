@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
+import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';

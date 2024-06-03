@@ -7,7 +7,7 @@ import {ParamsSettingsQA} from 'shared';
 import {TagInput} from 'ui/components/TagInput/TagInput';
 
 import {convertParamValueToArray} from './helpers';
-import {ParamsSettingsProps} from './types';
+import type {ParamsSettingsProps} from './types';
 
 import iconAdd from '@gravity-ui/icons/svgs/plus.svg';
 import iconDelete from '@gravity-ui/icons/svgs/trash-bin.svg';

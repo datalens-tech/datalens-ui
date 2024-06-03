@@ -1,11 +1,11 @@
-import React from 'react';
+import type React from 'react';
 
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import clone from 'lodash/clone';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';
 import without from 'lodash/without';
-import {
+import type {
     StringParams,
     TableCell,
     TableCommonCell,
@@ -13,13 +13,13 @@ import {
     TableRow,
     TableWidgetEventScope,
 } from 'shared';
-import {DataTableData, TableWidget} from 'ui/libs/DatalensChartkit/types';
+import type {DataTableData, TableWidget} from 'ui/libs/DatalensChartkit/types';
 
 import {addParams, subtractParameters} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
 
 import {hasGroups} from './misc';
-import {ActionParamsData} from './types';
+import type {ActionParamsData} from './types';
 
 type ValuesMap = Record<string, {value: number; hashes: string[]}>;
 

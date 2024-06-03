@@ -5,7 +5,8 @@ import {createSelector} from 'reselect';
 import {QLChartType} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
 import {QlConfigVersions} from 'shared/types/ql/versions';
-import {DL, DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL} from 'ui';
 import {
     selectVisualization as getWizardVisualization,
     selectColors,
@@ -55,7 +56,7 @@ import {
     UPDATE_PARAM_IN_QUERY,
     UPDATE_QUERY,
 } from '../actions/ql';
-import {
+import type {
     QLAction,
     QLActionAddParamInQuery,
     QLActionDrawPreview,

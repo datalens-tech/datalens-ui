@@ -2,7 +2,7 @@ import type {MenuItemsConfig} from '../../menu/Menu';
 import type {MenuCommentsItemVisibleArgs, MenuItemArgs} from '../../menu/MenuItems';
 import type {ChartsProps} from '../../modules/data-provider/charts';
 
-import {DataProps} from './types';
+import type {DataProps} from './types';
 
 export const CHARTKIT_BASE_CLASSNAME = 'chartkit-base';
 

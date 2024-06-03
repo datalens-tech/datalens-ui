@@ -8,7 +8,7 @@ import type {PartialBy} from 'shared';
 import {ErrorContent} from 'ui';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
-import {DataLensApiError} from '../../../../typings';
+import type {DataLensApiError} from '../../../../typings';
 import Utils from '../../../../utils';
 
 import './ErrorView.scss';

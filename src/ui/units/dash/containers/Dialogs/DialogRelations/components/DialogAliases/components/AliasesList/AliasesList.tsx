@@ -1,14 +1,15 @@
 import React from 'react';
 
 import {Magnifier, TrashBin, Xmark} from '@gravity-ui/icons';
-import {Button, ButtonView, Icon} from '@gravity-ui/uikit';
+import type {ButtonView} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DashCommonQa} from 'shared';
-import {DatasetsFieldsListData} from 'ui/components/DashKit/plugins/types';
+import type {DatasetsFieldsListData} from 'ui/components/DashKit/plugins/types';
 
 import {AliasesContext} from '../../../../hooks/useRelations';
-import {DatasetsListData, RelationsData} from '../../../../types';
+import type {DatasetsListData, RelationsData} from '../../../../types';
 
 import './AliasesList.scss';
 

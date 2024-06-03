@@ -1,7 +1,8 @@
 import {groupBy} from 'lodash';
 
-import {POINT_SHAPES_IN_ORDER, ServerShapesConfig} from '../../../../../../../../shared';
-import {ExtendedSeriesScatterOptions} from '../../../utils/color-helpers';
+import type {ServerShapesConfig} from '../../../../../../../../shared';
+import {POINT_SHAPES_IN_ORDER} from '../../../../../../../../shared';
+import type {ExtendedSeriesScatterOptions} from '../../../utils/color-helpers';
 
 function getShapeByFieldValueSelector(shapeConfig: ServerShapesConfig) {
     const shapeSymbolsByValue = new Map<string, string>();

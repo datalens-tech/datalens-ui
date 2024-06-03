@@ -1,10 +1,5 @@
-import {
-    ServerField,
-    StringParams,
-    isDateField,
-    isDimensionField,
-    isMarkupField,
-} from '../../../../../../../shared';
+import type {ServerField, StringParams} from '../../../../../../../shared';
+import {isDateField, isDimensionField, isMarkupField} from '../../../../../../../shared';
 import {formatDate, getServerDateFormat} from '../../utils/misc-helpers';
 
 export function canUseFieldForFiltering(field: ServerField) {

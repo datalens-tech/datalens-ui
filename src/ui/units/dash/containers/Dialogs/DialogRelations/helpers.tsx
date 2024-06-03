@@ -1,12 +1,14 @@
 import React from 'react';
 
 import type {Config, ConfigConnection, DashKit} from '@gravity-ui/dashkit';
-import {Icon, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import {DashTabItem, DashTabItemType} from '../../../../../../shared';
+import type {DashTabItem} from '../../../../../../shared';
+import {DashTabItemType} from '../../../../../../shared';
 import {IconById} from '../../../../../components/IconById/IconById';
 import {VISUALIZATIONS_BY_ID} from '../../../../../constants/visualizations';
 
@@ -17,7 +19,7 @@ import {
     RELATION_TYPES,
 } from './constants';
 import {getRelationsInfo, showInRelation} from './hooks/helpers';
-import {
+import type {
     ConnectionsData,
     DashMetaData,
     DashkitMetaDataItem,

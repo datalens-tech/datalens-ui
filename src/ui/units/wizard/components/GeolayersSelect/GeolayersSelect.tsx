@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {ChevronDown, Ellipsis} from '@gravity-ui/icons';
-import {Button, DropdownMenu, DropdownMenuProps, Icon, List, Popup} from '@gravity-ui/uikit';
+import type {DropdownMenuProps} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, List, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {VisualizationLayerType} from 'shared';
@@ -9,7 +10,7 @@ import {getGeolayerGroups} from 'units/wizard/utils/helpers';
 
 import DialogConfirm from '../../../../components/DialogConfirm/DialogConfirm';
 import DialogGeolayer from '../../components/Dialogs/DialogGeolayer/DialogGeolayer';
-import {GeolayerSettings} from '../../typings';
+import type {GeolayerSettings} from '../../typings';
 
 import './GeolayersSelect.scss';
 

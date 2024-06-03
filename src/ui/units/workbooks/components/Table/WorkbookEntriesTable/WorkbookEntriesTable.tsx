@@ -9,11 +9,11 @@ import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbo
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
 
-import {GetEntryResponse} from '../../../../../../shared/schema';
-import {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
-import {AppDispatch} from '../../../../../store';
+import type {GetEntryResponse} from '../../../../../../shared/schema';
+import type {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {ChunkItem, WorkbookEntry} from '../../../types';
+import type {ChunkItem, WorkbookEntry} from '../../../types';
 import {CreateEntry} from '../../CreateEntry/CreateEntry';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';

@@ -1,4 +1,4 @@
-import {EntryFieldMeta} from './fields';
+import type {EntryFieldMeta} from './fields';
 
 export interface CopyTemplateResponse {
     entryId: string;

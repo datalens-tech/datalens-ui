@@ -1,4 +1,4 @@
-import {Field} from '../../../../types';
+import type {Field} from '../../../../types';
 import {
     MOCKED_SHARED_DATA,
     MOCKED_V4_FIELD,

@@ -1,5 +1,6 @@
 import {I18n} from 'i18n';
-import {BaseSchema, ValidationError} from 'yup';
+import type {BaseSchema} from 'yup';
+import {ValidationError} from 'yup';
 
 const i18n = I18n.keyset('validation');
 

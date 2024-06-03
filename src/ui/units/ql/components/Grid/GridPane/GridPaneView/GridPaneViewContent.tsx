@@ -1,13 +1,13 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {EntryDialogues} from 'ui';
+import type {EntryDialogues} from 'ui';
 import {PANE_VIEWS} from 'units/ql/constants';
 import PaneMain from 'units/ql/containers/PaneMain/PaneMain';
 import PanePreview from 'units/ql/containers/PanePreview/PanePreview';
 import PaneTablePreview from 'units/ql/containers/PaneTablePreview/PaneTablePreview';
 import PaneVisualization from 'units/ql/containers/PaneVisualization/PaneVisualization';
-import {QLPaneView, QLTabData} from 'units/ql/store/typings/ql';
+import type {QLPaneView, QLTabData} from 'units/ql/store/typings/ql';
 
 const b = block('pane-view');
 

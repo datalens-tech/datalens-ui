@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {Alert, Dialog, TextInput, TextInputProps} from '@gravity-ui/uikit';
+import type {TextInputProps} from '@gravity-ui/uikit';
+import {Alert, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DialogCreateWorkbookEntryQa} from 'shared';
 
 import {I18n} from '../../../../i18n';
 import logger from '../../../libs/logger';
-import {DataLensApiError} from '../../../typings';
+import type {DataLensApiError} from '../../../typings';
 
 import './DialogCreateWorkbookEntry.scss';
 

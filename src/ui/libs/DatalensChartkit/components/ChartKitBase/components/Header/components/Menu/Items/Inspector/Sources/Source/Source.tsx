@@ -3,10 +3,10 @@ import React from 'react';
 import {ChevronDown} from '@gravity-ui/icons';
 import {Icon, Link, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import {registry} from 'ui/registry';
 
-import {
+import type {
     SourcesConfig,
     SourceError as TSourceError,
     SourceSuccess as TSourceSuccess,

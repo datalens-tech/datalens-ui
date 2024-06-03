@@ -1,20 +1,20 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
+import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
-import {
+import type {
     GetCollectionContentArgs,
     GetCollectionContentMode,
     GetCollectionContentResponse,
     OrderBasicField,
     OrderDirection,
 } from 'shared/schema';
+import type {CollectionsStructureDispatch} from 'store/actions/collectionsStructure';
 import {
-    CollectionsStructureDispatch,
     createCollection,
     createWorkbook,
     getCollection,
@@ -39,7 +39,8 @@ import {
     selectRootPermissionsData,
 } from 'store/selectors/collectionsStructure';
 
-import {CollectionContentFilters, CollectionFilters} from '../../CollectionFilters';
+import type {CollectionContentFilters} from '../../CollectionFilters';
+import {CollectionFilters} from '../../CollectionFilters';
 
 import {CreateEntityDialog} from './CreateEntityDialog/CreateEntityDialog';
 import {NewTitleDialog} from './NewTitleDialog/NewTitleDialog';

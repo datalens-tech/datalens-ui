@@ -2,7 +2,7 @@ import {WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
-import {
+import type {
     CreateConnectionArgs,
     CreateConnectionResponse,
     DeleteConnectionArgs,
@@ -17,8 +17,8 @@ import {
     GetConnectionSourceSchemaResponse,
     GetConnectionSourcesArgs,
     GetConnectionSourcesResponse,
-    type GetConnectionTypedQueryDataArgs,
-    type GetConnectionTypedQueryDataResponse,
+    GetConnectionTypedQueryDataArgs,
+    GetConnectionTypedQueryDataResponse,
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,

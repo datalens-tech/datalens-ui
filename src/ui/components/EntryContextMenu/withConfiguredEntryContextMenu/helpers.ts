@@ -1,7 +1,7 @@
-import {Permissions} from 'shared';
+import type {Permissions} from 'shared';
 
 import {getEntryContextMenu} from '../constants';
-import {ContextMenuParams} from '../types';
+import type {ContextMenuParams} from '../types';
 
 const checkPermissions = (
     actual?: Permissions,

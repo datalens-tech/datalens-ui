@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {TrashBin} from '@gravity-ui/icons';
-import {DropdownMenu, DropdownMenuItem, Icon, List, ListProps} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, ListProps} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DialogGroupControlQa, TabMenuQA} from 'shared';
-import {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/TabMenu';
+import type {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/TabMenu';
 
 import './ListWithMenu.scss';
 

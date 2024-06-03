@@ -1,19 +1,21 @@
 import React from 'react';
 
-import {RadioButtonOption, SelectOptionGroup} from '@gravity-ui/uikit';
+import type {RadioButtonOption, SelectOptionGroup} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import {
+import type {
     AvailableFieldType,
-    AxisMode,
     CommonNumberFormattingOptions,
-    DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
     DatasetOptions,
-    DialogFieldMainSectionQa,
     Field,
     Placeholder,
-    PlaceholderId,
     PlaceholderSettings,
+} from 'shared';
+import {
+    AxisMode,
+    DATASET_FIELD_TYPES,
+    DialogFieldMainSectionQa,
+    PlaceholderId,
     WizardVisualizationId,
     isDateField,
     isNumberField,

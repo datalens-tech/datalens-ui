@@ -3,15 +3,11 @@ import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import {
+import type {
     ColorsConfig,
-    DATASET_FIELD_TYPES,
     Dataset,
     DatasetApiError,
     DatasetField,
-    DatasetFieldAggregation,
-    DatasetFieldType,
-    ENTRY_TYPES,
     ExtendedChartsConfig,
     Field,
     FilterField,
@@ -24,14 +20,20 @@ import {
     RawUpdate,
     Shared,
     Sort,
-    TIMEOUT_95_SEC,
     Update,
     UpdateField,
     VisualizationLayerShared,
     VisualizationLayerType,
     VisualizationWithLayersShared,
-    WizardVisualizationId,
     WorkbookId,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DatasetFieldAggregation,
+    DatasetFieldType,
+    ENTRY_TYPES,
+    TIMEOUT_95_SEC,
+    WizardVisualizationId,
     createMeasureNames,
     filterUpdatesByDatasetId,
     getResultSchemaFromDataset,
@@ -43,26 +45,26 @@ import {
     prepareUrlParams,
     splitParamsToParametersAndFilters,
 } from 'shared';
-import {DataLensApiError} from 'typings';
-import {DatalensGlobalState} from 'ui';
+import type {DataLensApiError} from 'typings';
+import type {DatalensGlobalState} from 'ui';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
     getDefaultVisualization,
 } from 'ui/units/wizard/utils/visualization';
 import history from 'ui/utils/history';
-import {DatasetState} from 'units/wizard/reducers/dataset';
+import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import uuid from 'uuid/v1';
 
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
-import {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import logger from '../../../libs/logger';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {sdk as oldSdk} from '../../../libs/sdk';
 import {showToast} from '../../../store/actions/toaster';
 import {getFilteredObject} from '../../../utils';
-import {WizardDispatch, WizardGlobalState} from '../reducers';
+import type {WizardDispatch, WizardGlobalState} from '../reducers';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
 import {filterVisualizationColors} from '../utils/colors';

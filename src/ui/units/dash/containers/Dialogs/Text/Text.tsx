@@ -3,9 +3,11 @@ import React from 'react';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashTabItemText} from 'shared';
+import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';

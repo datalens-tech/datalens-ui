@@ -1,5 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {DATASET_FIELD_TYPES, NavigatorPeriod} from 'shared';
+import type {DATASET_FIELD_TYPES, NavigatorPeriod} from 'shared';
 
 import {getDefaultPeriodInMS} from './setNavigatorDefaultPeriod';
 

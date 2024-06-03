@@ -1,4 +1,4 @@
-import {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
+import type {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 
 export type HighchartsMapWidgetDataItem = {
     map: {

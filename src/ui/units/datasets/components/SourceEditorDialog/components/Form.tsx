@@ -3,9 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import _get from 'lodash/get';
 
-import {FormValidationError} from '../../../helpers/validation';
-import {FreeformSource} from '../../../store/types';
-import {EditedSource, OnSourceUpdate} from '../types';
+import type {FormValidationError} from '../../../helpers/validation';
+import type {FreeformSource} from '../../../store/types';
+import type {EditedSource, OnSourceUpdate} from '../types';
 import {TITLE_INPUT, getErrorText} from '../utils';
 
 import {EditorFormItem} from './EditorFormItem';

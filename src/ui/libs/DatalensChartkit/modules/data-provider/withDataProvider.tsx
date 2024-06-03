@@ -1,9 +1,10 @@
 import React from 'react';
 
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 
-import ChartKitBase, {ChartKitProps} from '../../components/ChartKitBase/ChartKitBase';
-import {DataProvider} from '../../types';
+import type {ChartKitProps} from '../../components/ChartKitBase/ChartKitBase';
+import ChartKitBase from '../../components/ChartKitBase/ChartKitBase';
+import type {DataProvider} from '../../types';
 
 // TODO: make the dataProvider field mandatory in ChartKitBaseProps,
 // TODO: but withDataProvider would return a type with an optional dataProvider field

@@ -1,4 +1,4 @@
-import {
+import type {
     ResetFormsData,
     ResetS3BasedData,
     SetBeingDeletedSourceId,

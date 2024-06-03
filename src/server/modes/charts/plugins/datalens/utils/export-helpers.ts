@@ -1,9 +1,5 @@
-import {
-    ExportingColumnOptions,
-    ServerField,
-    getFakeTitleOrTitle,
-    isDateField,
-} from '../../../../../../shared';
+import type {ExportingColumnOptions, ServerField} from '../../../../../../shared';
+import {getFakeTitleOrTitle, isDateField} from '../../../../../../shared';
 
 import {getDefaultDateFormat} from './misc-helpers';
 

@@ -1,4 +1,4 @@
-import {MonacoTypes} from '../../../../libs/monaco';
+import type {MonacoTypes} from '../../../../libs/monaco';
 
 export function getEditorDefaultOptions(): MonacoTypes.editor.IEditorConstructionOptions {
     return {

@@ -1,8 +1,8 @@
-import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
-import {ChartWidgetDataRef} from '../../../../../components/Widgets/Chart/types';
-import {ChartsProps} from '../../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {LoadedWidgetData} from '../../../../../libs/DatalensChartkit/types';
+import type {ChartWidgetDataRef} from '../../../../../components/Widgets/Chart/types';
+import type {ChartsProps} from '../../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {LoadedWidgetData} from '../../../../../libs/DatalensChartkit/types';
 
 export type ChartActionPanelButtonProps = {
     loadedData: LoadedWidgetData;

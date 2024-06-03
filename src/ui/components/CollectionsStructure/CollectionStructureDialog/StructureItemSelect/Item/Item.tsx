@@ -2,8 +2,8 @@ import React from 'react';
 
 import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {Collection} from 'shared/schema/us/types/collections';
-import {Workbook} from 'shared/schema/us/types/workbooks';
+import type {Collection} from 'shared/schema/us/types/collections';
+import type {Workbook} from 'shared/schema/us/types/workbooks';
 
 import {IconById} from '../../../../../components/IconById/IconById';
 import {WorkbookIcon} from '../../../../WorkbookIcon/WorkbookIcon';

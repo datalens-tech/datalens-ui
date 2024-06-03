@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {AdaptiveTabs, AdaptiveTabsProps, TabItem} from '@gravity-ui/components';
+import type {AdaptiveTabsProps, TabItem} from '@gravity-ui/components';
+import {AdaptiveTabs} from '@gravity-ui/components';
 import {useHistory, useLocation} from 'react-router-dom';
 
 export interface NavigationTabsProps {

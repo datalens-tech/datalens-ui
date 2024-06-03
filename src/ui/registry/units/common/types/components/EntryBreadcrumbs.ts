@@ -1,5 +1,5 @@
-import {BreadcrumbsProps} from '@gravity-ui/uikit/build/esm/components/Breadcrumbs/Breadcrumbs';
-import {GetCollectionBreadcrumbsResponse, GetEntryResponse} from 'shared/schema';
+import type {BreadcrumbsProps} from '@gravity-ui/uikit/build/esm/components/Breadcrumbs/Breadcrumbs';
+import type {GetCollectionBreadcrumbsResponse, GetEntryResponse} from 'shared/schema';
 
 export type EntryBreadcrumbsProps = {
     renderRootContent?: BreadcrumbsProps['renderRootContent'];

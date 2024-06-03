@@ -2,7 +2,7 @@
 
 import assignWith from 'lodash/assignWith';
 
-import {IndexSignatureObject} from '../types';
+import type {IndexSignatureObject} from '../types';
 
 function randomString(length: number, chars: string) {
     let result = '';

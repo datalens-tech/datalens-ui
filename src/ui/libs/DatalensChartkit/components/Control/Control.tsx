@@ -4,7 +4,7 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
 import {isMobileView} from 'ui/utils/mobile';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
@@ -13,7 +13,7 @@ import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constan
 import {i18n} from '../../ChartKit/modules/i18n/i18n';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
-import {
+import type {
     ActiveControl,
     Control as TControl,
     ControlRangeDatepicker as TControlRangeDatepicker,
@@ -29,7 +29,7 @@ import {
     ControlSelect,
     ControlTextArea,
 } from './Items/Items';
-import {
+import type {
     ControlItemProps,
     ControlProps,
     ControlState,

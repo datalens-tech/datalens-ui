@@ -1,4 +1,4 @@
-import {Shared} from 'shared';
+import type {Shared} from 'shared';
 
 import {DEFAULT_VISUALIZATION_ID_QL} from '../../constants';
 

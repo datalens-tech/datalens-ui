@@ -1,6 +1,6 @@
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
-import {EditorItemToDisplay} from '../../store/types';
+import type {EditorItemToDisplay} from '../../store/types';
 
 export const getFilteredFields = (args: {
     filter: string;

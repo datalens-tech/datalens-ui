@@ -6,24 +6,19 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {CommonSharedExtraSettings, EntryUpdateMode, Feature} from 'shared';
+import type {CommonSharedExtraSettings} from 'shared';
+import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
-import {
-    ActionPanel,
-    DatalensGlobalState,
-    DialogNoRights,
-    EntryDialogName,
-    EntryDialogResolveStatus,
-    EntryDialogues,
-    Utils,
-} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import {ActionPanel, DialogNoRights, EntryDialogName, EntryDialogResolveStatus, Utils} from 'ui';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
-import {AdditionalButtonTemplate} from '../../../../components/ActionPanel/components/ChartSaveControls/types';
-import {EntryContextMenuItems} from '../../../../components/EntryContextMenu/helpers';
+import type {AdditionalButtonTemplate} from '../../../../components/ActionPanel/components/ChartSaveControls/types';
+import type {EntryContextMenuItems} from '../../../../components/EntryContextMenu/helpers';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import {registry} from '../../../../registry';
 import {openNavigation} from '../../../../store/actions/asideHeader';
@@ -50,7 +45,7 @@ import {
     getRedirectUrl,
     getValid,
 } from '../../store/reducers/ql';
-import {QLEntry} from '../../store/typings/ql';
+import type {QLEntry} from '../../store/typings/ql';
 
 import iconMonitoring from 'ui/assets/icons/monitoring.svg';
 

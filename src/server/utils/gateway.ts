@@ -1,8 +1,9 @@
-import {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'http';
 
-import {Request, Response} from '@gravity-ui/expresskit';
-import {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravity-ui/gateway';
-import {AppContext, AppError, NodeKit} from '@gravity-ui/nodekit';
+import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravity-ui/gateway';
+import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
+import {AppError} from '@gravity-ui/nodekit';
 
 import {Feature, isEnabledServerFeature} from '../../shared';
 import {getAuthHeadersNone} from '../../shared/schema/gateway-utils';

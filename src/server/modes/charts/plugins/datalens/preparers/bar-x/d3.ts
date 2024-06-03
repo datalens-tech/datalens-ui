@@ -4,16 +4,12 @@ import type {
     ChartKitWidgetData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {
-    LabelsPositions,
-    PlaceholderId,
-    ServerField,
-    getFakeTitleOrTitle,
-} from '../../../../../../../shared';
+import type {ServerField} from '../../../../../../../shared';
+import {LabelsPositions, PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getAxisType} from '../helpers/axis';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
 

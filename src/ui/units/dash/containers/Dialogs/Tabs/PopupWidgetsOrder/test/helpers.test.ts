@@ -1,4 +1,4 @@
-import {DashData} from 'shared';
+import type {DashData} from 'shared';
 
 import {isOrderChanged, mapItemsByOrderToArray, mapItemsByOrderToObject} from '../helpers';
 

@@ -1,4 +1,5 @@
-import {GradientPalette, PALETTE_ID} from '../types';
+import type {GradientPalette} from '../types';
+import {PALETTE_ID} from '../types';
 
 export default {
     id: PALETTE_ID.OCEANIC_20,

@@ -6,10 +6,10 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import DialogManager from '../../../../components/DialogManager/DialogManager';
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {renameEntry} from '../../store/actions';
 import {selectRenameEntryIsLoading} from '../../store/selectors';
-import {WorkbookEntry} from '../../types';
+import type {WorkbookEntry} from '../../types';
 
 import './RenameEntryDialog.scss';
 

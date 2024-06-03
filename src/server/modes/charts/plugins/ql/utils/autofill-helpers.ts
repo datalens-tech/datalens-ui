@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, DatasetFieldType, Field} from '../../../../../../shared';
+import type {Field} from '../../../../../../shared';
+import {DATASET_FIELD_TYPES, DatasetFieldType} from '../../../../../../shared';
 
 import {getColorFieldsFromDistincts} from './colors';
 

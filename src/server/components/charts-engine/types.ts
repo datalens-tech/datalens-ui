@@ -1,12 +1,12 @@
-import {OutgoingHttpHeaders} from 'http';
+import type {OutgoingHttpHeaders} from 'http';
 
-import {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
-import {HttpMethod} from '@gravity-ui/expresskit/dist/types';
+import type {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
+import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
 
-import {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
-import {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
+import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
+import type {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
 
-import {Runner} from './runners';
+import type {Runner} from './runners';
 
 export type TelemetryCallbacks = {
     onConfigFetched?: ({

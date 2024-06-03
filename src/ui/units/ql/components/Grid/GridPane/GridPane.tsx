@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 
 import block from 'bem-cn-lite';
-import {EntryDialogues} from 'ui';
+import type {EntryDialogues} from 'ui';
 
 import PaneView from './GridPaneView/GridPaneView';
 

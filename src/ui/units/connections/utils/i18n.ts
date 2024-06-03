@@ -1,5 +1,5 @@
 import {I18n, i18n} from 'i18n';
-import {ActualConnectorType} from 'shared';
+import type {ActualConnectorType} from 'shared';
 
 const i18nForm = I18n.keyset('connections.form');
 

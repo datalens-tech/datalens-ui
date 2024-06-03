@@ -1,6 +1,6 @@
-import {DataLensApiError} from '../../../../typings';
-import {ConnectionsReduxState} from '../../store';
-import {ErrorScope} from '../ErrorView/ErrorView';
+import type {DataLensApiError} from '../../../../typings';
+import type {ConnectionsReduxState} from '../../store';
+import type {ErrorScope} from '../ErrorView/ErrorView';
 
 type UseErrorsProps = {
     apiErrors: ConnectionsReduxState['apiErrors'];

@@ -3,30 +3,31 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
-import {AxiosResponse} from 'axios';
+import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
-import {DashTabItemControlSourceType, StringParams} from 'shared';
+import type {StringParams} from 'shared';
+import {DashTabItemControlSourceType} from 'shared';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {DatalensChartkitContent} from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
-import {ResponseError} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ResponseError} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
 import ExtensionsManager from '../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
-import {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
+import type {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
 import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
-import {
+import type {
     ChartControlsType,
     ChartSelectorWidgetProps,
     ChartSelectorWithWrapRefProps,

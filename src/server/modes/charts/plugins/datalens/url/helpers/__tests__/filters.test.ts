@@ -1,4 +1,4 @@
-import {PayloadFilter} from '../../../../../../../../shared';
+import type {PayloadFilter} from '../../../../../../../../shared';
 import {getMergedChartAndParamsFilters} from '../filters';
 
 describe('getMergedChartAndParamsFilters', () => {

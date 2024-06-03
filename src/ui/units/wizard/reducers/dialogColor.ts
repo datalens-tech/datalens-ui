@@ -1,7 +1,5 @@
+import type {DialogColorAction, GradientState, PaletteState} from '../actions/dialogColor';
 import {
-    DialogColorAction,
-    GradientState,
-    PaletteState,
     RESET_DIALOG_COLOR_STATE,
     SET_DIALOG_COLOR_GRADIENT_STATE,
     SET_DIALOG_COLOR_PALETTE_STATE,

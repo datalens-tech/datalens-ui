@@ -1,5 +1,6 @@
-import {ServerChartsConfig, isVisualizationWithLayers} from '../../../../../shared';
-import {SourceRequest} from '../datalens/url/build-sources/types';
+import type {ServerChartsConfig} from '../../../../../shared';
+import {isVisualizationWithLayers} from '../../../../../shared';
+import type {SourceRequest} from '../datalens/url/build-sources/types';
 import {isCustomColorPaletteId} from '../datalens/url/helpers';
 
 type GetColorPalettesRequestArgs = {

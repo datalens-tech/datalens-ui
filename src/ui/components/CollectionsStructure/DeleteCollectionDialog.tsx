@@ -4,7 +4,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
-import {AppDispatch} from '../../store';
+import type {AppDispatch} from '../../store';
 import {deleteCollection} from '../../store/actions/collectionsStructure';
 import {selectDeleteCollectionIsLoading} from '../../store/selectors/collectionsStructure';
 

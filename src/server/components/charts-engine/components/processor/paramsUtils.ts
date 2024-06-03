@@ -1,4 +1,4 @@
-import {StringParams} from '../../../../../shared';
+import type {StringParams} from '../../../../../shared';
 
 export const getSortParams = (params: StringParams) => {
     const columnId = Array.isArray(params._columnId) ? params._columnId[0] : params._columnId;

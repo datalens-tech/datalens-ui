@@ -1,24 +1,18 @@
 import {lockedTextInfo} from 'components/RevisionsPanel/RevisionsPanel';
-import {History, Location} from 'history';
+import type {History, Location} from 'history';
 import {I18n} from 'i18n';
 import {sdk} from 'libs/sdk';
-import {
-    DashEntry,
-    DashSchemeConverter,
-    DashTabItem,
-    DashTabItemWidget,
-    EntryScope,
-    EntryUpdateMode,
-    Feature,
-} from 'shared';
-import {GetEntryArgs} from 'shared/schema';
+import type {DashEntry, DashTabItem, DashTabItemWidget, EntryUpdateMode} from 'shared';
+import {DashSchemeConverter, EntryScope, Feature} from 'shared';
+import type {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
-import {DatalensGlobalState, MarkdownProvider, URL_QUERY, Utils} from 'ui';
-import {ConnectionsReduxDispatch} from 'ui/units/connections/store';
-import {ManualError} from 'ui/utils/errors/manual';
+import type {DatalensGlobalState} from 'ui';
+import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
+import type {ConnectionsReduxDispatch} from 'ui/units/connections/store';
+import type {ManualError} from 'ui/utils/errors/manual';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
-import {DashDispatch} from '..';
+import type {DashDispatch} from '..';
 import {DL} from '../../../../../constants';
 import ChartKit from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -28,7 +22,7 @@ import {showToast} from '../../../../../store/actions/toaster';
 import {Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
 import * as actionTypes from '../../constants/dashActionTypes';
-import {DashState} from '../../reducers/dashTypedReducer';
+import type {DashState} from '../../reducers/dashTypedReducer';
 import {getFakeDashEntry} from '../../utils';
 import {
     SET_ERROR_MODE,

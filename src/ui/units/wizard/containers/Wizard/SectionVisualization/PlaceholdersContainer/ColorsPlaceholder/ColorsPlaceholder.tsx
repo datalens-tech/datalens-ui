@@ -3,17 +3,12 @@ import React from 'react';
 import {BucketPaint} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
-    Feature,
-    Field,
-    PlaceholderActionQa,
-    Shared,
-    isFieldHierarchy,
-    isMeasureField,
-} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field, Shared} from 'shared';
+import {Feature, PlaceholderActionQa, isFieldHierarchy, isMeasureField} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectColors,
@@ -29,7 +24,7 @@ import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview
 import {PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../../../../../constants';
 import {getDialogItem} from '../../../../../utils/helpers';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 const COLORS_PLACEHOLDER_TYPES = new Set([...PRIMITIVE_DATA_TYPES_AND_HIERARCHY, 'geopoint']);
 

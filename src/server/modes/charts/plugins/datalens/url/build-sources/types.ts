@@ -1,4 +1,4 @@
-import {
+import type {
     ApiV2Request,
     Link,
     ServerChartsConfig,
@@ -7,8 +7,8 @@ import {
     Shared,
     StringParams,
 } from '../../../../../../../shared';
-import {MiddlewareUrl} from '../../../types';
-import {ApiVersion} from '../../types';
+import type {MiddlewareUrl} from '../../../types';
+import type {ApiVersion} from '../../types';
 
 export type SourcesArgs = {
     params: StringParams;

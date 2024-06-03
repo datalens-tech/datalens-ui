@@ -1,8 +1,15 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
-import {Operations} from '../modules';
+import type {Operations} from '../modules';
 
-import {ClientChartsConfig, Dictionary, Entry, EntryScope, Params, StringParams} from './index';
+import type {
+    ClientChartsConfig,
+    Dictionary,
+    Entry,
+    EntryScope,
+    Params,
+    StringParams,
+} from './index';
 
 export enum DashTabItemType {
     Title = 'title',

@@ -5,17 +5,19 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {
+import type {
     ApiV2Filter,
     ApiV2Parameter,
     DashTabItemControlDataset,
     DashTabItemControlElementSelect,
     DashTabItemControlSingle,
+    StringParams,
+} from 'shared';
+import {
     DashTabItemControlSourceType,
     DatasetFieldType,
     Feature,
     Operations,
-    StringParams,
     resolveIntervalDate,
     resolveOperation,
     resolveRelativeDate,
@@ -23,9 +25,9 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from 'shared';
-import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
-import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
@@ -34,7 +36,7 @@ import Utils from 'ui/utils/utils';
 
 import logger from '../../../../../libs/logger';
 import {LIMIT, LOAD_STATUS, TYPE} from '../constants';
-import {
+import type {
     ErrorData,
     GetDistincts,
     LoadStatus,

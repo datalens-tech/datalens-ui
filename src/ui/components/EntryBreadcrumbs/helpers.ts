@@ -1,6 +1,6 @@
-import {History, Location} from 'history';
+import type {History, Location} from 'history';
 import {I18n} from 'i18n';
-import {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('component.collection-breadcrumbs');

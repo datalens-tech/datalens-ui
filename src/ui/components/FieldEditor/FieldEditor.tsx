@@ -1,38 +1,41 @@
 import React from 'react';
 
-import {Dialog, DialogProps} from '@gravity-ui/uikit';
+import type {DialogProps} from '@gravity-ui/uikit';
+import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import lodash from 'lodash';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
-import {
+import type {
     Dataset,
     DatasetField,
     DatasetFieldError,
     DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
-    DialogFieldEditorQA,
-    Feature,
-    FieldEditorQa,
     WorkbookId,
 } from 'shared';
+import {DialogFieldEditorQA, Feature, FieldEditorQa} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 import {selectFieldEditorDocShown} from 'store/selectors/user';
-import {DataTypeConfig, DatalensGlobalState, SPLIT_PANE_RESIZER_CLASSNAME, sdk} from 'ui';
+import type {DataTypeConfig, DatalensGlobalState} from 'ui';
+import {SPLIT_PANE_RESIZER_CLASSNAME, sdk} from 'ui';
 
 import {I18n} from '../../../i18n/index';
 import logger from '../../libs/logger';
-import {MonacoTypes, registerDatalensFormulaLanguage} from '../../libs/monaco';
+import type {MonacoTypes} from '../../libs/monaco';
+import {registerDatalensFormulaLanguage} from '../../libs/monaco';
 import {getSdk} from '../../libs/schematic-sdk';
 import Utils from '../../utils';
 import DialogConfirm from '../DialogConfirm/DialogConfirm';
 
 import DocSection from './components/DocSection';
-import FormulaSection, {FormulaSectionProps} from './components/FormulaSection';
+import type {FormulaSectionProps} from './components/FormulaSection';
+import FormulaSection from './components/FormulaSection';
 import Settings from './components/Settings';
 import SourceSection from './components/SourceSection';
-import {Cancelable, FieldEditorErrors, ModifiedDatasetField, ModifyField} from './typings';
+import type {Cancelable, FieldEditorErrors, ModifiedDatasetField, ModifyField} from './typings';
 import {
     createInitialErrors,
     createInitialField,

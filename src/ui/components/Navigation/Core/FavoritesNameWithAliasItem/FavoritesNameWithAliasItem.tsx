@@ -8,7 +8,7 @@ import {I18n} from 'i18n';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import {DL} from 'ui/constants';
 
-import {MenuClickArgs} from '../../types';
+import type {MenuClickArgs} from '../../types';
 
 import './FavoritesNameWithAliasItem.scss';
 

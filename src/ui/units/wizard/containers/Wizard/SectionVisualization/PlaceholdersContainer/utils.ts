@@ -1,4 +1,4 @@
-import {WizardVisualizationId} from '../../../../../../../shared';
+import type {WizardVisualizationId} from '../../../../../../../shared';
 import {getAvailableQlVisualizations} from '../../../../../ql/utils/visualization';
 import {getAvailableVisualizations} from '../../../../utils/visualization';
 

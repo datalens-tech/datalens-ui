@@ -1,4 +1,4 @@
-import {Alert} from '../../../../../types';
+import type {Alert} from '../../../../../types';
 
 enum TileMode {
     WideRectangle = 'WIDE_RECTANGLE',

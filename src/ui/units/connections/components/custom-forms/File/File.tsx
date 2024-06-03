@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {getIsAsideHeaderEnabled} from '../../../../../components/AsideHeaderAdapter';
 import {newConnectionSelector} from '../../../store';

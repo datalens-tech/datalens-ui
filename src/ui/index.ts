@@ -17,8 +17,8 @@ import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
-import {EditHistoryState} from './store/reducers/editHistory';
-import {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
+import type {EditHistoryState} from './store/reducers/editHistory';
+import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
 
 export {default as ActionPanel} from './components/ActionPanel/ActionPanel';
 export {default as Utils} from './utils';

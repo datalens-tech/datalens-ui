@@ -5,18 +5,12 @@ import {Button, Dialog, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import _pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {
-    Dataset,
-    DatasetField,
-    DialogMultiDatasetQa,
-    Link,
-    LinkField,
-    getResultSchemaFromDataset,
-} from 'shared';
+import type {Dataset, DatasetField, Link, LinkField} from 'shared';
+import {DialogMultiDatasetQa, getResultSchemaFromDataset} from 'shared';
 import {selectDatasets, selectLinks} from 'units/wizard/selectors/dataset';
 import uuid from 'uuid/v1';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 
-import {UserAvatarByIdProps} from '../../registry/units/common/types/components/UserAvatarById';
+import type {UserAvatarByIdProps} from '../../registry/units/common/types/components/UserAvatarById';
 
 import './UserAvatarById.scss';
 

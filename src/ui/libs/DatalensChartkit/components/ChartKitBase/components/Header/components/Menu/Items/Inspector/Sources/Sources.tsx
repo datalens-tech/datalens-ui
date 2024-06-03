@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
 import {chartsDataProvider} from '../../../../../../../../../index';
-import {
+import type {
     ResponseSourcesError,
     ResponseSourcesSuccess,
     SourcesConfig,

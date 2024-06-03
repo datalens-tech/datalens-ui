@@ -8,7 +8,7 @@ import {EntryScope} from 'shared';
 import {registry} from 'ui/registry';
 import Utils from 'utils';
 
-import {EntryItem} from '../types';
+import type {EntryItem} from '../types';
 
 const b = block('dl-entries-list');
 

@@ -1,4 +1,4 @@
-import {ChartsConfig} from '../../types';
+import type {ChartsConfig} from '../../types';
 
 export function getDatasetLinks(config: ChartsConfig) {
     const links: Record<string, string> = {};

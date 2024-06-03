@@ -1,8 +1,8 @@
-import {CancellablePromise} from '@gravity-ui/sdk';
-import {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
+import type {CancellablePromise} from '@gravity-ui/sdk';
+import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {GetEntryResponse} from 'shared/schema';
 
-import {DLUserSettings, IconId, formatNumber} from '../../../../shared';
+import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 import type {
     EntryContextMenuItem,
@@ -11,25 +11,25 @@ import type {
 } from '../../../components/EntryContextMenu/helpers';
 import type {ContextMenuItem} from '../../../components/EntryContextMenu/types';
 import type {EntryData} from '../../../components/EntryTitle/types';
-import {NavigationQuickItem} from '../../../components/Navigation/Base/types';
-import {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
-import {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
-import {AppThunkAction} from '../../../store';
+import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
+import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
+import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
+import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
-import {
+import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
 } from './types/functions/fetchDocumentation';
-import {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
-import {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
-import {GetIllustrationStore} from './types/functions/getIllustrationStore';
-import {GetLoginById} from './types/functions/getLoginById';
-import {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
-import {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
-import {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
-import {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
-import {UseSubjectsListId} from './types/functions/useSubjectsListId';
+import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
+import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
+import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
+import type {GetLoginById} from './types/functions/getLoginById';
+import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
+import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
+import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
+import type {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
+import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
 
 export const commonFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),

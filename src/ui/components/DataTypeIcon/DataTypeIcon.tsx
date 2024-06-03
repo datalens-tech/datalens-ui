@@ -12,7 +12,8 @@ import {
     SquareLetterT,
     TriangleExclamationFill,
 } from '@gravity-ui/icons';
-import {Icon, IconProps} from '@gravity-ui/uikit';
+import type {IconProps} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {DATASET_FIELD_TYPES, DatasetFieldType} from '../../../shared';

@@ -1,4 +1,4 @@
-import {ButtonView, IconData} from '@gravity-ui/uikit';
+import type {ButtonView, IconData} from '@gravity-ui/uikit';
 
 export type AdditionalButtonTemplate = {
     key: string;

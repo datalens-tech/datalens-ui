@@ -2,7 +2,7 @@ import cluster from 'cluster';
 
 // Without this import shared object is empty in runtime and it should be exactly here
 import '../shared';
-import {AppEnvironment} from '../shared/constants/common';
+import type {AppEnvironment} from '../shared/constants/common';
 import {getAppEndpointsConfig} from '../shared/endpoints';
 
 import {appEnv} from './app-env';

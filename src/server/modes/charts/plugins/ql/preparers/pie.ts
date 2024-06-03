@@ -1,16 +1,13 @@
-import {DATALENS_QL_TYPES, IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import type {IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
-import {
-    QLRenderResultHC,
-    formatUnknownTypeValue,
-    isGroup,
-    parseNumberValue,
-} from '../utils/misc-helpers';
+import type {QLRenderResultHC} from '../utils/misc-helpers';
+import {formatUnknownTypeValue, isGroup, parseNumberValue} from '../utils/misc-helpers';
 
 export default ({
     shared,

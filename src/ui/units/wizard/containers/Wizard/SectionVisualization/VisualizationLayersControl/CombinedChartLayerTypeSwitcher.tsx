@@ -3,7 +3,7 @@ import React, {useCallback} from 'react';
 import {Icon, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {VisualizationLayerType} from 'shared';
+import type {VisualizationLayerType} from 'shared';
 import {VISUALIZATION_IDS} from 'units/wizard/constants';
 import {selectSubVisualization} from 'units/wizard/selectors/visualization';
 

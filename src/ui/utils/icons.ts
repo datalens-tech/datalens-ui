@@ -1,4 +1,4 @@
-import {IconId} from '../../shared';
+import type {IconId} from '../../shared';
 import config from '../configs';
 
 const iconsConfig = config.icons;

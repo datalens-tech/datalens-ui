@@ -9,7 +9,7 @@ import type {
     CustomErrorDebugFullArgs,
 } from '../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {isOperationError, isSdkError} from '../../libs/schematic-sdk';
-import {DataLensApiError} from '../../typings';
+import type {DataLensApiError} from '../../typings';
 
 function isCustomError(error: Error): error is ChartKitCustomError {
     return Boolean((error as Error & {isCustomError?: boolean}).isCustomError);

@@ -1,16 +1,12 @@
 import React from 'react';
 
-import {
-    Breadcrumbs,
-    BreadcrumbsItem,
-    FirstDisplayedItemsCount,
-    LastDisplayedItemsCount,
-} from '@gravity-ui/uikit';
+import type {BreadcrumbsItem} from '@gravity-ui/uikit';
+import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 
-import {ListDirectoryBreadCrumb} from '../../../../../shared/schema';
-import {ChangeLocation, CurrentPageEntry, PlaceParameterItem} from '../../types';
+import type {ListDirectoryBreadCrumb} from '../../../../../shared/schema';
+import type {ChangeLocation, CurrentPageEntry, PlaceParameterItem} from '../../types';
 import {isRootPlace} from '../../util';
 
 import {BreadcrumbMenu} from './BreadcrumbMenu';

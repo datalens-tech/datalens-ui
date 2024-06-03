@@ -1,13 +1,15 @@
 import _isEmpty from 'lodash/isEmpty';
 
-import {
-    AxisMode,
+import type {
     Field,
     HighchartsSeriesCustomObject,
-    PlaceholderId,
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
+} from '../../../../../../../shared';
+import {
+    AxisMode,
+    PlaceholderId,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
@@ -38,8 +40,8 @@ import {
 } from '../line/helpers';
 import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
-import {PrepareFunctionArgs} from '../types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
+import type {PrepareFunctionArgs} from '../types';
 
 // eslint-disable-next-line complexity
 export function prepareBarX(args: PrepareFunctionArgs) {

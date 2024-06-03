@@ -1,5 +1,5 @@
 import {i18n} from 'i18n';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 import {DL} from 'ui';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';

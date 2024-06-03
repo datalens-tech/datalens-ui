@@ -1,8 +1,8 @@
-import {AxiosError} from 'axios';
-import {ManualError} from 'utils/errors/manual';
+import type {AxiosError} from 'axios';
+import type {ManualError} from 'utils/errors/manual';
 
 import type {ChartKitCustomError} from '../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
-import {OperationError, SdkError} from '../libs/schematic-sdk';
+import type {OperationError, SdkError} from '../libs/schematic-sdk';
 
 export type DataLensApiError =
     | ManualError

@@ -1,7 +1,7 @@
 import {I18n} from 'i18n';
 
 import {ValidationErrorType} from '../constants';
-import {ValidationError} from '../typings';
+import type {ValidationError} from '../typings';
 
 const i18n = I18n.keyset('connections.form');
 

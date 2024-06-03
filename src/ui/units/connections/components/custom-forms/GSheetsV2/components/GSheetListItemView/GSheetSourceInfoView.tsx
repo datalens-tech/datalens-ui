@@ -3,7 +3,8 @@ import React from 'react';
 import {I18n} from 'i18n';
 
 import type {GSheetSourceInfo} from '../../../../../store';
-import {ListItem, ListItemAction} from '../../../components';
+import type {ListItemAction} from '../../../components';
+import {ListItem} from '../../../components';
 import type {HandleItemClick} from '../../types';
 
 const i18n = I18n.keyset('connections.gsheet.view');

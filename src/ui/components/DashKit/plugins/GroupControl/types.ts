@@ -1,7 +1,7 @@
 import type {DashTabItemControlSourceType, StringParams, WorkbookId} from 'shared';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 
-import {LoadStatus} from '../Control/types';
+import type {LoadStatus} from '../Control/types';
 
 export type ContextProps = {
     workbookId?: WorkbookId;

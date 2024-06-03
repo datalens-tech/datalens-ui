@@ -13,7 +13,7 @@ import {
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from '../../../../components/CollectionsStructure';
 import {ViewError} from '../../../../components/ViewError/ViewError';
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';

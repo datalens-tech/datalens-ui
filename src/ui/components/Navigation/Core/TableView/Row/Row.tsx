@@ -15,7 +15,7 @@ import type {NavigationEntry} from '../../../../../../shared/schema';
 import {getPathDisplayName} from '../../../util';
 import EntryContextButton from '../../EntryContextButton/EntryContextButton';
 import {FavoritesNameWithAliasItem} from '../../FavoritesNameWithAliasItem/FavoritesNameWithAliasItem';
-import {HookBatchSelectResult, ParentFolderEntry, TableViewProps} from '../types';
+import type {HookBatchSelectResult, ParentFolderEntry, TableViewProps} from '../types';
 
 import workbookIcon from '../../../../../assets/icons/collections/workbook.svg';
 

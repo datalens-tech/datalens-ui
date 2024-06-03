@@ -5,9 +5,11 @@ import {Checkbox, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import update, {Context, CustomCommands, Spec} from 'immutability-helper';
+import type {CustomCommands, Spec} from 'immutability-helper';
+import update, {Context} from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA, StringParams} from 'shared';
+import type {StringParams} from 'shared';
+import {ControlQA} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 

@@ -1,4 +1,4 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 const getCurrentTimeMs = () => {
     const t = process.hrtime();

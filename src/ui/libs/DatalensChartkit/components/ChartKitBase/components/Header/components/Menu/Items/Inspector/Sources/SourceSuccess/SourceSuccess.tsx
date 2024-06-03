@@ -9,7 +9,7 @@ import {formatBytes, formatDuration} from 'shared/modules/format-units/formatUni
 import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 import {DL} from '../../../../../../../../../../../../constants/common';
 import Utils from '../../../../../../../../../../../../utils';
-import {
+import type {
     SourcesConfig,
     SourceSuccess as TSourceSuccess,
 } from '../../../../../../../../../../modules/data-provider/charts';

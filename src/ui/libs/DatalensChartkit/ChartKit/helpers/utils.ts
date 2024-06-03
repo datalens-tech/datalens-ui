@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 
 import type {StringParams} from '../../../../../shared';
-import {GraphWidget} from '../../types';
+import type {GraphWidget} from '../../types';
 import {ChartKitCustomError} from '../modules/chartkit-custom-error/chartkit-custom-error';
 
 export type PointActionParams = Record<string, string>;

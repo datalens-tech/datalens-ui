@@ -1,9 +1,9 @@
 import type {Optional} from 'utility-types';
 
-import {ApiV2Request, type ConnectionTypedQueryApiRequest} from '../../../../../../shared';
+import type {ApiV2Request, ConnectionTypedQueryApiRequest} from '../../../../../../shared';
 import type {Source} from '../../../../../components/charts-engine/types';
-import {MiddlewareUrl} from '../../types';
-import {ControlShared} from '../types';
+import type {MiddlewareUrl} from '../../types';
+import type {ControlShared} from '../types';
 
 export type SourceControlArgs = {
     shared: ControlShared;

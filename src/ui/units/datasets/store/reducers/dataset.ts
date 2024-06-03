@@ -1,6 +1,6 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
-import {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
+import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {DatasetSDK} from 'ui';
 import uuid from 'uuid/v1';
 
@@ -67,7 +67,7 @@ import {
     UPDATE_RLS,
 } from '../actions/types/dataset';
 import {initialState} from '../constants';
-import {ConnectionEntry, DatasetReduxAction, DatasetReduxState, Update} from '../types';
+import type {ConnectionEntry, DatasetReduxAction, DatasetReduxState, Update} from '../types';
 
 import {
     getAvatarsAndRelationsToDelete,

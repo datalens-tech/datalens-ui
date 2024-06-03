@@ -1,8 +1,8 @@
 import React from 'react';
 
 import ExtensionsManager from '../../../../modules/extensions-manager/extensions-manager';
-import {ChartKitBaseWrapperProps, ChartKitWrapperParams} from '../../types';
-import {State} from '../Content/store/types';
+import type {ChartKitBaseWrapperProps, ChartKitWrapperParams} from '../../types';
+import type {State} from '../Content/store/types';
 
 type ControlProps = Pick<ChartKitBaseWrapperProps, 'id' | 'noControls' | 'nonBodyScroll'> &
     Pick<ChartKitWrapperParams, 'onLoad' | 'onError' | 'onChange' | 'getControls'> &

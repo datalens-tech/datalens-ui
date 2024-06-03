@@ -1,14 +1,16 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Button, Icon, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {QlConfigParam} from 'shared/types/config/ql';
-import {DatalensGlobalState} from 'ui';
+import type {QlConfigParam} from 'shared/types/config/ql';
+import type {DatalensGlobalState} from 'ui';
 
 import {QLParamType, TabParamsQA, resolveRelativeDate} from '../../../../../../../shared';
 import {openDialogQLParameter} from '../../../../store/actions/dialog';

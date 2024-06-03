@@ -1,4 +1,4 @@
-import {Primitive} from 'utility-types';
+import type {Primitive} from 'utility-types';
 
 import {MAX_ARRAY_LENGTH} from './constants';
 

@@ -1,10 +1,5 @@
-import {
-    ChartsConfig,
-    ChartsConfigVersion,
-    ExtendedChartsConfig,
-    ServerChartsConfig,
-    Shared,
-} from '../../../types';
+import type {ChartsConfig, ExtendedChartsConfig, ServerChartsConfig, Shared} from '../../../types';
+import {ChartsConfigVersion} from '../../../types';
 
 import {mapV1ConfigToV2} from './v1/mapV1ConfigToV2';
 import {mapV2ConfigToV3} from './v2/mapV2ConfigToV3';

@@ -1,6 +1,6 @@
 import {isMarkupItem} from '../../../../../../../shared';
 import {findIndexInOrder} from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBasicMetricVariant} from './variants/basic';
 import {prepareMarkupMetricVariant} from './variants/markup';

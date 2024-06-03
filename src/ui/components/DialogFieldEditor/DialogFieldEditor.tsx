@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {Dataset, DatasetField, DatasetOptions, WorkbookId} from 'shared';
+import type {Dataset, DatasetField, DatasetOptions, WorkbookId} from 'shared';
 
-import {DataTypeConfig} from '../../typings/common';
+import type {DataTypeConfig} from '../../typings/common';
 import DialogManager from '../DialogManager/DialogManager';
 import FieldEditor from '../FieldEditor';
 

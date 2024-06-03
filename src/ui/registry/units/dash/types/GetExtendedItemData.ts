@@ -1,4 +1,4 @@
-import {AnyAction} from 'redux';
+import type {AnyAction} from 'redux';
 
 import type {AppDispatch} from '../../../../store';
 import type {SetItemDataArgs} from '../../../../units/dash/store/actions/dashTyped';

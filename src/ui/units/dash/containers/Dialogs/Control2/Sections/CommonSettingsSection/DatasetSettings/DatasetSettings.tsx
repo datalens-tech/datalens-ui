@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType, DatasetFieldType} from 'shared';
 
 import {VIEW_MODES} from '../../../../../../../../components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
-import {SelectFeaturedAsyncProps} from '../../../../../../../../components/Select/wrappers/SelectFeaturedAsync';
+import type {SelectFeaturedAsyncProps} from '../../../../../../../../components/Select/wrappers/SelectFeaturedAsync';
 import {selectWorkbookId} from '../../../../../../../workbooks/store/selectors';
 import {
     selectSelectorControlType,

@@ -19,7 +19,7 @@ import SquarePointIcon from './Icons/SquarePointIcon';
 import TriangleDownPointIcon from './Icons/TriangleDownPointIcon';
 import TrianglePointIcon from './Icons/TrianglePointIcon';
 import {DEFAULT_ICON_HEIGHT, DEFAULT_ICON_WIDTH} from './constants';
-import {CommonIconProps} from './types';
+import type {CommonIconProps} from './types';
 
 type Props = {
     iconType: LineShapeType | PointsShapeType | undefined;

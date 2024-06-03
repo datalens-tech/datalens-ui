@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {NestedPartial, TableFieldBackgroundSettings} from 'shared';
+import type {NestedPartial, TableFieldBackgroundSettings} from 'shared';
 
 type UseBackgroundSettingsSwitchArgs = {
     onUpdate: (args: NestedPartial<TableFieldBackgroundSettings, 'settings'>) => void;

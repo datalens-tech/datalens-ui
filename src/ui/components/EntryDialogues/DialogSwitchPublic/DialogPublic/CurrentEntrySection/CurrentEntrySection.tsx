@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Link, PopupPlacement, Switch} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import {Link, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

@@ -1,17 +1,17 @@
 import type {IncomingHttpHeaders} from 'http';
 
 import {CHARTS_API_BASE_URL, DASH_API_BASE_URL} from '../constants';
-import {Endpoints} from '../endpoints';
+import type {Endpoints} from '../endpoints';
 import {filterUrlFragment} from '../schema/utils';
-import {
+import type {
     CreateEntryRequest,
     DashEntry,
     DashEntryCreateParams,
     EntryReadParams,
-    EntryUpdateMode,
     Params,
     UpdateEntryRequest,
 } from '../types';
+import {EntryUpdateMode} from '../types';
 
 type UiEndpoints = Endpoints['ui'];
 

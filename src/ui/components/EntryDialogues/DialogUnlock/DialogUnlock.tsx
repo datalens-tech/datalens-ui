@@ -4,7 +4,7 @@ import {registry} from 'ui/registry';
 
 import type {EntryFields} from '../../../../shared/schema';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogUnlockProps extends EntryDialogProps {
     entry: Pick<EntryFields, 'entryId' | 'key' | 'scope' | 'type'>;

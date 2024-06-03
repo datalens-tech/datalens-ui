@@ -3,15 +3,14 @@ import React from 'react';
 import {RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {FloatNumberFormattingOptions, IntegerNumberFormattingOptions} from 'shared';
 import {
     DATASET_FIELD_TYPES,
     DialogFieldMainSectionQa,
-    FloatNumberFormattingOptions,
-    IntegerNumberFormattingOptions,
     NumberFormatType,
     NumberFormatUnit,
 } from 'shared';
-import {Required} from 'utility-types';
+import type {Required} from 'utility-types';
 
 import NumberInput from '../../../../../NumberInput/NumberInput';
 import {DialogFieldRow} from '../../DialogFieldRow/DialogFieldRow';

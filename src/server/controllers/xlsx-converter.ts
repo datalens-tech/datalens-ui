@@ -3,12 +3,12 @@ import {unlink} from 'fs/promises';
 
 import XLSX from '@datalens-tech/xlsx';
 import {dateTime} from '@gravity-ui/date-utils';
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import {isObject} from 'lodash';
 import mime from 'mime';
 import uuid from 'uuid';
 
-import {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
+import type {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
 
 const XLS_DATA_LIMIT = 1024 * 1024 * 50; // 50MB
 const MAX_EXCEL_CELL_LENGTH = 32767;

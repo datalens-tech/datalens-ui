@@ -1,36 +1,50 @@
 import React from 'react';
 
 import noop from 'lodash/noop';
-import {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
+import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
 
-import SDK, {sdk} from '../../libs/sdk';
+import type SDK from '../../libs/sdk';
+import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 
-import {DialogAccess, DialogAccessProps} from './DialogAccess/DialogAccess';
-import {
-    DialogAccessDescription,
-    DialogAccessDescriptionProps,
-} from './DialogAccessDescription/DialogAccessDescription';
-import {DialogCopyEntry, DialogCopyEntryProps} from './DialogCopyEntry';
-import {DialogCreateDashboard, DialogCreateDashboardProps} from './DialogCreateDashboard';
-import {DialogCreateEditorChart, DialogCreateEditorChartProps} from './DialogCreateEditorChart';
-import {DialogCreateFolder, DialogCreateFolderProps} from './DialogCreateFolder';
-import {DialogCreateQLChart, DialogCreateQLChartProps} from './DialogCreateQLChart';
-import {DialogCreateWizardChart, DialogCreateWizardChartProps} from './DialogCreateWizardChart';
+import type {DialogAccessProps} from './DialogAccess/DialogAccess';
+import {DialogAccess} from './DialogAccess/DialogAccess';
+import type {DialogAccessDescriptionProps} from './DialogAccessDescription/DialogAccessDescription';
+import {DialogAccessDescription} from './DialogAccessDescription/DialogAccessDescription';
+import type {DialogCopyEntryProps} from './DialogCopyEntry';
+import {DialogCopyEntry} from './DialogCopyEntry';
+import type {DialogCreateDashboardProps} from './DialogCreateDashboard';
+import {DialogCreateDashboard} from './DialogCreateDashboard';
+import type {DialogCreateEditorChartProps} from './DialogCreateEditorChart';
+import {DialogCreateEditorChart} from './DialogCreateEditorChart';
+import type {DialogCreateFolderProps} from './DialogCreateFolder';
+import {DialogCreateFolder} from './DialogCreateFolder';
+import type {DialogCreateQLChartProps} from './DialogCreateQLChart';
+import {DialogCreateQLChart} from './DialogCreateQLChart';
+import type {DialogCreateWizardChartProps} from './DialogCreateWizardChart';
+import {DialogCreateWizardChart} from './DialogCreateWizardChart';
 import {DialogDashMetaWrapper as DialogDashMeta} from './DialogDashMeta/DialogDashMetaWrapper';
-import {DialogDeleteEntry, DialogDeleteEntryProps} from './DialogDeleteEntry';
-import {DialogEditFavoritesAlias, DialogEditFavoritesAliasProps} from './DialogEditFavoritesAlias';
-import DialogEditWarning, {DialogEditWarningProps} from './DialogEditWarning/DialogEditWarning';
-import {DialogEntrySaveAsNew, DialogEntrySaveAsNewProps} from './DialogEntrySaveAsNew';
-import DialogMakeActualConfirm, {
-    DialogMakeActualConfirmProps,
-} from './DialogMakeActualConfirm/DialogMakeActualConfirm';
-import {DialogMigrateToWorkbook, DialogMigrateToWorkbookProps} from './DialogMigrateToWorkbook';
-import {DialogMoveEntry, DialogMoveEntryProps} from './DialogMoveEntry';
-import {DialogRenameEntry, DialogRenameEntryProps} from './DialogRenameEntry';
-import {DialogSwitchPublic, DialogSwitchPublicProps} from './DialogSwitchPublic';
-import {DialogUnlock, DialogUnlockProps} from './DialogUnlock';
-import {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
+import type {DialogDeleteEntryProps} from './DialogDeleteEntry';
+import {DialogDeleteEntry} from './DialogDeleteEntry';
+import type {DialogEditFavoritesAliasProps} from './DialogEditFavoritesAlias';
+import {DialogEditFavoritesAlias} from './DialogEditFavoritesAlias';
+import type {DialogEditWarningProps} from './DialogEditWarning/DialogEditWarning';
+import DialogEditWarning from './DialogEditWarning/DialogEditWarning';
+import type {DialogEntrySaveAsNewProps} from './DialogEntrySaveAsNew';
+import {DialogEntrySaveAsNew} from './DialogEntrySaveAsNew';
+import type {DialogMakeActualConfirmProps} from './DialogMakeActualConfirm/DialogMakeActualConfirm';
+import DialogMakeActualConfirm from './DialogMakeActualConfirm/DialogMakeActualConfirm';
+import type {DialogMigrateToWorkbookProps} from './DialogMigrateToWorkbook';
+import {DialogMigrateToWorkbook} from './DialogMigrateToWorkbook';
+import type {DialogMoveEntryProps} from './DialogMoveEntry';
+import {DialogMoveEntry} from './DialogMoveEntry';
+import type {DialogRenameEntryProps} from './DialogRenameEntry';
+import {DialogRenameEntry} from './DialogRenameEntry';
+import type {DialogSwitchPublicProps} from './DialogSwitchPublic';
+import {DialogSwitchPublic} from './DialogSwitchPublic';
+import type {DialogUnlockProps} from './DialogUnlock';
+import {DialogUnlock} from './DialogUnlock';
+import type {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
 
 export enum EntryDialogName {
     Rename = 'rename',

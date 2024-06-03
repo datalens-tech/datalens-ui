@@ -2,12 +2,13 @@ import React from 'react';
 
 import {Button, Checkbox, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatasetField, DatasetFieldCalcMode, Feature} from 'shared';
+import type {DatasetField, DatasetFieldCalcMode} from 'shared';
+import {Feature} from 'shared';
 
 import {I18n} from '../../../../i18n';
 import Utils from '../../../utils';
 import {DUPLICATE_TITLE, EMPTY_TITLE} from '../constants';
-import {FieldEditorErrors, ModifyField} from '../typings';
+import type {FieldEditorErrors, ModifyField} from '../typings';
 import {getErrorMessageKey} from '../utils';
 
 const b = block('dl-field-editor');

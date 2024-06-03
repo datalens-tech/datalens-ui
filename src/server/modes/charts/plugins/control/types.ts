@@ -1,5 +1,5 @@
-import {
-    type ConnectionQueryContent,
+import type {
+    ConnectionQueryContent,
     ConnectionQueryTypeValues,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,

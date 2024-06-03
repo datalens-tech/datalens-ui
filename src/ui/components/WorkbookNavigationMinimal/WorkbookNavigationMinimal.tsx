@@ -1,13 +1,15 @@
 import React from 'react';
 
-import {List, Loader, Popup, PopupPlacement} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import {List, Loader, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
-import {EntryScope, WorkbookNavigationMinimalQa} from 'shared';
+import type {EntryScope} from 'shared';
+import {WorkbookNavigationMinimalQa} from 'shared';
 import type {GetEntryResponse, GetWorkbookEntriesArgs} from 'shared/schema';
 import {CLUSTERS_DATE_FORMAT_DATE} from 'ui/constants/misc';
 

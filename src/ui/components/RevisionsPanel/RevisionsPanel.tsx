@@ -4,12 +4,13 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
 import {selectEntryContent} from 'store/selectors/entryContent';
-import {EntryGlobalState, RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import type {EntryGlobalState} from 'store/typings/entryContent';
+import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 

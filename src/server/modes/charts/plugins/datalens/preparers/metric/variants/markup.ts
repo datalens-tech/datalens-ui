@@ -1,11 +1,13 @@
 import {dateTime} from '@gravity-ui/date-utils';
 
-import {
+import type {
     CommonNumberFormattingOptions,
-    MINIMUM_FRACTION_DIGITS,
     MarkupItem,
     ServerCommonSharedExtraSettings,
     ServerField,
+} from '../../../../../../../../shared';
+import {
+    MINIMUM_FRACTION_DIGITS,
     formatNumber,
     getFakeTitleOrTitle,
     isDateField,

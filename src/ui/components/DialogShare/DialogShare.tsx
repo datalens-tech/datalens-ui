@@ -5,11 +5,11 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME, SHEET_IDS} from 'ui/constants';
-import {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import URI from 'ui/libs/DatalensChartkit/modules/uri/uri';
-import {Widget} from 'ui/libs/DatalensChartkit/types';
+import type {Widget} from 'ui/libs/DatalensChartkit/types';
 import {registry} from 'ui/registry';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 

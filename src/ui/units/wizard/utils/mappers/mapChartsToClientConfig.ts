@@ -1,4 +1,4 @@
-import {
+import type {
     ChartsConfig,
     ClientChartsConfig,
     CommonSharedExtraSettings,
@@ -6,11 +6,9 @@ import {
     Field,
     FilterField,
     HierarchyField,
-    LabelsPositions,
     Link,
     Placeholder,
     PointSizeConfig,
-    PseudoFieldTitle,
     ServerColor,
     ServerField,
     ServerFilter,
@@ -21,8 +19,12 @@ import {
     Shared,
     Sort,
     Update,
-    VISUALIZATION_IDS,
     VisualizationWithLayersShared,
+} from 'shared';
+import {
+    LabelsPositions,
+    PseudoFieldTitle,
+    VISUALIZATION_IDS,
     createMeasureNames,
     createMeasureValues,
     getResultSchemaFromDataset,

@@ -1,5 +1,5 @@
 import {CircleExclamationFill, CircleInfo, TriangleExclamationFill} from '@gravity-ui/icons';
-import {ChartsInsightsItemLevels} from 'shared';
+import type {ChartsInsightsItemLevels} from 'shared';
 
 const LevelToIcons = {
     critical: TriangleExclamationFill,

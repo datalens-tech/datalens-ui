@@ -1,11 +1,13 @@
 import React from 'react';
 
-import {TabItem} from '@gravity-ui/components';
+import type {TabItem} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {DashTabsQA} from 'shared';
-import {Tabs as DataLensTabs, DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {Tabs as DataLensTabs} from 'ui';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';

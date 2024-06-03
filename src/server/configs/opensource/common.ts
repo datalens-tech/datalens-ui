@@ -1,10 +1,5 @@
-import {
-    AppEnvironment,
-    AppInstallation,
-    DL_CONTEXT_HEADER,
-    Language,
-    isTrueArg,
-} from '../../../shared';
+import type {AppEnvironment} from '../../../shared';
+import {AppInstallation, DL_CONTEXT_HEADER, Language, isTrueArg} from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import {SERVICE_NAME_DATALENS} from '../../constants';

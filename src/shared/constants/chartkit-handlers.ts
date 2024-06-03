@@ -1,4 +1,4 @@
-import {ExtendedExportingCsvOptions, HighchartsSeriesCustomObject} from '../types';
+import type {ExtendedExportingCsvOptions, HighchartsSeriesCustomObject} from '../types';
 
 export enum ChartkitHandlers {
     DCMonitoringLabelFormatter = 'dc-monitoring-label-formatter',

@@ -1,15 +1,15 @@
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {isNumber} from 'lodash';
-import {
+import type {
     DashData,
     DashTab,
     DashTabItem,
     DashTabItemBase,
-    DashTabItemType,
     DashTabItemWidgetTab,
     DashTabLayout,
 } from 'shared';
+import {DashTabItemType} from 'shared';
 
 import {getTextOverflowedStr} from '../../../../../../utils/stringUtils';
 import {getLayoutMap, sortByOrderIdOrLayoutComparator} from '../../../../modules/helpers';

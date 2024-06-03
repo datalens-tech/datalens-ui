@@ -1,10 +1,8 @@
 import {LayoutColumns3, LayoutRows3, SquareHashtag} from '@gravity-ui/icons';
+import type {Field, Placeholder, TableShared} from 'shared';
 import {
     Feature,
-    Field,
-    Placeholder,
     PlaceholderId,
-    TableShared,
     createMeasureNames,
     isMeasureName,
     isMeasureNameOrValue,

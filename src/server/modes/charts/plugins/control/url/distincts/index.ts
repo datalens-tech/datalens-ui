@@ -3,7 +3,7 @@ import {
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from '../../../constants/middleware-urls';
 import {DATASET_DISTINCTS_URL, DATASET_ID_PLACEHOLDER} from '../constants';
-import {SourceControlArgs, SourceControlDistinctsRequestWithDataset} from '../types';
+import type {SourceControlArgs, SourceControlDistinctsRequestWithDataset} from '../types';
 
 export const prepareDistinctsRequest = (
     sourceArgs: SourceControlArgs,

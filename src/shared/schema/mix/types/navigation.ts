@@ -1,5 +1,5 @@
-import {PLACE} from '../../../constants';
-import {
+import type {PLACE} from '../../../constants';
+import type {
     EntriesCommonArgs,
     GetEntriesEntryWithPermissions,
     GetFavoritesEntryWithPermissions,

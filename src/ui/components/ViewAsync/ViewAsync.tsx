@@ -2,8 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 
-import {ViewError, ViewErrorProps} from '../ViewError/ViewError';
-import {ViewLoader, ViewLoaderProps} from '../ViewLoader/ViewLoader';
+import type {ViewErrorProps} from '../ViewError/ViewError';
+import {ViewError} from '../ViewError/ViewError';
+import type {ViewLoaderProps} from '../ViewLoader/ViewLoader';
+import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './ViewAsync.scss';
 

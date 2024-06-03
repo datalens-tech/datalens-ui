@@ -1,12 +1,6 @@
-import {SelectOption} from '@gravity-ui/uikit';
-import {
-    DATASET_FIELD_TYPES,
-    Feature,
-    Field,
-    Field as TField,
-    WizardVisualizationId,
-    isMeasureName,
-} from 'shared';
+import type {SelectOption} from '@gravity-ui/uikit';
+import type {Field, Field as TField} from 'shared';
+import {DATASET_FIELD_TYPES, Feature, WizardVisualizationId, isMeasureName} from 'shared';
 import Utils from 'ui/utils';
 
 export const getDialogFieldSelectItems = ({
