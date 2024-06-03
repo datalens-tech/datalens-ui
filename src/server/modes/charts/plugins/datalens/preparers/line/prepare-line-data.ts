@@ -358,7 +358,6 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             }
 
                             // We can skip a point only if we put x in each point instead of categories
-                            // if (!isXCategoryAxis && typeof value === 'undefined') {
                             if (
                                 !isXCategoryAxis &&
                                 typeof value === 'undefined' &&
