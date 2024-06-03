@@ -33,18 +33,23 @@ const initialState: EditHistoryState = {
 
 const cloneStateForHistory = (state: unknown, pathIgnoreList: string[]) => {
     const deepOmitBy = (value: unknown, path: string, iteratee: (key: string) => boolean) => {
-        if (_.isObject(value)) {
-            return _.transform(value, (result: Record<string, unknown>, val, key) => {
-                const itemPath = `${path}/${key}`;
-
-                if (!iteratee(itemPath)) {
+        if (_.isObject(value) && !_.isSet(value) && !_.isFunction(value)) {
+            return _.transform(value, (result: Record<string, unknown>, item, key) => {
+                if (typeof item === 'function') {
                     // eslint-disable-next-line no-param-reassign
-                    result[key] = deepOmitBy(val, itemPath, iteratee);
+                    result[key] = item;
+                } else {
+                    const itemPath = `${path}/${key}`;
+
+                    if (!iteratee(itemPath)) {
+                        // eslint-disable-next-line no-param-reassign
+                        result[key] = deepOmitBy(item, itemPath, iteratee);
+                    }
                 }
             });
+        } else {
+            return value;
         }
-
-        return value;
     };
 
     return deepOmitBy(state, '', (path: string) => pathIgnoreList.includes(path));
