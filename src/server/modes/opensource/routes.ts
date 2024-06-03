@@ -1,7 +1,7 @@
 import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
 import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
-import {PassportStatic} from 'passport';
+import type {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import {isChartsMode, isDatalensMode, isFullMode, isZitadelEnabled} from '../../app-env';
@@ -9,7 +9,6 @@ import type {ChartsEngine} from '../../components/charts-engine';
 import {ping} from '../../controllers/ping';
 import {logout} from '../../controllers/zitadel';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
-
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
 

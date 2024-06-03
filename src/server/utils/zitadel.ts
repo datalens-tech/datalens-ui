@@ -1,5 +1,5 @@
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import NodeCache from 'node-cache';
 

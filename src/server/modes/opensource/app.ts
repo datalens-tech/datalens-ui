@@ -3,7 +3,8 @@ import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
-import OpenIDConnectStrategy, {VerifyCallback} from 'passport-openidconnect';
+import type {VerifyCallback} from 'passport-openidconnect';
+import OpenIDConnectStrategy from 'passport-openidconnect';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
 import {

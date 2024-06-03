@@ -1,6 +1,5 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {ApiServiceActionConfig} from '@gravity-ui/gateway';
-import {GetAuthHeaders} from '@gravity-ui/gateway';
+import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import {SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';

@@ -6,7 +6,6 @@ import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import Utils from '../../../utils';
 import type {ChartTemplates} from '../components/chart-generator';
 import {chartGenerator} from '../components/chart-generator';
-
 import {chartValidator as validator} from '../components/chart-validator';
 import type {
     ProviderCreateParams,

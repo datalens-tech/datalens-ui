@@ -1,4 +1,4 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {appHostUri, clientId, zitadelUri} from '../app-env';
 
