@@ -31,10 +31,10 @@ const initialState: EditHistoryState = {
     units: {},
 };
 
-const cloneStateForHistory = (state: unknown, pathIgnoreList: any) => {
+const cloneStateForHistory = (state: unknown, pathIgnoreList: string[]) => {
     const deepOmitBy = (value: unknown, path: string, iteratee: (key: string) => boolean) => {
         if (_.isObject(value)) {
-            return _.transform(value, (result: any, val, key) => {
+            return _.transform(value, (result: Record<string, unknown>, val, key) => {
                 const itemPath = `${path}/${key}`;
 
                 if (!iteratee(itemPath)) {
