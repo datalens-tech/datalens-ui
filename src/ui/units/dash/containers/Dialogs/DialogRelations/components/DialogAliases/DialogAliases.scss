@@ -9,8 +9,7 @@
 
     &__collapse-list-content {
         max-height: 176px;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden auto;
     }
 
     &__info {

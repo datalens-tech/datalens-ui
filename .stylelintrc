@@ -1,6 +1,6 @@
 {
-    "extends": ["@gravity-ui/stylelint-config", "@gravity-ui/stylelint-config/prettier"],
-    "rules": {
-        "declaration-block-no-redundant-longhand-properties": [true, {"severity": "warning"}]
-    }
+    "extends": [
+        "@gravity-ui/stylelint-config",
+        "@gravity-ui/stylelint-config/prettier"
+    ]
 }

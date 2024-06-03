@@ -67,8 +67,7 @@ $titleHeight: 57px;
             'a a' 1fr
             'b b' 1fr
             'c d' 1fr;
-        row-gap: 8px;
-        column-gap: 6px;
+        gap: 8px 6px;
     }
 
     &__add-section-controls-area-a {

@@ -45,8 +45,7 @@
 
     &__tabs {
         max-height: 97%;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        overflow: hidden scroll;
     }
 
     &__tab-item {

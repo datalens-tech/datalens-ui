@@ -1,17 +1,11 @@
 .pane-editor {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 0;
+    inset: 0;
     display: flex;
 
     &__pane-children {
         position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: 0;
+        inset: 0;
         display: flex;
     }
 
@@ -22,10 +16,7 @@
     &__editor-place {
         position: absolute;
         height: calc(100% - 2px); // monaco sometimes becomes larger in height than the container
-        left: 0;
-        right: 0;
-        bottom: 1px;
-        top: 0;
+        inset: 0 0 1px;
         display: flex;
         width: 100%;
     }

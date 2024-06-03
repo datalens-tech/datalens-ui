@@ -29,8 +29,7 @@
         border-bottom: 1px solid var(--ds-color-divider);
         max-height: 50%;
         min-height: 120px;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden auto;
         flex-shrink: 0;
     }
 

@@ -1,8 +1,7 @@
 .dl-smart-loader {
     display: flex;
     flex: 1;
-    align-self: center;
-    justify-self: center;
+    place-self: center center;
 
     &__container {
         display: flex;

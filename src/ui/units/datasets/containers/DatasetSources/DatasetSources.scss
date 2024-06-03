@@ -13,7 +13,6 @@
 
     &__relations-map-panel {
         display: flex;
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow: auto hidden;
     }
 }

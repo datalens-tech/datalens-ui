@@ -19,8 +19,7 @@
         background: var(--g-color-base-background);
 
         &_mobile {
-            overflow-x: auto;
-            overflow-y: hidden;
+            overflow: auto hidden;
         }
     }
 

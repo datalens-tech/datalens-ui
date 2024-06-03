@@ -27,8 +27,7 @@
 
     &__content-panel {
         justify-content: center;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: hidden auto;
 
         &_right {
             height: 100%;
