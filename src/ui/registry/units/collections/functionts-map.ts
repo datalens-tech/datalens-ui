@@ -1,4 +1,4 @@
-import {DropdownMenuItem} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema';
 import {makeFunctionTemplate} from 'shared/utils/makeFunctionTemplate';
 

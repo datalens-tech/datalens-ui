@@ -1,4 +1,5 @@
-import {CommonSharedExtraSettings, DATASET_FIELD_TYPES, LabelsPositions} from '../../shared';
+import type {CommonSharedExtraSettings} from '../../shared';
+import {DATASET_FIELD_TYPES, LabelsPositions} from '../../shared';
 
 const ITEM_TYPES = {
     DIMENSIONS: new Set(['DIMENSION']),

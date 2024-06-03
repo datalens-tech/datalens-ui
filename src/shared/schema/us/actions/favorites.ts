@@ -1,7 +1,7 @@
 import {getEntryNameByKey} from '../../../modules';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
-import {
+import type {
     AddFavoriteArgs,
     AddFavoriteResponse,
     DeleteFavoriteArgs,

@@ -1,8 +1,9 @@
 import React from 'react';
 
-import {RadioButton, RadioButtonProps} from '@gravity-ui/uikit';
+import type {RadioButtonProps} from '@gravity-ui/uikit';
+import {RadioButton} from '@gravity-ui/uikit';
 
-import {FreeformSource} from '../../../store/types';
+import type {FreeformSource} from '../../../store/types';
 import {getTranslate} from '../utils';
 
 type SourceSwitcherProps = {

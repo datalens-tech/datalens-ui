@@ -5,7 +5,8 @@ import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
-import {QLParamType, QlConfigParam, TabParamsQA} from '../../../../../../../shared';
+import type {QlConfigParam} from '../../../../../../../shared';
+import {QLParamType, TabParamsQA} from '../../../../../../../shared';
 import {getDatesFromValue} from '../../../../../../components/RelativeDatesPicker/utils';
 
 import {resolveAndFormatDate, valueIsValidIntervalValue} from './utils';

@@ -2,8 +2,8 @@ import React from 'react';
 
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
-import {DatasetField, DatasetOptions} from 'shared';
-import {ApplyData, DatalensGlobalState} from 'ui';
+import type {DatasetField, DatasetOptions} from 'shared';
+import type {ApplyData, DatalensGlobalState} from 'ui';
 import {
     addObligatoryFilter,
     deleteObligatoryFilter,
@@ -19,8 +19,8 @@ import {
     obligatoryFiltersSelector,
     optionsSelector,
 } from '../../store/selectors';
-import {ObligatoryFilter} from '../../typings/dataset';
-import {UpdateDatasetByValidationData, Validation} from '../../typings/redux';
+import type {ObligatoryFilter} from '../../typings/dataset';
+import type {UpdateDatasetByValidationData, Validation} from '../../typings/redux';
 
 interface DatasetFiltersProps {
     fields: DatasetField[];

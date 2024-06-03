@@ -1,13 +1,12 @@
 import React from 'react';
 
-import {ColumnSettings, DialogColumnSettingsQa} from 'shared';
+import type {ColumnSettings} from 'shared';
+import {DialogColumnSettingsQa} from 'shared';
 
-import {
-    SectionWrapper,
-    SectionWrapperProps,
-} from '../../../../../../../components/SectionWrapper/SectionWrapper';
+import type {SectionWrapperProps} from '../../../../../../../components/SectionWrapper/SectionWrapper';
+import {SectionWrapper} from '../../../../../../../components/SectionWrapper/SectionWrapper';
 import {DialogRow} from '../../../components/DialogRow/DialogRow';
-import {ColumnSettingsState} from '../../hooks/useDialogColumnSettingsState';
+import type {ColumnSettingsState} from '../../hooks/useDialogColumnSettingsState';
 import {getDefaultColumnWidthSettings} from '../../utils';
 import {ColumnWidthSetting} from '../ColumnWidthSetting/ColumnWidthSetting';
 import {FieldInfo} from '../FieldInfo/FieldInfo';

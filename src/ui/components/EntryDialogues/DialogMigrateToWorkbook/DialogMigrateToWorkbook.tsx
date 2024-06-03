@@ -2,7 +2,7 @@ import React from 'react';
 
 import {SelectMigrationToWorkbookDialog} from '../../SelectMigrationToWorkbookDialog';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogMigrateToWorkbookProps extends EntryDialogProps {
     entryId: string;

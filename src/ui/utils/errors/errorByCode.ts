@@ -1,5 +1,5 @@
 import {ErrorCode} from 'shared';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 
 import {parseError} from './parse';
 

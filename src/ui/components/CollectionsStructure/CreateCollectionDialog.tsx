@@ -2,8 +2,8 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {CreateCollectionResponse} from 'shared/schema';
-import {AppDispatch} from 'store';
+import type {CreateCollectionResponse} from 'shared/schema';
+import type {AppDispatch} from 'store';
 
 import DialogManager from '../../components/DialogManager/DialogManager';
 import {createCollection} from '../../store/actions/collectionsStructure';

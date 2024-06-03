@@ -1,11 +1,11 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import {chartGenerator} from '../components/chart-generator';
-import {ResolvedConfig} from '../components/storage/types';
+import type {ResolvedConfig} from '../components/storage/types';
 
 import {runEditor} from './editor';
 
-import {RunnerHandler, RunnerHandlerProps} from '.';
+import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runChart: RunnerHandler = async (
     cx: AppContext,

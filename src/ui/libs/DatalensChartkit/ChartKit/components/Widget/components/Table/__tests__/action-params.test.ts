@@ -1,4 +1,4 @@
-import {StringParams, TableHead} from 'shared';
+import type {StringParams, TableHead} from 'shared';
 
 import {mergeStringParams} from '../utils/action-params';
 

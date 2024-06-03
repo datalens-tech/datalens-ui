@@ -12,7 +12,7 @@ import {registry} from 'ui/registry';
 
 import DialogManager from '../../../../../../../components/DialogManager/DialogManager';
 import {DL} from '../../../../../../../constants';
-import {DataLensApiError} from '../../../../../../../typings';
+import type {DataLensApiError} from '../../../../../../../typings';
 
 import './DialogAddDocument.scss';
 

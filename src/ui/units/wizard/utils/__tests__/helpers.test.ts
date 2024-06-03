@@ -1,4 +1,4 @@
-import {Field, Placeholder, Shared, Update} from 'shared';
+import type {Field, Placeholder, Shared, Update} from 'shared';
 
 import {actualizeUpdates, checkAllowedAreaSort} from '../helpers';
 

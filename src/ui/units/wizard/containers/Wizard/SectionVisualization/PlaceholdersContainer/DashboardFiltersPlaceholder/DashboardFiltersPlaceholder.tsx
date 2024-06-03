@@ -2,12 +2,14 @@ import React from 'react';
 
 import {Funnel, TrashBin} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {Field, isVisualizationWithLayers} from 'shared';
-import {ApplyData, DatalensGlobalState} from 'ui';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {Field} from 'shared';
+import {isVisualizationWithLayers} from 'shared';
+import type {ApplyData, DatalensGlobalState} from 'ui';
 import {selectFilters} from 'units/wizard/selectors/visualization';
 
-import {PlaceholderAction} from '../../../../../actions/dndItems';
+import type {PlaceholderAction} from '../../../../../actions/dndItems';
 import {updateDashboardFilters} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {onFilterItemClick, setFilters, updateLayers} from '../../../../../actions/visualization';
@@ -17,8 +19,9 @@ import {
     getExistedParameterKeys,
     removeUrlParameters,
 } from '../../../../../utils/wizard';
-import PlaceholderComponent, {CustomPlaceholderAction} from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CustomPlaceholderAction} from '../Placeholder/Placeholder';
+import PlaceholderComponent from '../Placeholder/Placeholder';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 export default class DialogManager {
     private static items: Record<symbol, React.ComponentType> = {};

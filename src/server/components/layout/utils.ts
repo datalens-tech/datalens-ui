@@ -1,7 +1,8 @@
-import {Script} from '@gravity-ui/app-layout';
+import type {Script} from '@gravity-ui/app-layout';
 import isMobile from 'ismobilejs';
 
-import {ChartkitGlobalSettings, DeviceType} from '../../../shared';
+import type {ChartkitGlobalSettings} from '../../../shared';
+import {DeviceType} from '../../../shared';
 
 export function getPlatform(userAgent: string | undefined) {
     const ua = isMobile(userAgent);

@@ -1,14 +1,16 @@
-import {
+import type {
     ServerChartsConfig,
     ServerColor,
     ServerField,
     ServerSort,
+} from '../../../../../../../shared';
+import {
     WizardVisualizationId,
     isDateField,
     isDimensionField,
     isNumberField,
 } from '../../../../../../../shared';
-import {ChartColorsConfig} from '../../types';
+import type {ChartColorsConfig} from '../../types';
 import {getGradientStops} from '../../utils/color-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 

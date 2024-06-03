@@ -1,5 +1,5 @@
 import {GeoPolygons} from '@gravity-ui/icons';
-import {Field, VisualizationLayerShared} from 'shared';
+import type {Field, VisualizationLayerShared} from 'shared';
 
 import {ITEM_TYPES} from '../misc';
 

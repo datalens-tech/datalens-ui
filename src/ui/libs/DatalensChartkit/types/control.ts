@@ -1,4 +1,4 @@
-import {StringParams} from '../../../../shared';
+import type {StringParams} from '../../../../shared';
 
 export interface ControlBase {
     // type: 'select' | 'textarea' | 'input' | 'checkbox' | 'datepicker' | 'range-datepicker' | 'button';

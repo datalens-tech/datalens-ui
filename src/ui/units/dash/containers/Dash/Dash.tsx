@@ -1,20 +1,23 @@
 import React from 'react';
 
-import {ConfigLayout} from '@gravity-ui/dashkit';
+import type {ConfigLayout} from '@gravity-ui/dashkit';
 import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
-import {ResolveThunks, connect} from 'react-redux';
-import {RouteComponentProps} from 'react-router-dom';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {RouteComponentProps} from 'react-router-dom';
 import {DashTabItemType, Feature} from 'shared';
-import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
+import type {EntryDialogues} from 'ui/components/EntryDialogues';
+import {EntryDialogName} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
 import {SlugifyUrl} from 'ui/components/SlugifyUrl';
 import {DL, URL_QUERY} from 'ui/constants';
-import {DatalensGlobalState, Interpolate} from 'ui/index';
+import type {DatalensGlobalState} from 'ui/index';
+import {Interpolate} from 'ui/index';
 import {axiosInstance} from 'ui/libs';
 import {NULL_HEADER} from 'ui/libs/axios/axios';
 import {registry} from 'ui/registry';
@@ -34,7 +37,8 @@ import {selectEntryContentRevId, selectLockToken} from '../../../../store/select
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
-import {CopiedConfigData, getTabTitleById} from '../../modules/helpers';
+import type {CopiedConfigData} from '../../modules/helpers';
+import {getTabTitleById} from '../../modules/helpers';
 import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,

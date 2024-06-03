@@ -1,6 +1,6 @@
-import {GetEntryResponse} from './entries';
-import {GetDatalensOperationResponse} from './operations';
-import {OrderBasicField, OrderDirection, OrderWorkbookEntriesField} from './sort';
+import type {GetEntryResponse} from './entries';
+import type {GetDatalensOperationResponse} from './operations';
+import type {OrderBasicField, OrderDirection, OrderWorkbookEntriesField} from './sort';
 
 export type WorkbookPermission = {
     listAccessBindings: boolean;

@@ -6,8 +6,8 @@ import {i18n} from 'i18n';
 import _pick from 'lodash/pick';
 import {withHiddenUnmount} from 'ui';
 
-import {CommonSharedExtraSettings} from '../../../../../../shared';
-import {QLEntry} from '../../../store/typings/ql';
+import type {CommonSharedExtraSettings} from '../../../../../../shared';
+import type {QLEntry} from '../../../store/typings/ql';
 
 import './Settings.scss';
 

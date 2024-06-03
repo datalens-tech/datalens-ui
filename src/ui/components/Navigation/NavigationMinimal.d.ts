@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {PopupPlacement} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 
 import type {NavigationEntry} from '../../../shared/schema';
-import SDK from '../../libs/sdk';
+import type SDK from '../../libs/sdk';
 
-import {ResolvePathMode} from './types';
+import type {ResolvePathMode} from './types';
 
 export interface NavigationMinimalProps {
     sdk: SDK;

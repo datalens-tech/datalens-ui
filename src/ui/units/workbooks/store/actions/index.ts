@@ -1,8 +1,8 @@
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
-import {ThunkDispatch} from 'redux-thunk';
-import {EntryScope} from 'shared';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
 
 import type {
@@ -17,8 +17,8 @@ import type {
     WorkbookPermission,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
-import {CreateEntryActionType} from '../../constants';
-import {WorkbookEntriesFilters} from '../../types';
+import type {CreateEntryActionType} from '../../constants';
+import type {WorkbookEntriesFilters} from '../../types';
 import {
     ADD_WORKBOOK_INFO,
     CHANGE_FAVORITE_ENTRY_FAILED,

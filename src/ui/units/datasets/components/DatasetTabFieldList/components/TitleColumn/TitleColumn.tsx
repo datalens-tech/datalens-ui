@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {DATASET_FIELD_TYPES} from 'shared';
+import type {DATASET_FIELD_TYPES} from 'shared';
 import {DataTypeIcon} from 'ui';
 
 import './TitleColumn.scss';

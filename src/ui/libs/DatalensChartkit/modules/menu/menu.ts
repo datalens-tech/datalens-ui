@@ -3,9 +3,9 @@ import {stringify} from 'querystring';
 import {i18n} from 'i18n';
 import {isObject} from 'lodash';
 import {MenuItemsIds} from 'shared';
-import {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import {registry} from 'ui/registry';
-import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
 import {getChartkitMenuItems} from '../../menu/Menu';
 import URI from '../uri/uri';

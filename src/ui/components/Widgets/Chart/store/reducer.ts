@@ -1,6 +1,5 @@
+import type {Action, State} from './types';
 import {
-    Action,
-    State,
     WIDGET_CHART_RESET_CHANGED_PARAMS,
     WIDGET_CHART_SET_DATA_PARAMS,
     WIDGET_CHART_SET_LOADED_DATA,

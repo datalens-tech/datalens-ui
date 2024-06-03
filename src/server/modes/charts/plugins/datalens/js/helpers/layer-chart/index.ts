@@ -1,6 +1,6 @@
-import {LayerChartMeta} from '../../../preparers/types';
+import type {LayerChartMeta} from '../../../preparers/types';
 
-import {ExtendCombinedChartGraphsArgs, GetLayerChartMetaArgs} from './types';
+import type {ExtendCombinedChartGraphsArgs, GetLayerChartMetaArgs} from './types';
 
 export const extendCombinedChartGraphs = (args: ExtendCombinedChartGraphsArgs) => {
     const {graphs, layer, layers, legendValues} = args;

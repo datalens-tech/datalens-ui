@@ -1,17 +1,18 @@
 import {i18n} from 'i18n';
 import isNil from 'lodash/isNil';
-import {DatasetField, DatasetFieldType, DatasetTabSectionQA} from 'shared';
+import type {DatasetField} from 'shared';
+import {DatasetFieldType, DatasetTabSectionQA} from 'shared';
 
 import {openDialogParameter} from '../../../../store/actions/dialog';
+import type {DatasetDispatch} from '../../store/actions/creators';
 import {
-    DatasetDispatch,
     deleteFieldWithValidation,
     duplicateFieldWithValidation,
     updateFieldWithValidation,
     updateFieldWithValidationByMultipleUpdates,
 } from '../../store/actions/creators';
 import {DatasetFieldListColumnType} from '../DatasetTabFieldList/constants';
-import {
+import type {
     ColumnWidth,
     FieldHeaderColumn,
     FieldListColumn,

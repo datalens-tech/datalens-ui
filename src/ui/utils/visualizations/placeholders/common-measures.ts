@@ -1,9 +1,7 @@
+import type {Field, Placeholder, Shared} from 'shared';
 import {
-    Field,
-    Placeholder,
     PlaceholderId,
     PlaceholderIndexes,
-    Shared,
     createMeasureNames,
     isMeasureField,
     isMeasureNameOrValue,

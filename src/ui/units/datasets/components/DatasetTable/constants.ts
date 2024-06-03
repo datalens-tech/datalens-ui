@@ -1,7 +1,8 @@
-import {DatasetFieldCalcMode, Feature} from 'shared';
+import type {DatasetFieldCalcMode} from 'shared';
+import {Feature} from 'shared';
 import {Utils} from 'ui';
 
-import {MenuItem} from './types';
+import type {MenuItem} from './types';
 
 export const FORMULA_CALC_MODE: DatasetFieldCalcMode = 'formula';
 

@@ -1,4 +1,5 @@
-import React, {ReactNode} from 'react';
+import type {ReactNode} from 'react';
+import React from 'react';
 
 import {CircleQuestion} from '@gravity-ui/icons';
 import {Icon, Label, Popover} from '@gravity-ui/uikit';

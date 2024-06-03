@@ -1,5 +1,5 @@
 import type {SelectOption} from '@gravity-ui/uikit';
-import {type ConnectionQueryContent, ConnectionQueryTypeValues, type WorkbookId} from 'shared';
+import type {ConnectionQueryContent, ConnectionQueryTypeValues, WorkbookId} from 'shared';
 import {getControlDisticntsFromRows} from 'shared/modules/control/typed-query-helpers';
 import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 

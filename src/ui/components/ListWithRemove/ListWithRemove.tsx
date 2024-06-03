@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Button, ButtonSize, Icon, List, ListProps} from '@gravity-ui/uikit';
+import type {ButtonSize, ListProps} from '@gravity-ui/uikit';
+import {Button, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import isEqual from 'lodash/isEqual';
 import {TabMenuQA} from 'shared';

@@ -3,11 +3,8 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {
-    CollectionsStructureDispatch,
-    moveCollections,
-    moveWorkbooks,
-} from '../../store/actions/collectionsStructure';
+import type {CollectionsStructureDispatch} from '../../store/actions/collectionsStructure';
+import {moveCollections, moveWorkbooks} from '../../store/actions/collectionsStructure';
 import {selectMoveIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
 

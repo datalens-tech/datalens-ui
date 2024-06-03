@@ -4,8 +4,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {RouteComponentProps} from 'react-router-dom';
-import {Feature, WorkbookId} from 'shared';
+import type {RouteComponentProps} from 'react-router-dom';
+import type {WorkbookId} from 'shared';
+import {Feature} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -18,12 +19,12 @@ import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/stor
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKit as ChartKitType} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {
+import type {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {registry} from '../../../../registry';
 import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
 import {sendEmbedHeight} from '../../modules/helpers';

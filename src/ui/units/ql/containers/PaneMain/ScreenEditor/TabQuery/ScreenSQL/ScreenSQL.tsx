@@ -5,18 +5,12 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {registerDatalensQLLanguage, setDatalensQLLanguageConfiguration} from 'libs/monaco';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {QlConfig} from 'shared/types/config/ql';
-import {
-    DatalensGlobalState,
-    EntryDialogName,
-    EntryDialogResolveStatus,
-    EntryDialogues,
-    Monaco,
-    MonacoProps,
-    MonacoTypes,
-} from 'ui';
+import type {DatalensGlobalState, EntryDialogues, MonacoProps, MonacoTypes} from 'ui';
+import {EntryDialogName, EntryDialogResolveStatus, Monaco} from 'ui';
 import {prepareChartDataBeforeSave} from 'units/ql/modules/helpers';
 import {
     drawPreview,
@@ -36,7 +30,7 @@ import {
     getQueryValue,
     getValid,
 } from 'units/ql/store/reducers/ql';
-import {QLEntry} from 'units/ql/store/typings/ql';
+import type {QLEntry} from 'units/ql/store/typings/ql';
 
 import './ScreenSQL.scss';
 

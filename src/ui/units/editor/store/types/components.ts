@@ -1,4 +1,4 @@
-import {RevisionAction} from '../../types/revisions';
+import type {RevisionAction} from '../../types/revisions';
 
 export type ButtonSaveComponentData = {
     progress: boolean;

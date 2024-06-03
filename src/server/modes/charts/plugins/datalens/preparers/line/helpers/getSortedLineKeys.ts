@@ -4,10 +4,10 @@ import {
     isMeasureField,
 } from '../../../../../../../../shared';
 import {collator, isNumericalDataType, numericStringCollator} from '../../../utils/misc-helpers';
-import {Categories} from '../../types';
-import {LinesRecord} from '../types';
+import type {Categories} from '../../types';
+import type {LinesRecord} from '../types';
 
-import {GetSortedLineKeysArgs} from './types';
+import type {GetSortedLineKeysArgs} from './types';
 
 export const sortLineKeysByFirstValues = (
     lk: string[],

@@ -1,7 +1,8 @@
 import {getSdk} from 'libs/schematic-sdk';
 import type {ColorPalette} from 'shared';
 import type {DatalensGlobalState, DataLensApiError} from 'index';
-import {closeDialog, openDialogConfirm, OpenDialogConfirmArguments} from './dialog';
+import type {OpenDialogConfirmArguments} from './dialog';
+import {closeDialog, openDialogConfirm} from './dialog';
 import type {AppDispatch} from 'store';
 import {I18n} from 'i18n';
 import {showToast} from './toaster';

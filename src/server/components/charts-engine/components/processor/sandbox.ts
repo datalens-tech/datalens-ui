@@ -8,7 +8,7 @@ import {config} from '../../constants';
 import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
 import type {LogItem} from './console';
-import {NativeModule} from './types';
+import type {NativeModule} from './types';
 
 const {
     RUNTIME_ERROR,

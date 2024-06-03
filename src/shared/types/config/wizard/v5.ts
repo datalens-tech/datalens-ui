@@ -1,4 +1,4 @@
-import {
+import type {
     AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,
@@ -9,7 +9,7 @@ import {
     ParameterDefaultValue,
     TableBarsSettings,
 } from '../../index';
-import {TableFieldBackgroundSettings} from '../../wizard';
+import type {TableFieldBackgroundSettings} from '../../wizard';
 
 export type V5ChartsConfig = {
     title?: string;

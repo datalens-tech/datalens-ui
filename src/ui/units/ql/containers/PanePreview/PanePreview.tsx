@@ -5,20 +5,27 @@ import {i18n} from 'i18n';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
-import {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import {VisualizationStatus} from '../../constants';
+import type {SetQueryMetadataProps} from '../../store/actions/ql';
 import {
-    SetQueryMetadataProps,
     setQueryMetadata,
     setTablePreviewData,
     setVisualizationStatus,
 } from '../../store/actions/ql';
 import {getChart, getConnection, getEntry} from '../../store/reducers/ql';
-import {QLChart, QLChartConfig, QLConnectionEntry, QLEntry, QLState} from '../../store/typings/ql';
+import type {
+    QLChart,
+    QLChartConfig,
+    QLConnectionEntry,
+    QLEntry,
+    QLState,
+} from '../../store/typings/ql';
 
 import './PanePreview.scss';
 

@@ -1,9 +1,11 @@
 import React from 'react';
 
-import {RadioButton, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {DATASET_FIELD_TYPES, NavigatorLinesMode, NavigatorPeriod, Period} from 'shared';
+import type {NavigatorPeriod, Period} from 'shared';
+import {DATASET_FIELD_TYPES, NavigatorLinesMode} from 'shared';
 
 import './NavigatorSubSettings.scss';
 

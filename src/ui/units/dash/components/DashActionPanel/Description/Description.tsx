@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {URL_QUERY} from 'ui/constants/common';
 
-import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
+import type EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {Mode} from '../../../modules/constants';
 import {
     setDashDescViewMode,

@@ -1,12 +1,7 @@
 import React from 'react';
 
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuItemMixed,
-    PopupPlacement,
-} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, DropdownMenuItemMixed, PopupPlacement} from '@gravity-ui/uikit';
+import {Button, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';

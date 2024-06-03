@@ -1,10 +1,12 @@
 import isNil from 'lodash/isNil';
 
-import {
+import type {
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
     MarkupItem,
     ServerField,
+} from '../../../../../../../../../shared';
+import {
     getFakeTitleOrTitle,
     isDateField,
     isMarkupField,
@@ -18,16 +20,16 @@ import {
     getFormatOptionsFromFieldFormatting,
     isNumericalDataType,
 } from '../../../../utils/misc-helpers';
-import {LineTemplate} from '../../types';
+import type {LineTemplate} from '../../types';
 import {getDateAxisValue} from '../getXAxisValue';
 import {getSegmentName} from '../segments/getSegmentName';
 import {getY2SegmentNameKey} from '../segments/getSegmentsMap';
-import {RowDataValue} from '../types';
+import type {RowDataValue} from '../types';
 
 import {mapDataToDimensionColoredLines} from './mapDataToDimensionColoredLines';
 import {mapDataToLines} from './mapDataToLines';
 import {mapDataToMeasureColoredLines} from './mapDataToMeasureColoredLines';
-import {
+import type {
     ExtendLineWithSegmentDataArgs,
     GetMappedDataToDimensionColoredLinesArgs,
     GetMappedDataToLinesArgs,

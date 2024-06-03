@@ -2,9 +2,10 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {CacheTtlRowItem} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {InnerFieldKey} from '../../../../constants';
 import {changeForm, changeInnerForm} from '../../../../store';

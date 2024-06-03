@@ -1,15 +1,16 @@
 import React from 'react';
 
-import {Button, Loader, Popover, PopoverInstanceProps} from '@gravity-ui/uikit';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit';
+import {Button, Loader, Popover} from '@gravity-ui/uikit';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
-import {ChartsInsightsItem} from 'shared';
+import type {ChartsInsightsItem} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
-import {ChartsInsightsData} from '../../../../../../types/widget';
+import type {ChartsInsightsData} from '../../../../../../types/widget';
 
 import {ChartsInsightsIcon} from './components/ChartsInsightsIcon/ChartsInsightsIcon';
 import {TooltipContent} from './components/TooltipContent/TooltipContent';

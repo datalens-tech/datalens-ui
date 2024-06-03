@@ -1,10 +1,10 @@
-import {AppContext} from '@gravity-ui/nodekit';
-import {Required} from 'utility-types';
+import type {AppContext} from '@gravity-ui/nodekit';
+import type {Required} from 'utility-types';
 
-import {StringParams, WorkbookId} from '../../../types';
-import {DeleteConnectionResponse, DeleteDatasetResponse} from '../../bi/types';
-import {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../../stat-api/types';
-import {
+import type {StringParams, WorkbookId} from '../../../types';
+import type {DeleteConnectionResponse, DeleteDatasetResponse} from '../../bi/types';
+import type {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../../stat-api/types';
+import type {
     DeleteUSEntryResponse,
     EntryByKeyPattern,
     GetEntryByKeyArgs,

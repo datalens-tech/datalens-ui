@@ -2,7 +2,7 @@ import qs from 'qs';
 import type {FormApiSchemaItem, FormSchema, ValidatedItemAction} from 'shared/schema/types';
 
 import {URL_QUERY} from '../../../../constants';
-import {FormDict} from '../../typings';
+import type {FormDict} from '../../typings';
 import {getFormWithTrimmedValues, getQueryParam} from '../../utils';
 
 const getPreparedValue = (value: FormDict[keyof FormDict]) => {

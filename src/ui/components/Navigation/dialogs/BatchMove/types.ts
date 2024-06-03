@@ -1,4 +1,4 @@
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 
 export type ErrorItem = {
     error: DataLensApiError;

@@ -4,10 +4,11 @@ import {ClipboardButton, Dialog, Label, Tabs, TextArea} from '@gravity-ui/uikit'
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Field} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field} from 'shared';
 import {closeDialog} from 'store/actions/dialog';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {selectDimensions, selectMeasures} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 

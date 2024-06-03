@@ -1,6 +1,6 @@
-import {ServerField} from '../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../types';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
+import type {ServerField} from '../../../../../../../../../shared';
+import type {ChartColorsConfig} from '../../../../types';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
 
 export type PrepareFooterValueArgs = {
     column: ServerField;

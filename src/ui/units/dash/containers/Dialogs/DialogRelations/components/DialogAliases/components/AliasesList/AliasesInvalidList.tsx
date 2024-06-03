@@ -4,7 +4,7 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {DatasetsListData} from '../../../../types';
+import type {DatasetsListData} from '../../../../types';
 
 import {getFieldNameByGuid} from './AliasesList';
 

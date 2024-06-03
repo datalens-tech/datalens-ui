@@ -1,5 +1,5 @@
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
     ChartsInsight,
@@ -9,11 +9,13 @@ import type {
     StringParams,
 } from '../../../../../shared';
 
-import {CommentsFetcherFetchResult, CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
-import {Console} from './console';
-import type {LogItem} from './console';
-import {DataFetcherResult} from './data-fetcher';
-import {ProcessorHooks} from './hooks';
+import type {
+    CommentsFetcherFetchResult,
+    CommentsFetcherPrepareCommentsParams,
+} from './comments-fetcher';
+import type {Console, LogItem} from './console';
+import type {DataFetcherResult} from './data-fetcher';
+import type {ProcessorHooks} from './hooks';
 
 export type UiTabExportsControl = {
     type: string;

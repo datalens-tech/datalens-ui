@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {registry} from 'ui/registry';
 
-import {HookBatchSelectResult, TableViewProps} from '../types';
+import type {HookBatchSelectResult, TableViewProps} from '../types';
 
 const b = block('dl-core-navigation-table-view');
 const i18n = I18n.keyset('component.navigation.view');

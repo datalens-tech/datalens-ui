@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {LayoutRows} from '@gravity-ui/icons';
-import {Icon, RadioButton, RadioButtonSize, Select, TextInput} from '@gravity-ui/uikit';
+import type {RadioButtonSize} from '@gravity-ui/uikit';
+import {Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
-import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
-import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import type {GetCollectionContentMode} from 'shared/schema/us/types/collections';
+import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Tabs from 'ui/components/Tabs/Tabs';
 import Utils from 'ui/utils';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';

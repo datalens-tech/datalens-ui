@@ -3,7 +3,7 @@ import React from 'react';
 import {registry} from 'ui/registry';
 
 import type {GetEntryResponse} from '../../../../shared/schema';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogAccessProps extends EntryDialogProps {
     entry: GetEntryResponse;

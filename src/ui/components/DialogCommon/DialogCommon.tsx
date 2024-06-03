@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Alert, Button, ButtonProps, Dialog, Icon} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {withHiddenUnmount} from '../../hoc/withHiddenUnmount';

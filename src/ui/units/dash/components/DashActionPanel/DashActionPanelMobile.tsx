@@ -4,7 +4,8 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import ActionPanelHelpers from 'components/ActionPanel/ActionPanelHelpers';
-import {DashEntry, Feature} from 'shared';
+import type {DashEntry} from 'shared';
+import {Feature} from 'shared';
 import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 import {isCurrentTenantWithOrg} from 'utils/tenant';

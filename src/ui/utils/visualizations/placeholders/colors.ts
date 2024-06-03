@@ -1,4 +1,5 @@
-import {Field, Placeholder, PlaceholderId, type Shared, isMeasureNameOrValue} from 'shared';
+import {PlaceholderId, isMeasureNameOrValue} from 'shared';
+import type {Field, Placeholder, Shared} from 'shared';
 import {selectPlaceholders} from 'shared/modules/visualization/placeholder';
 
 type UpdateMultipleColorsArgs = {

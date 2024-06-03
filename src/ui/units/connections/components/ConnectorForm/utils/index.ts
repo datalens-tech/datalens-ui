@@ -1,8 +1,8 @@
 import {isEqual} from 'lodash';
 import type {BaseItem} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
-import {ConnectionsReduxState} from '../../../store';
+import type {ConnectionsReduxState} from '../../../store';
 
 const checkDependencies = (
     form: ConnectionsReduxState['form'] | ConnectionsReduxState['innerForm'],

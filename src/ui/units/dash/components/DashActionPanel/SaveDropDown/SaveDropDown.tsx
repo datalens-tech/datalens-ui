@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {ChevronDown} from '@gravity-ui/icons';
-import {Button, DropdownMenu, DropdownMenuItem, Icon} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 

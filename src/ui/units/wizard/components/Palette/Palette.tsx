@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {LineShapeType, PointsShapeType} from 'shared';
+import type {LineShapeType, PointsShapeType} from 'shared';
 
 import IconRenderer from '../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../constants';

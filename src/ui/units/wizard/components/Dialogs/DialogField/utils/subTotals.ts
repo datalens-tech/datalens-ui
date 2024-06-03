@@ -1,5 +1,6 @@
-import {Field, PlaceholderId, WizardVisualizationId, isDimensionField} from 'shared';
-import {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import type {Field} from 'shared';
+import {PlaceholderId, WizardVisualizationId, isDimensionField} from 'shared';
+import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 
 export const isSubTotalsAvailableInDialogField = (
     visualizationId: WizardVisualizationId | undefined,

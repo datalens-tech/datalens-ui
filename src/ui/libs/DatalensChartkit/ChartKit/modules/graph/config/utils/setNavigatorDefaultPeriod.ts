@@ -1,6 +1,6 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import moment from 'moment';
-import {NavigatorPeriod} from 'shared';
+import type {NavigatorPeriod} from 'shared';
 
 import {getXAxisThresholdValue} from './getXAxisThresholdValue';
 

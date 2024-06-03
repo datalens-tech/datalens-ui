@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import _ from 'lodash';
 
 import {LIST_ITEM_HEIGHT, NULL_TITLE} from '../constants';
-import {ChangeValue} from '../typings';
+import type {ChangeValue} from '../typings';
 
 import './SelectFilter.scss';
 

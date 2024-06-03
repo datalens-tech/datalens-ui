@@ -3,18 +3,20 @@ import React from 'react';
 import {Funnel, TrashBin} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Field} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectFilters} from 'units/wizard/selectors/visualization';
 
-import {PlaceholderAction} from '../../../../../actions/dndItems';
+import type {PlaceholderAction} from '../../../../../actions/dndItems';
 import {updateFilters} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {onFilterItemClick, setFilters} from '../../../../../actions/visualization';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, VISUALIZATION_IDS} from '../../../../../constants';
-import PlaceholderComponent, {CustomPlaceholderAction} from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CustomPlaceholderAction} from '../Placeholder/Placeholder';
+import PlaceholderComponent from '../Placeholder/Placeholder';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;

@@ -1,6 +1,6 @@
-import {ColorMode} from '../../../constants';
-import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
-import {
+import type {ColorMode} from '../../../constants';
+import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {
     AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,

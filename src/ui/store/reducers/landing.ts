@@ -1,5 +1,6 @@
 import {DL} from '../../constants';
-import {LandingAction, SET_IS_LANDING} from 'store/actions/landing';
+import type {LandingAction} from 'store/actions/landing';
+import {SET_IS_LANDING} from 'store/actions/landing';
 
 export type LandingState = {
     isLanding: boolean;

@@ -1,6 +1,8 @@
-import React, {FC} from 'react';
+import type {FC} from 'react';
+import React from 'react';
 
-import {Datepicker, DatepickerProps, datepickerDefaultProps} from './Datepicker';
+import type {DatepickerProps} from './Datepicker';
+import {Datepicker, datepickerDefaultProps} from './Datepicker';
 
 export * from './Datepicker';
 

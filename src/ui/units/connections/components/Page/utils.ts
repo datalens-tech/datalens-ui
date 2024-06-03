@@ -1,8 +1,8 @@
-import {ConnectorType} from 'shared';
+import type {ConnectorType} from 'shared';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
 
 import {FieldKey} from '../../constants';
-import {FormDict} from '../../typings';
+import type {FormDict} from '../../typings';
 
 export const isS3BasedConnForm = (connectionData: FormDict, paramsType?: string) => {
     const type = (connectionData[FieldKey.DbType] || paramsType) as ConnectorType;

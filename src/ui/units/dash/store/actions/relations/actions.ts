@@ -1,15 +1,11 @@
-import {Dispatch} from 'redux';
-import {AliasClickHandlerArgs} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
+import type {Dispatch} from 'redux';
+import type {AliasClickHandlerArgs} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
 
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import {
-    DIALOG_RELATIONS,
-    DialogRelationsProps,
-} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
-import {
-    DIALOG_ALIASES,
-    DialogAliasesProps,
-} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
+import type {DialogRelationsProps} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
+import {DIALOG_RELATIONS} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
+import type {DialogAliasesProps} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
+import {DIALOG_ALIASES} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
 import * as actionTypes from '../../constants/dashActionTypes';
 
 export const openDialogRelations = ({widget, dashKitRef, onClose}: DialogRelationsProps) => {

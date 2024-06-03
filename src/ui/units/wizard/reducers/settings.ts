@@ -1,8 +1,8 @@
-import {ResetWizardStoreAction} from '../actions';
+import type {ResetWizardStoreAction} from '../actions';
+import type {SettingsAction} from '../actions/settings';
 import {
     SET_DEFAULTS_SET,
     SET_ROUTE_WORKBOOK_ID,
-    SettingsAction,
     TOGGLE_FULLSCREEN,
     TOGGLE_NAVIGATION,
     TOGGLE_VIEW_ONLY_MODE,

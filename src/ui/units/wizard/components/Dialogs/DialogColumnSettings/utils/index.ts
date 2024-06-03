@@ -1,15 +1,8 @@
-import {
-    ColumnSettings,
-    DatasetFieldType,
-    Field,
-    HierarchyField,
-    WidthAutoSetting,
-    isFieldHierarchy,
-    isParameter,
-} from 'shared';
+import type {ColumnSettings, Field, HierarchyField, WidthAutoSetting} from 'shared';
+import {DatasetFieldType, isFieldHierarchy, isParameter} from 'shared';
 
-import {DialogColumnSettingsFields} from '../DialogColumnSettings';
-import {ColumnSettingsState, PartialField} from '../hooks/useDialogColumnSettingsState';
+import type {DialogColumnSettingsFields} from '../DialogColumnSettings';
+import type {ColumnSettingsState, PartialField} from '../hooks/useDialogColumnSettingsState';
 
 export const getDefaultColumnWidthSettings = (): WidthAutoSetting => ({
     mode: 'auto',

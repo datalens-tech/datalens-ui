@@ -1,8 +1,8 @@
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {RevisionsListMode, RevisionsMode} from '../typings/entryContent';
 import {createSelector} from 'reselect';
 import {groupRevisionsByDate} from '../../components/Revisions/helpers';
-import {RevisionEntry} from '../../components/Revisions/types';
+import type {RevisionEntry} from '../../components/Revisions/types';
 
 export const selectEntryContent = (state: DatalensGlobalState) => state.entryContent || null;
 

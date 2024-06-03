@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 
-import {WizardVisualizationId} from '../../../constants';
-import {Shared} from '../../../types';
-import {EntryFields} from '../../us/types';
+import type {WizardVisualizationId} from '../../../constants';
+import type {Shared} from '../../../types';
+import type {EntryFields} from '../../us/types';
 
 export function filterDatasetsIdsForCheck(entries: Pick<EntryFields, 'entryId' | 'scope'>[]) {
     return entries

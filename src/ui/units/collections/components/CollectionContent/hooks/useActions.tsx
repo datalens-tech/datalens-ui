@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
-import {DropdownMenuItem} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
@@ -26,7 +26,7 @@ import {DropdownAction} from '../../../../../components/DropdownAction/DropdownA
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
-import {AppDispatch} from '../../../../../store';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import Utils from '../../../../../utils';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';

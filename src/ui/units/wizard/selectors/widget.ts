@@ -1,5 +1,6 @@
 import {i18n} from 'i18n';
-import {DL, DatalensGlobalState, URL_QUERY} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL, URL_QUERY} from 'ui';
 
 export const selectWidget = (state: DatalensGlobalState) => {
     if (state.wizard.widget.widget) {

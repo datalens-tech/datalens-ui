@@ -1,7 +1,7 @@
-import {SortedDataItem} from '@gravity-ui/react-data-table';
+import type {SortedDataItem} from '@gravity-ui/react-data-table';
 import {i18n} from 'i18n';
 import {get} from 'lodash';
-import {
+import type {
     AvailableFieldType,
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -10,9 +10,9 @@ import {
     DatasetOptions,
     DatasetRls,
     DatasetSourceAvatar,
-    Feature,
 } from 'shared';
-import {Permissions} from 'shared/types/dls';
+import {Feature} from 'shared';
+import type {Permissions} from 'shared/types/dls';
 import Utils from 'ui/utils';
 
 import {
@@ -27,8 +27,9 @@ import {
     getSourceColumn,
     getTitleColumn,
 } from './columns';
-import {FORMULA_CALC_MODE, FieldAction} from './constants';
-import {ColumnItem} from './types';
+import type {FieldAction} from './constants';
+import {FORMULA_CALC_MODE} from './constants';
+import type {ColumnItem} from './types';
 
 const WIDTH_15 = '15%';
 const WIDTH_20 = '20%';

@@ -5,7 +5,8 @@ import {useDispatch} from 'react-redux';
 import {DL, URL_QUERY} from 'ui';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
-import {EntryDialogBase, EntryDialogBaseProps} from '../../../../../components/EntryDialogues';
+import type {EntryDialogBaseProps} from '../../../../../components/EntryDialogues';
+import {EntryDialogBase} from '../../../../../components/EntryDialogues';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {getQueryParam} from '../../../utils';
 

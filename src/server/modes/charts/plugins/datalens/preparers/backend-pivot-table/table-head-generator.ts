@@ -1,9 +1,11 @@
-import {
+import type {
     ColorPalette,
     DATASET_FIELD_TYPES,
     MarkupItem,
     Palette,
     ServerField,
+} from '../../../../../../../shared';
+import {
     getFakeTitleOrTitle,
     getFormatOptions,
     isDateField,
@@ -25,7 +27,7 @@ import {MEASURE_NAME_PSEUDO_ID} from './constants/misc';
 import {colorizePivotTableHeaderByBackgroundSettings} from './helpers/backgroundColor';
 import {getCellValueForHeader, getPivotTableCellId} from './helpers/misc';
 import {getSortMeta} from './helpers/sort';
-import {
+import type {
     CharkitTableHead,
     ChartkitCell,
     ChartkitHeadCell,

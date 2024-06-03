@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {
     AddConfigItem,
@@ -10,9 +10,10 @@ import type {
     SetNewItemOptions,
 } from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
-import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
+import type {DatalensGlobalState} from 'index';
+import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import {
+import type {
     ConnectionQueryContent,
     ConnectionQueryTypeOptions,
     ConnectionQueryTypeValues,
@@ -21,16 +22,15 @@ import {
     DashSettings,
     DashTab,
     DashTabItem,
-    DashTabItemType,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
-    EntryUpdateMode,
     Operations,
     RecursivePartial,
     StringParams,
 } from 'shared';
-import {AppDispatch} from 'ui/store';
+import {DashTabItemType, EntryUpdateMode} from 'shared';
+import type {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -38,9 +38,10 @@ import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
-import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
+import type {EntryGlobalState} from '../../../../store/typings/entryContent';
+import {RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
-import {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
+import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
@@ -59,7 +60,7 @@ import {
     getControlValidation,
     getItemDataSource,
 } from './controls/helpers';
-import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
+import type {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {
     getBeforeCloseDialogItemAction,
@@ -67,7 +68,7 @@ import {
     migrateDataSettings,
 } from './helpers';
 
-import {DashDispatch} from './index';
+import type {DashDispatch} from './index';
 
 type GetState = () => DatalensGlobalState;
 

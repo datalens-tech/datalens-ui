@@ -1,4 +1,4 @@
-import {ReactElement} from 'react';
+import type {ReactElement} from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import {Toaster} from '@gravity-ui/uikit';
@@ -13,7 +13,7 @@ import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/d
 
 import {CHARTKIT_WIDGET_TYPE} from '../../../../../../../../ChartKit/components/Widget/Widget';
 
-import {ExportResultType} from './types';
+import type {ExportResultType} from './types';
 
 const i18n = I18n.keyset('chartkit.menu.export');
 

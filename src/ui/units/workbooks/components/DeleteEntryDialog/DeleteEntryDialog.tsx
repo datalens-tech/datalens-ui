@@ -5,10 +5,10 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import DialogManager from '../../../../components/DialogManager/DialogManager';
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {deleteEntry} from '../../store/actions';
 import {selectDeleteEntryIsLoading} from '../../store/selectors';
-import {WorkbookEntry} from '../../types';
+import type {WorkbookEntry} from '../../types';
 
 const i18n = I18n.keyset('new-workbooks');
 

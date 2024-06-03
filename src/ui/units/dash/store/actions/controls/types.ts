@@ -1,13 +1,13 @@
-import {ConnectionQueryTypeValues} from 'shared';
+import type {ConnectionQueryTypeValues} from 'shared';
 import type {Operations} from 'shared/modules';
-import {
+import type {
     ConnectionQueryContent,
     DATASET_FIELD_TYPES,
     DashTabItemControlSourceType,
     DatasetFieldType,
 } from 'shared/types';
 
-import {SelectorDialogState} from '../dashTyped';
+import type {SelectorDialogState} from '../dashTyped';
 
 export type SelectorDialogValidation = {
     title?: string;

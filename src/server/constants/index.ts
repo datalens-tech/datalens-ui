@@ -1,4 +1,5 @@
-import {ColorPalette, Palette, selectPaletteById} from '../../shared';
+import type {ColorPalette, Palette} from '../../shared';
+import {selectPaletteById} from '../../shared';
 
 const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 const CHARTS_API_BASE_URL = '/api/charts/v1/charts';

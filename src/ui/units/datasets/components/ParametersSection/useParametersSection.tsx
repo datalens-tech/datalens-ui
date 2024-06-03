@@ -1,14 +1,14 @@
 import React from 'react';
 
 import {useDispatch} from 'react-redux';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 import {openDialogParameter} from '../../../../store/actions/dialog';
 import {
     updateFieldWithValidation,
     updateFieldWithValidationByMultipleUpdates,
 } from '../../store/actions/creators';
-import {
+import type {
     FieldHeaderColumn,
     FieldListColumn,
     FieldRowControlSettings,

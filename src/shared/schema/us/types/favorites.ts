@@ -1,7 +1,7 @@
-import {Permissions} from '../../../types';
+import type {Permissions} from '../../../types';
 
-import {EntriesCommonArgs} from './common';
-import {EntryFavoriteFields} from './fields';
+import type {EntriesCommonArgs} from './common';
+import type {EntryFavoriteFields} from './fields';
 
 export interface AddFavoriteResponse {
     entryId: string;

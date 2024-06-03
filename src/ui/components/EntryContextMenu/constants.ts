@@ -1,5 +1,5 @@
 import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
-import {ConnectorType} from 'shared/constants/connections';
+import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
@@ -9,7 +9,7 @@ import {registry} from '../../registry';
 import Utils from '../../utils/utils';
 import {getAvailableScopes} from '../RevisionsPanel/utils';
 
-import {ContextMenuItem, ContextMenuParams} from './types';
+import type {ContextMenuItem, ContextMenuParams} from './types';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',

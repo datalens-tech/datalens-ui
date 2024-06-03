@@ -1,16 +1,18 @@
 import type {YagrConfig} from '@gravity-ui/chartkit/yagr';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
+import type {
+    IChartEditor,
+    QLChartType,
+    QlConfigPreviewTableData,
+    ServerVisualization,
+    StringParams,
+} from '../../../../../../shared';
 import {
     ConnectorType,
     DATALENS_QL_CONNECTION_TYPES,
     DATALENS_QL_TYPES,
-    IChartEditor,
-    QLChartType,
     QLParamType,
-    QlConfigPreviewTableData,
-    ServerVisualization,
-    StringParams,
     WizardVisualizationId,
     biToDatalensQL,
     getDatalensQLTypeName,

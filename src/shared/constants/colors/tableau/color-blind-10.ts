@@ -1,4 +1,5 @@
-import {PALETTE_ID, Palette} from '../types';
+import type {Palette} from '../types';
+import {PALETTE_ID} from '../types';
 
 export default {
     id: PALETTE_ID.COLOR_BLIND_10,

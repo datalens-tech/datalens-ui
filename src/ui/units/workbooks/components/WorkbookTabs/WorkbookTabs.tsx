@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {NavigationTabs} from 'components/NavigationTabs/NavigationTabs';
-import {WorkbookWithPermissions} from 'shared/schema';
+import type {WorkbookWithPermissions} from 'shared/schema';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
 import {registry} from '../../../../registry';

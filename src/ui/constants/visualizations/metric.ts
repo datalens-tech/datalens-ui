@@ -1,6 +1,6 @@
 import {SquareHashtag} from '@gravity-ui/icons';
 
-import {Shared} from '../../../shared';
+import type {Shared} from '../../../shared';
 import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES_AND_MARKUP} from '../misc';
 

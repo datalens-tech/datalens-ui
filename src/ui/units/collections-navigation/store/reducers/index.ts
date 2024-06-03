@@ -1,5 +1,5 @@
 import type {GetCollectionBreadcrumbsResponse} from '../../../../../shared/schema';
-import {CollectionsNavigationAction} from '../actions';
+import type {CollectionsNavigationAction} from '../actions';
 import {
     GET_COLLECTION_BREADCRUMBS_FAILED,
     GET_COLLECTION_BREADCRUMBS_LOADING,

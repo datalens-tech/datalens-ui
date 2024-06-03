@@ -1,9 +1,9 @@
 import type {MonitoringPresetV1, MonitoringPresetV2, QLEntryDataShared} from '../../ql/common';
 
-import {QlConfigV1} from './v1';
-import {QlConfigV2} from './v2';
-import {QlConfigV3} from './v3';
-import {
+import type {QlConfigV1} from './v1';
+import type {QlConfigV2} from './v2';
+import type {QlConfigV3} from './v3';
+import type {
     QLParamIntervalV4,
     QLParamV4,
     QLPreviewTableDataColumnV4,

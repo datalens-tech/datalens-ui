@@ -1,5 +1,5 @@
 import {createAction} from '../../gateway-utils';
-import {
+import type {
     AddGoogleSheetArgs,
     AddGoogleSheetResponse,
     AddYandexDocumentArgs,

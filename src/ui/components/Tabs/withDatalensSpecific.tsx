@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
+import type {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
 import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {isMobileView} from 'ui/utils/mobile';

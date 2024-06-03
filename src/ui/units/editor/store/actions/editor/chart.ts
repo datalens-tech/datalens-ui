@@ -1,4 +1,4 @@
-import {Status} from '../../../constants/common';
+import type {Status} from '../../../constants/common';
 
 export const PREVIEW_DRAW = Symbol('editor/chart/PREVIEW_DRAW');
 type DrawPreviewAction = {

@@ -18,7 +18,7 @@ import {
     getPreparedConstants,
     removeEmptyNDatasetFieldsProperties,
 } from './helpers/helpers';
-import {
+import type {
     ChartAlertProps,
     ChartWidgetData,
     ChartWidgetPropsWithContext,

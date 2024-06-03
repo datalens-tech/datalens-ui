@@ -1,5 +1,6 @@
 import {GeoDots, LayoutColumns3, SquareHashtag} from '@gravity-ui/icons';
-import {DatasetFieldType, Field, VisualizationLayerShared, isMeasureValue} from 'shared';
+import type {Field, VisualizationLayerShared} from 'shared';
+import {DatasetFieldType, isMeasureValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';

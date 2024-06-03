@@ -1,7 +1,8 @@
 import querystring from 'querystring';
 
-import {AppConfig} from '@gravity-ui/nodekit';
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import type {AppConfig} from '@gravity-ui/nodekit';
+import type {AxiosInstance, AxiosRequestConfig} from 'axios';
+import axios from 'axios';
 
 import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
 

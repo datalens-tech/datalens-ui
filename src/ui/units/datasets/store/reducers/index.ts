@@ -2,7 +2,7 @@ import {registry} from 'ui/registry';
 
 import {RESET_DATASET_STATE} from '../actions/types/dataset';
 import {getInitialState, initialPreview} from '../constants';
-import {DatasetReduxAction, DatasetReduxState} from '../types';
+import type {DatasetReduxAction, DatasetReduxState} from '../types';
 
 import dataset from './dataset';
 

@@ -1,6 +1,6 @@
 import {PureComponent} from 'react';
 
-import {TextInputSize} from '@gravity-ui/uikit';
+import type {TextInputSize} from '@gravity-ui/uikit';
 
 export interface DatepickerOutputDates {
     from: string | null;

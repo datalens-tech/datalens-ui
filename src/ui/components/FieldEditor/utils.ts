@@ -7,7 +7,7 @@ import {
     INVALID_ID,
     NEW_FIELD_PROPERTIES,
 } from './constants';
-import {FieldEditorErrors, ModifiedDatasetField} from './typings';
+import type {FieldEditorErrors, ModifiedDatasetField} from './typings';
 
 // datalens/backend/lib/bi_core/bi_core/components/ids.py?rev=r9134456#L19
 const ID_ALLOWED_CHARS = /^[a-z0-9_-]{1,36}$/;

@@ -1,5 +1,5 @@
 import {DATASET_FIELDS_URL, DATASET_ID_PLACEHOLDER} from '../constants';
-import {SourceControlFieldsRequest} from '../types';
+import type {SourceControlFieldsRequest} from '../types';
 
 export const prepareFieldsRequest = ({
     datasetId,

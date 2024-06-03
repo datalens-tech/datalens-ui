@@ -6,8 +6,8 @@ import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {CSVDelimiter, CSVEncoding} from 'shared';
 
-import {FileSourceItem} from '../../../../../store';
-import {HandleSourceSettingsApply} from '../../types';
+import type {FileSourceItem} from '../../../../../store';
+import type {HandleSourceSettingsApply} from '../../types';
 
 const b = block('conn-form-file');
 const i18n = I18n.keyset('connections.file.view');

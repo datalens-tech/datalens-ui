@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {ThemeType, useThemeType} from '@gravity-ui/uikit';
-import {IconId} from 'shared';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {useThemeType} from '@gravity-ui/uikit';
+import type {IconId} from 'shared';
 
 import {IconById} from '../IconById/IconById';
 

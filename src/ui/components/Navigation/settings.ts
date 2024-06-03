@@ -1,7 +1,7 @@
 import {UserSettings} from '../../libs/userSettings';
 
 import {ORDER_DIRECTION, ORDER_FIELD} from './constants';
-import {FilterCreatedBy, FilterOrderByDirection, FilterOrderByField} from './types';
+import type {FilterCreatedBy, FilterOrderByDirection, FilterOrderByField} from './types';
 
 export class NavigationSettings {
     private instance = UserSettings.getInstance();

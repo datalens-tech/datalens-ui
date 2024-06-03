@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {PANE_VIEWS} from '../../constants/common';

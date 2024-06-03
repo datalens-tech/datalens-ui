@@ -3,8 +3,8 @@ import React from 'react';
 import {usePrevious} from 'hooks/usePrevious';
 import isEqual from 'lodash/isEqual';
 
-import {FiltersTypes} from '../components/Filters/Filters';
-import {DashMetaData, RelationType} from '../types';
+import type {FiltersTypes} from '../components/Filters/Filters';
+import type {DashMetaData, RelationType} from '../types';
 
 import {getChangedRelations, getMappedFilters} from './helpers';
 

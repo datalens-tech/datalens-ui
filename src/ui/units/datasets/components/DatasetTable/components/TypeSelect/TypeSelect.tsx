@@ -4,8 +4,9 @@ import {Button, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {DATASET_FIELD_TYPES, DatasetField} from 'shared';
-import {DataTypeIcon, DatalensGlobalState} from 'ui';
+import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {DataTypeIcon} from 'ui';
 
 import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
 import {datasetValidationSelector} from '../../../../store/selectors/dataset';

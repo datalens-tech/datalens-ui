@@ -2,11 +2,11 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useInView} from 'react-intersection-observer';
-import {ChunkItem} from 'ui/units/workbooks/types';
+import type {ChunkItem} from 'ui/units/workbooks/types';
 
 import {EmptyRow, Row} from '../Row/Row';
 import {ROW_HEIGHT, options} from '../constants';
-import {WorkbookEntriesTableProps} from '../types';
+import type {WorkbookEntriesTableProps} from '../types';
 
 import './ChunkGroup.scss';
 

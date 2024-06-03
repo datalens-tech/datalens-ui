@@ -1,33 +1,36 @@
-import React from 'react';
+import type React from 'react';
 
-import {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
-import {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
-import {ControlWidget} from 'ui/libs/DatalensChartkit/types';
-import {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {ControlWidget} from 'ui/libs/DatalensChartkit/types';
+import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {
+import type {
     ChartInitialParams,
     ChartKitLoadSuccess,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {
+import type {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
-import {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
-import {ChartsData, ChartsProps} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {
+import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
+import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
+import type {
+    ChartsData,
+    ChartsProps,
+} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {
     Widget as ChartWidget,
     CombinedError,
     LoadedWidget,
     LoadedWidgetData,
     OnChangeData,
 } from '../../../libs/DatalensChartkit/types';
-import {WidgetType} from '../../../units/dash/modules/constants';
-import {WidgetPluginProps} from '../../DashKit/plugins/Widget/types';
+import type {WidgetType} from '../../../units/dash/modules/constants';
+import type {WidgetPluginProps} from '../../DashKit/plugins/Widget/types';
 
 type ChartKitBaseWrapperProps = ChartsProps & {
     onInnerParamsChanged?: (params: StringParams) => void;

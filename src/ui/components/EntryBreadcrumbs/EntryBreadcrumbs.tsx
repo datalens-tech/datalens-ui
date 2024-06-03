@@ -3,9 +3,10 @@ import React from 'react';
 import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
-import {BreadcrumbsItem, getWorkbookBreadcrumbsItems} from './helpers';
+import type {BreadcrumbsItem} from './helpers';
+import {getWorkbookBreadcrumbsItems} from './helpers';
 
 import './EntryBreadcrumbs.scss';
 

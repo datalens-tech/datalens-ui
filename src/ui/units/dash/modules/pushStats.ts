@@ -1,8 +1,8 @@
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
-import {Optional} from 'utility-types';
+import type {Optional} from 'utility-types';
 
-import {DashStats} from '../../../../shared';
+import type {DashStats} from '../../../../shared';
 import {DL} from '../../../constants';
 import {getSdk} from '../../../libs/schematic-sdk';
 

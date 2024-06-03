@@ -1,8 +1,9 @@
 import * as yup from 'yup';
 
-import {FormValidationError, VALIDATION_ERROR} from '../../../helpers/validation';
-import {FormOptions, FreeformSource} from '../../../store/types';
-import {EditedSource} from '../types';
+import type {FormValidationError} from '../../../helpers/validation';
+import {VALIDATION_ERROR} from '../../../helpers/validation';
+import type {FormOptions, FreeformSource} from '../../../store/types';
+import type {EditedSource} from '../types';
 
 import {BASE_TITLE_FORM_OPTIONS, TABLE_NAMES_INPUT, TITLE_INPUT, getPaths} from './helpers';
 

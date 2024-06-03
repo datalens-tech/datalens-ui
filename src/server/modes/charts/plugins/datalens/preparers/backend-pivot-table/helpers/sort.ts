@@ -1,6 +1,6 @@
 import {PseudoFieldTitle} from '../../../../../../../../shared';
-import {BackendPivotTableCellCustom} from '../../../types';
-import {HeaderInfo, PivotDataStructure, PivotDataTotals} from '../types';
+import type {BackendPivotTableCellCustom} from '../../../types';
+import type {HeaderInfo, PivotDataStructure, PivotDataTotals} from '../types';
 
 export const getSortDirection = (
     currentDirection: HeaderInfo['sorting_direction'],

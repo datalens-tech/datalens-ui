@@ -1,4 +1,4 @@
-import {I18NFn} from '@gravity-ui/i18n';
+import type {I18NFn} from '@gravity-ui/i18n';
 
 import type KeysetsData from './keysets/data.json';
 

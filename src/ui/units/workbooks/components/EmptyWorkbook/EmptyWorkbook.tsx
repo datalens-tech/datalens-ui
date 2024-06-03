@@ -6,8 +6,8 @@ import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
-import {WorkbookWithPermissions} from '../../../../../shared/schema';
-import {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookWithPermissions} from '../../../../../shared/schema';
+import type {WorkbookEntriesFilters} from '../../types';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './EmptyWorkbook.scss';

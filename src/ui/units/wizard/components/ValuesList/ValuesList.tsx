@@ -5,17 +5,19 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
 import {connect} from 'react-redux';
-import {
+import type {
     ApiV2Filter,
     ApiV2Parameter,
     ApiV2RequestField,
-    DATASET_FIELD_TYPES,
     DatasetOptions,
     Field,
     FilterField,
     MarkupItem,
-    TIMEOUT_90_SEC,
     Update,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    TIMEOUT_90_SEC,
     getFieldsApiV2RequestSection,
     getFiltersApiV2RequestSection,
     getParametersApiV2RequestSection,
@@ -25,13 +27,13 @@ import {
 import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
 import {getDistinctValue, getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {getWhereOperation} from '../../../../libs/datasetHelper';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {selectWizardWorkbookId} from '../../selectors/settings';
-import {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
+import type {ExtraSettings} from '../Dialogs/DialogColor/DialogColor';
 
 import './ValuesList.scss';
 

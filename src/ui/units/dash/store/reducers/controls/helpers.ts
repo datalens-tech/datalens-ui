@@ -1,5 +1,5 @@
 import {i18n} from 'i18n';
-import {DashTab, DashTabItemGroupControl} from 'shared/types';
+import type {DashTab, DashTabItemGroupControl} from 'shared/types';
 
 import type {SelectorDialogState} from '../../actions/dashTyped';
 

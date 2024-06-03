@@ -1,10 +1,12 @@
 import React from 'react';
 
-import {Button, SelectOption, SelectProps, Select as UiKitSelect} from '@gravity-ui/uikit';
+import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
+import {Button, Select as UiKitSelect} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {SelectItem} from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
 

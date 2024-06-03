@@ -1,6 +1,6 @@
 import {PlaceholderId} from '../../../../constants';
-import {QLEntryDataShared} from '../../../../types';
-import {QlConfigV1} from '../../../../types/config/ql/v1';
+import type {QLEntryDataShared} from '../../../../types';
+import type {QlConfigV1} from '../../../../types/config/ql/v1';
 import {QlConfigVersions} from '../../../../types/ql/versions';
 
 export const mapUndefinedConfigToV1 = (config: QLEntryDataShared): QlConfigV1 => {

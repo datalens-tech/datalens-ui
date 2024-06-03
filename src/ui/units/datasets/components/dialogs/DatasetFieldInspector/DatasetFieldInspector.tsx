@@ -3,8 +3,9 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatasetField} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatasetField} from 'shared';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import {closeDialog} from '../../../../../store/actions/dialog';

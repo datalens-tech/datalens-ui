@@ -1,4 +1,4 @@
-import {ServerField} from '../../../../../../../../../../shared';
+import type {ServerField} from '../../../../../../../../../../shared';
 
 export const ORDER_BY_MAP = {
     '9aa48a4f-cace-4256-bd59-55fc7aa43c4f': 'desc',

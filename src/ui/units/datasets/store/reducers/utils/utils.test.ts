@@ -1,6 +1,6 @@
-import {DatasetSource} from 'shared';
+import type {DatasetSource} from 'shared';
 
-import {FreeformSource} from '../../types';
+import type {FreeformSource} from '../../types';
 
 import {RELATIONS} from './mocks';
 

@@ -7,7 +7,7 @@ import type {
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
+import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartKitWidgetTooltip['renderer']>;

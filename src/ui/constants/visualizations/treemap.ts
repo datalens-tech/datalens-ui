@@ -1,13 +1,6 @@
 import {ChevronsExpandUpRight, GeoPolygons} from '@gravity-ui/icons';
-import {
-    Field,
-    GraphShared,
-    Placeholder,
-    Shared,
-    WizardVisualizationId,
-    createMeasureNames,
-    isMeasureNameOrValue,
-} from 'shared';
+import type {Field, GraphShared, Placeholder, Shared} from 'shared';
+import {WizardVisualizationId, createMeasureNames, isMeasureNameOrValue} from 'shared';
 import {
     prepareFieldToDimensionTransformation,
     prepareFieldToMeasureTransformation,

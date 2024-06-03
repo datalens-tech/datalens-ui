@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, ServerPlaceholder, V4Field} from '../../../../../../../shared';
+import type {ServerPlaceholder, V4Field} from '../../../../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../../../../shared';
 import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
@@ -14,7 +15,7 @@ import {
 import {getAllPlaceholderItems, log} from '../../utils/misc-helpers';
 import {prepareFieldsForPayload} from '../helpers';
 
-import {
+import type {
     PrepareSingleSourceRequestArgs,
     PrepareSourceRequestBody,
     PrepareSourceRequestsArgs,

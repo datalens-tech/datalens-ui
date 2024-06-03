@@ -1,4 +1,4 @@
-import {ServerField, ServerFieldFormatting, ServerPlaceholder} from '../../../../../shared';
+import type {ServerField, ServerFieldFormatting, ServerPlaceholder} from '../../../../../shared';
 import {
     DATASET_ID_KEY_PLACEHOLDER,
     DATASET_ID_KEY_TEMPLATE,

@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ColumnSettings, DATASET_FIELD_TYPES, DatasetFieldType} from 'shared';
 
-import {DialogColumnSettingsFields} from '../DialogColumnSettings';
+import type {DialogColumnSettingsFields} from '../DialogColumnSettings';
 import {mapFieldsToColumnSettingsState} from '../utils';
 
 type UseDialogColumnSettingsStateArgs = {

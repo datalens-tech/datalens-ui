@@ -1,19 +1,21 @@
-import {
-    ApiV2Annotations,
+import type {
     ColorPalette,
     FieldGuid,
     Palette,
-    PseudoFieldTitle,
     ServerField,
     TableFieldBackgroundSettings,
+} from '../../../../../../../../shared';
+import {
+    ApiV2Annotations,
+    PseudoFieldTitle,
     getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
-import {ChartColorsConfig} from '../../../types';
+import type {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
 import {getColor} from '../../../utils/constants';
 import {getCurrentBackgroundGradient} from '../../helpers/backgroundSettings/misc';
-import {
+import type {
     AnnotationsMap,
     CellValue,
     ChartkitCell,

@@ -1,4 +1,4 @@
-import {StringParams, TableWidgetEventScope} from 'shared';
+import type {StringParams, TableWidgetEventScope} from 'shared';
 
 export type ActionParamsData = {
     params: StringParams;

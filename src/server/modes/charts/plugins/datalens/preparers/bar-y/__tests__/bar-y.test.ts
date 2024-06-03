@@ -1,8 +1,9 @@
 import pick from 'lodash/pick';
 
-import {AxisMode, DATASET_FIELD_TYPES, WizardVisualizationId} from '../../../../../../../../shared';
+import type {DATASET_FIELD_TYPES} from '../../../../../../../../shared';
+import {AxisMode, WizardVisualizationId} from '../../../../../../../../shared';
 import {DateTimeField, EmptyPrepapreArgs, IntegerField} from '../../__tests__/common.mock';
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import {prepareBarYData} from '../prepare-bar-y-data';
 
 const DimensionField = {...IntegerField, type: 'DIMENSION', guid: 'DimensionField_guid'};

@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {ConnectorType} from 'shared';
+import type {ConnectorType} from 'shared';
 
 import {
     formSchemaSelector,

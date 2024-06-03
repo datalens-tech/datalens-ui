@@ -6,7 +6,7 @@ import Highcharts from 'highcharts';
 import merge from 'lodash/merge';
 
 import {getGraph} from '../../../modules/graph/graph';
-import {MetricTileProps, MetricWidgetDataItem} from '../types';
+import type {MetricTileProps, MetricWidgetDataItem} from '../types';
 
 import {
     GREEN_BACKGROUND,

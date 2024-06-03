@@ -1,11 +1,11 @@
-import {ChartKitWidgetData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
-import {GraphWidget} from '../../types';
-import {ChartKitAdapterProps} from '../types';
+import type {GraphWidget} from '../../types';
+import type {ChartKitAdapterProps} from '../types';
 
 import {handleClick} from './d3-event-handlers';
 import {isPointSelected, setPointSelectState, setSeriesSelectState} from './d3-utils';

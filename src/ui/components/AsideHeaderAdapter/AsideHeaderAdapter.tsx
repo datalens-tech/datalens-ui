@@ -1,13 +1,8 @@
 import React from 'react';
 
 import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
-import {
-    AsideHeader,
-    AsideHeaderProps,
-    AsideHeaderTopAlertProps,
-    FooterItem,
-    MenuItem,
-} from '@gravity-ui/navigation';
+import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
+import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as baseI18n} from 'i18n';
@@ -19,7 +14,7 @@ import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import Utils from 'ui/utils';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
-import {AsideHeaderData} from '../../store/typings/asideHeader';
+import type {AsideHeaderData} from '../../store/typings/asideHeader';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
 

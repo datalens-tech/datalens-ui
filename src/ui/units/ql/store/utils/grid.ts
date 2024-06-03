@@ -1,12 +1,19 @@
 import Hashids from 'hashids';
 import moment from 'moment';
-import {QLChartType, QlConfig, Shared} from 'shared';
+import type {QLChartType, QlConfig, Shared} from 'shared';
 import {QlConfigVersions} from 'shared/types/ql/versions';
 
 import {qlTypes} from '../../configs/chart-types';
 import {DEFAULT_TAB_ID, DEFAULT_TYPE, PANE_VIEWS} from '../../constants';
 import {getDefaultQlVisualization} from '../../utils/visualization';
-import {QLEntry, QLGridSchemes, QLPaneData, QLSettings, QLTabData, QLTabs} from '../typings/ql';
+import type {
+    QLEntry,
+    QLGridSchemes,
+    QLPaneData,
+    QLSettings,
+    QLTabData,
+    QLTabs,
+} from '../typings/ql';
 
 interface CreateGridDataParams {
     tabs: QLTabs;

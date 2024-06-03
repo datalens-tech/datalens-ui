@@ -3,7 +3,7 @@ import React from 'react';
 import {ArrowToggle, Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {CollapseProps} from './types';
+import type {CollapseProps} from './types';
 
 import './Collapse.scss';
 

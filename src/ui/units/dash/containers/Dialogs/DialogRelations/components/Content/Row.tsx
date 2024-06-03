@@ -7,7 +7,7 @@ import {DashCommonQa, DashRelationTypes} from 'shared';
 
 import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
 import {getRelationsIcon} from '../../helpers';
-import {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
+import type {AliasClickHandlerData, DashkitMetaDataItem, RelationType} from '../../types';
 
 import {
     getClampedText,

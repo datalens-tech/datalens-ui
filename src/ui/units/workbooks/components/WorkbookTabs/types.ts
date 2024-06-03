@@ -1,6 +1,6 @@
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 
-import {TAB_ALL} from './constants';
+import type {TAB_ALL} from './constants';
 
 export type TabId = EntryScope | typeof TAB_ALL;
 

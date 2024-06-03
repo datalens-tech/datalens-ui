@@ -5,15 +5,14 @@ import {CaretLeft, CaretRight} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {
+import type {
     BarTableCell,
     BarViewOptions,
-    ChartKitTableQa,
     NumberViewOptions,
     TableCommonCell,
     TableHead,
-    isMarkupItem,
 } from 'shared';
+import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import type {THead} from '../../../../../../../components/Table/types';

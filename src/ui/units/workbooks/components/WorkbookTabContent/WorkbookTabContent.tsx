@@ -6,9 +6,9 @@ import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
-import {EntryScope} from 'shared';
-import {WorkbookWithPermissions} from 'shared/schema';
-import {AppDispatch} from 'ui/store';
+import type {EntryScope} from 'shared';
+import type {WorkbookWithPermissions} from 'shared/schema';
+import type {AppDispatch} from 'ui/store';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {getWorkbookEntries, resetWorkbookEntries} from '../../store/actions';
@@ -18,7 +18,7 @@ import {
     selectWorkbookEntriesIsLoading,
     selectWorkbookItems,
 } from '../../store/selectors';
-import {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 

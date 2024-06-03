@@ -1,5 +1,5 @@
-import {CSVDelimiter, CSVEncoding} from '../../../constants';
-import {DATASET_FIELD_TYPES} from '../../../types';
+import type {CSVDelimiter, CSVEncoding} from '../../../constants';
+import type {DATASET_FIELD_TYPES} from '../../../types';
 import type {GoogleRefreshToken} from '../../types';
 
 export type StateStatus = 'ready' | 'in_progress' | 'failed';

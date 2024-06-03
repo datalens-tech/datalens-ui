@@ -1,5 +1,6 @@
 import type {AppConfig} from '@gravity-ui/nodekit';
-import axios, {AxiosInstance} from 'axios';
+import type {AxiosInstance} from 'axios';
+import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
 import {DEFAULT_TIMEOUT} from '../../shared';

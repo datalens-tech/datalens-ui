@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {MiddlewareStage} from '../../../components/charts-engine/types';
 

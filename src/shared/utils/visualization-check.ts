@@ -1,4 +1,5 @@
-import {Link, WizardVisualizationId} from '../../shared';
+import type {Link} from '../../shared';
+import {WizardVisualizationId} from '../../shared';
 import {QLChartType} from '../constants';
 
 export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {

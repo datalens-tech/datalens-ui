@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ConnectableElement} from 'react-dnd';
+import type {ConnectableElement} from 'react-dnd';
 
 import {ParametersContainer} from './ParametersContainer/ParametersContainer';
 

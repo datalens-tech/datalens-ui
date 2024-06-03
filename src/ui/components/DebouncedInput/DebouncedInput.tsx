@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {TextArea, TextAreaProps, TextInput, TextInputProps} from '@gravity-ui/uikit';
+import type {TextAreaProps, TextInputProps} from '@gravity-ui/uikit';
+import {TextArea, TextInput} from '@gravity-ui/uikit';
 import debounce from 'lodash/debounce';
 
 type WithMultiline = {multiline: true} & TextAreaProps;

@@ -1,4 +1,4 @@
-import {
+import type {
     ColorMode,
     CommonNumberFormattingOptions,
     DATASET_FIELD_TYPES,
@@ -9,9 +9,9 @@ import {
     ServerShapesConfig,
     ServerVisualizationLayer,
 } from '../../../../../../../../../shared';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from '../../types';
-import {RowDataValue, XAxisValue} from '../types';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from '../../types';
+import type {RowDataValue, XAxisValue} from '../types';
 
 export interface PrepareLinesArgs {
     isMultiDatasets: boolean;

@@ -11,7 +11,7 @@ import {
     COPY_ENTRIES_TO_WORKBOOK_FAILED,
 } from '../constants/copyEntriesToWorkbook';
 
-import {CopyingEntiesToWorkbookAction} from '../actions/copyEntriesToWorkbook';
+import type {CopyingEntiesToWorkbookAction} from '../actions/copyEntriesToWorkbook';
 
 import type {
     GetEntryResponse,

@@ -1,10 +1,10 @@
-import {AxiosError} from 'axios';
+import type {AxiosError} from 'axios';
 import {EntryUpdateMode} from 'shared';
 import {sdk, Utils} from 'ui';
 import {reloadRevisionsOnSave, setChartsEntryContent} from './entryContent';
-import {AppDispatch} from '../index';
+import type {AppDispatch} from '../index';
 import logger from '../../libs/logger';
-import {GetEntryResponse} from '../../../shared/schema';
+import type {GetEntryResponse} from '../../../shared/schema';
 import {setDialogConfirmLoadingStatus} from './dialog';
 import {DialogConfirmApplyStatus} from '../../components/DialogConfirm/DialogConfirm';
 

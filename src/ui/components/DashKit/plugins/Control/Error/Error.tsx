@@ -4,11 +4,11 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {closeDialog, openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {isMobileView} from 'ui/utils/mobile';
 
-import {ErrorData} from '../types';
+import type {ErrorData} from '../types';
 import {prepareSelectorError} from '../utils';
 
 import iconAlert from 'assets/icons/alert.svg';
