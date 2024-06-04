@@ -114,4 +114,15 @@
             width: 80px;
         }
     }
+
+    &_mobile {
+        #{$class}__content-cell {
+            @include text-body-2;
+            padding: 4px;
+        }
+
+        #{$class}__content-cell_title {
+            width: 100%;
+        }
+    }
 }

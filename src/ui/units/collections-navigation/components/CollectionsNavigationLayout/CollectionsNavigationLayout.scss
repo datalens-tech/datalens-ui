@@ -100,12 +100,10 @@ $class: 'dl-collections-navigation-layout';
         }
 
         .#{$class}__header-title {
+            @include overflow-ellipsis;
             @include text-header-1;
-            white-space: nowrap;
             max-width: 100%;
             display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .#{$class}__content {

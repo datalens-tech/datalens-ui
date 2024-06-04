@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
 import type {AppDispatch} from 'ui/store';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
@@ -103,7 +104,9 @@ export const WorkbookPage = () => {
                 <div className={b('layout')}>
                     <div className={b('container')}>
                         <div className={b('controls')}>
-                            <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
+                            {!isMobileView && (
+                                <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
+                            )}
                             {workbook && <WorkbookTabs workbook={workbook} />}
                         </div>
                         <div className={b('content')}>

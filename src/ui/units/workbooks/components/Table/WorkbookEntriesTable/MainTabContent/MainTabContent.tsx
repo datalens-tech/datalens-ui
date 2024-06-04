@@ -9,6 +9,7 @@ import {useDispatch} from 'react-redux';
 import type {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
 import type {ChunkItem} from 'ui/units/workbooks/types';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
 import {EmptyRow} from '../Row/Row';
@@ -31,6 +32,7 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     loadMoreEntries: () => void;
     retryLoadEntries: () => void;
     createEntryBtn?: React.ReactNode;
+    clearView?: boolean;
 }
 
 const MainTabContent = ({
@@ -49,6 +51,7 @@ const MainTabContent = ({
     isErrorMessage,
     isLoading,
     createEntryBtn,
+    clearView,
 }: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -85,9 +88,16 @@ const MainTabContent = ({
     };
 
     const getActionBtn = () => {
+        const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : undefined;
+
         if (isErrorMessage) {
             return (
-                <Button onClick={retryLoadEntries} className={b('retry-btn')} view="outlined">
+                <Button
+                    onClick={retryLoadEntries}
+                    size={buttonSize}
+                    className={b('retry-btn')}
+                    view="outlined"
+                >
                     {i18n('action_retry')}
                 </Button>
             );
@@ -95,7 +105,12 @@ const MainTabContent = ({
 
         if (isShowMoreBtn && isOpen) {
             return (
-                <Button onClick={loadMoreEntries} className={b('show-more-btn')} view="outlined">
+                <Button
+                    onClick={loadMoreEntries}
+                    size={buttonSize}
+                    className={b('show-more-btn')}
+                    view="outlined"
+                >
                     {i18n('action_show-more')}
                 </Button>
             );
@@ -104,36 +119,44 @@ const MainTabContent = ({
         return null;
     };
 
-    return (
-        <div className={b()}>
-            <div className={b('header', {closed: !isOpen})}>
-                <div className={b('content')}>
-                    <div className={b('title')} onClick={() => setIsOpen(!isOpen)}>
-                        {isOpen ? <ChevronDown /> : <ChevronUp />}
+    const showCreateButton = workbook.permissions.update && !isMobileView;
 
-                        <div className={b('title-text')}>{title}</div>
-                    </div>
-                </div>
-                {workbook.permissions.update && (
+    if (!isLoading && isMobileView && chunk.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className={b({mobile: isMobileView})}>
+            {!clearView && (
+                <div className={b('header', {closed: !isOpen})}>
                     <div className={b('content')}>
-                        <div className={b('create-btn')}>
-                            {createEntryBtn ?? (
-                                <Button onClick={handleCreateEntity}>
-                                    <Icon data={Plus} />
-                                    {actionCreateText}
-                                </Button>
-                            )}
+                        <div className={b('title')} onClick={() => setIsOpen(!isOpen)}>
+                            {isOpen ? <ChevronDown /> : <ChevronUp />}
+
+                            <div className={b('title-text')}>{title}</div>
                         </div>
                     </div>
-                )}
-            </div>
+                    {showCreateButton && (
+                        <div className={b('content')}>
+                            <div className={b('create-btn')}>
+                                {createEntryBtn ?? (
+                                    <Button onClick={handleCreateEntity}>
+                                        <Icon data={Plus} />
+                                        {actionCreateText}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
 
             <div className={b('table')}>
                 <div className={b('table-header')}>
                     <div className={b('table-header-cell', {title: true})} />
-                    <div className={b('table-header-cell', {author: true})} />
+                    {!isMobileView && <div className={b('table-header-cell', {author: true})} />}
                     <div className={b('table-header-cell', {date: true})} />
-                    <div className={b('table-header-cell', {controls: true})} />
+                    {!isMobileView && <div className={b('table-header-cell', {controls: true})} />}
                 </div>
                 {!isLoading && getContentTab()}
             </div>
