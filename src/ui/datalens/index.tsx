@@ -142,12 +142,8 @@ const DatalensPage: React.FC = () => {
     }
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
 
-    if (showMobileHeader) {
-        return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;
-    }
-
-    if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
+    if (token && showMobileHeader) {
+        return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
     }
 
     if (token && showAsideHeaderAdapter) {
