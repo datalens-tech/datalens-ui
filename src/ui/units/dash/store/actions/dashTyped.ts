@@ -19,6 +19,7 @@ import type {
     ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
+    DashEntry,
     DashSettings,
     DashTab,
     DashTabItem,
@@ -29,7 +30,7 @@ import type {
     RecursivePartial,
     StringParams,
 } from 'shared';
-import {DashTabItemType, EntryUpdateMode} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
@@ -49,8 +50,9 @@ import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
 import {
+    selectDash,
     selectDashData,
-    selectDashEntry,
+    selectEntryId,
     selectIsControlSourceTypeHasChanged,
 } from '../selectors/dashTypedSelectors';
 
@@ -764,22 +766,33 @@ export function saveDashAsDraft(setForce?: boolean) {
 }
 
 export type CopyDashArgs = {
+    entryId: string;
     key?: string;
     workbookId?: string;
     name?: string;
-    dataProcess?: (state: DatalensGlobalState) => DashData;
+    dataProcess?: (data: DashData) => DashData;
 };
 
-export function copyDash({key, workbookId, name, dataProcess}: CopyDashArgs) {
+export function copyDash({entryId, key, workbookId, name, dataProcess}: CopyDashArgs) {
     return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
-        const data = migrateDataSettings(
-            dataProcess ? dataProcess(state) : selectDashEntry(state).data,
-        );
+        let dashData: DashData;
+
+        if (selectDash(state) === null || selectEntryId(state) !== entryId) {
+            const response = await getSdk().us.getEntry({entryId});
+
+            if (response.scope === EntryScope.Dash) {
+                dashData = (response as any as DashEntry).data;
+            } else {
+                throw Error(`Invalid entry type: ${response.scope}`);
+            }
+        } else {
+            dashData = selectDashData(state);
+        }
 
         return sdk.charts.createDash({
             data: {
-                data,
+                data: migrateDataSettings(dataProcess ? dataProcess(dashData) : dashData),
                 mode: EntryUpdateMode.Publish,
                 withParams: true,
                 key,
@@ -863,14 +876,15 @@ export function purgeData(data: DashData) {
 
 export type SaveAsNewDashArgs = Omit<CopyDashArgs, 'dataProcess'>;
 
-export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
+export function saveDashAsNewDash({entryId, key, workbookId, name}: SaveAsNewDashArgs) {
     return async (dispatch: DashDispatch) => {
         const res = await dispatch(
             copyDash({
+                entryId,
                 key,
                 workbookId,
                 name,
-                dataProcess: (state) => purgeData(selectDashData(state)),
+                dataProcess: (data) => purgeData(data),
             }),
         );
         dispatch(setDashViewMode({mode: Mode.View}));
