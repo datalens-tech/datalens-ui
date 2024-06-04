@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import {isObject, isSet, isFunction, transform} from 'lodash';
 import type {AnyAction} from 'redux';
 import type {Delta as JDPDelta} from 'jsondiffpatch';
 
@@ -33,8 +33,8 @@ const initialState: EditHistoryState = {
 
 const cloneStateForHistory = (state: unknown, pathIgnoreList: string[]) => {
     const deepOmitBy = (value: unknown, path: string, iteratee: (key: string) => boolean) => {
-        if (_.isObject(value) && !_.isSet(value) && !_.isFunction(value)) {
-            return _.transform(value, (result: Record<string, unknown>, item, key) => {
+        if (isObject(value) && !isSet(value) && !isFunction(value)) {
+            return transform(value, (result: Record<string, unknown>, item, key) => {
                 if (typeof item === 'function') {
                     // eslint-disable-next-line no-param-reassign
                     result[key] = item;
