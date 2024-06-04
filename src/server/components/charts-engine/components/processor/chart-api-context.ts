@@ -4,8 +4,8 @@ import type {
     ServerChartsConfig,
     Shared,
 } from '../../../../../shared';
-import {WRAPPED_HTML_KEY} from '../../../../../shared';
 import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
+import {wrapHtml} from '../../../../../shared/utils/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
@@ -106,11 +106,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         };
     };
 
-    api.generateHtml = (value) => {
-        return {
-            [WRAPPED_HTML_KEY]: value,
-        };
-    };
+    api.generateHtml = wrapHtml;
 
     if (params) {
         api.getParams = () => params;
