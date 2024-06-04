@@ -9,7 +9,8 @@ import {DatasetSettings} from './DatasetSettings/DatasetSettings';
 import {ExternalSelectorSettings} from './ExternalSelectorSettings/ExternalSelectorSettings';
 import {InputSettings} from './InputSettings/InputSettings';
 
-const CommonSettingsSection = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
+// TODO: Remove hideCommonFields and related fields after enabling DLPROJECTS-93
+export const CommonSettingsSection = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
     const {sourceType} = useSelector(selectSelectorDialog);
 
     switch (sourceType) {
@@ -23,5 +24,3 @@ const CommonSettingsSection = ({hideCommonFields}: {hideCommonFields?: boolean})
             return <DatasetSettings hideCommonFields={hideCommonFields} />;
     }
 };
-
-export {CommonSettingsSection};

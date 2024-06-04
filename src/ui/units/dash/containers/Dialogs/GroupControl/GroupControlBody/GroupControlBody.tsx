@@ -3,6 +3,8 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
+import Utils from 'ui/utils/utils';
 
 import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
 import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
@@ -40,9 +42,11 @@ export const GroupControlBody = () => {
             <div className={b('section', {'bottom-divider': true})}>
                 <InputTypeSelector />
             </div>
-            <div className={b('section')}>
-                <OperationSelector />
-            </div>
+            {!Utils.isEnabledFeature(Feature.ConnectionBasedControl) && (
+                <div className={b('section')}>
+                    <OperationSelector />
+                </div>
+            )}
             <div className={b('section')}>
                 <ValueSelector />
             </div>
