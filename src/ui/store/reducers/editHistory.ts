@@ -1,4 +1,8 @@
-import {isObject, isSet, isFunction, transform} from 'lodash';
+import isObject from 'lodash/isObject';
+import isSet from 'lodash/isSet';
+import isFunction from 'lodash/isFunction';
+import transform from 'lodash/transform';
+
 import type {AnyAction} from 'redux';
 import type {Delta as JDPDelta} from 'jsondiffpatch';
 
