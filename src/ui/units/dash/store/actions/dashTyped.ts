@@ -52,6 +52,7 @@ import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
+    selectDashEntry,
     selectEntryId,
     selectIsControlSourceTypeHasChanged,
 } from '../selectors/dashTypedSelectors';
@@ -771,9 +772,17 @@ export type CopyDashArgs = {
     workbookId?: string;
     name?: string;
     dataProcess?: (data: DashData) => DashData;
+    withUnsavedChanges?: boolean;
 };
 
-export function copyDash({entryId, key, workbookId, name, dataProcess}: CopyDashArgs) {
+export function copyDash({
+    entryId,
+    key,
+    workbookId,
+    name,
+    withUnsavedChanges,
+    dataProcess,
+}: CopyDashArgs) {
     return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         let dashData: DashData;
@@ -787,7 +796,7 @@ export function copyDash({entryId, key, workbookId, name, dataProcess}: CopyDash
                 throw Error(`Invalid entry type: ${response.scope}`);
             }
         } else {
-            dashData = selectDashData(state);
+            dashData = withUnsavedChanges ? selectDashData(state) : selectDashEntry(state).data;
         }
 
         return sdk.charts.createDash({
@@ -885,6 +894,7 @@ export function saveDashAsNewDash({entryId, key, workbookId, name}: SaveAsNewDas
                 workbookId,
                 name,
                 dataProcess: (data) => purgeData(data),
+                withUnsavedChanges: true,
             }),
         );
         dispatch(setDashViewMode({mode: Mode.View}));
