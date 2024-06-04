@@ -2,6 +2,7 @@ import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
+import {DL} from 'ui/constants';
 
 import {Content} from './Content';
 
@@ -20,7 +21,7 @@ export const MarkdownHelpPopover = (props: Props) => {
     return (
         <HelpPopover
             content={<Content value={markdown} onRender={() => setLoaded(true)} />}
-            className={b()}
+            className={b({mobile: DL.IS_MOBILE})}
             contentClassName={b('content')}
             tooltipClassName={b('tooltip', {hidden: !isLoaded})}
             key={String(isLoaded)}

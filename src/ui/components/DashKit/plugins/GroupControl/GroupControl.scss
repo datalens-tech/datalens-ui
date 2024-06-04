@@ -84,5 +84,9 @@
             padding-right: 0;
             margin-top: 10px;
         }
+
+        #{$class}__item-label {
+            max-width: 95%;
+        }
     }
 }
