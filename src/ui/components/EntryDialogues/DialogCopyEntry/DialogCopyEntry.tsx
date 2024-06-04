@@ -105,6 +105,7 @@ class DialogCopyEntry extends React.Component<
     private getWarningMessage = () => {
         if (
             this.props.scope === EntryScope.Dash &&
+            this.props.entryContent.data &&
             isDeprecatedDashData(this.props.entryContent.data as any as DashData)
         ) {
             return i18n('dialog_dash-deprecation-copy-text');
@@ -130,6 +131,7 @@ class DialogCopyEntry extends React.Component<
         } else if (scope === EntryScope.Dash) {
             const {workbookId, copyDash} = this.props;
             const entry = await copyDash({
+                entryId: this.props.entryId,
                 ...(workbookId ? {workbookId} : {}),
                 name,
                 key: path + name,
