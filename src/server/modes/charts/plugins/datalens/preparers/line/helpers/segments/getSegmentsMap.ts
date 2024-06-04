@@ -1,4 +1,4 @@
-import {GetSegmentsMap, SegmentsMap} from './types';
+import type {GetSegmentsMap, SegmentsMap} from './types';
 
 export const getY2SegmentNameKey = (segmentName: string | null | undefined) => {
     if (typeof segmentName !== 'string') {

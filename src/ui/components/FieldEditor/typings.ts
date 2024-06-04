@@ -1,6 +1,6 @@
-import {DatasetField} from '../../../shared';
+import type {DatasetField} from '../../../shared';
 
-import {DUPLICATE_TITLE, EMPTY_SOURCE, EMPTY_TITLE, INVALID_ID} from './constants';
+import type {DUPLICATE_TITLE, EMPTY_SOURCE, EMPTY_TITLE, INVALID_ID} from './constants';
 
 export interface FieldEditorErrors {
     [DUPLICATE_TITLE]: boolean;

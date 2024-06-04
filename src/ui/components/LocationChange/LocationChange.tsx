@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Location} from 'history';
+import type {Location} from 'history';
 import {useHistory} from 'react-router-dom';
 
 export type LocationChangeProps = {

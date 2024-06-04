@@ -1,10 +1,12 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
+import isNumber from 'lodash/isNumber';
 
-import {DL_EMBED_TOKEN_HEADER, WorkbookId} from '../../../../../shared';
-import {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
+import type {WorkbookId} from '../../../../../shared';
+import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
+import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
 import {registry} from '../../../../registry';
-import {DatalensGatewaySchemas} from '../../../../types/gateway';
+import type {DatalensGatewaySchemas} from '../../../../types/gateway';
 
 import type {ConfigurableRequestWithDatasetPluginOptions} from './index';
 
@@ -54,7 +56,7 @@ export const getDatasetFieldsById = async (
             const {error} = err;
             req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', error);
             const status = getStatusFromError(error);
-            if (status && status < 500) {
+            if (isNumber(status) && status < 500) {
                 rejectFetchingSource({
                     [`${datasetId}_result`]: error,
                 });

@@ -3,6 +3,8 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
+import {Feature} from 'shared';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
@@ -11,7 +13,7 @@ import {
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from '../../../../components/CollectionsStructure';
 import {ViewError} from '../../../../components/ViewError/ViewError';
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
 import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
@@ -185,9 +187,18 @@ export const CollectionPage = () => {
         );
     }
 
+    const hasPermissionToCreate =
+        curCollectionId && collection
+            ? Boolean(collection.permissions?.createWorkbook)
+            : Boolean(rootCollectionPermissions?.createWorkbookInRoot);
+
+    const canCreateWorkbook = isMobileView ? false : hasPermissionToCreate;
+
+    const isFiltersHidden = isMobileView && Utils.isEnabledFeature(Feature.HideMultitenant);
+
     return (
-        <div className={b()}>
-            <div className={b('filters')}>
+        <div className={b({mobile: isMobileView})}>
+            <div className={b('filters', {hidden: isFiltersHidden})}>
                 <CollectionFilters
                     filters={filters}
                     controlSize="l"
@@ -196,6 +207,7 @@ export const CollectionPage = () => {
                     changeViewMode={changeViewMode}
                 />
             </div>
+
             <div className={b('content')}>
                 <CollectionContent
                     curCollectionId={curCollectionId}
@@ -204,11 +216,7 @@ export const CollectionPage = () => {
                     selectedMap={selectedMap}
                     itemsAvailableForSelection={itemsAvailableForSelection}
                     isOpenSelectionMode={isOpenSelectionMode}
-                    canCreateWorkbook={
-                        curCollectionId && collection
-                            ? Boolean(collection.permissions?.createWorkbook)
-                            : Boolean(rootCollectionPermissions?.createWorkbookInRoot)
-                    }
+                    canCreateWorkbook={canCreateWorkbook}
                     getCollectionContentRecursively={getCollectionContentRecursively}
                     fetchCollectionContent={fetchCollectionContent}
                     onCloseMoveDialog={handeCloseMoveDialog}

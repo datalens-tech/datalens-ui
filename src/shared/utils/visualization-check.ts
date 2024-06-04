@@ -1,4 +1,5 @@
-import {Link, WizardVisualizationId} from '../../shared';
+import type {Link} from '../../shared';
+import {WizardVisualizationId} from '../../shared';
 import {QLChartType} from '../constants';
 
 export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {
@@ -34,6 +35,7 @@ export function isD3Visualization(id: WizardVisualizationId) {
         WizardVisualizationId.PieD3,
         WizardVisualizationId.BarXD3,
         WizardVisualizationId.LineD3,
+        WizardVisualizationId.DonutD3,
     ];
     return d3Visualizations.includes(id);
 }

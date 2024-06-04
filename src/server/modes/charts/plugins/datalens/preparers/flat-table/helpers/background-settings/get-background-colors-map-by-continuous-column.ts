@@ -1,12 +1,12 @@
 import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 
-import {
+import type {
     RGBColor,
     ServerField,
     TableFieldBackgroundSettings,
 } from '../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../../../types';
 import {
     getCurrentGradient,
     getRangeDelta,
@@ -19,11 +19,23 @@ import {
 } from '../../../../utils/misc-helpers';
 import {getCurrentBackgroundGradient} from '../../../helpers/backgroundSettings/misc';
 import {interpolateRgbBasis} from '../../../helpers/colors';
-import {PrepareFunctionDataRow} from '../../../types';
+import type {PrepareFunctionDataRow} from '../../../types';
 
-import {GetBackgroundColorsMapByContinuousColumn} from './types';
+import type {GetBackgroundColorsMapByContinuousColumn} from './types';
 
 const MAX_COLOR_DELTA_VALUE = 1;
+
+function getColorFn(colors: RGBColor[]) {
+    if (colors.length > 2) {
+        const firstColors = interpolateRgbBasis(colors.slice(0, 2));
+        const lastColors = interpolateRgbBasis(colors.slice(1));
+
+        return (colorValue: number) =>
+            colorValue >= 0.5 ? lastColors((colorValue - 0.5) * 2) : firstColors(colorValue * 2);
+    }
+
+    return interpolateRgbBasis(colors);
+}
 
 export function colorizeFlatTableColumn({
     data,
@@ -34,17 +46,20 @@ export function colorizeFlatTableColumn({
     index: number;
     colorsConfig: ChartColorsConfig;
 }) {
-    const colorValues = data.reduce((acc, row) => {
-        const rowValue = row[index];
-        const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
+    const colorValues = data.reduce(
+        (acc, row) => {
+            const rowValue = row[index];
+            const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
 
-        return [...acc, parsedRowValue];
-    }, [] as (number | null)[]);
+            return [...acc, parsedRowValue];
+        },
+        [] as (number | null)[],
+    );
 
     const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
     const currentGradient = getCurrentGradient(colorsConfig);
     const colors: RGBColor[] = getRgbColors(currentGradient.colors, Boolean(colorsConfig.reversed));
-    const getRgbColor = interpolateRgbBasis(colors);
+    const getRgbColor = getColorFn(colors);
 
     let deltas: (number | null)[];
 
@@ -84,7 +99,7 @@ export function colorizeFlatTableColumn({
 export const getBackgroundColorsMapByContinuousColumn = (
     args: GetBackgroundColorsMapByContinuousColumn,
 ) => {
-    const {columns, idToTitle, order, data, loadedColorPalettes} = args;
+    const {columns, idToTitle, order, data, chartColorsConfig} = args;
 
     const columnsWithBackgroundSettings = columns.filter(
         (column): column is ServerField & {backgroundSettings: TableFieldBackgroundSettings} =>
@@ -95,30 +110,37 @@ export const getBackgroundColorsMapByContinuousColumn = (
         (column) => column.backgroundSettings.settings.isContinuous,
     );
 
-    return measuresWhichUsedForColorizing.reduce((acc, column) => {
-        const backgroundColors = column.backgroundSettings;
-        const guid = backgroundColors.colorFieldGuid;
-        const colorsConfig = backgroundColors.settings.gradientState;
+    return measuresWhichUsedForColorizing.reduce(
+        (acc, column) => {
+            const backgroundColors = column.backgroundSettings;
+            const guid = backgroundColors.colorFieldGuid;
+            const gradientState = backgroundColors.settings.gradientState;
 
-        const chartColorsConfig: ChartColorsConfig = {
-            ...colorsConfig,
-            colors: [],
-            loadedColorPalettes: {},
-            gradientColors:
-                getCurrentBackgroundGradient(colorsConfig, loadedColorPalettes)?.colors || [],
-        };
+            const colorsConfig: ChartColorsConfig = {
+                ...gradientState,
+                colors: [],
+                loadedColorPalettes: {},
+                availablePalettes: chartColorsConfig.availablePalettes,
+                gradientColors:
+                    getCurrentBackgroundGradient(
+                        gradientState,
+                        chartColorsConfig.loadedColorPalettes,
+                    )?.colors || [],
+            };
 
-        const title = idToTitle[guid];
-        const index = findIndexInOrder(order, column, title);
+            const title = idToTitle[guid];
+            const index = findIndexInOrder(order, column, title);
 
-        const rgbColorValues = colorizeFlatTableColumn({
-            colorsConfig: chartColorsConfig,
-            index,
-            data,
-        });
-        return {
-            ...acc,
-            [backgroundColors.settingsId]: rgbColorValues,
-        };
-    }, {} as Record<string, any>);
+            const rgbColorValues = colorizeFlatTableColumn({
+                colorsConfig: colorsConfig,
+                index,
+                data,
+            });
+            return {
+                ...acc,
+                [backgroundColors.settingsId]: rgbColorValues,
+            };
+        },
+        {} as Record<string, any>,
+    );
 };

@@ -3,9 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {getDialogRowIcon} from '../../../../helpers';
+import {getRelationsIcon} from '../../../../helpers';
 import {AliasesContext} from '../../../../hooks/useRelations';
-import {DashkitMetaDataItem} from '../../../../types';
+import type {DashkitMetaDataItem} from '../../../../types';
 
 import './AliasesDetail.scss';
 
@@ -24,7 +24,7 @@ export const AliasesDetail = ({fieldName, items}: AliasesDetailProps) => {
 
     let content: React.ReactNode = items
         .map((item: DashkitMetaDataItem & {intersectionParams: string[]}, index: number) => {
-            const icon = getDialogRowIcon(item, b('icon-widget'));
+            const icon = getRelationsIcon(item);
             const label = item?.label && item?.label !== item.title ? item?.label : '';
             const debugInfo = showDebugInfo ? (
                 <span className={b('info')}> ({item.widgetId})</span>

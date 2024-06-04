@@ -4,7 +4,8 @@ import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {DatalensGlobalState, EntryDialogProps, EntryDialogResolveStatus, Interpolate} from 'ui';
+import type {DatalensGlobalState, EntryDialogProps} from 'ui';
+import {EntryDialogResolveStatus, Interpolate} from 'ui';
 
 import Utils from '../../../utils';
 

@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {DL_COMPONENT_HEADER, RPC_AUTHORIZATION, DL_CONTEXT_HEADER, TENANT_ID_HEADER} from '../../../../shared';
 

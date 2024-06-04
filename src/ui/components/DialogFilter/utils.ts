@@ -1,14 +1,15 @@
 import {CommonDataType} from 'units/wizard/utils/helpers';
 
-import {DatasetField, DatasetFieldType} from '../../../shared';
+import type {DatasetField} from '../../../shared';
+import {DatasetFieldType} from '../../../shared';
 
+import type {Operation} from './constants';
 import {
     ARRAY_OPERATIONS,
     BOOLEAN_OPERATIONS,
     DATE_OPERATIONS,
     DIMENSION_NUMBER_OPERATIONS,
     MEASURE_NUMBER_OPERATIONS,
-    Operation,
     STRING_OPERATIONS,
 } from './constants';
 

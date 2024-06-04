@@ -1,5 +1,5 @@
 import {QLChartType, WizardVisualizationId} from '../../constants';
-import {Field, ServerField} from '../../types';
+import type {Field, ServerField} from '../../types';
 import {getFakeTitleOrTitle} from '../fields';
 
 type GetColorsConfigKeyOptions = {

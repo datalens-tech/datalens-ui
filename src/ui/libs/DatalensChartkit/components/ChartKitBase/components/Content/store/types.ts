@@ -1,10 +1,10 @@
-import React from 'react';
+import type React from 'react';
 
-import {ControlWidget} from 'ui/libs/DatalensChartkit/types';
+import type {ControlWidget} from 'ui/libs/DatalensChartkit/types';
 
-import {ChartsData, ChartsProps} from '../../../../../modules/data-provider/charts';
-import {CombinedError, LoadedWidget, LoadedWidgetData} from '../../../../../types';
-import {DataProps} from '../../../types';
+import type {ChartsData, ChartsProps} from '../../../../../modules/data-provider/charts';
+import type {CombinedError, LoadedWidget, LoadedWidgetData} from '../../../../../types';
+import type {DataProps} from '../../../types';
 
 export type State = {
     isLoading: boolean;

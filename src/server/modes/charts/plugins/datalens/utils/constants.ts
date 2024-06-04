@@ -1,5 +1,5 @@
 import {isTrueArg} from '../../../../../../shared';
-import {ChartColorsConfig} from '../js/helpers/colors';
+import type {ChartColorsConfig} from '../types';
 
 export const LOG_TIMING = isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
 export const LOG_INFO = isTrueArg(process.env.SHOW_CHARTS_LOG);

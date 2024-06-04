@@ -1,9 +1,11 @@
-import {
+import type {
     ApiV2Annotations,
     MarkupItem,
-    PlaceholderId,
     ServerField,
     ServerPlaceholder,
+} from '../../../../../../../../shared';
+import {
+    PlaceholderId,
     isMarkupField,
     isMarkupItem,
     markupToRawString,
@@ -15,7 +17,7 @@ import {
 } from '../../../utils/misc-helpers';
 import {getBarSettingsViewOptions} from '../../helpers/barsSettings';
 import {MEASURE_NAME_PSEUDO_ID} from '../constants/misc';
-import {
+import type {
     AnnotationsMap,
     PivotDataCellValue,
     PivotDataRows,
@@ -53,35 +55,41 @@ export const getValuesByField = (args: {
 
     const measures = measuresPlaceholder?.items || [];
 
-    const isBarInTotalsEnabledMap = measures.reduce((acc, field) => {
-        if (isTableBarsSettingsEnabled(field)) {
-            acc[field.guid] = field.barsSettings.showBarsInTotals;
-        }
-        return acc;
-    }, {} as Record<string, boolean>);
-
-    return rows.reduce((acc, row) => {
-        row.values.forEach((rowValue) => {
-            if (rowValue) {
-                const [value, legendItemId] = rowValue[0];
-                const pivotField: PivotField = fieldsItemIdMap[legendItemId];
-
-                const isTotalValue = pivotField.role_spec.role === 'total';
-
-                if (isTotalValue && !isBarInTotalsEnabledMap[pivotField.id]) {
-                    return;
-                }
-
-                if (acc[pivotField.id]) {
-                    acc[pivotField.id].push(value);
-                } else {
-                    acc[pivotField.id] = [value];
-                }
+    const isBarInTotalsEnabledMap = measures.reduce(
+        (acc, field) => {
+            if (isTableBarsSettingsEnabled(field)) {
+                acc[field.guid] = field.barsSettings.showBarsInTotals;
             }
-        });
+            return acc;
+        },
+        {} as Record<string, boolean>,
+    );
 
-        return acc;
-    }, {} as Record<string, string[]>);
+    return rows.reduce(
+        (acc, row) => {
+            row.values.forEach((rowValue) => {
+                if (rowValue) {
+                    const [value, legendItemId] = rowValue[0];
+                    const pivotField: PivotField = fieldsItemIdMap[legendItemId];
+
+                    const isTotalValue = pivotField.role_spec.role === 'total';
+
+                    if (isTotalValue && !isBarInTotalsEnabledMap[pivotField.id]) {
+                        return;
+                    }
+
+                    if (acc[pivotField.id]) {
+                        acc[pivotField.id].push(value);
+                    } else {
+                        acc[pivotField.id] = [value];
+                    }
+                }
+            });
+
+            return acc;
+        },
+        {} as Record<string, string[]>,
+    );
 };
 
 export const getPivotTableSettingsFromField = (

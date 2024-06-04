@@ -1,4 +1,4 @@
-import {GlobalConfigTsJest, InitialOptionsTsJest} from 'ts-jest';
+import type {GlobalConfigTsJest, InitialOptionsTsJest} from 'ts-jest';
 
 import {getIgnoredNodeModulesRegexp} from './mappers/ignore-node-modules-mapper';
 import {CSS_MAPPER, TYPESCRIPT_ALIASES_MAPPER} from './mappers/moduleNameMappers';

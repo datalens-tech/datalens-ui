@@ -24,6 +24,11 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
                 border-radius: 10px;
             }
         }
+
+        &_without-label {
+            flex-direction: row;
+            align-items: center;
+        }
     }
 
     &__title {

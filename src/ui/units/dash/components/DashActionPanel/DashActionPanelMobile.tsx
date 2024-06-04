@@ -4,12 +4,14 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import ActionPanelHelpers from 'components/ActionPanel/ActionPanelHelpers';
-import {DashEntry, Feature} from 'shared';
+import type {DashEntry} from 'shared';
+import {Feature} from 'shared';
 import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 import {isCurrentTenantWithOrg} from 'utils/tenant';
 
 import {isEmbeddedMode} from '../../../../utils/embedded';
+import {ShareButton} from '../ShareButton/ShareButton';
 
 import './DashActionPanelMobile.scss';
 
@@ -34,12 +36,14 @@ export class DashActionPanelMobile extends React.PureComponent<Props> {
         return (
             <div className={b()}>
                 <div className={b('entry-name')}>{entryName}</div>
-                {showControls && <div className={b('controls')}>{this.renderControls()}</div>}
+                {showControls && (
+                    <div className={b('controls')}>{this.renderControls(entry.entryId)}</div>
+                )}
             </div>
         );
     }
 
-    renderControls() {
+    renderControls(entryId: string) {
         if (
             DL.IS_MOBILE &&
             Utils.isEnabledFeature(Feature.ShowActionPanelTreeSelect) &&
@@ -49,6 +53,6 @@ export class DashActionPanelMobile extends React.PureComponent<Props> {
             return <CloudTreeSelectBase folderId={DL.CURRENT_TENANT_ID} />;
         }
 
-        return null;
+        return <ShareButton entityId={entryId} />;
     }
 }

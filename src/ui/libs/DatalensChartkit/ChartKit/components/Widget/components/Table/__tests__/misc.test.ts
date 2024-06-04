@@ -1,5 +1,5 @@
-import {SortedDataItem} from '@gravity-ui/react-data-table';
-import {DataTableData} from 'ui/libs/DatalensChartkit/types';
+import type {SortedDataItem} from '@gravity-ui/react-data-table';
+import type {DataTableData} from 'ui/libs/DatalensChartkit/types';
 
 import {getCellWidth, getTreeSetColumnSortAscending, prepareLinkHref} from '../utils/misc';
 

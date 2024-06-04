@@ -1,6 +1,6 @@
-import {QLChartType} from '../../constants';
-import {CommonSharedExtraSettings, ShapesConfig, Shared} from '../wizard/';
-import {Field} from '../wizard/field';
+import type {QLChartType} from '../../constants';
+import type {CommonSharedExtraSettings, ShapesConfig, Shared} from '../wizard/';
+import type {Field} from '../wizard/field';
 
 export interface QLResultEntryMetadataDataGroup {
     group: boolean;

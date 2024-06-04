@@ -1,26 +1,28 @@
-import {ThunkDispatch} from 'redux-thunk';
-import {DatalensGlobalState} from 'ui';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {DatalensGlobalState} from 'ui';
 
-import {EntryContentAction} from '../../../../store/actions/entryContent';
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
 
-import {
+import type {
     AddSelectorToGroupAction,
     SetActiveSelectorIndexAction,
     UpdateSelectorsGroupAction,
 } from './controls/actions';
-import {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
-import {
+import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
+import type {
     ChangeNavigationPathAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
+    SetDashOpenedDescKeyAction,
     SetDashUpdateStatusAction,
     SetDescViewModeAction,
     SetDescriptionAction,
     SetErrorModeAction,
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
-    type SetLastUsedConnectionIdAction,
+    SetItemDataAction,
+    SetLastUsedConnectionIdAction,
     SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
@@ -28,6 +30,7 @@ import {
     SetPageTabsItemsAction,
     SetRenameWithoutReloadAction,
     SetSelectorDialogItemAction,
+    SetSettingsAction,
     SetSkipReloadAction,
     SetStateAction,
     SetStateHashIdAction,
@@ -37,8 +40,8 @@ import {
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
 } from './dashTyped';
-import {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
-import {SetNewRelationsAction} from './relations/actions';
+import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
+import type {SetNewRelationsAction} from './relations/actions';
 
 export type DashAction<T = unknown> =
     | SetStateAction<T>
@@ -62,10 +65,12 @@ export type DashAction<T = unknown> =
     | SetDescriptionAction
     | SetAccessDescriptionAction
     | SetSupportDescriptionAction
+    | SetDashOpenedDescKeyAction
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
     | SetNewRelationsAction
+    | SetItemDataAction
     | SetDashKeyAction
     | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
@@ -76,6 +81,7 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | SetLastUsedConnectionIdAction;
+    | SetLastUsedConnectionIdAction
+    | SetSettingsAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

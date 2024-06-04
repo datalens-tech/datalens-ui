@@ -1,4 +1,4 @@
-import {FormDict} from '../../typings';
+import type {FormDict} from '../../typings';
 import {getFormWithTrimmedValues} from '../common';
 
 describe('connections/utils/common', () => {

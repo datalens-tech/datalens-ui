@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Button, ButtonProps, Icon, Popover} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {CheckData} from '../../../../store';
+import type {CheckData} from '../../../../store';
 
 import iconError from 'ui/assets/icons/error.svg';
 import iconOkay from 'ui/assets/icons/okay.svg';

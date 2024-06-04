@@ -1,16 +1,23 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen} from '@gravity-ui/icons';
+import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DIALOG_COPY_WORKBOOK, DIALOG_MOVE_WORKBOOK} from 'components/CollectionsStructure';
+import {
+    DIALOG_COPY_WORKBOOK,
+    DIALOG_DELETE_WORKBOOK,
+    DIALOG_MOVE_WORKBOOK,
+} from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
 
 import {Feature} from '../../../../../shared';
-import {WorkbookWithPermissions} from '../../../../../shared/schema';
+import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
@@ -67,9 +74,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
-    const classNameIconAction = b('icon-action');
 
-    const additionalActions = useAdditionalWorkbookActions(workbook, classNameIconAction);
+    const additionalActions = useAdditionalWorkbookActions(workbook);
 
     const dropdownActions = [...additionalActions];
 
@@ -92,50 +98,22 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     }),
                 );
             },
-            text: (
-                <React.Fragment>
-                    <Icon data={ArrowRight} className={classNameIconAction} />
-                    {i18n('action_move')}
-                </React.Fragment>
-            ),
+            text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
         });
+    }
 
-        if (workbook.permissions.copy) {
-            dropdownActions.push({
-                action: () => {
-                    dispatch(
-                        openDialog({
-                            id: DIALOG_COPY_WORKBOOK,
-                            props: {
-                                open: true,
-                                workbookId: workbook.workbookId,
-                                workbookTitle: workbook.title,
-                                initialCollectionId: workbook.collectionId,
-                                onApply: onApplyCopy,
-                                onClose: () => {
-                                    dispatch(closeDialog());
-                                },
-                            },
-                        }),
-                    );
-                },
-                text: (
-                    <React.Fragment>
-                        <Icon data={Copy} className={classNameIconAction} />
-                        {i18n('action_copy')}
-                    </React.Fragment>
-                ),
-            });
-        }
-
+    if (workbook.permissions.copy) {
         dropdownActions.push({
             action: () => {
                 dispatch(
                     openDialog({
-                        id: DIALOG_ASSIGN_CLAIMS,
+                        id: DIALOG_COPY_WORKBOOK,
                         props: {
-                            entryId: "",
+                            open: true,
                             workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            initialCollectionId: workbook.collectionId,
+                            onApply: onApplyCopy,
                             onClose: () => {
                                 dispatch(closeDialog());
                             },
@@ -143,14 +121,60 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     }),
                 );
             },
-            text: (
-                <React.Fragment>
-                    <Icon data={LockOpen} className={classNameIconAction} />
-                    {"Права доступа"}
-                </React.Fragment>
-            ),
+            text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
         });
     }
+
+    dropdownActions.push({
+        action: () => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_ASSIGN_CLAIMS,
+                    props: {
+                        entryId: "",
+                        workbookId: workbook.workbookId,
+                        onClose: () => {
+                            dispatch(closeDialog());
+                        },
+                    },
+                }),
+            );
+        },
+        text: <DropdownAction icon={LockOpen} text={'Права доступа'} />,
+    });
+
+    const otherActions: DropdownMenuItem[] = [];
+
+    if (workbook.permissions.delete) {
+        otherActions.push({
+            text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_DELETE_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            onSuccessApply: () => {
+                                if (workbook.collectionId) {
+                                    history.push(`${COLLECTIONS_PATH}/${workbook.collectionId}`);
+                                } else {
+                                    history.push(COLLECTIONS_PATH);
+                                }
+                            },
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            theme: 'danger',
+        });
+    }
+
+    dropdownActions.push([...otherActions]);
 
     return (
         <div className={b()}>

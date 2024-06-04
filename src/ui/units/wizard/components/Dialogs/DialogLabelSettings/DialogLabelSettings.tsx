@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 
 import {Font} from '@gravity-ui/icons';
-import {Dialog, Icon, RadioButtonOption} from '@gravity-ui/uikit';
+import type {RadioButtonOption} from '@gravity-ui/uikit';
+import {Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -11,12 +12,12 @@ import {DialogRadioButtons} from 'ui/units/wizard/components/Dialogs/components/
 import {DialogRow} from 'ui/units/wizard/components/Dialogs/components/DialogRow/DialogRow';
 import {selectExtraSettings} from 'units/wizard/selectors/widget';
 
-import {
+import type {
     CommonSharedExtraSettings,
     LabelsPositions,
-    VISUALIZATIONS_WITH_LABELS_POSITION,
     WizardVisualizationId,
 } from '../../../../../../shared';
+import {VISUALIZATIONS_WITH_LABELS_POSITION} from '../../../../../../shared';
 
 import './DialogLabelSettings.scss';
 

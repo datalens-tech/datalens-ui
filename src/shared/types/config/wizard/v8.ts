@@ -1,5 +1,5 @@
-import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
-import {
+import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {
     AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,
@@ -10,7 +10,7 @@ import {
     TableBarsSettings,
     TableFieldBackgroundSettings,
 } from '../../wizard';
-import {TableSubTotalsSettings} from '../../wizard/sub-totals';
+import type {TableSubTotalsSettings} from '../../wizard/sub-totals';
 
 export type V8ChartsConfig = {
     title?: string;

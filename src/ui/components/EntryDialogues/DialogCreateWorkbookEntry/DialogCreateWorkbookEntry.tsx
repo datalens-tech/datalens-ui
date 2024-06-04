@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {Dialog, TextInput, TextInputProps} from '@gravity-ui/uikit';
+import type {TextInputProps} from '@gravity-ui/uikit';
+import {Alert, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DialogCreateWorkbookEntryQa} from 'shared';
 
 import {I18n} from '../../../../i18n';
 import logger from '../../../libs/logger';
-import {DataLensApiError} from '../../../typings';
+import type {DataLensApiError} from '../../../typings';
 
 import './DialogCreateWorkbookEntry.scss';
 
@@ -27,6 +28,7 @@ interface DialogCreateWorkbookEntryGeneralProps<T> {
     textButtonCancel: string;
     textButtonApply: string;
     placeholder?: string;
+    warningMessage?: React.ReactNode;
     workbookId?: string;
 }
 
@@ -91,8 +93,15 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
     }
 
     render() {
-        const {caption, visible, placeholder, textButtonApply, textButtonCancel, children} =
-            this.props;
+        const {
+            caption,
+            visible,
+            placeholder,
+            textButtonApply,
+            textButtonCancel,
+            children,
+            warningMessage,
+        } = this.props;
         const {name, loading, inputError} = this.state;
 
         return (
@@ -119,6 +128,11 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
                                     onUpdate={this.onUpdateInput}
                                     error={inputError}
                                 />
+                            </div>
+                        )}
+                        {warningMessage && (
+                            <div className={b('warning')}>
+                                <Alert theme="warning" message={warningMessage} view="outlined" />
                             </div>
                         )}
                     </div>

@@ -2,6 +2,7 @@
 
 $contentPadding: 24px;
 $contentMobilePadding: 16px;
+$actionPanelDefaultBottom: 20px;
 
 .dash-body {
     --dashkit-grid-item-edit-opacity: 0.99; // Chrome z-index opacity leaking
@@ -40,7 +41,21 @@ $contentMobilePadding: 16px;
         }
 
         &_with-edit-panel {
-            padding-bottom: 124px;
+            margin-bottom: 124px;
+            padding-bottom: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &_with-edit-panel > .dashkit,
+        &_with-edit-panel > .dashkit > .react-grid-layout {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        &_with-footer #{$bodyClass}__edit-panel {
+            bottom: $actionPanelDefaultBottom + $footerHeight;
         }
 
         & #{$bodyClass}__edit-panel {
@@ -96,7 +111,7 @@ $contentMobilePadding: 16px;
         padding: 16px 0 4px;
     }
 
-    &__edit-panel {
+    & #{$bodyClass}__edit-panel {
         z-index: 10;
     }
 

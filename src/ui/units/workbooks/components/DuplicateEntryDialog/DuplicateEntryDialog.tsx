@@ -2,8 +2,8 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {CopyWorkbookEntryResponse} from 'shared/schema';
-import {DataLensApiError} from 'ui/typings';
+import type {CopyWorkbookEntryResponse} from 'shared/schema';
+import type {DataLensApiError} from 'ui/typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {getSdk} from '../../../../../ui/libs/schematic-sdk';

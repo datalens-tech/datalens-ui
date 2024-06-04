@@ -1,16 +1,20 @@
 import React from 'react';
 
-import {Dialog, Icon} from '@gravity-ui/uikit';
+import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {
     CommonSharedExtraSettings,
+    HintSettings,
     Placeholder,
-    PlaceholderId,
     TableFieldBackgroundSettings,
+} from 'shared';
+import {
+    PlaceholderId,
     TableFieldDisplayMode,
     WizardVisualizationId,
     canHideTableHeader,
@@ -18,24 +22,25 @@ import {
     getTableHeaderDisplayMode,
     isPseudoField,
 } from 'shared';
-import {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
-import {Optional} from 'utility-types';
+import type {Optional} from 'utility-types';
 
-import {
+import type {
     ClientChartsConfig,
     CommonNumberFormattingOptions,
-    DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
     DatasetOptions,
     NestedPartial,
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
     AVAILABLE_DATETIME_FORMATS,
@@ -99,6 +104,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     displayMode?: TableFieldDisplayMode;
+    hintSettings?: HintSettings;
 };
 
 const b = block('wizard-dialog-field');
@@ -126,6 +132,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const initialState: DialogFieldState = {
             formatting: props.item?.formatting || ({} as CommonNumberFormattingOptions),
+            hintSettings: props.item?.hintSettings,
             isBarsSettingsEnabled:
                 !isPivotFallbackTurnedOn &&
                 showBarsInDialogField(visualizationId, props.placeholderId, props.item),
@@ -363,6 +370,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         handleDateGroupUpdate={this.handleDateGroupUpdate}
                     />
                 )}
+                {this.renderHintSettings()}
                 {this.props.formattingEnabled && (
                     <Formatting
                         dataType={formattingDataType}
@@ -377,6 +385,54 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 {this.renderBarsSettings()}
                 {this.renderBackgroundSettings()}
             </>
+        );
+    }
+
+    private renderHintSettings() {
+        const {item, placeholderId} = this.props;
+        const availablePlaceholders = [
+            PlaceholderId.FlatTableColumns,
+            PlaceholderId.PivotTableRows,
+        ];
+
+        if (!item || !availablePlaceholders.includes(placeholderId as PlaceholderId)) {
+            return null;
+        }
+
+        const hintSettings = this.state.hintSettings;
+        const enabled = hintSettings?.enabled;
+        const text = hintSettings?.text || item?.description || '';
+
+        const {MarkdownControl} = registry.common.components.getAll();
+
+        return (
+            <React.Fragment>
+                <DialogFieldRow
+                    title={i18n('wizard', 'label_hint')}
+                    setting={
+                        <Switch
+                            onUpdate={(checked) =>
+                                this.setState({hintSettings: {enabled: checked, text}})
+                            }
+                            checked={enabled}
+                        />
+                    }
+                />
+                {enabled && (
+                    <DialogFieldRow
+                        title={''}
+                        setting={
+                            <MarkdownControl
+                                value={text}
+                                onChange={(value) =>
+                                    this.setState({hintSettings: {enabled, text: value}})
+                                }
+                                disabled={!enabled}
+                            />
+                        }
+                    />
+                )}
+            </React.Fragment>
         );
     }
 

@@ -1,4 +1,4 @@
-import {LinesRecord} from '../../types';
+import type {LinesRecord} from '../../types';
 import {sortLineKeysByFirstValues} from '../getSortedLineKeys';
 
 describe('sortLineKeysByFirstValues', () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
     pickActionParamsFromParams,
@@ -11,22 +11,23 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {DashTabItemControlSourceType, StringParams} from 'shared';
+import type {StringParams} from 'shared';
+import {DashTabItemControlSourceType} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
-import {
+import type {
     ChartKitWrapperLoadError,
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperLoadSuccess,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ChartsProps} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -38,7 +39,7 @@ import {
     WIDGET_CHART_SET_WIDGET_ERROR,
     WIDGET_CHART_UPDATE_DATA_PARAMS,
 } from '../store/types';
-import {
+import type {
     ChartContentProps,
     ChartNoWidgetProps,
     ChartSelectorWithRefProps,
@@ -873,6 +874,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         handleError,
         handleRetry,
         loadChartData: loadChart,
+        reloadChart: loadChartData,
         setLoadingProps,
         loadControls,
         drillDownFilters,

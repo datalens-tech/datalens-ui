@@ -3,13 +3,15 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import SplitPane from 'react-split-pane';
 
-import {DatasetField, DatasetFieldError} from '../../../../shared';
+import type {DatasetField, DatasetFieldError} from '../../../../shared';
 import {FORMULA_LANGUAGE_ID, SPLIT_PANE_RESIZER_CLASSNAME} from '../../../constants';
-import {MonacoTypes, setDatalensFormulaLanguageConfiguration} from '../../../libs/monaco';
+import type {MonacoTypes} from '../../../libs/monaco';
+import {setDatalensFormulaLanguageConfiguration} from '../../../libs/monaco';
 import DatasetFieldList from '../../DatasetFieldList/DatasetFieldList';
-import Monaco, {MonacoProps} from '../../Monaco/Monaco';
+import type {MonacoProps} from '../../Monaco/Monaco';
+import Monaco from '../../Monaco/Monaco';
 import {LEFT_PANE_MAX_WIDTH, LEFT_PANE_MIN_WIDTH, RESIZER_WIDTH} from '../constants';
-import {Cancelable, ModifyField} from '../typings';
+import type {Cancelable, ModifyField} from '../typings';
 
 export interface FormulaSectionProps {
     modifyField: ModifyField;

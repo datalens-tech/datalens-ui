@@ -4,7 +4,7 @@ import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@g
 import block from 'bem-cn-lite';
 import {IS_NULL_FILTER_TEMPLATE} from 'shared';
 
-import {OnChangeData} from '../../types';
+import type {OnChangeData} from '../../types';
 import ChartKitIcon from '../ChartKitIcon/ChartKitIcon';
 
 import iconArrowRight from 'ui/assets/icons/arrow-right.svg';

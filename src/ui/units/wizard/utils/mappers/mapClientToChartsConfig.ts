@@ -1,5 +1,5 @@
 import pick from 'lodash/pick';
-import {
+import type {
     ChartsConfig,
     ClientChartsConfig,
     FilterField,

@@ -1,10 +1,12 @@
 import React from 'react';
 
-import {Button, DropdownMenu, DropdownMenuItemMixed, Icon} from '@gravity-ui/uikit';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatasetField, DatasetTabSectionQA} from 'shared';
+import type {DatasetField} from 'shared';
+import {DatasetTabSectionQA} from 'shared';
 
-import {FieldColumn, FieldRowControlSettings} from '../../types';
+import type {FieldColumn, FieldRowControlSettings} from '../../types';
 
 import iconCross from 'ui/assets/icons/cross.svg';
 

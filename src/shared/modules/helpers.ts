@@ -1,3 +1,4 @@
+import type {WizardVisualizationId} from '../constants';
 import {
     ENTRY_ID_LENGTH,
     ENTRY_ROUTES,
@@ -5,18 +6,19 @@ import {
     NavigatorModes,
     VISUALIZATIONS_WITH_NAVIGATOR,
     WIZARD_ROUTE,
-    WizardVisualizationId,
 } from '../constants';
-import {
-    AxisMode,
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
+import type {
     Field,
     ServerChartsConfig,
     ServerField,
     ServerPlaceholder,
     ServerPlaceholderSettings,
     StringParams,
+} from '../types';
+import {
+    AxisMode,
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
     TableFieldDisplayMode,
     isDateField,
 } from '../types';
@@ -238,10 +240,13 @@ export const transformUrlParamsToParams = (urlParams: [string, string][]) => {
 export function getSortedData<K extends string, T>(data: Record<K, T>): Record<K, T> {
     return Object.keys(data)
         .sort()
-        .reduce((acc, key) => {
-            acc[key as K] = data[key as K];
-            return acc;
-        }, {} as Record<K, T>);
+        .reduce(
+            (acc, key) => {
+                acc[key as K] = data[key as K];
+                return acc;
+            },
+            {} as Record<K, T>,
+        );
 }
 
 export function getObjectValueByPossibleKeys<T>(possibleKeys: string[], obj: Record<string, T>) {

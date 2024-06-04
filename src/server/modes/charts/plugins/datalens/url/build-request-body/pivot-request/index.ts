@@ -1,16 +1,16 @@
-import {
+import type {
     ApiV2BackgroundSettingsGuids,
     ApiV2Filter,
     ApiV2OrderBy,
     ApiV2RequestBodyPivot,
     ApiV2RequestField,
     ApiV2RequestPivot,
-    PseudoFieldTitle,
     ServerColor,
     ServerPlaceholder,
 } from '../../../../../../../../shared';
+import {PseudoFieldTitle} from '../../../../../../../../shared';
 import {mapParameterToRequestFormat} from '../../helpers';
-import {BuildDefaultRequestArgs} from '../default-request';
+import type {BuildDefaultRequestArgs} from '../default-request';
 
 import {getAnnotations, getPivotStructure, getRegularFields} from './helpers';
 import {getTotalsForPivot} from './helpers/totals';
@@ -22,8 +22,7 @@ export type BuildPivotResultRequestArgs = Omit<BuildDefaultRequestArgs, 'allMeas
 };
 
 export const buildPivotRequest = (args: BuildPivotResultRequestArgs): ApiV2RequestBodyPivot => {
-    const {placeholders, colors, payload, revisionId, backgroundColorsFieldsIds, ChartEditor} =
-        args;
+    const {placeholders, colors, payload, revisionId, backgroundColorsFieldsIds, params} = args;
 
     const columns =
         placeholders.find((placeholder) => placeholder.id === 'pivot-table-columns')?.items || [];
@@ -38,12 +37,15 @@ export const buildPivotRequest = (args: BuildPivotResultRequestArgs): ApiV2Reque
 
     let fields: ApiV2RequestField[] = [];
 
-    const orderByMap = orderBy.reduce((acc, orderByPayload) => {
-        return {
-            ...acc,
-            [orderByPayload.column]: orderByPayload.direction.toLowerCase(),
-        };
-    }, {} as Record<string, string>);
+    const orderByMap = orderBy.reduce(
+        (acc, orderByPayload) => {
+            return {
+                ...acc,
+                [orderByPayload.column]: orderByPayload.direction.toLowerCase(),
+            };
+        },
+        {} as Record<string, string>,
+    );
 
     const {columnsReq, rowsReq, measuresReq} = getRegularFields({
         columns,
@@ -127,7 +129,7 @@ export const buildPivotRequest = (args: BuildPivotResultRequestArgs): ApiV2Reque
             rowsReq,
             measuresReq,
             annotations,
-            ChartEditor,
+            params,
         }),
         pagination: pivot_pagination,
         ...settings,

@@ -6,13 +6,25 @@ import {ControlQA} from 'shared';
 import {DL} from 'ui/constants';
 import {isMobileView} from 'ui/utils/mobile';
 
+import {MarkdownHelpPopover} from '../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
 
 const b = block('chartkit-control-item');
 
 function withWrapForControls(WrappedComponent) {
     function WithWrapForControls(props) {
-        const {type, width, hidden, label, labelInside, className, style, renderOverlay} = props;
+        const {
+            type,
+            width,
+            hidden,
+            label,
+            labelInside,
+            className,
+            style,
+            renderOverlay,
+            labelClassName,
+            hint,
+        } = props;
 
         if (hidden) {
             return null;
@@ -30,17 +42,27 @@ function withWrapForControls(WrappedComponent) {
 
         return (
             <div
-                className={b('control', {mobile: isMobileView}, className)}
+                className={b(
+                    'control',
+                    {mobile: isMobileView, 'without-label': !showLabel},
+                    className,
+                )}
                 style={controlStyle}
                 data-qa={ControlQA.chartkitControl}
             >
                 {renderOverlay?.()}
                 {showLabel && (
-                    <span className={b('title')} data-qa={ControlQA.controlLabel}>
+                    <span
+                        className={b('title', labelClassName)}
+                        data-qa={ControlQA.controlLabel}
+                        title={label}
+                    >
                         {label}
+                        {hint && <MarkdownHelpPopover markdown={hint} />}
                     </span>
                 )}
                 <WrappedComponent {...props} />
+                {hint && !showLabel && <MarkdownHelpPopover markdown={hint} />}
             </div>
         );
     }

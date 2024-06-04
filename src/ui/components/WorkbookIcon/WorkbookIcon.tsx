@@ -39,6 +39,12 @@ const sizesMap: SizeMap = {
         lineHeight: 38,
         borderRadius: 12,
     },
+    mobile: {
+        size: 28,
+        fontSize: 13,
+        lineHeight: 18,
+        borderRadius: 6,
+    },
 };
 
 export const WorkbookIcon: React.FC<Props> = ({title, size = 'm'}) => {

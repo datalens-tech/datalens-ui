@@ -1,4 +1,4 @@
-import {ServerField} from '../../../../../../../../../../shared';
+import type {ServerField} from '../../../../../../../../../../shared';
 
 import {MOCKED_DIMENSION_FIELD} from './common.mock';
 

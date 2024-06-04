@@ -1,9 +1,9 @@
-import React from 'react';
+import type React from 'react';
 
-import {IconData} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 
-import {EntryScope, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
 import {DL} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
@@ -11,7 +11,8 @@ import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
-import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from '../EntryDialogues';
+import type {EntryDialogues} from '../EntryDialogues';
+import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
 interface MenuEntry {
     entryId: string;
@@ -107,6 +108,21 @@ export async function deleteEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
 
 export async function accessEntry(entryDialoguesRef: EntryDialoguesRef, entry: GetEntryResponse) {
     if (entryDialoguesRef.current) {
+        const hasEditPermissions = entry.permissions?.edit || entry.permissions?.admin;
+        if (
+            Utils.isEnabledFeature(Feature.CustomAccessDescription) &&
+            entry?.data?.accessDescription &&
+            !hasEditPermissions
+        ) {
+            await entryDialoguesRef.current.open({
+                dialog: EntryDialogName.AccessDescription,
+                dialogProps: {
+                    accessDescription: entry.data.accessDescription as string,
+                },
+            });
+            return;
+        }
+
         await entryDialoguesRef.current.open({
             dialog: EntryDialogName.Access,
             dialogProps: {

@@ -1,3 +1,4 @@
+import type {DatePickerProps} from '@gravity-ui/date-components';
 import type {
     ButtonProps,
     CheckboxProps,
@@ -10,7 +11,6 @@ import type {
 } from '@gravity-ui/uikit';
 
 import type {CollapseProps} from '../../../../ui/components/Collapse/types';
-import type {SimpleDatepickerProps} from '../../../../ui/components/common/SimpleDatepicker/types';
 import type {ConnectionData} from '../../../types';
 
 type MarkdownString = string;
@@ -98,7 +98,7 @@ export type CheckboxItem = BaseItem & {
 export type DatepickerItem = BaseItem &
     Omit<BaseControlItem, 'width'> & {
         id: 'datepicker';
-        controlProps?: Partial<SimpleDatepickerProps>;
+        controlProps?: Partial<DatePickerProps>;
     };
 
 export type PlainTextItem = Pick<BaseItem, 'displayConditions'> & {

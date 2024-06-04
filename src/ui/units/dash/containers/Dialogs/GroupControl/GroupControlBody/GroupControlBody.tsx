@@ -4,6 +4,8 @@ import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
+import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
+import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitleRow} from '../../Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
 import {CommonSettingsSection} from '../../Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorTypeSelect} from '../../Control2/SelectorTypeSelect/SelectorTypeSelect';
@@ -21,6 +23,12 @@ export const GroupControlBody = () => {
             </FormRow>
             <div className={b('section')}>
                 <TitleRow />
+            </div>
+            <div className={b('section')}>
+                <InnerTitleRow />
+            </div>
+            <div className={b('section')}>
+                <HintRow />
             </div>
             <div className={b('section')}>
                 <CommonSettingsSection />

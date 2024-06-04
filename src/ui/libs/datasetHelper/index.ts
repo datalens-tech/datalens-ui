@@ -1,4 +1,5 @@
-import {DatasetField, DatasetOptions, Operations} from '../../../shared';
+import type {DatasetField, DatasetOptions} from '../../../shared';
+import {Operations} from '../../../shared';
 
 export const getFilterOperations = (
     field: DatasetField | null,

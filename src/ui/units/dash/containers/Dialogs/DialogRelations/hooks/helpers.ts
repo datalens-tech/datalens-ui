@@ -1,23 +1,20 @@
-import {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit} from '@gravity-ui/dashkit';
 import intersection from 'lodash/intersection';
-import {
-    DashTabItem,
-    DashTabItemControlSourceType,
-    DashTabItemType,
-    DashTabItemWidgetTab,
-} from 'shared';
-import {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
-import {DatasetsData} from 'ui/components/DashKit/plugins/types';
+import type {DashTabItem, DashTabItemWidgetTab} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
+import type {GetEntriesDatasetsFieldsResponse} from 'shared/schema';
+import type {DatasetsData} from 'ui/components/DashKit/plugins/types';
+import type {FilteringWidgetType} from 'ui/units/dash/modules/constants';
 import {
     CONNECTION_KIND,
     DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES,
     DASH_FILTERING_CHARTS_WIDGET_TYPES,
-    FilteringWidgetType,
 } from 'ui/units/dash/modules/constants';
 
-import {DEFAULT_FILTERS, FiltersTypes} from '../components/Filters/Filters';
+import type {FiltersTypes} from '../components/Filters/Filters';
+import {DEFAULT_FILTERS} from '../components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from '../constants';
-import {
+import type {
     AliasesData,
     ConnectionsData,
     DashMetaData,
@@ -510,7 +507,8 @@ const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem)
 
     const currentWidgetId =
         currentPlugin?.chartKitRef?.current?.props.id || currentPlugin?.getCurrentTabChartId?.();
-    const res = currentPlugin.props.data.tabs.find(
+
+    const res = currentPlugin?.props.data.tabs.find(
         (item: DashTabItemWidgetTab) => item.chartId === currentWidgetId,
     );
     if (res) {
@@ -535,7 +533,7 @@ export const getCurrentWidgetMeta = ({
         return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
     }
     const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget);
-    return (metaData?.find((item) => item.widgetId === tabInfo.id) || {}) as DashkitMetaDataItem;
+    return (metaData?.find((item) => item.widgetId === tabInfo?.id) || {}) as DashkitMetaDataItem;
 };
 
 export const getMappedFilters = (items: Array<FiltersTypes>) => {

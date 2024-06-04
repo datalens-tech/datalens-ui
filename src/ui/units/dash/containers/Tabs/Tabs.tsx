@@ -1,11 +1,13 @@
 import React from 'react';
 
-import {TabItem} from '@gravity-ui/components';
+import type {TabItem} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {DashTabsQA} from 'shared';
-import {Tabs as DataLensTabs, DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {Tabs as DataLensTabs} from 'ui';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';
@@ -30,6 +32,8 @@ type OwnPops<T> = {
 };
 
 type TabsProps<T> = OwnPops<T> & StateProps & DispatchProps;
+
+const TABS_VIRTUALIZATION_SELECT_LIMIT = 70;
 
 function TabsComponent<T>(props: TabsProps<T>) {
     const location = useLocation();
@@ -60,6 +64,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                         hash: '',
                     });
                 }}
+                moreControlProps={{virtualizationThreshold: TABS_VIRTUALIZATION_SELECT_LIMIT}}
             />
         </div>
     ) : null;

@@ -6,10 +6,12 @@ import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import {EntryScope, PLACE} from 'shared';
-import {DL, DatalensGlobalState, EntryDialogues, MonacoTypes, NavigationMinimal, sdk} from 'ui';
+import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
+import {DL, NavigationMinimal, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ConnectionStatus} from 'ui/units/ql/constants';
@@ -27,7 +29,7 @@ import {
     getPreviewData,
     getValid,
 } from '../../../store/reducers/ql';
-import {QLConnectionEntry} from '../../../store/typings/ql';
+import type {QLConnectionEntry} from '../../../store/typings/ql';
 
 import TabParams from './TabParams/TabParams';
 import TabQuery from './TabQuery/TabQuery';

@@ -1,6 +1,6 @@
 import type {GetEntryResponse, GetPublicationPreviewEntry} from 'shared/schema';
 
-import {DIALOG_STATUS} from './constants';
+import type {DIALOG_STATUS} from './constants';
 
 export type EntryData = GetEntryResponse;
 export type EntryRelation = GetPublicationPreviewEntry;
@@ -38,7 +38,7 @@ export type DialogPublicCloseCallback = (
     publish: boolean,
 ) => void;
 
-export type DialogStatus = typeof DIALOG_STATUS[keyof typeof DIALOG_STATUS];
+export type DialogStatus = (typeof DIALOG_STATUS)[keyof typeof DIALOG_STATUS];
 
 export type State = {
     status: DialogStatus;

@@ -4,6 +4,7 @@ import {MobileHeader} from '@gravity-ui/navigation';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {PRODUCT_NAME} from 'ui/constants';
+import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/components/MobileHeaderComponent';
 
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 
@@ -26,7 +27,7 @@ const menuItems = [
     },
 ];
 
-export const MobileHeaderComponent = () => {
+export const MobileHeaderComponent = ({renderContent}: MobileHeaderComponentProps) => {
     return (
         <MobileHeader
             logo={{
@@ -35,7 +36,9 @@ export const MobileHeaderComponent = () => {
                 iconClassName: b('logo-icon'),
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
+            contentClassName={b('content')}
             className={b('container')}
+            renderContent={renderContent}
         />
     );
 };

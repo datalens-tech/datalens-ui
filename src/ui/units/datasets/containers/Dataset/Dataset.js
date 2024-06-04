@@ -33,12 +33,10 @@ import uuid from 'uuid/v1';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import ActionPanel from '../../../../components/ActionPanel/ActionPanel';
-import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import EntryDialogues, {
     EntryDialogName,
 } from '../../../../components/EntryDialogues/EntryDialogues';
 import ErrorContent from '../../../../components/ErrorContent/ErrorContent';
-import {MobileHeader} from '../../../../components/MobileHeader/MobileHeader';
 import NavigationPrompt from '../../../../components/NavigationPrompt/NavigationPrompt';
 import {PageTitle} from '../../../../components/PageTitle';
 import {SlugifyUrl} from '../../../../components/SlugifyUrl';
@@ -581,7 +579,6 @@ class Dataset extends React.Component {
     render() {
         const {history} = this.props;
         const entry = this.getEntry();
-        const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
 
         return (
             <React.Fragment>
@@ -596,7 +593,6 @@ class Dataset extends React.Component {
                         <AccessRightsUrlOpen history={history} />
                     </React.Fragment>
                 )}
-                {!isAsideHeaderEnabled && <MobileHeader />}
                 {this.renderBody()}
                 <DatasetError />
             </React.Fragment>

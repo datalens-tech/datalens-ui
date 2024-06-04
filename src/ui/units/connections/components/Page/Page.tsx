@@ -3,19 +3,29 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {RouteChildrenProps, withRouter} from 'react-router-dom';
+import type {RouteChildrenProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {Dispatch, bindActionCreators} from 'redux';
-import {ConnectorType} from 'shared';
-import {DatalensGlobalState, PageTitle, SlugifyUrl, Utils} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {ConnectorType} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {PageTitle, SlugifyUrl, Utils} from 'ui';
 import {registry} from 'ui/registry';
 
-import {ErrorView, ErrorViewProps, Router, WrappedLoader} from '../';
+import type {ErrorViewProps} from '../';
+import {ErrorView, Router, WrappedLoader} from '../';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {ActionPanel} from '../../../../components/ActionPanel';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {FieldKey} from '../../constants';
-import {getConnectorSchema, getConnectors, setInitialState, setPageData} from '../../store';
+import {
+    getConnectionData,
+    getConnectorSchema,
+    getConnectors,
+    setInitialState,
+    setPageData,
+} from '../../store';
 import {getConnItemByType} from '../../utils';
 
 import ConnPanelActions from './ConnPanelActions';
@@ -35,29 +45,30 @@ type PageProps = DispatchProps &
 
 type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     type: ConnectorType;
+    getConnectionData: () => void;
     getConnectors: () => void;
     getConnectorSchema: (type: ConnectorType) => void;
 };
 
 const PageContent = (props: PageContentProps) => {
-    const {
-        type,
-        apiErrors,
-        flattenConnectors,
-        groupedConnectors,
-        connectionData,
-        getConnectors: getConnectorsHandler,
-        getConnectorSchema: getConnectorSchemaHandler,
-    } = props;
+    const {type, apiErrors, flattenConnectors, groupedConnectors, connectionData} = props;
     const {error, scope} = useApiErrors({apiErrors});
 
     if (error) {
         let handler: NonNullable<ErrorViewProps['action']>['handler'];
 
-        if (scope === 'connectors') {
-            handler = getConnectorsHandler;
-        } else if (scope === 'schema') {
-            handler = () => getConnectorSchemaHandler(type);
+        switch (scope) {
+            case 'connection': {
+                handler = props.getConnectionData;
+                break;
+            }
+            case 'connectors': {
+                handler = props.getConnectors;
+                break;
+            }
+            case 'schema': {
+                handler = () => props.getConnectorSchema(type);
+            }
         }
 
         const action: ErrorViewProps['action'] = {handler};
@@ -151,6 +162,7 @@ const PageComponent = (props: PageProps) => {
                         flattenConnectors={flattenConnectors}
                         groupedConnectors={groupedConnectors}
                         connectionData={connectionData}
+                        getConnectionData={actions.getConnectionData}
                         getConnectors={actions.getConnectors}
                         getConnectorSchema={actions.getConnectorSchema}
                     />
@@ -178,6 +190,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
             {
                 setPageData,
                 setInitialState,
+                getConnectionData,
                 getConnectors,
                 getConnectorSchema,
             },

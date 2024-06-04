@@ -5,7 +5,7 @@ import {Icon, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useShallowEqualSelector} from 'hooks';
 import {I18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';

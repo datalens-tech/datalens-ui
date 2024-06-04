@@ -4,12 +4,13 @@ import type {
     HighchartsComment,
     HighchartsWidgetData,
 } from '@gravity-ui/chartkit/highcharts';
-import {Yagr, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import type {Yagr, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
-import DataTable, {DataTableProps} from '@gravity-ui/react-data-table';
-import {Optional, Required} from 'utility-types';
+import type {DataTableProps} from '@gravity-ui/react-data-table';
+import type DataTable from '@gravity-ui/react-data-table';
+import type {Optional, Required} from 'utility-types';
 
-import {
+import type {
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
@@ -23,10 +24,10 @@ import {
     TableWidgetEventScope,
     WidgetEvent,
 } from '../../../../shared';
-import {ChartsData} from '../modules/data-provider/charts';
+import type {ChartsData} from '../modules/data-provider/charts';
 
-import {CombinedError} from './common';
-import {Control} from './control';
+import type {CombinedError} from './common';
+import type {Control} from './control';
 
 export type WithControls = {
     controls: {controls: Control[]; lineBreaks?: 'wrap' | 'nowrap'} | null;
@@ -222,15 +223,17 @@ export type DataTableData = Record<string, TableCell>;
 
 export type ChartKitDataTable = DataTable<DataTableData>;
 
+// data: {} when there is no data
+export type TableData = {
+    head?: TableHead[];
+    rows?: TableRow[];
+    footer?: TableRow[];
+};
+
 export type TableWidget = WidgetBaseWithData &
     WithControls & {
         type: 'table';
-        // data: {} when there is no data
-        data: {
-            head?: TableHead[];
-            rows?: TableRow[];
-            footer?: TableRow[];
-        };
+        data: TableData;
         config?: {
             title?: string | TableTitle;
             sort?: string;

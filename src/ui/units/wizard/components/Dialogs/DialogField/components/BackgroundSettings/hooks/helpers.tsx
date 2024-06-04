@@ -1,11 +1,9 @@
 import React from 'react';
 
-import {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
 import uniqBy from 'lodash/uniqBy';
+import type {ClientChartsConfig, Field, Placeholder} from 'shared';
 import {
-    ClientChartsConfig,
-    Field,
-    Placeholder,
     PlaceholderId,
     WizardVisualizationId,
     getFakeTitleOrTitle,
@@ -144,12 +142,15 @@ export const getChartFields = (
         ...additionalFields.datasetMeasures,
     ]
         .filter(isFieldVisible)
-        .reduce((acc, field) => {
-            return {
-                ...acc,
-                [field.guid]: true,
-            };
-        }, {} as Record<string, boolean>);
+        .reduce(
+            (acc, field) => {
+                return {
+                    ...acc,
+                    [field.guid]: true,
+                };
+            },
+            {} as Record<string, boolean>,
+        );
 
     return {chartFields: uniqueFields, datasetFieldsMap};
 };

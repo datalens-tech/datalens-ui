@@ -2,14 +2,18 @@ import React from 'react';
 
 import without from 'lodash/without';
 import {useDispatch, useSelector} from 'react-redux';
-import {DatasetField, DatasetOptions} from 'shared';
-import {ApplyData} from 'ui';
+import type {DatasetField, DatasetOptions} from 'shared';
+import type {ApplyData} from 'ui';
 
 import {openDialogFilter} from '../../../../store/actions/dialog';
 import {useDatasetPageContext} from '../../containers/DatasetPage/DatasetPage';
 import {filteredDatasetParametersSelector, workbookIdSelector} from '../../store/selectors';
-import {ObligatoryFilter} from '../../typings/dataset';
-import {FieldColumn, FieldListColumn, FieldRowControlSettings} from '../DatasetTabFieldList/types';
+import type {ObligatoryFilter} from '../../typings/dataset';
+import type {
+    FieldColumn,
+    FieldListColumn,
+    FieldRowControlSettings,
+} from '../DatasetTabFieldList/types';
 
 import {
     getFieldsByFilters,

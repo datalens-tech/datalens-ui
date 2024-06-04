@@ -1,11 +1,16 @@
 {
-    "extends": ["@gravity-ui/eslint-config", "@gravity-ui/eslint-config/prettier"],
+    "extends": [
+        "@gravity-ui/eslint-config",
+        "@gravity-ui/eslint-config/prettier",
+        "@gravity-ui/eslint-config/import-order"
+    ],
     "root": true,
     "env": {
         "node": true,
         "jest": true
     },
     "rules": {
+        "@typescript-eslint/consistent-type-imports": "error",
         "security/detect-child-process": 0,
         "security/detect-non-literal-fs-filename": 0,
         "camelcase": 0,

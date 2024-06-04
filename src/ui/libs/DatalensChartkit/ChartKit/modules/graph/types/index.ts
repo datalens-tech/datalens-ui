@@ -1,4 +1,4 @@
-import {FormatNumberOptions} from 'shared/modules/format-units/types';
+import type {FormatNumberOptions} from 'shared/modules/format-units/types';
 
 export type ChartKitFormatNumberSettings = {
     chartKitFormatting?: boolean;

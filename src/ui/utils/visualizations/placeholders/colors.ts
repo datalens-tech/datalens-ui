@@ -1,4 +1,5 @@
-import {Field, Placeholder, PlaceholderId, type Shared, isMeasureNameOrValue} from 'shared';
+import {PlaceholderId, isMeasureNameOrValue} from 'shared';
+import type {Field, Placeholder, Shared} from 'shared';
 import {selectPlaceholders} from 'shared/modules/visualization/placeholder';
 
 type UpdateMultipleColorsArgs = {
@@ -51,12 +52,15 @@ export const updateColors = (args: UpdateColorsArgs) => {
     if (colors?.length === 2) {
         const isBothFieldsPseudo = colorsCopy.every((color) => isMeasureNameOrValue(color));
 
-        const prevColorsGuidsMap = prevColors?.reduce((acc, color) => {
-            return {
-                ...acc,
-                [color.guid || color.title]: true,
-            };
-        }, {} as Record<string, boolean>);
+        const prevColorsGuidsMap = prevColors?.reduce(
+            (acc, color) => {
+                return {
+                    ...acc,
+                    [color.guid || color.title]: true,
+                };
+            },
+            {} as Record<string, boolean>,
+        );
 
         const replacedItemIndex = colorsCopy.findIndex(
             (color) => prevColorsGuidsMap[color.guid || color.title],

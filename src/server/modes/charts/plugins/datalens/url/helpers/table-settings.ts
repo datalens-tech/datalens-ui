@@ -1,30 +1,33 @@
 import _unionBy from 'lodash/unionBy';
 
-import {
-    IChartEditor,
-    PlaceholderId,
+import type {
     ServerCommonSharedExtraSettings,
     ServerField,
     ServerVisualization,
-    WizardVisualizationId,
+    StringParams,
 } from '../../../../../../../shared';
-import {BaseUrlPayload} from '../../types';
+import {PlaceholderId, WizardVisualizationId} from '../../../../../../../shared';
+import {
+    getCurrentPage,
+    getSortParams,
+} from '../../../../../../components/charts-engine/components/processor/paramsUtils';
+import type {BaseUrlPayload} from '../../types';
 import {SORT_ORDER} from '../../utils/constants';
 import {getSortData} from '../../utils/misc-helpers';
 
 type GetOrderByItemForColumnSortClickArgs = {
-    ChartEditor: IChartEditor;
+    params: StringParams;
     isPivotTable: boolean;
     allItemsIds: Record<string, boolean>;
     visualization: ServerVisualization;
 };
 const getOrderByItemForColumnClickSort = ({
-    ChartEditor,
+    params,
     allItemsIds,
     isPivotTable,
     visualization,
 }: GetOrderByItemForColumnSortClickArgs) => {
-    const {columnId, order} = getSortData(ChartEditor.getSortParams(), isPivotTable);
+    const {columnId, order} = getSortData(getSortParams(params), isPivotTable);
 
     // If the data for sorting and the column exist, then
     // We process tabular sorting, it is in priority
@@ -56,7 +59,7 @@ const getOrderByItemForColumnClickSort = ({
 };
 
 type GetUpdatedOrderByForColumnClickSortArgs = {
-    ChartEditor: IChartEditor;
+    params: StringParams;
     isPivotTable: boolean;
     allItemsIds: Record<string, boolean>;
     orderBy: BaseUrlPayload['order_by'];
@@ -64,7 +67,7 @@ type GetUpdatedOrderByForColumnClickSortArgs = {
     visualization: ServerVisualization;
 };
 const getUpdatedOrderByForColumnClickSort = ({
-    ChartEditor,
+    params,
     allItemsIds,
     isPivotTable,
     orderBy,
@@ -72,7 +75,7 @@ const getUpdatedOrderByForColumnClickSort = ({
     visualization,
 }: GetUpdatedOrderByForColumnClickSortArgs) => {
     const columnSort = getOrderByItemForColumnClickSort({
-        ChartEditor,
+        params,
         allItemsIds,
         isPivotTable,
         visualization,
@@ -100,13 +103,13 @@ export const getPayloadWithCommonTableSettings = (
     options: {
         extraSettings: ServerCommonSharedExtraSettings | undefined;
         fields: ServerField[];
-        ChartEditor: IChartEditor;
+        params: StringParams;
         allItemsIds: Record<string, boolean>;
         datasetId: string;
         visualization: ServerVisualization;
     },
 ): BaseUrlPayload => {
-    const {fields, extraSettings, ChartEditor, allItemsIds, datasetId, visualization} = options;
+    const {fields, extraSettings, params, allItemsIds, datasetId, visualization} = options;
 
     const visualizationId = visualization.id;
 
@@ -136,14 +139,13 @@ export const getPayloadWithCommonTableSettings = (
     // and backend will be failed to process it
     if (dimensionsFromCurrentDataset.length && isPaginationEnabled && extraSettings?.limit) {
         updatedPayload.limit = extraSettings?.limit;
-
-        const page = ChartEditor.getCurrentPage();
+        const page = getCurrentPage(params);
         updatedPayload.offset = (page - 1) * extraSettings.limit;
     }
 
     if (isBackendPivotTable || isPaginationEnabled) {
         updatedPayload.order_by = getUpdatedOrderByForColumnClickSort({
-            ChartEditor,
+            params,
             allItemsIds,
             isPivotTable,
             orderBy: payload.order_by,

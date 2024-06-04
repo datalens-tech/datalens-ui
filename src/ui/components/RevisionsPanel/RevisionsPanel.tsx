@@ -4,12 +4,13 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
 import {selectEntryContent} from 'store/selectors/entryContent';
-import {EntryGlobalState, RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import type {EntryGlobalState} from 'store/typings/entryContent';
+import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 
@@ -30,6 +31,8 @@ export type RevisionsPanelProps = {
     onOpenDraftRevision: () => void;
     setRevisionsMode?: (mode: RevisionsMode) => void;
     setRevisionsListMode?: (mode: RevisionsListMode) => void;
+    onDeprecationConfirm?: () => void;
+    deprecationMessage?: string | null;
     isEditing: boolean;
 };
 
@@ -114,12 +117,15 @@ export const setLockedTextInfo = ({loginOrId, scope, callback, onError}: LockedT
     };
 };
 
+// eslint-disable-next-line complexity
 const RevisionsPanel = ({
     entry,
     leftStyle,
     onOpenActualRevision,
     onSetActualRevision,
     onOpenDraftRevision,
+    onDeprecationConfirm,
+    deprecationMessage,
     isEditing,
 }: RevisionsPanelProps) => {
     const dispatch = useDispatch();
@@ -138,6 +144,8 @@ const RevisionsPanel = ({
         [location, scope],
     );
     const isCurrentRevDraft = savedId === urlRevId;
+
+    const showDeprecationMessage = isEditing && Boolean(deprecationMessage);
 
     const showDraftWarningPanel =
         currentRevId &&
@@ -189,7 +197,7 @@ const RevisionsPanel = ({
         });
     }, [onOpenDraftRevision, savedId, publishedId, location]);
 
-    if (isPanelHidden && !showDraftWarningPanel) {
+    if (isPanelHidden && !showDraftWarningPanel && !showDeprecationMessage) {
         return null;
     }
 
@@ -202,7 +210,9 @@ const RevisionsPanel = ({
     let warningText = '';
     let loginText = null;
     let dateText = '';
-    if (showDraftWarningPanel) {
+    if (showDeprecationMessage) {
+        warningText = deprecationMessage ?? '';
+    } else if (showDraftWarningPanel) {
         warningText = `${i18n('label_later-warning-text', {scope: scopeText})}`;
     } else {
         dateText = `${i18n('label_by')} ${date}`;
@@ -235,7 +245,9 @@ const RevisionsPanel = ({
                     onOpenActualClickCallback={handleOpenActualClick}
                     onOpenRevisionsClickCallback={handleOpenRevisionsClick}
                     onOpenDraftClickCallback={handleOpenDraftClick}
+                    onDeprecationConfirm={onDeprecationConfirm}
                     isDraft={Boolean(showDraftWarningPanel)}
+                    isDeprecated={Boolean(showDeprecationMessage)}
                     isLoading={revisionsLoadingStatus === 'loading'}
                 />
             </div>

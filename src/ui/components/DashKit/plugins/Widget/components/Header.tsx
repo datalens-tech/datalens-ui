@@ -1,16 +1,17 @@
 import React from 'react';
 
-import {AdaptiveTabs, ShareOptions, SharePopover, TabItem} from '@gravity-ui/components';
+import type {TabItem} from '@gravity-ui/components';
+import {AdaptiveTabs} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from 'ui/components/Widgets/Chart/helpers/helpers';
-import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
-import {CurrentTab} from '../types';
+import type {CurrentTab} from '../types';
 
 import {DASH_WIDGET_CLASSNAME} from './helpers';
 
@@ -29,7 +30,6 @@ type HeaderProps = {
     hideDebugTool?: boolean;
 };
 
-const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
 const b = block(DASH_WIDGET_CLASSNAME);
 
 export const Header = (props: HeaderProps) => {
@@ -96,12 +96,12 @@ export const Header = (props: HeaderProps) => {
                 {isFullscreen ? <div className={b('title')}>{currentTab.title}</div> : renderTabs()}
                 {withShareWidget && (
                     <div className={b('share-widget')}>
-                        <SharePopover
-                            useWebShareApi={DL.IS_MOBILE}
-                            url={window.location.href}
-                            title={currentTab.title}
-                            text={currentTab.title}
-                            shareOptions={socialNets}
+                        <ShareButton
+                            enablePopover={true}
+                            entityId={widgetId}
+                            popoverText={currentTab.title}
+                            popoverTitle={currentTab.title}
+                            iconSize={16}
                         />
                     </div>
                 )}

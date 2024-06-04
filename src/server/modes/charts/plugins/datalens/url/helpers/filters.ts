@@ -1,4 +1,4 @@
-import {PayloadFilter} from '../../../../../../../shared';
+import type {PayloadFilter} from '../../../../../../../shared';
 
 type GetMergedChartAndParamsFiltersArgs = {
     paramsFilters: PayloadFilter[];
@@ -10,11 +10,14 @@ export const getMergedChartAndParamsFilters = (
 ): PayloadFilter[] => {
     const {chartFilters, paramsFilters} = args;
 
-    const paramsFiltersMap = paramsFilters.reduce((acc, paramFilter) => {
-        acc[paramFilter.column] = true;
+    const paramsFiltersMap = paramsFilters.reduce(
+        (acc, paramFilter) => {
+            acc[paramFilter.column] = true;
 
-        return acc;
-    }, {} as Record<string, boolean>);
+            return acc;
+        },
+        {} as Record<string, boolean>,
+    );
 
     const filteredChartFilters = chartFilters.filter((chartFilter) => {
         return !paramsFiltersMap[chartFilter.column];

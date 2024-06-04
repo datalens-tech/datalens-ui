@@ -1,8 +1,8 @@
 import {MAP_PLACE_TO_SCOPE, PLACE} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
-import {GetEntriesResponse, GetFavoritesResponse, ListDirectoryResponse} from '../../us/types';
-import {GetNavigationListArgs, GetNavigationListResponse, NavigationEntry} from '../types';
+import type {GetEntriesResponse, GetFavoritesResponse, ListDirectoryResponse} from '../../us/types';
+import type {GetNavigationListArgs, GetNavigationListResponse, NavigationEntry} from '../types';
 
 export const navigationActions = {
     getNavigationList: createAction<GetNavigationListResponse, GetNavigationListArgs>(

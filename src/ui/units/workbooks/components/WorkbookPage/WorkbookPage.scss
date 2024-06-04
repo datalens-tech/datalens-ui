@@ -50,11 +50,11 @@
         align-items: center;
     }
 
-    &__breadcrumbs {
-        max-width: var(--dl-breadcrumbs-max-width);
+    &__breadcrumbs_is-mobile {
+        max-width: 150px;
+    }
 
-        &_is-mobile {
-            max-width: 150px;
-        }
+    &__return-button {
+        margin-right: 8px;
     }
 }

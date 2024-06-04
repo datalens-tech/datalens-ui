@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {DataLensApiError, Utils} from 'ui';
+import type {DataLensApiError} from 'ui';
+import {Utils} from 'ui';
 
 import ErrorText from '../../ErrorText/ErrorText';
 

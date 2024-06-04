@@ -1,4 +1,4 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode} from '../../index';
+import type {ChartsConfigVersion, DatasetFieldCalcMode} from '../../index';
 
 export type V2ChartsConfig = {
     title?: string;

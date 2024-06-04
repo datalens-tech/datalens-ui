@@ -1,17 +1,19 @@
-import {
-    ApiV2Annotations,
+import type {
     BarViewOptions,
     ColorPalette,
     IChartEditor,
     ServerColor,
     ServerField,
+} from '../../../../../../../shared';
+import {
+    ApiV2Annotations,
     getFormatOptions,
     isDateField,
     isMarkupItem,
     isMeasureField,
 } from '../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../constants/misc';
-import {ChartColorsConfig} from '../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../types';
 import {
     chartKitFormatNumberWrapper,
     formatDate,
@@ -19,7 +21,7 @@ import {
     isTableBarsSettingsEnabled,
 } from '../../utils/misc-helpers';
 import {getBarSettingsValue} from '../helpers/barsSettings';
-import {BarValueOptions} from '../helpers/barsSettings/types';
+import type {BarValueOptions} from '../helpers/barsSettings/types';
 
 import {colorizePivotTableByFieldBackgroundSettings} from './helpers/backgroundColor';
 import {colorizePivotTableByColorField} from './helpers/color';
@@ -33,7 +35,7 @@ import {
 import {getSortMeta} from './helpers/sort';
 import {isRowWithTotals} from './helpers/totals';
 import {getRowHeaderCellMetadata} from './table-head-generator';
-import {
+import type {
     AnnotationsMap,
     ChartkitCell,
     ChartkitTableRows,
@@ -232,6 +234,7 @@ export const generateTableRows = ({
                         settingsByField,
                         parents,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        availablePalettes: colorsConfig.availablePalettes,
                     }),
                 };
 
@@ -336,6 +339,7 @@ export const generateTableRows = ({
         fieldDict,
         fieldsItemIdMap,
         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+        availablePalettes: colorsConfig.availablePalettes,
     });
 
     colorizePivotTableByColorField({

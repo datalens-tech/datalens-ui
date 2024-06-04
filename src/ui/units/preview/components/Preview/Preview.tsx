@@ -4,8 +4,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {RouteComponentProps} from 'react-router-dom';
-import {Feature, WorkbookId} from 'shared';
+import type {RouteComponentProps} from 'react-router-dom';
+import type {WorkbookId} from 'shared';
+import {Feature} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -13,19 +14,20 @@ import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchEntryById} from 'ui/store/actions/entryContent';
+import {PostMessage} from 'ui/units/dash/modules/postMessage';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKit as ChartKitType} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../libs/DatalensChartkit/ChartKit/helpers/constants';
-import {
+import type {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {registry} from '../../../../registry';
 import {SNAPTER_DESIRED_CLASS} from '../../modules/constants/constants';
+import {sendEmbedHeight} from '../../modules/helpers';
 
 import './Preview.scss';
 import 'ui/components/Widgets/Chart/Chart.scss';
@@ -36,22 +38,6 @@ interface PreviewProps extends RouteComponentProps<{idOrSource: string}> {
     asideHeaderSize: number;
     setPageEntry: (pageEntry: {entryId: string; key: string}) => void;
     isEmbedded?: boolean;
-}
-
-function sendEmbedHeight(previewRef: React.RefObject<HTMLDivElement>) {
-    if (!previewRef.current) {
-        return;
-    }
-
-    const scrollableNodesCollection = previewRef.current.getElementsByClassName(
-        CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
-    );
-
-    if (scrollableNodesCollection.length) {
-        const height = scrollableNodesCollection[0].scrollHeight;
-
-        window.parent.postMessage({iFrameName: window.name, embedHeight: height}, '*');
-    }
 }
 
 const Preview: React.FC<PreviewProps> = (props) => {
@@ -158,7 +144,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
 
         const handleMessageSend = (event: MessageEvent<string>) => {
             if (event.data === EMBEDDED_CHART_MESSAGE_NAME) {
-                sendEmbedHeight(previewRef);
+                sendEmbedHeight(previewRef.current);
             }
         };
 
@@ -206,7 +192,11 @@ const Preview: React.FC<PreviewProps> = (props) => {
                 previewRef.current.dispatchEvent(event);
 
                 if (isEmbedded && window.name) {
-                    sendEmbedHeight(previewRef);
+                    sendEmbedHeight(previewRef.current);
+                    PostMessage.send({
+                        iFrameName: window.name,
+                        isRendered: true,
+                    });
                 }
             }
         },

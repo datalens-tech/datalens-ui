@@ -26,8 +26,9 @@
 
     &__title-tooltip {
         margin-left: 5px;
+
         .yfm {
-            font-size: 13px;
+            @include yfm-text-style();
         }
     }
 

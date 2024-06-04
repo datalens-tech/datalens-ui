@@ -1,8 +1,11 @@
-import {
+import type {
     ColorPalette,
     DATASET_FIELD_TYPES,
     MarkupItem,
+    Palette,
     ServerField,
+} from '../../../../../../../shared';
+import {
     getFakeTitleOrTitle,
     getFormatOptions,
     isDateField,
@@ -24,7 +27,7 @@ import {MEASURE_NAME_PSEUDO_ID} from './constants/misc';
 import {colorizePivotTableHeaderByBackgroundSettings} from './helpers/backgroundColor';
 import {getCellValueForHeader, getPivotTableCellId} from './helpers/misc';
 import {getSortMeta} from './helpers/sort';
-import {
+import type {
     CharkitTableHead,
     ChartkitCell,
     ChartkitHeadCell,
@@ -51,6 +54,7 @@ type GenerateTableHeadArgs = {
     isTotalsEnabled: boolean;
     isPaginatorEnabled: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
     sortSettings: PivotTableSortSettings;
 };
 
@@ -64,6 +68,7 @@ type GetHeaderCellMetadataArgs = {
     isTotalHeader?: boolean;
     isPaginatorEnabled?: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 type HeadSortMetaData = {
@@ -105,6 +110,7 @@ export const getRowHeaderCellMetadata = (args: GetHeaderCellMetadataArgs): Chart
         cellValue,
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
+        availablePalettes: args.availablePalettes,
     });
 
     if (isMeasureName) {
@@ -193,6 +199,7 @@ export const getHeaderCellMetadata = (
         cellValue: getCellValueForHeader(name, {pivotField, datasetField: field}),
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
+        availablePalettes: args.availablePalettes,
     });
 
     if (isMeasureName) {
@@ -236,6 +243,7 @@ export const generateTableHead = ({
     settingsByField,
     isPaginatorEnabled,
     loadedColorPalettes,
+    availablePalettes,
     sortSettings,
     pivotStructure,
 }: GenerateTableHeadArgs): CharkitTableHead => {
@@ -256,6 +264,7 @@ export const generateTableHead = ({
             measures,
             isPaginatorEnabled,
             loadedColorPalettes,
+            availablePalettes,
         },
         cellId,
         sortMetaData: {
@@ -298,6 +307,10 @@ export const generateTableHead = ({
 
             if (cellType === 'date') {
                 head[index].format = field.format || getDefaultDateFormat(field.data_type);
+            }
+
+            if (field.hintSettings?.enabled) {
+                head[index].hint = field.hintSettings?.text;
             }
         }
 

@@ -1,6 +1,7 @@
-import {SchemasByScope} from '@gravity-ui/gateway';
-import sdkFactory, {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
-import {Lang} from '@gravity-ui/sdk/build/constants';
+import type {SchemasByScope} from '@gravity-ui/gateway';
+import type {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
+import sdkFactory from '@gravity-ui/sdk';
+import type {Lang} from '@gravity-ui/sdk/build/constants';
 import uuid from 'uuid/v4';
 
 import {
@@ -11,21 +12,15 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
     TIMEZONE_OFFSET_HEADER,
-    RPC_AUTHORIZATION,
-    WithRequired,
+    RPC_AUTHORIZATION
 } from '../../../shared';
-import type {schema} from '../../../shared';
+import type {WithRequired, schema} from '../../../shared';
 import {DL} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils';
 
-import {
-    OperationError,
-    SdkError,
-    handleRequestError,
-    isOperationError,
-    isSdkError,
-} from './parse-error';
+import type {OperationError, SdkError} from './parse-error';
+import {handleRequestError, isOperationError, isSdkError} from './parse-error';
 
 export {isSdkError, isOperationError, handleRequestError};
 export type {SdkError, OperationError};

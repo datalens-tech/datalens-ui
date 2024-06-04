@@ -1,11 +1,13 @@
 import React from 'react';
 
-import {CheckboxProps, Checkbox as CommonCheckbox} from '@gravity-ui/uikit';
+import type {CheckboxProps} from '@gravity-ui/uikit';
+import {Checkbox as CommonCheckbox} from '@gravity-ui/uikit';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {CheckboxItem} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {changeForm, changeInnerForm} from '../../../../store';
 

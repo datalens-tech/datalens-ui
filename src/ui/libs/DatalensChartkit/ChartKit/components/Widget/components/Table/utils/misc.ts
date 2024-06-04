@@ -1,9 +1,9 @@
-import React from 'react';
+import type React from 'react';
 
 import {sanitizeUrl} from '@braintree/sanitize-url';
-import {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
+import type {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import isEqual from 'lodash/isEqual';
-import {
+import type {
     BarTableCell,
     BarViewOptions,
     ChartKitCss,
@@ -16,7 +16,7 @@ import {
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {DataTableData} from '../../../../../../types';
+import type {DataTableData} from '../../../../../../types';
 
 const decodeURISafe = (uri: string) => {
     return decodeURI(uri.replace(/%(?![0-9a-fA-F][0-9a-fA-F]+)/g, '%25'));

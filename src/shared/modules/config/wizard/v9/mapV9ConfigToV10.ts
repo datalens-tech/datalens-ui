@@ -1,17 +1,18 @@
 import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
-import {
-    ChartsConfigVersion,
+import type {
     V10ChartsConfig,
     V10Placeholder,
     V9ChartsConfig,
     V9Placeholder,
 } from '../../../../types';
+import {ChartsConfigVersion} from '../../../../types';
 
 export const mapV9ConfigToV10 = (config: V9ChartsConfig): V10ChartsConfig => {
     const affectedVisualizations = [
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,
         WizardVisualizationId.PieD3,
+        WizardVisualizationId.DonutD3,
     ];
 
     let visualization = config.visualization;

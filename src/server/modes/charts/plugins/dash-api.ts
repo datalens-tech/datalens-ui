@@ -1,26 +1,24 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import pick from 'lodash/pick';
 
+import type {DashEntry, EntryReadParams} from '../../../../shared';
 import {
     DASH_API_BASE_URL,
     DASH_CURRENT_SCHEME_VERSION,
-    DashEntry,
     DashLoadPriority,
     DashTabConnectionKind,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
     DashTabItemTitleSize,
     DashTabItemType,
-    EntryReadParams,
     EntryScope,
     ErrorCode,
 } from '../../../../shared';
 import {Utils} from '../../../components';
-import type {Plugin} from '../../../components/charts-engine/types';
-import {PluginRoute} from '../../../components/charts-engine/types';
+import type {Plugin, PluginRoute} from '../../../components/charts-engine/types';
 import {Dash} from '../../../components/sdk';
 import {DASH_DEFAULT_NAMESPACE, DASH_ENTRY_RELEVANT_FIELDS} from '../../../constants';
-import {ValidationConfig} from '../../../lib/validation/types';
+import type {ValidationConfig} from '../../../lib/validation/types';
 
 // TODO: add "additionalProperties: false" for all "type: object"
 // in view of the existing incorrect schemes, we leave validation enabled only for internal installation

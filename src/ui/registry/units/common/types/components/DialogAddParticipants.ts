@@ -1,4 +1,4 @@
-import {EntryFields} from 'shared/schema';
+import type {EntryFields} from 'shared/schema';
 
 export type DialogAddParticipantsProps = {
     onClose: () => void;
@@ -8,4 +8,5 @@ export type DialogAddParticipantsProps = {
     mode?: 'add' | 'request';
     showParticipantsRequests?: boolean;
     showOwners?: boolean;
+    showCustomAccess?: boolean;
 };

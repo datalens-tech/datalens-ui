@@ -1,8 +1,8 @@
-import {URL_OPTIONS} from 'ui/constants/common';
+import type {URL_OPTIONS} from 'ui/constants/common';
 
-import {StringParams} from '../../../../shared';
+import type {StringParams} from '../../../../shared';
 
-import {ControlsOnlyWidget, Widget} from './widget';
+import type {ControlsOnlyWidget, Widget} from './widget';
 //import {ChartKitLoadSuccess, ChartKitProps} from '../components/ChartKitBase/ChartKitBase'; // TODO after remove old alternative Chartkit code, cause cycle imports
 //import {ChartsData, ChartsProps, ChartsStats} from '../modules/data-provider/charts'; // TODO after remove old alternative Chartkit code, cause cycle imports
 

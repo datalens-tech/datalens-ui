@@ -46,6 +46,24 @@ Text | Text | Text
 
 ---
 
+{% cut "**Text cut header**" %}
+
+Detaled text
+
+{% endcut %}
+
+{gray}(some gray text)
+{yellow}(some yellow text)
+{orange}(some orange text)
+{red}(some red text)
+{green}(some green text)
+{blue}(some blue text)
+{violet}(some violet text)
+
+[*term_key]: Some term descriptions with _base_ markdown.
+
+Usage of [term](*term_key) in text.
+
 \\\`\\\`\\\`js
 // Code
 const b = 10;

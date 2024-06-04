@@ -1,6 +1,5 @@
-import {
+import type {
     ApiV2Request,
-    IChartEditor,
     Link,
     ServerChartsConfig,
     ServerPlaceholder,
@@ -8,13 +7,12 @@ import {
     Shared,
     StringParams,
 } from '../../../../../../../shared';
-import {MiddlewareUrl} from '../../../types';
-import {ApiVersion} from '../../types';
+import type {MiddlewareUrl} from '../../../types';
+import type {ApiVersion} from '../../types';
 
-export type BuildSourcesArgs = {
+export type SourcesArgs = {
     params: StringParams;
     shared: Shared;
-    ChartEditor: IChartEditor;
     apiVersion?: ApiVersion;
 };
 
@@ -23,7 +21,7 @@ export type PrepareSourceRequestsArgs = {
     datasetsIds: string[];
     visualization: ServerVisualization;
     extraSettings: ServerChartsConfig['extraSettings'];
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     links?: Link[];
 };
 
@@ -32,7 +30,7 @@ export type PrepareSingleSourceRequestArgs = {
     datasetsIds: string[];
     layerId?: string;
     placeholders: ServerPlaceholder[];
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     isPivotRequest: boolean;
     links?: Link[];
 };
@@ -40,7 +38,7 @@ export type PrepareSingleSourceRequestArgs = {
 export type SourceRequests = Record<string, SourceRequest>;
 
 export type SourceRequest = Omit<ApiV2Request, 'data'> & {
-    sourceArgs?: BuildSourcesArgs;
+    sourceArgs?: SourcesArgs;
     middlewareUrl?: MiddlewareUrl;
     hideInInspector?: boolean;
 };
@@ -48,6 +46,6 @@ export type SourceRequest = Omit<ApiV2Request, 'data'> & {
 export type PrepareSourceRequestBody = {
     datasetId: string;
     apiVersion: ApiVersion;
-    sourceArgs: BuildSourcesArgs;
+    sourceArgs: SourcesArgs;
     isPivotRequest: boolean;
 };

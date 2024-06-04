@@ -138,12 +138,10 @@ datalensTest.describe('Wizard - replacing the dataset', () => {
 
             await wizardPage.columnSettings.open();
 
-            const columnValue = await wizardPage.columnSettings.getRadioButtonsValue(
-                firstColumnFieldName,
-            );
-            const columnInputValue = await wizardPage.columnSettings.getInputValue(
-                firstColumnFieldName,
-            );
+            const columnValue =
+                await wizardPage.columnSettings.getRadioButtonsValue(firstColumnFieldName);
+            const columnInputValue =
+                await wizardPage.columnSettings.getInputValue(firstColumnFieldName);
 
             expect(columnValue).toEqual('pixel');
             expect(columnInputValue).toEqual('500');

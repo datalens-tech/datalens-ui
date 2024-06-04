@@ -1,6 +1,15 @@
-import {Operations} from '../modules';
+import type {ItemDropProps} from '@gravity-ui/dashkit';
 
-import {ClientChartsConfig, Dictionary, Entry, EntryScope, Params, StringParams} from './index';
+import type {Operations} from '../modules';
+
+import type {
+    ClientChartsConfig,
+    Dictionary,
+    Entry,
+    EntryScope,
+    Params,
+    StringParams,
+} from './index';
 
 export enum DashTabItemType {
     Title = 'title',
@@ -78,6 +87,8 @@ export interface DashData {
     supportDescription?: string;
 }
 
+export type DashDragOptions = ItemDropProps;
+
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
@@ -117,6 +128,10 @@ export interface DashTabItemText extends DashTabItemBase {
     data: {
         text: string;
         autoHeight?: boolean;
+        background?: {
+            enabled: boolean;
+            color: string;
+        };
     };
 }
 
@@ -127,6 +142,10 @@ export interface DashTabItemTitle extends DashTabItemBase {
         size: DashTabItemTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
+        background?: {
+            enabled: boolean;
+            color: string;
+        };
     };
 }
 
@@ -210,6 +229,8 @@ export interface DashTabItemControlElementBase {
     innerTitle?: string;
     fieldType?: string;
     required?: boolean;
+    showHint?: boolean;
+    hint?: string;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
@@ -246,6 +267,9 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+
+    updateControlsOnChange?: boolean;
+
     group: DashTabItemControlSingle[];
 }
 
@@ -278,5 +302,8 @@ export interface DashStats {
     dashId: string;
     dashTabId: string;
     dashStateHash: string | null;
-    login: string;
+    login?: string;
+    userId: string;
+    tenantId: string;
+    traceId?: string;
 }

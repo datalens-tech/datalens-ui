@@ -1,12 +1,12 @@
-import {
-    ConnectorType,
+import type {
     Dictionary,
-    Feature,
     IChartEditor,
-    QLParamType,
     ServerChartsConfig,
     StringParams,
-    isEnabledServerFeature,
+} from '../../../../../shared';
+import {
+    ConnectorType,
+    QLParamType,
     isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,
@@ -14,7 +14,6 @@ import {
 } from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 import type {QlConfig} from '../../../../../shared/types/config/ql';
-import {registry} from '../../../../registry';
 import {getColorPalettesRequests} from '../helpers/color-palettes';
 
 import {buildSource, iterateThroughVisibleQueries, log, prepareQuery} from './utils/misc-helpers';
@@ -212,13 +211,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             };
         }
 
-        const app = registry.getApp();
-        if (isEnabledServerFeature(app.nodekit.ctx, Feature.CustomColorPalettes)) {
-            Object.assign(
-                sources,
-                getColorPalettesRequests({config: config as unknown as ServerChartsConfig}),
-            );
-        }
+        Object.assign(
+            sources,
+            getColorPalettesRequests({config: config as unknown as ServerChartsConfig}),
+        );
     } catch (error) {
         ChartEditor._setError({
             code: 'ERR.CK.PROCESSING_ERROR',

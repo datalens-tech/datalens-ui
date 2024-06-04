@@ -1,15 +1,14 @@
-import {
+import type {
     ApiV2Filter,
     ApiV2OrderBy,
     ApiV2Parameter,
     ApiV2RequestBody,
     ApiV2RequestField,
-    IChartEditor,
     ServerField,
-    isDimensionField,
-    isTreeField,
+    StringParams,
 } from '../../../../../../../shared';
-import {ApiVersion, BaseUrlPayload} from '../../types';
+import {isDimensionField, isTreeField} from '../../../../../../../shared';
+import type {ApiVersion, BaseUrlPayload} from '../../types';
 import {getTreeState, mapParameterToRequestFormat} from '../helpers';
 
 const TREE_ROOT = '[]';
@@ -29,17 +28,17 @@ const getRequestFields = (payload: GetRequestFieldsPayload): ApiV2RequestField[]
 type GetTreeRequestFieldsPayload = {
     columns: string[];
     fields: ServerField[];
-    ChartEditor: IChartEditor;
+    params: StringParams;
 };
 
-const getTreeRequestFields = ({columns, fields, ChartEditor}: GetTreeRequestFieldsPayload) => {
+const getTreeRequestFields = ({columns, fields, params}: GetTreeRequestFieldsPayload) => {
     const requestFields: ApiV2RequestField[] = [];
 
     columns.forEach((fieldId) => {
         const field = fields.find((field) => field.guid === fieldId);
 
         if (field && isTreeField(field)) {
-            const treeState = getTreeState(ChartEditor);
+            const treeState = getTreeState(params);
 
             const initialLegendItemId = 1;
             let legendItemId = initialLegendItemId + 1;
@@ -111,7 +110,7 @@ export type BuildDefaultRequestArgs = {
     payload: BaseUrlPayload;
     fields: ServerField[];
     apiVersion: ApiVersion;
-    ChartEditor: IChartEditor;
+    params: StringParams;
     revisionId: string;
     datasetId: string;
 
@@ -122,7 +121,7 @@ export const buildDefaultRequest = ({
     payload,
     fields,
     apiVersion,
-    ChartEditor,
+    params,
     datasetId,
     revisionId,
     allMeasuresMap,
@@ -145,7 +144,7 @@ export const buildDefaultRequest = ({
         requestFields = getTreeRequestFields({
             columns,
             fields,
-            ChartEditor,
+            params,
         });
     } else {
         requestFields = getRequestFields({

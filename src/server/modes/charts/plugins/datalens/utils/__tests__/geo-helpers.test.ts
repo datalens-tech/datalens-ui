@@ -1,4 +1,5 @@
-import {Coordinate, getMapBounds} from '../geo-helpers';
+import type {Coordinate} from '../geo-helpers';
+import {getMapBounds} from '../geo-helpers';
 
 describe('getMapBounds', () => {
     it('It should return 2 arrays for the leftmost lower and rightmost upper points on the map', () => {

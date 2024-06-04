@@ -12,6 +12,7 @@ import block from 'bem-cn-lite';
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
 import {TableHead} from './components/TableHead/TableHead';
+import {useDevicePixelRatio, useTableDimensions} from './hooks';
 import type {TableProps} from './types';
 import {getTableColumns, getTableData} from './utils';
 
@@ -30,11 +31,15 @@ export const Table = (props: TableProps) => {
         onSortingChange,
     } = props;
     const {head, footer, rows} = props.data;
-    const columns = React.useMemo(
-        () => getTableColumns({head, rows, footer}),
-        [head, rows, footer],
-    );
-    const data = React.useMemo(() => getTableData({head, rows}), [head, rows]);
+    const tableRef = React.useRef<HTMLTableElement>(null);
+
+    const columns = React.useMemo(() => {
+        return getTableColumns({head, rows, footer});
+    }, [head, rows, footer]);
+
+    const data = React.useMemo(() => {
+        return getTableData({head, rows});
+    }, [head, rows]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const table = useReactTable({
         data,
@@ -44,6 +49,7 @@ export const Table = (props: TableProps) => {
         getGroupedRowModel: getGroupedRowModel(),
         sortDescFirst: true,
         manualSorting,
+        manualPagination: true,
         state: {
             sorting,
         },
@@ -59,15 +65,31 @@ export const Table = (props: TableProps) => {
         },
     });
 
+    const {tableDimensions} = useTableDimensions({table: tableRef, data: props.data});
+
     const shouldShowFooter = columns.some((column) => column.footer);
+    const tableRows = table.getRowModel().rows;
+
+    let tableStyle: React.CSSProperties = {};
+    const pixelRatio = useDevicePixelRatio();
+    if (pixelRatio && pixelRatio > 1) {
+        tableStyle = {
+            '--dl-table-cell-border-offset': `${-1 / ((pixelRatio % 1) + 1)}px`,
+        } as React.CSSProperties;
+    }
 
     return (
-        <table className={b()} data-qa={qa}>
+        <table ref={tableRef} className={b()} data-qa={qa} style={tableStyle}>
             {title && <caption className={b('title')}>{title.text}</caption>}
-            <TableHead headers={table.getHeaderGroups()} sticky={headerOptions?.sticky} />
+            <TableHead
+                headers={table.getHeaderGroups()}
+                sticky={headerOptions?.sticky}
+                tableDimensions={tableDimensions}
+            />
             <TableBody
                 columns={columns}
-                rows={table.getRowModel().rows}
+                tableDimensions={tableDimensions}
+                rows={tableRows}
                 noData={noData}
                 onCellClick={onCellClick}
             />

@@ -1,19 +1,20 @@
 import escape from 'lodash/escape';
 
-import {
-    Feature,
-    MINIMUM_FRACTION_DIGITS,
+import type {
     PointSizeConfig,
     ServerFieldFormatting,
     VisualizationLayerShared,
+} from '../../../../../../../shared';
+import {
+    Feature,
+    MINIMUM_FRACTION_DIGITS,
     isEnabledServerFeature,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
+import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
 import {
-    Coordinate,
-    GradientOptions,
     getExtremeValues,
     getFlattenCoordinates,
     getGradientMapOptions,
@@ -28,10 +29,10 @@ import {
     isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {DEFAULT_ICON_COLOR, DEFAULT_POINT_RADIUS} from './constants';
-import {GeopointMapOptions, GeopointPointConfig} from './types';
+import type {GeopointMapOptions, GeopointPointConfig} from './types';
 
 type GetPointConfigArgs = {
     stringifyedCoordinates: string;

@@ -1,5 +1,6 @@
 import block from 'bem-cn-lite';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
 
 import logger from '../../../../logger';
@@ -12,8 +13,8 @@ import defineGridmap from './modules/components/gridmap/Gridmap';
 import defaultMapper from './modules/components/polygonmap/utils/defaultMapper';
 import defineModules from './modules/modules';
 
-import '../graph/graph.scss';
 import './yandex-map.scss';
+import '../graph/graph.scss';
 
 // TODO: CHARTS-4847
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
@@ -409,6 +410,17 @@ class YandexMap {
             await YandexMap._initYmaps(lang, apiKey);
 
             yandexMapAPIWaiting = Performance.getDuration(initYmapsMarkId);
+        }
+
+        // When only one point on the map, the map is displayed at the z zoom level, which is not there (too close).
+        // As a result, it shows an empty square instead of a map by default.
+        const bounds = state.bounds;
+        if (bounds && isEqual(bounds[0], bounds[1])) {
+            const zoomRange = await YandexMap._ymaps.getZoomRange('yandex#map', bounds[0]);
+
+            state.center = bounds[0];
+            state.zoom = zoomRange[1];
+            delete state.bounds;
         }
 
         const geoObjectsInstantiationMarkId = getRandomCKId();

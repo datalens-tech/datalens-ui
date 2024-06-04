@@ -5,9 +5,9 @@ import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
+import type {DatasetOptions, Field, FilterField, ShapesConfig, Update} from 'shared';
 
-import {PaletteTypes} from '../../../constants';
+import type {PaletteTypes} from '../../../constants';
 
 import DialogShapesPalette from './DialogShapesPalette/DialogShapesPalette';
 

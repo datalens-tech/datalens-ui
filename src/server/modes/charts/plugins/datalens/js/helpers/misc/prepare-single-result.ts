@@ -1,15 +1,16 @@
-import {
+import type {
     ColorPalette,
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     IChartEditor,
+    Palette,
     ServerChartsConfig,
     ServerVisualization,
     ServerVisualizationLayer,
-    WizardVisualizationId,
-    isMonitoringOrPrometheusChart,
 } from '../../../../../../../../shared';
+import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
-import {PivotData} from '../../../preparers/backend-pivot-table/types';
+import type {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
 import {prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
@@ -17,15 +18,15 @@ import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import prepareLineTime from '../../../preparers/line-time';
 import {prepareD3Line} from '../../../preparers/line/d3';
+import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import prepareTreemapData from '../../../preparers/treemap';
-import {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
@@ -44,8 +45,10 @@ type PrepareSingleResultArgs = {
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
     ChartEditor: IChartEditor;
     datasetsIds: string[];
+    palettes: Record<string, Palette>;
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
+    features: FeatureConfig;
 };
 
 // eslint-disable-next-line complexity
@@ -59,6 +62,8 @@ export default ({
     datasetsIds,
     loadedColorPalettes = {},
     disableDefaultSorting = false,
+    palettes,
+    features,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -168,6 +173,7 @@ export default ({
             break;
 
         case WizardVisualizationId.PieD3:
+        case WizardVisualizationId.DonutD3:
             prepare = prepareD3Pie;
             rowsLimit = 1000;
             break;
@@ -287,6 +293,7 @@ export default ({
     const chartColorsConfig = getChartColorsConfig({
         loadedColorPalettes,
         colorsConfig,
+        availablePalettes: palettes,
     });
 
     const prepareFunctionArgs = {
@@ -312,6 +319,7 @@ export default ({
         segments,
 
         disableDefaultSorting,
+        features,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

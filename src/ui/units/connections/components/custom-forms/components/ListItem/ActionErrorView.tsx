@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Icon, Popover, PopoverInstanceProps, PopupPlacement} from '@gravity-ui/uikit';
+import type {PopoverInstanceProps, PopupPlacement} from '@gravity-ui/uikit';
+import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

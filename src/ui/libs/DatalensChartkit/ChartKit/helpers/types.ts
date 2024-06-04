@@ -1,4 +1,4 @@
-import {GraphWidgetEventScope, WidgetEventHandler} from 'shared';
+import type {GraphWidgetEventScope, WidgetEventHandler} from 'shared';
 
 export type ShapedAction = {
     type: WidgetEventHandler['type'];

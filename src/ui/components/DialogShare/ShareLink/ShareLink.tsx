@@ -1,4 +1,5 @@
-import React, {ReactElement} from 'react';
+import type {ReactElement} from 'react';
+import React from 'react';
 
 import {ClipboardButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';

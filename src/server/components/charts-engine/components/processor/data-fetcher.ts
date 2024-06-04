@@ -1,26 +1,26 @@
 /* eslint-disable complexity */
-import {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 import querystring from 'querystring';
 import url from 'url';
 
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
 
+import type {WorkbookId} from '../../../../../shared';
 import {
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     Feature,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
-    WorkbookId,
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
-import {ChartsEngine} from '../../index';
-import {Source} from '../../types';
+import type {ChartsEngine} from '../../index';
+import type {Source} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
@@ -81,6 +81,12 @@ type DataFetcherRequestOptions = {
     body?: string | Record<string, string>;
     json?: boolean;
 };
+
+type SourceWithMiddlewareUrl = Source & Required<Pick<Source, 'middlewareUrl' | 'sourceArgs'>>;
+
+function isSourceWithMiddlewareUrl(source: Source): source is SourceWithMiddlewareUrl {
+    return isObject(source.middlewareUrl) && isObject(source.sourceArgs);
+}
 
 function getDatasetId(publicTargetUri?: string | Record<string, string>) {
     if (!publicTargetUri || typeof publicTargetUri !== 'string') {
@@ -177,7 +183,7 @@ export class DataFetcher {
                         ? DataFetcher.fetchSource({
                               req,
                               sourceName,
-                              source: isString(source) ? ({url: source} as Source) : source,
+                              source: isString(source) ? {url: source} : source,
                               chartsEngine,
                               fetchingStartTime,
                               subrequestHeaders,
@@ -723,7 +729,7 @@ export class DataFetcher {
             requestOptions.headers['x-forwarded-for'] = req.headers['x-forwarded-for'];
         }
 
-        if (source.middlewareUrl) {
+        if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
                 chartsEngine,
                 sourcePath: source.middlewareUrl.sourceName,
@@ -731,7 +737,7 @@ export class DataFetcher {
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
-                    source: source as Source & Required<Pick<Source, 'middlewareUrl'>>,
+                    source,
                     sourceName,
                     req,
                     iamToken: iamToken ?? undefined,
@@ -797,6 +803,7 @@ export class DataFetcher {
                         traceId,
                         tenantId,
                         url: publicTargetUri,
+                        userId: userId || '',
                     });
 
                     if (error.response) {
@@ -903,6 +910,7 @@ export class DataFetcher {
                             url: publicTargetUri,
                             traceId,
                             tenantId,
+                            userId: userId || '',
                         });
 
                         if (response.statusCode === 204 && data === '') {

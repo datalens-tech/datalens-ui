@@ -1,21 +1,22 @@
 import React from 'react';
 
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatalensGlobalState} from 'ui';
 import {selectWorkbookLimitedView} from 'ui/units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../shared/schema';
 import {registry} from '../../registry';
 import {toggleRevisionsMode} from '../../store/actions/entryContent';
 import {selectIsEditMode} from '../../store/selectors/entryContent';
-import {EntryDialogOnClose, EntryDialogues} from '../EntryDialogues';
+import type {EntryDialogOnClose} from '../EntryDialogues';
+import {EntryDialogues} from '../EntryDialogues';
 
 import EntryContextMenuBase from './EntryContextMenuBase/EntryContextMenuBase';
 import {ENTRY_CONTEXT_MENU_ACTION} from './constants';
+import type {EntryContextMenuItems, EntryDialoguesRef} from './helpers';
 import {
-    EntryContextMenuItems,
-    EntryDialoguesRef,
     accessEntry,
     copyEntry,
     deleteEntry,

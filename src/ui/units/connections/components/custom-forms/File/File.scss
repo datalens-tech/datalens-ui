@@ -19,17 +19,7 @@
     }
 
     &__add-file-button {
-        display: inline-flex;
         margin-right: 5px;
-    }
-
-    &__add-file-button-content {
-        display: flex;
-        align-items: center;
-    }
-
-    &__add-file-button-icon {
-        margin-right: 8px;
     }
 
     &__list {
@@ -130,10 +120,6 @@
         color: var(--g-color-text-secondary);
     }
 
-    &__action-replace {
-        position: absolute;
-    }
-
     &__workspace {
         position: relative;
         overflow-x: auto;
@@ -205,8 +191,9 @@
     // the normal api for working with data-table styles has not yet been delivered
     & .data-table {
         height: calc(
-            100vh - var(--container-height-offset) - var(--settings-height) -
-                var(--column-filter-height) - var(--gn-aside-top-panel-height)
+            100vh - var(--container-height-offset) - var(--settings-height) - var(
+                    --column-filter-height
+                ) - var(--gn-aside-top-panel-height)
         );
 
         &__table {
@@ -242,8 +229,9 @@
 
     &__workspace_standalone .data-table {
         height: calc(
-            100vh - var(--container-height-offset) - var(--column-filter-height) -
-                var(--gn-aside-top-panel-height)
+            100vh - var(--container-height-offset) - var(--column-filter-height) - var(
+                    --gn-aside-top-panel-height
+                )
         );
     }
 

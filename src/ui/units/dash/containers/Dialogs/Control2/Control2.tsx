@@ -3,9 +3,11 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState, Utils} from 'index';
+import type {DatalensGlobalState} from 'index';
+import {Utils} from 'index';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/AppearanceSection';
@@ -51,6 +53,7 @@ class DialogAddControl extends React.Component<Props> {
                 size={'m'}
                 qa={ControlQA.dialogControl}
                 disableFocusTrap={true}
+                disableEscapeKeyDown={true}
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>

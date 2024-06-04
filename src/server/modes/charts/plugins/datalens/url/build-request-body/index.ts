@@ -2,15 +2,12 @@
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
-import {
+import type {
     ApiV2RequestBody,
     DatasetFieldCalcMode,
     DrillDownData,
-    Feature,
-    IChartEditor,
     IntervalPart,
     Link,
-    Operations,
     ParameterDefaultValue,
     PayloadFilter,
     ServerChartsConfig,
@@ -20,6 +17,10 @@ import {
     SharedData,
     StringParams,
     V4Layer,
+} from '../../../../../../../shared';
+import {
+    Feature,
+    Operations,
     WizardVisualizationId,
     filterUpdatesByDatasetId,
     getItemLinkWithDatasets,
@@ -29,12 +30,13 @@ import {
     isParameter,
     prepareFilterValues,
     prepareFilterValuesWithOperations,
+    resolveRelativeDate,
     splitParamsToParametersAndFilters,
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
 import {registry} from '../../../../../../registry';
-import {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
+import type {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT, SORT_ORDER} from '../../utils/constants';
 import {preprocessHierarchies} from '../../utils/hierarchy-helpers';
@@ -223,17 +225,15 @@ function formatFilters({
     links,
     datasetId,
     datasetSchema,
-    params,
+    filterParams,
     drillDownData,
-    ChartEditor,
 }: {
     filters: ServerChartsConfig['filters'];
     links: Link[];
     datasetId: string;
     datasetSchema: ServerDatasetField[];
-    params: StringParams;
+    filterParams: StringParams;
     drillDownData?: DrillDownData;
-    ChartEditor: IChartEditor;
 }): PayloadFilter[] | undefined {
     const app = registry.getApp();
     let chartFilters: PayloadFilter[] = [];
@@ -242,7 +242,7 @@ function formatFilters({
         datasetSchema,
         datasetId,
         links,
-        params,
+        params: filterParams,
     });
 
     if (drillDownData) {
@@ -328,7 +328,7 @@ function formatFilters({
                                     intervalPart = i === 0 ? 'start' : 'end';
                                 }
 
-                                const resolved = ChartEditor.resolveRelative(entry, intervalPart);
+                                const resolved = resolveRelativeDate(entry, intervalPart);
 
                                 if (resolved === null) {
                                     valuesValidationFailed = true;
@@ -380,10 +380,11 @@ function formatFilters({
             if (
                 !filter.isDrillDown &&
                 filterField &&
-                (Object.hasOwnProperty.call(params, filterField.guid) ||
-                    Object.hasOwnProperty.call(params, filterField.title))
+                (Object.hasOwnProperty.call(filterParams, filterField.guid) ||
+                    Object.hasOwnProperty.call(filterParams, filterField.title))
             ) {
-                const paramFilter = params[filterField.guid] || params[filterField.title];
+                const paramFilter =
+                    filterParams[filterField.guid] || filterParams[filterField.title];
 
                 return Array.isArray(paramFilter) ? paramFilter[0] !== '' : paramFilter !== '';
             }
@@ -413,7 +414,6 @@ export function prepareSingleRequest({
     updates = [],
     segments = [],
     extraSettings,
-    ChartEditor,
     sharedData,
     revisionId,
 }: {
@@ -434,7 +434,6 @@ export function prepareSingleRequest({
     updates: ServerChartsConfig['updates'];
     layerId: string | undefined;
     extraSettings?: ServerChartsConfig['extraSettings'];
-    ChartEditor: IChartEditor;
     sharedData: SharedData;
     revisionId: string;
 }): ApiV2RequestBody {
@@ -477,6 +476,7 @@ export function prepareSingleRequest({
     const withTotals =
         (visualization.id === WizardVisualizationId.FlatTable ||
             visualization.id === WizardVisualizationId.Donut ||
+            visualization.id === WizardVisualizationId.DonutD3 ||
             visualization.id === WizardVisualizationId.PivotTable) &&
         extraSettings?.totals === 'on' &&
         isMeasureInFields;
@@ -611,7 +611,7 @@ export function prepareSingleRequest({
     ) {
         payload = getPayloadWithCommonTableSettings(payload, {
             extraSettings,
-            ChartEditor,
+            params,
             datasetId,
             allItemsIds,
             visualization,
@@ -636,9 +636,8 @@ export function prepareSingleRequest({
         links,
         datasetSchema,
         datasetId,
-        params: transformedFilterParams,
+        filterParams: transformedFilterParams,
         drillDownData: sharedData.drillDownData,
-        ChartEditor,
     });
 
     if (formattedFilters) {
@@ -657,7 +656,7 @@ export function prepareSingleRequest({
             placeholders,
             payload,
             colors,
-            ChartEditor,
+            params,
             fields: [],
             datasetId,
             revisionId,
@@ -669,7 +668,7 @@ export function prepareSingleRequest({
             payload,
             fields,
             apiVersion,
-            ChartEditor,
+            params,
             datasetId,
             revisionId,
             allMeasuresMap,
@@ -681,14 +680,13 @@ export function prepareSingleRequest({
 export const getUrlsRequestBody = (args: {
     params: StringParams;
     shared: Shared;
-    ChartEditor: IChartEditor;
     apiVersion?: ApiVersion;
     datasetFields: ServerDatasetField[];
     datasetId: string;
     layerId: string;
     revisionId: string;
 }): ApiV2RequestBody => {
-    const {params, shared, ChartEditor, datasetId, layerId, revisionId} = args;
+    const {params, shared, datasetId, layerId, revisionId} = args;
 
     const apiVersion = args.apiVersion || '1.5';
 
@@ -752,7 +750,6 @@ export const getUrlsRequestBody = (args: {
         extraSettings,
         sharedData,
         layerId,
-        ChartEditor,
         revisionId,
         segments,
     });

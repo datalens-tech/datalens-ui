@@ -1,19 +1,20 @@
-import React from 'react';
+import type React from 'react';
 
-import {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
-import {DashData, DashEntry, Permissions, WidgetType} from 'shared';
+import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
-import {DashUpdateStatus} from '../../typings/dash';
+import type {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
     SET_ACTIVE_SELECTOR_INDEX,
     UPDATE_SELECTORS_GROUP,
 } from '../actions/controls/actions';
-import {SelectorsGroupDialogState} from '../actions/controls/types';
+import type {SelectorsGroupDialogState} from '../actions/controls/types';
+import type {SelectorDialogState, TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
     SET_DASHKIT_REF,
@@ -21,6 +22,7 @@ import {
     SET_DASH_DESCRIPTION,
     SET_DASH_DESC_VIEW_MODE,
     SET_DASH_KEY,
+    SET_DASH_OPENED_DESC,
     SET_DASH_SUPPORT_DESCRIPTION,
     SET_DASH_UPDATE_STATUS,
     SET_DASH_VIEW_MODE,
@@ -35,15 +37,14 @@ import {
     SET_PAGE_TABS_ITEMS,
     SET_RENAME_WITHOUT_RELOAD,
     SET_SELECTOR_DIALOG_ITEM,
+    SET_SETTINGS,
     SET_STATE,
     SET_STATE_HASH_ID,
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
-    SelectorDialogState,
     TOGGLE_TABLE_OF_CONTENT,
-    TabsHashStates,
 } from '../actions/dashTyped';
-import {DashAction} from '../actions/index';
+import type {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
@@ -80,8 +81,10 @@ export type DashState = {
     isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
-    // contains widgetId: curentTabId to open widget dialog with current tab
+    // contains widgetId: currentTabId to open widget dialog with current tab
     widgetsCurrentTab: {[key: string]: string};
+    dragOperationProps: DashDragOptions | null;
+    openInfoOnLoad?: boolean;
 };
 
 // eslint-disable-next-line complexity
@@ -328,7 +331,8 @@ export function dashTypedReducer(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset} = action.payload;
+            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
+                action.payload;
 
             return {
                 ...state,
@@ -338,6 +342,7 @@ export function dashTypedReducer(
                     autoHeight,
                     buttonApply,
                     buttonReset,
+                    updateControlsOnChange,
                 },
             };
         }
@@ -420,6 +425,13 @@ export function dashTypedReducer(
             };
         }
 
+        case SET_DASH_OPENED_DESC: {
+            return {
+                ...state,
+                openInfoOnLoad: Boolean(action.payload),
+            };
+        }
+
         case SET_LOADING_EDIT_MODE: {
             return {
                 ...state,
@@ -450,6 +462,12 @@ export function dashTypedReducer(
                 isRenameWithoutReload: action.payload || false,
             };
         }
+
+        case SET_SETTINGS:
+            return {
+                ...state,
+                data: update(data, {settings: {$set: action.payload}}),
+            };
 
         case SET_WIDGET_CURRENT_TAB: {
             return {

@@ -1,4 +1,5 @@
-import {GraphShared, WizardVisualizationId} from '../../../shared';
+import type {GraphShared} from '../../../shared';
+import {WizardVisualizationId} from '../../../shared';
 
 import {COLUMN_VISUALIZATION} from './line';
 

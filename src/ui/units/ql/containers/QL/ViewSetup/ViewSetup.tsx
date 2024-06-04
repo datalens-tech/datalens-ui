@@ -6,9 +6,11 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {DL, DatalensGlobalState, NavigationMinimal, Utils as UIUtils, sdk} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL, NavigationMinimal, Utils as UIUtils, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import Utils from 'utils';
 
@@ -20,7 +22,7 @@ import {registry} from '../../../../../registry';
 import {AppStatus} from '../../../constants';
 import {performManualConfiguration, setError, setStatus} from '../../../store/actions/ql';
 import {getDefaultPath, getEntry} from '../../../store/reducers/ql';
-import {QLConnectionEntry, QLEntry} from '../../../store/typings/ql';
+import type {QLConnectionEntry, QLEntry} from '../../../store/typings/ql';
 
 import './ViewSetup.scss';
 

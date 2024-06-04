@@ -1,5 +1,5 @@
 import pick from 'lodash/pick';
-import {Placeholder} from 'shared';
+import type {Placeholder} from 'shared';
 
 import {getPlaceholdersWithMergedSettings} from '../getPlaceholdersWithMergedSettings';
 

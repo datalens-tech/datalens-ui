@@ -1,11 +1,11 @@
 import {MenuItemsIds} from 'shared';
-import {GetDefaultChartMenuArgs} from 'ui/registry/units/chart/types/functions/getDefaultChartMenu';
-import {GetPanePreviewChartMenuArgs} from 'ui/registry/units/chart/types/functions/getPanePreviewChartMenu';
-import {GetWizardChartMenuArgs} from 'ui/registry/units/chart/types/functions/getWizardChartMenu';
+import type {GetDefaultChartMenuArgs} from 'ui/registry/units/chart/types/functions/getDefaultChartMenu';
+import type {GetPanePreviewChartMenuArgs} from 'ui/registry/units/chart/types/functions/getPanePreviewChartMenu';
+import type {GetWizardChartMenuArgs} from 'ui/registry/units/chart/types/functions/getWizardChartMenu';
 
-import {ChartKitDataProvider} from '../components/ChartKitBase/types';
+import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 
-import {MenuItemConfig} from './Menu';
+import type {MenuItemConfig} from './Menu';
 import {
     getEditMenuItem,
     getExportMenuItem,

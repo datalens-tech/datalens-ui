@@ -1,13 +1,8 @@
 import React from 'react';
 
 import {i18n} from 'i18n';
-import {
-    BarsColorType,
-    ColorPalette,
-    DialogFieldBarsSettingsQa,
-    Field,
-    TableBarsSettings,
-} from 'shared';
+import type {ColorPalette, Field, TableBarsSettings} from 'shared';
+import {BarsColorType, DialogFieldBarsSettingsQa} from 'shared';
 
 import {DialogFieldRow} from '../../../DialogFieldRow/DialogFieldRow';
 import {GradientColorControl} from '../GradientColorControl/GradientColorControl';

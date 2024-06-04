@@ -2,9 +2,9 @@ import React from 'react';
 
 import {noop} from 'lodash';
 
-import {ReplaceSourceActionData} from '../../../store';
+import type {ReplaceSourceActionData} from '../../../store';
 
-import {
+import type {
     DeleteFileSource,
     DeleteUploadedFile,
     HandleFileColumnFilterUpdate,

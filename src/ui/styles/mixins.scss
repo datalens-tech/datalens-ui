@@ -1,4 +1,5 @@
 @import './variables';
+@import '~@gravity-ui/uikit/styles/mixins';
 
 @mixin overflow-ellipsis($type: ellipsis) {
     white-space: nowrap;
@@ -140,4 +141,27 @@
     overflow-y: auto;
     // $height - [dialog header height] - [dialog footer height] - [body padding]
     max-height: calc($height - 54px - 92px - 20px);
+}
+
+@mixin dl-breadcrumbs-items-style {
+    &,
+    &:visited,
+    &:active {
+        color: var(--g-color-text-secondary);
+    }
+
+    display: inline;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--g-color-text-primary);
+    }
+
+    &_link:hover {
+        color: var(--g-color-text-link-hover);
+    }
+}
+
+@mixin yfm-text-style {
+    @include text-body-1();
 }

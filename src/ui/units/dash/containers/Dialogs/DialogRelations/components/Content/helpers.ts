@@ -1,7 +1,7 @@
 import {i18n} from 'i18n';
 
 import {RELATION_TYPES, TEXT_LIMIT} from '../../constants';
-import {RelationType} from '../../types';
+import type {RelationType} from '../../types';
 
 import iconReverse from 'ui/assets/icons/arr-reverse.svg';
 import iconRight from 'ui/assets/icons/arr-right.svg';
@@ -27,7 +27,7 @@ export const getLinkIcon = (type: string) => {
 };
 
 export const getClampedText = (text: string) =>
-    text.length > TEXT_LIMIT ? `${text.substr(0, TEXT_LIMIT)}...` : text;
+    text?.length > TEXT_LIMIT ? `${text.substr(0, TEXT_LIMIT)}...` : text;
 
 export const getRelationsText = (type: RelationType): string => {
     switch (type) {

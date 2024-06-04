@@ -6,20 +6,22 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
-import {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
-import {SelectorDialogState} from '../../../../store/actions/dashTyped';
-import {ListState, TabMenu} from '../../Widget/TabMenu/TabMenu';
+import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
+import type {ListState} from '../../Widget/TabMenu/TabMenu';
+import {TabMenu} from '../../Widget/TabMenu/TabMenu';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';
@@ -124,8 +126,18 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
+    const handleChangeUpdateControls = (value: boolean) => {
+        dispatch(
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                updateControlsOnChange: value,
+            }),
+        );
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+    const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
         <div className={b('sidebar')}>
@@ -140,6 +152,23 @@ export const GroupControlSidebar = () => {
                 />
             </div>
             <div className={b('settings')}>
+                {showUpdateControlsOnChange && (
+                    <div className={b('settings-container')}>
+                        <div>
+                            <span>{i18n('label_update-controls-on-change')}</span>
+                            <HelpPopover
+                                className={b('help-icon')}
+                                htmlContent={i18n('context_update-controls-on-change')}
+                            />
+                        </div>
+                        <Checkbox
+                            checked={selectorsGroup.updateControlsOnChange}
+                            onUpdate={handleChangeUpdateControls}
+                            size="l"
+                            qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
+                        />
+                    </div>
+                )}
                 {showAutoHeight && (
                     <div className={b('settings-container')}>
                         <div>
@@ -149,6 +178,7 @@ export const GroupControlSidebar = () => {
                             checked={selectorsGroup.autoHeight}
                             onUpdate={handleChangeAutoHeight}
                             size="l"
+                            qa={DialogGroupControlQa.autoHeightCheckbox}
                         />
                     </div>
                 )}
@@ -164,6 +194,7 @@ export const GroupControlSidebar = () => {
                         checked={selectorsGroup.buttonApply}
                         onUpdate={handleChangeButtonApply}
                         size="l"
+                        qa={DialogGroupControlQa.applyButtonCheckbox}
                     />
                 </div>
                 <div className={b('settings-container')}>
@@ -178,18 +209,22 @@ export const GroupControlSidebar = () => {
                         checked={selectorsGroup.buttonReset}
                         onUpdate={handleChangeButtonReset}
                         size="l"
+                        qa={DialogGroupControlQa.resetButtonCheckbox}
                     />
                 </div>
 
-                <Button
-                    view="outlined"
-                    width="max"
-                    className={b('order-selectors-button')}
-                    onClick={handleSelectorsPlacementClick}
-                >
-                    <Icon data={Gear} height={16} width={16} />
-                    {i18n('button_selectors-placement')}
-                </Button>
+                {isMultipleSelectors && (
+                    <Button
+                        view="outlined"
+                        width="max"
+                        className={b('order-selectors-button')}
+                        onClick={handleSelectorsPlacementClick}
+                        qa={DialogGroupControlQa.placementButton}
+                    >
+                        <Icon data={Gear} height={16} width={16} />
+                        {i18n('button_selectors-placement')}
+                    </Button>
+                )}
             </div>
         </div>
     );

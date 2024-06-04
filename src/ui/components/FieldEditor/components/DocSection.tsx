@@ -12,7 +12,7 @@ import type {
 import {I18n} from '../../../../i18n';
 import {DL, SPLIT_PANE_RESIZER_CLASSNAME} from '../../../constants';
 import logger from '../../../libs/logger';
-import SDK from '../../../libs/sdk';
+import type SDK from '../../../libs/sdk';
 import {registry} from '../../../registry';
 import {YfmWrapper} from '../../YfmWrapper/YfmWrapper';
 import {LEFT_PANE_MAX_WIDTH, LEFT_PANE_MIN_WIDTH} from '../constants';

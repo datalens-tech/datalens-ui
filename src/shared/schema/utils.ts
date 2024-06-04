@@ -1,4 +1,4 @@
-import {ResponseError} from '@gravity-ui/gateway';
+import type {ResponseError} from '@gravity-ui/gateway';
 import type {AxiosRequestConfig, AxiosResponse} from 'axios';
 import omit from 'lodash/omit';
 import qs from 'qs';

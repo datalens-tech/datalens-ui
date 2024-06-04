@@ -1,10 +1,10 @@
-import {AsideHeaderSettings, AsideHeaderState} from '../typings/asideHeader';
+import type {AsideHeaderSettings, AsideHeaderState} from '../typings/asideHeader';
 
+import type {AsideHeaderAction} from '../actions/asideHeader';
 import {
     OPEN_NAVIGATION,
     CLOSE_NAVIGATION,
     SET_ASIDE_HEADER_DATA,
-    AsideHeaderAction,
     SET_CURRENT_PAGE_ENTRY,
     SET_ASIDE_HEADER_SETTINGS,
     RESET_ASIDE_HEADER_SETTINGS,
@@ -51,17 +51,13 @@ const initialSettings: AsideHeaderSettings = {
     ...(DL.IS_LANDING ? getLandingNavigationSettings() : {}),
 };
 
-// Default navigation value
-// https://github.com/gravity-ui/navigation/blob/main/src/components/constants.ts
-// ASIDE_HEADER_EXPANDED_WIDTH
-const INITIAL_ASIDE_HEADER_SIZE = 236;
-
 const initialState: Omit<AsideHeaderState, 'isCompact'> = {
     startFromNavigation: '',
     panelVisible: false,
     place: '',
     asideHeaderData: {
-        size: INITIAL_ASIDE_HEADER_SIZE,
+        // This initial size is used in mobile version
+        size: 0,
     },
     settings: initialSettings,
     currentPageEntry: null,

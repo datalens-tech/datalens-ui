@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
-import {FieldActionsPopup, FieldActionsPopupProps} from '../components';
-import {ColumnItem} from '../types';
+import type {FieldActionsPopupProps} from '../components';
+import {FieldActionsPopup} from '../components';
+import type {ColumnItem} from '../types';
 
 const b = block('dataset-table');
 

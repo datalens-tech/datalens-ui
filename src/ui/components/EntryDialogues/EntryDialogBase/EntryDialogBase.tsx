@@ -1,14 +1,15 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
+import {Alert, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 
 import {EntryDialogQA, normalizeDestination} from '../../../../shared';
 import logger from '../../../libs/logger';
 import Utils from '../../../utils';
-import PathSelect, {PathSelectProps} from '../../PathSelect/PathSelect';
+import type {PathSelectProps} from '../../PathSelect/PathSelect';
+import PathSelect from '../../PathSelect/PathSelect';
 
 import './EntryDialogBase.scss';
 
@@ -29,6 +30,7 @@ interface EntryDialogBaseGeneralProps<T> {
     textButtonApply: string;
     placeholder?: string;
     inactiveEntryKeys?: string[];
+    warningMessage?: React.ReactNode;
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -121,6 +123,7 @@ export class EntryDialogBase<T> extends React.Component<
             textButtonCancel,
             inactiveEntryKeys,
             children,
+            warningMessage,
         } = this.props;
 
         return (
@@ -149,6 +152,11 @@ export class EntryDialogBase<T> extends React.Component<
                                 placeholder={placeholder}
                                 inactiveEntryKeys={inactiveEntryKeys}
                             />
+                        )}
+                        {warningMessage && (
+                            <div className={b('warning')}>
+                                <Alert theme="warning" message={warningMessage} view="outlined" />
+                            </div>
                         )}
                     </div>
                 </Dialog.Body>

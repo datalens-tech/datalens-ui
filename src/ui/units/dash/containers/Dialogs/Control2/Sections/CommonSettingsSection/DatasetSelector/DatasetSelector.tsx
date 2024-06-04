@@ -5,20 +5,19 @@ import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {useDispatch, useSelector} from 'react-redux';
+import type {Dataset} from 'shared';
 import {
     DATASET_FIELD_TYPES,
     DATASET_IGNORED_DATA_TYPES,
-    Dataset,
     DatasetFieldType,
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
-import {
+import type {
     SelectorElementType,
     SetSelectorDialogItemArgs,
-    setLastUsedDatasetId,
-    setSelectorDialogItem,
 } from 'units/dash/store/actions/dashTyped';
+import {setLastUsedDatasetId, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,
@@ -37,9 +36,11 @@ function DatasetSelector() {
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
     const workbookId = useSelector(selectDashWorkbookId);
-    const [isValidDataset, setIsValidDataset] = React.useState(false);
+    const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
+        setIsInvalid(false);
+
         getSdk()
             .bi.getDatasetByVersion({
                 datasetId: entryId,
@@ -52,11 +53,10 @@ function DatasetSelector() {
                         dataset,
                     }),
                 );
-                setIsValidDataset(true);
             })
-            .catch((error) => {
-                setIsValidDataset(false);
-                logger.logError('DatasetSelector: load dataset failed', error);
+            .catch((isInvalid) => {
+                setIsInvalid(true);
+                logger.logError('DatasetSelector: load dataset failed', isInvalid);
             });
     }, []);
 
@@ -67,9 +67,7 @@ function DatasetSelector() {
     }, []);
 
     const handleDatasetChange = React.useCallback(
-        (args: any) => {
-            const entryId = args.entry.entryId as string;
-
+        ({entryId}: {entryId: string}) => {
             if (entryId !== datasetId) {
                 dispatch(setLastUsedDatasetId(entryId));
 
@@ -141,8 +139,9 @@ function DatasetSelector() {
                 label={i18n('field_dataset')}
                 entryId={datasetId}
                 scope={EntryScope.Dataset}
-                handleEntryChange={handleDatasetChange}
-                isValidEntry={isValidDataset}
+                onChange={handleDatasetChange}
+                isInvalid={isInvalid}
+                workbookId={workbookId}
                 getEntryLink={getDatasetLink}
             />
             <FormRow label={i18n('field_field')}>

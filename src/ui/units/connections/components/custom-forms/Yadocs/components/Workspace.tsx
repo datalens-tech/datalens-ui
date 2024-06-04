@@ -11,8 +11,8 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import {Veil} from 'ui/components/Veil/Veil';
 import {parseError} from 'ui/utils/errors/parse';
 
-import {ApplySourceSettings, YadocSource, isYadocSourceItem} from '../../../../store';
-import type {YadocItem} from '../../../../store';
+import {isYadocSourceItem} from '../../../../store';
+import type {ApplySourceSettings, YadocItem, YadocSource} from '../../../../store';
 import {getYadocErrorData} from '../../../../utils';
 import {ErrorView} from '../../../ErrorView/ErrorView';
 import {ColumnFilter, ColumnsHeaderSwitcher} from '../../components';

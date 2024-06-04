@@ -3,16 +3,13 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig, StringParams} from '../../../shared';
 import {
-    Feature,
     QLChartType,
     QL_TYPE,
     WizardVisualizationId,
-    isEnabledServerFeature,
     isMonitoringOrPrometheusChart,
 } from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
 import {getTranslationFn} from '../../../shared/modules/language';
-import {registry} from '../../registry';
 
 export default {
     module: 'libs/qlchart/v1',
@@ -77,22 +74,31 @@ export default {
                     return QL_TYPE.GRAPH_QL_NODE;
                 }
             case WizardVisualizationId.Metric: {
-                const app = registry.getApp();
+                const {placeholders} = chart.visualization;
 
-                const useMarkupMetric = isEnabledServerFeature(
-                    app.nodekit.ctx,
-                    Feature.MarkupMetric,
-                );
+                let useMarkup;
 
-                if (useMarkupMetric) {
+                if (placeholders) {
+                    const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]
+                        ?.data_type;
+
+                    useMarkup = dataType === 'markup';
+                } else {
+                    // Case for legacy ql charts before integration with wizard
+                    useMarkup = true;
+                }
+
+                if (useMarkup) {
                     return QL_TYPE.MARKUP_QL_NODE;
                 } else {
                     return QL_TYPE.METRIC_QL_NODE;
                 }
             }
+            case WizardVisualizationId.LineD3:
             case WizardVisualizationId.ScatterD3:
             case WizardVisualizationId.BarXD3:
-            case WizardVisualizationId.PieD3: {
+            case WizardVisualizationId.PieD3:
+            case WizardVisualizationId.DonutD3: {
                 return QL_TYPE.D3_QL_NODE;
             }
             default:

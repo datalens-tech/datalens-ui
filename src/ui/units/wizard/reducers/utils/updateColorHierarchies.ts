@@ -1,4 +1,5 @@
-import {Field, HierarchyField, Shared, isVisualizationWithLayers} from 'shared';
+import type {Field, HierarchyField, Shared} from 'shared';
+import {isVisualizationWithLayers} from 'shared';
 
 export function updateColorsHierarchies(
     colors: Field[],

@@ -3,12 +3,12 @@ import {
     DashTabItemControlSourceType,
     DatasetFieldType,
 } from '../../../../../../shared';
-import {ControlShared} from '../types';
+import type {ControlShared} from '../types';
 
 import {prepareDistinctsRequest} from './distincts';
 import {prepareFieldsRequest} from './fields';
 import {prepareTypedQueryRequest} from './typed-query';
-import {SourceControlArgs, SourceControlRequests} from './types';
+import type {SourceControlArgs, SourceControlRequests} from './types';
 
 const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, never> => {
     if (shared.source.elementType === DashTabItemControlElementType.Select) {
@@ -23,17 +23,16 @@ const buildManualSelectorSources = (shared: ControlShared): Record<PropertyKey, 
     return {};
 };
 
-const buildSources = ({
+export const buildSources = ({
     shared,
     params,
-    ChartEditor,
 }: SourceControlArgs): SourceControlRequests | Record<PropertyKey, never> => {
     switch (shared.sourceType) {
         case DashTabItemControlSourceType.Manual:
             return buildManualSelectorSources(shared);
         case DashTabItemControlSourceType.Connection:
             return {
-                connectionDistincts: prepareTypedQueryRequest({shared, params, ChartEditor}),
+                connectionDistincts: prepareTypedQueryRequest({shared, params}),
             };
         case DashTabItemControlSourceType.Dataset:
         default: {
@@ -51,12 +50,10 @@ const buildSources = ({
                 shared.source.elementType !== DashTabItemControlElementType.Checkbox &&
                 shared.source.datasetFieldType !== DatasetFieldType.Measure
             ) {
-                sources.distincts = prepareDistinctsRequest({shared, params, ChartEditor});
+                sources.distincts = prepareDistinctsRequest({shared, params});
             }
 
             return sources;
         }
     }
 };
-
-export default buildSources;

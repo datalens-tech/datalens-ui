@@ -1,5 +1,5 @@
-import {AppInstallation, MinimumEntryFields} from 'shared';
-import {Endpoints} from 'shared/endpoints';
+import type {AppInstallation, MinimumEntryFields} from 'shared';
+import type {Endpoints} from 'shared/endpoints';
 
 export type GetUIEntryRouteArgs = {
     entry: MinimumEntryFields;

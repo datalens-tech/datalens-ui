@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
-import {GetPresetArgs, GetPresetResponse} from '../types';
+import type {GetPresetArgs, GetPresetResponse} from '../types';
 
 const PATH_PREFIX = '/v1';
 

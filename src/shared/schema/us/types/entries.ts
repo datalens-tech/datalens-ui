@@ -1,8 +1,8 @@
 import type {WorkbookId} from '../../../../shared';
-import {InitialPermissions, Permissions} from '../../../types';
+import type {InitialPermissions, Permissions} from '../../../types';
 
-import {EntriesCommonArgs} from './common';
-import {
+import type {EntriesCommonArgs} from './common';
+import type {
     EntryFieldData,
     EntryFieldLinks,
     EntryFields,

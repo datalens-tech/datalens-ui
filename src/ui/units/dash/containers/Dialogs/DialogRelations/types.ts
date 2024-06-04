@@ -1,13 +1,13 @@
-import React from 'react';
+import type React from 'react';
 
-import {DashTabConnectionKind} from 'shared';
+import type {DashTabConnectionKind} from 'shared';
 
-import {
+import type {
     DashkitMetaDataItemBase,
     DatasetsFieldsListData,
 } from '../../../../../components/DashKit/plugins/types';
 
-import {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
+import type {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
 
 export type DashkitMetaDataItem = DashkitMetaDataItemBase & {
     relations: RelationsData;

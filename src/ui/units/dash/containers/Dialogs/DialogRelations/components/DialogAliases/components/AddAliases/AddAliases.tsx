@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Check, Xmark} from '@gravity-ui/icons';
-import {Button, Icon, Link, Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Button, Icon, Link, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -13,7 +14,7 @@ import {addAlias} from '../../../../helpers';
 import {isEditorChart} from '../../../../hooks/helpersChart';
 import {isControl, isExternalControl} from '../../../../hooks/helpersControls';
 import {AliasesContext} from '../../../../hooks/useRelations';
-import {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
+import type {DashkitMetaDataItem, DatasetsListData} from '../../../../types';
 import {AliasesInvalidList} from '../AliasesList/AliasesInvalidList';
 
 import {getParamsSelectOptions, hasAliasWithSameDataset, isAddingAliasExists} from './helpers';
@@ -228,7 +229,7 @@ export const AddAliases = ({
             <div className={b('row')}>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={leftAliasSubTitle}>
-                        {widgetIcon}
+                        <div className={b('icon')}>{widgetIcon}</div>
                         {leftAliasSubTitle}
                     </div>
                     <Select
@@ -248,7 +249,7 @@ export const AddAliases = ({
                 <span className={b('eq')}>=</span>
                 <div className={b('select-wrap')}>
                     <div className={b('sub-title')} title={rightAliasSubTitle}>
-                        {rowIcon}
+                        <div className={b('icon')}>{rowIcon}</div>
                         {rightAliasSubTitle}
                     </div>
                     <Select

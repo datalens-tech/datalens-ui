@@ -1,4 +1,8 @@
+@import '../../../../styles/mixins.scss';
+
 .dl-collection-breadcrumbs {
+    margin-right: 5px;
+
     &__skeleton {
         display: block;
         width: 200px;
@@ -6,13 +10,20 @@
     }
 
     &__item {
-        color: var(--g-color-text-primary);
-        text-decoration: none;
+        @include dl-breadcrumbs-items-style;
 
-        &:hover,
-        &:visited,
-        &:active {
-            color: var(--g-color-text-secondary);
+        &_last,
+        &_last:active,
+        &_last:visited {
+            color: var(--g-color-text-primary);
         }
+
+        &_last:hover {
+            color: var(--g-color-text-link-hover);
+        }
+    }
+
+    &__container {
+        display: grid;
     }
 }

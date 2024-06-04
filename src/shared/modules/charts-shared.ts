@@ -1,7 +1,7 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils/build/typings';
 
-import {ServerDatasetField} from '../types';
+import type {ServerDatasetField} from '../types';
 
 import {isParameter} from './helpers';
 
@@ -216,19 +216,21 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
         return getFallbackForUrlFilters(urlValue);
     }
 
-    const operation = match[1]?.toUpperCase() as Operations;
+    const operation = match[1]?.toUpperCase();
     const value = match[2];
 
     if (
         typeof value === 'undefined' &&
-        !Object.values(OperationsWithoutValue).includes(operation)
+        !Object.values(OperationsWithoutValue).includes(
+            operation as unknown as OperationsWithoutValue,
+        )
     ) {
         return getFallbackForUrlFilters(urlValue);
     }
 
-    if (Object.values(Operations).includes(operation)) {
+    if (Object.values(Operations).includes(operation as unknown as Operations)) {
         return {
-            operation,
+            operation: operation as Operations,
             value,
         };
     }
@@ -253,11 +255,14 @@ export function splitParamsToParametersAndFilters(
     urlSearchParams: [string, string][],
     fields: ServerDatasetField[],
 ) {
-    const parametersMap = fields.filter(isParameter).reduce((acc, field) => {
-        acc[field.guid] = true;
-        acc[field.title] = true;
-        return acc;
-    }, {} as Record<string, true>);
+    const parametersMap = fields.filter(isParameter).reduce(
+        (acc, field) => {
+            acc[field.guid] = true;
+            acc[field.title] = true;
+            return acc;
+        },
+        {} as Record<string, true>,
+    );
 
     return urlSearchParams.reduce(
         (acc, curr) => {

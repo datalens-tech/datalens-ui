@@ -7,16 +7,12 @@ import {Feature} from 'shared';
 import Utils from 'ui/utils';
 
 import navigateHelper from '../../../libs/navigateHelper';
-import {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
-import EntryContextMenuBase from '../EntryContextMenuBase/EntryContextMenuBase';
+import type {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
+import type EntryContextMenuBase from '../EntryContextMenuBase/EntryContextMenuBase';
 import {ENTRY_CONTEXT_MENU_ACTION} from '../constants';
-import {
-    EntryContextMenuItem,
-    EntryContextMenuItems,
-    WrapperParams,
-    getGroupedMenu,
-} from '../helpers';
-import {ContextMenuParams} from '../types';
+import type {EntryContextMenuItem, EntryContextMenuItems, WrapperParams} from '../helpers';
+import {getGroupedMenu} from '../helpers';
+import type {ContextMenuParams} from '../types';
 
 import {getFilteredEntryContextMenu} from './helpers';
 
@@ -65,7 +61,7 @@ export const getEntryContextMenuItems = (
                 id: menuItem.id,
                 qa: menuItem.qa,
                 ...(OVERRIDE_CONTEXT_MENU[menuItem.id] || {}),
-            } as EntryContextMenuItem),
+            }) as EntryContextMenuItem,
     );
 
     return entryContextMenuItems;

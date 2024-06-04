@@ -1,5 +1,5 @@
 import {isEmpty, size} from 'lodash';
-import {ChartsInsightsItem, ChartsInsightsItemLevels} from 'shared';
+import type {ChartsInsightsItem, ChartsInsightsItemLevels} from 'shared';
 
 const levelsValue = {
     info: 1,

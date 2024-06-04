@@ -4,16 +4,18 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     DashTabItemControlData,
     DashTabItemControlDataset,
-    DashTabItemControlElementType,
     DashTabItemControlManual,
     DashTabItemControlSingle,
-    DashTabItemControlSourceType,
     StringParams,
     WorkbookId,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
 } from 'shared';
 import {
     ControlCheckbox,
@@ -23,8 +25,8 @@ import {
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
-import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
@@ -32,16 +34,16 @@ import logger from '../../../../../libs/logger';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
-import {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
+import type {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
 import {
     checkDatasetFieldType,
     getDatasetSourceInfo,
-    getRequiredLabel,
+    getLabels,
     getStatus,
     isValidRequiredValue,
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
-import {ExtendedLoadedData} from '../types';
+import type {ExtendedLoadedData} from '../types';
 import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
@@ -115,6 +117,8 @@ export const Control = ({
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
+
+    const [prevParams, setPrevParams] = React.useState<StringParams | null>(params);
 
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
@@ -245,6 +249,11 @@ export const Control = ({
         }
     }
 
+    if (control?.param && !isEqual(prevParams, params)) {
+        setPrevParams(params);
+        reload();
+    }
+
     if (!isInit && status === LOAD_STATUS.INITIAL) {
         init();
     }
@@ -360,10 +369,10 @@ export const Control = ({
 
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
-        const {source, placementMode, width, title} = controlData;
-        const {required, operation, showTitle} = source;
+        const {source, placementMode, width} = controlData;
+        const {required, operation} = source;
 
-        const innerLabel = showTitle ? getRequiredLabel({title, required}) : '';
+        const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
         if (controlData.source.elementType === DashTabItemControlElementType.Select) {
@@ -384,7 +393,8 @@ export const Control = ({
                     validateValue={validateValue}
                     getDistincts={getDistincts}
                     classMixin={b('item')}
-                    selectProps={{innerLabel, style}}
+                    labelMixin={b('item-label')}
+                    selectProps={{innerLabel, label, style, limitLabel: true}}
                     renderOverlay={renderOverlay}
                 />
             );
@@ -431,13 +441,16 @@ export const Control = ({
             type: control.type,
             widgetId: id,
             className: b('item'),
+            labelClassName: b('item-label'),
             value: preparedValue,
             onChange: onChangeControl,
+            label,
             innerLabel,
             required,
             hasValidationError: Boolean(currentValidationError),
             style,
             renderOverlay,
+            hint: controlData.source.showHint ? controlData.source.hint : undefined,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 
@@ -449,7 +462,7 @@ export const Control = ({
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={true} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} label={innerLabel} />;
+                return <ControlCheckbox {...props} />;
         }
 
         return null;

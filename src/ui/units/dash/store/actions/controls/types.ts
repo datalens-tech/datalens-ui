@@ -1,13 +1,13 @@
-import {ConnectionQueryTypeValues} from 'shared';
+import type {ConnectionQueryTypeValues} from 'shared';
 import type {Operations} from 'shared/modules';
-import {
-    type ConnectionQueryContent,
+import type {
+    ConnectionQueryContent,
     DATASET_FIELD_TYPES,
     DashTabItemControlSourceType,
     DatasetFieldType,
 } from 'shared/types';
 
-import {SelectorDialogState} from '../dashTyped';
+import type {SelectorDialogState} from '../dashTyped';
 
 export type SelectorDialogValidation = {
     title?: string;
@@ -23,6 +23,7 @@ export type SelectorsGroupDialogState = {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+    updateControlsOnChange: boolean;
     defaults?: Record<string, string | string[]>;
     group: SelectorDialogState[];
     id?: string;
@@ -55,4 +56,6 @@ export type ItemDataSource = {
     connectionId?: string;
     connectionQueryType?: ConnectionQueryTypeValues;
     connectionQueryContent?: ConnectionQueryContent;
+    showHint?: boolean;
+    hint?: string;
 };

@@ -1,5 +1,7 @@
-import {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
-import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import get from 'lodash/get';
+import sizeof from 'object-sizeof';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import CacheClient from '../../components/cache-client';
@@ -8,7 +10,7 @@ import {isConfigWithFunction} from '../../components/charts-engine/components/ut
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {startMonitoring} from '../../components/monitoring';
 import {checkValidation} from '../../lib/validation';
-import {ExtendedAppRouteDescription} from '../../types/controllers';
+import type {ExtendedAppRouteDescription} from '../../types/controllers';
 
 export function initChartsEngine({
     plugins,
@@ -31,7 +33,7 @@ export function initChartsEngine({
     }
 
     const telemetryCallbacks: TelemetryCallbacks = {
-        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId}) => {
+        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
                 service: 'us',
@@ -42,11 +44,12 @@ export function initChartsEngine({
                 requestUrl: id || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
         onConfigFetchingFailed: (
             _error,
-            {id, statusCode, requestId, latency = 0, traceId, tenantId},
+            {id, statusCode, requestId, latency = 0, traceId, tenantId, userId},
         ) => {
             ctx.stats('apiRequests', {
                 requestId: requestId!,
@@ -58,10 +61,20 @@ export function initChartsEngine({
                 requestUrl: id || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
-        onDataFetched: ({sourceName, url, requestId, statusCode, latency, traceId, tenantId}) => {
+        onDataFetched: ({
+            sourceName,
+            url,
+            requestId,
+            statusCode,
+            latency,
+            traceId,
+            tenantId,
+            userId,
+        }) => {
             ctx.stats('apiRequests', {
                 requestId,
                 service: sourceName || 'unknown-charts-source',
@@ -72,11 +85,12 @@ export function initChartsEngine({
                 requestUrl: url || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
         onDataFetchingFailed: (
             _error,
-            {sourceName, url, requestId, statusCode, latency, traceId, tenantId},
+            {sourceName, url, requestId, statusCode, latency, traceId, tenantId, userId},
         ) => {
             ctx.stats('apiRequests', {
                 requestId,
@@ -88,6 +102,7 @@ export function initChartsEngine({
                 requestUrl: url || '',
                 traceId: traceId || '',
                 tenantId: tenantId || '',
+                userId: userId || '',
             });
         },
 
@@ -101,9 +116,49 @@ export function initChartsEngine({
         },
 
         onTabsExecuted: ({result, entryId}) => {
-            if (shouldLogChartWithFunction && isConfigWithFunction(result)) {
-                ctx.stats('chartsWithFn', {datetime: getTime(), entryId: entryId || ''});
+            const {
+                config: chartConfig,
+                highchartsConfig,
+                sources,
+                sourceData,
+                processedData,
+            } = result;
+            const chartEntryId = entryId || '';
+            const datetime = Date.now();
+
+            if (
+                shouldLogChartWithFunction &&
+                (isConfigWithFunction(chartConfig) || isConfigWithFunction(highchartsConfig))
+            ) {
+                ctx.stats('chartsWithFn', {datetime, entryId: chartEntryId});
             }
+
+            let rowsCount = 0;
+            let columnsCount = 0;
+            if (sourceData && typeof sourceData === 'object') {
+                Object.values(sourceData as object).forEach((item) => {
+                    rowsCount += get(item, 'result_data[0].rows.length', 0);
+                    columnsCount = Math.max(
+                        columnsCount,
+                        get(item, 'result_data[0].rows[0].data.length', 0),
+                    );
+                }, 0);
+            }
+
+            ctx.stats('chartSizeStats', {
+                datetime,
+                entryId: chartEntryId,
+                requestedDataSize:
+                    sources && typeof sources === 'object'
+                        ? Object.values(sources as object).reduce<number>(
+                              (sum, item) => sum + get(item, 'size', 0),
+                              0,
+                          )
+                        : 0,
+                requestedDataRowsCount: rowsCount,
+                requestedDataColumnsCount: columnsCount,
+                processedDataSize: sizeof(processedData),
+            });
         },
     };
 

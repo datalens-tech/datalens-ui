@@ -6,7 +6,8 @@ import {useHover} from 'hooks/useHover';
 import {ParamsSettingsQA} from 'shared';
 import {TagInput} from 'ui/components/TagInput/TagInput';
 
-import {ParamsSettingsProps} from './types';
+import {convertParamValueToArray} from './helpers';
+import type {ParamsSettingsProps} from './types';
 
 import iconAdd from '@gravity-ui/icons/svgs/plus.svg';
 import iconDelete from '@gravity-ui/icons/svgs/trash-bin.svg';
@@ -128,7 +129,6 @@ export const ParamsRow = ({
             }
 
             event.preventDefault();
-            event.stopPropagation();
 
             titleRef.current?.blur();
 
@@ -158,13 +158,7 @@ export const ParamsRow = ({
     }, [paramTitle, handleValidateTitle]);
 
     React.useEffect(() => {
-        if (paramValue === undefined || paramValue === '') {
-            setValue([]);
-        } else if (Array.isArray(paramValue)) {
-            setValue(paramValue.filter((val) => val.trim() !== ''));
-        } else {
-            setValue([paramValue]);
-        }
+        setValue(convertParamValueToArray(paramValue));
     }, [paramValue]);
 
     return (
@@ -199,7 +193,6 @@ export const ParamsRow = ({
                         value={tagValue}
                         onUpdate={(newTagValue) => handleUpdateValue(tagValue, newTagValue)}
                         onRemove={handleRemoveValue}
-                        defaultEditMode={tagValue.trim() === ''}
                         applyOnBlur={true}
                     />
                 ))}

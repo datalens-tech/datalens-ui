@@ -10,9 +10,9 @@ import {
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
-import {GraphWidgetEventScope, StringParams} from '../../../../../shared';
-import {GraphWidget, LoadedWidgetData} from '../../types';
-import {ChartKitAdapterProps} from '../types';
+import type {GraphWidgetEventScope, StringParams} from '../../../../../shared';
+import type {GraphWidget, LoadedWidgetData} from '../../types';
+import type {ChartKitAdapterProps} from '../types';
 
 import {addParams, subtractParameters} from './action-params-handlers';
 import {getPointActionParams, isPointSelected} from './d3-utils';

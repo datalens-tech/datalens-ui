@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {slct} from '../../utils';
+import {slct, fillDatePicker} from '../../utils';
 import {Operations, RelativeDatepickerQa} from '../../../src/shared';
 import {SCALES} from '../../../src/shared/constants/datepicker/relative-datepicker';
 
@@ -23,8 +23,11 @@ export default class FilterEditor {
     }
 
     async selectDate(dateValue: string) {
-        await this.setInputValue(dateValue);
-        await this.closeDatepickerPopup();
+        await fillDatePicker({
+            page: this.page,
+            selector: '.dl-dialog-filter__body .g-text-input__control',
+            value: dateValue,
+        });
     }
 
     async selectRangeDate(dateValue: [string | null, string]) {
@@ -32,20 +35,18 @@ export default class FilterEditor {
         const endDate = dateValue[1];
 
         if (startDate) {
-            await this.page.fill(
-                `.dl-dialog-filter__body ${slct('datepicker-start')} .g-text-input__control`,
-                startDate,
-            );
+            await fillDatePicker({
+                page: this.page,
+                selector: `${slct('datepicker-start')} input`,
+                value: startDate,
+            });
         }
 
-        await this.closeDatepickerPopup();
-
-        await this.page.fill(
-            `.dl-dialog-filter__body ${slct('datepicker-end')} .g-text-input__control`,
-            endDate,
-        );
-
-        await this.closeDatepickerPopup();
+        await fillDatePicker({
+            page: this.page,
+            selector: `${slct('datepicker-end')} input`,
+            value: endDate,
+        });
     }
 
     async selectRadio(value: string) {
@@ -72,7 +73,7 @@ export default class FilterEditor {
         value,
     }: {
         type: 'start' | 'end';
-        period?: typeof SCALES[keyof typeof SCALES];
+        period?: (typeof SCALES)[keyof typeof SCALES];
         value?: string;
     }) {
         await this.page.click(`${slct(`relative-radio-buttons-${type}`)} [value=relative]`);
@@ -117,10 +118,5 @@ export default class FilterEditor {
         const buttons = await this.page.$$(dialogFooterButtonSelector);
 
         return buttons.length === 1;
-    }
-
-    private async closeDatepickerPopup() {
-        // position is needed just for click on the left corner of container
-        return this.page.click('.dl-dialog-filter__body', {position: {x: 0, y: 0}});
     }
 }

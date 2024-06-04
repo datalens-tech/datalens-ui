@@ -3,9 +3,10 @@ import React from 'react';
 import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
-import {BreadcrumbsItem, getWorkbookBreadcrumbsItems} from './helpers';
+import type {BreadcrumbsItem} from './helpers';
+import {getWorkbookBreadcrumbsItems} from './helpers';
 
 import './EntryBreadcrumbs.scss';
 
@@ -36,11 +37,15 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
             firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
             lastDisplayedItemsCount={LastDisplayedItemsCount.One}
             renderRootContent={entry?.workbookId ? undefined : renderRootContent}
-            renderItemContent={(item: BreadcrumbsItem) => {
+            renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
+                if (isCurrent) {
+                    return item.text;
+                }
+
                 return item.path ? (
                     <Link
                         to={item.path}
-                        className={b('item')}
+                        className={b('item', {link: true})}
                         onClick={(e) => {
                             e.stopPropagation();
                         }}
@@ -48,7 +53,7 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
                         {item.text}
                     </Link>
                 ) : (
-                    <div>{item.text}</div>
+                    <div className={b('item')}>{item.text}</div>
                 );
             }}
         />

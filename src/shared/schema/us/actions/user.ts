@@ -1,4 +1,4 @@
-import {DLUserSettings} from '../../../types';
+import type {DLUserSettings} from '../../../types';
 import {createAction} from '../../gateway-utils';
 
 const PATH_PREFIX = '/v1';

@@ -2,11 +2,10 @@ import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
-import {getUniqueTimestamp, isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {ControlQA} from '../../../../src/shared/constants';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Feature} from '../../../../src/shared';
 
 const PARAMS = {
     DATASET: {
@@ -43,20 +42,12 @@ async function checkLabels(
 ) {
     const {dialogControl} = dashboardPage;
 
-    const isEnabledGroupControls = await isEnabledFeature(
-        dashboardPage.page,
-        Feature.GroupControls,
-    );
-
     await dashboardPage.changeTab({tabName: tab});
     await dashboardPage.enterEditMode();
 
     // enable the internal title and title in the selector settings
     await dashboardPage.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
-    const controlSettingsButton = await dashboardPage.waitForSelector(
-        slct(ControlQA.controlSettings),
-    );
-    await controlSettingsButton.click();
+    await dashboardPage.clickFirstControlSettingsButton();
     await dashboardPage.editSelectorBySettings({
         appearance: {title, titleEnabled: true, innerTitle, innerTitleEnabled: true},
     });
@@ -65,9 +56,6 @@ async function checkLabels(
     //checking label
     const selectorControl = await dialogControl.getControlByTitle(title);
 
-    if (isEnabledGroupControls) {
-        return;
-    }
     //checking innerLabel
     await selectorControl.waitForSelector(`${innerSelector} >> text=${innerTitle}`);
 }

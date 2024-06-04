@@ -17,6 +17,11 @@
         padding: 0 20px;
         border-bottom: 1px solid var(--g-color-line-generic);
         background: var(--g-color-base-background);
+
+        &_mobile {
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
     }
 
     &__create-widget-btn {

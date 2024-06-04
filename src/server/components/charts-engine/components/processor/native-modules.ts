@@ -1,8 +1,8 @@
 import controlModule from './../../../../modes/charts/plugins/control';
-import datalensModule from './../../../../modes/charts/plugins/datalens/module';
+import {datalensModule} from './../../../../modes/charts/plugins/datalens/module';
 import datasetModuleV2 from './../../../../modes/charts/plugins/dataset/v2';
 import qlModule from './../../../../modes/charts/plugins/ql/module';
-import {NativeModulesType} from './types';
+import type {NativeModulesType} from './types';
 
 export const nativeModules: Record<NativeModulesType, Record<string, unknown>> = {
     BASE_NATIVE_MODULES: {

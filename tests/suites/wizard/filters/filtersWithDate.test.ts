@@ -12,7 +12,7 @@ import {SCALES} from '../../../../src/shared/constants/datepicker/relative-datep
 const FIXED_TEST_YEAR_VALUE = 2017;
 const CURRENT_YEAR_VALUE = new Date().getFullYear();
 
-const getPreviousDayDate = (value: number, period: typeof SCALES[keyof typeof SCALES]) => {
+const getPreviousDayDate = (value: number, period: (typeof SCALES)[keyof typeof SCALES]) => {
     const date = moment.utc();
     switch (period) {
         case SCALES.y:

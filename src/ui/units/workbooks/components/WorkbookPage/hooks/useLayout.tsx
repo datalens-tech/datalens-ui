@@ -1,16 +1,20 @@
 import React from 'react';
 
-import {PencilToLine} from '@gravity-ui/icons';
+import {ArrowLeft, PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18N} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
+import {useHistory} from 'react-router';
+import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import {AppDispatch} from '../../../../../store';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
+import {setCollection} from '../../../../collections/store/actions';
 import {
     CollectionBreadcrumbs,
     cutBreadcrumbs,
@@ -21,7 +25,6 @@ import {
     selectCollectionBreadcrumbs,
     selectCollectionBreadcrumbsError,
 } from '../../../../collections-navigation/store/selectors';
-import {setCollection} from '../../../../collections/store/actions';
 import {selectPageError, selectWorkbook, selectWorkbookFilters} from '../../../store/selectors';
 import {WorkbookActions} from '../../WorkbookActions/WorkbookActions';
 
@@ -40,6 +43,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
     const {setLayout} = React.useContext(LayoutContext);
 
     const dispatch = useDispatch<AppDispatch>();
+    const history = useHistory();
 
     const workbook = useSelector(selectWorkbook);
     const filters = useSelector(selectWorkbookFilters);
@@ -54,6 +58,14 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                 (breadcrumbs &&
                     breadcrumbs[breadcrumbs.length - 1]?.collectionId === workbook.collectionId)),
     );
+
+    const goToParentCollection = React.useCallback(() => {
+        if (!workbook) {
+            return;
+        }
+
+        history.push(getParentCollectionPath(workbook));
+    }, [history, workbook]);
 
     React.useEffect(() => {
         setLayout({
@@ -152,6 +164,18 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                                 </Button>
                             </div>
                         </Tooltip>
+                    ) : null,
+                },
+                titleBeforeActionsBlock: {
+                    content: isMobileView ? (
+                        <Button
+                            view="flat"
+                            size="l"
+                            onClick={goToParentCollection}
+                            className={b('return-button')}
+                        >
+                            <Icon data={ArrowLeft} size={16} />
+                        </Button>
                     ) : null,
                 },
                 title: {

@@ -1,28 +1,32 @@
-import {AnyAction, combineReducers} from 'redux';
-import {ThunkDispatch} from 'redux-thunk';
-import {DatalensGlobalState} from 'ui';
+import type {AnyAction} from 'redux';
+import {combineReducers} from 'redux';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {DatalensGlobalState} from 'ui';
 
-import {
-    RESET_WIZARD_STORE,
-    ResetWizardStoreAction,
-    SET_WIZARD_STORE,
-    SetWizardStoreAction,
-} from '../actions';
-import {DatasetAction} from '../actions/dataset';
-import {DialogColorAction} from '../actions/dialogColor';
-import {HierarchyEditorAction} from '../actions/hierarchyEditor';
-import {PreviewAction} from '../actions/preview';
-import {SettingsAction} from '../actions/settings';
-import {VisualizationAction} from '../actions/visualization';
-import {WidgetAction} from '../actions/widget';
+import type {ResetWizardStoreAction, SetWizardStoreAction} from '../actions';
+import {RESET_WIZARD_STORE, SET_WIZARD_STORE} from '../actions';
+import type {DatasetAction} from '../actions/dataset';
+import type {DialogColorAction} from '../actions/dialogColor';
+import type {HierarchyEditorAction} from '../actions/hierarchyEditor';
+import type {PreviewAction} from '../actions/preview';
+import type {SettingsAction} from '../actions/settings';
+import type {VisualizationAction} from '../actions/visualization';
+import type {WidgetAction} from '../actions/widget';
 
-import {DatasetState, dataset} from './dataset';
-import {DialogColorState, dialogColor} from './dialogColor';
-import {HierarchyEditorState, hierarchyEditor} from './hierarchyEditor';
-import {PreviewState, preview} from './preview';
-import {SettingsState, settings} from './settings';
-import {VisualizationState, visualization} from './visualization';
-import {WidgetState, widget} from './widget';
+import type {DatasetState} from './dataset';
+import {dataset} from './dataset';
+import type {DialogColorState} from './dialogColor';
+import {dialogColor} from './dialogColor';
+import type {HierarchyEditorState} from './hierarchyEditor';
+import {hierarchyEditor} from './hierarchyEditor';
+import type {PreviewState} from './preview';
+import {preview} from './preview';
+import type {SettingsState} from './settings';
+import {settings} from './settings';
+import type {VisualizationState} from './visualization';
+import {visualization} from './visualization';
+import type {WidgetState} from './widget';
+import {widget} from './widget';
 
 export type WizardGlobalState = {
     hierarchyEditor: HierarchyEditorState;

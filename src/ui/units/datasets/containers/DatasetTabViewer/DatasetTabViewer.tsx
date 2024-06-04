@@ -1,15 +1,16 @@
 import React from 'react';
 
-import {SDK} from 'ui';
+import type {SDK} from 'ui';
 
-import {DATASET_TABS, TAB_DATASET, TAB_FILTERS, TAB_PARAMETERS, TAB_SOURCES} from '../../constants';
+import type {DatasetTab} from '../../constants';
+import {TAB_DATASET, TAB_FILTERS, TAB_PARAMETERS, TAB_SOURCES} from '../../constants';
 import DatasetEditor from '../DatasetEditor/DatasetEditor';
 import DatasetFilters from '../DatasetFilters/DatasetFilters';
 import {DatasetParameters} from '../DatasetParameters/DatasetParameters';
 import DatasetSources from '../DatasetSources/DatasetSources';
 
 type Props = {
-    tab?: keyof typeof DATASET_TABS;
+    tab?: DatasetTab;
     sdk: SDK;
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;

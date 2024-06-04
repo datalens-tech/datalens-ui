@@ -1,20 +1,21 @@
 import React from 'react';
 
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatasetField, Field} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatasetField, Field} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectDashboardParameters} from 'units/wizard/selectors/visualization';
 
 import {openDialogParameter} from '../../../../../../../store/actions/dialog';
-import {PlaceholderAction} from '../../../../../actions/dndItems';
+import type {PlaceholderAction} from '../../../../../actions/dndItems';
 import {updateDashboardParameters} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {setDashboardParameters} from '../../../../../actions/visualization';
 import {ITEM_TYPES} from '../../../../../constants';
 import {updateUrlParameter} from '../../../../../utils/wizard';
 import PlaceholderComponent from '../Placeholder/Placeholder';
-import {CommonPlaceholderProps} from '../PlaceholdersContainer';
+import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
 import iconFilter from 'ui/assets/icons/parameter-section.svg';
 

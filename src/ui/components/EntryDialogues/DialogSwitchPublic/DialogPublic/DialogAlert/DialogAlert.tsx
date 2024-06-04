@@ -13,7 +13,7 @@ const b = block('dl-public-alert-dialog');
 const i18n = I18n.keyset('component.dialog-switch-public.view');
 
 type Props = {
-    onClose: (value: {status: typeof RESOLVE_STATUS[keyof typeof RESOLVE_STATUS]}) => void;
+    onClose: (value: {status: (typeof RESOLVE_STATUS)[keyof typeof RESOLVE_STATUS]}) => void;
     visible: boolean;
     publish?: boolean;
     many?: boolean;

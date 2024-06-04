@@ -1,9 +1,11 @@
-import {AxiosRequestConfig} from 'axios';
+import type {AxiosRequestConfig} from 'axios';
 import {DL, Scope} from 'ui';
 
 import {
     ACCEPT_LANGUAGE_HEADER,
     DASH_INFO_HEADER,
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     ENABLE,
     Feature,
     SUPERUSER_SWITCH_MODE_COOKIE_NAME,
@@ -19,7 +21,7 @@ import {getStore} from '../../../store';
 import Utils from '../../../utils';
 import ChartKit from '../DatalensChartKitOld';
 import Error from '../Error/Error';
-import {ChartKitDataProvider} from '../components/ChartKitBase/types';
+import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import renderControl from '../extensions/control';
 import renderMarkdown from '../extensions/markdown';
 import renderTable from '../extensions/table';
@@ -87,6 +89,8 @@ export const initChartKitSettings = () => {
 
             return request;
         },
-        noJsonFn: Utils.isEnabledFeature(Feature.NoJsonFn),
+        noJsonFn:
+            Utils.isEnabledFeature(Feature.NoJsonFn) ||
+            Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE,
     });
 };

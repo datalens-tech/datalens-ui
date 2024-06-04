@@ -1,22 +1,27 @@
-import {
-    DATALENS_QL_TYPES,
+import type {
+    CommonNumberFormattingOptions,
     ExtendedSeriesLineOptions,
-    getUtcDateTime,
-    isDateField,
 } from '../../../../../../../shared';
+import {DATALENS_QL_TYPES, getUtcDateTime, isDateField} from '../../../../../../../shared';
 import {getLineTimeDistinctValue} from '../../../../../../../shared/modules/colors/distincts-helpers';
 import {getColorsForNames} from '../../../ql/utils/colors';
-import {
+import type {
     QLRenderResultYagr,
     QLRenderResultYagrGraph,
     QLValue,
+} from '../../../ql/utils/misc-helpers';
+import {
     formatUnknownTypeValue,
     parseNumberValue,
     renderValue,
 } from '../../../ql/utils/misc-helpers';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
-import {findIndexInOrder, isLegendEnabled} from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import {
+    findIndexInOrder,
+    getFormatOptionsFromFieldFormatting,
+    isLegendEnabled,
+} from '../../utils/misc-helpers';
+import type {PrepareFunctionArgs} from '../types';
 
 const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
 
@@ -147,6 +152,17 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                         return dataMatrix[String(xValue)] as number;
                     }),
                 };
+
+                const formatting = y.formatting as CommonNumberFormattingOptions | undefined;
+                const tooltipOptions = getFormatOptionsFromFieldFormatting(formatting, y.data_type);
+
+                // TODO: add other options when they will be available in Chartkit
+                // https://github.com/gravity-ui/chartkit/issues/476
+                ChartEditor.updateLibraryConfig({
+                    tooltip: {
+                        precision: tooltipOptions.chartKitPrecision,
+                    },
+                });
 
                 result.graphs?.push(graph);
             });

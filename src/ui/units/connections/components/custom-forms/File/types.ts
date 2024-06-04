@@ -1,5 +1,5 @@
-import {UpdateFileSourceResponse} from '../../../../../../shared/schema';
-import {
+import type {UpdateFileSourceResponse} from '../../../../../../shared/schema';
+import type {
     ApplySourceSettings,
     ListItemProps,
     ReplaceSourceActionData,

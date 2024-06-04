@@ -1,18 +1,21 @@
-import {
-    ApiV2Annotations,
+import type {
     ColorPalette,
     FieldGuid,
-    PseudoFieldTitle,
+    Palette,
     ServerField,
     TableFieldBackgroundSettings,
+} from '../../../../../../../../shared';
+import {
+    ApiV2Annotations,
+    PseudoFieldTitle,
     getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
-import {ChartColorsConfig} from '../../../js/helpers/colors';
+import type {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
 import {getColor} from '../../../utils/constants';
 import {getCurrentBackgroundGradient} from '../../helpers/backgroundSettings/misc';
-import {
+import type {
     AnnotationsMap,
     CellValue,
     ChartkitCell,
@@ -37,11 +40,13 @@ const getContinuousColorValue = (colorValue: undefined | null | string | number)
     return Number(colorValue);
 };
 
-const getDiscreteColorValue = (
-    colorValue: undefined | null | string,
-    settings: TableFieldBackgroundSettings['settings'],
-    loadedColorPalettes: Record<string, ColorPalette>,
-): string | null => {
+const getDiscreteColorValue = (args: {
+    colorValue: undefined | null | string;
+    settings: TableFieldBackgroundSettings['settings'];
+    customColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+}): string | null => {
+    const {colorValue, settings, customColorPalettes, availablePalettes} = args;
     const mountedColors = settings.paletteState.mountedColors;
     const palette = settings.paletteState.palette;
 
@@ -55,7 +60,14 @@ const getDiscreteColorValue = (
         return null;
     }
 
-    return getColor(Number(colorIndex), selectServerPalette(palette, loadedColorPalettes));
+    return getColor(
+        Number(colorIndex),
+        selectServerPalette({
+            palette,
+            customColorPalettes,
+            availablePalettes,
+        }),
+    );
 };
 
 type ColorizePivotTableHeaderByBackgroundSettings = {
@@ -65,6 +77,7 @@ type ColorizePivotTableHeaderByBackgroundSettings = {
     parents: Record<string, boolean>;
     isTotal: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 export const colorizePivotTableHeaderByBackgroundSettings = ({
     backgroundSettings,
@@ -73,6 +86,7 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
     parents,
     isTotal,
     loadedColorPalettes,
+    availablePalettes,
 }: ColorizePivotTableHeaderByBackgroundSettings) => {
     if (isTotal) {
         return {};
@@ -82,11 +96,12 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
         backgroundSettings.enabled &&
         backgroundSettings.settings.paletteState
     ) {
-        let colorValue = getDiscreteColorValue(
-            cellValue,
-            backgroundSettings.settings,
-            loadedColorPalettes,
-        );
+        let colorValue = getDiscreteColorValue({
+            colorValue: cellValue,
+            settings: backgroundSettings.settings,
+            customColorPalettes: loadedColorPalettes,
+            availablePalettes,
+        });
 
         if (!colorValue) {
             const parentNames = Object.keys(parents);
@@ -95,11 +110,12 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
                     return;
                 }
 
-                colorValue = getDiscreteColorValue(
-                    parentName,
-                    backgroundSettings.settings,
-                    loadedColorPalettes,
-                );
+                colorValue = getDiscreteColorValue({
+                    colorValue: parentName,
+                    settings: backgroundSettings.settings,
+                    customColorPalettes: loadedColorPalettes,
+                    availablePalettes,
+                });
             });
         }
 
@@ -122,10 +138,18 @@ type PrepareBackgroundColorSettings = {
     fieldDict: Record<string, ServerField>;
     settingsByField: Record<string, PivotTableFieldSettings>;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSettings) => {
-    const {annotationsMap, rowsData, fieldsItemIdMap, fieldDict, settingsByField} = args;
+    const {
+        annotationsMap,
+        rowsData,
+        fieldsItemIdMap,
+        fieldDict,
+        settingsByField,
+        availablePalettes,
+    } = args;
 
     if (!rowsData.length) {
         return {discreteColorsByField: {}, continuousColorsByField: {}};
@@ -180,11 +204,12 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
                 discreteColorsByField[datasetField.guid] = {};
             }
 
-            discreteColorsByField[datasetField.guid][colorValue] = getDiscreteColorValue(
+            discreteColorsByField[datasetField.guid][colorValue] = getDiscreteColorValue({
                 colorValue,
                 settings,
-                args.loadedColorPalettes,
-            );
+                customColorPalettes: args.loadedColorPalettes,
+                availablePalettes,
+            });
         });
     });
 
@@ -220,6 +245,7 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
                 backgroundSettings.settings.gradientState,
                 args.loadedColorPalettes,
             ).colors,
+            availablePalettes,
         };
 
         fieldColorValues.forEach((value) => {
@@ -246,6 +272,7 @@ type ColorizePivotTableByFieldBackgroundSettings = {
     fieldsItemIdMap: Record<string, PivotField>;
     fieldDict: Record<string, ServerField>;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 export const colorizePivotTableByFieldBackgroundSettings = (
@@ -260,6 +287,7 @@ export const colorizePivotTableByFieldBackgroundSettings = (
         fieldDict,
         fieldsItemIdMap,
         loadedColorPalettes,
+        availablePalettes,
     } = args;
 
     const {discreteColorsByField, continuousColorsByField} = prepareBackgroundColorSettings({
@@ -269,6 +297,7 @@ export const colorizePivotTableByFieldBackgroundSettings = (
         annotationsMap,
         settingsByField,
         loadedColorPalettes,
+        availablePalettes,
     });
 
     rows.forEach((row) => {
@@ -310,7 +339,12 @@ export const colorizePivotTableByFieldBackgroundSettings = (
                 datasetField
             ) {
                 const measureName = getFakeTitleOrTitle(datasetField);
-                backgroundColor = getDiscreteColorValue(measureName, settings, loadedColorPalettes);
+                backgroundColor = getDiscreteColorValue({
+                    colorValue: measureName,
+                    settings,
+                    customColorPalettes: loadedColorPalettes,
+                    availablePalettes,
+                });
             }
 
             if (backgroundColor) {

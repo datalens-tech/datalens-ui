@@ -113,11 +113,11 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderDescription() {
-        const {description} = this.props;
+        const {description, hideTitle} = this.props;
         if (this.state.accessDescriptionMd) {
             return (
                 <YfmWrapper
-                    className={b('yfm')}
+                    className={b('yfm', {'without-title': hideTitle})}
                     content={this.state.accessDescriptionMd}
                     setByInnerHtml={true}
                 />

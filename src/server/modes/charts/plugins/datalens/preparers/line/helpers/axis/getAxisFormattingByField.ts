@@ -1,10 +1,9 @@
-import {
+import type {
     CommonNumberFormattingOptions,
     ServerField,
     ServerPlaceholder,
-    isNumberField,
-    isPercentVisualization,
 } from '../../../../../../../../../shared';
+import {isNumberField, isPercentVisualization} from '../../../../../../../../../shared';
 import {getFormatOptionsFromFieldFormatting} from '../../../../utils/misc-helpers';
 
 export const getFieldFromPlaceholder = (

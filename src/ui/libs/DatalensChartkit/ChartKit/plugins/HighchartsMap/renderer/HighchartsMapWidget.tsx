@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
 
-import {HighchartsMapWidgetProps} from '../types';
+import type {HighchartsMapWidgetProps} from '../types';
 
 import {HighchartsMapComponent} from './HighchartsMapComponent';
 

@@ -1,12 +1,12 @@
 import React from 'react';
 
 import {chartsDataProvider} from '../../../libs/DatalensChartkit';
-import {ChartKitDataProvider} from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ChartKitDataProvider} from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
 
 import {Chart as ChartComponent} from './Chart';
 import {ChartSelector as ChartSelectorComponent} from './ChartSelector';
 import {ChartWidget as ChartWidgetComponent} from './ChartWidget';
-import {
+import type {
     ChartSelectorWidgetProps,
     ChartWidgetProviderPropsWithRefProps,
     ChartWithProviderWithRefProps,

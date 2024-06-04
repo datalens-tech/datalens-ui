@@ -1,5 +1,6 @@
-import {History} from 'history';
-import {DashEntry, DashTabItemType} from 'shared';
+import type {History} from 'history';
+import type {DashEntry} from 'shared';
+import {DashTabItemType} from 'shared';
 
 import {registry} from '../../../../registry';
 
@@ -20,6 +21,26 @@ export const prepareLoadedData = (data: DashEntry['data']) => {
             return widgetItem;
         });
     });
+    return data;
+};
+
+export const isDeprecatedDashData = (data?: DashEntry['data'] | null) => {
+    if (!data) return true;
+
+    return data.settings.dependentSelectors !== true;
+};
+
+export const migrateDataSettings = (data: DashEntry['data']) => {
+    if (isDeprecatedDashData(data)) {
+        return {
+            ...data,
+            settings: {
+                ...data.settings,
+                dependentSelectors: true,
+            },
+        };
+    }
+
     return data;
 };
 

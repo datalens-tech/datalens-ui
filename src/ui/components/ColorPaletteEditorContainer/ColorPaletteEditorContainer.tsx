@@ -2,8 +2,15 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {ColorPalette, DEFAULT_PALETTE, GradientType, selectAvailableGradientsColors} from 'shared';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {ColorPalette} from 'shared';
+import {
+    DEFAULT_PALETTE,
+    GradientType,
+    ServiceSettingsQA,
+    selectAvailableGradientsColors,
+} from 'shared';
 import {
     deleteColorPalette,
     fetchColorPalettes,
@@ -12,7 +19,8 @@ import {
     setCurrentColorPalette,
 } from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
-import {DatalensGlobalState, selectDefaultClientGradient} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {selectDefaultClientGradient} from 'ui';
 
 import ColorPalettesCard from './ColorPalettesCard/ColorPalettesCard';
 import GradientColorPaletteEditor from './GradientPaletteEditor/GradientPaletteEditor';
@@ -74,6 +82,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     className={b('color-palettes-card')}
                     colorPalettes={colorPalettes.filter((item) => !item.isGradient)}
                     condensed={condensed}
+                    qa={ServiceSettingsQA.ColorPalettes}
                 />
                 <ColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />
                 <GradientColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />

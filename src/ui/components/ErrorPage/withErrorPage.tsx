@@ -1,6 +1,7 @@
 import React from 'react';
 
-import ErrorPage, {ErrorPageProps} from './ErrorPage';
+import type {ErrorPageProps} from './ErrorPage';
+import ErrorPage from './ErrorPage';
 
 interface WithErrorPageState {
     error: null | Error;

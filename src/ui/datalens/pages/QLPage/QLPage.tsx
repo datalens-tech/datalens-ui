@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {QLChartType} from 'shared';
+import type {QLChartType} from 'shared';
 
 import App from 'units/ql/containers/App/App';
 import {reducerRegistry} from '../../../store';

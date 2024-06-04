@@ -1,16 +1,11 @@
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
-import {DateTime} from 'luxon';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants';
-import {
-    DashData,
-    DashTab,
-    DashTabConnectionKind,
-    DashTabItemControlElementType,
-    DashTabItemType,
-} from '../types';
+import type {DashData, DashTab} from '../types';
+import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
 
-const DATE_FORMAT_V7 = 'yyyy-MM-dd';
+const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
 // appeared at the time of the transition from 6 to 7, there is possibility that previous conversions are no longer needed
 
@@ -188,6 +183,7 @@ class DashSchemeConverter {
         const tabs: DashTab[] = pages[0].tabs;
 
         tabs.forEach((tab: any) => {
+            // eslint-disable-next-line complexity
             tab.items = tab.items.map((item: any) => {
                 const {type, data} = item;
 
@@ -229,11 +225,7 @@ class DashSchemeConverter {
                                     to[0] === '-' ? `+${to.replace('-', '')}` : `-${to || 0}`;
                                 control.defaultValue = `__interval___relative_${resultFrom}d___relative_${resultTo}d`;
                             } else if (type === 'date' && value.from && value.to) {
-                                control.defaultValue = `__interval_${DateTime.fromISO(
-                                    value.from,
-                                ).toFormat(DATE_FORMAT_V7)}_${DateTime.fromISO(value.to).toFormat(
-                                    DATE_FORMAT_V7,
-                                )}`;
+                                control.defaultValue = `__interval_${dateTimeUtc({input: value.from}).format(DATE_FORMAT_V7)}_${dateTimeUtc({input: value.to}).format(DATE_FORMAT_V7)}`;
                             } else {
                                 control.defaultValue = '';
                             }
@@ -243,7 +235,7 @@ class DashSchemeConverter {
                                 from[0] === '-' ? `+${from.replace('-', '')}` : `-${from || 0}`;
                             control.defaultValue = `__relative_${resultFrom}d`;
                         } else if (type === 'date' && value.from) {
-                            control.defaultValue = DateTime.fromISO(value.from).toFormat(
+                            control.defaultValue = dateTimeUtc({input: value.from}).format(
                                 DATE_FORMAT_V7,
                             );
                         } else {

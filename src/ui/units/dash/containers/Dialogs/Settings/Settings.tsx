@@ -7,9 +7,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {registry} from 'ui/registry';
 
-import {DatalensGlobalState, EntryDialogName} from '../../../../..';
+import type {DatalensGlobalState} from '../../../../..';
+import {EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
-import {DashLoadPriority, DashSettingsGlobalParams, Feature} from '../../../../../../shared';
+import type {DashSettingsGlobalParams} from '../../../../../../shared';
+import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
@@ -190,6 +192,7 @@ const Settings = () => {
             open={visible}
             onClose={() => dispatch(closeDialog())}
             disableFocusTrap={true}
+            disableEscapeKeyDown={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />

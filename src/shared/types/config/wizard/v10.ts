@@ -1,10 +1,11 @@
-import {ColorMode} from '../../../constants';
-import {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
-import {
+import type {ColorMode} from '../../../constants';
+import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {
     AxisLabelFormatMode,
     AxisMode,
     ChartsConfigVersion,
     ColumnSettings,
+    HintSettings,
     LabelsPositions,
     NumberFormatType,
     NumberFormatUnit,
@@ -61,6 +62,7 @@ export interface V10CommonSharedExtraSettings {
     navigatorSettings?: V10NavigatorSettings;
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
+    pinnedColumns?: number;
 }
 
 export type V10NavigatorSettings = {
@@ -261,6 +263,7 @@ export type V10Field = {
     subTotalsSettings?: TableSubTotalsSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
+    hintSettings?: HintSettings;
 } & V10ClientOnlyFields;
 
 export type V10ColorsConfig = {

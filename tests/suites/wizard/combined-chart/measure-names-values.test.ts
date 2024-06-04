@@ -57,9 +57,8 @@ const checkMeasureNamesInPlaceholder = async (
     wizardPage: WizardPage,
     placeholderName: PlaceholderName,
 ) => {
-    const texts = await wizardPage.sectionVisualization.getPlaceholderItemsInnerText(
-        placeholderName,
-    );
+    const texts =
+        await wizardPage.sectionVisualization.getPlaceholderItemsInnerText(placeholderName);
 
     return texts.includes('Measure Names');
 };

@@ -6,7 +6,7 @@ import Highcharts from 'highcharts';
 import merge from 'lodash/merge';
 
 import {getGraph} from '../../../modules/graph/graph';
-import {MetricTileProps, MetricWidgetDataItem} from '../types';
+import type {MetricTileProps, MetricWidgetDataItem} from '../types';
 
 import {
     GREEN_BACKGROUND,
@@ -115,9 +115,9 @@ export class MetricTile extends React.PureComponent<MetricTileProps> {
         }
 
         const {config, callback} = getGraph(chartConfig, chart, undefined, isMobile);
-
         return (
             <HighchartsReact
+                key={Math.random()}
                 options={config}
                 highcharts={Highcharts}
                 callback={callback}
@@ -126,6 +126,7 @@ export class MetricTile extends React.PureComponent<MetricTileProps> {
         );
     };
 
+    // eslint-disable-next-line complexity
     private renderDiff = (
         content: MetricWidgetDataItem['content'],
         diffType: 'diff' | 'diffPercent',

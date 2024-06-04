@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {TrashBin} from '@gravity-ui/icons';
-import {DropdownMenu, DropdownMenuItem, Icon, List, ListProps} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, ListProps} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {TabMenuQA} from 'shared';
-import {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/TabMenu';
+import {DialogGroupControlQa, TabMenuQA} from 'shared';
+import type {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/TabMenu';
 
 import './ListWithMenu.scss';
 
@@ -65,17 +66,20 @@ export const ListWithMenu = <T extends ItemWithTitle>({
             text: i18n('button_delete'),
             icon: <Icon data={TrashBin} />,
             className: b('delete-btn'),
+            qa: DialogGroupControlQa.removeControlButton,
         },
     ];
 
     const wrappedRenderItem = (item: T, active: boolean, itemIndex: number) => {
         return (
-            <div className={b('wrapper', {'icon-on-hover': iconOnHover, active})}>
+            <div
+                className={b('wrapper', {'icon-on-hover': iconOnHover, active})}
+                data-qa={TabMenuQA.Item}
+            >
                 <div
                     className={b('item')}
                     onClick={onAction({action: 'changeChosen', index: itemIndex})}
                     key={itemIndex}
-                    data-qa={TabMenuQA.Item}
                 >
                     <div className={b('item-content')}>
                         <span title={item.title} className={b('item-text')}>
@@ -90,6 +94,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
                             size="m"
                             onOpenToggle={handleMenuToggle(itemIndex)}
                             items={customMenuOptions}
+                            defaultSwitcherProps={{qa: DialogGroupControlQa.controlMenu}}
                         />
                     </div>
                 )}

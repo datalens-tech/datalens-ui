@@ -1,10 +1,5 @@
-import {
-    Field,
-    PseudoFieldTitle,
-    ServerField,
-    createMeasureNames,
-    createMeasureValues,
-} from 'shared';
+import type {Field, ServerField} from 'shared';
+import {PseudoFieldTitle, createMeasureNames, createMeasureValues} from 'shared';
 
 import {mapServerFieldToWizardField} from '../../mappers/mapChartsToClientConfig';
 

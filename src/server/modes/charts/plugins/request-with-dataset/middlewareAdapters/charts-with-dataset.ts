@@ -1,9 +1,9 @@
 import {getResultSchemaFromDataset} from '../../../../../../shared';
-import {PartialDatasetField} from '../../../../../../shared/schema';
-import Cache from '../../../../../components/cache-client';
+import type {PartialDatasetField} from '../../../../../../shared/schema';
+import type Cache from '../../../../../components/cache-client';
 import {getUrlsRequestBody} from '../../datalens/url/build-request-body';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
-import {MiddlewareSourceAdapterArgs} from '../../types';
+import type {MiddlewareSourceAdapterArgs} from '../../types';
 import type {ConfigurableRequestWithDatasetPluginOptions} from '../index';
 import {getDatasetFields} from '../request-dataset';
 
@@ -63,7 +63,9 @@ export default async (
     });
 
     const data = getUrlsRequestBody({
-        ...source.sourceArgs,
+        params: source.sourceArgs.params,
+        shared: source.sourceArgs.shared,
+        apiVersion: source.sourceArgs.apiVersion,
         datasetId,
         datasetFields,
         layerId,

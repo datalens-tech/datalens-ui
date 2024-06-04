@@ -6,6 +6,9 @@
     overflow: hidden; // ellipsis for long dataset names in the Selector dialog
 
     &__button {
+        justify-content: flex-start;
+        align-items: center;
+
         & .entity-icon__container {
             width: unset;
         }

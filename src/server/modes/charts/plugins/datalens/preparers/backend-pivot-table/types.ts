@@ -1,4 +1,4 @@
-import {
+import type {
     ApiV2Annotations,
     ApiV2RequestPivotRoleSpec,
     BarTableCell,
@@ -10,7 +10,7 @@ import {
     ServerField,
     TableFieldBackgroundSettings,
 } from '../../../../../../../shared';
-import {BackendPivotTableCellCustom} from '../../types';
+import type {BackendPivotTableCellCustom} from '../../types';
 
 export type PivotDataWithInfo = {
     columns: PivotDataColumn[];

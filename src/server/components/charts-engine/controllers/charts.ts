@@ -1,15 +1,16 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {ChartsEngine} from '..';
+import type {ChartsEngine} from '..';
 import {EntryUpdateMode} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
-import {ChartTemplates, chartGenerator as generator} from '../components/chart-generator';
+import type {ChartTemplates} from '../components/chart-generator';
+import {chartGenerator} from '../components/chart-generator';
 import {chartValidator as validator} from '../components/chart-validator';
-import {
+import type {
     ProviderCreateParams,
     ProviderUpdateParams,
-    USProvider,
 } from '../components/storage/united-storage/provider';
+import {USProvider} from '../components/storage/united-storage/provider';
 
 type ErrorWithStatusAndData = Error & {response?: {status: number; data: string}} & {
     status?: number;
@@ -63,11 +64,13 @@ function prepareChartData(
 
     try {
         if (typeof template !== 'undefined') {
-            ({chart, type, links} = generator.generateChart({data, template, req, ctx}));
+            ({chart, type, links} = chartGenerator.generateChart({data, template, req, ctx}));
 
             // Convert from wizard to editor script
             if (data.convert) {
                 type = type.replace(/_wizard/, '');
+            } else {
+                chart = {shared: chart.shared};
             }
         } else if (type) {
             if (validator.validate({data, type})) {

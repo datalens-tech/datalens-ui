@@ -4,14 +4,15 @@ import {RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {ColorMode, ColorsConfig, Feature, Field} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {ColorsConfig, Field} from 'shared';
+import {ColorMode} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes} from 'store/selectors/colorPaletteEditor';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import type {GradientState, PaletteState} from 'units/wizard/actions/dialogColor';
 import {
-    GradientState,
-    PaletteState,
     prepareDialogColorState,
     resetDialogColorState,
     setDialogColorGradientState,
@@ -30,7 +31,7 @@ import {
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
 } from '../../../../selectors/dialogColor';
-import {ExtraSettings} from '../DialogColor';
+import type {ExtraSettings} from '../DialogColor';
 import DialogColorGradientBody from '../DialogColorGradient/DialogColorGradient';
 import DialogColorPalette, {DEFAULT_COLOR} from '../DialogColorPalette/DialogColorPalette';
 
@@ -60,10 +61,7 @@ class ColorSettingsContainer extends React.Component<Props> {
         const {colorsConfig, items} = this.props;
 
         this.props.actions.prepareDialogColorState({colorsConfig, items});
-
-        if (Utils.isEnabledFeature(Feature.CustomColorPalettes)) {
-            this.props.actions.fetchColorPalettes();
-        }
+        this.props.actions.fetchColorPalettes();
     }
 
     componentWillUnmount() {

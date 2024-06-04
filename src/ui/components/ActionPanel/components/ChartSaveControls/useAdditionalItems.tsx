@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Button, Icon} from '@gravity-ui/uikit';
 
-import {AdditionalButtonTemplate} from './types';
+import type {AdditionalButtonTemplate} from './types';
 
 type UseAdditionalItemsArgs = {
     items: AdditionalButtonTemplate[] | undefined;

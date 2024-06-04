@@ -1,10 +1,6 @@
-import {
-    ApiV2BackgroundSettingsGuids,
-    Link,
-    ServerField,
-    WizardVisualizationId,
-} from '../../../../../../../shared';
-import {ServerFieldWithBackgroundSettings} from '../../types';
+import type {ApiV2BackgroundSettingsGuids, Link, ServerField} from '../../../../../../../shared';
+import {WizardVisualizationId} from '../../../../../../../shared';
+import type {ServerFieldWithBackgroundSettings} from '../../types';
 import {isTableFieldBackgroundSettingsEnabled} from '../../utils/misc-helpers';
 
 export const prepareFieldsForPayload = (

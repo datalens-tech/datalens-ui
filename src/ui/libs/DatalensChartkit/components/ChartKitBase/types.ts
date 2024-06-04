@@ -1,13 +1,13 @@
-import React from 'react';
+import type React from 'react';
 
-import {CancelTokenSource} from 'axios';
-import {DashTabItemControlSourceType, StringParams} from 'shared';
+import type {CancelTokenSource} from 'axios';
+import type {DashTabItemControlSourceType, StringParams} from 'shared';
 
-import {ChartWidgetDataRef} from '../../../../components/Widgets/Chart/types';
-import {WidgetType} from '../../../../units/dash/modules/constants';
+import type {ChartWidgetDataRef} from '../../../../components/Widgets/Chart/types';
+import type {WidgetType} from '../../../../units/dash/modules/constants';
 import type {ChartKit} from '../../ChartKit/ChartKit';
-import {ChartsData, ChartsProps} from '../../modules/data-provider/charts';
-import {
+import type {ChartsData, ChartsProps} from '../../modules/data-provider/charts';
+import type {
     CombinedError,
     DataProvider,
     LoadedWidget,
@@ -15,7 +15,7 @@ import {
     OnChangeData,
     Widget as TWidget,
 } from '../../types';
-import {MenuItems} from '../../types/menu';
+import type {MenuItems} from '../../types/menu';
 
 export interface ChartKitWrapperLoadSuccess {
     status: 'success';

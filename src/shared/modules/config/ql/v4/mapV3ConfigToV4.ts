@@ -1,5 +1,5 @@
 import {PlaceholderId, WizardVisualizationId} from '../../../../constants';
-import {Placeholder} from '../../../../types';
+import type {Placeholder} from '../../../../types';
 import type {QlConfigV3} from '../../../../types/config/ql/v3';
 import type {QlConfigV4} from '../../../../types/config/ql/v4';
 import {QlConfigVersions} from '../../../../types/ql/versions';
@@ -9,6 +9,7 @@ export const mapV3ConfigToV4 = (config: QlConfigV3): QlConfigV4 => {
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,
         WizardVisualizationId.PieD3,
+        WizardVisualizationId.DonutD3,
     ];
 
     let visualization = config.visualization;

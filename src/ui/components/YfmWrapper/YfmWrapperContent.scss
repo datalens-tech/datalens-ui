@@ -1,4 +1,5 @@
 @import '~@gravity-ui/uikit/styles/mixins';
+@import '../../styles/mixins';
 
 // support yfm dark theme
 
@@ -7,7 +8,7 @@
     --yfm-font-family-monospace: var(--g-font-family-monospace);
 
     font-family: var(--g-font-family-sans);
-    @include text-body-1();
+    @include yfm-text-style();
 
     // override common styles to make it look better with header widgets
     h1,
@@ -19,9 +20,44 @@
         font-weight: 500;
     }
 
-    .g-root &:not(.yfm_only-light) img,
+    .g-root .editor-page div.yfm p img,
+    .g-root .app div.yfm p img,
     img {
         background: transparent;
+    }
+
+    p.yfm-latex {
+        text-align: center;
+        display: inline-block;
+
+        & > span:last-child {
+            margin: 0;
+        }
+    }
+
+    p:has(+ template:last-child),
+    p:has(+ dfn:last-child),
+    .yfm-cut-content table:last-child {
+        margin-bottom: 0;
+    }
+
+    .yfm-cut:last-child .yfm-cut-content {
+        padding-bottom: 0;
+    }
+
+    // only for inner yfm block, fixes for autoheight markdown
+    .yfm:not(.yfm-term_title) {
+        display: table;
+
+        p:has(.MagicLink),
+        p:has(.yfm-latex) {
+            display: table;
+            padding: 0.3em 0;
+        }
+    }
+
+    .yfm:not(.yfm-term_title):not(.yfm-term_dfn) {
+        width: 100%;
     }
 }
 
@@ -113,6 +149,10 @@
     .yfm-tab.active {
         border-bottom-color: var(--g-color-line-brand);
     }
+
+    .yfm-term_dfn {
+        background: var(--g-color-base-float);
+    }
 }
 
 .g-root_theme_dark .yfm,
@@ -120,4 +160,39 @@
     .yfm-cut-title:before {
         background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNykiIGZpbGw9Im5vbmUiIGQ9Ik0zIDZsNSA1IDUtNSI+PC9wYXRoPjwvc3ZnPg==');
     }
+}
+
+.g-root .yfm .yfm-colorify {
+    $colors: (
+        'gray': '--g-color-text-secondary',
+        'yellow': '--g-color-text-warning',
+        'orange': '--g-color-text-warning-heavy',
+        'red': '--g-color-text-danger',
+        'green': '--g-color-text-positive',
+        'blue': '--g-color-text-info',
+        'violet': '--g-color-text-utility',
+    );
+
+    @each $name, $value in $colors {
+        --yfm-color-text-#{$name}: var(#{$value});
+    }
+
+    // for already colored to black text
+    --yfm-colorify-black: var(--g-color-text-primary);
+
+    @each $name, $value in $colors {
+        --yfm-colorify-#{$name}: var(--yfm-color-text-#{$name});
+    }
+
+    @each $name, $_ in $colors {
+        &.yfm-colorify--#{$name} > .yfm,
+        &.yfm-colorify--#{$name} {
+            color: var(--yfm-colorify-#{$name});
+        }
+    }
+}
+
+.g-root_theme_dark .yfm .yfm-colorify,
+.g-root_theme_dark-hc .yfm .yfm-colorify {
+    --yfm-color-text-orange: var(--g-color-private-orange-750-solid);
 }

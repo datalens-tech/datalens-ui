@@ -1,8 +1,7 @@
 import isFunction from 'lodash/isFunction';
 
+import type {FilterValue, IntervalPart} from '../../../../shared';
 import {
-    FilterValue,
-    IntervalPart,
     URL_ACTION_PARAMS_PREFIX,
     resolveIntervalDate as sharedResolveIntervalDate,
     resolveOperation as sharedResolveOperation,

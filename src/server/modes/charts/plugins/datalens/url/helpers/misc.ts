@@ -1,4 +1,5 @@
-import {IChartEditor} from '../../../../../../../shared';
+import type {StringParams} from '../../../../../../../shared';
+import {getParam} from '../../../../../../components/charts-engine/components/processor/paramsUtils';
 
 export const isParamValid = (value: unknown) => {
     if (typeof value === 'undefined' || value === null) {
@@ -39,6 +40,6 @@ export const isRawParamValid = (paramValue: unknown) => {
     return true;
 };
 
-export const getTreeState = (ChartEditor: IChartEditor) => {
-    return ([] as string[]).concat(ChartEditor.getParam('treeState')).filter(Boolean);
+export const getTreeState = (params: StringParams) => {
+    return ([] as string[]).concat(getParam('treeState', params)).filter(Boolean);
 };

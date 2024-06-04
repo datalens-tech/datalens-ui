@@ -5,7 +5,7 @@ import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {TextEditor} from 'ui/components/TextEditor/TextEditor';
-import {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
+import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
 
 import {DashMetaQa} from '../../../../shared/constants/qa/dash';
 import logger from '../../../libs/logger';
@@ -19,7 +19,16 @@ const b = block('dialog-dash-meta');
 const i18n = I18n.keyset('component.dialog-dash-meta');
 
 export const DialogDashMeta = (props: DialogDashMetaProps) => {
-    const {onEdit, onApply, onClose, onCancel, onContactService, canEdit, isEditMode} = props;
+    const {
+        onEdit,
+        onApply,
+        onClose,
+        onCancel,
+        onContactService,
+        canEdit,
+        isEditMode,
+        onCloseCallback,
+    } = props;
 
     const isMounted = React.useRef<boolean>(false);
 
@@ -65,7 +74,8 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
     const handleClose = React.useCallback(() => {
         onCancel?.();
         onClose({status: EntryDialogResolveStatus.Close});
-    }, [onCancel, onClose]);
+        onCloseCallback?.();
+    }, [onCancel, onClose, onCloseCallback]);
 
     const handleApply = React.useCallback(() => {
         onApply?.(text);

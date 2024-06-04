@@ -1,12 +1,12 @@
-import {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'http';
 import {stringify} from 'querystring';
 
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import pick from 'lodash/pick';
 
-import {GetEntryByKeyResponse, GetEntryMetaResponse} from '../../../shared/schema';
+import type {GetEntryByKeyResponse, GetEntryMetaResponse} from '../../../shared/schema';
 import {filterUrlFragment} from '../../../shared/schema/utils';
-import {
+import type {
     CreateEntryRequest,
     Entry,
     EntryReadParams,

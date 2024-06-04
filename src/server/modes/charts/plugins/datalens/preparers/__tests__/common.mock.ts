@@ -1,5 +1,5 @@
-import type {IChartEditor} from '../../../../../../../shared';
-import {DATASET_FIELD_TYPES, ServerField} from '../../../../../../../shared';
+import type {IChartEditor, ServerField} from '../../../../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../../../../shared';
 import type {PrepareFunctionArgs} from '../types';
 
 export const EmptyPrepapreArgs: PrepareFunctionArgs = {
@@ -14,6 +14,7 @@ export const EmptyPrepapreArgs: PrepareFunctionArgs = {
         loadedColorPalettes: {},
         colors: ['blue', 'red', 'orange'],
         gradientColors: [],
+        availablePalettes: {},
     },
     shapes: [],
     segments: [],

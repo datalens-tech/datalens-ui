@@ -1,12 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
 import moment from 'moment';
 
-import {
-    ColorMode,
+import type {
     CommonNumberFormattingOptions,
-    DATASET_FIELD_TYPES,
-    LegendDisplayMode,
-    MINIMUM_FRACTION_DIGITS,
     ServerColor,
     ServerCommonSharedExtraSettings,
     ServerField,
@@ -15,14 +11,20 @@ import {
     SortParams,
     StringParams,
     V9Color,
+} from '../../../../../../shared';
+import {
+    ColorMode,
+    DATASET_FIELD_TYPES,
+    LegendDisplayMode,
+    MINIMUM_FRACTION_DIGITS,
     formatNumber as chartKitFormatNumber,
     isDateField,
     isMeasureField,
     isMeasureValue,
 } from '../../../../../../shared';
-import type {ChartColorsConfig} from '../js/helpers/colors';
-import {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
-import {
+import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
+import type {
+    ChartColorsConfig,
     ServerFieldWithBackgroundSettings,
     ServerFieldWithBarsSettings,
     ServerFieldWithColumnWidthSettings,

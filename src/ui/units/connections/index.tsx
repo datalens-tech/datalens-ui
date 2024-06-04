@@ -2,11 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {DatalensGlobalState} from 'ui';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {DatalensGlobalState} from 'ui';
 
-import {getIsAsideHeaderEnabled} from '../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../hoc/withInaccessibleOnMobile';
 import {setCurrentPageEntry} from '../../store/actions/asideHeader';
 
@@ -19,8 +18,6 @@ type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 interface Props extends StateProps, DispatchProps {}
 
 const App = (props: Props) => {
-    const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
-
     React.useEffect(() => {
         return () => {
             props.setCurrentPageEntry(null);
@@ -30,7 +27,6 @@ const App = (props: Props) => {
 
     return (
         <div className={b()}>
-            {!isAsideHeaderEnabled && <MobileHeader />}
             <Page />
         </div>
     );

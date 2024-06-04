@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
@@ -62,6 +63,10 @@ const initialState = {
 
 export function getGroupSelectorDialogInitialState() {
     return {
+        autoHeight: false,
+        buttonApply: false,
+        buttonReset: false,
+        updateControlsOnChange: true,
         group: [],
     };
 }
@@ -84,6 +89,9 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
+        hint: '',
+        showHint: false,
+        draftId: getRandomKey(),
     };
 }
 
@@ -132,6 +140,8 @@ export function getSelectorDialogFromData(data, defaults) {
         innerTitle: data.source.innerTitle,
         showInnerTitle: data.source.showInnerTitle,
         required: data.source.required,
+        showHint: data.source.showHint,
+        hint: data.source.hint,
     };
 }
 
@@ -164,6 +174,8 @@ export function getSelectorGroupDialogFromData(data) {
             placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
             width: item.width || '',
             namespace: item.namespace,
+            showHint: item.source.showHint,
+            hint: item.source.hint,
         }))
         .sort((a, b) => a.index - b.index);
 
@@ -171,6 +183,8 @@ export function getSelectorGroupDialogFromData(data) {
         autoHeight: data.autoHeight,
         buttonApply: data.buttonApply,
         buttonReset: data.buttonReset,
+
+        updateControlsOnChange: data.updateControlsOnChange,
 
         group: items,
     };
@@ -186,13 +200,16 @@ function dash(state = initialState, action) {
     switch (action.type) {
         case actionTypes.SAVE_DASH_SUCCESS:
         case actionTypes.SAVE_DASH_ERROR:
-        case actionTypes.CLOSE_DIALOG:
+        case actionTypes.CLOSE_DIALOG: {
             return {
                 ...state,
                 selectorsGroup: getGroupSelectorDialogInitialState(),
                 ...action.payload,
+                dragOperationProps: null,
             };
+        }
         case actionTypes.OPEN_DIALOG: {
+            const selectorGroup = getGroupSelectorDialogInitialState();
             const selectorDialog =
                 action.payload?.openedDialog === DashTabItemType.Control ||
                 action.payload?.openedDialog === DashTabItemType.GroupControl
@@ -216,17 +233,13 @@ function dash(state = initialState, action) {
                 ...action.payload,
                 selectorDialog,
                 selectorsGroup: {
+                    ...selectorGroup,
                     group: [selectorDialog],
-                    autoHeight: Boolean(selectorDialog.autoHeight),
-                    buttonApply: Boolean(selectorDialog.buttonApply),
-                    buttonReset: Boolean(selectorDialog.buttonReset),
-                    defaults: selectorDialog.defaults,
                 },
                 activeSelectorIndex: 0,
+                dragOperationProps: action.payload.dragOperationProps ?? null,
             };
         }
-        case actionTypes.SET_SETTINGS:
-            return {...state, data: update(data, {settings: {$set: action.payload}})};
         case actionTypes.SET_TABS: {
             let counter = data.counter;
 
@@ -365,9 +378,10 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const tabData = DashKit.setItem({
-                item: action.payload.data,
+                item: action.payload.item,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
+                    ...action.payload.options,
                     excludeIds: getUniqIdsFromDashData(data),
                 },
             });
@@ -390,16 +404,18 @@ function dash(state = initialState, action) {
                     data: action.payload.data,
                     namespace: action.payload.namespace,
                     operation: action.payload.operation,
+                    layout: state.dragOperationProps?.itemLayout,
                     ...(action.payload.defaults ? {defaults: action.payload.defaults} : null),
                 },
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
+                    updateLayout: state.dragOperationProps?.newLayout,
                 },
             });
 
             // migration of connections if old selector becomes a group selector
-            // 1. state.openedItemId existance means that widget alredy exist
+            // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
             if (
                 state.openedItemId &&
@@ -440,17 +456,11 @@ function dash(state = initialState, action) {
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data);
-                selectorDialog.title =
-                    data.source.innerTitle && data.source.showInnerTitle
-                        ? `${data.title} ${data.source.innerTitle}`
-                        : data.title;
 
                 // migration forward to group
                 openedDialog = 'group_control';
                 newState.selectorsGroup = {
-                    autoHeight: Boolean(data.autoHeight),
-                    buttonApply: false,
-                    buttonReset: false,
+                    ...getGroupSelectorDialogInitialState(),
                     group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;

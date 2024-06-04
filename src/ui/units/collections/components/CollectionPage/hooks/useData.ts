@@ -3,10 +3,12 @@ import React from 'react';
 import {CancellablePromise} from '@gravity-ui/sdk';
 import {batch, useDispatch, useSelector} from 'react-redux';
 
-import type {GetCollectionContentResponse} from '../../../../../../shared/schema';
-import {GetCollectionContentArgs} from '../../../../../../shared/schema';
-import {CollectionContentFilters} from '../../../../../components/CollectionFilters';
-import {AppDispatch} from '../../../../../store';
+import type {
+    GetCollectionContentArgs,
+    GetCollectionContentResponse,
+} from '../../../../../../shared/schema';
+import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import type {AppDispatch} from '../../../../../store';
 import {
     getCollectionBreadcrumbs,
     setCollectionBreadcrumbs,

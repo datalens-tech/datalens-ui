@@ -1,11 +1,10 @@
-import {
-    AxisMode,
-    DATASET_FIELD_TYPES,
+import type {
     IChartEditor,
     ServerColor,
     ServerField,
     ServerShape,
 } from '../../../../../../../../../shared';
+import {AxisMode, DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
 
 const chartEditorMock = {
     getLang: () => {

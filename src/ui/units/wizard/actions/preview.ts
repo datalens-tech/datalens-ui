@@ -2,14 +2,13 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {batch} from 'react-redux';
-import {Dispatch} from 'redux';
+import type {Dispatch} from 'redux';
 
 import type {DatalensGlobalState} from '../../..';
-import {
+import type {
     ColorsConfig,
     CommonPlaceholders,
     Dataset,
-    Feature,
     Field,
     FilterField,
     HierarchyField,
@@ -20,15 +19,15 @@ import {
     Sort,
     Update,
     VisualizationWithLayersShared,
-    isVisualizationWithLayers,
 } from '../../../../shared';
+import {Feature, isVisualizationWithLayers} from '../../../../shared';
 import {addEditHistoryPoint} from '../../../store/actions/editHistory';
 import Utils from '../../../utils';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../constants';
-import {WizardDispatch} from '../reducers';
-import {DatasetState} from '../reducers/dataset';
-import {VisualizationState} from '../reducers/visualization';
-import {WidgetState} from '../reducers/widget';
+import type {WizardDispatch} from '../reducers';
+import type {DatasetState} from '../reducers/dataset';
+import type {VisualizationState} from '../reducers/visualization';
+import type {WidgetState} from '../reducers/widget';
 import {
     actualizeUpdates,
     extractFieldsFromDatasets,

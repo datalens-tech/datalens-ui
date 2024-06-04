@@ -1,18 +1,18 @@
-import {BOOLEAN_OPERATIONS, Operation} from 'components/DialogFilter/constants';
+import type {Operation} from 'components/DialogFilter/constants';
+import {BOOLEAN_OPERATIONS} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {getFilterOperations} from 'libs/datasetHelper';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     DashTabItem,
     DashTabItemControlData,
-    DashTabItemControlSourceType,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     Operations,
 } from 'shared';
+import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
@@ -101,6 +101,13 @@ export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): 
         default:
             return false;
     }
+};
+
+export const getDatasetField = (state: DatalensGlobalState) => {
+    const {dataset, datasetFieldId} = (state.dash as DashState).selectorDialog;
+    return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
+        (item) => item.guid === datasetFieldId,
+    );
 };
 
 export const selectAvailableOperationsDict = (
@@ -219,6 +226,9 @@ export const selectDashDescription = (state: DatalensGlobalState) =>
 
 export const selectDashDescMode = (state: DatalensGlobalState) =>
     state.dash.descriptionMode || Mode.View;
+
+export const selectDashShowOpenedDescription = (state: DatalensGlobalState) =>
+    Boolean(state.dash?.openInfoOnLoad);
 
 export const selectDashAccessDescription = (state: DatalensGlobalState) =>
     state.dash?.data?.accessDescription || '';
@@ -365,6 +375,22 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
             [] as DashTabItem[],
         );
 });
+
+export const selectCurrentTabRelationDataItems = createSelector(
+    [selectCurrentTab],
+    (currentTab) => {
+        if (!currentTab) {
+            return undefined;
+        }
+
+        return currentTab.items.filter(
+            ({type}) =>
+                type === ITEM_TYPE.CONTROL ||
+                type === ITEM_TYPE.WIDGET ||
+                type === ITEM_TYPE.GROUP_CONTROL,
+        );
+    },
+);
 
 export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],

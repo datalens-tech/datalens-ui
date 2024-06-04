@@ -1,22 +1,24 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 
-import {
+import type {
     ApiV2Filter,
     ApiV2Parameter,
     ApiV2RequestBody,
-    DatasetFieldType,
     FiltersOperationFromURL,
-    IChartEditor,
-    Operations,
     StringParams,
+} from '../../../../../../../shared';
+import {
+    DatasetFieldType,
+    Operations,
+    resolveIntervalDate,
     resolveOperation,
     resolveRelativeDate,
     splitParamsToParametersAndFilters,
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
-import {PartialDatasetField} from '../../../../../../../shared/schema';
-import {ControlShared} from '../../types';
+import type {PartialDatasetField} from '../../../../../../../shared/schema';
+import type {ControlShared} from '../../types';
 
 function buildDistinctsBodyRequest({
     where,
@@ -83,12 +85,10 @@ export const getDistinctsRequestBody = ({
     shared,
     params,
     datasetFields,
-    ChartEditor,
     req,
 }: {
     shared: ControlShared;
-    params: Record<string, string | string[]>;
-    ChartEditor: IChartEditor;
+    params: StringParams;
     datasetFields: PartialDatasetField[];
     req?: Request;
 }): ApiV2RequestBody => {
@@ -103,16 +103,19 @@ export const getDistinctsRequestBody = ({
 
     req?.ctx?.log?.('CONTROLS_START_MAPPING_DATASET_FIELDS');
 
-    const datasetFieldsMap = datasetFields.reduce((acc, field) => {
-        const fieldData = {
-            fieldType: field.type,
-            guid: field.guid,
-        };
-        acc[field.guid] = fieldData;
-        acc[field.title] = fieldData;
+    const datasetFieldsMap = datasetFields.reduce(
+        (acc, field) => {
+            const fieldData = {
+                fieldType: field.type,
+                guid: field.guid,
+            };
+            acc[field.guid] = fieldData;
+            acc[field.title] = fieldData;
 
-        return acc;
-    }, {} as Record<string, {guid: string; fieldType: string}>);
+            return acc;
+        },
+        {} as Record<string, {guid: string; fieldType: string}>,
+    );
 
     req?.ctx?.log?.('CONTROLS_END_MAPPING_DATASET_FIELDS');
 
@@ -163,7 +166,7 @@ export const getDistinctsRequestBody = ({
             }
 
             if (values.length === 1 && String(values[0]).startsWith('__interval')) {
-                const resolvedInterval = ChartEditor.resolveInterval(values[0]);
+                const resolvedInterval = resolveIntervalDate(values[0]);
 
                 if (resolvedInterval) {
                     const {from, to} = resolvedInterval;

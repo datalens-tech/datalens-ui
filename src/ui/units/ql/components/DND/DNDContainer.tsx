@@ -3,7 +3,8 @@ import React from 'react';
 import update from 'immutability-helper';
 import debounce from 'lodash/debounce';
 import flow from 'lodash/flow';
-import {ConnectDropTarget, ConnectableElement, DropTarget, DropTargetMonitor} from 'react-dnd';
+import type {ConnectDropTarget, ConnectableElement, DropTargetMonitor} from 'react-dnd';
+import {DropTarget} from 'react-dnd';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from 'shared/types/config/ql';
 
 import DragAndDrop from '../../../../components/DragAndDrop/DragAndDrop';

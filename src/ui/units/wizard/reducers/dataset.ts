@@ -1,9 +1,9 @@
-import {Dataset, DatasetApiError, DatasetOptions, Field, Link} from 'shared';
-import {DataLensApiError} from 'typings';
+import type {Dataset, DatasetApiError, DatasetOptions, Field, Link} from 'shared';
+import type {DataLensApiError} from 'typings';
 
-import {ResetWizardStoreAction} from '../actions';
+import type {ResetWizardStoreAction} from '../actions';
+import type {DatasetAction} from '../actions/dataset';
 import {
-    DatasetAction,
     SET_DATASET,
     SET_DATASETS,
     SET_DATASET_API_ERRORS,

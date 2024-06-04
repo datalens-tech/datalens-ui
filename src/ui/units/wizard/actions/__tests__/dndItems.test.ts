@@ -1,4 +1,5 @@
-import {ClientChartsConfig, PlaceholderId, VisualizationWithLayersShared} from 'shared';
+import type {ClientChartsConfig, VisualizationWithLayersShared} from 'shared';
+import {PlaceholderId} from 'shared';
 
 import {getFieldsFromVisualization} from '../dndItems';
 

@@ -10,7 +10,8 @@
         overflow: hidden;
 
         &_icon-on-hover {
-            &#{$wrapper}_active #{$main}__controls {
+            &#{$wrapper}_active #{$main}__controls,
+            &:hover #{$main}__controls {
                 visibility: visible;
             }
         }

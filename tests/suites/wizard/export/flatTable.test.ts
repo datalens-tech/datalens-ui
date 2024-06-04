@@ -67,7 +67,7 @@ datalensTest.describe('Wizard - export. Table', () => {
             'East;30.12.2017;466,8000068664551\n' +
             'West;30.12.2017;37,60000038146973';
 
-        await expect(content).toEqual(expected);
+        await expect(content?.toString('utf8')).toEqual(expected);
     });
 
     datalensTest('CSV space delimiter', async ({page}: {page: Page}) => {
@@ -93,6 +93,6 @@ datalensTest.describe('Wizard - export. Table', () => {
             'East 30.12.2017 466.8000068664551\n' +
             'West 30.12.2017 37.60000038146973';
 
-        await expect(content).toEqual(expected);
+        await expect(content?.toString('utf8')).toEqual(expected);
     });
 });

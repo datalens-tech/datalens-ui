@@ -1,4 +1,4 @@
-import {HierarchyField} from 'shared';
+import type {HierarchyField} from 'shared';
 
 export const OPEN_HIERARCHY_EDITOR = Symbol('wizard/hierarchyEditor/OPEN_HIERARCHY_EDITOR');
 export const CLOSE_HIERARCHY_EDITOR = Symbol('wizard/hierarchyEditor/CLOSE_HIERARCHY_EDITOR');

@@ -5,11 +5,13 @@
   "button_selectors-placement": "Размещение селекторов",
   "context_apply-button": "Опция включает кнопку для применения селекторов",
   "context_reset-button": "Опция включает кнопку для сброса селекторов",
+  "context_update-controls-on-change": "При включении опции зависимые селекторы будут влиять друг на друга до нажатия кнопки «Применить».",
   "label_apply-button-checkbox": "Кнопка «‎Применить»‎",
   "label_autoheight-checkbox": "Автовысота",
   "label_default-tab": "Селектор {{index}}",
   "label_reset-button-checkbox": "Кнопка «‎Сбросить»",
   "label_selector-settings": "Настройки селектора",
   "label_selectors-list": "Селекторы",
-  "label_source": "Источник"
+  "label_source": "Источник",
+  "label_update-controls-on-change": "Автообновление зависимых селекторов"
 }

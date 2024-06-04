@@ -4,10 +4,8 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
-import {
-    DialogCreateWorkbookEntry,
-    DialogCreateWorkbookEntryProps,
-} from '../../../../../components/EntryDialogues';
+import type {DialogCreateWorkbookEntryProps} from '../../../../../components/EntryDialogues';
+import {DialogCreateWorkbookEntry} from '../../../../../components/EntryDialogues';
 import {closeDialog} from '../../../../../store/actions/dialog';
 
 const i18n = I18n.keyset('connections.form');

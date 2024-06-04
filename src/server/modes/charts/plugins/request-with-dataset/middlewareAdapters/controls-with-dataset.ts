@@ -1,6 +1,7 @@
-import Cache from '../../../../../components/cache-client';
+import type Cache from '../../../../../components/cache-client';
+import type {ControlShared} from '../../control/types';
 import {getDistinctsRequestBody} from '../../control/url/distincts/build-distincts-body';
-import {MiddlewareSourceAdapterArgs} from '../../types';
+import type {MiddlewareSourceAdapterArgs} from '../../types';
 import type {ConfigurableRequestWithDatasetPluginOptions} from '../index';
 import {getDatasetFields} from '../request-dataset';
 
@@ -42,7 +43,8 @@ export default async (
     });
 
     const data = getDistinctsRequestBody({
-        ...source.sourceArgs,
+        params: source.sourceArgs.params,
+        shared: source.sourceArgs.shared as unknown as ControlShared,
         datasetFields,
         req,
     });

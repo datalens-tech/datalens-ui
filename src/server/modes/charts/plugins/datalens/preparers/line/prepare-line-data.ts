@@ -1,9 +1,8 @@
 import _isEmpty from 'lodash/isEmpty';
 
+import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../shared';
 import {
     AxisMode,
-    Field,
-    HighchartsSeriesCustomObject,
     PlaceholderId,
     WizardVisualizationId,
     getActualAxisModeForField,
@@ -30,12 +29,12 @@ import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsIndexInOrder, getSortedCategories, getXAxisValue, prepareLines} from './helpers';
 import {colorizeByGradient} from './helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from './helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from './types';
 
 // eslint-disable-next-line complexity
 export function prepareLineData(args: PrepareFunctionArgs) {
@@ -131,6 +130,12 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     if (isSortByMeasureColor) {
         measureColorSortLine[getFakeTitleOrTitle(colorItem)] = {data: {}};
     }
+
+    const defaultNullValue =
+        visualizationId === WizardVisualizationId.Area ||
+        visualizationId === WizardVisualizationId.Area100p
+            ? 'as-0'
+            : 'ignore';
 
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
@@ -261,6 +266,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         const isSortBySegments = Boolean(
             isSortItemExists && segmentField && sortItem.guid === segmentField.guid,
         );
+
         const isSortableXAxis =
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
@@ -318,6 +324,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         orderedLineKeys.forEach((lineKeys, lineKeysIndex) => {
             lineKeys.forEach((lineKey) => {
                 let line: LineTemplate;
+
                 let nulls: any;
                 if (lineKeysIndex === 0) {
                     line = lines1[lineKey];
@@ -326,6 +333,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     line = lines2[lineKey];
                     nulls = nullsY2;
                 }
+
+                nulls = nulls || defaultNullValue;
 
                 const innerLabels = labelsValues[lineKey];
 
@@ -340,6 +349,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                         .map((category, i) => {
                             const lineData = line.data[category];
                             const colorValue = lineData?.colorValue;
+
                             let value = lineData?.value;
 
                             if (typeof value === 'undefined' && nulls === 'as-0') {
@@ -347,7 +357,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             }
 
                             // We can skip a point only if we put x in each point instead of categories
-                            if (!isXCategoryAxis && typeof value === 'undefined') {
+                            if (
+                                !isXCategoryAxis &&
+                                typeof value === 'undefined' &&
+                                nulls === 'connect'
+                            ) {
                                 return null;
                             }
 

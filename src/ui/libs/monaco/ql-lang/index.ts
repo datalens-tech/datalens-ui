@@ -5,7 +5,7 @@ import {
 } from 'monaco-editor/esm/vs/basic-languages/mysql/mysql';
 
 import {QL_LANGUAGE_ID} from '../../../constants/common';
-import {MonacoTypes} from '../types';
+import type {MonacoTypes} from '../types';
 import {createCompletionItem, escapeFieldName, isLanguageAlreadyRegister} from '../utils';
 
 import {FUNCTIONS, KEYWORDS, OPERATORS} from './constants';

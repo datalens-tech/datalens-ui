@@ -1,12 +1,15 @@
-import {
+import type {
+    ColorPalette,
     ColumnSettings,
+    Palette,
     ParameterDefaultValue,
     PayloadFilter,
+    ServerColorsConfig,
     ServerField,
     TableBarsSettings,
     Update,
 } from '../../../../../shared';
-import {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
+import type {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
 
 export type PayloadParameter = {
     id: string;
@@ -59,3 +62,10 @@ export type BackendPivotTableCellCustom = {
     // when building request
     fieldOrder: string[];
 };
+
+export interface ChartColorsConfig extends ServerColorsConfig {
+    colors: string[];
+    gradientColors: string[];
+    loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+}

@@ -1,14 +1,14 @@
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 
-import {
-    DATASET_FIELD_TYPES,
+import type {
     IChartEditor,
     ServerColor,
     ServerField,
     ServerShape,
 } from '../../../../../../../../../shared';
-import {PrepareFunctionArgs} from '../../../types';
+import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import type {PrepareFunctionArgs} from '../../../types';
 
 const ChartEditor = {
     getWidgetConfig: () => {},

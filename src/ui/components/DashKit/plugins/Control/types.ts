@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';
@@ -77,10 +77,12 @@ export interface SelectControlProps {
     editMode?: boolean;
     label?: string;
     innerLabel: string;
+    limitLabel?: boolean;
     param: string;
     multiselect: boolean;
     type: ControlType;
     className: string;
+    labelClassName: string;
     key: string;
     value: string;
     onChange: (value: string) => void;
@@ -106,6 +108,7 @@ export interface SelectControlProps {
     hasValidationError: boolean;
     renderOverlay?: () => React.ReactNode;
     style?: React.CSSProperties;
+    hint?: string;
 }
 
 export type ChartControlRef =

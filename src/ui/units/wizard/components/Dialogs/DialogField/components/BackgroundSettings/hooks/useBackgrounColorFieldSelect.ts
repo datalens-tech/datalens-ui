@@ -1,15 +1,9 @@
 import React from 'react';
 
-import {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
 import {useSelector} from 'react-redux';
-import {
-    Field,
-    NestedPartial,
-    TableFieldBackgroundSettings,
-    isMeasureField,
-    isMeasureName,
-    isNumberField,
-} from 'shared';
+import type {Field, NestedPartial, TableFieldBackgroundSettings} from 'shared';
+import {isMeasureField, isMeasureName, isNumberField} from 'shared';
 
 import {
     selectDialogColorGradientState,

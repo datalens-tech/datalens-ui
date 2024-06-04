@@ -3,9 +3,12 @@ import React from 'react';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItemText, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashTabItemText} from 'shared';
+import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import type {DatalensGlobalState} from 'ui';
+import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
@@ -29,6 +32,8 @@ interface State {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
+    hasBackground?: boolean;
+    backgroundColor?: string;
 }
 
 export type TextProps = OwnProps & StateProps & DispatchProps;
@@ -38,6 +43,8 @@ class Text extends React.PureComponent<TextProps, State> {
         data: {
             text: '',
             autoHeight: false,
+            hasBackground: false,
+            backgroundColor: 'transparent',
         },
     };
 
@@ -50,6 +57,8 @@ class Text extends React.PureComponent<TextProps, State> {
             prevVisible: nextProps.visible,
             text: nextProps.data.text,
             autoHeight: Boolean(nextProps.data.autoHeight),
+            hasBackground: Boolean(nextProps.data.background?.enabled),
+            backgroundColor: nextProps.data.background?.color || '',
         };
     }
 
@@ -57,7 +66,7 @@ class Text extends React.PureComponent<TextProps, State> {
 
     render() {
         const {id, visible} = this.props;
-        const {text, autoHeight} = this.state;
+        const {text, autoHeight, hasBackground, backgroundColor} = this.state;
 
         return (
             <Dialog
@@ -77,6 +86,20 @@ class Text extends React.PureComponent<TextProps, State> {
                         >
                             {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
                         </Checkbox>
+                    </div>
+                    <div className={b('setting-row')}>
+                        <Checkbox
+                            checked={Boolean(hasBackground)}
+                            onChange={this.handleHasBackgroundChanged}
+                        >
+                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                        </Checkbox>
+                        {Boolean(hasBackground) && (
+                            <PaletteBackground
+                                color={backgroundColor}
+                                onSelect={this.handleHasBackgroundSelected}
+                            />
+                        )}
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer
@@ -98,14 +121,31 @@ class Text extends React.PureComponent<TextProps, State> {
     onTextUpdate = (text: string) => this.setState({text});
 
     onApply = () => {
-        const {text, autoHeight} = this.state;
+        const {text, autoHeight, hasBackground, backgroundColor} = this.state;
 
-        this.props.setItemData({data: {text, autoHeight}});
+        this.props.setItemData({
+            data: {
+                text,
+                autoHeight,
+                background: {
+                    enabled: hasBackground,
+                    color: backgroundColor,
+                },
+            },
+        });
         this.props.closeDialog();
     };
 
     handleAutoHeightChanged = () => {
         this.setState({autoHeight: !this.state.autoHeight});
+    };
+
+    handleHasBackgroundChanged = () => {
+        this.setState({hasBackground: !this.state.hasBackground});
+    };
+
+    handleHasBackgroundSelected = (color: string) => {
+        this.setState({backgroundColor: color});
     };
 }
 

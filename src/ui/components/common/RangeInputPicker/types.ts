@@ -1,6 +1,6 @@
-import {ReactElement} from 'react';
+import type {ReactElement} from 'react';
 
-import {IconProps, TextInputSize} from '@gravity-ui/uikit';
+import type {IconProps, TextInputSize} from '@gravity-ui/uikit';
 export interface RangeInputPickerDefaultProps {
     value?: number;
     minValue?: number;

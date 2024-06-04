@@ -3,8 +3,10 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {ActionPanelQA, Feature} from 'shared';
 import {
     cleanRevisions,
@@ -17,13 +19,14 @@ import {
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {selectEntryContent, selectIsRevisionsOpened} from 'store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 
 import type {GetEntryResponse} from '../../../shared/schema';
-import {DatalensGlobalState} from '../../index';
+import type {DatalensGlobalState} from '../../index';
 import {getSdk} from '../../libs/schematic-sdk';
-import {EntryContextMenuItems} from '../EntryContextMenu/helpers';
+import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';
@@ -48,6 +51,10 @@ type OwnProps = {
     enablePublish?: boolean;
     setActualVersion?: () => void;
     isEditing?: boolean;
+    deprecationWarning?: null | {
+        message: string;
+        onConfirm?: () => void;
+    };
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -144,6 +151,7 @@ class ActionPanel extends React.Component<Props, State> {
             isRevisionsOpened,
             setActualVersion,
             isEditing,
+            deprecationWarning,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -153,7 +161,7 @@ class ActionPanel extends React.Component<Props, State> {
         return (
             <React.Fragment>
                 <div className={b()} data-qa={ActionPanelQA.ActionPanel}>
-                    <div className={b('container', mix)} style={leftStyle}>
+                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={leftStyle}>
                         {Array.isArray(leftItems)
                             ? leftItems.map((LeftItems) => LeftItems)
                             : leftItems}
@@ -180,6 +188,8 @@ class ActionPanel extends React.Component<Props, State> {
                             onOpenActualRevision={this.handleOpenCurrentRevision}
                             onOpenDraftRevision={this.handleOpenDraftRevision}
                             isEditing={isEditing || false}
+                            deprecationMessage={deprecationWarning?.message}
+                            onDeprecationConfirm={deprecationWarning?.onConfirm}
                         />
                         <ExpandablePanel
                             title={i18n('label_history-changes')}

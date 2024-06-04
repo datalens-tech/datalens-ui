@@ -1,6 +1,13 @@
 import type {IconProps} from '@gravity-ui/uikit';
 
-import {ChartsConfig, Dataset, FilterField, HierarchyField, Link, ServerDatasetField} from '../';
+import type {
+    ChartsConfig,
+    Dataset,
+    FilterField,
+    HierarchyField,
+    Link,
+    ServerDatasetField,
+} from '../';
 import type {
     ColorMode,
     GradientType,
@@ -8,13 +15,13 @@ import type {
     NavigatorPeriod,
     WizardVisualizationId,
 } from '../../constants';
-import {CommonUpdate, CommonUpdateField} from '../common-update';
-import {IconId} from '../configs';
-import {DatasetField} from '../dataset';
+import type {CommonUpdate, CommonUpdateField} from '../common-update';
+import type {IconId} from '../configs';
+import type {DatasetField} from '../dataset';
 
-import {Field} from './field';
-import {Placeholder} from './placeholder';
-import {ChartsConfigVersion} from './versions';
+import type {Field} from './field';
+import type {Placeholder} from './placeholder';
+import type {ChartsConfigVersion} from './versions';
 
 export * from './formatting';
 export * from './field';
@@ -98,6 +105,7 @@ export interface CommonSharedExtraSettings {
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
     qlAutoExecuteChart?: 'on' | 'off';
+    pinnedColumns?: number;
 }
 
 interface CommonShared {
@@ -137,6 +145,7 @@ interface CommonShared {
     version?: ChartsConfigVersion.V1;
     datasetsIds?: string[];
     datasetsPartialFields?: ServerDatasetField[][];
+    wizardDataset?: Dataset | undefined;
 }
 
 interface CommonSharedLayer extends CommonShared {
@@ -179,6 +188,7 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.Pie
             | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut
+            | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
             | WizardVisualizationId.ScatterD3
             | WizardVisualizationId.Treemap;

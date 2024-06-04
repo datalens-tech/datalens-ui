@@ -3,7 +3,7 @@ import React from 'react';
 import {Icon} from '@gravity-ui/uikit';
 
 import {selectGradientIcon} from '../../../../';
-import {IconId} from '../../../../../shared';
+import type {IconId} from '../../../../../shared';
 import {registry} from '../../../../registry';
 
 export const enum PaletteType {

@@ -1,13 +1,13 @@
-import {StringParams} from '@gravity-ui/chartkit/highcharts';
+import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
 import {DashTabItemControlSourceType} from 'shared/types';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
 import {addOperationForValue} from 'ui/units/dash/modules/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 
-import {SelectorDialogState} from '../dashTyped';
+import type {SelectorDialogState} from '../dashTyped';
 
-import {ItemDataSource, SelectorDialogValidation} from './types';
+import type {ItemDataSource, SelectorDialogValidation} from './types';
 
 const fieldNameValidationSourceTypes: Partial<Record<DashTabItemControlSourceType, boolean>> = {
     [DashTabItemControlSourceType.Manual]: true,
@@ -148,6 +148,8 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         showTitle,
         showInnerTitle,
         innerTitle,
+        showHint,
+        hint,
         elementType,
         multiselectable,
         isRange,
@@ -181,6 +183,8 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         innerTitle,
         operation,
         required,
+        showHint,
+        hint,
     };
 
     switch (sourceType) {

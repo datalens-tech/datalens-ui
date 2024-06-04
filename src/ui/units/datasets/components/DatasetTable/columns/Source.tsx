@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {Function} from '@gravity-ui/icons';
-import DataTable, {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
+import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatasetField, DatasetSourceAvatar} from 'shared';
+import type {DatasetField, DatasetSourceAvatar} from 'shared';
 
 import {FORMULA_CALC_MODE} from '../constants';
 import {getFieldSourceTitle, sortSourceColumn} from '../utils';
@@ -40,6 +41,7 @@ export const getSourceColumn = (args: GetSourceColumnArgs): Column<DatasetField>
             return (
                 <Button
                     key={`source-${index}`}
+                    className={b('btn-source', {formula: isFormulaField})}
                     view="flat"
                     title={i18n('button_open-field-editor')}
                     width="max"

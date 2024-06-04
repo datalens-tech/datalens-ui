@@ -1,36 +1,29 @@
 import _isEqual from 'lodash/isEqual';
 import {isColorModeChangeAvailable} from 'ui/units/wizard/selectors/dialogColor';
 
-import {
+import type {
     ColorsConfig,
     CommonSharedExtraSettings,
     Dataset,
     DatasetUpdate,
-    Feature,
     Field,
     Link,
     Placeholder,
     PointSizeConfig,
     ShapesConfig,
     Shared,
-    WizardVisualizationId,
-    isMeasureValue,
 } from '../../../../shared';
-import {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
+import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
+import type {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
 import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../store/selectors/colorPaletteEditor';
-import Utils from '../../../utils';
 import {getChartType} from '../../ql/store/reducers/ql';
-import {
-    DIALOG_COLUMN_SETTINGS,
-    DialogColumnSettingsFields,
-} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
-import {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
-import {
-    DIALOG_LABEL_SETTINGS,
-    LabelSettings,
-} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
+import type {DialogColumnSettingsFields} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
+import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
+import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
+import type {LabelSettings} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
+import {DIALOG_LABEL_SETTINGS} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_METRIC_SETTINGS} from '../components/Dialogs/DialogMetricSettings/DialogMetricSettings';
 import {DIALOG_MULTIDATASET} from '../components/Dialogs/DialogMultidataset';
 import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
@@ -38,7 +31,7 @@ import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
 import {DIALOG_SHAPES} from '../components/Dialogs/DialogShapes/DialogShapes';
 import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
 import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
-import {WizardDispatch} from '../reducers';
+import type {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
 import {selectParameters} from '../selectors/dataset';
 import {selectWizardWorkbookId} from '../selectors/settings';
@@ -142,7 +135,7 @@ type OpenDialogMetricArguments = {
 export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const colorPalettes = selectColorPalettes(getState());
-        if (Utils.isEnabledFeature(Feature.CustomColorPalettes) && !colorPalettes.length) {
+        if (!colorPalettes.length) {
             await dispatch(fetchColorPalettes());
         }
 
@@ -478,15 +471,20 @@ export function openWizardDialogFilter({
 }
 
 type OpenDialogColumnSettingsArguments = {
-    onApply: (fields: {columns: ColumnSettingsState; rows: ColumnSettingsState}) => void;
+    onApply: (
+        fields: {columns: ColumnSettingsState; rows: ColumnSettingsState},
+        pinnedColumns?: number,
+    ) => void;
     fields: DialogColumnSettingsFields;
     visualizationId: WizardVisualizationId;
+    pinnedColumns?: number;
 };
 
 export function openDialogColumnSettings({
     onApply,
     fields,
     visualizationId,
+    pinnedColumns,
 }: OpenDialogColumnSettingsArguments) {
     return function (dispatch: WizardDispatch) {
         dispatch(
@@ -495,11 +493,9 @@ export function openDialogColumnSettings({
                 props: {
                     visualizationId,
                     fields,
-                    onApply: (updatedFields: {
-                        columns: ColumnSettingsState;
-                        rows: ColumnSettingsState;
-                    }) => {
-                        onApply(updatedFields);
+                    pinnedColumns,
+                    onApply: (args) => {
+                        onApply(args.fields, args.pinnedColumns);
                         dispatch(closeDialog());
                     },
                     onClose: () => dispatch(closeDialog()),

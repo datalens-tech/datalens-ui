@@ -1,8 +1,5 @@
-import {
-    ApiV2ResultData,
-    ApiV2ResultDataRow,
-    DashTabItemControlElementType,
-} from '../../../../../../../../shared';
+import type {ApiV2ResultData, ApiV2ResultDataRow} from '../../../../../../../../shared';
+import {DashTabItemControlElementType} from '../../../../../../../../shared';
 import type {ControlShared} from '../../../types';
 
 type ProcessDistinctsContentArgs = {

@@ -1,21 +1,24 @@
 // 0. <regular fields> -> block_id=0:
 import isEmpty from 'lodash/isEmpty';
 
-import {
-    ApiV2Annotations,
+import type {
     ApiV2PivotRequestStructure,
     ApiV2RequestField,
     ApiV2RequestFieldSorting,
     ApiV2RequestPivot,
     ApiV2RequestPivotRoleSpec,
+} from '../../../../../../../../../shared';
+import {
+    ApiV2Annotations,
     PseudoFieldTitle,
     getObjectValueByPossibleKeys,
     isMeasureName,
     isMeasureValue,
 } from '../../../../../../../../../shared';
-import {BackendPivotTableCellCustom} from '../../../../types';
+import {getSortParams} from '../../../../../../../../components/charts-engine/components/processor/paramsUtils';
+import type {BackendPivotTableCellCustom} from '../../../../types';
 
-import {
+import type {
     GetAnnotationsArgs,
     GetPivotStructureArgs,
     GetRegularFieldsArgs,
@@ -209,9 +212,9 @@ const isSortSupported = (meta: BackendPivotTableCellCustom, measures: number, gu
 };
 
 const getStructureWithSortingFromField = (args: GetStructureWithSortingFromFieldArgs) => {
-    const {ChartEditor, field, rowsReq, columnsReq, measuresReq} = args;
-    const params = ChartEditor.getSortParams();
-    const meta = params.meta as
+    const {params, field, rowsReq, columnsReq, measuresReq} = args;
+    const sortParams = getSortParams(params);
+    const meta = sortParams.meta as
         | {column: BackendPivotTableCellCustom; row: BackendPivotTableCellCustom}
         | undefined;
 
@@ -274,7 +277,7 @@ export const getPivotStructure = ({
     measuresReq,
     rowsReq,
     annotations,
-    ChartEditor,
+    params,
     totals,
 }: GetPivotStructureArgs): ApiV2RequestPivot['structure'] => {
     // PivotStructure is a mapping of elements from columns, measures and rows
@@ -285,7 +288,7 @@ export const getPivotStructure = ({
         ...measuresReq.map((field) => {
             return getStructureWithSortingFromField({
                 field,
-                ChartEditor,
+                params,
                 rowsReq,
                 columnsReq,
                 measuresReq,

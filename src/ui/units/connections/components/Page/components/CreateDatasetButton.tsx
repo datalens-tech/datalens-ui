@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Button, ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {workbookIdSelector} from '../../../store';
 

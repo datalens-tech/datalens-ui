@@ -1,7 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import {ServiceConfig} from '@gravity-ui/app-builder';
+import type {ServiceConfig} from '@gravity-ui/app-builder';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import type {FileCacheOptions, MemoryCacheOptions} from 'webpack';
 
 const appDirectory = fs.realpathSync(process.cwd());

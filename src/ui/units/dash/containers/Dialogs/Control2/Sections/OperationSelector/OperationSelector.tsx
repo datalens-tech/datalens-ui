@@ -3,7 +3,8 @@ import React from 'react';
 import {FormRow, HelpPopover} from '@gravity-ui/components';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {Operations, getDefaultTitleForOperation} from 'shared';
+import type {Operations} from 'shared';
+import {getDefaultTitleForOperation} from 'shared';
 import {SelectFeatured} from 'ui/components/Select/wrappers/SelectFeatured';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {

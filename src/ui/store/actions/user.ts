@@ -1,9 +1,9 @@
 import type {ThunkDispatch} from 'redux-thunk';
 import type {DatalensGlobalState} from 'ui';
-import {DLUserSettings} from 'shared';
+import type {DLUserSettings} from 'shared';
 import logger from 'libs/logger';
 import {registry} from '../../registry';
-import {Theme, ThemeSettings} from '@gravity-ui/uikit';
+import type {Theme, ThemeSettings} from '@gravity-ui/uikit';
 
 type UserDispatch = ThunkDispatch<DatalensGlobalState, void, UserAction>;
 
@@ -20,9 +20,8 @@ export function updateUserSettings({newSettings}: {newSettings: NewUserSettings}
     return async (dispatch: UserDispatch) => {
         try {
             const {getUpdatedUserSettings} = registry.common.functions.getAll();
-            const userSettings: NewUserSettings | undefined = await getUpdatedUserSettings(
-                newSettings,
-            );
+            const userSettings: NewUserSettings | undefined =
+                await getUpdatedUserSettings(newSettings);
 
             if (userSettings) {
                 dispatch({type: UPDATE_USER_SETTINGS, payload: {userSettings}});

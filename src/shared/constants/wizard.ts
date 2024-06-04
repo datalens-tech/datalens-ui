@@ -1,4 +1,5 @@
-import {DATASET_FIELD_TYPES, NumberFormatType, ServerFieldFormatting} from '../types';
+import type {DATASET_FIELD_TYPES, ServerFieldFormatting} from '../types';
+import {NumberFormatType} from '../types';
 
 import {WizardVisualizationId} from './visualization';
 

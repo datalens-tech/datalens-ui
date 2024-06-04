@@ -2,8 +2,6 @@ import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
-import {RangeDatepicker} from '../../../components/common/RangeDatepicker';
-import {SimpleDatepicker} from '../../../components/common/SimpleDatepicker';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
@@ -18,8 +16,10 @@ import type {DialogAddParticipantsProps} from './types/components/DialogAddParti
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
+import type {MarkdownControlProps} from './types/components/MarkdownControl';
 import type {MarkupShareLinkProps} from './types/components/MarkupShareLink';
 import type {MarkupUserInfoProps} from './types/components/MarkupUserInfo';
+import type {MobileHeaderComponentProps} from './types/components/MobileHeaderComponent';
 import type {OAuthTokenButtonProps} from './types/components/OAuthTokenButton';
 import type {PlaceholderIllustrationImageProps} from './types/components/PlaceholderIllustrationImage';
 import type {ReportButtonProps} from './types/components/ReportButton';
@@ -33,7 +33,7 @@ export const commonComponentsMap = {
     YfmWrapperContent: makeDefaultEmpty<YfmWrapperProps>(),
     ActionPanelEntrySelect: makeDefaultEmpty<ActionPanelEntrySelectProps>(),
     EntryBreadcrumbs: makeDefaultEmpty<EntryBreadcrumbsProps>(),
-    MobileHeaderComponent: makeDefaultEmpty<{}>(),
+    MobileHeaderComponent: makeDefaultEmpty<MobileHeaderComponentProps>(),
     PlaceholderIllustrationImage: makeDefaultEmpty<PlaceholderIllustrationImageProps>(),
     ReportButton: makeDefaultEmpty<ReportButtonProps>(),
     AccessRights: makeDefaultEmpty<AccessRightsProps>(),
@@ -41,14 +41,14 @@ export const commonComponentsMap = {
     AccessRightsUrlOpenComponent: makeDefaultEmpty<AccessRightsUrlOpenProps>(),
     IamAccessDialogComponent: makeDefaultEmpty<IamAccessDialogProps>(),
     UserAvatarById: makeDefaultEmpty<UserAvatarByIdProps>(),
-    Datepicker: Datepicker,
+    Datepicker,
     DatepickerControl: makeDefaultEmpty<DatepickerControlProps>(),
-    Timings: Timings,
-    SimpleDatepicker: SimpleDatepicker,
-    RangeDatepicker: RangeDatepicker,
-    RangeInputPicker: RangeInputPicker,
+    Timings,
+    RangeInputPicker,
     ButtonFavorite: makeDefaultEmpty<ButtonFavoriteProps>(),
     OAuthTokenButton: makeDefaultEmpty<OAuthTokenButtonProps>(),
     MarkupShareLink: makeDefaultEmpty<MarkupShareLinkProps>(),
     MarkupUserInfo: makeDefaultEmpty<MarkupUserInfoProps>(),
+    MarkdownControl: makeDefaultEmpty<MarkdownControlProps>(),
+    Footer: makeDefaultEmpty(),
 } as const;

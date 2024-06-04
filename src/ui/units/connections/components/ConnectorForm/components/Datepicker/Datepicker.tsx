@@ -1,45 +1,54 @@
 import React from 'react';
 
+import {DatePicker as BaseDatepicker} from '@gravity-ui/date-components';
+import type {DatePickerProps} from '@gravity-ui/date-components';
+import {dateTime} from '@gravity-ui/date-utils';
+import type {DateTime} from '@gravity-ui/date-utils';
+import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {DatepickerItem} from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
-import {SimpleDatepickerOutput, SimpleDatepickerProps} from 'ui/components/common/SimpleDatepicker';
-import {registry} from 'ui/registry';
 
 import {changeForm, changeInnerForm} from '../../../../store';
 import {withControlWrap} from '../withControlWrap/withControlWrap';
 
-const {SimpleDatepicker} = registry.common.components.getAll();
+import './Datepicker.scss';
+
+const b = block('conn-form-datepicker');
+
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type DatepickerProps = DispatchState & DispatchProps & Omit<DatepickerItem, 'id'>;
 
 const DatepickerComponent = (props: DatepickerProps) => {
     const {actions, form, innerForm, name, placeholder, inner = false} = props;
-    const controlProps = get(props, 'controlProps', {} as Partial<SimpleDatepickerProps>);
+    const controlProps = get(props, 'controlProps', {} as Partial<DatePickerProps>);
     const size = get(controlProps, 'size', 'm');
     const formValue = inner ? innerForm[name] : form[name];
-    const value = (formValue ?? '') as string;
+    const date = dateTime({input: (formValue ?? '') as string});
+    const value = date.isValid() ? date : null;
 
     const updateHandler = React.useCallback(
-        ({date}: SimpleDatepickerOutput) => {
+        (nextDate: DateTime | null) => {
             if (inner) {
-                actions.changeInnerForm({[name]: date});
+                actions.changeInnerForm({[name]: nextDate?.format()});
             } else {
-                actions.changeForm({[name]: date});
+                actions.changeForm({[name]: nextDate?.format()});
             }
         },
         [actions, name, inner],
     );
 
     return (
-        <SimpleDatepicker
+        <BaseDatepicker
             {...controlProps}
+            className={b()}
             size={size}
-            datePlaceholder={placeholder}
-            date={value}
+            placeholder={placeholder}
+            value={value}
             onUpdate={updateHandler}
         />
     );

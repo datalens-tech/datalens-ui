@@ -5,7 +5,6 @@ import {usePrevious} from 'hooks';
 import PropTypes from 'prop-types';
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {registry} from '../../../../registry';
@@ -144,7 +143,6 @@ const EditorPage = ({
 
     return (
         <React.Fragment>
-            {!isAsideHeaderEnabled && <MobileHeader />}
             <div className={b({aside: isAsideHeaderEnabled})}>
                 <DndProvider backend={HTML5Backend}>
                     <main className={b('main')}>{renderPageContent()}</main>

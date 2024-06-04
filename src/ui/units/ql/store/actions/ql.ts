@@ -1,5 +1,5 @@
-import {AxiosError} from 'axios';
-import {History, Location} from 'history';
+import type {AxiosError} from 'axios';
+import type {History, Location} from 'history';
 import {I18n, i18n} from 'i18n';
 import _ from 'lodash';
 import type {match as Match} from 'react-router-dom';
@@ -12,28 +12,31 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
 
-import {
+import type {
     CommonSharedExtraSettings,
     ConnectorType,
     Dataset,
-    ENTRY_TYPES,
     EntryUpdateMode,
-    Feature,
     Field,
-    QLChartType,
     QlConfigPreviewTableData,
     Shared,
     WorkbookId,
+} from '../../../../../shared';
+import {
+    ENTRY_TYPES,
+    Feature,
+    QLChartType,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
 import type {GetEntryArgs} from '../../../../../shared/schema';
-import {DL, DatalensGlobalState, Entry, URL_QUERY, Utils} from '../../../../index';
+import type {DatalensGlobalState, Entry} from '../../../../index';
+import {DL, URL_QUERY, Utils} from '../../../../index';
 import {navigateHelper} from '../../../../libs';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {registry} from '../../../../registry';
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
 import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
 import {
@@ -53,12 +56,12 @@ import {
     updatePlaceholderSettings,
 } from '../../../wizard/actions/visualization';
 import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
+import type {VisualizationStatus} from '../../constants';
 import {
     AVAILABLE_CHART_TYPES,
     AppStatus,
     ConnectionStatus,
     QL_MOCKED_DATASET_ID,
-    VisualizationStatus,
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
 import {getDefaultQlVisualization, getQlVisualization} from '../../utils/visualization';
@@ -69,7 +72,7 @@ import {
     getValid,
     selectInitalQlChartConfig,
 } from '../reducers/ql';
-import {
+import type {
     QLAction,
     QLChart,
     QLConnectionEntry,

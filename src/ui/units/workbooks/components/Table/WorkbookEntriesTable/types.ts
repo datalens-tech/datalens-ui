@@ -1,5 +1,5 @@
-import {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
-import {WorkbookEntry} from 'ui/units/workbooks/types/index';
+import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
+import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
 interface WorkbookEntriesTableProps {
     workbook: WorkbookWithPermissions;

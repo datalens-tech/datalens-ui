@@ -1,8 +1,8 @@
 import type {GatewayError} from '@gravity-ui/gateway';
-import {SdkConfig} from '@gravity-ui/sdk';
+import type {SdkConfig} from '@gravity-ui/sdk';
 import {DIALOG_NEED_RESET} from 'components/OpenDialogNeedReset/OpenDialogNeedReset';
 import _ from 'lodash';
-import {Action, Dispatch} from 'redux';
+import type {Action, Dispatch} from 'redux';
 import {ErrorCode, REQUEST_ID_HEADER, TRACE_ID_HEADER} from 'shared';
 import {openDialog} from 'store/actions/dialog';
 import {showReadOnlyToast} from 'ui/utils/readOnly';

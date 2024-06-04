@@ -1,6 +1,6 @@
 import {clone, get, merge} from 'lodash';
 import {batch} from 'react-redux';
-import {RecursivePartial} from 'shared';
+import type {RecursivePartial} from 'shared';
 
 import logger from '../../../../../libs/logger';
 import {FieldKey} from '../../../constants';

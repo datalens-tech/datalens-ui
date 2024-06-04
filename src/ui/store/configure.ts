@@ -1,8 +1,9 @@
-import {Store, createStore, applyMiddleware, combineReducers, compose, AnyAction} from 'redux';
+import type {Store, AnyAction} from 'redux';
+import {createStore, applyMiddleware, combineReducers, compose} from 'redux';
 import thunk from 'redux-thunk';
 import {createLogger} from 'redux-logger';
 import {reducerRegistry} from './reducer-registry';
-import {DatalensGlobalState} from '../';
+import type {DatalensGlobalState} from '../';
 
 let store: Store<DatalensGlobalState, AnyAction>;
 

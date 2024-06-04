@@ -12,14 +12,11 @@ import CurrentEntrySection from './CurrentEntrySection/CurrentEntrySection';
 import DialogAlert from './DialogAlert/DialogAlert';
 import RelationsList from './RelationsList/RelationsList';
 import {DIALOG_STATUS, RESOLVE_STATUS} from './constants';
+import type {DialogPublicCloseCallback, EntryData, EntryRelationExtended, State} from './types';
 import {
     DIALOG_PUBLIC_CHANGE_ENTRY_AUTHOR,
     DIALOG_PUBLIC_CHANGE_RELATIONS_ENTRIES,
     DIALOG_PUBLIC_SET_PUBLISH_UNPUBLISH_ONCE,
-    DialogPublicCloseCallback,
-    EntryData,
-    EntryRelationExtended,
-    State,
 } from './types';
 import {useDialogPublicState} from './useDialogPublicState';
 

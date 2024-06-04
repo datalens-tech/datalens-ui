@@ -1,11 +1,12 @@
 import React from 'react';
 
-import {CancellablePromise} from '@gravity-ui/sdk';
+import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
+import {isMobileView} from 'ui/utils/mobile';
 
 import type {
     CollectionWithPermissions,
@@ -14,10 +15,8 @@ import type {
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../components/CollectionFilters';
+import type {CollectionContentFilters} from '../../../../components/CollectionFilters';
+import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
 import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
@@ -147,7 +146,7 @@ export const CollectionContent: React.FC<Props> = ({
     }
 
     if (items.length === 0) {
-        if (isDefaultFilters) {
+        if (isDefaultFilters || isMobileView) {
             return (
                 <AnimateBlock className={b('empty-state')}>
                     <PlaceholderIllustration
@@ -171,13 +170,19 @@ export const CollectionContent: React.FC<Props> = ({
                 </AnimateBlock>
             );
         }
+        const description = isMobileView ? undefined : i18n('section_incorrect-filters');
+
         return (
             <AnimateBlock className={b('empty-state')}>
                 <PlaceholderIllustration
                     name="notFound"
                     title={i18n('label_not-found')}
-                    description={i18n('section_incorrect-filters')}
+                    description={description}
                     renderAction={() => {
+                        if (isMobileView) {
+                            return null;
+                        }
+
                         return (
                             <Button
                                 className={b('placeholder-controls')}
@@ -192,9 +197,11 @@ export const CollectionContent: React.FC<Props> = ({
         );
     }
 
+    const showGridMode = viewMode === CollectionPageViewMode.Grid && !isMobileView;
+
     return (
         <div className={b()}>
-            {viewMode === CollectionPageViewMode.Grid ? (
+            {showGridMode ? (
                 <CollectionContentGrid
                     selectedMap={selectedMap}
                     isOpenSelectionMode={isOpenSelectionMode}

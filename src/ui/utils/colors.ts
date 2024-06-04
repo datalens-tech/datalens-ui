@@ -1,4 +1,4 @@
-import {ColorPalette} from 'shared';
+import type {ColorPalette} from 'shared';
 import {getAvailableClientPalettesMap} from 'ui/constants';
 
 export function getPaletteColors(paletteName: string, clientPalettes?: ColorPalette[]) {

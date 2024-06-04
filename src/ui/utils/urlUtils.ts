@@ -1,6 +1,6 @@
 import {ENTRY_TYPES, EntryScope, getEntryNameByKey, makeSlugName} from 'shared';
 
-import {GetUIEntryRouteArgs} from '../registry/units/common/types/functions/getUIEntryRoute';
+import type {GetUIEntryRouteArgs} from '../registry/units/common/types/functions/getUIEntryRoute';
 
 export const getUrlParamFromStr = (search: string, paramName: string) => {
     const searchParams = new URLSearchParams(search);

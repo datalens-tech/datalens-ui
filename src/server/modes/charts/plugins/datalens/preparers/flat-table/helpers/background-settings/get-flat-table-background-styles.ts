@@ -1,9 +1,10 @@
-import {MarkupItem, getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
+import type {MarkupItem} from '../../../../../../../../../shared';
+import {getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../../constants';
 import {getColor} from '../../../../utils/constants';
 import {findIndexInOrder} from '../../../../utils/misc-helpers';
 
-import {
+import type {
     GetContinuousBackgroundColorStyle,
     GetDiscreteBackgroundColorStyle,
     GetFlatTableCellBackgroundSettingsStylesArgs,
@@ -18,6 +19,7 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         backgroundSettings,
         idToDataType,
         loadedColorPalettes,
+        availablePalettes,
     } = args;
 
     const {settings, colorFieldGuid} = backgroundSettings;
@@ -51,7 +53,10 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
     if (paletteSettings?.palette && loadedColorPalettes[paletteSettings.palette]) {
         colors = loadedColorPalettes[paletteSettings.palette].colors;
     } else {
-        colors = selectServerPalette(paletteSettings.palette);
+        colors = selectServerPalette({
+            palette: paletteSettings.palette,
+            availablePalettes,
+        });
     }
 
     const colorValue = getColor(Number(mountedColorValue), colors);
@@ -90,6 +95,7 @@ export const getFlatTableBackgroundStyles = (
         currentRowIndex,
         idToDataType,
         loadedColorPalettes,
+        availablePalettes,
     } = args;
 
     const backgroundSettings = column.backgroundSettings;
@@ -118,5 +124,6 @@ export const getFlatTableBackgroundStyles = (
         idToTitle,
         idToDataType,
         loadedColorPalettes,
+        availablePalettes,
     });
 };

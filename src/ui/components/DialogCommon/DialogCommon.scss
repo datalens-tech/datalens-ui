@@ -1,0 +1,90 @@
+.dl-dialog-common {
+    &_medium {
+        width: 520px;
+    }
+
+    &_warning {
+        padding: 28px 32px;
+
+        .g-dialog-btn-close__btn {
+            margin-top: 10px;
+        }
+    }
+
+    &_warning:not(&_medium) {
+        width: 444px;
+    }
+
+    &__body-container {
+        width: 292px;
+        padding: 16px 12px;
+    }
+
+    &__body-container_warning {
+        padding: 20px 0;
+        width: auto;
+    }
+
+    &__body {
+        display: flex;
+        align-items: center;
+    }
+
+    &__header {
+        &_warning {
+            padding: 0 0 15px;
+        }
+    }
+
+    &__message {
+        padding: 0 12px;
+        line-height: 26px;
+    }
+
+    &__message_no-icon {
+        padding: 0;
+    }
+
+    &__message_warning {
+        line-height: 1.3;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+    }
+
+    &__footer_warning {
+        justify-content: flex-end;
+    }
+
+    &__icon_warning {
+        margin-right: 5px;
+        color: var(--g-color-text-warning);
+    }
+
+    &__button {
+        display: flex;
+        align-items: center;
+        flex: 0 0 50%;
+        padding: 0 2px 4px;
+    }
+
+    &__button_warning {
+        flex: 0;
+        margin-left: 10px;
+    }
+
+    &__button_first {
+        padding-left: 4px;
+    }
+
+    &__button_last {
+        padding-right: 4px;
+    }
+
+    &__button_first#{&}__button_last:not(&__button_warning) {
+        flex: 1;
+    }
+}

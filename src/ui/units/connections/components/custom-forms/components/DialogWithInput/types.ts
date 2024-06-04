@@ -1,4 +1,4 @@
-import {DataLensApiError} from '../../../../../../typings';
+import type {DataLensApiError} from '../../../../../../typings';
 
 type DataWithError<T> = T & {error?: DataLensApiError};
 

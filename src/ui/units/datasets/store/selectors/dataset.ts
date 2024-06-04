@@ -1,9 +1,9 @@
 import {createSelector} from 'reselect';
-import {DatasetField} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatasetField} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 
 import DatasetUtils from '../../helpers/utils';
-import {BaseSource} from '../types';
+import type {BaseSource} from '../types';
 
 export const typesSelector = (state: DatalensGlobalState) => state.dataset.types.data;
 

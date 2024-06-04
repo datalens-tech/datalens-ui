@@ -13,7 +13,7 @@ import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/W
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import Loader from '../../components/Loader/Loader';
-import {ENTRY_TYPE} from '../../modules/constants';
+import {EntryTypeNode} from '../../modules/constants';
 import {getPersonalFolderPath} from '../../modules/helpers';
 import {changeNavigationPath} from '../../store/actions/dashTyped';
 
@@ -48,8 +48,8 @@ class DropdownNavigation extends React.PureComponent {
         onUpdate: PropTypes.func,
         onClick: PropTypes.func.isRequired,
         scope: PropTypes.oneOf(Object.values(EntryScope)).isRequired,
-        includeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
-        excludeClickableType: PropTypes.oneOf(Object.values(ENTRY_TYPE)),
+        includeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
+        excludeClickableType: PropTypes.oneOf(Object.values(EntryTypeNode)),
         size: PropTypes.string,
         navigationPath: PropTypes.string.isRequired,
         changeNavigationPath: PropTypes.func.isRequired,
@@ -177,10 +177,13 @@ class DropdownNavigation extends React.PureComponent {
 
         const width = this.state.entry ? 'max' : undefined;
 
+        const defaultView = this.props.error ? 'outlined-danger' : 'outlined-action';
+        const view = this.state.entry ? 'outlined' : defaultView;
+
         return (
             <div className={b()} ref={this.buttonRef}>
                 <Button
-                    view={this.props.error ? 'outlined-danger' : 'outlined'}
+                    view={view}
                     width={width}
                     size={this.props.size}
                     disabled={this.props.disabled}

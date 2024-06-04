@@ -1,12 +1,7 @@
-import {
-    ChartsConfigVersion,
-    IChartEditor,
-    ServerVisualization,
-    isYAGRVisualization,
-} from '../../../../../shared';
-import type {QlConfig} from '../../../../../shared';
+import {ChartsConfigVersion, isYAGRVisualization} from '../../../../../shared';
+import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import buildHighchartsConfigWizard from '../datalens/highcharts';
+import {buildHighchartsConfig as buildHighchartsConfigWizard} from '../datalens/highcharts';
 
 import buildHighchartsConfig from './highcharts';
 import {log} from './utils/misc-helpers';

@@ -4,11 +4,11 @@ import * as child_process from 'child_process';
 
 import {monitorEventLoopDelay, performance} from 'perf_hooks';
 
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import iconv from 'iconv-lite';
 import moment from 'moment/moment';
 
-import {Graph} from '../components/processor/comments-fetcher';
+import type {Graph} from '../components/processor/comments-fetcher';
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 const CSV_DATA_LIMIT = 1024 * 1024 * 50; // 50MB

@@ -1,11 +1,12 @@
-import {AppMiddleware, AuthPolicy, Request, Response} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
+import {AuthPolicy} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
-import {ChartsEngine} from '../../components/charts-engine';
+import type {ChartsEngine} from '../../components/charts-engine';
 import {ping} from '../../controllers/ping';
-import {ExtendedAppRouteDescription} from '../../types/controllers';
+import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
 

@@ -5,7 +5,8 @@ import {Dialog as CommonDialog, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import omit from 'lodash/omit';
-import {Field, HierarchyEditorQa} from 'shared';
+import type {Field} from 'shared';
+import {HierarchyEditorQa} from 'shared';
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 
 import './HierarchyEditor.scss';
@@ -152,10 +153,13 @@ class HierarchyEditor extends React.Component<Props, State> {
     };
 
     getSelectedFields = (values: string[]) => {
-        return values.reduce((acc, value) => {
-            acc[value] = true;
-            return acc;
-        }, {} as Record<string, boolean>);
+        return values.reduce(
+            (acc, value) => {
+                acc[value] = true;
+                return acc;
+            },
+            {} as Record<string, boolean>,
+        );
     };
 }
 

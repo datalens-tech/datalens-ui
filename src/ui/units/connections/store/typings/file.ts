@@ -1,10 +1,10 @@
-import {
+import type {
     ApplySourceSettingsArgs,
     FileSourceColumnType,
     FileSourceInfo,
     UpdateFileSourceResponse,
 } from '../../../../../shared/schema';
-import {DataLensApiError} from '../../../../typings';
+import type {DataLensApiError} from '../../../../typings';
 
 /** File from the moment of upload to successful status polling*/
 export type UploadedFile = {

@@ -151,6 +151,10 @@
             transform: rotate(90deg);
         }
     }
+
+    &__column-hint {
+        margin-left: 4px;
+    }
 }
 
 .chartkit-table .data-table {

@@ -1,9 +1,9 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
+import type {ExtendedExportingCsvOptions} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
-    ExtendedExportingCsvOptions,
     LegendDisplayMode,
     isDateField,
 } from '../../../../../../../shared';
@@ -11,7 +11,7 @@ import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
 import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
-import {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
+import type {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
 import {prepareScatter} from './prepareScatter';
 

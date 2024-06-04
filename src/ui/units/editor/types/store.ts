@@ -1,4 +1,4 @@
-import {EditorEntryData} from './common';
+import type {EditorEntryData} from './common';
 
 export interface TabData {
     id: string;

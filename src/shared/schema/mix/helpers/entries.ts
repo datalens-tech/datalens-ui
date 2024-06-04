@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 
-import {WizardVisualizationId} from '../../../constants';
-import {Shared} from '../../../types';
-import {EntryFields} from '../../us/types';
+import type {WizardVisualizationId} from '../../../constants';
+import type {Shared} from '../../../types';
+import type {EntryFields} from '../../us/types';
 
 export function filterDatasetsIdsForCheck(entries: Pick<EntryFields, 'entryId' | 'scope'>[]) {
     return entries
@@ -25,6 +25,17 @@ export function getEntryVisualizationType(entry: Partial<EntryFields>) {
         const shared: Shared | null =
             typeof sharedData === 'string' ? JSON.parse(sharedData) : null;
         return shared?.visualization?.id as WizardVisualizationId | undefined;
+    } catch (e) {
+        return undefined;
+    }
+}
+
+export function getEntryHierarchy(entry: Partial<EntryFields>) {
+    try {
+        const sharedData = get(entry, 'data.shared');
+        const shared: Shared | null =
+            typeof sharedData === 'string' ? JSON.parse(sharedData) : null;
+        return shared?.hierarchies;
     } catch (e) {
         return undefined;
     }

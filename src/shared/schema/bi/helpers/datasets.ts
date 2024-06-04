@@ -1,6 +1,6 @@
-import {ResponseError} from '@gravity-ui/gateway';
+import type {ResponseError} from '@gravity-ui/gateway';
 
-import {
+import type {
     ConnectionErrorResponse,
     GetDistinctsApiV2Response,
     GetDistinctsApiV2TransformedResponse,
@@ -39,9 +39,12 @@ export const transformApiV2DistinctsResponse = (
 
     const rows = result_data[0].rows;
 
-    const responseData = rows.reduce((data, row) => {
-        return [...data, row.data];
-    }, [] as GetDistinctsResponse['result']['data']['Data']);
+    const responseData = rows.reduce(
+        (data, row) => {
+            return [...data, row.data];
+        },
+        [] as GetDistinctsResponse['result']['data']['Data'],
+    );
 
     return {
         result: {

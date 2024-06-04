@@ -1,6 +1,6 @@
-import {ChartKitWidgetTitle} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetTitle} from '@gravity-ui/chartkit';
 
-import {ServerCommonSharedExtraSettings} from '../../../../../../../shared';
+import type {ServerCommonSharedExtraSettings} from '../../../../../../../shared';
 
 export function getChartTitle(
     settings?: ServerCommonSharedExtraSettings,

@@ -1,4 +1,5 @@
-import {CommonSharedExtraSettings, Dataset, Shared, WizardType} from 'shared';
+import type {CommonSharedExtraSettings, Dataset, Shared} from 'shared';
+import {WizardType} from 'shared';
 
 import {VISUALIZATION_IDS} from '../../../../constants/visualizations';
 import {UPDATE_CLIENT_CHARTS_CONFIG, UPDATE_PREVIEW} from '../../actions/preview';
@@ -33,6 +34,7 @@ describe('Preview reducer', () => {
             [VISUALIZATION_IDS.PIE]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.PIE_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.DONUT]: WizardType.GraphWizardNode,
+            [VISUALIZATION_IDS.DONUT_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.TREEMAP]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.SCATTER]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.SCATTER_D3]: WizardType.D3WizardNode,

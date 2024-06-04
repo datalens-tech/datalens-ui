@@ -1,25 +1,26 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import update, {Context, CustomCommands, Spec} from 'immutability-helper';
-import {ResolveThunks, connect} from 'react-redux';
-import {
-    DashCommonQa,
+import type {CustomCommands, Spec} from 'immutability-helper';
+import update, {Context} from 'immutability-helper';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
-    DialogDashWidgetQA,
-    Feature,
-    ParamsSettingsQA,
+    HierarchyField,
     StringParams,
     WidgetKind,
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
-import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import {DatalensGlobalState} from 'ui';
+import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
+import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
+import type {DatalensGlobalState} from 'ui';
+import {DL, Interpolate} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
@@ -35,7 +36,7 @@ import {
 } from '../../../components/ParamsSettings/helpers';
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {DASH_WIDGET_TYPES, ENTRY_TYPE} from '../../../modules/constants';
+import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../../modules/constants';
 import {setItemData} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
@@ -47,7 +48,8 @@ import {
 } from '../../../store/selectors/dashTypedSelectors';
 import {isEntryTypeWithFiltering} from '../utils';
 
-import {ListState, TabMenu} from './TabMenu/TabMenu';
+import type {ListState} from './TabMenu/TabMenu';
+import {TabMenu} from './TabMenu/TabMenu';
 
 import './Widget.scss';
 
@@ -103,6 +105,7 @@ type State = {
     tabParams: StringParams;
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
+    hierarchies?: HierarchyField[];
 };
 
 type Props = StateProps & DispatchProps;
@@ -374,7 +377,13 @@ class Widget extends React.PureComponent<Props, State> {
         entryMeta: {type: WidgetType};
     }) => {
         const visualizationType = getEntryVisualizationType(entryMeta);
-        this.setState({selectedWidgetType, selectedEntryType: entryMeta.type, visualizationType});
+        const hierarchies = getEntryHierarchy(entryMeta);
+        this.setState({
+            selectedWidgetType,
+            selectedEntryType: entryMeta.type,
+            visualizationType,
+            hierarchies,
+        });
 
         if (this.afterSettingSelectedWidgetTypeCallback) {
             this.afterSettingSelectedWidgetTypeCallback(selectedWidgetType);
@@ -399,11 +408,36 @@ class Widget extends React.PureComponent<Props, State> {
         );
     };
 
-    renderFilteringCharts = () => {
-        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
-        if (!showFilteringChartSetting) {
+    getHierarchyWarning = () => {
+        const {hierarchies} = this.state;
+        const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
+
+        if (!showFilterHierarchyWarning) {
             return null;
         }
+
+        return (
+            <p className={b('info-comment')}>
+                <Interpolate
+                    text={i18n('dash.widget-dialog.edit', 'context_filtering-usage-limitations')}
+                    matches={{
+                        link(match) {
+                            return (
+                                <Link
+                                    target="_blank"
+                                    href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration#using`}
+                                >
+                                    {match}
+                                </Link>
+                            );
+                        },
+                    }}
+                />
+            </p>
+        );
+    };
+
+    renderFilteringCharts = () => {
         const {data, tabIndex, selectedEntryType, visualizationType} = this.state;
         const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
         const enableActionParams = Boolean(
@@ -425,14 +459,17 @@ class Widget extends React.PureComponent<Props, State> {
 
         return (
             <Line caption={caption}>
-                <Checkbox
-                    size="m"
-                    onChange={this.handleChangeFiltering}
-                    checked={enableActionParams}
-                    disabled={!canUseFiltration}
-                >
-                    {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
-                </Checkbox>
+                <div>
+                    <Checkbox
+                        size="m"
+                        onChange={this.handleChangeFiltering}
+                        checked={enableActionParams}
+                        disabled={!canUseFiltration}
+                    >
+                        {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
+                    </Checkbox>
+                    {this.getHierarchyWarning()}
+                </div>
             </Line>
         );
     };
@@ -500,9 +537,10 @@ class Widget extends React.PureComponent<Props, State> {
                         <NavigationInput
                             entryId={chartId}
                             onChange={this.onAddWidget}
-                            excludeClickableType={ENTRY_TYPE.CONTROL_NODE}
+                            excludeClickableType={EntryTypeNode.CONTROL_NODE}
                             onUpdate={this.setSelectedWidgetType}
                             workbookId={workbookId}
+                            scope={EntryScope.Widget}
                         />
                     </div>
                     <Popup
@@ -561,6 +599,7 @@ class Widget extends React.PureComponent<Props, State> {
 
     renderDialogFooter = () => {
         const {closeDialog} = this.props;
+
         return (
             <Dialog.Footer
                 onClickButtonCancel={closeDialog}
@@ -631,11 +670,9 @@ class Widget extends React.PureComponent<Props, State> {
         const footer = this.renderDialogFooter();
         const content = this.renderDialogBody();
 
-        const showFilteringChartSetting = Utils.isEnabledFeature(Feature.ShowFilteringChartSetting);
-
         return (
             <TwoColumnDialog
-                className={b({long: showFilteringChartSetting})}
+                className={b({long: true})}
                 open={visible}
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
@@ -646,6 +683,7 @@ class Widget extends React.PureComponent<Props, State> {
                 contentClassMixin={b('content')}
                 bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
+                disableEscapeKeyDown={true}
             />
         );
     }

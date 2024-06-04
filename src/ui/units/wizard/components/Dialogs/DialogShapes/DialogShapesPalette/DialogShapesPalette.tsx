@@ -1,23 +1,22 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {
+import type {
     DatasetOptions,
     Field,
     FilterField,
     LineShapeType,
-    POINT_SHAPES_IN_ORDER,
     PointsShapeType,
-    SHAPES_PALETTE_ORDER,
     Update,
 } from 'shared';
+import {POINT_SHAPES_IN_ORDER, SHAPES_PALETTE_ORDER} from 'shared';
 import {selectClientAvailableLineShapes} from 'ui';
 
 import IconRenderer from '../../../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../../../constants';
 import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
-import {ShapesState} from '../DialogShapes';
+import type {ShapesState} from '../DialogShapes';
 
 import './DialogShapesPalette.scss';
 

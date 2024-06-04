@@ -19,15 +19,15 @@ import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
+import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import Utils from '../../../utils';
 import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
 import {getExportItem} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
-import {ChartKitDataProvider} from '../components/ChartKitBase/types';
+import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
 import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import {LoadedWidget, Widget as TWidget, WidgetData} from '../types';
+import type {LoadedWidget, Widget as TWidget, WidgetData} from '../types';
 
 import type {MenuItemConfig, MenuItemModalProps, MenuLoadedData} from './Menu';
 

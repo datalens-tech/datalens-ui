@@ -15,6 +15,8 @@ import {isEmbeddedMode, isTvMode} from '../utils/embedded';
 import Utils from '../utils';
 import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
+import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
+import {DL} from 'ui/constants';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -127,6 +129,7 @@ const DatalensPageView = (props: any) => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
+
     const [token, _setToken] = React.useState(Utils.getRpcAuthorization() || "");
     
     function setToken(value: any) {
@@ -136,6 +139,15 @@ const DatalensPage: React.FC = () => {
             value: value,
         });
         _setToken(value);
+    }
+    const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
+
+    if (showMobileHeader) {
+        return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;
+    }
+
+    if (showAsideHeaderAdapter) {
+        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
     }
 
     if (token && showAsideHeaderAdapter) {

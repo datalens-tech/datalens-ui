@@ -1,6 +1,6 @@
+import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
-    ExtendedSeriesLineOptions,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     getDistinctValue,
@@ -10,12 +10,13 @@ import {
     isNumberField,
     isPseudoField,
 } from '../../../../../../../shared';
-import {ChartColorsConfig} from '../../js/helpers/colors';
-import {ColorValue, getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
+import type {ChartColorsConfig} from '../../types';
+import type {ColorValue} from '../../utils/color-helpers';
+import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {getColor, getMountedColor} from '../../utils/constants';
 import {findIndexInOrder} from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
-import {PiePoint, PrepareFunctionArgs} from '../types';
+import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import {getFormattedValue, isColoringByMeasure} from './utils';
 

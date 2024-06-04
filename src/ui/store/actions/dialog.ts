@@ -1,18 +1,20 @@
-import {OpenDialogArgs} from 'store/actions/openDialogTypes';
+import type {OpenDialogArgs} from 'store/actions/openDialogTypes';
 import {DIALOG_ERROR_WITH_TABS} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
-import {DataLensApiError, DIALOG_FILTER, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
-import {
-    DIALOG_CONFIRM,
+import type {DataLensApiError, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
+import {DIALOG_FILTER} from 'ui';
+import type {
     DialogConfirmApplyStatus,
     DialogConfirmProps,
 } from '../../components/DialogConfirm/DialogConfirm';
+import {DIALOG_CONFIRM} from '../../components/DialogConfirm/DialogConfirm';
+
+import type {DialogWarningProps} from 'ui/components/DialogWarning/DialogWarning';
+import {DIALOG_WARNING} from 'ui/components/DialogWarning/DialogWarning';
 import {i18n} from 'i18n';
-import {AppDispatch} from '../index';
-import {
-    DIALOG_PARAMETER,
-    DialogParameterProps,
-} from '../../components/DialogParameter/DialogParameter';
-import {PartialBy} from 'shared';
+import type {AppDispatch} from '../index';
+import type {DialogParameterProps} from '../../components/DialogParameter/DialogParameter';
+import {DIALOG_PARAMETER} from '../../components/DialogParameter/DialogParameter';
+import type {PartialBy} from 'shared';
 
 export const OPEN_DIALOG = Symbol('dialog/OPEN_DIALOG');
 export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');
@@ -118,6 +120,22 @@ export const openDialogConfirm = (commonProps: OpenDialogConfirmArguments) => {
     };
 };
 
+export type OpenWarningAlertArguments = Omit<DialogWarningProps, 'visible'>;
+
+export const openWarningDialog = (commonProps: OpenWarningAlertArguments) => {
+    return function (dispatch: AppDispatch) {
+        dispatch(
+            openDialog({
+                id: DIALOG_WARNING,
+                props: {
+                    ...commonProps,
+                    visible: true,
+                },
+            }),
+        );
+    };
+};
+
 type OpenDialogSaveChartConfirmArguments = Pick<
     OpenDialogConfirmArguments,
     | 'onApply'
@@ -126,7 +144,6 @@ type OpenDialogSaveChartConfirmArguments = Pick<
     | 'confirmButtonText'
     | 'cancelButtonText'
     | 'widthType'
-    | 'applyBtnLoadingStatus'
 >;
 
 export const openDialogSaveChartConfirm = ({
@@ -136,12 +153,11 @@ export const openDialogSaveChartConfirm = ({
     confirmButtonText,
     cancelButtonText,
     widthType,
-    applyBtnLoadingStatus,
 }: OpenDialogSaveChartConfirmArguments) => {
     return function (dispatch: AppDispatch) {
         const openDialogConfirmParams: OpenDialogConfirmArguments = {
-            onApply: (args) => {
-                onApply(args);
+            onApply: async (args) => {
+                await onApply(args);
                 dispatch(closeDialog());
             },
             message,
@@ -158,7 +174,6 @@ export const openDialogSaveChartConfirm = ({
                 confirmButtonText ||
                 i18n('component.dl-dialog-confirm.view', 'button-save-chart_apply'),
             widthType,
-            applyBtnLoadingStatus,
         };
         dispatch(openDialogConfirm(openDialogConfirmParams));
     };

@@ -291,6 +291,7 @@ export class YCSelect extends React.PureComponent {
         itemsListTestAnchor: PropTypes.string,
         switcherClassName: PropTypes.string,
         label: PropTypes.string,
+        limitLabel: PropTypes.bool,
         itemsLoaderClassName: PropTypes.string,
         controlWidth: PropTypes.number,
         popupWidth: PropTypes.number,
@@ -528,9 +529,9 @@ export class YCSelect extends React.PureComponent {
         const {type, value} = this.props;
 
         if (type === YCSelect.SINGLE) {
-            return !value;
+            return isFalsy(value);
         } else {
-            return (value || []).filter(Boolean).length === 0;
+            return (value || []).filter((value) => !isFalsy(value)).length === 0;
         }
     }
 
@@ -1321,6 +1322,7 @@ export class YCSelect extends React.PureComponent {
             type,
             className,
             label,
+            limitLabel,
             showArrow,
             showItemIcon,
             stretched,
@@ -1396,7 +1398,11 @@ export class YCSelect extends React.PureComponent {
                     </div>
                 ) : (
                     <React.Fragment>
-                        {label && <span className={bControl('label')}>{label}</span>}
+                        {label && (
+                            <span className={bControl('label', {limited: limitLabel})}>
+                                {label}
+                            </span>
+                        )}
                         {!isMultiply && showItemIcon && icon && (
                             <div className={bControl('selected-item-icon')}>{icon}</div>
                         )}

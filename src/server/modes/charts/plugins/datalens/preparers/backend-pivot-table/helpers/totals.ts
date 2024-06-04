@@ -1,5 +1,6 @@
-import {IChartEditor, MarkupItem, markupToRawString} from '../../../../../../../../shared';
-import {CharkitTableHead, ChartkitTableRows, PivotDataRowsHeader, PivotField} from '../types';
+import type {IChartEditor, MarkupItem} from '../../../../../../../../shared';
+import {markupToRawString} from '../../../../../../../../shared';
+import type {CharkitTableHead, ChartkitTableRows, PivotDataRowsHeader, PivotField} from '../types';
 
 export const isRowWithTotals = (
     headers: PivotDataRowsHeader[],

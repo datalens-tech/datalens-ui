@@ -1,15 +1,17 @@
 import escape from 'lodash/escape';
 
+import type {
+    DATASET_FIELD_TYPES,
+    ServerChartsConfig,
+    ServerPlaceholder,
+} from '../../../../../shared';
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
-    DATASET_FIELD_TYPES,
     Feature,
     LabelsPositions,
     LegendDisplayMode,
     PlaceholderId,
-    ServerChartsConfig,
-    ServerPlaceholder,
     VISUALIZATIONS_WITH_LABELS_POSITION,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
@@ -18,7 +20,8 @@ import {
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 
-import {IgnoreProps, applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
+import type {IgnoreProps} from './utils/axis-helpers';
+import {applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from './utils/config-helpers';
 import {getFieldTitle, isNumericalDataType, log} from './utils/misc-helpers';
 
@@ -33,7 +36,9 @@ type ExtendedHighchartsOptions = Omit<Highcharts.Options, 'legend'> & {
 };
 
 // eslint-disable-next-line complexity
-export default (...options: [{shared: ServerChartsConfig} | ServerChartsConfig]) => {
+export const buildHighchartsConfig = (
+    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
+) => {
     const app = registry.getApp();
     let shared: ServerChartsConfig;
 

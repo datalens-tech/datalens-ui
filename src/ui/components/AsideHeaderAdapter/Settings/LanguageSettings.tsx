@@ -2,7 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {Language} from 'shared';
+import type {Language} from 'shared';
 import {DL} from 'ui/constants';
 import {updateUserSettings} from 'ui/store/actions/user';
 import {getCurrentUserSettings} from 'ui/store/utils/user';

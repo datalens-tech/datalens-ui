@@ -1,18 +1,20 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
 
-import {
-    ChartkitHandlers,
-    DEFAULT_CHART_LINES_LIMIT,
+import type {
     DashWidgetConfig,
-    Feature,
     GraphTooltipLine,
     GraphWidgetEventScope,
-    PlaceholderId,
     ServerChartsConfig,
     ServerCommonSharedExtraSettings,
     StringParams,
     TableWidgetEventScope,
     WidgetEvent,
+} from '../../../../../shared';
+import {
+    ChartkitHandlers,
+    DEFAULT_CHART_LINES_LIMIT,
+    Feature,
+    PlaceholderId,
     WizardVisualizationId,
     getIsNavigatorEnabled,
     isEnabledServerFeature,
@@ -120,6 +122,7 @@ function getActionParamsEvents(
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.PieD3:
         case WizardVisualizationId.Donut:
+        case WizardVisualizationId.DonutD3:
         case WizardVisualizationId.CombinedChart: {
             return {
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
@@ -143,7 +146,7 @@ function canUseActionParams(shared: ServerChartsConfig) {
 }
 
 // eslint-disable-next-line complexity
-export default (
+export const buildChartsConfig = (
     ...options: [
         (
             | {

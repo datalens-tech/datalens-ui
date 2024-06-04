@@ -1,32 +1,20 @@
-import {
-    DATALENS_QL_TYPES,
-    Feature,
-    IChartEditor,
-    QlConfigPreviewTableData,
-    formatNumber,
-    isEnabledServerFeature,
-} from '../../../../../../shared';
+import type {IChartEditor, QlConfigPreviewTableData} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, formatNumber} from '../../../../../../shared';
 import type {
     QlConfig,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
-import {registry} from '../../../../../registry';
 import {prepareMetricObject} from '../../datalens/utils/markup-helpers';
-import {
-    QLRenderResultMetric,
-    formatUnknownTypeValue,
-    isGroup,
-    parseNumberValue,
-} from '../utils/misc-helpers';
+import type {QLRenderResultMetric} from '../utils/misc-helpers';
+import {formatUnknownTypeValue, isGroup, parseNumberValue} from '../utils/misc-helpers';
 
 export default ({
     shared,
     columns,
     rows,
     ChartEditor: _ChartEditor,
-    tablePreviewData,
 }: {
     shared: QlConfig;
     columns: QlConfigResultEntryMetadataDataColumn[];
@@ -109,38 +97,17 @@ export default ({
             value = parseNumberValue(value);
         }
 
-        const app = registry.getApp();
+        const size = 'm';
+        const color = 'rgb(77, 162, 241)';
+        const title = measureColumn.name;
 
-        const useMarkupMetric = isEnabledServerFeature(app.nodekit.ctx, Feature.MarkupMetric);
+        let formattedValue = String(value);
 
-        if (useMarkupMetric) {
-            const size = 'm';
-            const color = 'rgb(77, 162, 241)';
-            const title = measureColumn.name;
-
-            let formattedValue = String(value);
-
-            if (typeof value === 'number') {
-                formattedValue = formatNumber(value, {});
-            }
-
-            return prepareMetricObject({size, title, color, value: formattedValue});
-        } else {
-            result = [
-                {
-                    content: {
-                        current: {
-                            value,
-                        },
-                    },
-                    title: columns[measureIndex].name,
-                    metadata: {
-                        order,
-                    },
-                    tablePreviewData,
-                },
-            ];
+        if (typeof value === 'number') {
+            formattedValue = formatNumber(value, {});
         }
+
+        return prepareMetricObject({size, title, color, value: formattedValue});
     } else {
         result = {};
     }

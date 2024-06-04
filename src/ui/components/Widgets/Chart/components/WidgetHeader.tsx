@@ -1,14 +1,15 @@
 import React from 'react';
 
-import {AdaptiveTabs, ShareOptions, SharePopover} from '@gravity-ui/components';
+import {AdaptiveTabs} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
-import {CurrentTab} from 'components/DashKit/plugins/Widget/types';
+import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
@@ -39,7 +40,6 @@ type HeaderProps = {
     title?: string;
 };
 
-const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
 const b = block('widget-header');
 
 export const WidgetHeader = (props: HeaderProps) => {
@@ -123,12 +123,12 @@ export const WidgetHeader = (props: HeaderProps) => {
                 {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
                 {withShareWidget && (
                     <div className={b('share-widget')}>
-                        <SharePopover
-                            useWebShareApi={DL.IS_MOBILE}
-                            url={window.location.href}
-                            title={widgetTitle}
-                            text={widgetTitle}
-                            shareOptions={socialNets}
+                        <ShareButton
+                            enablePopover={true}
+                            entityId={widgetId}
+                            popoverText={widgetTitle}
+                            popoverTitle={widgetTitle}
+                            iconSize={16}
                         />
                     </div>
                 )}

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
-import {DropdownMenu, DropdownMenuProps, Icon} from '@gravity-ui/uikit';
+import type {DropdownMenuProps} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
 import type {ActionMore} from './types';

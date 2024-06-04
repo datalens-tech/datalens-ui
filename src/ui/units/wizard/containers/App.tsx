@@ -2,10 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
-import {DatalensGlobalState} from 'ui';
-import {MobileHeader} from 'ui/components/MobileHeader/MobileHeader';
+import type {DatalensGlobalState} from 'ui';
 
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
@@ -42,11 +42,6 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
 
     return (
         <div className={b()}>
-            {!isAsideHeaderEnabled && (
-                <div className={b('header')}>
-                    <MobileHeader />
-                </div>
-            )}
             <div className={b('main', {aside: isAsideHeaderEnabled})}>
                 <Wizard
                     {...routeProps}

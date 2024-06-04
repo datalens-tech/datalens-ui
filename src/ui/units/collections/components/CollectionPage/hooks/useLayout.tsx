@@ -1,11 +1,13 @@
 import React from 'react';
 
-import {PencilToLine} from '@gravity-ui/icons';
+import {ArrowLeft, PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -13,13 +15,12 @@ import type {
     CreateCollectionResponse,
     WorkbookWithPermissions,
 } from '../../../../../../shared/schema';
-import {
-    CollectionContentFilters,
-    CollectionPageViewMode,
-} from '../../../../../components/CollectionFilters';
+import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
     DIALOG_ADD_DEMO_WORKBOOK,
     DIALOG_CREATE_COLLECTION,
+    DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
 } from '../../../../../components/CollectionsStructure';
@@ -27,7 +28,7 @@ import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
-import {AppDispatch} from '../../../../../store';
+import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import Utils from '../../../../../utils';
 import {
@@ -49,7 +50,7 @@ import {
 } from '../../../store/selectors';
 import {CollectionActions} from '../../CollectionActions';
 
-import {SelectedMap} from './useSelection';
+import type {SelectedMap} from './useSelection';
 
 const b = block('dl-collection-page');
 
@@ -91,6 +92,7 @@ export const useLayout = ({
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {ActionPanelEntrySelect} = registry.common.components.getAll();
+    const {RootCollectionTitleAction} = registry.collections.components.getAll();
 
     const {setLayout} = React.useContext(LayoutContext);
 
@@ -111,6 +113,14 @@ export const useLayout = ({
             (breadcrumbs && breadcrumbs[breadcrumbs.length - 1]?.collectionId === curCollectionId),
     );
 
+    const goToParentCollection = React.useCallback(() => {
+        if (!collection) {
+            return;
+        }
+
+        history.push(getParentCollectionPath(collection));
+    }, [history, collection]);
+
     React.useEffect(() => {
         let preparedBreadcrumbs = breadcrumbs ?? [];
         if (breadcrumbsError && collection) {
@@ -123,7 +133,6 @@ export const useLayout = ({
                     <div className={b('action-panel-left-block')}>
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
-                            className={b('breadcrumbs')}
                             isLoading={!(isCorrectBreadcrumbs || breadcrumbsError)}
                             collections={preparedBreadcrumbs}
                             workbook={null}
@@ -174,6 +183,24 @@ export const useLayout = ({
                 actionsPanelRightBlock: {
                     content: (
                         <CollectionActions
+                            onDeleteClick={() => {
+                                if (curCollectionId && collection) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_DELETE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                collectionId: curCollectionId,
+                                                collectionTitle: collection.title,
+                                                onSuccessApply: goToParentCollection,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                }
+                            }}
                             onCreateCollectionClick={() => {
                                 dispatch(
                                     openDialog({
@@ -320,6 +347,7 @@ export const useLayout = ({
                     content: i18n('label_root-title'),
                 },
                 description: null,
+                titleBeforeActionsBlock: null,
             });
         } else if (isCorrectCollection && collection) {
             setLayout({
@@ -331,6 +359,18 @@ export const useLayout = ({
                           content: collection.description,
                       }
                     : null,
+                titleBeforeActionsBlock: {
+                    content: isMobileView ? (
+                        <Button
+                            view="flat"
+                            size="l"
+                            onClick={goToParentCollection}
+                            className={b('return-button')}
+                        >
+                            <Icon data={ArrowLeft} size={16} />
+                        </Button>
+                    ) : null,
+                },
             });
         } else {
             setLayout({
@@ -339,12 +379,21 @@ export const useLayout = ({
                 },
             });
         }
-    }, [curCollectionId, collection, setLayout, isRootCollection, isCorrectCollection]);
+    }, [
+        curCollectionId,
+        collection,
+        setLayout,
+        isRootCollection,
+        isCorrectCollection,
+        goToParentCollection,
+    ]);
 
     React.useEffect(() => {
         if (isRootCollection) {
             setLayout({
-                titleActionsBlock: null,
+                titleActionsBlock: {
+                    content: <RootCollectionTitleAction />,
+                },
             });
         } else if (isCorrectCollection && collection && collection.permissions) {
             setLayout({
@@ -401,6 +450,7 @@ export const useLayout = ({
         isRootCollection,
         dispatch,
         fetchCollectionInfo,
+        RootCollectionTitleAction,
     ]);
 
     React.useEffect(() => {

@@ -222,10 +222,14 @@ class NavigationBase extends React.Component {
         this.update(response, EntryDialogName.Delete, entry);
     }
     async accessEntry(entry) {
+        const hasEditPermissions = entry.permissions?.edit || entry.permissions?.admin;
+
         await this.refDialogues.current.open({
             dialog: EntryDialogName.Access,
             dialogProps: {
                 entry,
+                showCustomAccess:
+                    Utils.isEnabledFeature(Feature.CustomAccessDescription) && !hasEditPermissions,
             },
         });
     }
@@ -234,6 +238,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Unlock,
             dialogProps: {
                 entry,
+                showCustomAccess: Utils.isEnabledFeature(Feature.CustomAccessDescription),
             },
         });
     }
@@ -284,6 +289,9 @@ class NavigationBase extends React.Component {
                         props: {
                             initialCollectionId: null,
                             entryType: 'dashboard',
+                            onApply: () => {
+                                this.closeNavigation();
+                            },
                             onClose: () => {
                                 this.props.closeDialog();
                             },

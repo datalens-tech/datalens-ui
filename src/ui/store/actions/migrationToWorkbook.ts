@@ -1,7 +1,7 @@
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {showToast} from 'store/actions/toaster';
 import {
     RESET_STATE,

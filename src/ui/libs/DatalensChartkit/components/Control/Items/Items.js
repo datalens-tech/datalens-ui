@@ -67,6 +67,7 @@ function BaseControlSelect({
     placeholder,
     required,
     hasValidationError,
+    limitLabel,
 }) {
     const [currentValue, setCurrentValue] = React.useState(
         multiselect ? wrapToArray(value) : value,
@@ -115,6 +116,7 @@ function BaseControlSelect({
             items={getItems ? undefined : items}
             initialItems={getItems ? items : undefined}
             label={labelInside ? label : innerLabel}
+            limitLabel={limitLabel}
             getItems={getItems}
             loadingItems={loadingItems}
             errorContent={errorContent}
@@ -460,7 +462,7 @@ BaseControlRangeDatepicker.propTypes = {
     labelInside: PropTypes.bool,
 };
 
-function BaseControlButton({label, theme, onChange}) {
+function BaseControlButton({label, theme, onChange, qa}) {
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
 
     const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
@@ -476,6 +478,7 @@ function BaseControlButton({label, theme, onChange}) {
             width="max"
             // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
             onClick={handleClick}
+            qa={qa}
         >
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>
@@ -486,10 +489,7 @@ BaseControlButton.propTypes = {
     label: PropTypes.string,
     theme: PropTypes.string,
     onChange: PropTypes.func.isRequired,
-    className: PropTypes.string,
-    width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    hidden: PropTypes.bool,
-    widgetId: PropTypes.string,
+    qa: PropTypes.string,
 };
 
 function BaseControlCheckbox({label, value, onChange}) {
@@ -503,6 +503,7 @@ function BaseControlCheckbox({label, value, onChange}) {
             view="default"
             size={size}
             checked={checked}
+            title={label}
             onChange={() =>
                 onChange(checked ? CheckboxControlValue.FALSE : CheckboxControlValue.TRUE)
             }

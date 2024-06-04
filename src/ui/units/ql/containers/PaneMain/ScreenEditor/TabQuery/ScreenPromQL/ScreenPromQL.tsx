@@ -8,17 +8,12 @@ import copyToClipboard from 'clipboard-copy';
 import {Collapse} from 'components/Collapse/Collapse';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/ql';
-import {
-    DatalensGlobalState,
-    EntryDialogName,
-    EntryDialogResolveStatus,
-    EntryDialogues,
-    Monaco,
-    MonacoTypes,
-} from 'ui';
+import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
+import {EntryDialogName, EntryDialogResolveStatus, Monaco} from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
 import {TabQueryQA} from '../../../../../../../../shared';
@@ -48,7 +43,7 @@ import {
     getQueries,
     getValid,
 } from '../../../../../store/reducers/ql';
-import {QLEntry} from '../../../../../store/typings/ql';
+import type {QLEntry} from '../../../../../store/typings/ql';
 import {isQlAutoExecuteChartEnabled} from '../../../../../utils/chart-settings';
 
 import './ScreenPromQL.scss';
@@ -154,6 +149,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                                     this.setActiveTab(newTabId, queryIndex);
                                                 }}
                                                 activeTab={activeTab || 'queryTab'}
+                                                size={'m'}
                                             />
                                             <DropdownMenu
                                                 size="s"

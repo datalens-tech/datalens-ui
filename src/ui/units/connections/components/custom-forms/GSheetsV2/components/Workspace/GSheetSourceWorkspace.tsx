@@ -8,7 +8,7 @@ import {clone, get} from 'lodash';
 import type {ApplySourceSettings, GSheetSource} from '../../../../../store';
 import {ColumnFilter, ColumnsHeaderSwitcher} from '../../../components';
 import {getColumnsWithTypeIcons} from '../../../utils/render';
-import {UpdateColumnFilter} from '../../types';
+import type {UpdateColumnFilter} from '../../types';
 
 import {getGSheetSourceWorkspaceData} from './utils';
 

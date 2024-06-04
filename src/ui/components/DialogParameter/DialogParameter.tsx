@@ -1,10 +1,12 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Button, Dialog, Loader, Select, SelectOption, TextInput} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Button, Dialog, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DATASET_FIELD_TYPES, DatasetField, DialogParameterQA, isDateField} from 'shared';
+import type {DatasetField} from 'shared';
+import {DATASET_FIELD_TYPES, DialogParameterQA, isDateField} from 'shared';
 import {registry} from 'ui/registry';
 
 import DialogManager from '../DialogManager/DialogManager';

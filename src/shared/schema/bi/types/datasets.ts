@@ -1,7 +1,7 @@
-import {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
-import {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
+import type {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
+import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 
-import {WorkbookIdArg} from './common';
+import type {WorkbookIdArg} from './common';
 
 type Id = {id: string};
 

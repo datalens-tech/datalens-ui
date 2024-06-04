@@ -1,23 +1,23 @@
-import {YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
+import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
 
 import React from 'react';
 
 import debounce from 'lodash/debounce';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {DashSettings, FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
+import type {DashSettings} from 'shared';
+import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
-import {
+import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import Utils from '../../../../utils';
-import {
+import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
     WidgetPluginProps,
@@ -30,7 +30,7 @@ import {
     pushStats,
     updateImmediateLayout,
 } from '../helpers/helpers';
-import {
+import type {
     ChartWidgetProps,
     CurrentRequestStateItem,
     ResolveMetaDataRef,
@@ -38,7 +38,8 @@ import {
 } from '../types';
 
 import {useResizeObserver} from './useAutoHeightResizeObserver';
-import {LoadingChartHookProps, useLoadingChart} from './useLoadingChart';
+import type {LoadingChartHookProps} from './useLoadingChart';
+import {useLoadingChart} from './useLoadingChart';
 
 type LoadingChartWidgetHookProps = Pick<
     WidgetPluginProps,
@@ -483,7 +484,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (resolvingData: LoadedWidgetData<ChartsData>) => {
-                if (Utils.isEnabledFeature(Feature.ShowNewRelations) && isNewRelations) {
+                if (isNewRelations) {
                     getCurrentWidgetResolvedMetaInfo(resolvingData);
                 } else {
                     resolveMeta(resolvingData);
@@ -531,7 +532,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     return;
                 }
                 let targetEl = mutatedItem?.target as Element;
-                const hasYfm = targetEl?.classList.contains(YFM_MARKDOWN_CLASSNAME);
+                const hasYfm =
+                    targetEl?.classList.contains(YFM_MARKDOWN_CLASSNAME) ||
+                    targetEl?.classList.contains(YFM_CUT_MARKDOWN_CLASSNAME);
+
                 if (hasYfm) {
                     needUpdate = true;
                 }
@@ -587,6 +591,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             mutationObserver.current.observe(rootNodeRef.current, {
                 childList: true,
                 subtree: true,
+                attributes: true,
+                attributeFilter: ['class'],
             });
         }
         return () => {

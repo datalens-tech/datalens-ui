@@ -1,8 +1,9 @@
 import * as yup from 'yup';
 
-import {FormValidationError, VALIDATION_ERROR} from '../../../helpers/validation';
-import {FormOptions, FreeformSource} from '../../../store/types';
-import {EditedSource} from '../types';
+import type {FormValidationError} from '../../../helpers/validation';
+import {VALIDATION_ERROR} from '../../../helpers/validation';
+import type {FormOptions, FreeformSource} from '../../../store/types';
+import type {EditedSource} from '../types';
 
 import {BASE_TITLE_FORM_OPTIONS, TABLE_NAMES_INPUT, TITLE_INPUT, getPaths} from './helpers';
 
@@ -12,30 +13,33 @@ const concatTitleFormItem = (items: FormOptions[] = []) => {
 
 export const createValidationSchema = (items: FormOptions[] = []) => {
     const allItems = concatTitleFormItem(items);
-    const schemaOptions = allItems.reduce((acc, {name, required}) => {
-        acc[name] = yup.string();
+    const schemaOptions = allItems.reduce(
+        (acc, {name, required}) => {
+            acc[name] = yup.string();
 
-        if (required) {
-            acc[name] = acc[name].required();
-        }
+            if (required) {
+                acc[name] = acc[name].required();
+            }
 
-        if (name === TABLE_NAMES_INPUT) {
-            acc[name] = acc[name].test(function (input?: string) {
-                if (!input) {
-                    return true;
-                }
+            if (name === TABLE_NAMES_INPUT) {
+                acc[name] = acc[name].test(function (input?: string) {
+                    if (!input) {
+                        return true;
+                    }
 
-                const paths = getPaths(input);
-                const hasDuplications = new Set(paths).size !== paths.length;
+                    const paths = getPaths(input);
+                    const hasDuplications = new Set(paths).size !== paths.length;
 
-                return hasDuplications
-                    ? this.createError({path: this.path, type: VALIDATION_ERROR.HAS_DUPLICATES})
-                    : true;
-            });
-        }
+                    return hasDuplications
+                        ? this.createError({path: this.path, type: VALIDATION_ERROR.HAS_DUPLICATES})
+                        : true;
+                });
+            }
 
-        return acc;
-    }, {} as Record<string, yup.StringSchema>);
+            return acc;
+        },
+        {} as Record<string, yup.StringSchema>,
+    );
 
     return yup.object(schemaOptions);
 };
@@ -43,15 +47,18 @@ export const createValidationSchema = (items: FormOptions[] = []) => {
 export const getDataForValidation = (source: EditedSource, freeformSource?: FreeformSource) => {
     const allItems = concatTitleFormItem(freeformSource?.form);
 
-    return allItems.reduce((acc, {name}) => {
-        if (name === TITLE_INPUT) {
-            acc[name] = source.title;
-        } else {
-            acc[name] = source.parameters[name];
-        }
+    return allItems.reduce(
+        (acc, {name}) => {
+            if (name === TITLE_INPUT) {
+                acc[name] = source.title;
+            } else {
+                acc[name] = source.parameters[name];
+            }
 
-        return acc;
-    }, {} as Record<string, string>);
+            return acc;
+        },
+        {} as Record<string, string>,
+    );
 };
 
 export const getValidationErrors = (

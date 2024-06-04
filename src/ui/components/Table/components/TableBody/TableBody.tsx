@@ -1,21 +1,22 @@
 import React from 'react';
 
-import {ColumnDef, Row, flexRender} from '@tanstack/react-table';
+import type {ColumnDef, Row} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {OnCellClickFn, TData, TableProps} from '../../types';
+import type {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
 
 const b = block('dl-table');
 
 type Props = {
     columns: ColumnDef<TData, unknown>[];
     rows: Row<TData>[];
-    noData: TableProps['noData'];
+    noData?: TableProps['noData'];
     onCellClick?: OnCellClickFn;
+    tableDimensions?: TableDimensions;
 };
 
 export const TableBody = (props: Props) => {
-    const {rows, columns, noData, onCellClick} = props;
+    const {rows, columns, tableDimensions, noData, onCellClick} = props;
 
     if (!rows.length) {
         return (
@@ -37,17 +38,26 @@ export const TableBody = (props: Props) => {
         }
     };
 
+    const canUseFixedColumns = columns.some((col) => !col.meta?.width);
     return (
         <tbody className={b('body')}>
             {rows.map((row) => {
                 const visibleCells = row.getVisibleCells();
+
                 return (
                     <tr key={row.id} className={b('tr')}>
                         {visibleCells.map((cell, index) => {
-                            const width = cell.column.columnDef.meta?.width;
+                            const originalHeadData = cell.column.columnDef.meta?.head;
+                            const width = canUseFixedColumns
+                                ? cell.column.columnDef.meta?.width
+                                : undefined;
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
-                            const cellClassName = [b('td'), originalCellData?.className]
+                            const pinned = Boolean(originalHeadData?.pinned);
+                            const cellClassName = [
+                                b('td', {pinned, 'fixed-size': isFixedSize}),
+                                originalCellData?.className,
+                            ]
                                 .filter(Boolean)
                                 .join(' ');
 
@@ -55,11 +65,24 @@ export const TableBody = (props: Props) => {
                                 return null;
                             }
 
+                            const left = pinned
+                                ? tableDimensions?.head[0]?.[index]?.left
+                                : undefined;
+                            const cellStyle = {
+                                left,
+                                ...originalCellData?.css,
+                            };
+
+                            const renderCell =
+                                typeof cell.column.columnDef.cell === 'function'
+                                    ? cell.column.columnDef.cell
+                                    : () => cell.column.columnDef.cell;
+
                             return (
                                 <td
                                     key={cell.id}
                                     className={cellClassName}
-                                    style={originalCellData?.css}
+                                    style={cellStyle}
                                     onClick={(event) =>
                                         handleCellClick({
                                             row: row.original,
@@ -69,12 +92,8 @@ export const TableBody = (props: Props) => {
                                     }
                                     rowSpan={originalCellData?.rowSpan}
                                 >
-                                    <div
-                                        className={b('td-content', {
-                                            'fixed-size': isFixedSize,
-                                        })}
-                                    >
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    <div className={b('td-content')} style={{width}}>
+                                        {renderCell(cell.getContext())}
                                     </div>
                                 </td>
                             );

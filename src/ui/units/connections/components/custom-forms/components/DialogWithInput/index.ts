@@ -1,7 +1,7 @@
 import DialogManager from '../../../../../../components/DialogManager/DialogManager';
 
 import {DialogWithInput} from './DialogWithInput';
-import {DialogConnWithInputProps} from './types';
+import type {DialogConnWithInputProps} from './types';
 
 export const DIALOG_CONN_WITH_INPUT = Symbol('DIALOG_CONN_WITH_INPUT');
 

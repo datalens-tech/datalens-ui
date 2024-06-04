@@ -1,20 +1,24 @@
 import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
-import {Icon, IconProps, Popover} from '@gravity-ui/uikit';
+import type {IconProps} from '@gravity-ui/uikit';
+import {Icon, Popover} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import {ConnectableElement} from 'react-dnd';
+import type {ConnectableElement} from 'react-dnd';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {Field, isParameter} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Field} from 'shared';
+import {isParameter} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 
 import {actualizeAndSetUpdates} from '../../../../../actions/preview';
 import DNDContainer from '../../../../../components/DND/DNDContainer';
 import PlaceholderActionIcon from '../../../../../components/PlaceholderActionIcon/PlaceholderActionIcon';
 import {ITEM_TYPES} from '../../../../../constants';
-import AddFieldContainer, {AddableField} from '../../AddField/AddField';
+import type {AddableField} from '../../AddField/AddField';
+import AddFieldContainer from '../../AddField/AddField';
 
 import placeholderTooltipIcon from 'ui/assets/icons/placeholder-tooltip.svg';
 

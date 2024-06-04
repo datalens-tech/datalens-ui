@@ -1,14 +1,17 @@
 import React from 'react';
 
 import {LayoutRows} from '@gravity-ui/icons';
-import {Icon, RadioButton, RadioButtonSize, Select, TextInput} from '@gravity-ui/uikit';
+import type {RadioButtonSize} from '@gravity-ui/uikit';
+import {Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
-import {GetCollectionContentMode} from 'shared/schema/us/types/collections';
-import {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import type {GetCollectionContentMode} from 'shared/schema/us/types/collections';
+import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
+import Tabs from 'ui/components/Tabs/Tabs';
 import Utils from 'ui/utils';
+import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -71,6 +74,11 @@ type Props = {
     onChange: (value: CollectionContentFilters) => void;
     changeViewMode?: (value: CollectionPageViewMode) => void;
 };
+
+const onlyMyOptions = [
+    {value: 'false', content: i18n('label_filter-by-ownership-all')},
+    {value: 'true', content: i18n('label_filter-by-ownership-only-my')},
+];
 
 export const CollectionFilters = React.memo<Props>(
     ({
@@ -170,6 +178,26 @@ export const CollectionFilters = React.memo<Props>(
             });
         }, [orderField, orderDirection]);
 
+        if (isMobileView) {
+            const tabItems = onlyMyOptions.map(({value, content}) => ({
+                id: value,
+                title: content,
+            }));
+
+            return (
+                <React.Fragment>
+                    {Utils.isEnabledFeature(Feature.HideMultitenant) ? null : (
+                        <Tabs
+                            items={tabItems}
+                            activeTab={onlyMy.toString()}
+                            size={MOBILE_SIZE.TABS}
+                            onSelectTab={handleChangeOnlyMy}
+                        />
+                    )}
+                </React.Fragment>
+            );
+        }
+
         return (
             <div className={b({'compact-mode': compactMode}, className)}>
                 <TextInput
@@ -225,14 +253,8 @@ export const CollectionFilters = React.memo<Props>(
                             value={onlyMy.toString()}
                             size={controlSize}
                             onUpdate={handleChangeOnlyMy}
-                        >
-                            <Select.Option value="false">
-                                {i18n('label_filter-by-ownership-all')}
-                            </Select.Option>
-                            <Select.Option value="true">
-                                {i18n('label_filter-by-ownership-only-my')}
-                            </Select.Option>
-                        </RadioButton>
+                            options={onlyMyOptions}
+                        />
                     )}
 
                     {!compactMode && (
@@ -242,12 +264,12 @@ export const CollectionFilters = React.memo<Props>(
                             size={controlSize}
                             onUpdate={handleChangeViewMode}
                         >
-                            <Select.Option value={CollectionPageViewMode.Grid}>
+                            <RadioButton.Option value={CollectionPageViewMode.Grid}>
                                 <Icon data={GridIcon} />
-                            </Select.Option>
-                            <Select.Option value={CollectionPageViewMode.Table}>
+                            </RadioButton.Option>
+                            <RadioButton.Option value={CollectionPageViewMode.Table}>
                                 <Icon data={LayoutRows} />
-                            </Select.Option>
+                            </RadioButton.Option>
                         </RadioButton>
                     )}
                 </div>

@@ -1,7 +1,8 @@
-import {ConnectionData, TIMEOUT_65_SEC} from 'shared';
+import type {ConnectionData} from 'shared';
+import {TIMEOUT_65_SEC} from 'shared';
 import {DL} from 'ui';
 
-import {
+import type {
     AddGoogleSheetResponse,
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
@@ -356,11 +357,13 @@ const getGoogleCredentials = async (
 
 const addYandexDocument = async ({
     authorized = false,
+    connectionId,
     privatePath,
     publicLink,
     oauthToken,
 }: {
     authorized?: boolean;
+    connectionId?: string;
     privatePath?: string;
     publicLink?: string;
     oauthToken?: string;
@@ -368,6 +371,7 @@ const addYandexDocument = async ({
     try {
         const document = await getSdk().biConverter.addYandexDocument({
             authorized,
+            connection_id: connectionId,
             type: 'yadocs',
             private_path: privatePath,
             public_link: publicLink,

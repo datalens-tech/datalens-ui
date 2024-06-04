@@ -1,9 +1,6 @@
-import {
-    ColorPaletteEditorAction,
-    SET_COLOR_PALETTES,
-    SET_CURRENT_COLOR_PALETTE,
-} from '../actions/colorPaletteEditor';
-import {ResetWizardStoreAction} from '../../units/wizard/actions';
+import type {ColorPaletteEditorAction} from '../actions/colorPaletteEditor';
+import {SET_COLOR_PALETTES, SET_CURRENT_COLOR_PALETTE} from '../actions/colorPaletteEditor';
+import type {ResetWizardStoreAction} from '../../units/wizard/actions';
 import type {ColorPalette} from 'shared';
 
 export interface ColorPaletteEditorState {

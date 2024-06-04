@@ -2,9 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
+import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
 
 import {QLChartType, isMonitoringOrPrometheusChart} from '../../../../../../../shared';
 import {getChartType} from '../../../../store/reducers/ql';

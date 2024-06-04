@@ -28,4 +28,8 @@
         margin-right: 8px !important;
         background-color: var(--g-color-line-generic);
     }
+
+    &_mobile {
+        display: flex;
+    }
 }

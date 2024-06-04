@@ -1,7 +1,7 @@
-import {Request} from '@gravity-ui/expresskit';
-import {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 
-import {StringParams} from '../../../../shared';
+import type {StringParams} from '../../../../shared';
 
 const commonTemplateGraph = `
 const {buildHighchartsConfig, buildLibraryConfig} = require('#module');

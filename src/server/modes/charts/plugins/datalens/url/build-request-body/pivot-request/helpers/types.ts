@@ -1,10 +1,10 @@
-import {
+import type {
     ApiV2BackgroundSettingsGuids,
     ApiV2RequestField,
     ApiV2RequestPivotTotals,
-    IChartEditor,
     ServerColor,
     ServerField,
+    StringParams,
 } from '../../../../../../../../../shared';
 
 export type GetRegularFieldsArgs = {
@@ -22,7 +22,7 @@ export type GetPivotStructureArgs = {
     measuresReq: ApiV2RequestField[];
     rowsReq: ApiV2RequestField[];
     annotations: ApiV2RequestField[];
-    ChartEditor: IChartEditor;
+    params: StringParams;
     totals?: ApiV2RequestPivotTotals;
 };
 
@@ -44,7 +44,7 @@ export type GetAnnotationsArgs = {
 
 export type GetStructureWithSortingFromFieldArgs = {
     field: ApiV2RequestField;
-    ChartEditor: IChartEditor;
+    params: StringParams;
     columnsReq: ApiV2RequestField[];
     rowsReq: ApiV2RequestField[];
     measuresReq: ApiV2RequestField[];

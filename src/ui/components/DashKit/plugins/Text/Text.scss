@@ -1,13 +1,30 @@
 .dashkit-plugin-text-container {
+    $class: &;
+
     height: 100%;
 
     &__content-wrap {
         overflow: auto;
         height: 100%;
         padding-right: 5px;
+
+        #{$class}_with-color & {
+            padding: 0;
+        }
     }
 
-    .dashkit-grid-item__item_editMode & {
-        background-color: var(--g-color-base-float);
+    &_with-color .dashkit-plugin-text {
+        padding: 0 10px;
+
+        > .yfm > {
+            ol:first-child,
+            ul:first-child,
+            table:first-child,
+            blockquote:first-child {
+                // Currently markdown in common has margin-top: 0 !important reset for :first-child
+                /* stylelint-disable-next-line declaration-no-important */
+                margin-top: 5px !important;
+            }
+        }
     }
 }

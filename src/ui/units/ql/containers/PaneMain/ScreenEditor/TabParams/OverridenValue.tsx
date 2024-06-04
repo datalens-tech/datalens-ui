@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {QLParamInterval, QLParamType} from '../../../../../../../shared';
+import type {QLParamInterval, QLParamType} from '../../../../../../../shared';
 
 import {resolveAndFormatDate, valueIsValidIntervalValue} from './utils';
 

@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import {clickDropDownOption, cssSlct, slct, waitForCondition} from '../../utils';
 import {COMMON_SELECTORS} from '../../utils/constants';
 import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
-import {DashRevisions} from '../../../src/shared';
+import {DashRevisions, DialogConfirmQA} from '../../../src/shared';
 
 const REVISIONS_LOAD_TIMEOUT = 2000;
 
@@ -73,9 +73,11 @@ export default class Revisions {
     async makeRevisionActual() {
         await this.page.click(slct('action-make-actual'));
 
-        await this.page.waitForSelector('.dl-dialog-confirm');
+        await this.page.waitForSelector(slct(DialogConfirmQA.Dialog));
 
-        await this.page.click(`.dl-dialog-confirm ${slct('dialog-confirm-apply-button')}`);
+        await this.page.click(
+            `${slct(DialogConfirmQA.Dialog)} ${slct(DialogConfirmQA.ApplyButton)}`,
+        );
     }
 
     async validateRevisions(expectedNumber: number) {

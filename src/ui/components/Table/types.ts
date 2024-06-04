@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {RowData, SortingFnOption} from '@tanstack/react-table';
 
@@ -31,6 +31,7 @@ export type THead = {
     enableSorting?: boolean;
     sortingFn?: SortingFnOption<TData>;
     enableRowGrouping?: boolean;
+    pinned?: boolean;
     width?: string | number;
     cell?: RenderCellFn<CellData>;
     columns?: THead[];
@@ -59,4 +60,12 @@ export type TableProps = {
     qa?: string;
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
+};
+
+export type TableDimensions = {
+    head: {width: number; top: number; left: number}[][];
+    height: number;
+    minWidth?: number;
+    prevWidth?: number;
+    width?: number;
 };

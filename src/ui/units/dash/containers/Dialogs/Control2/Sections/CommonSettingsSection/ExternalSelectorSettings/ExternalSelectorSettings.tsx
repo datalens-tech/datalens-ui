@@ -5,13 +5,15 @@ import {Checkbox, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import update, {Context, CustomCommands, Spec} from 'immutability-helper';
+import type {CustomCommands, Spec} from 'immutability-helper';
+import update, {Context} from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA, StringParams} from 'shared';
-import NavigationInput from 'units/dash/components/NavigationInput/NavigationInput';
-import {ENTRY_TYPE} from 'units/dash/modules/constants';
+import type {StringParams} from 'shared';
+import {ControlQA} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+
+import {EntrySelector} from '../EntrySelector/EntrySelector';
 
 import './ExternalSelectorSettings.scss';
 
@@ -90,17 +92,11 @@ const ExternalSelectorSettings = () => {
                 </FieldWrapper>
             </FormRow>
 
-            <FormRow label={i18n('dash.control-dialog.edit', 'field_source')}>
-                <div className={b('navigation-container')}>
-                    <NavigationInput
-                        entryId={chartId}
-                        onChange={handleChartIdChange}
-                        includeClickableType={ENTRY_TYPE.CONTROL_NODE}
-                        linkMixin={b('link')}
-                        navigationMixin={b('navigation')}
-                    />
-                </div>
-            </FormRow>
+            <EntrySelector
+                label={i18n('dash.control-dialog.edit', 'field_source')}
+                entryId={chartId}
+                onChange={handleChartIdChange}
+            />
 
             <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>
                 <Checkbox

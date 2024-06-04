@@ -1,6 +1,6 @@
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {ChartsEngine} from '..';
+import type {ChartsEngine} from '..';
 import {DataFetcher} from '../components/processor/data-fetcher';
 
 export const configController = (chartsEngine: ChartsEngine) => {

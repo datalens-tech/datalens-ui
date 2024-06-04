@@ -1,17 +1,18 @@
-import {FilterBody} from '../charts';
-import {ServerField} from '../config/wizard';
-import {DATASET_FIELD_TYPES, DatasetField, DatasetFieldType} from '../dataset';
+import type {FilterBody} from '../charts';
+import type {ServerField} from '../config/wizard';
+import type {DatasetField, DatasetFieldType} from '../dataset';
+import {DATASET_FIELD_TYPES} from '../dataset';
 
-import {TableFieldBackgroundSettings} from './background-settings';
-import {TableBarsSettings} from './bars';
-import {ColumnSettings} from './column';
-import {
+import type {TableFieldBackgroundSettings} from './background-settings';
+import type {TableBarsSettings} from './bars';
+import type {ColumnSettings} from './column';
+import type {
     CommonNumberFormattingOptions,
     FloatNumberFormattingOptions,
     IntegerNumberFormattingOptions,
 } from './formatting';
-import {TableFieldDisplayMode} from './misc';
-import {TableSubTotalsSettings} from './sub-totals';
+import type {TableFieldDisplayMode} from './misc';
+import type {TableSubTotalsSettings} from './sub-totals';
 
 export interface WizardDatasetField extends DatasetField {
     datasetName: string;
@@ -44,7 +45,13 @@ export interface WizardDatasetField extends DatasetField {
     backgroundSettings?: TableFieldBackgroundSettings;
     distincts?: string[];
     displayMode?: TableFieldDisplayMode;
+    hintSettings?: HintSettings;
 }
+
+export type HintSettings = {
+    enabled?: boolean;
+    text?: string;
+};
 
 export interface FilterField extends WizardDatasetField {
     filter: FilterBody;

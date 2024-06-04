@@ -1,17 +1,19 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import {
+import type {
     ExtendedSeriesLineOptions,
-    GradientType,
     RGBColor,
     RGBGradient,
     TableCellsRow,
+} from '../../../../../../shared';
+import {
+    GradientType,
     getRangeDelta,
     getRgbColorValue,
     getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
-import {ChartColorsConfig} from '../js/helpers/colors';
+import type {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
 

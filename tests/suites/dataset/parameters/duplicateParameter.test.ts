@@ -26,18 +26,16 @@ datalensTest.describe('Datasets - Parameter duplication', () => {
 
         await datasetPage.datasetTabSection.duplicateRow(INITIAL_ROW_INDEX);
 
-        const initialRow = await datasetPage.datasetTabSection.getRowLocatorByIndex(
-            INITIAL_ROW_INDEX,
-        );
+        const initialRow =
+            await datasetPage.datasetTabSection.getRowLocatorByIndex(INITIAL_ROW_INDEX);
         const parameterValues = await initialRow.innerText();
 
         const [initialName, initialType, initialValue] = parameterValues.split('\n');
 
         const expectedDuplicateName = `${initialName} (1)`;
 
-        const duplicatedRow = await datasetPage.datasetTabSection.getRowLocatorByIndex(
-            DUPLICATE_ROW_INDEX,
-        );
+        const duplicatedRow =
+            await datasetPage.datasetTabSection.getRowLocatorByIndex(DUPLICATE_ROW_INDEX);
 
         const duplicateParameterValues = await duplicatedRow.innerText();
 

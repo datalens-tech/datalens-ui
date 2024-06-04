@@ -7,28 +7,31 @@ import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
 import _pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {
+import type {
     CommonSharedExtraSettings,
     Dataset,
-    Feature,
     GraphShared,
-    NavigatorLinesMode,
     NavigatorPeriod,
     NavigatorSettings,
     Period,
-    PlaceholderId,
     PlaceholderSettings,
     QLChartType,
     Shared,
+} from 'shared';
+import {
+    Feature,
+    NavigatorLinesMode,
+    PlaceholderId,
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isD3Visualization,
     isDateField,
     isTreeField,
 } from 'shared';
-import {DatalensGlobalState, Utils} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {Utils} from 'ui';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
-import {WidgetData} from 'units/wizard/actions/widget';
+import type {WidgetData} from 'units/wizard/actions/widget';
 import {selectHighchartsWidget, selectIsLoading} from 'units/wizard/selectors/preview';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
@@ -110,6 +113,7 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.SCATTER_D3,
         VISUALIZATION_IDS.PIE_D3,
         VISUALIZATION_IDS.BAR_X_D3,
+        WizardVisualizationId.DonutD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -171,7 +175,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const isFlatTable = visualization.id === 'flatTable';
         const isPivotTable = visualization.id === 'pivotTable';
-        const isDonut = visualization.id === 'donut';
+        const isDonut = [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3].includes(
+            visualization.id as WizardVisualizationId,
+        );
 
         if (isFlatTable) {
             const placeholderWithGrouppingSettings = visualization.placeholders.find(
@@ -667,6 +673,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const shouldRenderTotal = [
             WizardVisualizationId.FlatTable,
             WizardVisualizationId.Donut,
+            WizardVisualizationId.DonutD3,
         ].includes(visualizationId);
 
         if (!shouldRenderTotal || qlMode) {

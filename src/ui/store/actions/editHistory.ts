@@ -1,12 +1,12 @@
-import {cloneDeep} from 'lodash';
-import {Dispatch} from 'redux';
+import type {Dispatch} from 'redux';
 import {batch} from 'react-redux';
 
 import type {DatalensGlobalState} from '../../';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
 
-import {createJDP, CreateJDPOptions} from '../utils/jdp';
+import type {CreateJDPOptions} from '../utils/jdp';
+import {createJDP} from '../utils/jdp';
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');
@@ -161,7 +161,7 @@ export function goBack({unitId}: {unitId: string}) {
         const jdp = createJDP(unit.options);
 
         // Unapply last diff
-        const targetState = jdp.unpatch(cloneDeep(pointState), targetDiff);
+        const targetState = jdp.unpatch(pointState, targetDiff);
 
         batch(() => {
             dispatch(
@@ -200,7 +200,7 @@ export function goForward({unitId}: {unitId: string}) {
         const jdp = createJDP(unit.options);
 
         // Apply next diff
-        const targetState = jdp.patch(cloneDeep(pointState), targetDiff);
+        const targetState = jdp.patch(pointState, targetDiff);
 
         batch(() => {
             dispatch(

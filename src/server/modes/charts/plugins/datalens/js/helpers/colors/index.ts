@@ -1,28 +1,27 @@
+import type {ColorPalette, Palette, ServerColorsConfig} from '../../../../../../../../shared';
 import {
-    ColorPalette,
     GradientType,
-    ServerColorsConfig,
     TWO_POINT_DEFAULT_ID,
     selectAvailableGradientsColors,
 } from '../../../../../../../../shared';
 import {selectServerPalette} from '../../../../../../../constants';
-
-export interface ChartColorsConfig extends ServerColorsConfig {
-    colors: string[];
-    gradientColors: string[];
-    loadedColorPalettes: Record<string, ColorPalette>;
-}
+import type {ChartColorsConfig} from '../../../types';
 
 type GetChartColorsArgs = {
     colorsConfig?: ServerColorsConfig;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
 };
 
 export const getChartColorsConfig = ({
     colorsConfig = {},
     loadedColorPalettes,
+    availablePalettes,
 }: GetChartColorsArgs): ChartColorsConfig => {
-    const fallbackColors = selectServerPalette(colorsConfig.palette);
+    const fallbackColors = selectServerPalette({
+        palette: colorsConfig.palette,
+        availablePalettes,
+    });
 
     const fallbackGradientColors = selectAvailableGradientsColors(
         (colorsConfig.gradientMode as GradientType | undefined) || GradientType.TWO_POINT,
@@ -46,6 +45,7 @@ export const getChartColorsConfig = ({
         colors,
         gradientColors,
         loadedColorPalettes,
+        availablePalettes,
     };
 
     return chartColors;

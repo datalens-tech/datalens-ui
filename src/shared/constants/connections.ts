@@ -35,6 +35,8 @@ export enum ConnectorType {
     Oracle = 'oracle',
     Postgres = 'postgres',
     Snowflake = 'snowflake',
+    UsageAnalyticsDetailed = 'usage_analytics_detailed',
+    UsageAnalyticsLight = 'usage_analytics_light',
     UsageTrackingYT = 'usage_tracking_ya_team',
     Ydb = 'ydb',
     Yt = 'yt',
@@ -103,4 +105,4 @@ export const MDB_AVAILABLE_BASES = [
 ] as const;
 
 // This type contains here (in constants file) because of possible circular dependencies
-export type MdbAvailableDatabase = typeof MDB_AVAILABLE_BASES[number];
+export type MdbAvailableDatabase = (typeof MDB_AVAILABLE_BASES)[number];

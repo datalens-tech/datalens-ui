@@ -1,7 +1,9 @@
 import {DL} from 'constants/common';
 
-import axios, {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
-import Highcharts, {Series as HighchartSeries, SeriesOptionsType} from 'highcharts';
+import type {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
+import axios from 'axios';
+import type {Series as HighchartSeries, SeriesOptionsType} from 'highcharts';
+import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -9,6 +11,7 @@ import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
+import type {StringParams, WizardType} from 'shared';
 import {
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
@@ -18,13 +21,11 @@ import {
     ErrorCode,
     Feature,
     MAX_SEGMENTS_NUMBER,
-    StringParams,
-    WizardType,
 } from 'shared';
 
-import {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
+import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
-import {WidgetType} from '../../../../../units/dash/modules/constants';
+import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import Utils from '../../../../../utils';
 import {CHARTKIT_WIDGET_TYPE} from '../../../ChartKit/components/Widget/Widget';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
@@ -32,18 +33,24 @@ import type {
     ChartKitLoadSuccess,
     ChartKitProps,
 } from '../../../components/ChartKitBase/ChartKitBase';
-import {ControlsOnlyWidget, DataProvider, GraphWidget, TableWidget, Widget} from '../../../types';
+import type {
+    ControlsOnlyWidget,
+    DataProvider,
+    GraphWidget,
+    TableWidget,
+    Widget,
+} from '../../../types';
 import axiosInstance, {initConcurrencyManager} from '../../axios/axios';
 import {REQUEST_ID_HEADER, RPC_AUTHORIZATION, TRACE_ID_HEADER, URL_OPTIONS} from '../../constants/constants';
+import type {ExtraParams} from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import DatalensChartkitCustomError, {
     ERROR_CODE,
-    ExtraParams,
 } from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import URI from '../../uri/uri';
 
 import {getGraph} from './get-graph/get-graph';
 import processNode from './node';
-import {
+import type {
     ChartsData,
     ChartsProps,
     ChartsStats,
@@ -594,7 +601,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
 
             const processed = isResponseSuccessNode(loaded)
-                ? processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
+                ? await processNode<ResponseSuccessNode, Widget>(loaded, this.settings.noJsonFn)
                 : // @ts-ignore Types from the js file are incorrect
                   processWizard(loaded);
 

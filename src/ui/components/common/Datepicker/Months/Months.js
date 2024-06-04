@@ -134,6 +134,7 @@ export class Months extends React.PureComponent {
                         <div
                             key={`${cell}-${this.dateTime.year}`}
                             className={b(CELLS.MONTH, mods)}
+                            // eslint-disable-next-line react/no-unknown-property
                             range={`${startMonth.toISODate()}/${endMonth.toISODate()}`}
                             {...(!disabled && {
                                 onClick: this.getOnRangeDateClick({

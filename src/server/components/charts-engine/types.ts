@@ -1,11 +1,12 @@
-import {OutgoingHttpHeaders} from 'http';
+import type {OutgoingHttpHeaders} from 'http';
 
-import {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
-import {HttpMethod} from '@gravity-ui/expresskit/dist/types';
+import type {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
+import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
 
-import {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
+import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
+import type {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
 
-import {Runner} from './runners';
+import type {Runner} from './runners';
 
 export type TelemetryCallbacks = {
     onConfigFetched?: ({
@@ -22,6 +23,7 @@ export type TelemetryCallbacks = {
         traceId?: string;
         latency?: number;
         tenantId?: string;
+        userId?: string;
     }) => void;
     onConfigFetchingFailed?: (
         error: Error,
@@ -37,6 +39,7 @@ export type TelemetryCallbacks = {
             statusCode: number;
             requestId?: string;
             traceId?: string;
+            userId?: string;
             tenantId?: string;
             latency?: number;
         },
@@ -49,12 +52,14 @@ export type TelemetryCallbacks = {
         tenantId,
         statusCode,
         latency,
+        userId,
     }: {
         sourceName: string;
         url: string;
         requestId: string;
         traceId?: string;
         tenantId?: string;
+        userId?: string;
         statusCode: number;
         latency: number;
     }) => void;
@@ -66,6 +71,7 @@ export type TelemetryCallbacks = {
             requestId,
             traceId,
             tenantId,
+            userId,
             statusCode,
             latency,
         }: {
@@ -74,6 +80,7 @@ export type TelemetryCallbacks = {
             requestId: string;
             traceId?: string;
             tenantId?: string;
+            userId?: string;
             statusCode: number;
             latency: number;
         },
@@ -87,7 +94,19 @@ export type TelemetryCallbacks = {
         requestId: string;
         latency: number;
     }) => void;
-    onTabsExecuted?: ({result, entryId}: {result: unknown; entryId: string}) => void;
+    onTabsExecuted?: ({
+        result,
+        entryId,
+    }: {
+        result: {
+            config: unknown;
+            highchartsConfig: unknown;
+            sources: unknown;
+            processedData: unknown;
+            sourceData: unknown;
+        };
+        entryId: string;
+    }) => void;
 };
 
 export type Source<T = string | Record<string, string>> = {
@@ -100,7 +119,8 @@ export type Source<T = string | Record<string, string>> = {
     middlewareUrl?: MiddlewareUrl;
     data?: T;
     hideInInspector?: boolean;
-    ui: boolean;
+    ui?: boolean;
+    sourceArgs?: SourcesArgs;
 };
 
 export type SourceConfig = {

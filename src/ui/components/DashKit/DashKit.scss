@@ -1,4 +1,5 @@
 @import '~@gravity-ui/uikit/styles/mixins';
+@import '../../styles/mixins';
 // TODO: think about how to make it more clear (moved these from the dashkit)
 
 .dashkit_theme_datalens {
@@ -9,10 +10,23 @@
     }
 
     .dashkit-grid-item {
-        overflow: hidden;
+        z-index: 1;
+        // Transition added for case when element is unfocused but
+        // there could be tooltip with hide animation
+        transition: z-index 0.5s;
+
+        &.dashkit-grid-item_is-focused {
+            z-index: 2;
+            transition: none;
+        }
+
+        &.react-draggable-dragging {
+            z-index: 3;
+            transition: none;
+        }
 
         div.yfm {
-            @include text-body-2();
+            @include yfm-text-style();
         }
     }
 }

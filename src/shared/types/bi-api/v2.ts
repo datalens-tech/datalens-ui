@@ -1,6 +1,6 @@
-import {ApiV2Annotations} from '../../constants';
-import {DatasetUpdate, ParameterDefaultValue} from '../dataset';
-import {Update} from '../wizard';
+import type {ApiV2Annotations} from '../../constants';
+import type {DatasetUpdate, ParameterDefaultValue} from '../dataset';
+import type {Update} from '../wizard';
 
 export type ApiV2Request = {
     url: string;

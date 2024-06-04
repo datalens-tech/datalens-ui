@@ -1,10 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
-import {
-    ExtendedSeriesLineOptions,
-    ServerShapesConfig,
-    getServerShapesOrder,
-} from '../../../../../../shared';
+import type {ExtendedSeriesLineOptions, ServerShapesConfig} from '../../../../../../shared';
+import {getServerShapesOrder} from '../../../../../../shared';
 
 const SHAPES_IN_ORDER = getServerShapesOrder();
 

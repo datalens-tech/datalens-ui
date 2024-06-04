@@ -1,17 +1,19 @@
 import React from 'react';
 
-import {TextInput, TextInputProps} from '@gravity-ui/uikit';
+import type {TextInputProps} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import type {RenameEntryResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
-import {DataLensApiError} from '../../../typings';
+import type {DataLensApiError} from '../../../typings';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogRenameEntryProps extends EntryDialogProps {
     entryId: string;

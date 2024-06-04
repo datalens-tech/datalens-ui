@@ -1,4 +1,4 @@
-import {IconData} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import type {Permissions} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 

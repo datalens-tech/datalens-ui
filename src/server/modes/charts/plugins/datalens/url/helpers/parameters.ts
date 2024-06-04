@@ -1,11 +1,11 @@
-import {
+import type {
     DatasetField,
     ParameterDefaultValue,
     ServerDatasetField,
     ServerField,
 } from '../../../../../../../shared';
-import {ApiV2Parameter} from '../../../../../../../shared/types/bi-api/v2';
-import {PayloadParameter} from '../../types';
+import type {ApiV2Parameter} from '../../../../../../../shared/types/bi-api/v2';
+import type {PayloadParameter} from '../../types';
 
 import {isParamValid, isRawParamValid} from './misc';
 
@@ -26,9 +26,12 @@ export const prepareParameterForPayload = (
         .map(mapItemToPayloadParameter);
 };
 export const getParametersMap = (parameters: PayloadParameter[]) => {
-    return parameters.reduce((acc, curr) => {
-        return {...acc, [curr.id]: true};
-    }, {} as Record<string, boolean>);
+    return parameters.reduce(
+        (acc, curr) => {
+            return {...acc, [curr.id]: true};
+        },
+        {} as Record<string, boolean>,
+    );
 };
 export const mapParameterToRequestFormat = (parameter: PayloadParameter): ApiV2Parameter => {
     return {

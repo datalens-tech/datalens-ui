@@ -1,12 +1,14 @@
 import React from 'react';
 
-import {RadioGroup as CommonRadioGroup, RadioGroupProps} from '@gravity-ui/uikit';
+import type {RadioGroupProps} from '@gravity-ui/uikit';
+import {RadioGroup as CommonRadioGroup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {RadioGroupItem, RadioGroupItemOption} from 'shared/schema/types';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
 import {MarkdownItem} from '../';
 import {changeForm, changeInnerForm} from '../../../../store';

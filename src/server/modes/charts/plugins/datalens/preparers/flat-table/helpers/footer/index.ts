@@ -1,10 +1,5 @@
-import {
-    BarTableCell,
-    ServerField,
-    TableCommonCell,
-    isDateField,
-    isMarkupField,
-} from '../../../../../../../../../shared';
+import type {BarTableCell, ServerField, TableCommonCell} from '../../../../../../../../../shared';
+import {isDateField, isMarkupField} from '../../../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../../../constants/misc';
 import {
     findIndexInOrder,
@@ -14,7 +9,7 @@ import {
 } from '../../../../utils/misc-helpers';
 import {getBarSettingsValue} from '../../../helpers/barsSettings';
 
-import {GetFooterArgs, GetFooterCellWithStylesArgs, PrepareFooterValueArgs} from './types';
+import type {GetFooterArgs, GetFooterCellWithStylesArgs, PrepareFooterValueArgs} from './types';
 
 export const getTotalTitle = (
     value: string | number | undefined,

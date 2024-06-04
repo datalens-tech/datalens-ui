@@ -1,7 +1,7 @@
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 
 import {DialogS3Source} from './DialogS3Source';
-import {DialogS3SourcesProps} from './types';
+import type {DialogS3SourcesProps} from './types';
 
 export const DIALOG_CONN_S3_SOURCES = Symbol('DIALOG_CONN_S3_SOURCES');
 

@@ -1,11 +1,11 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {Field} from 'shared';
+import type {Field} from 'shared';
 
 import DNDContainer from '../../../../../../components/DND/DNDContainer';
 import {ITEM_TYPES} from '../../../../../../constants';
-import {CommonContainerProps} from '../../FieldsContainer';
+import type {CommonContainerProps} from '../../FieldsContainer';
 
 import './SectionContainer.scss';
 

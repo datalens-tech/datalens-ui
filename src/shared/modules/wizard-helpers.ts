@@ -1,3 +1,4 @@
+import type {RGBColor} from '../constants';
 import {
     DEFAULT_FLOAT_NUMBERS,
     DEFAULT_FORMATTING,
@@ -6,11 +7,10 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     PseudoFieldTitle,
-    RGBColor,
     VISUALIZATIONS_WITH_SEVERAL_FIELDS_X_PLACEHOLDER,
     WizardVisualizationId,
 } from '../constants';
-import {
+import type {
     CommonNumberFormattingOptions,
     Dataset,
     Field,
@@ -19,10 +19,8 @@ import {
     ServerSort,
     Update,
     V3Label,
-    isDateField,
-    isFloatField,
-    isNumberField,
 } from '../types';
+import {isDateField, isFloatField, isNumberField} from '../types';
 
 import {isMeasureField} from './helpers';
 
@@ -43,7 +41,7 @@ export const createMeasureNames = () =>
         type: 'PSEUDO',
         className: 'item pseudo-item dimension-item',
         data_type: 'string',
-    } as Field);
+    }) as Field;
 
 export const createMeasureValues = () =>
     ({
@@ -51,7 +49,7 @@ export const createMeasureValues = () =>
         type: 'PSEUDO',
         className: 'item pseudo-item measure-item',
         data_type: 'float',
-    } as Field);
+    }) as Field;
 
 export const getDefaultFormatting = (
     field: Field | undefined,
@@ -124,17 +122,20 @@ export function getDeltasByColorValuesMap(
     min: number,
     range: number,
 ) {
-    return colorValues.reduce((acc, colorValue) => {
-        const delta = getRangeDelta(colorValue, min, range);
-        if (typeof colorValue !== 'number' || typeof delta !== 'number') {
-            return acc;
-        }
+    return colorValues.reduce(
+        (acc, colorValue) => {
+            const delta = getRangeDelta(colorValue, min, range);
+            if (typeof colorValue !== 'number' || typeof delta !== 'number') {
+                return acc;
+            }
 
-        return {
-            ...acc,
-            [colorValue]: delta,
-        };
-    }, {} as Record<number, number>);
+            return {
+                ...acc,
+                [colorValue]: delta,
+            };
+        },
+        {} as Record<number, number>,
+    );
 }
 
 export function getRgbColorValue(

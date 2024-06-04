@@ -1,12 +1,12 @@
 import keyBy from 'lodash/keyBy';
-import {Required} from 'utility-types';
+import type {Required} from 'utility-types';
 
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
-import {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
+import type {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
 import {escapeStringForLike, filterDatasetsIdsForCheck} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
-import {
+import type {
     DeleteEntryArgs,
     DeleteEntryResponse,
     GetEntriesInFolderArgs,
@@ -119,7 +119,11 @@ export const entriesActions = {
             try {
                 await typedApi.us.getEntryMeta({entryId});
                 return {code: 'OK'};
-            } catch ({error}) {
+            } catch (errorWrapper) {
+                let error;
+                if (errorWrapper instanceof Object && 'error' in errorWrapper) {
+                    error = errorWrapper.error;
+                }
                 if (typeof error === 'object' && error !== null && 'status' in error) {
                     switch (error.status) {
                         case 403:

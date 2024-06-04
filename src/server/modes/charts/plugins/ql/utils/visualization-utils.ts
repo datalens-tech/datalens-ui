@@ -1,11 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 
-import {
-    Field,
-    PlaceholderId,
-    ServerVisualization,
-    WizardVisualizationId,
-} from '../../../../../../shared';
+import type {Field, ServerVisualization} from '../../../../../../shared';
+import {PlaceholderId, WizardVisualizationId} from '../../../../../../shared';
 import type {QlConfigResultEntryMetadataDataColumnOrGroup} from '../../../../../../shared/types/config/ql';
 
 import {
@@ -104,6 +100,7 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.Pie,
             WizardVisualizationId.Donut,
             WizardVisualizationId.PieD3,
+            WizardVisualizationId.DonutD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
         // Checking if order is set (from older versions of ql charts)

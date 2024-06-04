@@ -1,23 +1,23 @@
-import React, {Component} from 'react';
+import type React from 'react';
+import {Component} from 'react';
 
 import flow from 'lodash/flow';
-import {
+import type {
     ConnectDragPreview,
     ConnectDragSource,
     ConnectDropTarget,
     ConnectableElement,
-    DragSource,
     DragSourceConnector,
     DragSourceMonitor,
-    DropTarget,
     DropTargetMonitor,
 } from 'react-dnd';
+import {DragSource, DropTarget} from 'react-dnd';
 import {findDOMNode} from 'react-dom';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Field} from 'shared';
+import type {Field} from 'shared';
 
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 import {PlaceholderAction, handleDnDItemUpdate} from '../../actions/dndItems';
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -138,8 +138,8 @@ const itemSource = {
             typeof dropPlace === 'number'
                 ? dropPlace
                 : typeof item.hoverIndex === 'number'
-                ? item.hoverIndex
-                : targetComponent.state.items.length;
+                  ? item.hoverIndex
+                  : targetComponent.state.items.length;
 
         const isSameItemAndPosition =
             dropResult.listId === item.listId &&

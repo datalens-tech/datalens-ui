@@ -114,6 +114,7 @@ export class Quarters extends React.PureComponent {
                         <div
                             key={`${cell}-${this.dateTime.year}`}
                             className={b(CELLS.QUARTER, mods)}
+                            // eslint-disable-next-line react/no-unknown-property
                             range={`${startQuarter.toISODate()}/${endQuarter.toISODate()}`}
                             {...(!disabled && {
                                 onClick: this.getOnRangeDateClick({

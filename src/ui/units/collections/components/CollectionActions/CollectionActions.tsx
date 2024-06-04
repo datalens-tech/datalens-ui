@@ -1,17 +1,12 @@
 import React from 'react';
 
-import {ArrowRight, ChevronDown, LockOpen} from '@gravity-ui/icons';
-import {
-    Button,
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuItemMixed,
-    Icon,
-    Tooltip,
-} from '@gravity-ui/uikit';
+import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
+import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 
 import {Feature} from '../../../../../shared';
 import {DL} from '../../../../constants';
@@ -37,6 +32,7 @@ export type Props = {
     onCreateWorkbookClick: () => void;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
+    onDeleteClick: () => void;
 };
 
 export const CollectionActions = React.memo<Props>(
@@ -49,6 +45,7 @@ export const CollectionActions = React.memo<Props>(
         onCreateWorkbookClick,
         onEditAccessClick,
         onMoveClick,
+        onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
         const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
@@ -63,12 +60,9 @@ export const CollectionActions = React.memo<Props>(
             ? collection.permissions?.createWorkbook
             : rootCollectionPermissions?.createWorkbookInRoot;
 
-        const addDemoWorkbookEnabled = Utils.isEnabledFeature(Feature.AddDemoWorkbook);
-
-        const showAddDemoWorkbook =
-            addDemoWorkbookEnabled && showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
+        const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
         const showAddLearningMaterialsWorkbook =
-            addDemoWorkbookEnabled && showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
+            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
 
         const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
 
@@ -134,16 +128,37 @@ export const CollectionActions = React.memo<Props>(
 
         const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
+        const dropdownActions = [];
+
+        if (collection && collection.permissions?.move) {
+            dropdownActions.push({
+                action: onMoveClick,
+                text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
+            });
+        }
+
+        const otherActions: DropdownMenuItem[] = [];
+
+        if (collection && collection.permissions?.delete) {
+            otherActions.push({
+                text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                action: onDeleteClick,
+                theme: 'danger',
+            });
+        }
+
+        if (otherActions.length > 0) {
+            dropdownActions.push([...otherActions]);
+        }
+
         return (
             <div className={b(null, className)}>
-                {collection && collection.permissions?.move && (
-                    <Tooltip content={i18n('action_move')}>
-                        <div className={b('move')}>
-                            <Button onClick={onMoveClick}>
-                                <Icon data={ArrowRight} />
-                            </Button>
-                        </div>
-                    </Tooltip>
+                {collection && Boolean(dropdownActions.length) && (
+                    <DropdownMenu
+                        defaultSwitcherProps={{view: 'normal'}}
+                        switcherWrapperClassName={b('dropdown-btn')}
+                        items={dropdownActions}
+                    />
                 )}
 
                 <CustomActionPanelCollectionActions />

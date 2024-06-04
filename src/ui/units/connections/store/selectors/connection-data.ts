@@ -1,5 +1,5 @@
-import {ConnectorType} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {ConnectorType} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 
 import {FieldKey} from '../../constants';
 

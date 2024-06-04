@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {ButtonProps, Dialog as CommonDialog} from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Dialog as CommonDialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';

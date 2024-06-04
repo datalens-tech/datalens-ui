@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {
     AddConfigItem,
@@ -7,29 +7,30 @@ import type {
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
+    SetNewItemOptions,
 } from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
-import {DatalensGlobalState, URL_QUERY, sdk} from 'index';
+import type {DatalensGlobalState} from 'index';
+import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
-import {
-    type ConnectionQueryContent,
-    type ConnectionQueryTypeOptions,
+import type {
+    ConnectionQueryContent,
+    ConnectionQueryTypeOptions,
     ConnectionQueryTypeValues,
     DATASET_FIELD_TYPES,
     DashData,
     DashSettings,
     DashTab,
     DashTabItem,
-    DashTabItemType,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
-    EntryUpdateMode,
     Operations,
     RecursivePartial,
     StringParams,
 } from 'shared';
-import {AppDispatch} from 'ui/store';
+import {DashTabItemType, EntryUpdateMode} from 'shared';
+import type {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -37,16 +38,21 @@ import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
-import {EntryGlobalState, RevisionsMode} from '../../../../store/typings/entryContent';
+import type {EntryGlobalState} from '../../../../store/typings/entryContent';
+import {RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
-import {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
+import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
-import {selectIsControlSourceTypeHasChanged} from '../selectors/dashTypedSelectors';
+import {
+    selectDashData,
+    selectDashEntry,
+    selectIsControlSourceTypeHasChanged,
+} from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
 import {
@@ -54,11 +60,15 @@ import {
     getControlValidation,
     getItemDataSource,
 } from './controls/helpers';
-import {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
+import type {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
-import {getBeforeCloseDialogItemAction, getExtendedItemDataAction} from './helpers';
+import {
+    getBeforeCloseDialogItemAction,
+    getExtendedItemDataAction,
+    migrateDataSettings,
+} from './helpers';
 
-import {DashDispatch} from './index';
+import type {DashDispatch} from './index';
 
 type GetState = () => DatalensGlobalState;
 
@@ -354,10 +364,21 @@ export type SetItemDataArgs = {
     type?: string;
 };
 
-export const setItemData = (data: SetItemDataArgs) => ({
-    type: actionTypes.SET_ITEM_DATA,
-    payload: data,
-});
+export type SetItemDataAction = {
+    type: typeof actionTypes.SET_ITEM_DATA;
+    payload: SetItemDataArgs;
+};
+
+export const setItemData = (data: SetItemDataArgs) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        dispatch({
+            type: actionTypes.SET_ITEM_DATA,
+            payload: data,
+        });
+
+        getState().dash.dragOperationProps?.commit();
+    };
+};
 
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
 
@@ -399,6 +420,10 @@ export type SelectorDialogState = {
     width: string;
     id?: string;
     namespace?: string;
+    showHint?: boolean;
+    hint?: string;
+    // unique id for manipulating selectors in the creation phase
+    draftId?: string;
 };
 
 export type AcceptableValue = {
@@ -738,6 +763,33 @@ export function saveDashAsDraft(setForce?: boolean) {
     };
 }
 
+export type CopyDashArgs = {
+    key?: string;
+    workbookId?: string;
+    name?: string;
+    dataProcess?: (state: DatalensGlobalState) => DashData;
+};
+
+export function copyDash({key, workbookId, name, dataProcess}: CopyDashArgs) {
+    return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const data = migrateDataSettings(
+            dataProcess ? dataProcess(state) : selectDashEntry(state).data,
+        );
+
+        return sdk.charts.createDash({
+            data: {
+                data,
+                mode: EntryUpdateMode.Publish,
+                withParams: true,
+                key,
+                workbookId,
+                name,
+            },
+        });
+    };
+}
+
 export function purgeData(data: DashData) {
     const allTabsIds = new Set();
     const allItemsIds = new Set();
@@ -809,37 +861,20 @@ export function purgeData(data: DashData) {
     };
 }
 
-export type SaveAsNewDashArgs = {
-    key?: string;
-    workbookId?: string;
-    name?: string;
-};
+export type SaveAsNewDashArgs = Omit<CopyDashArgs, 'dataProcess'>;
 
 export function saveDashAsNewDash({key, workbookId, name}: SaveAsNewDashArgs) {
-    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        const {dash} = getState();
-
-        try {
-            const res = await sdk.charts.createDash({
-                data: {
-                    data: purgeData(dash.data),
-                    key,
-                    mode: EntryUpdateMode.Publish,
-                    withParams: true,
-                    workbookId,
-                    name,
-                },
-            });
-            dispatch(setDashViewMode({mode: Mode.View}));
-            return res;
-        } catch (error) {
-            saveFailedCallback({
-                error,
-                dispatch,
-                getState,
-            });
-        }
-        return null;
+    return async (dispatch: DashDispatch) => {
+        const res = await dispatch(
+            copyDash({
+                key,
+                workbookId,
+                name,
+                dataProcess: (state) => purgeData(selectDashData(state)),
+            }),
+        );
+        dispatch(setDashViewMode({mode: Mode.View}));
+        return res;
     };
 }
 
@@ -861,16 +896,20 @@ export const updateCurrentTabData = (data: {
     payload: data,
 });
 
-export const setSettings = (settings: DashSettings) => ({
-    type: actionTypes.SET_SETTINGS,
+export const SET_SETTINGS = Symbol('dash/SET_SETTINGS');
+export type SetSettingsAction = {
+    type: typeof SET_SETTINGS;
+    payload: DashSettings;
+};
+
+export const setSettings = (settings: DashSettings): SetSettingsAction => ({
+    type: SET_SETTINGS,
     payload: settings,
 });
 
-export const setCopiedItemData = (data: AddConfigItem) => ({
+export const setCopiedItemData = (payload: {item: AddConfigItem; options: SetNewItemOptions}) => ({
     type: actionTypes.SET_COPIED_ITEM_DATA,
-    payload: {
-        data,
-    },
+    payload,
 });
 
 export const setDefaultViewState = () => {
@@ -888,6 +927,18 @@ export type SetDashKeyAction = {
 export const renameDash = (key: string): SetDashKeyAction => ({
     type: SET_DASH_KEY,
     payload: key,
+});
+
+export const SET_DASH_OPENED_DESC = Symbol('dash/SET_DASH_OPENED_DESC');
+export type SetDashOpenedDescKeyAction = {
+    type: typeof SET_DASH_OPENED_DESC;
+    payload: boolean;
+};
+export const updateDashOpenedDesc = (
+    payload: SetDashOpenedDescKeyAction['payload'],
+): SetDashOpenedDescKeyAction => ({
+    type: SET_DASH_OPENED_DESC,
+    payload,
 });
 
 export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');
@@ -935,3 +986,12 @@ export const closeControl2Dialog = () => {
         dispatch(closeDashDialog());
     };
 };
+
+export function updateDeprecatedDashConfig() {
+    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const data = selectDashData(getState());
+        const migratedData = migrateDataSettings(data);
+
+        dispatch(setSettings(migratedData.settings));
+    };
+}

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {ListItemData} from '@gravity-ui/uikit';
+import type {ListItemData} from '@gravity-ui/uikit';
 
-import {ListItemProps} from '../../../../../store';
+import type {ListItemProps} from '../../../../../store';
 
 import {FileItem} from './FileItem';
 import {SourceItem} from './SourceItem';

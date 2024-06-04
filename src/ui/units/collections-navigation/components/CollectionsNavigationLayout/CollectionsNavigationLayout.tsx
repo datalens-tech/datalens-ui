@@ -4,10 +4,13 @@ import {Button} from '@gravity-ui/uikit';
 import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useSelector} from 'react-redux';
 
-import {selectAsideHeaderData} from '../../../../store/selectors/asideHeader';
-import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
+import {Feature} from 'shared';
+import {registry} from 'ui/registry';
+import {isMobileView} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
+
+import type {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
 import {AuthContext} from 'ui/datalens/index';
@@ -51,8 +54,14 @@ export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
         const auth = React.useContext(AuthContext);
-        const asideHeaderData = useSelector(selectAsideHeaderData);
-        const asideHeaderSize = asideHeaderData.size || 0;
+
+        const {Footer} = registry.common.components.getAll();
+
+        const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
+        const showTitleRightBlock = !isMobileView && layout.titleRightBlock;
+        const showDescription = !isMobileView && layout.description;
+
+        const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
 
         let userName = "";
         if(auth.token) {
@@ -61,59 +70,63 @@ export const CollectionsNavigationLayout = React.memo<Props>(
         }
         
         return (
-            <div className={b()}>
-                {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) && (
-                    <ActionBar>
-                        <ActionBar.Section type="primary">
-                            <ActionBar.Group pull="left">
-                                {layout.actionsPanelLeftBlock && (
-                                    <ActionBar.Item>
-                                        {layout.actionsPanelLeftBlock.isLoading ? (
-                                            <Skeleton
-                                                style={
-                                                    skeletonsSettings.actionsPanelLeftBlock
-                                                        ? skeletonsSettings.actionsPanelLeftBlock
-                                                        : DEFAULT_SKELETONS_SETTINGS.actionsPanelLeftBlock
-                                                }
-                                            />
-                                        ) : (
-                                            layout.actionsPanelLeftBlock.content
-                                        )}
-                                    </ActionBar.Item>
-                                )}
-                            </ActionBar.Group>
-                            <ActionBar.Group pull="right">
-                                <ActionBar.Item>
-                                    {layout.actionsPanelRightBlock && (
-                                        <div>
-                                            {layout.actionsPanelRightBlock.isLoading ? (
+            <div className={b({mobile: isMobileView})}>
+                {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) &&
+                    !isMobileView && (
+                        <ActionBar>
+                            <ActionBar.Section type="primary">
+                                <ActionBar.Group pull="left">
+                                    {layout.actionsPanelLeftBlock && (
+                                        <ActionBar.Item>
+                                            {layout.actionsPanelLeftBlock.isLoading ? (
                                                 <Skeleton
                                                     style={
-                                                        skeletonsSettings.actionsPanelRightBlock
-                                                            ? skeletonsSettings.actionsPanelRightBlock
-                                                            : DEFAULT_SKELETONS_SETTINGS.actionsPanelRightBlock
+                                                        skeletonsSettings.actionsPanelLeftBlock
+                                                            ? skeletonsSettings.actionsPanelLeftBlock
+                                                            : DEFAULT_SKELETONS_SETTINGS.actionsPanelLeftBlock
                                                     }
                                                 />
                                             ) : (
-                                                layout.actionsPanelRightBlock.content
+                                                layout.actionsPanelLeftBlock.content
                                             )}
-                                        </div>
+                                        </ActionBar.Item>
                                     )}
-                                </ActionBar.Item>
-                                <ActionBar.Item>{userName}</ActionBar.Item>
-                                <ActionBar.Item>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</ActionBar.Item>
-                            </ActionBar.Group>
-                        </ActionBar.Section>
-                    </ActionBar>
-                )}
+                                </ActionBar.Group>
+                                <ActionBar.Group pull="right">
+                                    <ActionBar.Item>
+                                        {layout.actionsPanelRightBlock && (
+                                            <div>
+                                                {layout.actionsPanelRightBlock.isLoading ? (
+                                                    <Skeleton
+                                                        style={
+                                                            skeletonsSettings.actionsPanelRightBlock
+                                                                ? skeletonsSettings.actionsPanelRightBlock
+                                                                : DEFAULT_SKELETONS_SETTINGS.actionsPanelRightBlock
+                                                        }
+                                                    />
+                                                ) : (
+                                                    layout.actionsPanelRightBlock.content
+                                                )}
+                                            </div>
+                                        )}
+                                    </ActionBar.Item>
+                                    <ActionBar.Item>{userName}</ActionBar.Item>
+                                    <ActionBar.Item>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</ActionBar.Item>
+                                </ActionBar.Group>
+                            </ActionBar.Section>
+                        </ActionBar>
+                    )}
 
-                <div className={b('page-wrapper')} style={{left: `${asideHeaderSize}px`}}>
+                <div className={b('page-wrapper')}>
                     <div className={b('page')}>
                         <div className={b('header')}>
                             {layout.title || layout.titleActionsBlock ? (
                                 <div className={b('header-title-wrapper')}>
+                                    {layout.titleBeforeActionsBlock?.content && (
+                                        <div>{layout.titleBeforeActionsBlock.content}</div>
+                                    )}
                                     {layout.title && (
-                                        <h1 className={b('header-title')}>
+                                        <h1 className={b('header-title')} title={title}>
                                             {layout.title.isLoading ? (
                                                 <Skeleton
                                                     style={
@@ -127,9 +140,9 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                             )}
                                         </h1>
                                     )}
-                                    {layout.titleActionsBlock && (
+                                    {showTitleActionsBlock && (
                                         <div className={b('header-title-actions-block')}>
-                                            {layout.titleActionsBlock.isLoading ? (
+                                            {layout.titleActionsBlock?.isLoading ? (
                                                 <Skeleton
                                                     style={
                                                         skeletonsSettings.titleActionsBlock
@@ -138,16 +151,16 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                                     }
                                                 />
                                             ) : (
-                                                layout.titleActionsBlock.content
+                                                layout.titleActionsBlock?.content
                                             )}
                                         </div>
                                     )}
                                 </div>
                             ) : null}
 
-                            {layout.titleRightBlock && (
+                            {showTitleRightBlock && (
                                 <div className={b('header-right-block')}>
-                                    {layout.titleRightBlock.isLoading ? (
+                                    {layout.titleRightBlock?.isLoading ? (
                                         <Skeleton
                                             style={
                                                 skeletonsSettings.titleRightBlock
@@ -156,15 +169,15 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                             }
                                         />
                                     ) : (
-                                        layout.titleRightBlock.content
+                                        layout.titleRightBlock?.content
                                     )}
                                 </div>
                             )}
                         </div>
 
-                        {layout.description && (
+                        {showDescription && (
                             <div className={b('header-description')}>
-                                {layout.description.isLoading ? (
+                                {layout.description?.isLoading ? (
                                     <Skeleton
                                         style={
                                             skeletonsSettings.description
@@ -173,13 +186,14 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                         }
                                     />
                                 ) : (
-                                    layout.description.content
+                                    layout.description?.content
                                 )}
                             </div>
                         )}
 
                         {children && <div className={b('content')}>{children}</div>}
                     </div>
+                    {Utils.isEnabledFeature(Feature.EnableFooter) && <Footer />}
                 </div>
             </div>
         );

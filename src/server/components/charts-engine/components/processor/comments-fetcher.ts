@@ -1,7 +1,8 @@
 import {stringify} from 'querystring';
 
-import {AppContext} from '@gravity-ui/nodekit';
-import axios, {AxiosRequestConfig} from 'axios';
+import type {AppContext} from '@gravity-ui/nodekit';
+import type {AxiosRequestConfig} from 'axios';
+import axios from 'axios';
 import moment from 'moment';
 
 const TEN_SECONDS = 10000;

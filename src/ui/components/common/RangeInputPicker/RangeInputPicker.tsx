@@ -4,11 +4,12 @@ import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {debounce} from 'lodash';
 import type {DebouncedFunc} from 'lodash';
-import Slider, {SliderProps, SliderRef} from 'rc-slider';
-import {MarkObj} from 'rc-slider/lib/Marks';
+import type {SliderProps, SliderRef} from 'rc-slider';
+import Slider from 'rc-slider';
+import type {MarkObj} from 'rc-slider/lib/Marks';
 
 import {LEFT_INFO_POINT_STYLE, RIGHT_INFO_POINT_STYLE} from './constants';
-import {RangeInputPickerDefaultProps, RangeInputPickerProps} from './types';
+import type {RangeInputPickerDefaultProps, RangeInputPickerProps} from './types';
 import {
     getClosestValue,
     getInfoPoints,
@@ -447,11 +448,14 @@ export class RangeInputPicker extends Component<RangeInputPickerProps, RangeInpu
 
         const points = getInfoPoints({infoPointsCount, min, max, values});
 
-        const infoItems = points.reduce((acc, point: number) => {
-            acc[point] = {label: this.renderItem(point), style: {}};
+        const infoItems = points.reduce(
+            (acc, point: number) => {
+                acc[point] = {label: this.renderItem(point), style: {}};
 
-            return acc;
-        }, {} as NonNullable<SliderProps['marks']>);
+                return acc;
+            },
+            {} as NonNullable<SliderProps['marks']>,
+        );
 
         if (infoItems[min]) {
             (infoItems[min] as MarkObj).style = LEFT_INFO_POINT_STYLE;

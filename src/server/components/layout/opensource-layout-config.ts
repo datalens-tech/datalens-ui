@@ -1,15 +1,8 @@
-import {RenderParams} from '@gravity-ui/app-layout';
+import type {RenderParams} from '@gravity-ui/app-layout';
 
-import {
-    AppEnvironment,
-    AppInstallation,
-    DLGlobalData,
-    DLUser,
-    FALLBACK_LANGUAGES,
-    Language,
-    USER_SETTINGS_KEY,
-} from '../../../shared';
-import {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
+import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../../shared';
+import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
+import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
 
 import {getChartkitLayoutSettings, getPlatform} from './utils';

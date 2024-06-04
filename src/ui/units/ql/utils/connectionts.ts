@@ -1,4 +1,4 @@
-import {QLChartType} from 'shared';
+import type {QLChartType} from 'shared';
 
 import {AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE} from '../constants';
 

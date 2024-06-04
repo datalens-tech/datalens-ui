@@ -1,5 +1,5 @@
-import {ExtendedSeriesLineOptions} from '../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../js/helpers/colors';
+import type {ExtendedSeriesLineOptions} from '../../../../../../../../../shared';
+import type {ChartColorsConfig} from '../../../../types';
 
 export type ColorizeByGradientOptions = {
     graphs: ExtendedSeriesLineOptions[];

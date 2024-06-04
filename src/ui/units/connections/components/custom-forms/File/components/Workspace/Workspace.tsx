@@ -10,7 +10,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 
 import {Interpolate} from '../../../../../../../components/Interpolate';
 import {Veil} from '../../../../../../../components/Veil/Veil';
-import {
+import type {
     FileSourceInfoItem,
     FileSourceItem,
     ListItemProps,
@@ -20,8 +20,7 @@ import {
 import {ErrorView} from '../../../../ErrorView/ErrorView';
 import {getColumnsWithTypeIcons} from '../../../utils/render';
 import {useFileContext} from '../../context';
-import {getCreatingSourceColumns} from '../../utils';
-import {getAcceptedExtensions} from '../AddFileButton';
+import {getAcceptedExtensions, getCreatingSourceColumns} from '../../utils';
 
 import {ColumnFilter} from './ColumnFilter';
 import {FileSettings} from './FileSettings';

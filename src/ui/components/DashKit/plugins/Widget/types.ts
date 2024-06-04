@@ -1,15 +1,15 @@
-import React from 'react';
+import type React from 'react';
 
 import type {ConfigItem, ConfigItemWithTabs, PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DebouncedFunc} from 'lodash';
-import {StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 
-import {ChartKitBaseOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {Widget} from '../../../../libs/DatalensChartkit/types';
-import {AdjustWidgetLayoutProps} from '../../utils';
-import {DashkitOldMetaDataItemBase} from '../types';
+import type {ChartKitBaseOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {Widget} from '../../../../libs/DatalensChartkit/types';
+import type {AdjustWidgetLayoutProps} from '../../utils';
+import type {DashkitOldMetaDataItemBase} from '../types';
 
 export type CurrentTab = {
     id: string;

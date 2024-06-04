@@ -1,9 +1,8 @@
-import {
+import type {
     Field,
     FilterField,
     HierarchyField,
     Placeholder,
-    PlaceholderId,
     PlaceholderSettings,
     PointSizeConfig,
     ShapesConfig,
@@ -11,14 +10,15 @@ import {
     Sort,
     TableShared,
     VisualizationWithLayersShared,
-    isFieldHierarchy,
 } from 'shared';
-import {ApplyData, DatalensGlobalState} from 'ui';
+import {PlaceholderId, isFieldHierarchy} from 'shared';
+import type {ApplyData, DatalensGlobalState} from 'ui';
 
-import {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
-import {WizardDispatch} from '../reducers';
+import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
+import type {WizardDispatch} from '../reducers';
 
-import {SetHierarchiesAction, setHierarchies} from './dataset';
+import type {SetHierarchiesAction} from './dataset';
+import {setHierarchies} from './dataset';
 import {openWizardDialogFilter} from './dialog';
 import {updatePreviewAndClientChartsConfig} from './preview';
 
