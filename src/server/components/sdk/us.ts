@@ -88,6 +88,30 @@ class US {
         }
     }
 
+    static async tables(
+        headers: IncomingHttpHeaders,
+        ctx: AppContext,
+        data: any[]
+    ): Promise<Entry> {
+        try {
+            const {data: result} = await getAxios(ctx.config)({
+                method: 'POST',
+                url: `${ctx.config.endpoints.api.us}/tables`,
+                headers,
+                'axios-retry': {retries: 1},
+                data
+            });
+
+            ctx.log('SDK_US_UPDATE_ACCESSES_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_UPDATE_ACCESSES_FAILED', error, {});
+
+            throw error;
+        }
+    }
+
     static async getAccesses(
         headers: IncomingHttpHeaders,
         ctx: AppContext,

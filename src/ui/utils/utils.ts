@@ -329,4 +329,10 @@ export default class Utils {
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
+
+    static tables = async (propsData: any) => {
+        var result = await getSdk().us.tables(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
 }

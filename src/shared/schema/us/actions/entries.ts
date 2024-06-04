@@ -112,6 +112,13 @@ export const entriesActions = {
             },
         }),
     }),
+    tables: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/tables` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
     getAuth: createAction<any, any>({
         method: 'GET',
         path: (data) => { 
