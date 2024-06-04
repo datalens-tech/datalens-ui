@@ -52,8 +52,6 @@ const OperationSelector: React.FC = () => {
         [dispatch],
     );
 
-    const note = i18n('field_operation-note');
-
     const options = React.useMemo(
         () => operations?.map(({value, title}) => ({value, content: title})) || [],
         [operations],
@@ -63,7 +61,7 @@ const OperationSelector: React.FC = () => {
         <React.Fragment>
             <span>{i18n('field_operation')}</span>
             <HelpPopover
-                htmlContent={note}
+                htmlContent={i18n('field_operation-note')}
                 placement={['bottom', 'top']}
                 offset={{top: -1, left: 5}}
             />

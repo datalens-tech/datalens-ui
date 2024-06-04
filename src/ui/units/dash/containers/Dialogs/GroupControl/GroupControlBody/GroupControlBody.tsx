@@ -8,6 +8,9 @@ import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/Hi
 import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitleRow} from '../../Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
 import {CommonSettingsSection} from '../../Control2/Sections/CommonSettingsSection/CommonSettingsSection';
+import {InputTypeSelector} from '../../Control2/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
+import {OperationSelector} from '../../Control2/Sections/OperationSelector/OperationSelector';
+import {ValueSelector} from '../../Control2/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from '../../Control2/SelectorTypeSelect/SelectorTypeSelect';
 
 import './../GroupControl.scss';
@@ -22,6 +25,10 @@ export const GroupControlBody = () => {
                 <SelectorTypeSelect showExternalType={false} mode="select" />
             </FormRow>
             <div className={b('section')}>
+                <CommonSettingsSection hideCommonFields={true} />
+            </div>
+
+            <div className={b('section', {'top-divider': true})}>
                 <TitleRow />
             </div>
             <div className={b('section')}>
@@ -30,8 +37,14 @@ export const GroupControlBody = () => {
             <div className={b('section')}>
                 <HintRow />
             </div>
+            <div className={b('section', {'bottom-divider': true})}>
+                <InputTypeSelector />
+            </div>
             <div className={b('section')}>
-                <CommonSettingsSection />
+                <OperationSelector />
+            </div>
+            <div className={b('section')}>
+                <ValueSelector />
             </div>
         </React.Fragment>
     );
