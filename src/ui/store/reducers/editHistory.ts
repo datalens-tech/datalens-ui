@@ -1,4 +1,8 @@
-import {cloneDeep} from 'lodash';
+import isObject from 'lodash/isObject';
+import isSet from 'lodash/isSet';
+import isFunction from 'lodash/isFunction';
+import transform from 'lodash/transform';
+
 import type {AnyAction} from 'redux';
 import type {Delta as JDPDelta} from 'jsondiffpatch';
 
@@ -29,6 +33,30 @@ export interface EditHistoryState {
 
 const initialState: EditHistoryState = {
     units: {},
+};
+
+const cloneStateForHistory = (state: unknown, pathIgnoreList: string[]) => {
+    const deepOmitBy = (value: unknown, path: string, iteratee: (key: string) => boolean) => {
+        if (isObject(value) && !isSet(value) && !isFunction(value)) {
+            return transform(value, (result: Record<string, unknown>, item, key) => {
+                if (typeof item === 'function') {
+                    // eslint-disable-next-line no-param-reassign
+                    result[key] = item;
+                } else {
+                    const itemPath = `${path}/${key}`;
+
+                    if (!iteratee(itemPath)) {
+                        // eslint-disable-next-line no-param-reassign
+                        result[key] = deepOmitBy(item, itemPath, iteratee);
+                    }
+                }
+            });
+        } else {
+            return value;
+        }
+    };
+
+    return deepOmitBy(state, '', (path: string) => pathIgnoreList.includes(path));
 };
 
 export function editHistory(state = initialState, action: EditHistoryAction): EditHistoryState {
@@ -74,6 +102,11 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
 
             const prevDiffs = diffs.slice(0, pointIndex + 1);
 
+            const storedNewState = cloneStateForHistory(
+                newState,
+                editHistoryUnit.options.pathIgnoreList,
+            );
+
             return {
                 units: {
                     ...state.units,
@@ -86,7 +119,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         // Remove all missed diffs
                         diffs: [...prevDiffs, diff],
 
-                        pointState: cloneDeep(newState),
+                        pointState: storedNewState,
                     },
                 },
             };
@@ -111,12 +144,17 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
 
             const editHistoryUnit = state.units[unitId];
 
+            const storedPointState = cloneStateForHistory(
+                pointState,
+                editHistoryUnit.options.pathIgnoreList,
+            );
+
             return {
                 units: {
                     ...state.units,
                     [unitId]: {
                         ...editHistoryUnit,
-                        pointState: cloneDeep(pointState),
+                        pointState: storedPointState,
                     },
                 },
             };
