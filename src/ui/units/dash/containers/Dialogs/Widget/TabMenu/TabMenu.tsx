@@ -1,3 +1,4 @@
+import type {ReactElement} from 'react';
 import React from 'react';
 
 import {CopyPlus, Plus, Star, StarFill} from '@gravity-ui/icons';
@@ -7,10 +8,14 @@ import {ListWithMenu} from 'components/ListWithMenu/ListWithMenu';
 import {ListWithRemove} from 'components/ListWithRemove/ListWithRemove';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
+import {connect} from 'react-redux';
 import {TabMenuQA} from 'shared';
+import type {DatalensGlobalState} from 'ui/index';
+import {getPastedWidgetData} from 'ui/units/dash/modules/helpers';
+import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {TabActionType} from './types';
-import type {TabMenuItemData, TabMenuProps, UpdateState} from './types';
+import type {TabMenuItemData, TabMenuProps, TabMenuState, UpdateState} from './types';
 
 import './TabMenu.scss';
 
@@ -18,7 +23,28 @@ const b = block('tab-menu');
 
 const ADD_BUTTON_DEFAULT_SIZE = 16;
 
-export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+type Props<T> = TabMenuProps<T> & StateProps;
+
+class TabMenuComponent<T> extends React.PureComponent<Props<T>> {
+    state: TabMenuState = {
+        pasteConfig: null,
+    };
+
+    componentDidMount() {
+        if (this.props.canPasteItems) {
+            // if localStorage already have a dash item, we need to set it to state
+            this.storageHandler();
+
+            window.addEventListener('storage', this.storageHandler);
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('storage', this.storageHandler);
+    }
+
     render() {
         const {
             enableActionMenu,
@@ -27,7 +53,6 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             selectedItemIndex,
             tabIconMixin,
             pasteButtonText,
-            onPasteItem,
         } = this.props;
 
         return (
@@ -47,7 +72,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     />
                     <span>{addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}</span>
                 </div>
-                {onPasteItem && (
+                {this.state.pasteConfig && (
                     <div
                         className={b('paste-tab')}
                         onClick={this.onAction({action: TabActionType.Paste})}
@@ -66,6 +91,15 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             </div>
         );
     }
+
+    storageHandler = () => {
+        const pasteConfig = getPastedWidgetData();
+        if (this.props.canPasteItems?.(pasteConfig, this.props.workbookId)) {
+            this.setState({pasteConfig});
+            return;
+        }
+        this.setState({pasteConfig: null});
+    };
 
     onAction =
         ({action, index}: {action: Exclude<TabActionType, 'skipped'>; index?: number}) =>
@@ -112,13 +146,14 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
     }
 
     paste(): UpdateState<T> {
-        if (!this.props.onPasteItem) {
+        const pasteItems = this.props.onPasteItems?.(this.state.pasteConfig);
+        if (!pasteItems) {
             return {
                 action: TabActionType.Skipped,
             };
         }
 
-        const items = [...this.props.items, ...this.props.onPasteItem()];
+        const items = [...this.props.items, ...pasteItems];
 
         return {
             items,
@@ -218,6 +253,8 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
     };
 
     renderListWithMenu = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
+        const withPaste = Boolean(this.state.pasteConfig);
+
         return (
             <ListWithMenu
                 list={{
@@ -227,7 +264,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     virtualized: false,
                     deactivateOnLeave: true,
                     selectedItemIndex,
-                    className: b('list', {'with-paste': Boolean(this.props.onPasteItem)}),
+                    className: b('list', {'with-paste': withPaste}),
                     onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
                     itemClassName: b('list-item'),
                 }}
@@ -294,3 +331,12 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
         );
     };
 }
+
+const mapStateToProps = (state: DatalensGlobalState) => ({
+    workbookId: selectDashWorkbookId(state),
+});
+
+// workaround of using generics with a HOC
+export const TabMenu = connect(mapStateToProps, null)(TabMenuComponent) as unknown as <T>(
+    props: TabMenuProps<T>,
+) => ReactElement;

@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemType, DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
-import {getPastedWidgetData, isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
+import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -20,7 +20,6 @@ import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
 } from 'ui/units/dash/store/reducers/dash';
-import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
@@ -43,31 +42,34 @@ const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     autoHeight: false,
 };
 
-const getPasteItemHandler = (workbookId: string | null) => {
-    const pasteConfig = getPastedWidgetData() as CopiedConfigData;
-
+const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
     if (
         pasteConfig &&
         isItemPasteAllowed(pasteConfig, workbookId) &&
         (pasteConfig.type === DashTabItemType.Control ||
             pasteConfig.type === DashTabItemType.GroupControl)
     ) {
-        return () => {
-            const pasteItems = pasteConfig?.data.group
-                ? getSelectorGroupDialogFromData(pasteConfig?.data).group
-                : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
-
-            return pasteItems as TabMenuItemData<SelectorDialogState>[];
-        };
+        return true;
     }
 
-    return null;
+    return false;
+};
+
+const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
+    if (!pasteConfig) {
+        return null;
+    }
+
+    const pasteItems = pasteConfig?.data.group
+        ? getSelectorGroupDialogFromData(pasteConfig?.data).group
+        : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
+
+    return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
-    const workbookId = useSelector(selectDashWorkbookId);
     const dispatch = useDispatch();
 
     const initialTabIndex =
@@ -171,8 +173,6 @@ export const GroupControlSidebar = () => {
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
-    const handlePasteItem = getPasteItemHandler(workbookId);
-
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
@@ -184,7 +184,8 @@ export const GroupControlSidebar = () => {
                     pasteButtonText={i18n('button_paste-selector')}
                     defaultTabText={getDefaultTabText}
                     enableActionMenu={true}
-                    onPasteItem={handlePasteItem}
+                    onPasteItems={handlePasteItems}
+                    canPasteItems={canPasteItems}
                 />
             </div>
             <div className={b('settings')}>

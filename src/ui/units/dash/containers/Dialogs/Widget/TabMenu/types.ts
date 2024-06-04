@@ -1,4 +1,5 @@
 import type {ListItemData} from '@gravity-ui/uikit';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 
 export type TabMenuItemData<T> = ListItemData<T> & {title?: string; isDefault?: boolean};
 
@@ -33,5 +34,10 @@ export type TabMenuProps<T> = {
     defaultTabText?: () => string;
     tabIconMixin?: string;
     allowPaste?: boolean;
-    onPasteItem?: (() => TabMenuItemData<T>[]) | null;
+    onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
+    canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
+};
+
+export type TabMenuState = {
+    pasteConfig: null | CopiedConfigData;
 };
