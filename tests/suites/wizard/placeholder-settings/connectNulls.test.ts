@@ -7,6 +7,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {AxisNullsMode} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', () => {
     datalensTest(
@@ -14,7 +15,11 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
 
-            const expectedValues = ['ignore', 'connect', 'as-0'];
+            const expectedValues = [
+                AxisNullsMode.Ignore,
+                AxisNullsMode.Connect,
+                AxisNullsMode.Connect,
+            ];
 
             await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
 
@@ -38,7 +43,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
         },
     );
 
-    datalensTest('The default value is "Do not display"', async ({page}: {page: Page}) => {
+    datalensTest('The default value is "Connect"', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
         await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
@@ -48,7 +53,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
         await wizardPage.placeholderDialog.open(PlaceholderId.Y);
 
         let selectedButtonText: string;
-        const expectedValue = 'ignore';
+        const expectedValue = AxisNullsMode.Connect;
 
         await waitForCondition(async () => {
             const selectedButton = await wizardPage.placeholderDialog.getCheckRadioButton(
@@ -70,7 +75,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
 
-            const expectedValues = ['ignore', 'as-0'];
+            const expectedValues = [AxisNullsMode.Ignore, AxisNullsMode.AsZero];
 
             await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
 
@@ -97,7 +102,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
             });
 
             let selectedButtonText: string;
-            const expectedValue = 'as-0';
+            const expectedValue = AxisNullsMode.AsZero;
 
             await waitForCondition(async () => {
                 const selectedButton = await wizardPage.placeholderDialog.getCheckRadioButton(
