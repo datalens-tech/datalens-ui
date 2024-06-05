@@ -18,7 +18,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
             const expectedValues = [
                 AxisNullsMode.Ignore,
                 AxisNullsMode.Connect,
-                AxisNullsMode.Connect,
+                AxisNullsMode.AsZero,
             ];
 
             await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
@@ -43,7 +43,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
         },
     );
 
-    datalensTest('The default value is "Connect"', async ({page}: {page: Page}) => {
+    datalensTest('The default value is "Ignore" for bar-y', async ({page}: {page: Page}) => {
         const wizardPage = new WizardPage({page});
 
         await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
@@ -52,7 +52,36 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
 
         await wizardPage.placeholderDialog.open(PlaceholderId.Y);
 
-        let selectedButtonText: string;
+        let selectedButtonValue: string;
+        const expectedValue = AxisNullsMode.Ignore;
+
+        await waitForCondition(async () => {
+            const selectedButton = await wizardPage.placeholderDialog.getCheckRadioButton(
+                RadioButtons.ConnectNulls,
+            );
+
+            selectedButtonValue = (await selectedButton?.getAttribute('value')) || '';
+
+            return selectedButtonValue === expectedValue;
+        }).catch(() => {
+            throw new Error(
+                `By default, ${selectedButtonValue} was selected, and ${expectedValue} was expected`,
+            );
+        });
+    });
+
+    datalensTest('The default value is "Connect" for line', async ({page}: {page: Page}) => {
+        const wizardPage = new WizardPage({page});
+
+        await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
+
+        await wizardPage.setVisualization(WizardVisualizationId.Line);
+
+        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Sales');
+
+        await wizardPage.placeholderDialog.open(PlaceholderId.Y);
+
+        let selectedButtonValue: string;
         const expectedValue = AxisNullsMode.Connect;
 
         await waitForCondition(async () => {
@@ -60,12 +89,12 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
                 RadioButtons.ConnectNulls,
             );
 
-            selectedButtonText = (await selectedButton?.getAttribute('value')) || '';
+            selectedButtonValue = (await selectedButton?.getAttribute('value')) || '';
 
-            return selectedButtonText === expectedValue;
+            return selectedButtonValue === expectedValue;
         }).catch(() => {
             throw new Error(
-                `By default, ${selectedButtonText} was selected, and ${expectedValue} was expected`,
+                `By default, ${selectedButtonValue} was selected, and ${expectedValue} was expected`,
             );
         });
     });
