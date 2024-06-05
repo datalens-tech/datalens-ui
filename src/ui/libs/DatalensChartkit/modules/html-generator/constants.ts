@@ -62,7 +62,6 @@ export const ALLOWED_TAGS = [
     'tr',
     'u',
     'ul',
-    '#text',
 ];
 
 export const ALLOWED_ATTRIBUTES = [
@@ -79,7 +78,6 @@ export const ALLOWED_ATTRIBUTES = [
     'aria-readonly',
     'aria-roledescription',
     'aria-selected',
-    'class',
     'clip-path',
     'color',
     'colspan',
@@ -95,17 +93,11 @@ export const ALLOWED_ATTRIBUTES = [
     'flood-opacity',
     'height',
     'href',
-    'id',
     'in',
-    'markerHeight',
-    'markerWidth',
     'offset',
     'opacity',
     'orient',
     'padding',
-    'paddingLeft',
-    'paddingRight',
-    'patternUnits',
     'r',
     'refX',
     'refY',
@@ -113,13 +105,9 @@ export const ALLOWED_ATTRIBUTES = [
     'scope',
     'slope',
     'src',
-    'startOffset',
-    'stdDeviation',
     'stroke',
     'stroke-linecap',
     'stroke-width',
-    'style',
-    'tableValues',
     'result',
     'rowspan',
     'summary',
@@ -127,8 +115,6 @@ export const ALLOWED_ATTRIBUTES = [
     'tabindex',
     'text-align',
     'text-anchor',
-    'textAnchor',
-    'textLength',
     'title',
     'type',
     'valign',
@@ -142,3 +128,5 @@ export const ALLOWED_ATTRIBUTES = [
     'y2',
     'zIndex',
 ];
+
+export const ALLOWED_REFERENCES = ['https://', 'http://', 'mailto:', '#'];

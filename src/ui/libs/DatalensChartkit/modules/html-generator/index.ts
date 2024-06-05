@@ -3,7 +3,9 @@ import escape from 'lodash/escape';
 import type {ChartKitHtmlItem} from '../../../../../shared';
 import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
-import {ALLOWED_ATTRIBUTES, ALLOWED_TAGS} from './constants';
+import {ALLOWED_ATTRIBUTES, ALLOWED_REFERENCES, ALLOWED_TAGS} from './constants';
+
+const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
 
 export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string): string {
     if (item) {
@@ -32,6 +34,15 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
                     details: `Attribute '${key}' is not allowed`,
                 });
             }
+
+            if (ATTRS_WITH_REF_VALIDATION.includes(key)) {
+                if (!ALLOWED_REFERENCES.some((ref) => String(value).startsWith(ref))) {
+                    throw new ChartKitCustomError(null, {
+                        details: `Attribute '${key}' is not valid`,
+                    });
+                }
+            }
+
             elem.setAttribute(key, String(value));
         });
 
