@@ -40,12 +40,11 @@ export const TableBody = (props: Props) => {
     };
 
     const canUseFixedColumns = columns.some((col) => !col.meta?.width);
-    const columnOptions: Record<number, {width?: number}> = {};
+    const columnOptions: Record<number, {width?: string | number}> = {};
     if (canUseFixedColumns) {
         rows[0]?.getVisibleCells().forEach((cell, index) => {
-            columnOptions[index] = {
-                width: getColumnWidth(cell.column),
-            };
+            const width = getColumnWidth(cell.column);
+            columnOptions[index] = {width};
         });
     }
 

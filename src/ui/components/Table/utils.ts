@@ -111,7 +111,7 @@ export function getTableData(args: {head?: THead[]; rows?: TData[]}) {
     return rows;
 }
 
-export function getColumnWidth(col: Column<TData> | undefined) {
+export function getColumnWidth(col: Column<TData> | undefined): number | string | undefined {
     if (!col) {
         return undefined;
     }
@@ -121,8 +121,9 @@ export function getColumnWidth(col: Column<TData> | undefined) {
     }
 
     const parentCellWidth = getColumnWidth(col.parent);
+    const siblings = col.parent?.columns || [];
     if (parentCellWidth) {
-        return parentCellWidth / col.parent?.columns.length;
+        return Number(parentCellWidth) / siblings.length;
     }
 
     return undefined;
