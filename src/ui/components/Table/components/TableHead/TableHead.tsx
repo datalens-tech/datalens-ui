@@ -5,6 +5,7 @@ import {flexRender} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
 import type {TData, TableDimensions} from '../../types';
+import {getColumnWidth} from '../../utils';
 import {SortIcon} from '../SortIcon/SortIcon';
 
 const b = block('dl-table');
@@ -36,7 +37,7 @@ export const TableHead = (props: Props) => {
                             }
 
                             const original = header.column.columnDef.meta?.head;
-                            const width = header.column.columnDef.meta?.width;
+                            const width = getColumnWidth(header.column);
                             const isFixedSize = canUseFixedColumns && Boolean(width);
                             const rowSpan = header.isPlaceholder
                                 ? headers.length - headerGroup.depth
