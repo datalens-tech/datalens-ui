@@ -6,7 +6,7 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemType, DialogGroupControlQa} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
@@ -47,7 +47,8 @@ const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string
         pasteConfig &&
         isItemPasteAllowed(pasteConfig, workbookId) &&
         (pasteConfig.type === DashTabItemType.Control ||
-            pasteConfig.type === DashTabItemType.GroupControl)
+            pasteConfig.type === DashTabItemType.GroupControl) &&
+        pasteConfig.data.sourceType !== DashTabItemControlSourceType.External
     ) {
         return true;
     }
@@ -179,13 +180,14 @@ export const GroupControlSidebar = () => {
                 <TabMenu
                     items={selectorsGroup.group}
                     selectedItemIndex={activeSelectorIndex}
-                    update={updateSelectorsList}
+                    onUpdate={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
                     pasteButtonText={i18n('button_paste-selector')}
                     defaultTabText={getDefaultTabText}
                     enableActionMenu={true}
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
+                    addButtonView="outlined"
                 />
             </div>
             <div className={b('settings')}>

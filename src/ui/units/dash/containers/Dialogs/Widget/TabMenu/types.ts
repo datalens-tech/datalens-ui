@@ -27,17 +27,13 @@ export type UpdateState<T> = ListState<T> | SkippedListState<T>;
 export type TabMenuProps<T> = {
     items: TabMenuItemData<T>[];
     selectedItemIndex: number;
-    update: ({items, selectedItemIndex, action}: UpdateState<T>) => void;
+    onUpdate: ({items, selectedItemIndex, action}: UpdateState<T>) => void;
     enableActionMenu?: boolean;
     addButtonText?: string;
     pasteButtonText?: string;
     defaultTabText?: () => string;
     tabIconMixin?: string;
-    allowPaste?: boolean;
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
-};
-
-export type TabMenuState = {
-    pasteConfig: null | CopiedConfigData;
+    addButtonView?: 'flat' | 'outlined';
 };

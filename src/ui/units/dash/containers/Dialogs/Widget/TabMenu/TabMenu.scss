@@ -1,7 +1,9 @@
-$class: 'tab-menu';
-$addTabButtonHeight: 40px;
+$class: '.tab-menu';
+$tabButtonFlatHeight: 40px;
+$tabButtonOutlinedHeight: 28px;
+$tabButtonOutlinedPadding: 8px;
 
-.#{$class} {
+#{$class} {
     $listItemPadding: 0 24px;
 
     width: 100%;
@@ -10,25 +12,6 @@ $addTabButtonHeight: 40px;
 
     &__list-item {
         padding: $listItemPadding;
-    }
-
-    &__add-tab,
-    &__paste-tab {
-        color: var(--g-color-text-secondary);
-        display: flex;
-        padding: $listItemPadding;
-        align-items: center;
-        cursor: pointer;
-        height: 40px;
-
-        &:hover,
-        &:focus {
-            background-color: var(--g-color-base-simple-hover);
-        }
-    }
-
-    &__add-tab-icon {
-        margin-right: 8px;
     }
 
     &__item {
@@ -68,11 +51,41 @@ $addTabButtonHeight: 40px;
     }
 
     &__list {
-        height: calc(100% - $addTabButtonHeight);
+        height: calc(100% - $tabButtonFlatHeight);
         overflow-y: auto;
+    }
 
-        &_with-paste {
-            height: calc(100% - 2 * $addTabButtonHeight);
+    &_view_outlined {
+        height: calc(100% - ($tabButtonOutlinedHeight + 2 * $tabButtonOutlinedPadding));
+
+        #{$class}__buttons-row {
+            display: flex;
+            padding: $tabButtonOutlinedPadding 24px;
+            gap: 6px;
+        }
+
+        #{$class}__list {
+            height: 100%;
+        }
+    }
+
+    &_view_flat {
+        #{$class}__action-button {
+            color: var(--g-color-text-secondary);
+            display: flex;
+            padding: $listItemPadding;
+            align-items: center;
+            cursor: pointer;
+            height: 40px;
+
+            &:hover,
+            &:focus {
+                background-color: var(--g-color-base-simple-hover);
+            }
+        }
+
+        #{$class}__action-button-icon {
+            margin-right: 8px;
         }
     }
 }
