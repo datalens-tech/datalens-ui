@@ -21,6 +21,7 @@ export default {
         limit: '50mb',
         extended: false,
     },
+    expressTrustProxyNumber: 3,
     errorBooster,
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
     fetchingTimeout: 95 * 1000,
