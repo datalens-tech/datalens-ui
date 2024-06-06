@@ -8,8 +8,6 @@ declare global {
 
             login: string;
             userId: string;
-            userName: string;
-            email?: string;
         }
         interface Request {
             blackbox?: any;

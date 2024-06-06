@@ -62,14 +62,12 @@ export function initZitadel({
                     throw new Error('Incorrect type of accessToken');
                 }
 
-                const {id, emails, username, displayName} = uiProfile as any;
+                const {id, username} = uiProfile as any;
 
-                const email = emails?.length > 0 ? emails[0] : undefined;
                 const login = username;
-                const userName = displayName;
                 const userId = id;
 
-                return done(null, {accessToken, refreshToken, userId, login, email, userName});
+                return done(null, {accessToken, refreshToken, userId, login});
             },
         ),
     );
