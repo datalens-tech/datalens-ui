@@ -1,9 +1,13 @@
+import escape from 'lodash/escape';
 import pick from 'lodash/pick';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
+import {WRAPPED_HTML_KEY} from '../../../../../../shared';
 import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
+import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import {generateHtml} from '../../html-generator';
 
 /**
  * Config value to check. It could have any type.
@@ -54,6 +58,18 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     vm.setProp(highchartsHandle, 'dateFormat', dateFormatHandle);
     highchartsHandle.dispose();
     dateFormatHandle.dispose();
+
+    const chartEditorHandle = vm.newObject();
+    const generateHtmlHandle = vm.newFunction('generateHtml', (...args) => {
+        const nativeArgs = args.map(vm.dump);
+        // @ts-ignore
+        const wrappedHtmlConfig = wrapHtml(...nativeArgs);
+        return vm.evalCode(`JSON.parse('${JSON.stringify(wrappedHtmlConfig)}')`);
+    });
+    vm.setProp(vm.global, 'ChartEditor', chartEditorHandle);
+    vm.setProp(chartEditorHandle, 'generateHtml', generateHtmlHandle);
+    chartEditorHandle.dispose();
+    generateHtmlHandle.dispose();
 };
 
 const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'];
@@ -161,7 +177,7 @@ const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWr
 
         vm.dispose();
 
-        return value;
+        return unwrapHtml(value);
     };
 };
 
@@ -223,3 +239,37 @@ export const shouldUseUISandbox = (target: TargetValue) => {
 
     return result;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ItemValue = any;
+
+export function generateSafeHtml(target: ItemValue) {
+    if (!target || typeof target !== 'object') {
+        return;
+    }
+
+    Object.keys(target).forEach((key) => {
+        const value = target[key];
+
+        if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
+            // eslint-disable-next-line no-param-reassign
+            target[key] = generateHtml(value[WRAPPED_HTML_KEY]);
+        } else if (Array.isArray(value)) {
+            value.forEach(generateSafeHtml);
+        } else if (value && typeof value === 'object') {
+            generateSafeHtml(value);
+        }
+    });
+}
+
+export function unwrapHtml(value: ItemValue) {
+    if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
+        return generateHtml(value[WRAPPED_HTML_KEY]);
+    }
+
+    if (typeof value === 'string') {
+        return escape(value);
+    }
+
+    return value;
+}

@@ -113,3 +113,5 @@ function DCMonitoringLabelFormatter(this: any) {
 
     return `${Math.round(this.value * 100) / 100} ${units}`;
 }
+
+export const WRAPPED_HTML_KEY = '__wrappedHTML__';
