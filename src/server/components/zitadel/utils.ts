@@ -1,11 +1,15 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import NodeCache from 'node-cache';
 
 import {getDuration} from '../charts-engine/components/utils';
 
 const cache = new NodeCache();
+
+const axiosInstance = axios.create();
+axiosRetry(axiosInstance, {retries: 3});
 
 export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
     ctx.log('Token introspection');
@@ -27,17 +31,12 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 
         const hrStart = process.hrtime();
 
-        const axiosInstance = axios.create();
-
         const response = await axiosInstance({
             method: 'post',
             url: `${ctx.config.zitadelUri}/oauth/v2/introspect`,
             auth: {
                 username: ctx.config.clientId,
                 password: ctx.config.clientSecret,
-            },
-            'axios-retry': {
-                retries: 3,
             },
             params: {
                 token,
@@ -69,8 +68,6 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     }
 
     try {
-        const axiosInstance = axios.create();
-
         const response = await axiosInstance({
             method: 'post',
             url: `${ctx.config.zitadelUri}/oauth/v2/token`,
@@ -111,19 +108,18 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
     try {
         ctx.log('Fetching service user access token');
 
-        const response = await axios.post(
-            `${ctx.config.zitadelUri}/oauth/v2/token`,
-            new URLSearchParams({
+        const response = await axiosInstance({
+            method: 'post',
+            url: `${ctx.config.zitadelUri}/oauth/v2/token`,
+            auth: {
+                username: ctx.config.serviceClientId,
+                password: ctx.config.serviceClientSecret,
+            },
+            params: {
                 grant_type: 'client_credentials',
                 scope: `openid profile urn:zitadel:iam:org:project:id:${ctx.config.zitadelProjectId}:aud`,
-            }),
-            {
-                auth: {
-                    username: ctx.config.serviceClientId,
-                    password: ctx.config.serviceClientSecret,
-                },
             },
-        );
+        });
 
         ctx.log('Service user access token fetched successfully');
 
