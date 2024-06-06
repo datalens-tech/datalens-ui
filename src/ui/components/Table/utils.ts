@@ -1,4 +1,4 @@
-import type {ColumnDef} from '@tanstack/react-table';
+import type {Column, ColumnDef} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 
 import type {TData, TFoot, THead} from './types';
@@ -109,4 +109,22 @@ export function getTableData(args: {head?: THead[]; rows?: TData[]}) {
     }
 
     return rows;
+}
+
+export function getColumnWidth(col: Column<TData> | undefined): number | string | undefined {
+    if (!col) {
+        return undefined;
+    }
+    const currentCellWidth = col.columnDef.meta?.width;
+    if (currentCellWidth) {
+        return currentCellWidth;
+    }
+
+    const parentCellWidth = getColumnWidth(col.parent);
+    const siblings = col.parent?.columns || [];
+    if (parentCellWidth) {
+        return Number(parentCellWidth) / siblings.length;
+    }
+
+    return undefined;
 }

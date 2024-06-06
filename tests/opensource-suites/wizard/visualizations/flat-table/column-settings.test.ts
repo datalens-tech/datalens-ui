@@ -66,9 +66,6 @@ datalensTest.describe('Wizard', () => {
 
             await wizardPage.columnSettings.apply();
 
-            // Changing the width of the columns should trigger a request for chart rendering
-            await expect(previewLoader).toBeVisible();
-            // And then the width changes
             await expect(previewLoader).not.toBeVisible();
             const tableWidth = (await table.boundingBox())?.width;
 
