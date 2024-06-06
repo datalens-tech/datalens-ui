@@ -224,6 +224,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
+                    entryId: this.props.entry.entryId,
                     initDestination: Utils.getPathBefore({path: entry.key}),
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,

@@ -56,3 +56,9 @@ export const enum AxisLabelFormatMode {
     Auto = 'auto',
     ByField = 'by-field',
 }
+
+export const enum AxisNullsMode {
+    Ignore = 'ignore',
+    Connect = 'connect',
+    AsZero = 'as-0',
+}
