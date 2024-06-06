@@ -29,7 +29,7 @@
   "field_end-time": "End time",
   "field_field": "Field",
   "field_field-name": "Field or parameter",
-  "field_field-name-note": "The name of the field or parameter is involved in links with other widgets",
+  "field_field-name-note": "The name of the field or parameter, which can be used to link the selector with other widgets.",
   "field_hint": "Hint",
   "field_inner-title": "Inner title",
   "field_inner-title-note": "The inner title allows you to specify a text inside the selector, e.g., to display an operation inside a selector.<br><br>Not available in the Checkbox selector type.",
