@@ -14,6 +14,8 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     const isAuthenticated = req.isAuthenticated();
 
     if (isAuthenticated) {
+        req.originalContext.set('userId', req.user.userId);
+
         req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.userId);
 
         const accessToken = req.user.accessToken;
