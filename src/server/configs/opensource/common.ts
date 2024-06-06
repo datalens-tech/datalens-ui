@@ -202,4 +202,18 @@ export default {
 
     appSensitiveKeys: [SERVICE_USER_ACCESS_TOKEN_HEADER],
     appSensitiveHeaders: [SERVICE_USER_ACCESS_TOKEN_HEADER],
+
+    isZitadelEnabled: isTrueArg(process.env.ZITADEL),
+
+    clientId: process.env.CLIENT_ID || '',
+    clientSecret: process.env.CLIENT_SECRET || '',
+
+    zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
+
+    zitadelUri: process.env.ZITADEL_URI || '',
+    appHostUri: process.env.APP_HOST_URI || '',
+    zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
+
+    serviceClientId: process.env.SERVICE_CLIENT_ID || '',
+    serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
 };

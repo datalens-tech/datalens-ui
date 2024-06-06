@@ -3,7 +3,6 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ChartsEngine} from '..';
 import {EntryUpdateMode} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
-import {isZitadelEnabled} from '../../../app-env';
 import Utils from '../../../utils';
 import type {ChartTemplates} from '../components/chart-generator';
 import {chartGenerator} from '../components/chart-generator';
@@ -94,7 +93,7 @@ function prepareChartData(
 export const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
-        ...(isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+        ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
     };
 
     return headers;

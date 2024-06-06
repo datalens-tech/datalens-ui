@@ -1,38 +1,43 @@
 import type {AppMiddleware} from '@gravity-ui/expresskit';
+import type {NodeKit} from '@gravity-ui/nodekit';
 import cookieSession from 'cookie-session';
 import passport from 'passport';
 import type {VerifyCallback} from 'passport-openidconnect';
 import OpenIDConnectStrategy from 'passport-openidconnect';
 
-import {appHostUri, clientId, clientSecret, zitadelCookieSecret, zitadelUri} from '../../app-env';
-
-export function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
-    if (!zitadelUri) {
+export function initZitadel({
+    nodekit,
+    beforeAuth,
+}: {
+    nodekit: NodeKit;
+    beforeAuth: AppMiddleware[];
+}) {
+    if (!nodekit.config.zitadelUri) {
         throw new Error('Missing ZITADEL_URI in env');
     }
-    if (!clientId) {
+    if (!nodekit.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
-    if (!clientSecret) {
+    if (!nodekit.config.clientSecret) {
         throw new Error('Missing CLIENT_SECRET in env');
     }
-    if (!appHostUri) {
+    if (!nodekit.config.appHostUri) {
         throw new Error('Missing APP_HOST_URI in env');
     }
-    if (!zitadelCookieSecret) {
+    if (!nodekit.config.zitadelCookieSecret) {
         throw new Error('Missing ZITADEL_COOKIE_SECRET in env');
     }
 
     passport.use(
         new OpenIDConnectStrategy(
             {
-                issuer: zitadelUri,
-                authorizationURL: `${zitadelUri}/oauth/v2/authorize`,
-                tokenURL: `${zitadelUri}/oauth/v2/token`,
-                userInfoURL: `${zitadelUri}/oidc/v1/userinfo`,
-                clientID: clientId,
-                clientSecret: clientSecret,
-                callbackURL: `${appHostUri}/api/auth/callback`,
+                issuer: nodekit.config.zitadelUri,
+                authorizationURL: `${nodekit.config.zitadelUri}/oauth/v2/authorize`,
+                tokenURL: `${nodekit.config.zitadelUri}/oauth/v2/token`,
+                userInfoURL: `${nodekit.config.zitadelUri}/oidc/v1/userinfo`,
+                clientID: nodekit.config.clientId,
+                clientSecret: nodekit.config.clientSecret,
+                callbackURL: `${nodekit.config.appHostUri}/api/auth/callback`,
                 scope: [
                     'openid',
                     'profile',
@@ -80,7 +85,7 @@ export function initZitadel({beforeAuth}: {beforeAuth: AppMiddleware[]}) {
     beforeAuth.push(
         cookieSession({
             name: 'zitadelCookie',
-            secret: zitadelCookieSecret,
+            secret: nodekit.config.zitadelCookieSecret,
             path: '/',
             maxAge: 24 * 60 * 60 * 1000 * 365, // 1 year
         }),

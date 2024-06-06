@@ -3,14 +3,6 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import NodeCache from 'node-cache';
 
-import {
-    clientId,
-    clientSecret,
-    serviceClientId,
-    serviceClientSecret,
-    zitadelProjectId,
-    zitadelUri,
-} from '../../app-env';
 import {getDuration} from '../charts-engine/components/utils';
 
 const cache = new NodeCache();
@@ -18,13 +10,13 @@ const cache = new NodeCache();
 export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
     ctx.log('Token introspection');
 
-    if (!zitadelUri) {
+    if (!ctx.config.zitadelUri) {
         throw new Error('Missing ZITADEL_URI in env');
     }
-    if (!clientId) {
+    if (!ctx.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
-    if (!clientSecret) {
+    if (!ctx.config.clientSecret) {
         throw new Error('Missing CLIENT_SECRET in env');
     }
 
@@ -39,10 +31,10 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 
         const response = await axiosInstance({
             method: 'post',
-            url: `${zitadelUri}/oauth/v2/introspect`,
+            url: `${ctx.config.zitadelUri}/oauth/v2/introspect`,
             auth: {
-                username: clientId,
-                password: clientSecret,
+                username: ctx.config.clientId,
+                password: ctx.config.clientSecret,
             },
             'axios-retry': {
                 retries: 3,
@@ -66,10 +58,10 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     ctx.log('Refreshing tokens');
 
-    if (!clientId) {
+    if (!ctx.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
-    if (!clientSecret) {
+    if (!ctx.config.clientSecret) {
         throw new Error('Missing CLIENT_SECRET in env');
     }
     if (!refreshToken) {
@@ -81,10 +73,10 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
 
         const response = await axiosInstance({
             method: 'post',
-            url: `${zitadelUri}/oauth/v2/token`,
+            url: `${ctx.config.zitadelUri}/oauth/v2/token`,
             auth: {
-                username: clientId,
-                password: clientSecret,
+                username: ctx.config.clientId,
+                password: ctx.config.clientSecret,
             },
             params: {
                 refresh_token: refreshToken,
@@ -103,16 +95,16 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
 };
 
 export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
-    if (!zitadelUri) {
+    if (!ctx.config.zitadelUri) {
         throw new Error('Missing ZITADEL_URI in env');
     }
-    if (!serviceClientId) {
+    if (!ctx.config.serviceClientId) {
         throw new Error('Missing SERVICE_CLIENT_ID in env');
     }
-    if (!serviceClientSecret) {
+    if (!ctx.config.serviceClientSecret) {
         throw new Error('Missing SERVICE_CLIENT_SECRET in env');
     }
-    if (!zitadelProjectId) {
+    if (!ctx.config.zitadelProjectId) {
         throw new Error('Missing ZITADEL_PROJECT_ID in env');
     }
 
@@ -120,15 +112,15 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
         ctx.log('Fetching service user access token');
 
         const response = await axios.post(
-            `${zitadelUri}/oauth/v2/token`,
+            `${ctx.config.zitadelUri}/oauth/v2/token`,
             new URLSearchParams({
                 grant_type: 'client_credentials',
-                scope: `openid profile urn:zitadel:iam:org:project:id:${zitadelProjectId}:aud`,
+                scope: `openid profile urn:zitadel:iam:org:project:id:${ctx.config.zitadelProjectId}:aud`,
             }),
             {
                 auth: {
-                    username: serviceClientId,
-                    password: serviceClientSecret,
+                    username: ctx.config.serviceClientId,
+                    password: ctx.config.serviceClientSecret,
                 },
             },
         );

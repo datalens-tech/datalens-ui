@@ -5,7 +5,7 @@ import '../shared';
 import type {AppEnvironment} from '../shared/constants/common';
 import {getAppEndpointsConfig} from '../shared/endpoints';
 
-import {appEnv, isZitadelEnabled} from './app-env';
+import {appEnv} from './app-env';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
 import authZitadel from './middlewares/auth-zitadel';
 import {convertConnectionType} from './modes/charts/plugins/ql/utils/connection';
@@ -23,7 +23,7 @@ nodekit.config.endpoints = getAppEndpointsConfig(
     appEnv as AppEnvironment.Production | AppEnvironment.Development,
 );
 
-if (isZitadelEnabled) {
+if (nodekit.config.isZitadelEnabled) {
     nodekit.config.appAuthHandler = authZitadel;
 }
 

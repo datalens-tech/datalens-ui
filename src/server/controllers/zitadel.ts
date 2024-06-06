@@ -1,9 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {appHostUri, clientId, zitadelUri} from '../app-env';
-
 export async function logout(req: Request, res: Response) {
-    if (!clientId) {
+    if (!req.ctx.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
     req.logOut((err) => {
@@ -13,10 +11,10 @@ export async function logout(req: Request, res: Response) {
     });
 
     const url =
-        `${zitadelUri}/oidc/v1/end_session?` +
+        `${req.ctx.config.zitadelUri}/oidc/v1/end_session?` +
         new URLSearchParams({
-            post_logout_redirect_uri: appHostUri + '/auth',
-            client_id: clientId,
+            post_logout_redirect_uri: req.ctx.config.appHostUri + '/auth',
+            client_id: req.ctx.config.clientId,
         });
 
     res.redirect(url);

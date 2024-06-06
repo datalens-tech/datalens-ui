@@ -4,7 +4,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode, isZitadelEnabled} from '../../app-env';
+import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
@@ -35,7 +35,7 @@ export function getRoutes({
         },
     };
 
-    if (isZitadelEnabled) {
+    if (ctx.config.isZitadelEnabled) {
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 

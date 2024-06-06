@@ -4,7 +4,7 @@ import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode, isZitadelEnabled} from '../../app-env';
+import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
@@ -32,8 +32,8 @@ export default function initApp(nodekit: NodeKit) {
 
     registry.setupXlsxConverter(xlsxConverter);
 
-    if (isZitadelEnabled) {
-        initZitadel({beforeAuth});
+    if (nodekit.config.isZitadelEnabled) {
+        initZitadel({nodekit, beforeAuth});
     }
 
     if (isFullMode || isDatalensMode) {
@@ -94,7 +94,9 @@ function initChartsApp({
             configuredDashApiPlugin({
                 basePath: DASH_API_BASE_URL,
                 routeParams: {
-                    authPolicy: isZitadelEnabled ? AuthPolicy.required : AuthPolicy.disabled,
+                    authPolicy: nodekit.config.isZitadelEnabled
+                        ? AuthPolicy.required
+                        : AuthPolicy.disabled,
                 },
                 privatePath: PUBLIC_API_DASH_API_BASE_URL,
                 privateRouteParams: {

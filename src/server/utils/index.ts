@@ -17,7 +17,7 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
-import {isOpensourceInstallation, isZitadelEnabled} from '../app-env';
+import {isOpensourceInstallation} from '../app-env';
 
 import {isGatewayError} from './gateway';
 
@@ -71,7 +71,7 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            ...(isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };
     }
