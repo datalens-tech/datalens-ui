@@ -26,7 +26,18 @@ export default async function (req: Request, res: Response, next: NextFunction) 
         if (accessTokenIntrospected) {
             return next();
         } else {
-            const tokens = await refreshTokens(ctx, refreshToken);
+            const tokensFirstTrial = await refreshTokens(ctx, refreshToken);
+
+            const tokens = {accessToken: undefined, refreshToken: undefined};
+
+            if (tokensFirstTrial.accessToken && tokensFirstTrial.refreshToken) {
+                // second trial should be deleted as soon as Zitadel fixes mutliple invalid refresh tokens issuing in parallel: CHARTS-9774
+                const tokensSecondTrial = await refreshTokens(ctx, tokensFirstTrial.refreshToken);
+                if (tokensSecondTrial.accessToken && tokensSecondTrial.refreshToken) {
+                    tokens.accessToken = tokensSecondTrial.accessToken;
+                    tokens.refreshToken = tokensSecondTrial.refreshToken;
+                }
+            }
 
             if (tokens.accessToken && tokens.refreshToken) {
                 req.user.accessToken = tokens.accessToken;
