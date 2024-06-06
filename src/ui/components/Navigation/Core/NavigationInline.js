@@ -40,11 +40,7 @@ class NavigationInline extends React.Component {
         }
     };
     onItemSelect = ({selectedItemsIds}) => {
-        if (selectedItemsIds.size > 0) {
-            this.setState({isSomeItemSelected: true});
-        } else {
-            this.setState({isSomeItemSelected: false});
-        }
+        this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
     };
     refresh = () => {
         if (this.refEntries.current) {
@@ -66,7 +62,7 @@ class NavigationInline extends React.Component {
                     place={place}
                     getPlaceParameters={getPlaceParameters}
                     onClick={onCrumbClick}
-                    enableMenu={true && !this.state.isSomeItemSelected}
+                    enableMenu={!this.state.isSomeItemSelected}
                     getContextMenuItems={this.props.getContextMenuItems}
                     refresh={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}

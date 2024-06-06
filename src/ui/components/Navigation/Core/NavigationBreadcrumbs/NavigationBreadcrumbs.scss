@@ -1,13 +1,13 @@
 .dl-core-navigation-breadcrumbs {
     flex: 1 1 0;
     position: relative;
-    height: 28px;
+    height: var(--dl-navigation-breadcrumbs-height);
 
     &__wrapper {
         position: absolute;
         inset: 0;
 
-        line-height: 28px;
+        line-height: var(--dl-navigation-breadcrumbs-height);
         vertical-align: middle;
     }
 

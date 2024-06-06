@@ -107,11 +107,7 @@ class NavigationModal extends React.Component {
         }
     };
     onItemSelect = ({selectedItemsIds}) => {
-        if (selectedItemsIds.size > 0) {
-            this.setState({isSomeItemSelected: true});
-        } else {
-            this.setState({isSomeItemSelected: false});
-        }
+        this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
     };
     render() {
         const {
@@ -150,7 +146,7 @@ class NavigationModal extends React.Component {
                             place={place}
                             getPlaceParameters={this.props.getPlaceParameters}
                             onClick={this.onCrumbClick}
-                            enableMenu={true && !this.state.isSomeItemSelected}
+                            enableMenu={!this.state.isSomeItemSelected}
                             getContextMenuItems={this.props.getContextMenuItems}
                             refresh={this.refresh}
                             onChangeLocation={this.props.onChangeLocation}
