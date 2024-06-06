@@ -57,7 +57,6 @@ class NavigationMinimal extends React.Component {
 
     state = {
         breadCrumbs: [],
-        isSomeItemSelected: false,
     };
 
     refEntries = React.createRef();
@@ -84,14 +83,6 @@ class NavigationMinimal extends React.Component {
     setBreadCrumbs = (breadCrumbs) => {
         if (!isEqual(this.state.breadCrumbs, breadCrumbs)) {
             this.setState({breadCrumbs});
-        }
-    };
-
-    onItemSelect = ({selectedItemsIds}) => {
-        if (selectedItemsIds.size > 0) {
-            this.setState({isSomeItemSelected: true});
-        } else {
-            this.setState({isSomeItemSelected: false});
         }
     };
 
@@ -183,7 +174,6 @@ class NavigationMinimal extends React.Component {
                             getPlaceParameters={this.props.getPlaceParameters}
                             setBreadCrumbs={this.setBreadCrumbs}
                             onPermissionError={this.props.onPermissionError}
-                            onItemSelect={this.onItemSelect}
                         />
                         {hasButtonsChoose && this.renderFooter()}
                     </div>
