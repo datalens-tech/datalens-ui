@@ -51,7 +51,7 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
                         if (access.update) _roles[i].update = true;
                     });
                 }
-                setAccesses(_roles.sort((a:any, b:any)=> a.weight - b.weight).filter((item: any)=>item.role_id > 1));
+                setAccesses(_roles.sort((a:any, b:any)=> a.weight - b.weight));
             });
         })
         
