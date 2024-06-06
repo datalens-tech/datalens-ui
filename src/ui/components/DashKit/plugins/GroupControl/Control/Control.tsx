@@ -49,6 +49,7 @@ import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../
 import {getInitialState, reducer} from './store/reducer';
 import {
     setErrorData,
+    setIsInit,
     setLoadedData,
     setLoadingItems,
     setSilentLoader,
@@ -215,15 +216,13 @@ export const Control = ({
     };
 
     const reload = () => {
-        if (!isInit) {
-            return;
-        }
-
         clearLoaderTimer(silentLoaderTimer);
 
         if (data.source.elementType !== ELEMENT_TYPE.SELECT) {
             silentLoaderTimer = setTimeout(() => {
-                dispatch(setSilentLoader({silentLoading}));
+                if (isInit) {
+                    dispatch(setSilentLoader({silentLoading}));
+                }
             }, 800);
         }
 
@@ -231,7 +230,10 @@ export const Control = ({
     };
 
     React.useEffect(() => {
+        dispatch(setIsInit({isInit: true}));
+
         return () => {
+            dispatch(setIsInit({isInit: false}));
             clearLoaderTimer(silentLoaderTimer);
             cancelCurrentRequests(cancelSource);
             onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
@@ -296,7 +298,7 @@ export const Control = ({
         const newParam = {[param]: value};
 
         if (!isEqual(param, newParam)) {
-            onChange({params: {[param]: value}, controlId: id});
+            onChange({params: newParam, controlId: id});
         }
     };
 
@@ -433,7 +435,9 @@ export const Control = ({
                 operation,
             });
 
-            onChangeParams({value: valueWithOperation, param});
+            if (preparedValue !== valueWithOperation) {
+                onChangeParams({value: valueWithOperation, param});
+            }
         };
 
         const props: Record<string, unknown> = {

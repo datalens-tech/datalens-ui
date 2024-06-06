@@ -50,11 +50,17 @@
     }
 
     &__item,
-    &__item-stub {
+    &__item-stub,
+    &__apply-hint {
         margin-top: 8px;
         max-width: 100%;
         padding: 0;
         padding-right: 10px;
+    }
+
+    &__apply-hint {
+        display: flex;
+        align-items: center;
     }
 
     &__item-stub {
