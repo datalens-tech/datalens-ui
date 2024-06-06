@@ -1,12 +1,12 @@
-import React from 'react';
+import type React from 'react';
 
-import {IconData} from '@gravity-ui/uikit';
-import {DatasetField} from 'shared';
+import type {IconData} from '@gravity-ui/uikit';
+import type {DatasetField} from 'shared';
 
-import {TitleColumnProps} from './components/TitleColumn/TitleColumn';
-import {TypeColumnProps} from './components/TypeColumn/TypeColumn';
-import {ValueColumnProps} from './components/ValueColumn/ValueColumn';
-import {DatasetFieldListColumnType} from './constants';
+import type {TitleColumnProps} from './components/TitleColumn/TitleColumn';
+import type {TypeColumnProps} from './components/TypeColumn/TypeColumn';
+import type {ValueColumnProps} from './components/ValueColumn/ValueColumn';
+import type {DatasetFieldListColumnType} from './constants';
 
 export type ColumnWidth = string | number;
 

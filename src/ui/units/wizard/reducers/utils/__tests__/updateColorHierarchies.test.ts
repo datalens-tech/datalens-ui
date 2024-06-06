@@ -1,4 +1,4 @@
-import {Field, HierarchyField, VisualizationWithLayersShared} from 'shared';
+import type {Field, HierarchyField, VisualizationWithLayersShared} from 'shared';
 
 import {updateColorsHierarchies} from '../updateColorHierarchies';
 

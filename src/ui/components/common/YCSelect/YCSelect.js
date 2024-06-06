@@ -529,9 +529,9 @@ export class YCSelect extends React.PureComponent {
         const {type, value} = this.props;
 
         if (type === YCSelect.SINGLE) {
-            return !value;
+            return isFalsy(value);
         } else {
-            return (value || []).filter(Boolean).length === 0;
+            return (value || []).filter((value) => !isFalsy(value)).length === 0;
         }
     }
 

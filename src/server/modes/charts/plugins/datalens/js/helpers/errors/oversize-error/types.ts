@@ -1,6 +1,6 @@
-import {ServerField} from '../../../../../../../../../shared';
-import {PrepareFunctionDataRow, ResultDataOrder} from '../../../../preparers/types';
-import {OversizeErrorType} from '../../../constants/errors';
+import type {ServerField} from '../../../../../../../../../shared';
+import type {PrepareFunctionDataRow, ResultDataOrder} from '../../../../preparers/types';
+import type {OversizeErrorType} from '../../../constants/errors';
 
 export type GetOversizeErrorArgs = {
     type: OversizeErrorType;

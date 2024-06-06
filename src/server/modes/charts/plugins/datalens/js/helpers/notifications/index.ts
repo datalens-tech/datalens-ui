@@ -1,11 +1,10 @@
-import {
+import type {
     ChartsInsight,
-    ChartsInsightLocator,
     ServerField,
     ServerPlaceholder,
     ServerVisualization,
-    getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
+import {ChartsInsightLocator, getFakeTitleOrTitle} from '../../../../../../../../shared';
 
 export const prepareNotifications = (
     notifications: ChartsInsight[],

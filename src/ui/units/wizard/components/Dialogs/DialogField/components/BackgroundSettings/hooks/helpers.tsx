@@ -1,11 +1,9 @@
 import React from 'react';
 
-import {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
 import uniqBy from 'lodash/uniqBy';
+import type {ClientChartsConfig, Field, Placeholder} from 'shared';
 import {
-    ClientChartsConfig,
-    Field,
-    Placeholder,
     PlaceholderId,
     WizardVisualizationId,
     getFakeTitleOrTitle,

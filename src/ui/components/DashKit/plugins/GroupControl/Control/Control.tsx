@@ -4,16 +4,18 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     DashTabItemControlData,
     DashTabItemControlDataset,
-    DashTabItemControlElementType,
     DashTabItemControlManual,
     DashTabItemControlSingle,
-    DashTabItemControlSourceType,
     StringParams,
     WorkbookId,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    DashTabItemControlElementType,
+    DashTabItemControlSourceType,
 } from 'shared';
 import {
     ControlCheckbox,
@@ -23,8 +25,8 @@ import {
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
-import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
@@ -32,7 +34,7 @@ import logger from '../../../../../libs/logger';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
-import {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
+import type {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
 import {
     checkDatasetFieldType,
     getDatasetSourceInfo,
@@ -41,7 +43,7 @@ import {
     isValidRequiredValue,
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
-import {ExtendedLoadedData} from '../types';
+import type {ExtendedLoadedData} from '../types';
 import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';

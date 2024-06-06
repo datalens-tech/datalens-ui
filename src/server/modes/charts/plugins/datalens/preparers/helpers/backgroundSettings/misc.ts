@@ -1,8 +1,5 @@
-import {
-    ColorPalette,
-    TableFieldBackgroundSettings,
-    selectCurrentRGBGradient,
-} from '../../../../../../../../shared';
+import type {ColorPalette, TableFieldBackgroundSettings} from '../../../../../../../../shared';
+import {selectCurrentRGBGradient} from '../../../../../../../../shared';
 
 export const getCurrentBackgroundGradient = (
     gradientState: TableFieldBackgroundSettings['settings']['gradientState'],

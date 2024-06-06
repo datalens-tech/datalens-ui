@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 
 import {I18n} from '../../../../../../i18n';
 import {Interpolate} from '../../../../../../ui';
-import {FormOptions} from '../../../store/types';
+import type {FormOptions} from '../../../store/types';
 
 const b = block('source-editor-dialog');
 const i18n = I18n.keyset('dataset.sources-tab.modify');

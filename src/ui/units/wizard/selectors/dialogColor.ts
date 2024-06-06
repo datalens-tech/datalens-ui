@@ -5,9 +5,10 @@ import {
     isMeasureValue,
     isNumberField,
 } from 'shared';
-import {DatalensGlobalState, selectPalette} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {selectPalette} from 'ui';
 
-import {OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
+import type {OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
 import {VISUALIZATION_IDS} from '../constants';
 
 export const selectDialogColorPaletteState = (state: DatalensGlobalState) =>

@@ -8,7 +8,7 @@ import {registry} from 'ui/registry';
 import {isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
-import {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
+import type {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
 

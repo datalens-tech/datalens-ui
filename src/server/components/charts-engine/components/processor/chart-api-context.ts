@@ -5,10 +5,11 @@ import type {
     Shared,
 } from '../../../../../shared';
 import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
+import {wrapHtml} from '../../../../../shared/utils/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
 
 import {getCurrentPage, getParam, getSortParams} from './paramsUtils';
-import {ChartApiContext} from './types';
+import type {ChartApiContext} from './types';
 import {isWrapFnArgsValid} from './utils';
 
 function getOrphanedObject() {
@@ -104,6 +105,8 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             },
         };
     };
+
+    api.generateHtml = wrapHtml;
 
     if (params) {
         api.getParams = () => params;

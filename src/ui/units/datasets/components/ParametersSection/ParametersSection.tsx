@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
-import {DatasetField, ParametersQA} from 'shared';
+import type {DatasetField} from 'shared';
+import {ParametersQA} from 'shared';
 
 import {DatasetTabSection} from '../DatasetTabSection/DatasetTabSection';
 

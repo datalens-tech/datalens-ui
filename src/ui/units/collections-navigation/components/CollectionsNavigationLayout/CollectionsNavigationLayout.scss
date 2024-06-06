@@ -9,10 +9,7 @@ $class: 'dl-collections-navigation-layout';
 
     &__page-wrapper {
         position: absolute;
-        top: calc($actionPanelHeight);
-        right: 0;
-        bottom: 0;
-        left: 0;
+        inset: calc($actionPanelHeight) 0 0 0;
         display: grid;
         grid-template-rows: auto minmax(auto, $footerHeight);
         overflow-y: auto;
@@ -100,12 +97,10 @@ $class: 'dl-collections-navigation-layout';
         }
 
         .#{$class}__header-title {
+            @include overflow-ellipsis;
             @include text-header-1;
-            white-space: nowrap;
             max-width: 100%;
             display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .#{$class}__content {

@@ -8,25 +8,29 @@ import {
     Function,
     Xmark,
 } from '@gravity-ui/icons';
-import {DropdownMenu, Icon, Popover, PopoverInstanceProps} from '@gravity-ui/uikit';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {SDK} from 'libs';
+import type {SDK} from 'libs';
 import {cloneDeep} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
-    AxisMode,
-    DATASET_FIELD_TYPES,
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {
     DatasetField,
     DatasetFieldCalcMode,
-    DatasetFieldType,
-    Feature,
     Field,
-    PlaceholderId,
     PlaceholderSettings,
     Shared,
     Sort,
+} from 'shared';
+import {
+    AxisMode,
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
+    Feature,
+    PlaceholderId,
     SortDirection,
     VisualizationItemQa,
     WizardVisualizationId,
@@ -35,7 +39,7 @@ import {
     isParameter,
 } from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
 import {
     createFieldFromVisualization,
@@ -52,10 +56,8 @@ import {
     setSort,
     updatePlaceholderSettings,
 } from 'units/wizard/actions/visualization';
-import {
-    DIALOG_FIELD,
-    DialogFieldState,
-} from 'units/wizard/components/Dialogs/DialogField/DialogField';
+import type {DialogFieldState} from 'units/wizard/components/Dialogs/DialogField/DialogField';
+import {DIALOG_FIELD} from 'units/wizard/components/Dialogs/DialogField/DialogField';
 import {DIALOG_FIELD_INSPECTOR} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
 import {CONFLICT_TOOLTIPS, SETTINGS} from 'units/wizard/constants';
 import {

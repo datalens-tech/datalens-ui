@@ -3,9 +3,9 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
-import {CopyWorkbookTemplateResponse} from '../../../shared/schema';
+import type {CopyWorkbookTemplateResponse} from '../../../shared/schema';
 import DialogManager from '../../components/DialogManager/DialogManager';
-import {AppDispatch} from '../../store';
+import type {AppDispatch} from '../../store';
 import {addDemoWorkbook} from '../../store/actions/collectionsStructure';
 import {selectAddDemoWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 

@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 
-import {DatalensGlobalState} from '../../../../';
+import type {DatalensGlobalState} from '../../../../';
 
 const selectGetCollection = (state: DatalensGlobalState) => state.collections.getCollection;
 

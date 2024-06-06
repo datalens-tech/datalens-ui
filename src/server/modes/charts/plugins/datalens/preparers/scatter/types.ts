@@ -1,4 +1,4 @@
-import {ExtendedPointOptionsObject} from '../../utils/color-helpers';
+import type {ExtendedPointOptionsObject} from '../../utils/color-helpers';
 
 export type ScatterPoint = ExtendedPointOptionsObject & {
     xLabel?: string;

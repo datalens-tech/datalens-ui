@@ -5,7 +5,7 @@ import LocationChange from 'components/LocationChange/LocationChange';
 import {usePrevious} from 'hooks/usePrevious';
 import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
-import {RouteComponentProps} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
 import ResizeObserver from 'resize-observer-polyfill';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
@@ -14,7 +14,7 @@ import {registry} from 'ui/registry';
 
 import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
-import {CurrentPageEntry} from '../../../../components/Navigation/types';
+import type {CurrentPageEntry} from '../../../../components/Navigation/types';
 import {DL, EMBEDDED_DASH_MESSAGE_NAME} from '../../../../constants/common';
 import {isEmbeddedMode, isIframe, isNoScrollMode} from '../../../../utils/embedded';
 import {dispatchResize, sendEmbedDashHeight} from '../../modules/helpers';

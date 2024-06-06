@@ -1,5 +1,5 @@
-import {DatalensGlobalState} from 'index';
-import {ThunkDispatch} from 'redux-thunk';
+import type {DatalensGlobalState} from 'index';
+import type {ThunkDispatch} from 'redux-thunk';
 
 import type {
     Collection,
@@ -7,8 +7,8 @@ import type {
     GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
 } from '../../../../../shared/schema';
-import {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
-import {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
+import type {GetCollectionContentMode} from '../../../../../shared/schema/us/types/collections';
+import type {OrderBasicField, OrderDirection} from '../../../../../shared/schema/us/types/sort';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';

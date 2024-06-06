@@ -1,4 +1,4 @@
-import {FormDict} from '../../typings';
+import type {FormDict} from '../../typings';
 import {
     RESET_FORMS_DATA,
     RESET_S3_BASED_DATA,
@@ -36,7 +36,7 @@ import {
     SET_YADOCS_SELECTED_ITEM_ID,
 } from '../actions';
 import {initialState} from '../constants';
-import {ConnectionsReduxAction, ConnectionsReduxState} from '../typings';
+import type {ConnectionsReduxAction, ConnectionsReduxState} from '../typings';
 
 // eslint-disable-next-line complexity
 export default (state = initialState, action: ConnectionsReduxAction): ConnectionsReduxState => {

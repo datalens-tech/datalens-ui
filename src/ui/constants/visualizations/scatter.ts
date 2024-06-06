@@ -1,6 +1,7 @@
 import {ArrowRight, ArrowUp, ChevronsExpandUpRight, Circles5Random} from '@gravity-ui/icons';
 
-import {Field, GraphShared, Placeholder, Shared, WizardVisualizationId} from '../../../shared';
+import type {Field, GraphShared, Placeholder, Shared} from '../../../shared';
+import {WizardVisualizationId} from '../../../shared';
 import {
     ITEM_TYPES,
     PRIMITIVE_DATA_TYPES,

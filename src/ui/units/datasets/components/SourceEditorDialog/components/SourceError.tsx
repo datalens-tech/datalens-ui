@@ -4,8 +4,8 @@ import block from 'bem-cn-lite';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
 import {I18n} from '../../../../../../i18n';
-import {Dataset} from '../../../../../../shared';
-import {EditedSource} from '../types';
+import type {Dataset} from '../../../../../../shared';
+import type {EditedSource} from '../types';
 
 const b = block('source-editor-dialog');
 const i18n = I18n.keyset('dataset.sources-tab.modify');

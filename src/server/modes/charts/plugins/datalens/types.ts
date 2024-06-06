@@ -1,4 +1,4 @@
-import {
+import type {
     ColorPalette,
     ColumnSettings,
     Palette,
@@ -9,7 +9,7 @@ import {
     TableBarsSettings,
     Update,
 } from '../../../../../shared';
-import {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
+import type {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
 
 export type PayloadParameter = {
     id: string;

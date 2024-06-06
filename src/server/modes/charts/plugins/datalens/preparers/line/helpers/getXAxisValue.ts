@@ -1,7 +1,7 @@
 import {DATASET_FIELD_TYPES, isDateField, isNumberField} from '../../../../../../../../shared';
 import {findIndexInOrder, getTimezoneOffsettedTime} from '../../../utils/misc-helpers';
 
-import {GetXAxisValueArgs, XAxisValue} from './types';
+import type {GetXAxisValueArgs, XAxisValue} from './types';
 
 export function getDateAxisValue(value: string | number | Date, dataType: string) {
     const val = new Date(value);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
+import type {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
 import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {isMobileView} from 'ui/utils/mobile';
@@ -29,18 +29,19 @@ const handleTabLinkClick = (event: React.MouseEvent) => {
 
 type TabsWithDatalensSpecificProps<T> = Omit<AdaptiveTabsProps<T>, 'breakpointsConfig'> & {
     size?: TabsSize;
+    disableOpacity?: boolean;
 };
 
 function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<T>>) {
     function WithDatalensSpecific(props: TabsWithDatalensSpecificProps<T>) {
-        const {size = 'm', ...restProps} = props;
+        const {size = 'm', disableOpacity, ...restProps} = props;
 
         const breakpointsConfig = isMobileView
             ? breakpointsWithoutCollapse
             : defaultBreakPointsConfig;
 
         return (
-            <div className={b({size})}>
+            <div className={b({size, opacity: !disableOpacity, mobile: isMobileView})}>
                 <Component
                     {...restProps}
                     breakpointsConfig={breakpointsConfig}
@@ -51,13 +52,15 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                         return item?.id ? (
                             <Link
                                 onClick={handleTabLinkClick}
-                                className={b('tab', {active: isActive})}
+                                className={b('tab', {
+                                    active: isActive,
+                                })}
                                 href={`${window.location.pathname}?tab=${item.id}`}
                             >
                                 {node}
                             </Link>
                         ) : (
-                            <React.Fragment>{node}</React.Fragment>
+                            <div className={b('tab', {active: isActive})}>{node}</div>
                         );
                     }}
                 />

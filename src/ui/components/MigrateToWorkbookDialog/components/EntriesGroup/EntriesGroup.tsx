@@ -6,7 +6,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import Utils from '../../../../utils';
-import {EntryFields, EntryRow} from '../EntryRow';
+import type {EntryFields} from '../EntryRow';
+import {EntryRow} from '../EntryRow';
 
 import './EntriesGroup.scss';
 

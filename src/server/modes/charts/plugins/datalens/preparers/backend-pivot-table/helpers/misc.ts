@@ -1,9 +1,11 @@
-import {
+import type {
     ApiV2Annotations,
     MarkupItem,
-    PlaceholderId,
     ServerField,
     ServerPlaceholder,
+} from '../../../../../../../../shared';
+import {
+    PlaceholderId,
     isMarkupField,
     isMarkupItem,
     markupToRawString,
@@ -15,7 +17,7 @@ import {
 } from '../../../utils/misc-helpers';
 import {getBarSettingsViewOptions} from '../../helpers/barsSettings';
 import {MEASURE_NAME_PSEUDO_ID} from '../constants/misc';
-import {
+import type {
     AnnotationsMap,
     PivotDataCellValue,
     PivotDataRows,

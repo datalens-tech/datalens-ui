@@ -1,9 +1,9 @@
-import React from 'react';
+import type React from 'react';
 
-import {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 
-import {ErrorData, LoadStatus} from '../../../Control/types';
+import type {ErrorData, LoadStatus} from '../../../Control/types';
 
 export type Dispatch = React.Dispatch<Action>;
 

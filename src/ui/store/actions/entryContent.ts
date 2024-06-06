@@ -1,10 +1,12 @@
-import {EntryGlobalState, RevisionsListMode, RevisionsMode} from '../typings/entryContent';
+import type {EntryGlobalState, RevisionsListMode} from '../typings/entryContent';
+import {RevisionsMode} from '../typings/entryContent';
 import type {GetEntryResponse, GetRevisionsEntry} from '../../../shared/schema';
-import {ThunkDispatch} from 'redux-thunk';
-import {DatalensGlobalState, URL_QUERY} from 'ui';
+import type {ThunkDispatch} from 'redux-thunk';
+import type {DatalensGlobalState} from 'ui';
+import {URL_QUERY} from 'ui';
 import {getSdk} from '../../libs/schematic-sdk';
 import {REVISIONS_LIST_PART_SIZE} from '../../components/Revisions/helpers';
-import {EntryContentState} from '../reducers/entryContent';
+import type {EntryContentState} from '../reducers/entryContent';
 import history from '../../utils/history';
 import {filterUsersIds} from '../../../shared';
 import {getResolveUsersByIdsAction} from './usersByIds';

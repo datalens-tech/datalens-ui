@@ -1,10 +1,12 @@
-import {
-    ConnectorType,
+import type {
     Dictionary,
     IChartEditor,
-    QLParamType,
     ServerChartsConfig,
     StringParams,
+} from '../../../../../shared';
+import {
+    ConnectorType,
+    QLParamType,
     isMonitoringOrPrometheusChart,
     resolveIntervalDate,
     resolveOperation,

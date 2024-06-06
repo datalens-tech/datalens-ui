@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
 import type {schema} from 'shared';

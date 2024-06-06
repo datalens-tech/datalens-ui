@@ -1,16 +1,16 @@
 import React from 'react';
 
 import {Minus, Plus} from '@gravity-ui/icons';
-import DataTable, {Column, SortOrder} from '@gravity-ui/react-data-table';
+import type {Column, SortOrder} from '@gravity-ui/react-data-table';
+import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {debounce, isUndefined} from 'lodash';
 import get from 'lodash/get';
 import moment from 'moment';
-import {
+import type {
     BarTableCell,
     BarViewOptions,
-    ChartKitTableQa,
     CommonTableColumn,
     DateTableColumn,
     DiffTableColumn,
@@ -22,15 +22,15 @@ import {
     TableCommonCell,
     TableHead,
     TableRow,
-    isMarkupItem,
 } from 'shared';
+import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
-import {ChartKitDataTable, DataTableData} from '../../../../../../types';
+import type {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
-import {TableProps} from '../types';
+import type {TableProps} from '../types';
 
 import {getAdditionalStyles, getRowActionParams} from './action-params';
 import {getCellClickArgs, getCellOnClickHandler} from './event-handlers';

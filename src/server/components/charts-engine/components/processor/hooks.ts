@@ -1,8 +1,8 @@
-import {Request} from '@gravity-ui/expresskit';
-import {AppContext} from '@gravity-ui/nodekit';
+import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import {flow} from 'lodash';
 
-import {ChartsEngine} from '../../index';
+import type {ChartsEngine} from '../../index';
 
 export class HookError extends Error {
     hookError: {

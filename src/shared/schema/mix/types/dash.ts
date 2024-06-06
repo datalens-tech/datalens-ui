@@ -1,6 +1,6 @@
-import {WizardVisualizationId} from '../../../constants';
-import {DashStats, WorkbookId} from '../../../types';
-import {GetEntriesEntryResponse} from '../../us/types';
+import type {WizardVisualizationId} from '../../../constants';
+import type {DashStats, WorkbookId} from '../../../types';
+import type {GetEntriesEntryResponse} from '../../us/types';
 
 export type CollectDashStatsResponse = {
     status: 'success';

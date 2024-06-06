@@ -1,15 +1,8 @@
 import lodash from 'lodash';
-import {
-    ChartsConfigVersion,
-    ClientChartsConfig,
-    Field,
-    ServerDatasetField,
-    Shared,
-    getResultSchemaFromDataset,
-    getSortedData,
-} from 'shared';
+import type {ClientChartsConfig, Field, ServerDatasetField, Shared} from 'shared';
+import {ChartsConfigVersion, getResultSchemaFromDataset, getSortedData} from 'shared';
 
-import {ConfigDataState} from '../preview';
+import type {ConfigDataState} from '../preview';
 
 export const getConfigData = (state: ConfigDataState): ClientChartsConfig => {
     const datasetsIds: string[] = state.datasets.map((dataset) => dataset.id);

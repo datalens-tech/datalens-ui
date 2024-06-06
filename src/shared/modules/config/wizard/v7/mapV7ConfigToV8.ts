@@ -3,8 +3,7 @@ import {WizardVisualizationId} from '../../../../constants';
 // it will be failed when playwright runs tests.
 // the TypeError will occur and says that PlaceholderId is undefined
 import {PlaceholderId} from '../../../../constants/placeholder';
-import {
-    ChartsConfigVersion,
+import type {
     ServerField,
     V7ChartsConfig,
     V7Placeholder,
@@ -12,6 +11,7 @@ import {
     V8Placeholder,
     V8Visualization,
 } from '../../../../types';
+import {ChartsConfigVersion} from '../../../../types';
 
 const PLACEHOLDERS_WITH_TOTALS_SETTINGS: Record<string, boolean> = {
     [PlaceholderId.PivotTableRows]: true,

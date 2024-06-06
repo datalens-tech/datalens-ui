@@ -1,19 +1,19 @@
 import {I18n} from 'i18n';
 import {flow} from 'lodash';
 import {batch} from 'react-redux';
-import {ConnectionData, ConnectorType} from 'shared';
+import type {ConnectionData, ConnectorType} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
 import {registry} from 'ui/registry';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import logger from '../../../../libs/logger';
 import {showToast} from '../../../../store/actions/toaster';
-import {DataLensApiError} from '../../../../typings';
+import type {DataLensApiError} from '../../../../typings';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {newConnectionSelector} from '../selectors';
-import {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
+import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
 import {
     getConnectorItemFromFlattenList,
     getDataForParamsChecking,

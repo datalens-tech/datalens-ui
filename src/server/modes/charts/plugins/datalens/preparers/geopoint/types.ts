@@ -1,4 +1,4 @@
-import {Coordinate} from '../../utils/geo-helpers';
+import type {Coordinate} from '../../utils/geo-helpers';
 
 export type GeopointPointConfig = {
     feature: {

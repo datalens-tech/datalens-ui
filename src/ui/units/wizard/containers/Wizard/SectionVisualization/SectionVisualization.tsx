@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
 
 import {connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
-    Placeholder,
-    Shared,
-    VisualizationWithLayersShared,
-    isVisualizationWithLayers,
-} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {Placeholder, Shared, VisualizationWithLayersShared} from 'shared';
+import {isVisualizationWithLayers} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {selectDatasetError} from 'units/wizard/selectors/dataset';
 import {selectSubVisualization, selectVisualization} from 'units/wizard/selectors/visualization';
 
@@ -17,9 +15,8 @@ import {setSelectedLayerId} from '../../../actions';
 
 import PlaceholdersContainer from './PlaceholdersContainer/PlaceholdersContainer';
 import VisualizationLayersControl from './VisualizationLayersControl/VisualizationLayersControl';
-import VisualizationSelector, {
-    VisualizationSelectorOwnProps,
-} from './VisualizationSelector/VisualizationSelector';
+import type {VisualizationSelectorOwnProps} from './VisualizationSelector/VisualizationSelector';
+import VisualizationSelector from './VisualizationSelector/VisualizationSelector';
 
 import './SectionVisualization.scss';
 

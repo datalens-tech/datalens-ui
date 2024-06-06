@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {DialogRow, DialogRowProps} from '../../../components/DialogRow/DialogRow';
+import type {DialogRowProps} from '../../../components/DialogRow/DialogRow';
+import {DialogRow} from '../../../components/DialogRow/DialogRow';
 
 type DialogPlaceholderRowProps = DialogRowProps;
 

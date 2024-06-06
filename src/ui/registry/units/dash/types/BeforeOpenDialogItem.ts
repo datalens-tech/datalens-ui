@@ -1,7 +1,7 @@
 import type {ConfigItem} from '@gravity-ui/dashkit';
-import {AnyAction} from 'redux';
+import type {AnyAction} from 'redux';
 
-import {AppDispatch} from '../../../../store';
+import type {AppDispatch} from '../../../../store';
 
 export type BeforeOpenDialogItemAction = <T>(
     data: ConfigItem,

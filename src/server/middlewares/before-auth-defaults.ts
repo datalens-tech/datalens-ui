@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {FALLBACK_LANGUAGES} from '../../shared';
 import {createI18nInstance, getLang} from '../utils/language';

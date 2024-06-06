@@ -1,4 +1,4 @@
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import linetimePrepare from '../index';
 
 import {expectedResult, options} from './mocks/line-time.mock';

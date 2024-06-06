@@ -4,11 +4,11 @@ import {Button, RadioGroup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
+import type {FilterValue} from 'shared';
 import {
     ControlQA,
     DATASET_FIELD_TYPES,
     DialogControlDateQa,
-    FilterValue,
     getParsedIntervalDates,
     getParsedRelativeDate,
 } from 'shared';

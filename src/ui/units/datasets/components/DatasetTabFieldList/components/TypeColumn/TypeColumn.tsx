@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {AvailableFieldType, DATASET_FIELD_TYPES, DatasetFieldType} from 'shared';
+import type {AvailableFieldType, DATASET_FIELD_TYPES, DatasetFieldType} from 'shared';
 import {DataTypeIcon} from 'ui';
 
 import './TypeColumn.scss';

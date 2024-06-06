@@ -4,7 +4,7 @@ import {CircleCheckFill} from '@gravity-ui/icons';
 import {Icon, Loader, Toast, Toaster} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {ExportChartArgs} from '../types';
+import type {ExportChartArgs} from '../types';
 import {truncateTextWithEllipsis} from '../utils';
 
 import './ToastContent.scss';

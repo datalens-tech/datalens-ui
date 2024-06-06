@@ -3,7 +3,7 @@ import React from 'react';
 import {Dialog, TextArea} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 import './RLSDialog.scss';
 

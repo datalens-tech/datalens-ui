@@ -2,7 +2,7 @@ import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import {WizardVisualizationId} from '../../../../../../../../../shared';
 import {getSegmentsYAxis} from '../segments/getSegmentsYAxis';
-import {SegmentsMap} from '../segments/types';
+import type {SegmentsMap} from '../segments/types';
 
 describe('getSegmentsYAxis', () => {
     it('The position of a segment(top) depends on its index', () => {

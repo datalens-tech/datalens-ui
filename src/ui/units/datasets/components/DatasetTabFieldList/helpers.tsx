@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {ListItemData} from '@gravity-ui/uikit';
-import {DatasetField} from 'shared';
+import type {ListItemData} from '@gravity-ui/uikit';
+import type {DatasetField} from 'shared';
 
 import {TitleColumn} from './components/TitleColumn/TitleColumn';
 import {TypeColumn} from './components/TypeColumn/TypeColumn';
 import {ValueColumn} from './components/ValueColumn/ValueColumn';
-import {FieldColumn, FieldListColumn} from './types';
+import type {FieldColumn, FieldListColumn} from './types';
 
 export const getFieldRowColumns = (
     columns: FieldListColumn[],

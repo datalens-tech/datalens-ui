@@ -1,5 +1,6 @@
-import {WizardVisualizationId} from '../../constants';
-import {AxisMode, ServerSort} from '../../types';
+import type {WizardVisualizationId} from '../../constants';
+import type {ServerSort} from '../../types';
+import {AxisMode} from '../../types';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 
 export function getActualAxisModeForField(args: {

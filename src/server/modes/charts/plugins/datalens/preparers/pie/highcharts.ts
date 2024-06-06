@@ -1,7 +1,7 @@
 import {PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
-import {PrepareFunctionArgs} from '../types';
+import type {PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
 import {isColoringByMeasure} from './utils';

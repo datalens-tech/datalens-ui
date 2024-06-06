@@ -1,7 +1,8 @@
-import {ConnectionData, TIMEOUT_65_SEC} from 'shared';
+import type {ConnectionData} from 'shared';
+import {TIMEOUT_65_SEC} from 'shared';
 import {DL} from 'ui';
 
-import {
+import type {
     AddGoogleSheetResponse,
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,

@@ -5,7 +5,7 @@ import merge from 'lodash/merge';
 
 import {SvgImage} from './SvgImage/SvgImage';
 import {importContext, isContext} from './context';
-import {CreateIllustrationProps, IllustrationStore} from './types';
+import type {CreateIllustrationProps, IllustrationStore} from './types';
 
 export function createIllustration(
     items: Array<__WebpackModuleApi.RequireContext | IllustrationStore> = [],

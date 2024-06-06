@@ -1,12 +1,14 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
-import {SelectorElementType, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import type {SelectorElementType} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,

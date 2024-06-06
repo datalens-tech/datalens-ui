@@ -42,7 +42,11 @@ function withWrapForControls(WrappedComponent) {
 
         return (
             <div
-                className={b('control', {mobile: isMobileView}, className)}
+                className={b(
+                    'control',
+                    {mobile: isMobileView, 'without-label': !showLabel},
+                    className,
+                )}
                 style={controlStyle}
                 data-qa={ControlQA.chartkitControl}
             >

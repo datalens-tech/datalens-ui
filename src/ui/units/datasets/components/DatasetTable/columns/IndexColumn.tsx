@@ -1,10 +1,11 @@
 import React from 'react';
 
 import {Hashtag} from '@gravity-ui/icons';
-import DataTable, {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
+import DataTable from '@gravity-ui/react-data-table';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DatasetField} from 'shared';
+import type {DatasetField} from 'shared';
 
 const b = block('dataset-table');
 

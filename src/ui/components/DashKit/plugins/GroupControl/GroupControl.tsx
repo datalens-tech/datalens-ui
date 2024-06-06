@@ -1,28 +1,24 @@
 import React from 'react';
 
-import {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
-import {
-    ControlQA,
-    DashTabItemControlSingle,
-    DashTabItemGroupControlData,
-    StringParams,
-} from 'shared';
+import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
+import {ControlQA} from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {
@@ -31,11 +27,11 @@ import {
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
-import {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
+import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
-import {
+import type {
     ContextProps,
     ExtendedLoadedData,
     PluginGroupControlState,

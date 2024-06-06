@@ -1,11 +1,12 @@
-import {Dispatch} from 'redux';
+import type {Dispatch} from 'redux';
 import {batch} from 'react-redux';
 
 import type {DatalensGlobalState} from '../../';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
 
-import {createJDP, CreateJDPOptions} from '../utils/jdp';
+import type {CreateJDPOptions} from '../utils/jdp';
+import {createJDP} from '../utils/jdp';
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');

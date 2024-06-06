@@ -1,4 +1,4 @@
-import {CommonPlaceholders} from '../config/wizard';
+import type {CommonPlaceholders} from '../config/wizard';
 
 export type CommonPlaceholdersKeys = keyof CommonPlaceholders;
 
@@ -55,4 +55,10 @@ export const enum AxisMode {
 export const enum AxisLabelFormatMode {
     Auto = 'auto',
     ByField = 'by-field',
+}
+
+export const enum AxisNullsMode {
+    Ignore = 'ignore',
+    Connect = 'connect',
+    AsZero = 'as-0',
 }

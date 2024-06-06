@@ -3,8 +3,8 @@ import React from 'react';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
-import {WorkbookWithPermissions} from 'shared/schema';
-import {AppDispatch} from 'ui/store';
+import type {WorkbookWithPermissions} from 'shared/schema';
+import type {AppDispatch} from 'ui/store';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {
@@ -14,7 +14,7 @@ import {
     resetWorkbookEntriesByScope,
 } from '../../store/actions';
 import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
-import {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters} from '../../types';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 
 import {useChunkedEntries} from './useChunkedEntries';

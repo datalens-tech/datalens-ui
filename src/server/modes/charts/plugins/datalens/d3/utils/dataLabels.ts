@@ -1,4 +1,5 @@
-import {ServerField, getFormatOptions, isNumberField} from '../../../../../../../shared';
+import type {ServerField} from '../../../../../../../shared';
+import {getFormatOptions, isNumberField} from '../../../../../../../shared';
 import {chartKitFormatNumberWrapper} from '../../utils/misc-helpers';
 
 export function getFormattedLabel(value?: string | number, labelField?: ServerField) {

@@ -1,6 +1,6 @@
-import {ServerField} from '../../../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../../../types';
-import {AnnotationsMap, PivotDataRows} from '../../../types';
+import type {ServerField} from '../../../../../../../../../../shared';
+import type {ChartColorsConfig} from '../../../../../types';
+import type {AnnotationsMap, PivotDataRows} from '../../../types';
 
 export const MOCKED_PIVOT_DATA_ROWS = [
     {

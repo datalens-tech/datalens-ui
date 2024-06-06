@@ -1,6 +1,6 @@
 import {TIMEOUT_60_SEC} from '../../../constants';
 import {createAction} from '../../gateway-utils';
-import {CopyTemplateArgs, CopyTemplateResponse} from '../types';
+import type {CopyTemplateArgs, CopyTemplateResponse} from '../types';
 
 const PATH_PREFIX = '/v1';
 

@@ -1,6 +1,6 @@
-import {ThunkAction, ThunkDispatch} from 'redux-thunk';
-import {DatalensGlobalState} from 'ui';
-import {AnyAction} from 'redux';
+import type {ThunkAction, ThunkDispatch} from 'redux-thunk';
+import type {DatalensGlobalState} from 'ui';
+import type {AnyAction} from 'redux';
 
 export * from './configure';
 export * from './reducer-registry';

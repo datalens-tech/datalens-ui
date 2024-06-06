@@ -1,6 +1,6 @@
-import {CSSProperties} from 'react';
+import type {CSSProperties} from 'react';
 
-import {DashTabItemControlData} from 'shared';
+import type {DashTabItemControlData} from 'shared';
 
 export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],

@@ -1,4 +1,4 @@
-import {PrepareFunctionArgs} from '../../types';
+import type {PrepareFunctionArgs} from '../../types';
 import {prepareHighchartsPie} from '../highcharts';
 
 import {piePrepareForQLArgs, piePrepareForQLResult} from './mocks/pie.mock';

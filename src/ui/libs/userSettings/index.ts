@@ -1,4 +1,4 @@
-import {DLUserSettings} from 'shared';
+import type {DLUserSettings} from 'shared';
 import {getStore} from 'store';
 import {updateUserSettings} from 'store/actions/user';
 import {selectUserSettings} from 'store/selectors/user';

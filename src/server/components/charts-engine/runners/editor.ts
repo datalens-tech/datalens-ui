@@ -1,14 +1,15 @@
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
 import {Feature, isEnabledServerFeature} from '../../../../shared';
-import {Processor, ProcessorParams} from '../components/processor';
+import type {ProcessorParams} from '../components/processor';
+import {Processor} from '../components/processor';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
 
-import {RunnerHandlerProps} from '.';
+import type {RunnerHandlerProps} from '.';
 
 export const runEditor = async (
     parentContext: AppContext,

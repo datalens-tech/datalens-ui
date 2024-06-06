@@ -1,4 +1,4 @@
-import {ColorsConfig} from './index';
+import type {ColorsConfig} from './index';
 type PaletteFields = 'mountedColors' | 'palette';
 type GradientFields =
     | 'thresholdsMode'

@@ -22,13 +22,11 @@
 
     &__content-cell,
     &__empty-cell {
+        @include overflow-ellipsis();
         display: table-cell;
         box-sizing: content-box;
-        overflow: hidden;
         overflow-wrap: break-word;
         text-align: left;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         vertical-align: middle;
 
         border-bottom: 1px solid var(--g-color-line-generic);
@@ -106,5 +104,20 @@
 
     &__btn-actions {
         margin-left: 8px;
+    }
+
+    &_mobile {
+        #{$class}__content-cell {
+            @include text-body-2;
+            padding: 0;
+        }
+
+        #{$class}__title-col {
+            padding-right: 8px;
+        }
+
+        #{$class}__content-cell_date {
+            width: 80px;
+        }
     }
 }

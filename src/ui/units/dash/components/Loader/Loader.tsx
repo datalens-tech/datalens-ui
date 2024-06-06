@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Loader as CommonLoader, LoaderProps as CommonLoaderProps} from '@gravity-ui/uikit';
+import type {LoaderProps as CommonLoaderProps} from '@gravity-ui/uikit';
+import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './Loader.scss';

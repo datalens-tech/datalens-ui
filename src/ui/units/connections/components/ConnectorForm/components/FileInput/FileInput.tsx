@@ -1,11 +1,14 @@
 import React from 'react';
 
-import {ButtonProps, Label} from '@gravity-ui/uikit';
-import {ButtonAttach, ButtonAttachProps} from 'components/ButtonAttach/ButtonAttach';
+import type {ButtonProps} from '@gravity-ui/uikit';
+import {Label} from '@gravity-ui/uikit';
+import type {ButtonAttachProps} from 'components/ButtonAttach/ButtonAttach';
+import {ButtonAttach} from 'components/ButtonAttach/ButtonAttach';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {FileInputItem} from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
 

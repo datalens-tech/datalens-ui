@@ -1,4 +1,4 @@
-import {DatasetAvatarRelation} from '../../../../../../shared';
+import type {DatasetAvatarRelation} from '../../../../../../shared';
 
 export const RELATIONS = [
     {

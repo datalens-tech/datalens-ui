@@ -7,10 +7,13 @@ import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import {ResolveThunks, connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {showToast} from 'store/actions/toaster';
-import {DatalensGlobalState, URL_QUERY} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {URL_QUERY} from 'ui';
 
 import logger from '../../libs/logger';
 import {loadRevisions, setEntryCurrentRevId} from '../../store/actions/entryContent';

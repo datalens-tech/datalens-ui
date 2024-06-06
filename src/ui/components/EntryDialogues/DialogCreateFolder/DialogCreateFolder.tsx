@@ -1,16 +1,17 @@
 import React from 'react';
 
 import {I18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
-import {DataLensApiError} from 'typings';
+import type {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import type {CreateFolderResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 export interface DialogCreateFolderProps extends EntryDialogProps {
     initDestination: string;

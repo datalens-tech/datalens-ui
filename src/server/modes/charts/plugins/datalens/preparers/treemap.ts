@@ -19,7 +19,7 @@ import {
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
-import {PrepareFunctionArgs} from './types';
+import type {PrepareFunctionArgs} from './types';
 
 type TreemapItem = {
     id: string;

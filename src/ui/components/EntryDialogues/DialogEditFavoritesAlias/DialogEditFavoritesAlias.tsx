@@ -9,7 +9,7 @@ import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {EntryDialogResolveStatus} from '../constants';
-import {EntryDialogProps} from '../types';
+import type {EntryDialogProps} from '../types';
 
 import './DialogEditFavoritesAlias.scss';
 

@@ -1,10 +1,16 @@
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
-import type {TableCommonCell, TableWidgetEventScope} from 'shared';
-import {TableCell, TableCellsRow, TableHead, TableRow} from 'shared';
+import type {
+    TableCell,
+    TableCellsRow,
+    TableCommonCell,
+    TableHead,
+    TableRow,
+    TableWidgetEventScope,
+} from 'shared';
 
 import type {TData} from '../../../../../../../components/Table/types';
 import type {TableWidget} from '../../../../../types';
-import {ActionParamsData} from '../../../../components/Widget/components/Table/utils';
+import type {ActionParamsData} from '../../../../components/Widget/components/Table/utils';
 import {
     getActionParams,
     getAdditionalStyles,

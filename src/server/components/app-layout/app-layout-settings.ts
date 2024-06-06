@@ -1,7 +1,7 @@
-import {Meta} from '@gravity-ui/app-layout';
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Meta} from '@gravity-ui/app-layout';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {AppLayoutSettings, AppLayoutSettingsName} from '../../types/app-layout';
+import type {AppLayoutSettings, AppLayoutSettingsName} from '../../types/app-layout';
 export const getAppLayoutSettings = (
     req: Request,
     _res: Response,

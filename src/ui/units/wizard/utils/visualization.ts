@@ -1,11 +1,9 @@
 import _ from 'lodash';
 import get from 'lodash/get';
 
+import type {ChartkitGlobalSettings, Field, Shared} from '../../../../shared';
 import {
-    ChartkitGlobalSettings,
     DatasetFieldAggregation,
-    Field,
-    Shared,
     WizardVisualizationId,
     isFieldHierarchy,
     isParameter,

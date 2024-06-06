@@ -1,8 +1,6 @@
+import type {Field, Placeholder, Shared} from 'shared';
 import {
     DATASET_FIELD_TYPES,
-    Field,
-    Placeholder,
-    Shared,
     isMeasureField,
     isMeasureName,
     isMeasureNameOrValue,

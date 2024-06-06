@@ -1,5 +1,5 @@
-import {ServerField, ServerSort} from '../../../../../../../../../shared';
-import {PrepareFunctionDataRow} from '../../../types';
+import type {ServerField, ServerSort} from '../../../../../../../../../shared';
+import type {PrepareFunctionDataRow} from '../../../types';
 
 export interface GetSortedSegmentsList extends GetSegmentsList {
     sortItem: ServerSort | undefined;

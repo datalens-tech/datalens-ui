@@ -1,10 +1,13 @@
-import {
-    AxisMode,
+import type {
     Field,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
+} from '../../../../../../../shared';
+import {
+    AxisMode,
+    AxisNullsMode,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
@@ -29,9 +32,10 @@ import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSortedCategories, getXAxisValue, prepareLines} from '../line/helpers';
 import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
-import {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
-import {PrepareFunctionArgs} from '../types';
+import type {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
+import type {PrepareFunctionArgs} from '../types';
 
+// eslint-disable-next-line complexity
 export function prepareBarYData({
     ChartEditor,
     placeholders,
@@ -318,7 +322,7 @@ export function prepareBarYData({
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
 
-                            if (typeof value === 'undefined' && nulls === 'as-0') {
+                            if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
                                 value = 0;
                             }
 
@@ -374,7 +378,7 @@ export function prepareBarYData({
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: null,
-                    connectNulls: nulls === 'connect',
+                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
 

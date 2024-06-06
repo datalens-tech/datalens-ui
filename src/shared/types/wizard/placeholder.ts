@@ -1,10 +1,10 @@
 import type {IconProps} from '@gravity-ui/uikit';
 
-import {PlaceholderId} from '../../constants';
+import type {PlaceholderId} from '../../constants';
 
-import {Field} from './field';
+import type {Field} from './field';
 
-import {Sort} from './index';
+import type {Sort} from './index';
 
 export interface PlaceholderSettings {
     scale?: string;

@@ -1,4 +1,4 @@
-import {ControlType, LoadStatus} from './types';
+import type {ControlType, LoadStatus} from './types';
 
 export const ELEMENT_TYPE = {
     SELECT: 'select',

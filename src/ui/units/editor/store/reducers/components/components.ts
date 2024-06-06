@@ -1,5 +1,6 @@
-import {COMPONENT_STATE_CHANGE, ComponentName, ComponentStateChangeAction} from '../../actions';
-import {ButtonSaveComponentData, DialogRevisionsComponentData} from '../../types';
+import type {ComponentStateChangeAction} from '../../actions';
+import {COMPONENT_STATE_CHANGE, ComponentName} from '../../actions';
+import type {ButtonSaveComponentData, DialogRevisionsComponentData} from '../../types';
 
 export type ComponentsState = {
     [ComponentName.ButtonSave]: ButtonSaveComponentData;

@@ -1,7 +1,7 @@
-import {ConnectorType} from '../constants';
-import {Permissions} from '../types';
+import type {ConnectorType} from '../constants';
+import type {Permissions} from '../types';
 
-import {CommonUpdate} from './common-update';
+import type {CommonUpdate} from './common-update';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export enum DATASET_FIELD_TYPES {

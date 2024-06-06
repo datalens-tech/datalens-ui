@@ -41,7 +41,7 @@ export function getTitleValue(title) {
 }
 
 export function isFalsy(value) {
-    return !value;
+    return !value && value !== 0;
 }
 
 /**

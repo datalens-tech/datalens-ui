@@ -1,5 +1,5 @@
 import _get from 'lodash/get';
-import {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
+import type {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
 import {DL} from 'ui';
 
 import Utils from '../../../utils';

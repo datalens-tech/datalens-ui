@@ -3,7 +3,8 @@ import React from 'react';
 
 import type {Config, DashKit} from '@gravity-ui/dashkit';
 import {ChevronDown, TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Dialog, DropdownMenu, Icon, Popup, Select, SelectOption} from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
+import {Button, Dialog, DropdownMenu, Icon, Popup, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -11,7 +12,8 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashCommonQa, DashTab, DashTabItem, DashTabItemType, DatasetField} from 'shared';
+import type {DashTab, DashTabItem, DatasetField} from 'shared';
+import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 
@@ -25,7 +27,8 @@ import {
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
-import {Filters, FiltersTypes} from './components/Filters/Filters';
+import type {FiltersTypes} from './components/Filters/Filters';
+import {Filters} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from './constants';
 import {
     getPairedRelationType,
@@ -37,7 +40,7 @@ import {
 } from './helpers';
 import {useFilteredRelations} from './hooks/useFilteredRelations';
 import {useRelations} from './hooks/useRelations';
-import {
+import type {
     ClickCallbackArgs,
     DashMetaData,
     RelationType,

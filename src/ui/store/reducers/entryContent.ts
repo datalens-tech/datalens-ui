@@ -1,5 +1,5 @@
+import type {EntryContentAction} from '../actions/entryContent';
 import {
-    EntryContentAction,
     SET_ENTRY,
     SET_ENTRY_CURRENT_REVID,
     SET_REVISIONS,

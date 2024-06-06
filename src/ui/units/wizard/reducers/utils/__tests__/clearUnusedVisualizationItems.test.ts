@@ -1,6 +1,7 @@
-import {ColorsConfig, Field, ShapesConfig, Sort} from 'shared';
+import type {ColorsConfig, Field, ShapesConfig, Sort} from 'shared';
 
-import {VisualizationFields, prepareCommonPlaceholderItems} from '../clearUnusedVisualizationItems';
+import type {VisualizationFields} from '../clearUnusedVisualizationItems';
+import {prepareCommonPlaceholderItems} from '../clearUnusedVisualizationItems';
 import {clearUnusedVisualizationItems} from '../index';
 
 const MOCKED_SHAPES_CONFIG = {

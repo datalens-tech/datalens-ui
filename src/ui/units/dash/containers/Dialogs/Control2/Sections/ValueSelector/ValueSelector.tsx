@@ -17,7 +17,7 @@ import {
     selectSelectorValidation,
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
-import {FilterValue} from '../../../../../../../../shared/modules';
+import type {FilterValue} from '../../../../../../../../shared/modules';
 import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';

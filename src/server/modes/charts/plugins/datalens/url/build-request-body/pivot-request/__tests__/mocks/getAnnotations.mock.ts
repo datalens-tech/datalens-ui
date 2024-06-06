@@ -1,4 +1,4 @@
-import {ApiV2BackgroundSettingsGuids, ServerField} from '../../../../../../../../../../shared';
+import type {ApiV2BackgroundSettingsGuids, ServerField} from '../../../../../../../../../../shared';
 
 export const COLORS = [{guid: '1899d37a-ff15-4bbc-b9f1-9df1e5f715ee'}] as ServerField[];
 

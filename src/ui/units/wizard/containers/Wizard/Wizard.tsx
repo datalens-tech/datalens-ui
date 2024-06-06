@@ -1,20 +1,23 @@
 import React from 'react';
 
-import {DropdownMenuItemMixed, Loader, Toaster} from '@gravity-ui/uikit';
-import {AxiosError} from 'axios';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Loader, Toaster} from '@gravity-ui/uikit';
+import type {AxiosError} from 'axios';
 import block from 'bem-cn-lite';
-import {History, Location} from 'history';
+import type {History, Location} from 'history';
 import {i18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
-import {Dispatch, bindActionCreators} from 'redux';
-import {ChartSaveControlsQA, ChartsConfig, EntryUpdateMode, Feature} from 'shared';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {ChartsConfig} from 'shared';
+import {ChartSaveControlsQA, EntryUpdateMode, Feature} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {
     DL,
-    DatalensGlobalState,
     EntryDialogName,
     EntryDialogResolveStatus,
     EntryDialogues,
@@ -54,7 +57,7 @@ import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRig
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
-import {RevisionEntry} from '../../../../components/Revisions/types';
+import type {RevisionEntry} from '../../../../components/Revisions/types';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
@@ -71,13 +74,14 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import {getUrlParamFromStr} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
-import {SetDefaultsArgs, resetWizardStore, setDefaults, setWizardStore} from '../../actions';
+import type {SetDefaultsArgs} from '../../actions';
+import {resetWizardStore, setDefaults, setWizardStore} from '../../actions';
 import {updateClientChartsConfig} from '../../actions/preview';
 import {toggleViewOnlyMode} from '../../actions/settings';
 import {receiveWidgetAndPrepareMetadata, updateWizardWidget} from '../../actions/widget';
 import DialogNoRights from '../../components/Dialogs/DialogNoRights';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
-import {WizardGlobalState} from '../../reducers';
+import type {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
 import {getDefaultChartName, shouldComponentUpdateWithDeepComparison} from '../../utils/helpers';
@@ -166,7 +170,11 @@ class Wizard extends React.Component<Props, State> {
                     });
                 },
                 options: {
-                    pathIgnoreList: ['/preview/highchartsWidget', '/preview/filters'],
+                    pathIgnoreList: [
+                        '/preview/highchartsWidget',
+                        '/preview/filters',
+                        '/visualization/layers',
+                    ],
                 },
             });
         }

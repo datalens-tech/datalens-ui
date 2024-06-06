@@ -3,31 +3,26 @@ import React from 'react';
 import {ListUl} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {History, Location} from 'history';
+import type {History, Location} from 'history';
 import {I18n} from 'i18n';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {Feature} from 'shared';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
-import {
-    ActionPanel,
-    DL,
-    DatalensGlobalState,
-    EntryDialogName,
-    EntryDialogResolveStatus,
-    EntryDialogues,
-} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import {ActionPanel, DL, EntryDialogName, EntryDialogResolveStatus} from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
-import {ValuesType} from 'utility-types';
+import type {ValuesType} from 'utility-types';
 import Utils from 'utils';
 
-import {GetEntryResponse} from '../../../../../shared/schema';
-import {
+import type {GetEntryResponse} from '../../../../../shared/schema';
+import type {
     EntryContextMenuItem,
     EntryContextMenuItems,
 } from '../../../../components/EntryContextMenu/helpers';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
-import {RevisionEntry} from '../../../../components/Revisions/types';
+import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
@@ -50,7 +45,7 @@ import {
     selectRenameWithoutReload,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
-import {DashEntry} from '../../typings/entry';
+import type {DashEntry} from '../../typings/entry';
 
 import {EditControls} from './EditControls/EditControls';
 import {ViewControls} from './ViewControls/ViewControls';
@@ -229,6 +224,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
+                    entryId: this.props.entry.entryId,
                     initDestination: Utils.getPathBefore({path: entry.key}),
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,

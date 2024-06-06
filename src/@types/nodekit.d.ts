@@ -1,7 +1,7 @@
-import {Link, Meta} from '@gravity-ui/app-layout';
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {Link, Meta} from '@gravity-ui/app-layout';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {FeaturesConfig} from '../src/components/features/types';
+import type {FeaturesConfig} from '../src/components/features/types';
 
 export interface SharedAppConfig {
     endpoints: Endpoints;

@@ -2,8 +2,9 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch} from 'ui/store';
-import {CollectionsStructureDispatch, copyTemplate} from 'ui/store/actions/collectionsStructure';
+import type {AppDispatch} from 'ui/store';
+import type {CollectionsStructureDispatch} from 'ui/store/actions/collectionsStructure';
+import {copyTemplate} from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectCopyTemplateIsLoading} from 'ui/store/selectors/collectionsStructure';
 

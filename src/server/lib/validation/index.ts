@@ -1,7 +1,7 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 import Ajv from 'ajv';
 
-import {ValidationConfig, ValidationResult} from './types';
+import type {ValidationConfig, ValidationResult} from './types';
 
 const ajv = new Ajv();
 

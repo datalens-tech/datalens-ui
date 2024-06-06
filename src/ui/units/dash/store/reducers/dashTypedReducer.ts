@@ -1,19 +1,20 @@
-import React from 'react';
+import type React from 'react';
 
-import {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
-import {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
-import {DashUpdateStatus} from '../../typings/dash';
+import type {DashUpdateStatus} from '../../typings/dash';
 import {
     ADD_SELECTOR_TO_GROUP,
     SET_ACTIVE_SELECTOR_INDEX,
     UPDATE_SELECTORS_GROUP,
 } from '../actions/controls/actions';
-import {SelectorsGroupDialogState} from '../actions/controls/types';
+import type {SelectorsGroupDialogState} from '../actions/controls/types';
+import type {SelectorDialogState, TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
     SET_DASHKIT_REF,
@@ -41,11 +42,9 @@ import {
     SET_STATE_HASH_ID,
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
-    SelectorDialogState,
     TOGGLE_TABLE_OF_CONTENT,
-    TabsHashStates,
 } from '../actions/dashTyped';
-import {DashAction} from '../actions/index';
+import type {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 

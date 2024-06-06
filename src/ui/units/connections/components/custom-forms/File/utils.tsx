@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {Column} from '@gravity-ui/react-data-table';
+import type {Column} from '@gravity-ui/react-data-table';
 import type {ListItemData, ListProps} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {flow, get} from 'lodash';
-import {DATASET_FIELD_TYPES, Feature} from 'shared';
-import type {NonNullableBy} from 'shared';
+import {Feature} from 'shared';
+import type {DATASET_FIELD_TYPES, NonNullableBy} from 'shared';
 import Utils from 'utils';
 
 import type {DataLensApiError} from '../../../../../typings';

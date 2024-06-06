@@ -1,10 +1,12 @@
-import {
+import type {
     BarGradientColorSettings,
     BarTwoColorSettings,
     BarViewOptions,
     ColorPalette,
     ServerField,
     TableBarsSettings,
+} from '../../../../../../../../shared';
+import {
     getFormatOptions,
     getRangeDelta,
     getRgbColorValue,
@@ -13,9 +15,9 @@ import {
 } from '../../../../../../../../shared';
 import {getRgbColors} from '../../../utils/color-helpers';
 import {chartKitFormatNumberWrapper} from '../../../utils/misc-helpers';
-import {PrepareFunctionDataRow} from '../../types';
+import type {PrepareFunctionDataRow} from '../../types';
 
-import {BarValueOptions} from './types';
+import type {BarValueOptions} from './types';
 
 // CHARTS-6452
 const BAR_HEIGHT = 19;

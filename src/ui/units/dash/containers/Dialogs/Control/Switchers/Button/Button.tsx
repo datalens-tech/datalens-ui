@@ -4,7 +4,8 @@ import {Button as CommonButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ControlQA} from 'shared';
 
-import Wrapper, {WrapperProps} from '../../Wrapper/Wrapper';
+import type {WrapperProps} from '../../Wrapper/Wrapper';
+import Wrapper from '../../Wrapper/Wrapper';
 
 import './Button.scss';
 

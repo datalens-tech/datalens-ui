@@ -3,15 +3,15 @@ import React from 'react';
 import {Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {
+import type {
     ClientChartsConfig,
-    DialogFieldBackgroundSettingsQa,
     Field,
     NestedPartial,
     PlaceholderId,
     TableFieldBackgroundSettings,
     WizardVisualizationId,
 } from 'shared';
+import {DialogFieldBackgroundSettingsQa} from 'shared';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
 import {ButtonColorDialog} from '../ButtonColorDialog/ButtonColorDialog';

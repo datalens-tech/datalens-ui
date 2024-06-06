@@ -1,10 +1,12 @@
 import React from 'react';
 
-import {Button, Dialog, List, Popup, PopupProps} from '@gravity-ui/uikit';
+import type {PopupProps} from '@gravity-ui/uikit';
+import {Button, Dialog, List, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {cloneDeep} from 'lodash';
-import {DashTabItem, DashTabLayout, DialogTabsQA, EntryDialogQA} from 'shared';
+import type {DashTabItem, DashTabLayout} from 'shared';
+import {DialogTabsQA, EntryDialogQA} from 'shared';
 import {registry} from 'ui/registry';
 
 import {getLayoutMap, sortByLayoutComparator} from '../../../../modules/helpers';

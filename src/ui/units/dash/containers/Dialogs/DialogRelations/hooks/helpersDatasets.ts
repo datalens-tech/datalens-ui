@@ -1,10 +1,10 @@
-import {
+import type {
     DashkitMetaDataItemBase,
     DatasetsData,
     DatasetsFieldsListData,
 } from 'ui/components/DashKit/plugins/types';
 
-import {DashkitMetaDataItemNoRelations, Datasets, DatasetsFlatListData} from '../types';
+import type {DashkitMetaDataItemNoRelations, Datasets, DatasetsFlatListData} from '../types';
 
 import {isControl} from './helpersControls';
 

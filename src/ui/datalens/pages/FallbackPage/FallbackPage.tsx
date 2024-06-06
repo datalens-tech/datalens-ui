@@ -1,7 +1,8 @@
 import React from 'react';
 import block from 'bem-cn-lite';
 
-import {Loader, LoaderProps} from '@gravity-ui/uikit';
+import type {LoaderProps} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
 
 import './FallbackPage.scss';
 

@@ -1,4 +1,4 @@
-import {Placeholder, PlaceholderId} from '../../../../../shared';
+import type {Placeholder, PlaceholderId} from '../../../../../shared';
 import {getAvailableVisualizations} from '../../utils/visualization';
 
 type GetMergedPlaceholdersSettingsArgs = {

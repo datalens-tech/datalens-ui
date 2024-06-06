@@ -1,4 +1,4 @@
-import {Location} from 'history';
+import type {Location} from 'history';
 
 import {isEmbeddedMode} from '../../../utils/embedded';
 

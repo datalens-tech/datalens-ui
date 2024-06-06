@@ -1,4 +1,4 @@
-import {AppThunkAction} from '../index';
+import type {AppThunkAction} from '../index';
 
 export const getIsCompact = (): boolean => {
     const isCompactValue = localStorage.getItem('isCompact');

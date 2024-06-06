@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Select, SelectProps} from '@gravity-ui/uikit';
+import type {SelectProps} from '@gravity-ui/uikit';
+import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 

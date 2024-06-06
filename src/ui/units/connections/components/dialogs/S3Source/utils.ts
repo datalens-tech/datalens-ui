@@ -1,4 +1,4 @@
-import {FileSourceInfo} from '../../../../../../shared/schema';
+import type {FileSourceInfo} from '../../../../../../shared/schema';
 
 import type {DialogS3SourceItem} from './types';
 

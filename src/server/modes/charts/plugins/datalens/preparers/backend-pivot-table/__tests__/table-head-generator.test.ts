@@ -1,5 +1,5 @@
 import {mapColumnsToHeadCellData} from '../table-head-generator';
-import {PivotDataColumn} from '../types';
+import type {PivotDataColumn} from '../types';
 
 jest.mock('../../../../../../../registry', () => ({
     registry: {

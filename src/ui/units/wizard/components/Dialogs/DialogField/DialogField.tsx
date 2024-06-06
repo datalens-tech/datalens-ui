@@ -5,13 +5,16 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
-import {
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
+import type {
     CommonSharedExtraSettings,
     HintSettings,
     Placeholder,
-    PlaceholderId,
     TableFieldBackgroundSettings,
+} from 'shared';
+import {
+    PlaceholderId,
     TableFieldDisplayMode,
     WizardVisualizationId,
     canHideTableHeader,
@@ -19,24 +22,24 @@ import {
     getTableHeaderDisplayMode,
     isPseudoField,
 } from 'shared';
-import {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
-import {Optional} from 'utility-types';
+import type {Optional} from 'utility-types';
 
-import {
+import type {
     ClientChartsConfig,
     CommonNumberFormattingOptions,
-    DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
     DatasetOptions,
     NestedPartial,
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,

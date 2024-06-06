@@ -1,20 +1,15 @@
-import {
-    DATALENS_QL_TYPES,
-    IChartEditor,
-    QlConfigPreviewTableData,
-    getUtcDateTime,
-} from '../../../../../../shared';
+import {DATALENS_QL_TYPES, getUtcDateTime} from '../../../../../../shared';
 import type {
+    IChartEditor,
     QlConfig,
+    QlConfigPreviewTableData,
     QlConfigResultEntryMetadataDataColumn,
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared';
 import {isLegendEnabled} from '../../datalens/utils/misc-helpers';
+import type {QLRenderResultYagr, QLRenderResultYagrGraph, QLValue} from '../utils/misc-helpers';
 import {
-    QLRenderResultYagr,
-    QLRenderResultYagrGraph,
-    QLValue,
     formatUnknownTypeValue,
     isGroup,
     parseNumberValue,

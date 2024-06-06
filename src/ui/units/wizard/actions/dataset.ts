@@ -1,5 +1,5 @@
-import {Dispatch} from 'redux';
-import {
+import type {Dispatch} from 'redux';
+import type {
     Dataset,
     DatasetApiError,
     DatasetOptions,
@@ -8,8 +8,8 @@ import {
     Link,
     Update,
 } from 'shared';
-import {DataLensApiError} from 'typings';
-import {DatalensGlobalState} from 'ui';
+import type {DataLensApiError} from 'typings';
+import type {DatalensGlobalState} from 'ui';
 import {selectDimensionsByDataset} from 'units/wizard/selectors/dataset';
 
 import {prepareDataset} from './index';

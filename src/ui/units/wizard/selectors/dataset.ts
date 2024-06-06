@@ -1,10 +1,7 @@
 import {createSelector} from 'reselect';
+import type {Dataset, Field, Placeholder, Shared} from 'shared';
 import {
-    Dataset,
     DatasetFieldType,
-    Field,
-    Placeholder,
-    Shared,
     createMeasureNames,
     createMeasureValues,
     getResultSchemaFromDataset,
@@ -12,7 +9,7 @@ import {
     isParameter,
     isVisualizationWithLayers,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {extractFieldsFromDatasets} from 'units/wizard/utils/helpers';
 import {isFieldVisible} from 'units/wizard/utils/wizard';
 

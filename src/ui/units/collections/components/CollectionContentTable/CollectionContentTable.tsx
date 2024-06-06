@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Checkbox, DropdownMenu, DropdownMenuItem} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';

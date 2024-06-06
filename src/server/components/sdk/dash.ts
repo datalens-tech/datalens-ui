@@ -1,25 +1,27 @@
-import {IncomingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders} from 'http';
 
-import {AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import Hashids from 'hashids/cjs';
 import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
-import {ServerI18n} from '../../../i18n/types';
+import type {ServerI18n} from '../../../i18n/types';
 import {DASH_CURRENT_SCHEME_VERSION} from '../../../shared/constants';
-import {
+import type {
     CreateEntryRequest,
     DashData,
     DashEntry,
     DashEntryCreateParams,
     DashTabItemControlData,
-    DashTabItemControlSourceType,
-    DashTabItemType,
     Dictionary,
     EntryReadParams,
+    UpdateEntryRequest,
+} from '../../../shared/types';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
     EntryScope,
     EntryUpdateMode,
-    UpdateEntryRequest,
 } from '../../../shared/types';
 
 import US from './us';

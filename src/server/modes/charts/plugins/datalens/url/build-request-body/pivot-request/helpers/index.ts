@@ -1,22 +1,24 @@
 // 0. <regular fields> -> block_id=0:
 import isEmpty from 'lodash/isEmpty';
 
-import {
-    ApiV2Annotations,
+import type {
     ApiV2PivotRequestStructure,
     ApiV2RequestField,
     ApiV2RequestFieldSorting,
     ApiV2RequestPivot,
     ApiV2RequestPivotRoleSpec,
+} from '../../../../../../../../../shared';
+import {
+    ApiV2Annotations,
     PseudoFieldTitle,
     getObjectValueByPossibleKeys,
     isMeasureName,
     isMeasureValue,
 } from '../../../../../../../../../shared';
 import {getSortParams} from '../../../../../../../../components/charts-engine/components/processor/paramsUtils';
-import {BackendPivotTableCellCustom} from '../../../../types';
+import type {BackendPivotTableCellCustom} from '../../../../types';
 
-import {
+import type {
     GetAnnotationsArgs,
     GetPivotStructureArgs,
     GetRegularFieldsArgs,

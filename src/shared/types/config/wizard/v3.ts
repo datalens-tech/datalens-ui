@@ -1,4 +1,9 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode, ParameterDefaultValue} from '../../index';
+import type {
+    AxisNullsMode,
+    ChartsConfigVersion,
+    DatasetFieldCalcMode,
+    ParameterDefaultValue,
+} from '../../index';
 
 export type V3ChartsConfig = {
     title?: string;
@@ -149,7 +154,7 @@ type V3Placeholder = {
         gridStepValue?: number;
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
-        nulls?: 'ignore' | 'connect' | 'as-0';
+        nulls?: AxisNullsMode;
     };
     items: V3Field[];
 };

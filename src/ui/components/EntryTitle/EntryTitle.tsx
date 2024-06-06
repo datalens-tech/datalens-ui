@@ -6,7 +6,7 @@ import moment from 'moment';
 import {registry} from '../../registry';
 import {EntryIcon} from '../EntryIcon/EntryIcon';
 
-import {EntryData} from './types';
+import type {EntryData} from './types';
 
 import './EntryTitle.scss';
 

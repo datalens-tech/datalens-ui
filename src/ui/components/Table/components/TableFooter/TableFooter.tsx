@@ -4,7 +4,7 @@ import type {HeaderGroup} from '@tanstack/react-table';
 import {flexRender} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
-import {TData} from '../../types';
+import type {TData} from '../../types';
 
 const b = block('dl-table');
 

@@ -1,7 +1,8 @@
-import {ApiV2Annotations, ServerColor, isMeasureName} from '../../../../../../../../shared';
-import {ChartColorsConfig} from '../../../types';
+import type {ServerColor} from '../../../../../../../../shared';
+import {ApiV2Annotations, isMeasureName} from '../../../../../../../../shared';
+import type {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
-import {AnnotationsMap, PivotDataCellValue, PivotDataRows} from '../types';
+import type {AnnotationsMap, PivotDataCellValue, PivotDataRows} from '../types';
 
 import {getAnnotation} from './misc';
 

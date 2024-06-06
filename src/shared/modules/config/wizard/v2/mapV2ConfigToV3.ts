@@ -1,6 +1,6 @@
 import {ChartsConfigVersion} from '../../../../types';
-import {V2ChartsConfig} from '../../../../types/config/wizard/v2';
-import {V3ChartsConfig} from '../../../../types/config/wizard/v3';
+import type {V2ChartsConfig} from '../../../../types/config/wizard/v2';
+import type {V3ChartsConfig} from '../../../../types/config/wizard/v3';
 
 export const mapV2ConfigToV3 = (config: V2ChartsConfig): V3ChartsConfig => {
     const visualization = config.visualization;

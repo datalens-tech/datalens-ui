@@ -6,9 +6,11 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import findIndex from 'lodash/findIndex';
 import omit from 'lodash/omit';
-import {ResolveThunks, connect} from 'react-redux';
-import {DashTabItem, DialogTabsQA} from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DashTabItem} from 'shared';
+import {DialogTabsQA} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 
 import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {setTabs} from '../../../store/actions/dashTyped';
@@ -19,7 +21,8 @@ import {
     selectTabs,
 } from '../../../store/selectors/dashTypedSelectors';
 
-import TabItem, {DashTabChanged} from './TabItem';
+import type {DashTabChanged} from './TabItem';
+import TabItem from './TabItem';
 
 import iconPlus from 'ui/assets/icons/plus.svg';
 

@@ -1,18 +1,18 @@
-import {BOOLEAN_OPERATIONS, Operation} from 'components/DialogFilter/constants';
+import type {Operation} from 'components/DialogFilter/constants';
+import {BOOLEAN_OPERATIONS} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 import {getFilterOperations} from 'libs/datasetHelper';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     DashTabItem,
     DashTabItemControlData,
-    DashTabItemControlSourceType,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     Operations,
 } from 'shared';
+import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';

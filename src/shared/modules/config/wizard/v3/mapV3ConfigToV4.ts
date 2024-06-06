@@ -1,8 +1,5 @@
 import {DEFAULT_FORMATTING} from '../../../../constants';
-import {
-    ChartsConfigVersion,
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
+import type {
     Field,
     V3ChartsConfig,
     V3Label,
@@ -11,6 +8,7 @@ import {
     V4Label,
     V4Visualization,
 } from '../../../../types';
+import {ChartsConfigVersion, DATASET_FIELD_TYPES, DatasetFieldType} from '../../../../types';
 import {getDefaultFormatting} from '../../../wizard-helpers';
 
 const createV4LabelFromV3 = (v3Label: V3Label): V4Label => {

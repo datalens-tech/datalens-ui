@@ -1,4 +1,4 @@
-import {FreeformSource, StandaloneSource} from '../../store/types';
+import type {FreeformSource, StandaloneSource} from '../../store/types';
 
 export type EditedSource = FreeformSource | StandaloneSource;
 

@@ -10,7 +10,7 @@ import type {AppDispatch} from '../../../../store';
 import type {CloseDialogAction, OpenDialogAction} from '../../../../store/actions/dialog';
 import type {DataLensApiError} from '../../../../typings';
 import type {FormDict, ValidationError} from '../../typings';
-import {
+import type {
     RESET_FORMS_DATA,
     RESET_S3_BASED_DATA,
     SET_BEING_DELETED_SOURCE_ID,
@@ -50,7 +50,7 @@ import {
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';
 import type {GSheetActiveDialog, GSheetAddSectionState, GSheetItem} from './gsheet';
 import type {ReplaceSource} from './s3-based';
-import {YadocItem, YadocsActiveDialog} from './yadocs';
+import type {YadocItem, YadocsActiveDialog} from './yadocs';
 
 export * from './file';
 export * from './gsheet';

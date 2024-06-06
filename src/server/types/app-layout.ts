@@ -1,7 +1,7 @@
-import {RenderParams} from '@gravity-ui/app-layout';
-import {Request, Response} from '@gravity-ui/expresskit';
+import type {RenderParams} from '@gravity-ui/app-layout';
+import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {DLGlobalData} from '../../shared';
+import type {DLGlobalData} from '../../shared';
 
 export type AppLayoutSettingsName = 'dl-main' | 'navigation' | 'landing-layout';
 

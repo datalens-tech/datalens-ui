@@ -1,4 +1,4 @@
-import {EntryFields} from 'shared/schema';
+import type {EntryFields} from 'shared/schema';
 
 export type DialogAddParticipantsProps = {
     onClose: () => void;

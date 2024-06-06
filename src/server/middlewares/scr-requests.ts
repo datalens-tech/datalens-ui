@@ -1,4 +1,4 @@
-import {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 const SCR_USER_AGENT = 'StatScreenshooter';
 

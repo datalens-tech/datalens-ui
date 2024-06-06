@@ -1,6 +1,7 @@
-import {Request} from '@gravity-ui/expresskit';
+import type {Request} from '@gravity-ui/expresskit';
 
-import {ErrorContentTypes, LandingLayoutPageError} from '../../shared';
+import type {LandingLayoutPageError} from '../../shared';
+import {ErrorContentTypes} from '../../shared';
 
 export const getError = (req: Request): Record<string, LandingLayoutPageError> => {
     const {ctx} = req;

@@ -1,21 +1,21 @@
-import {ChartKitPlugin, ChartKitType} from '@gravity-ui/chartkit';
-import {ChartKitHolidays} from '@gravity-ui/chartkit/build/types';
+import type {ChartKitPlugin, ChartKitType} from '@gravity-ui/chartkit';
+import type {ChartKitHolidays} from '@gravity-ui/chartkit/build/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
-import {EntryContextMenuItem} from '../../../components/EntryContextMenu/helpers';
-import {SourceMeta} from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/types';
-import {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
-import {
+import type {EntryContextMenuItem} from '../../../components/EntryContextMenu/helpers';
+import type {SourceMeta} from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/types';
+import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
+import type {
     ResponseSuccessControls,
     ResponseSuccessNode,
 } from '../../../libs/DatalensChartkit/modules/data-provider/charts/types';
-import {LoadedWidgetData} from '../../../libs/DatalensChartkit/types';
-import {GetChartkitMenuByType} from '../../../registry/units/chart/types/functions/getChartkitMenuByType';
+import type {LoadedWidgetData} from '../../../libs/DatalensChartkit/types';
+import type {GetChartkitMenuByType} from '../../../registry/units/chart/types/functions/getChartkitMenuByType';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
-import {GetDefaultChartMenuArgs} from './types/functions/getDefaultChartMenu';
-import {GetPanePreviewChartMenuArgs} from './types/functions/getPanePreviewChartMenu';
-import {GetWizardChartMenuArgs} from './types/functions/getWizardChartMenu';
+import type {GetDefaultChartMenuArgs} from './types/functions/getDefaultChartMenu';
+import type {GetPanePreviewChartMenuArgs} from './types/functions/getPanePreviewChartMenu';
+import type {GetWizardChartMenuArgs} from './types/functions/getWizardChartMenu';
 
 export const chartFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),

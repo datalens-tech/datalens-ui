@@ -1,4 +1,4 @@
-import {ChartsConfigVersion, DatasetFieldCalcMode} from '../../index';
+import type {AxisNullsMode, ChartsConfigVersion, DatasetFieldCalcMode} from '../../index';
 
 export type V2ChartsConfig = {
     title?: string;
@@ -147,7 +147,7 @@ type V2Placeholder = {
         gridStepValue?: number;
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
-        nulls?: 'ignore' | 'connect' | 'as-0';
+        nulls?: AxisNullsMode;
     };
     items: V2Field[];
 };

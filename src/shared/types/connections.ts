@@ -1,4 +1,4 @@
-import {ConnectionQueryTypeValues} from '../constants';
+import type {ConnectionQueryTypeValues} from '../constants';
 
 export type ConnectionData = Record<
     string,

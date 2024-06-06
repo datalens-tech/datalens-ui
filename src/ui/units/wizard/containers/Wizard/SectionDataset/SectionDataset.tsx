@@ -1,29 +1,34 @@
 import React from 'react';
 
-import {Button, DropdownMenu, DropdownMenuItem, Icon, Loader, Toaster} from '@gravity-ui/uikit';
-import {EntryDialogues} from 'components/EntryDialogues';
+import type {DropdownMenuItem, Toaster} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Loader} from '@gravity-ui/uikit';
+import type {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
-import {SDK} from 'libs';
+import type {SDK} from 'libs';
 import _debounce from 'lodash/debounce';
 import {connect} from 'react-redux';
-import {Dispatch, bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import ResizeObserver from 'resize-observer-polyfill';
-import {
-    DATASET_FIELD_TYPES,
+import type {
     Dataset,
     DatasetField,
     DatasetFieldCalcMode,
-    EntryScope,
     Field,
     HierarchyField,
     Link,
+    Update,
+} from 'shared';
+import {
+    DATASET_FIELD_TYPES,
+    EntryScope,
     PLACE,
     SectionDatasetQA,
-    Update,
     getResultSchemaFromDataset,
 } from 'shared';
 import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog';
-import {DL, DatalensGlobalState, EntryDialogName, NavigationMinimal} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {DL, EntryDialogName, NavigationMinimal} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {openDialogMultidataset} from 'units/wizard/actions/dialog';
 import {
@@ -46,10 +51,8 @@ import {selectHierarchies, selectVisualization} from 'units/wizard/selectors/vis
 import {selectWidget} from 'units/wizard/selectors/widget';
 import uuid from 'uuid/v1';
 
-import {
-    DIALOG_FIELD_EDITOR,
-    DialogFieldEditorProps,
-} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
+import type {DialogFieldEditorProps} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
+import {DIALOG_FIELD_EDITOR} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {registry} from '../../../../../registry';
 import Utils from '../../../../../utils';
 import {
@@ -65,7 +68,8 @@ import {updatePreviewAndClientChartsConfig} from '../../../actions/preview';
 import {toggleNavigation} from '../../../actions/settings';
 import DNDContainer from '../../../components/DND/DNDContainer';
 import DatasetSelect from '../../../components/DatasetSelect/DatasetSelect';
-import {DIALOG_FIELD, DialogFieldState} from '../../../components/Dialogs/DialogField/DialogField';
+import type {DialogFieldState} from '../../../components/Dialogs/DialogField/DialogField';
+import {DIALOG_FIELD} from '../../../components/Dialogs/DialogField/DialogField';
 import SearchInput from '../../../components/SearchInput/SearchInput';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -81,7 +85,8 @@ import {
 } from '../../../utils/helpers';
 import {isFieldVisible} from '../../../utils/wizard';
 
-import DatasetItem, {DatasetItemProps} from './DatasetItem/DatasetItem';
+import type {DatasetItemProps} from './DatasetItem/DatasetItem';
+import DatasetItem from './DatasetItem/DatasetItem';
 import {FieldsContainer} from './FieldsContainer/FieldsContainer';
 import HierarchyEditor from './HierarchyEditor/HierarchyEditor';
 

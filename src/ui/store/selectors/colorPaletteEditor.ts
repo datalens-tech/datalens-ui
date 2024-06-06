@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {ColorPalette} from 'shared';
+import type {ColorPalette} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 export const selectCurrentColorPalette = (state: DatalensGlobalState) =>

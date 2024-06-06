@@ -2,12 +2,13 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {History, Location} from 'history';
-import {ResolveThunks, connect} from 'react-redux';
-import {DatalensGlobalState} from 'ui';
-import EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
+import type {History, Location} from 'history';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {DatalensGlobalState} from 'ui';
+import type EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
 import {MobileTocToggle} from 'ui/components/MobileTocToggle/MobileTocToggle';
-import {DashEntry} from 'ui/units/dash/typings/entry';
+import type {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
 import DashActionPanel from '../../components/DashActionPanel/DashActionPanel';

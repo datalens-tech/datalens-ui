@@ -12,7 +12,7 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import type {

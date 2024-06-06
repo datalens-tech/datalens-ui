@@ -12,7 +12,7 @@ import {Feature} from '../../../types/feature';
 import {isEnabledServerFeature} from '../../../utils/feature';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
-import {
+import type {
     CopyEntriesToWorkbookArgs,
     CopyEntriesToWorkbookResponse,
     CopyEntryArgs,

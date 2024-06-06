@@ -1,15 +1,17 @@
-import {
-    Feature,
+import type {
     Field,
     FilterField,
     GraphShared,
     Placeholder,
-    PlaceholderId,
     PlaceholderSettings,
     ServerSort,
     Shared,
-    SortDirection,
     VisualizationLayerShared,
+} from 'shared';
+import {
+    Feature,
+    PlaceholderId,
+    SortDirection,
     WizardVisualizationId,
     isMeasureField,
     isNumberField,
@@ -18,14 +20,14 @@ import {
     isVisualizationWithLayers,
 } from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
-import {ApplyData, DatalensGlobalState} from 'ui';
+import type {ApplyData, DatalensGlobalState} from 'ui';
 import {
     getAxisModePlaceholderSettings,
     getFirstFieldInPlaceholder,
 } from 'ui/units/wizard/utils/placeholder';
 
 import {SETTINGS} from '../../../constants/visualizations';
-import {AppDispatch} from '../../../store';
+import type {AppDispatch} from '../../../store';
 import Utils from '../../../utils';
 import {getChartType} from '../../ql/store/reducers/ql';
 import {

@@ -1,12 +1,13 @@
 import {selectAvailableClientGradients} from 'constants/common';
 
-import {ColorsConfig, Field, GradientType, PartialBy} from 'shared';
+import type {ColorsConfig, Field, GradientType, PartialBy} from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 
-import {DIALOG_COLOR, OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
+import type {OpenDialogColorArgs} from '../components/Dialogs/DialogColor/DialogColor';
+import {DIALOG_COLOR} from '../components/Dialogs/DialogColor/DialogColor';
 import {DEFAULT_GRADIENT_MODE, DEFAULT_TWO_POINT_GRADIENT} from '../constants/dialogColor';
-import {WizardDispatch} from '../reducers';
+import type {WizardDispatch} from '../reducers';
 import {
     selectDialogColorGradientState,
     selectDialogColorPaletteState,

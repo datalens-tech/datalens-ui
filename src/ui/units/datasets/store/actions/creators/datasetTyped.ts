@@ -1,9 +1,9 @@
-import {Toaster} from '@gravity-ui/uikit';
+import type {Toaster} from '@gravity-ui/uikit';
 import type {DatalensGlobalState} from 'index';
 import _debounce from 'lodash/debounce';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
-import {ThunkDispatch} from 'redux-thunk';
+import type {ThunkDispatch} from 'redux-thunk';
 import type {
     Dataset,
     DatasetAvatarRelation,

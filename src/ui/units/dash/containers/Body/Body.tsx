@@ -1,16 +1,13 @@
 import React from 'react';
 
-import {
-    DashKit as DashKitComponent,
-    DashKitDnDWrapper,
-    ActionPanel as DashkitActionPanel,
-    ItemDropProps,
-} from '@gravity-ui/dashkit';
+import {DashKitDnDWrapper, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
     ConfigLayout,
+    DashKit as DashKitComponent,
     DashKitProps,
     ActionPanelItem as DashkitActionPanelItem,
+    ItemDropProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
@@ -26,49 +23,48 @@ import {
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
-import {Search} from 'history';
+import type {Search} from 'history';
 import {i18n} from 'i18n';
 import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEditor/PaletteEditor';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
-import {ResolveThunks, connect} from 'react-redux';
-import {RouteComponentProps, withRouter} from 'react-router-dom';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
+import type {RouteComponentProps} from 'react-router-dom';
+import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
+import type {DashTab, DashTabItem, StringParams} from 'shared';
 import {
     ControlQA,
     DashEntryQa,
-    DashTab,
-    DashTabItem,
     DashTabItemType,
     DashboardAddWidgetQa,
     Feature,
-    StringParams,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
-import {DatalensGlobalState} from 'ui';
+import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
-import SDK from '../../../../libs/sdk';
+import type SDK from '../../../../libs/sdk';
 import Utils from '../../../../utils';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
+import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
 import {
-    CopiedConfigContext,
-    CopiedConfigData,
     getLayoutMap,
     getPastedWidgetData,
     memoizedGetLocalTabs,
     sortByOrderIdOrLayoutComparator,
     stringifyMemoize,
 } from '../../modules/helpers';
+import type {TabsHashStates} from '../../store/actions/dashTyped';
 import {
-    TabsHashStates,
     setCurrentTabData,
     setDashKitRef,
     setErrorMode,

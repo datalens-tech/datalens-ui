@@ -6,7 +6,8 @@ import {ViewError} from 'components/ViewError/ViewError';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {Utils} from 'ui';
-import {AppDispatch} from 'ui/store';
+import type {AppDispatch} from 'ui/store';
+import {isMobileView} from 'ui/utils/mobile';
 
 import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
@@ -23,7 +24,7 @@ import {WorkbookMainTabContent} from '../WorkbookMainTabContent/WorkbookMainTabC
 import {WorkbookTabContent} from '../WorkbookTabContent/WorkbookTabContent';
 import {WorkbookTabs} from '../WorkbookTabs/WorkbookTabs';
 import {TAB_ALL} from '../WorkbookTabs/constants';
-import {TabId} from '../WorkbookTabs/types';
+import type {TabId} from '../WorkbookTabs/types';
 
 import {useLayout} from './hooks/useLayout';
 
@@ -103,7 +104,9 @@ export const WorkbookPage = () => {
                 <div className={b('layout')}>
                     <div className={b('container')}>
                         <div className={b('controls')}>
-                            <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
+                            {!isMobileView && (
+                                <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
+                            )}
                             {workbook && <WorkbookTabs workbook={workbook} />}
                         </div>
                         <div className={b('content')}>

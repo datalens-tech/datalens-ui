@@ -1,7 +1,7 @@
-import {StringParams} from 'shared';
-import {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import type {StringParams} from 'shared';
+import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
-import {
+import type {
     ActiveControl,
     ControlsOnlyWidget,
     OnChangeData,

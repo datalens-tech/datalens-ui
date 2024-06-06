@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 
-import {Alert, AlertData, WidgetProps} from '../../../../../types';
+import type {Alert, AlertData, WidgetProps} from '../../../../../types';
 
 import {computeFitSinglestatStyle, computeFitTileStyle} from './utils';
 

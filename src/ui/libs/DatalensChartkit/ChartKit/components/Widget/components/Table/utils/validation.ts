@@ -1,8 +1,8 @@
 import get from 'lodash/get';
-import {TableRow, TableWidgetEventScope} from 'shared';
+import type {TableRow, TableWidgetEventScope} from 'shared';
 import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
-import {TableWidget} from '../../../../../../types';
+import type {TableWidget} from '../../../../../../types';
 
 const AVAILABLE_TABLE_CLICK_SCOPES: TableWidgetEventScope[] = ['row', 'cell'];
 

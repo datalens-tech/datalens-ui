@@ -1,4 +1,4 @@
-import {
+import type {
     Placeholder,
     V4ChartsConfig,
     V4Field,

@@ -4,7 +4,8 @@ import block from 'bem-cn-lite';
 
 import {Status} from '../../constants/common';
 import {ViewError} from '../ViewError/ViewError';
-import {ViewLoader, ViewLoaderProps} from '../ViewLoader/ViewLoader';
+import type {ViewLoaderProps} from '../ViewLoader/ViewLoader';
+import {ViewLoader} from '../ViewLoader/ViewLoader';
 
 import './ViewAsync.scss';
 

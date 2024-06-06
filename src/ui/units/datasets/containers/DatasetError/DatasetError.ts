@@ -2,9 +2,11 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import _isEmpty from 'lodash/isEmpty';
-import {ResolveThunks, connect} from 'react-redux';
+import type {ResolveThunks} from 'react-redux';
+import {connect} from 'react-redux';
 import {showToast} from 'store/actions/toaster';
-import {BI_ERRORS, DatalensGlobalState, Utils} from 'ui';
+import type {DatalensGlobalState} from 'ui';
+import {BI_ERRORS, Utils} from 'ui';
 import {setDatasetRevisionMismatch} from 'units/datasets/store/actions/creators';
 
 import {TOASTERS_NAMES} from '../../constants';

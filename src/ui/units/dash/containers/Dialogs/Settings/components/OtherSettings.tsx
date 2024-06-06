@@ -1,11 +1,13 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Button, Checkbox, SelectProps} from '@gravity-ui/uikit';
+import type {SelectProps} from '@gravity-ui/uikit';
+import {Button, Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import {DashLoadPriority, Feature} from '../../../../../../../shared';
+import type {DashLoadPriority} from '../../../../../../../shared';
+import {Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 import Utils from '../../../../../../utils';
 

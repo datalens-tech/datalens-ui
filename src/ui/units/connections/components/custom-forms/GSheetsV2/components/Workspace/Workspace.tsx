@@ -7,7 +7,8 @@ import {parseError} from 'ui/utils/errors/parse';
 import {Veil} from '../../../../../../../components/Veil/Veil';
 import type {ApplySourceSettings} from '../../../../../store';
 import {getGSheetErrorData} from '../../../../../utils';
-import {ErrorContentAction, ErrorView} from '../../../../ErrorView/ErrorView';
+import type {ErrorContentAction} from '../../../../ErrorView/ErrorView';
+import {ErrorView} from '../../../../ErrorView/ErrorView';
 import type {GSheetListItem, UpdateColumnFilter} from '../../types';
 
 import {EmptyWorkspace} from './EmptyWorkspace';

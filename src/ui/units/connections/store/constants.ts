@@ -1,6 +1,6 @@
 import {DL} from 'ui';
 
-import {ConnectionsReduxState} from './typings';
+import type {ConnectionsReduxState} from './typings';
 
 export const initialState: ConnectionsReduxState = {
     currentTenantId: DL.CURRENT_TENANT_ID,

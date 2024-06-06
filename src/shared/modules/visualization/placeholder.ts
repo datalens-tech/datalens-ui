@@ -1,4 +1,4 @@
-import {PlaceholderId} from '../../constants';
+import type {PlaceholderId} from '../../constants';
 import type {Placeholder} from '../../types';
 
 export const selectPlaceholders = <T extends PlaceholderId>(

@@ -1,4 +1,4 @@
-import {DatalensGlobalState} from 'index';
+import type {DatalensGlobalState} from 'index';
 
 import {ComponentName} from '../actions';
 

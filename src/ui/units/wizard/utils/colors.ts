@@ -1,4 +1,4 @@
-import {Field, Shared} from 'shared';
+import type {Field, Shared} from 'shared';
 
 export function filterVisualizationColors(colors: Field[], visualization: Shared['visualization']) {
     let updatedColors = [...colors];
