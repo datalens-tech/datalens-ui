@@ -39,14 +39,11 @@ export const TableBody = (props: Props) => {
         }
     };
 
-    const canUseFixedColumns = columns.some((col) => !col.meta?.width);
     const columnOptions: Record<number, {width?: string | number}> = {};
-    if (canUseFixedColumns) {
-        rows[0]?.getVisibleCells().forEach((cell, index) => {
-            const width = getColumnWidth(cell.column);
-            columnOptions[index] = {width};
-        });
-    }
+    rows[0]?.getVisibleCells().forEach((cell, index) => {
+        const width = getColumnWidth(cell.column);
+        columnOptions[index] = {width};
+    });
 
     return (
         <tbody className={b('body')}>
