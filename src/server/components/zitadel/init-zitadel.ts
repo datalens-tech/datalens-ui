@@ -64,10 +64,7 @@ export function initZitadel({
 
                 const {id, username} = uiProfile as any;
 
-                const login = username;
-                const userId = id;
-
-                return done(null, {accessToken, refreshToken, userId, login});
+                return done(null, {accessToken, refreshToken, userId: id, username});
             },
         ),
     );

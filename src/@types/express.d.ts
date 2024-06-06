@@ -6,7 +6,7 @@ declare global {
             accessToken: string;
             refreshToken: string;
 
-            login: string;
+            username: string;
             userId: string;
         }
         interface Request {
