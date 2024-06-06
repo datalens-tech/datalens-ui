@@ -18,10 +18,7 @@
 
     & &__btn-pseudosave {
         position: absolute;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        right: $gap;
+        inset: 0 $gap 0 0;
         cursor: pointer;
     }
 

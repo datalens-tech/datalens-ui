@@ -67,8 +67,7 @@ $addTabButtonHeight: 40px;
 
     &__list {
         height: calc(100% - $addTabButtonHeight);
-        overflow-y: auto;
+        overflow: hidden auto;
         // TODO: remove after https://github.com/gravity-ui/uikit/pull/1479
-        overflow-x: hidden;
     }
 }

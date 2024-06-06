@@ -76,8 +76,7 @@ $titleHeight: 57px;
         grid-template:
             'a a' 1fr
             'b c' 1fr;
-        row-gap: 8px;
-        column-gap: 6px;
+        gap: 8px 6px;
     }
 
     &__add-section-controls-input {

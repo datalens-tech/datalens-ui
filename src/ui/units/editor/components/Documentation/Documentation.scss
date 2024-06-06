@@ -2,10 +2,7 @@
     --g-tabs-item-gap: 20px;
 
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: 36px;
+    inset: 36px 0 0;
     background-color: var(--g-color-base-generic-ultralight);
     display: flex;
     flex-direction: column;

@@ -7,10 +7,7 @@
 
     &__bg {
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
+        inset: 0;
         background-color: var(--g-color-text-danger);
         opacity: 0.05;
         z-index: 1;
