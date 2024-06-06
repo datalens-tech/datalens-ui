@@ -14,9 +14,10 @@ import {EntryDialogResolveStatus} from '../constants';
 import type {EntryDialogProps} from '../types';
 
 export interface DialogEntrySaveAsNewProps extends EntryDialogProps {
+    entryId: string;
     initDestination: string;
     initName?: string;
-    onSaveAsNewCallback: ({key, workbookId, name}: SaveAsNewDashArgs) => void;
+    onSaveAsNewCallback: (args: SaveAsNewDashArgs) => void;
     workbookId?: string;
     warningMessage?: string | null;
 }
@@ -73,13 +74,15 @@ class DialogEntrySaveAsNew extends React.Component<Props> {
     }
 
     private onWorkbookApply = async ({name}: {name: string}) => {
-        const {workbookId} = this.props;
+        const {workbookId, entryId} = this.props;
 
-        return this.props.onSaveAsNewCallback({name, workbookId});
+        return this.props.onSaveAsNewCallback({entryId, name, workbookId});
     };
 
     private onApply = async (key: string) => {
-        return this.props.onSaveAsNewCallback({key});
+        const {entryId} = this.props;
+
+        return this.props.onSaveAsNewCallback({entryId, key});
     };
 
     private onError = (error: DataLensApiError) => {

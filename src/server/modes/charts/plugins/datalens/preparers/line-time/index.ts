@@ -2,7 +2,12 @@ import type {
     CommonNumberFormattingOptions,
     ExtendedSeriesLineOptions,
 } from '../../../../../../../shared';
-import {DATALENS_QL_TYPES, getUtcDateTime, isDateField} from '../../../../../../../shared';
+import {
+    AxisNullsMode,
+    DATALENS_QL_TYPES,
+    getUtcDateTime,
+    isDateField,
+} from '../../../../../../../shared';
 import {getLineTimeDistinctValue} from '../../../../../../../shared/modules/colors/distincts-helpers';
 import {getColorsForNames} from '../../../ql/utils/colors';
 import type {
@@ -128,7 +133,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                 if (typeof dataCell === 'object' && dataCell !== null) {
                     colorValues.forEach((colorValue: QLValue, i) => {
                         if (typeof dataCell[String(colorValue)] === 'undefined') {
-                            if (yPlaceholderSettings.nulls === 'as-0') {
+                            if (yPlaceholderSettings.nulls === AxisNullsMode.AsZero) {
                                 graphs[i].data.push(0);
                             } else {
                                 graphs[i].data.push(null);
@@ -234,7 +239,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
         result.graphs.forEach((graph, i) => {
             graph.color = colorData[i];
-            graph.spanGaps = yPlaceholderSettings.nulls === 'connect';
+            graph.spanGaps = yPlaceholderSettings.nulls === AxisNullsMode.Connect;
         });
 
         if (result.graphs.length > 1 && isLegendEnabled(shared.extraSettings)) {

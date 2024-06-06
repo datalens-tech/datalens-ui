@@ -9,7 +9,7 @@ import type {
     ParameterDefaultValue,
     TableBarsSettings,
 } from '../../index';
-import type {TableFieldBackgroundSettings} from '../../wizard';
+import type {AxisNullsMode, TableFieldBackgroundSettings} from '../../wizard';
 
 export type V5ChartsConfig = {
     title?: string;
@@ -164,7 +164,7 @@ export type V5Placeholder = {
         gridStepValue?: number;
         hideLabels?: 'yes' | 'no';
         labelsView?: 'horizontal' | 'vertical' | 'angle';
-        nulls?: 'ignore' | 'connect' | 'as-0';
+        nulls?: AxisNullsMode;
         holidays?: 'on' | 'off';
         axisFormatMode?: AxisLabelFormatMode;
         axisMode?: AxisMode;
