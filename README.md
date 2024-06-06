@@ -59,35 +59,29 @@ Password:
 demo
 ```
 ## Комментарий
-Ключ для авторизации требуется передать в адресной строке, как `x-rpc-authorization=bW9iaWxlOjEyMzQ1`.
+Ключ (токен) для авторизации требуется передать в адресной строке, как `x-rpc-authorization=bW9iaWxlOjEyMzQ1`. Токен защифрован, как кодировка `base64`.
 
 Во все внешние запросы прокидывается дополнительный заголовок: `X-Rpc-Authorization`.
 
-## Отладка и запуск проекта
-Требуется установить WSL2 и запусить проект в Visual Code
-
-В терминале выбрать `Ubuntu WSL` и выполнить команду `code .`
-
-Подробнее:
-* https://www.petermorlion.com/debugging-wsl-from-vs-code/
-* https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode
-
+Интерфейс взаимодействует с REST API https://github.com/akrasnov87/datalens-auth.
 
 ## Сборка
 <pre>
 docker login -u [username]
-docker build -t akrasnov87/datalens-ui:0.1245.0 .
-docker push akrasnov87/datalens-ui:0.1245.0
+docker build -t akrasnov87/datalens-ui:0.1675.0 .
+docker push akrasnov87/datalens-ui:0.1675.0
 </pre>
 
-## Тестирвование
+## Тестирование
 
-В корне проекта создать файл .env и добавить туда строки:
+В корне проекта создать файл `.env` и добавить туда строки:
+
 <pre>
 US_ENDPOINT="http://host.docker.internal:8030"
 BI_API_ENDPOINT="http://host.docker.internal:8031"
 BI_DATA_ENDPOINT="http://host.docker.internal:8032"
 HC=1
+PYTHON=python3
 ### TEMPLATE SECRETS BEGIN
 APP_MODE=full
 APP_ENV=development
@@ -97,21 +91,45 @@ APP_DEV_MODE=1
 ### TEMPLATE SECRETS END
 </pre>
 
-## Проблема с запуском *.sock
+Где:
+* PYTHON - это команда для вызова python, используется для создания `.ods` файла (альтернатива `.xlsx`). По умолчанию хранится `python3` (см. src/server/configs/common.ts)
 
-Если запускать проект из под WSL, то может быть проблема с запуком *.sock
+Выполняем команды:
+<pre>
+npm ci
+npm run dev
+</pre>
 
-Для её решения требуется переместить проект из директории /mnt/ в каталог /home/ т.к. Windows не поддерживает unix:///
-
-Ниже отрывок из [stackoverflow.com](https://stackoverflow.com/questions/75083709/wsl2-debian-socket-operation-not-supported)
-
-Under WSL2 you may find your home or working directory mapped to something like /mnt/c/Users/username, which is a Windows filesystem not a linux filesystem. Windows filesystems dont support AF_UNIX sockets and consequently if you try to create one it fails.
-
-The solution is to move you working development directory in to the linux filesystem, such as under /home. After doing the you can create AF_UNIX sockets. However, this fs is not mappable to Windows and so cant directly be accessed by Windows hosted IDEs such as VSCode which renders the whole WSL2 as a dev environment for this kind of thing a bit useless.
-
-## Получение последних изменений
+## Получение последних изменений с главного репозитория yandex
 
 <pre>
 git remote add upstream https://github.com/datalens-tech/datalens-ui.git
 git pull upstream main
 </pre>
+
+## Запуск через vscode
+
+Создаём launch файл
+<pre>
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch via npm",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": ["run", "dev"]
+        }
+    ]
+}
+</pre>
+
+## Авторы доработки
+
+* Александр Краснов - https://github.com/akrasnov87
+* Кирилл Автономов -  https://github.com/kirillva
