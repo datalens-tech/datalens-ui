@@ -20,7 +20,12 @@ import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/da
 
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
-import {getUISandbox, shouldUseUISandbox, unwrapPossibleFunctions} from './ui-sandbox';
+import {
+    generateSafeHtml,
+    getUISandbox,
+    shouldUseUISandbox,
+    unwrapPossibleFunctions,
+} from './ui-sandbox';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -271,11 +276,20 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 noJsonFn ? replacer : undefined,
             );
 
-            if (shouldUseUISandbox(result.config) || shouldUseUISandbox(result.libraryConfig)) {
+            if (
+                shouldUseUISandbox(result.config) ||
+                shouldUseUISandbox(result.libraryConfig) ||
+                shouldUseUISandbox(result.data)
+            ) {
                 const uiSandbox = await getUISandbox();
                 unwrapPossibleFunctions(uiSandbox, result.config);
                 unwrapPossibleFunctions(uiSandbox, result.libraryConfig);
+                unwrapPossibleFunctions(uiSandbox, result.data);
             }
+
+            // TODO: escape html
+            generateSafeHtml(result.data);
+            generateSafeHtml(result.libraryConfig);
 
             applyChartkitHandlers(result.config, result.libraryConfig);
 

@@ -21,7 +21,7 @@ import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import {TreeCell} from '../components/TreeCell/TreeCell';
 
-import {calculateNumericProperty} from './math';
+import {calculateNumericProperty, isStringValueInPixel} from './math';
 
 const b = block('chartkit-table-widget');
 
@@ -39,7 +39,11 @@ export function mapHeadCell(
 ): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
     const hint = get(th, 'hint');
-    const cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
+
+    let cellWidth: number | undefined;
+    if (head?.some((h) => !h.width || !isStringValueInPixel(String(h.width)))) {
+        cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
+    }
 
     return {
         ...th,
