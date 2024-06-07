@@ -48,6 +48,7 @@ type BaseConfig = {
         breadcrumbs: string[];
         level: number;
     };
+    enableJsAndHtml?: boolean;
 };
 
 type GraphConfig = BaseConfig &
