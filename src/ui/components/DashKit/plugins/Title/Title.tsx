@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemTitle} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -58,14 +59,28 @@ const titlePlugin = {
             data.background?.color &&
             data.background?.color !== 'transparent';
 
-        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+        const style = showBgColor
+            ? {
+                  backgroundColor:
+                      data.background?.color === CustomPaletteColors.LIKE_CHART
+                          ? undefined
+                          : data.background?.color,
+              }
+            : {};
+
+        const wrapperClassMod =
+            (showBgColor &&
+                (data.background?.color === CustomPaletteColors.LIKE_CHART
+                    ? 'with-default-color'
+                    : 'with-color')) ||
+            '';
 
         return (
             <RendererWrapper
                 type="title"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={showBgColor ? 'with-color' : undefined}
+                classMod={wrapperClassMod}
             >
                 <div
                     className={b({

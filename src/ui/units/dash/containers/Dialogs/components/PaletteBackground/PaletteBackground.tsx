@@ -1,12 +1,19 @@
 import React from 'react';
 
 import type {PaletteOption} from '@gravity-ui/uikit';
-import {Palette, Popover} from '@gravity-ui/uikit';
+import {Icon, Palette, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+
+import ChartColumnIcon from '@gravity-ui/icons/svgs/chart-column.svg';
 
 import './PaletteBackground.scss';
 
 const b = block('widget-palette-background');
+
+export enum CustomPaletteColors {
+    LIKE_CHART = 'like-chart-bg',
+    NONE = 'transparent',
+}
 
 const ColorItem = ({
     color,
@@ -17,17 +24,22 @@ const ColorItem = ({
     classNameMod?: string;
     isSelected?: boolean;
 }) => {
-    const isTransparent = color === 'transparent';
+    const isTransparent = color === CustomPaletteColors.NONE;
+    const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
+
     return (
         <span
-            style={{backgroundColor: `${color}`}}
+            style={{backgroundColor: isLikeChartBg ? '' : `${color}`}}
             className={b('color-item', {
                 transparent: isTransparent,
                 selected: isSelected,
+                'widget-bg': isLikeChartBg,
                 ...mod,
             })}
-        />
+        >
+            {isLikeChartBg && <Icon data={ChartColumnIcon} className={b('color-icon')} />}
+        </span>
     );
 };
 
@@ -60,7 +72,8 @@ const colors = [
     'var(--g-color-base-misc-medium-hover)',
     'var(--g-color-base-neutral-medium)',
     'var(--g-color-base-neutral-medium-hover)',
-    'transparent',
+    CustomPaletteColors.NONE,
+    CustomPaletteColors.LIKE_CHART,
 ];
 
 const PaletteList = (props: {onSelect: (val: string[]) => void; selectedColor: string}) => {
@@ -88,7 +101,9 @@ type PaletteBackgroundProps = {
 };
 
 export const PaletteBackground = (props: PaletteBackgroundProps) => {
-    const [selectedColor, setSelectedColor] = React.useState(props.color || 'transparent');
+    const [selectedColor, setSelectedColor] = React.useState(
+        props.color || CustomPaletteColors.NONE,
+    );
 
     const handleSelectColor = React.useCallback(
         (val) => {

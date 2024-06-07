@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce';
 import type {DashTabItemText} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
+import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -117,14 +118,28 @@ const textPlugin = {
             data.background?.color &&
             data.background?.color !== 'transparent';
 
-        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+        const wrapperClassMod =
+            (showBgColor &&
+                (data.background?.color === CustomPaletteColors.LIKE_CHART
+                    ? 'with-default-color'
+                    : 'with-color')) ||
+            '';
+
+        const style = showBgColor
+            ? {
+                  backgroundColor:
+                      data.background?.color === CustomPaletteColors.LIKE_CHART
+                          ? undefined
+                          : data.background?.color,
+              }
+            : {};
 
         return (
             <RendererWrapper
                 type="text"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={showBgColor ? 'with-color' : undefined}
+                classMod={wrapperClassMod}
             >
                 <YfmWrapper
                     // needed for force update when text is changed
