@@ -154,6 +154,7 @@ export type ConfigNode = (
     // therefore, the key must be additionally passed from Editor and Wizard to ChartKit and then to /api/run,
     // to get it back in the response
     key: string;
+    createdAt?: string;
 };
 
 export interface ChartsProps {

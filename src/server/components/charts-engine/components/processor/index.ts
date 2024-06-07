@@ -45,7 +45,7 @@ import type {
     UiTabExports,
     UserConfig,
 } from './types';
-import {getMessageFromUnknownError} from './utils';
+import {getMessageFromUnknownError, isChartWithJSAndHtmlAllowed} from './utils';
 
 const {
     CONFIG_LOADING_ERROR,
@@ -812,6 +812,9 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
+                if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
+                    resultConfig.enableJsAndHtml = false;
+                }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', true);
                 const stringify =
                     isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
