@@ -6,6 +6,15 @@
 
     &__section {
         margin-bottom: 15px;
+
+        &_top-divider {
+            border-top: 1px solid var(--g-color-line-generic);
+            padding-top: 15px;
+        }
+
+        &_bottom-divider {
+            border-bottom: 1px solid var(--g-color-line-generic);
+        }
     }
 
     &__sidebar {
