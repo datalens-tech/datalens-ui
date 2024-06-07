@@ -138,7 +138,7 @@
     "@types/luxon": "^1.26.2",
     "@types/markdown-it": "^13.0.7",
     "@types/markdown-it-link-attributes": "^3.0.4",
-    "@types/node": "^18.16.18",
+    "@types/node": "^20.14.2",
     "@types/object-hash": "^3.0.2",
     "@types/pixelmatch": "^5.2.4",
     "@types/pngjs": "^6.0.1",
