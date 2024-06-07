@@ -57,6 +57,7 @@ import type {
 } from '../preparers/types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
+import {preprocessHierarchies} from '../utils/hierarchy-helpers';
 import {getServerDateFormat, log} from '../utils/misc-helpers';
 
 import {OversizeErrorType} from './constants/errors';
@@ -405,6 +406,21 @@ function prepareSingleResult({
     palettes,
     features,
 }: PrepareSingleResultArgs) {
+    const isVisualizationWithLayers = Boolean(
+        (visualization as ServerVisualizationLayer).layerSettings,
+    );
+    const commonPlaceholders = (visualization as ServerVisualizationLayer).commonPlaceholders;
+
+    preprocessHierarchies({
+        visualizationId: visualization.id,
+        placeholders: visualization.placeholders,
+        params: ChartEditor.getParams(),
+        sharedData: shared.sharedData,
+        colors: isVisualizationWithLayers ? commonPlaceholders.colors : shared.colors,
+        shapes: (isVisualizationWithLayers ? commonPlaceholders.shapes : shared.shapes) || [],
+        segments: shared.segments || [],
+    });
+
     const {
         sharedData: {drillDownData},
     } = shared;
@@ -439,7 +455,7 @@ function prepareSingleResult({
         ChartEditor.updateConfig({
             drillDown: {
                 breadcrumbs: drillDownData.breadcrumbs,
-                dateFormat: getServerDateFormat(currentDrillDownField?.data_type),
+                dateFormat: getServerDateFormat(currentDrillDownField?.data_type || ''),
             },
         });
 
