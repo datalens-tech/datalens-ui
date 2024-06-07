@@ -27,6 +27,7 @@ class ErrorContent extends React.PureComponent {
         className: PropTypes.string,
         title: PropTypes.string,
         isHtmlInTitle: PropTypes.bool,
+        isHtmlInDescription: PropTypes.bool,
         description: PropTypes.node,
         type: PropTypes.oneOf(Object.values(ErrorContentTypes)),
         action: PropTypes.shape({
@@ -113,7 +114,7 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderDescription() {
-        const {description, hideTitle} = this.props;
+        const {description, hideTitle, isHtmlInDescription} = this.props;
         if (this.state.accessDescriptionMd) {
             return (
                 <YfmWrapper
@@ -127,6 +128,14 @@ class ErrorContent extends React.PureComponent {
         if (!description) {
             return null;
         }
+
+        if (isHtmlInDescription)
+            return (
+                <div
+                    className={b('description')}
+                    dangerouslySetInnerHTML={{__html: description}}
+                ></div>
+            );
 
         return <div className={b('description')}>{description}</div>;
     }

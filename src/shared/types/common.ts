@@ -24,6 +24,7 @@ export interface LandingLayoutPageError {
     errorType: string;
     title?: string;
     isHtmlInTitle?: boolean;
+    isHtmlInDescription?: boolean;
     description?: string;
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
@@ -129,6 +130,7 @@ export interface DLUser extends DLUserAccount {
     isFederationUser?: boolean;
     isGlobalFederationUser?: boolean;
     isLocalFederationUser?: boolean;
+    isFederationUserOnCommunity?: boolean;
 }
 
 export type MainLayoutConfigData = {
