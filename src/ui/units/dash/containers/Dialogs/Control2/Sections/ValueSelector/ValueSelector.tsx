@@ -7,7 +7,9 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
+import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {registry} from 'ui/registry';
+import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
@@ -18,13 +20,21 @@ import {
 } from 'units/dash/store/selectors/dashTypedSelectors';
 
 import type {FilterValue} from '../../../../../../../../shared/modules';
-import {DATASET_FIELD_TYPES} from '../../../../../../../../shared/types';
+import {
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+} from '../../../../../../../../shared/types';
 import DateDefaultValue from '../../../Control/Date/Default/Default';
 import {CheckboxControlValue} from '../../../Control/constants';
+import {getDistinctsByTypedQuery} from '../CommonSettingsSection/ConnectionSettings/helpers/get-distincts-by-typed-query';
+import {
+    DEFAULT_PAGE_SIZE,
+    getDistinctsByDatasetField,
+} from '../CommonSettingsSection/DatasetSettings/helpers/get-distincts-by-dataset-field';
 
+import type {ListValueControlProps} from './ListValueControl/ListValueControl';
 import {ListValueControl} from './ListValueControl/ListValueControl';
 import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
-import type {ValueSelectorControlProps} from './types';
 
 import './ValueSelector.scss';
 
@@ -173,12 +183,86 @@ const CheckboxValueControl = () => {
     );
 };
 
-type ValueSelectorProps = {
-    controlProps: ValueSelectorControlProps;
-};
-
-const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) => {
+const ValueSelector = () => {
+    const {sourceType} = useSelector(selectSelectorDialog);
     const controlType = useSelector(selectSelectorControlType);
+    const workbookId = useSelector(selectWorkbookId);
+
+    const {datasetId, datasetFieldId} = useSelector(selectSelectorDialog);
+
+    const {connectionId, connectionQueryContent, connectionQueryType, selectorParameters} =
+        useSelector(selectSelectorDialog);
+
+    const connectionFetcher = React.useCallback(
+        () =>
+            getDistinctsByTypedQuery({
+                workbookId,
+                connectionId,
+                connectionQueryContent,
+                connectionQueryType,
+                parameters: selectorParameters || {},
+            }),
+        [connectionId, connectionQueryContent, connectionQueryType, workbookId, selectorParameters],
+    );
+
+    const [searchPattern, setSearchPattern] = React.useState('');
+
+    const onFilterChange = (pattern: string, mode: 'ALL' | 'SELECTED') => {
+        if (mode === VIEW_MODES.ALL) {
+            setSearchPattern(pattern);
+        }
+    };
+
+    const datasetFetcher = React.useCallback(
+        ({pageNumber, pageSize} = {pageNumber: 0, pageSize: DEFAULT_PAGE_SIZE}) =>
+            getDistinctsByDatasetField({
+                datasetId,
+                workbookId,
+                datasetFieldId,
+                nextPageToken: pageNumber,
+                searchPattern,
+                pageSize,
+            }),
+        [datasetId, workbookId, datasetFieldId, searchPattern],
+    );
+
+    const listValueProps = React.useMemo((): ListValueControlProps => {
+        switch (sourceType) {
+            case DashTabItemControlSourceType.Connection:
+                return {
+                    type: 'dynamic',
+                    custom: {
+                        fetcher: connectionFetcher,
+                        disabled: !connectionId || !connectionQueryContent || !connectionQueryType,
+                        filterable: false,
+                        onRetry: async () => {
+                            await connectionFetcher();
+                        },
+                    },
+                    hasMultiselect: false,
+                };
+            case DashTabItemControlSourceType.Dataset:
+                return {
+                    type: 'dynamic',
+                    custom: {
+                        fetcher: datasetFetcher,
+                        onFilterChange,
+                        disabled: !datasetId || !datasetFieldId,
+                    },
+                };
+            default:
+                return {type: 'manual'};
+        }
+    }, [
+        connectionFetcher,
+        connectionId,
+        connectionQueryContent,
+        connectionQueryType,
+        datasetFetcher,
+        datasetFieldId,
+        datasetId,
+        sourceType,
+    ]);
 
     const {useExtendedValueSelector} = registry.dash.functions.getAll();
 
@@ -194,7 +278,7 @@ const ValueSelector: React.FC<ValueSelectorProps> = (props: ValueSelectorProps) 
             break;
         }
         case 'select': {
-            inputControl = <ListValueControl {...props.controlProps.select} />;
+            inputControl = <ListValueControl {...listValueProps} />;
             break;
         }
         case 'input': {

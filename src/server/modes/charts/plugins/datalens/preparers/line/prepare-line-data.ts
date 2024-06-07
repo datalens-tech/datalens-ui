@@ -3,6 +3,7 @@ import _isEmpty from 'lodash/isEmpty';
 import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../shared';
 import {
     AxisMode,
+    AxisNullsMode,
     PlaceholderId,
     WizardVisualizationId,
     getActualAxisModeForField,
@@ -134,8 +135,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const defaultNullValue =
         visualizationId === WizardVisualizationId.Area ||
         visualizationId === WizardVisualizationId.Area100p
-            ? 'as-0'
-            : 'ignore';
+            ? AxisNullsMode.AsZero
+            : AxisNullsMode.Connect;
 
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
@@ -352,7 +353,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                             let value = lineData?.value;
 
-                            if (typeof value === 'undefined' && nulls === 'as-0') {
+                            if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
                                 value = 0;
                             }
 
@@ -360,7 +361,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             if (
                                 !isXCategoryAxis &&
                                 typeof value === 'undefined' &&
-                                nulls === 'connect'
+                                nulls === AxisNullsMode.Connect
                             ) {
                                 return null;
                             }
@@ -427,7 +428,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: shapeItem?.guid || null,
-                    connectNulls: nulls === 'connect',
+                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
 

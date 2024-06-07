@@ -2,6 +2,7 @@ import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import type {
     AxisLabelFormatMode,
     AxisMode,
+    AxisNullsMode,
     ChartsConfigVersion,
     ColumnSettings,
     LabelsPositions,
@@ -165,7 +166,7 @@ export type V8PlaceholderSettings = {
     gridStepValue?: number;
     hideLabels?: 'yes' | 'no';
     labelsView?: 'horizontal' | 'vertical' | 'angle';
-    nulls?: 'ignore' | 'connect' | 'as-0';
+    nulls?: AxisNullsMode;
     holidays?: 'on' | 'off';
     axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
