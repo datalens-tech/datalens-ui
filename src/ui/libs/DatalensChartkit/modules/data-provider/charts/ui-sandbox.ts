@@ -240,9 +240,6 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ItemValue = unknown;
-
 export function processHtmlFields(target: unknown, options?: {allowHtml: boolean}) {
     const allowHtml = Boolean(options?.allowHtml);
 
@@ -250,20 +247,19 @@ export function processHtmlFields(target: unknown, options?: {allowHtml: boolean
         if (Array.isArray(target)) {
             target.forEach((item) => processHtmlFields(item, options));
         } else {
-            Object.keys(target).forEach((key) => {
-                const value = target[key];
-
+            const config = target as Record<string, unknown>;
+            Object.entries(config).forEach(([key, value]) => {
                 if (value) {
                     if (typeof value === 'object') {
                         if (WRAPPED_HTML_KEY in value) {
                             // eslint-disable-next-line no-param-reassign
-                            target[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+                            config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
                         } else {
                             processHtmlFields(value, options);
                         }
                     } else if (typeof value === 'string' && !allowHtml) {
                         // eslint-disable-next-line no-param-reassign
-                        target[key] = escape(value);
+                        config[key] = escape(value);
                     }
                 }
             });
@@ -271,9 +267,9 @@ export function processHtmlFields(target: unknown, options?: {allowHtml: boolean
     }
 }
 
-export function unwrapHtml(value: ItemValue) {
+export function unwrapHtml(value: unknown) {
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
-        return generateHtml(value[WRAPPED_HTML_KEY]);
+        return generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
     }
 
     if (typeof value === 'string') {

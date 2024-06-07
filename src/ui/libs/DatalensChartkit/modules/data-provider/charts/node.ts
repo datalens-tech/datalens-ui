@@ -271,7 +271,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             const parsedConfig = JSON.parse(loaded.config);
             const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
 
-            const jsonParse = noJsonFn || !enableJsAndHtml ? JSON.parse : JSONfn.parse;
+            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
