@@ -296,9 +296,7 @@ export const Control = ({
     const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
         const newParam = {[param]: value};
 
-        if (!isEqual(param, newParam)) {
-            onChange({params: newParam, controlId: id});
-        }
+        onChange({params: newParam, controlId: id});
     };
 
     const getTypeProps = (
