@@ -1,5 +1,6 @@
-import type {ServerPlaceholder, V4Field} from '../../../../../../../shared';
+import type {Palette, ServerPlaceholder, V4Field} from '../../../../../../../shared';
 import {DATASET_FIELD_TYPES} from '../../../../../../../shared';
+import {registry} from '../../../../../../registry';
 import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
@@ -131,9 +132,10 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
     }
 };
 
-export const buildSources = (args: SourcesArgs): SourceRequests => {
-    const {shared} = args;
-
+export const buildSourcesPrivate = (
+    args: SourcesArgs & {palettes: Record<string, Palette>},
+): SourceRequests => {
+    const {shared, palettes} = args;
     const apiVersion = args.apiVersion || '1.5';
 
     const config = mapChartsConfigToServerConfig(shared);
@@ -154,10 +156,15 @@ export const buildSources = (args: SourcesArgs): SourceRequests => {
         links: config.links,
     });
 
-    Object.assign(requests, getColorPalettesRequests({config}));
+    Object.assign(requests, getColorPalettesRequests({config, palettes}));
 
     log('SOURCE REQUESTS:');
     log(requests);
 
     return requests;
+};
+
+export const buildSources = (args: SourcesArgs): SourceRequests => {
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+    return buildSourcesPrivate({...args, palettes: getAvailablePalettesMap()});
 };

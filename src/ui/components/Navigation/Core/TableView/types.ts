@@ -2,6 +2,7 @@ import type {NavigationEntry} from '../../../../../shared/schema';
 import type {
     ChangeLocation,
     CurrentPageEntry,
+    ItemSelectArgs,
     LinkWrapperArgs,
     MenuClickArgs,
     Mode,
@@ -46,6 +47,7 @@ export type TableViewProps = {
     hasNextPage?: boolean;
     isMobileNavigation?: boolean;
     onMenuClick?: (args: MenuClickArgs) => void;
+    onItemSelect?: (args: ItemSelectArgs) => void;
 };
 
 export type HookBatchSelectResult = {

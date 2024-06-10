@@ -3,7 +3,7 @@ import type React from 'react';
 import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 
-import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import {EntryScope, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
 import {DL} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
@@ -109,11 +109,7 @@ export async function deleteEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
 export async function accessEntry(entryDialoguesRef: EntryDialoguesRef, entry: GetEntryResponse) {
     if (entryDialoguesRef.current) {
         const hasEditPermissions = entry.permissions?.edit || entry.permissions?.admin;
-        if (
-            Utils.isEnabledFeature(Feature.CustomAccessDescription) &&
-            entry?.data?.accessDescription &&
-            !hasEditPermissions
-        ) {
+        if (entry?.data?.accessDescription && !hasEditPermissions) {
             await entryDialoguesRef.current.open({
                 dialog: EntryDialogName.AccessDescription,
                 dialogProps: {

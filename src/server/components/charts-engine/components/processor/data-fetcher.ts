@@ -13,6 +13,7 @@ import {
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     Feature,
+    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
@@ -655,6 +656,16 @@ export class DataFetcher {
 
         if (workbookId) {
             headers[WORKBOOK_ID_HEADER] = workbookId;
+        }
+
+        if (req.user?.accessToken) {
+            Object.assign(headers, {authorization: `Bearer ${req.user.accessToken}`});
+        }
+
+        if (req.serviceUserAccessToken) {
+            Object.assign(headers, {
+                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
+            });
         }
 
         if (passedCredentials) {

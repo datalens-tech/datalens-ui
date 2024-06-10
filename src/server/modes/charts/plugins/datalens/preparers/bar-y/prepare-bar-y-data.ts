@@ -7,6 +7,7 @@ import type {
 } from '../../../../../../../shared';
 import {
     AxisMode,
+    AxisNullsMode,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
@@ -34,6 +35,7 @@ import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
 import type {LineTemplate, LinesRecord, MergedYSectionItems} from '../line/types';
 import type {PrepareFunctionArgs} from '../types';
 
+// eslint-disable-next-line complexity
 export function prepareBarYData({
     ChartEditor,
     placeholders,
@@ -320,7 +322,7 @@ export function prepareBarYData({
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
 
-                            if (typeof value === 'undefined' && nulls === 'as-0') {
+                            if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
                                 value = 0;
                             }
 
@@ -376,7 +378,7 @@ export function prepareBarYData({
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: null,
-                    connectNulls: nulls === 'connect',
+                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
 

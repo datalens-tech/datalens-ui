@@ -1,4 +1,10 @@
-import {AxisLabelFormatMode, AxisMode, LabelsPositions, LegendDisplayMode} from 'shared';
+import {
+    AxisLabelFormatMode,
+    AxisMode,
+    AxisNullsMode,
+    LabelsPositions,
+    LegendDisplayMode,
+} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -82,9 +88,9 @@ export const SETTINGS = {
         ANGLE: 'angle',
     },
     NULLS: {
-        IGNORE: 'ignore',
-        CONNECT: 'connect',
-        AS_ZERO: 'as-0',
+        IGNORE: AxisNullsMode.Ignore,
+        CONNECT: AxisNullsMode.Connect,
+        AS_ZERO: AxisNullsMode.AsZero,
     },
     HOLIDAYS: {
         ON: 'on',

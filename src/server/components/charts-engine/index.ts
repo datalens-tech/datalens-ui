@@ -23,7 +23,6 @@ const defaultControllers = {
     embeds: embedsController,
 };
 import type {Runner} from './runners';
-import defaultRunners from './runners';
 import type {Plugin, SourceConfig, TelemetryCallbacks} from './types';
 import {MiddlewareStage} from './types';
 
@@ -60,6 +59,7 @@ class ChartsEngine {
         cacheClient,
         beforeAuth,
         afterAuth,
+        runners,
     }: {
         config: AppConfig;
         secrets: Record<string, string>;
@@ -70,9 +70,10 @@ class ChartsEngine {
         cacheClient: CacheClient;
         beforeAuth: AppMiddleware[];
         afterAuth: AppMiddleware[];
+        runners: Runner[];
     }) {
         this.config = config;
-        this.runners = defaultRunners;
+        this.runners = runners;
         this.sources = config.sources;
         this.telemetryCallbacks = telemetryCallbacks;
         this.processorHooks = [];

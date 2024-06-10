@@ -2,6 +2,7 @@ import escape from 'lodash/escape';
 
 import type {
     DATASET_FIELD_TYPES,
+    FeatureConfig,
     ServerChartsConfig,
     ServerPlaceholder,
 } from '../../../../../shared';
@@ -15,8 +16,8 @@ import {
     VISUALIZATIONS_WITH_LABELS_POSITION,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getServerFeatures,
     isDateField,
-    isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 
@@ -36,19 +37,12 @@ type ExtendedHighchartsOptions = Omit<Highcharts.Options, 'legend'> & {
 };
 
 // eslint-disable-next-line complexity
-export const buildHighchartsConfig = (
-    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
-) => {
-    const app = registry.getApp();
-    let shared: ServerChartsConfig;
-
-    if ('shared' in options[0]) {
-        shared = options[0].shared;
-    } else {
-        shared = options[0];
-    }
-
-    shared = mapChartsConfigToServerConfig(shared);
+export const buildHighchartsConfigPrivate = (args: {
+    shared: ServerChartsConfig;
+    features: FeatureConfig;
+}) => {
+    const {features} = args;
+    const shared = mapChartsConfigToServerConfig(args.shared);
 
     if (
         ['geolayer', 'geopoint', 'geopolygon', 'heatmap', 'polyline'].includes(
@@ -149,7 +143,7 @@ export const buildHighchartsConfig = (
         let shapeTitle = getFieldTitle(shapeField);
         let sizeTitle = getFieldTitle(sizeField);
 
-        if (isEnabledServerFeature(app.nodekit.ctx, Feature.EscapeUserHtmlInDefaultHcTooltip)) {
+        if (features[Feature.EscapeUserHtmlInDefaultHcTooltip]) {
             xTitle = escape(xTitle);
             yTitle = escape(yTitle);
             pointTitle = escape(pointTitle);
@@ -489,4 +483,18 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
             break;
         }
     }
+};
+
+export const buildHighchartsConfig = (
+    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
+) => {
+    const app = registry.getApp();
+    let shared: ServerChartsConfig;
+    if ('shared' in options[0]) {
+        shared = options[0].shared;
+    } else {
+        shared = options[0];
+    }
+
+    return buildHighchartsConfigPrivate({shared, features: getServerFeatures(app.nodekit.ctx)});
 };

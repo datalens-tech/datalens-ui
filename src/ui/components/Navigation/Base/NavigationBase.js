@@ -228,8 +228,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Access,
             dialogProps: {
                 entry,
-                showCustomAccess:
-                    Utils.isEnabledFeature(Feature.CustomAccessDescription) && !hasEditPermissions,
+                showCustomAccess: !hasEditPermissions,
             },
         });
     }
@@ -238,7 +237,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Unlock,
             dialogProps: {
                 entry,
-                showCustomAccess: Utils.isEnabledFeature(Feature.CustomAccessDescription),
+                showCustomAccess: true,
             },
         });
     }
