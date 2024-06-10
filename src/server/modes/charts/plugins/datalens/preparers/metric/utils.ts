@@ -11,7 +11,7 @@ export function getTitle(
             return '';
         }
         case IndicatorTitleMode.Manual: {
-            return extraSettings.title || '';
+            return extraSettings?.title || '';
         }
         case IndicatorTitleMode.ByField:
         default: {

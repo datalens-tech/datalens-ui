@@ -3,7 +3,7 @@ import React from 'react';
 import {RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {IndicatorTitleMode} from 'shared';
+import {ChartSettingsDialogQA, IndicatorTitleMode} from 'shared';
 
 import './IndicatorTitleSetting.scss';
 
@@ -45,7 +45,11 @@ const IndicatorTitleSetting: React.FC<Props> = (props: Props) => {
         <div className={b()}>
             <div className={b('row')}>
                 <div className={b('title')}>{i18n('wizard', 'label_header')}</div>
-                <RadioButton value={mode} onUpdate={handleUpdateMode}>
+                <RadioButton
+                    value={mode}
+                    onUpdate={handleUpdateMode}
+                    qa={ChartSettingsDialogQA.IndicatorTitleMode}
+                >
                     {RADIO_OPTIONS.map((item) => (
                         <RadioButton.Option key={item.value} value={item.value}>
                             {item.label}
