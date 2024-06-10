@@ -61,7 +61,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
-    _cancelSource: any = null;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME);
 
@@ -429,7 +428,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 getDistincts={getDistincts}
                 onChange={this.onChange}
                 needReload={this.state.needReload}
-                cancelSource={this._cancelSource}
                 workbookId={workbookId}
             />
         );

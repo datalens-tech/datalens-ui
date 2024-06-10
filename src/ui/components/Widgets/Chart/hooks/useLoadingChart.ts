@@ -535,6 +535,20 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     });
 
     /**
+     * actions before chart unmount
+     */
+    React.useEffect(() => {
+        return () => {
+            for (const requestStatusData of Object.values(requestCancellationRef.current || {})) {
+                if (requestStatusData.requestCancellation) {
+                    requestStatusData.status = 'canceled';
+                    requestStatusData.requestCancellation.cancel();
+                }
+            }
+        };
+    }, []);
+
+    /**
      * force initializing chart loading data, when widget became visible,
      * loading only visible on screen charts
      */

@@ -18,9 +18,3 @@ export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
         clearTimeout(timer);
     }
 };
-
-export const cancelCurrentRequests = (cancelSource: any) => {
-    if (cancelSource) {
-        cancelSource.cancel('DASHKIT_CONTROL_CANCEL_CURRENT_REQUESTS');
-    }
-};

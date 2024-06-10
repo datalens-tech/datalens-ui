@@ -3,6 +3,7 @@ import React from 'react';
 import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
+import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
@@ -423,6 +424,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const {workbookId} = this.props;
 
+            const payloadCanccelation = chartsDataProvider.getRequestCancellation();
+
             const payload = {
                 data: {
                     config: {
@@ -436,7 +439,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
                 },
+                cancelToken: payloadCanccelation.token,
             };
+
+            if (data.sourceType !== DashTabItemControlSourceType.External) {
+                this.cancelCurrentRequests();
+            }
+
+            this._cancelSource = payloadCanccelation;
 
             const response =
                 data.sourceType === DashTabItemControlSourceType.External
@@ -469,6 +479,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.setState({isInit: true});
             }
         } catch (error) {
+            if (axios.isCancel(error)) {
+                return;
+            }
             if (this.state.isInit === false) {
                 this.setState({isInit: true});
             }
