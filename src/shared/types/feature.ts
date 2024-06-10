@@ -42,7 +42,6 @@ export enum Feature {
     GroupControls = 'GroupControls',
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
-    PivotTableMeasureNames = 'PivotTableMeasureNames',
     NewMobileDesign = 'NewMobileDesign',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',

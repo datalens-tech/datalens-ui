@@ -1,13 +1,6 @@
 import {LayoutColumns3, LayoutRows3, SquareHashtag} from '@gravity-ui/icons';
 import type {Field, Placeholder, TableShared} from 'shared';
-import {
-    Feature,
-    PlaceholderId,
-    createMeasureNames,
-    isMeasureName,
-    isMeasureNameOrValue,
-} from 'shared';
-import Utils from 'ui/utils';
+import {PlaceholderId, createMeasureNames, isMeasureName, isMeasureNameOrValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';
@@ -44,9 +37,7 @@ function onPivotTableMeasuresChange({visualization}: OnPivotTableMeasuresChangeA
 
     const isMeasureNameExist =
         columns.some(isMeasureNameOrValue) || rows.some(isMeasureNameOrValue);
-    const shouldUseMeasureName = Utils.isEnabledFeature(Feature.PivotTableMeasureNames)
-        ? measuresPlaceholder.items.length
-        : measuresPlaceholder.items.length > 1;
+    const shouldUseMeasureName = measuresPlaceholder.items.length > 1;
 
     if (!isMeasureNameExist && shouldUseMeasureName) {
         if (columns.length && !rows.length) {
