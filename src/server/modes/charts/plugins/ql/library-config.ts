@@ -28,7 +28,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 hierarchies: [],
                 links: [],
                 updates: [],
-                version: ChartsConfigVersion.V10,
+                version: ChartsConfigVersion.V11,
                 datasetsIds: [],
                 datasetsPartialFields: [],
             },

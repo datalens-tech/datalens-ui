@@ -6,12 +6,9 @@ import type {
     NumberFormatUnit,
     ServerCommonSharedExtraSettings,
 } from '../../../../../../../../shared';
-import {
-    MINIMUM_FRACTION_DIGITS,
-    getFakeTitleOrTitle,
-    isDateField,
-} from '../../../../../../../../shared';
+import {MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../../../shared';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
+import {getTitle} from '../utils';
 
 type MetricCurrent = {
     value: string | number | null;
@@ -66,13 +63,7 @@ export const prepareBasicMetricVariant = ({
 
     const size = (extraSettings && extraSettings.metricFontSize) || '';
     const color = (extraSettings && extraSettings.metricFontColor) || '';
-    let title;
-
-    if (extraSettings && extraSettings.title && extraSettings.titleMode === 'show') {
-        title = extraSettings.title;
-    } else {
-        title = getFakeTitleOrTitle(measure);
-    }
+    const title = getTitle(extraSettings, measure);
 
     const metric: MetricConfig = {
         content: {

@@ -138,6 +138,7 @@
   "label_field-has-wrong-type": "Invalid field type",
   "label_field-invalid": "Incorrect field",
   "label_field-more-than-one-hierarchy": "You can't apply more than one hierarchy",
+  "label_field-name": "By field name",
   "label_field-not-exist": "Field not found in dataset",
   "label_field-not-exist-in-query": "Field not found in query",
   "label_fields-overflow": "The maximum number of fields is set",
