@@ -165,7 +165,8 @@ type EntryContextMenuIDTypeBase =
     | 'embedded'
     | 'materialization'
     | 'revisions'
-    | 'migrate-to-workbook';
+    | 'migrate-to-workbook'
+    | 'embed';
 
 export type EntryContextMenuIDType<T = unknown> = unknown extends T
     ? EntryContextMenuIDTypeBase
@@ -218,7 +219,7 @@ const ENTRY_MENU_GROUP_CONFIG: Array<Array<EntryContextMenuIDType>> = [
     ['rename', 'move', 'duplicate', 'copy'],
     ['tableOfContent', 'fullscreen'],
     ['sql', 'materialization'],
-    ['access', 'copy-link', 'claims', 'public', 'sql-to-monitoring'],
+    ['access', 'copy-link', 'claims', 'public', 'sql-to-monitoring', 'embed'],
     ['edit', 'settings'],
     ['migrate-to-workbook'],
     ['delete'],
