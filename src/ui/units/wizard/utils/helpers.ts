@@ -273,6 +273,7 @@ export function versionExtractor(this: any, key: string, value: any) {
                 const barsSettings = item.barsSettings || {};
                 const backgroundSettings = item.backgroundSettings || {};
                 const subTotalsSettings = item.subTotalsSettings || {};
+                const hintSettings = item.hintSettings || {};
                 const {fakeTitle, format, hideLabelMode} = item;
                 return {
                     guid: item.guid,
@@ -284,6 +285,7 @@ export function versionExtractor(this: any, key: string, value: any) {
                     barsSettings,
                     backgroundSettings,
                     subTotalsSettings,
+                    hintSettings,
                 };
             }),
         );
