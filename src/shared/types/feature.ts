@@ -70,7 +70,6 @@ export enum Feature {
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
-    CustomAccessDescription = 'CustomAccessDescription',
     EnableFooter = 'EnableFooter',
     EnableDashDNDPanel = 'EnableDashDNDPanel',
     /** Chart runner for the execution of trusted code in wizard/ql. */
