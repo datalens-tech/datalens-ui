@@ -535,7 +535,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     });
 
     /**
-     * actions before chart unmount
+     * cancel active requests when component is unmounted (changing dash tab, switching to another page)
      */
     React.useEffect(() => {
         return () => {

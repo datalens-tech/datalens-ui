@@ -245,6 +245,8 @@ export const Control = ({
         init();
     };
 
+    // cancel requests, transfer status and remove timer if component is unmounted or selector is
+    // removed from group
     React.useEffect(() => {
         return () => {
             clearLoaderTimer(silentLoaderTimer);
