@@ -42,7 +42,6 @@ export enum Feature {
     GroupControls = 'GroupControls',
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
-    PivotTableMeasureNames = 'PivotTableMeasureNames',
     NewMobileDesign = 'NewMobileDesign',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
@@ -70,7 +69,6 @@ export enum Feature {
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
-    CustomAccessDescription = 'CustomAccessDescription',
     EnableFooter = 'EnableFooter',
     EnableDashDNDPanel = 'EnableDashDNDPanel',
     /** Chart runner for the execution of trusted code in wizard/ql. */
