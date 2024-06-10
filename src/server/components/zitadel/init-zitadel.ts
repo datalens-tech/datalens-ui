@@ -15,6 +15,9 @@ export function initZitadel({
     if (!nodekit.config.zitadelUri) {
         throw new Error('Missing ZITADEL_URI in env');
     }
+    if (!nodekit.config.zitadelInternalUri) {
+        throw new Error('Missing ZITADEL_INTERNAL_URI in env');
+    }
     if (!nodekit.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
@@ -31,10 +34,10 @@ export function initZitadel({
     passport.use(
         new OpenIDConnectStrategy(
             {
-                issuer: nodekit.config.zitadelUri,
+                issuer: nodekit.config.zitadelInternalUri,
                 authorizationURL: `${nodekit.config.zitadelUri}/oauth/v2/authorize`,
-                tokenURL: `${nodekit.config.zitadelUri}/oauth/v2/token`,
-                userInfoURL: `${nodekit.config.zitadelUri}/oidc/v1/userinfo`,
+                tokenURL: `${nodekit.config.zitadelInternalUri}/oauth/v2/token`,
+                userInfoURL: `${nodekit.config.zitadelInternalUri}/oidc/v1/userinfo`,
                 clientID: nodekit.config.clientId,
                 clientSecret: nodekit.config.clientSecret,
                 callbackURL: `${nodekit.config.appHostUri}/api/auth/callback`,

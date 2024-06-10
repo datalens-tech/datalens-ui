@@ -64,6 +64,7 @@ export interface SharedAppConfig {
     zitadelProjectId?: string;
 
     zitadelUri?: string;
+    zitadelInternalUri?: string;
     appHostUri?: string;
     zitadelCookieSecret?: string;
 
