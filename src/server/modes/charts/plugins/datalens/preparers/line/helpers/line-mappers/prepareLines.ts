@@ -7,6 +7,7 @@ import type {
     ServerField,
 } from '../../../../../../../../../shared';
 import {
+    AxisNullsMode,
     getFakeTitleOrTitle,
     isDateField,
     isMarkupField,
@@ -228,7 +229,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
 
         if (isNumericalDataType(yDataType)) {
             if (yValue === null) {
-                yValue = nullsSetting === 'as-0' ? 0 : null;
+                yValue = nullsSetting === AxisNullsMode.AsZero ? 0 : null;
             } else {
                 yValue = Number(yValue);
             }

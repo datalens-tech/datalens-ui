@@ -5,7 +5,6 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {
-    DashTabItemControlData,
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
@@ -338,7 +337,7 @@ export const Control = ({
     };
 
     const renderSilentLoader = () => {
-        if (showSilentLoader) {
+        if (showSilentLoader || (!control && status === LOAD_STATUS.SUCCESS)) {
             return (
                 <div className={b('loader', {silent: true})}>
                     <Loader size="s" />
@@ -369,15 +368,48 @@ export const Control = ({
         );
     };
 
+    const renderLoadingStub = (props: Record<string, unknown>) => {
+        const {
+            source: {elementType},
+        } = data as unknown as DashTabItemControlSingle;
+
+        const stubProps = {
+            ...props,
+            value: '',
+            param: '',
+        };
+        switch (elementType) {
+            case DashTabItemControlElementType.Input:
+                return <ControlInput {...stubProps} type="input" />;
+            case DashTabItemControlElementType.Date:
+                return <ControlDatepicker {...stubProps} type="datepicker" />;
+            case DashTabItemControlElementType.Checkbox:
+                return <ControlCheckbox {...stubProps} type="checkbox" />;
+        }
+
+        return null;
+    };
+
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
-        const {required, operation} = source;
+        const {required, operation, elementType} = source;
 
         const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
-        if (controlData.source.elementType === DashTabItemControlElementType.Select) {
+        const viewProps: Record<string, unknown> = {
+            innerLabel,
+            label,
+            className: b('item'),
+            labelClassName: b('item-label'),
+
+            style,
+            renderOverlay,
+            hint: controlData.source.showHint ? controlData.source.hint : undefined,
+        };
+
+        if (elementType === DashTabItemControlElementType.Select) {
             return (
                 <ControlItemSelect
                     id={id}
@@ -402,12 +434,16 @@ export const Control = ({
             );
         }
 
-        if (status === LOAD_STATUS.FAIL || !control) {
+        if (status === LOAD_STATUS.FAIL) {
             return (
                 <div className={b('item-stub', {error: true})} style={style}>
                     <Error errorData={errorData} onClickRetry={handleClickRetry} />
                 </div>
             );
+        }
+
+        if (!control) {
+            return renderLoadingStub(viewProps);
         }
 
         const {param} = control;
@@ -441,20 +477,14 @@ export const Control = ({
         };
 
         const props: Record<string, unknown> = {
+            ...viewProps,
             param,
             type: control.type,
             widgetId: id,
-            className: b('item'),
-            labelClassName: b('item-label'),
             value: preparedValue,
-            onChange: onChangeControl,
-            label,
-            innerLabel,
             required,
+            onChange: onChangeControl,
             hasValidationError: Boolean(currentValidationError),
-            style,
-            renderOverlay,
-            hint: controlData.source.showHint ? controlData.source.hint : undefined,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 
@@ -475,17 +505,6 @@ export const Control = ({
     const handleClickRetry = () => {
         reload();
     };
-
-    const {placementMode, width} = data as unknown as DashTabItemControlData;
-    const style = getControlWidthStyle(placementMode, width);
-
-    if ((status === LOAD_STATUS.INITIAL || status === LOAD_STATUS.PENDING) && !control) {
-        return (
-            <div className={b('item-stub')} style={style}>
-                <Loader size="s" />
-            </div>
-        );
-    }
 
     return renderControl();
 };

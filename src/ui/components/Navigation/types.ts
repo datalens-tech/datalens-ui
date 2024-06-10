@@ -42,6 +42,11 @@ export type MenuClickArgs = {
     action: string;
 };
 
+export type ItemSelectArgs = {
+    selectedItemId: string;
+    selectedItemsIds: Set<string>;
+};
+
 export type BatchAction = 'move';
 
 export type ChangeLocation = (place: string, path: string) => void;

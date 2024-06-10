@@ -3,6 +3,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import JSONfn from 'json-fn';
 import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
@@ -44,7 +45,7 @@ import type {
     UiTabExports,
     UserConfig,
 } from './types';
-import {getMessageFromUnknownError} from './utils';
+import {getMessageFromUnknownError, isChartWithJSAndHtmlAllowed} from './utils';
 
 const {
     CONFIG_LOADING_ERROR,
@@ -811,9 +812,14 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
+                if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
+                    resultConfig.enableJsAndHtml = false;
+                }
+                const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', true);
                 const stringify =
                     isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
-                    req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE
+                    req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE ||
+                    enableJsAndHtml === false
                         ? JSON.stringify
                         : JSONfn.stringify;
 

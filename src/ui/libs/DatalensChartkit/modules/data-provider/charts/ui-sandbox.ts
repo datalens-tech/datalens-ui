@@ -1,9 +1,13 @@
+import escape from 'lodash/escape';
 import pick from 'lodash/pick';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
-import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
+import type {ChartKitHtmlItem} from '../../../../../../shared';
+import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
+import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import {generateHtml} from '../../html-generator';
 
 /**
  * Config value to check. It could have any type.
@@ -54,6 +58,18 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     vm.setProp(highchartsHandle, 'dateFormat', dateFormatHandle);
     highchartsHandle.dispose();
     dateFormatHandle.dispose();
+
+    const chartEditorHandle = vm.newObject();
+    const generateHtmlHandle = vm.newFunction('generateHtml', (...args) => {
+        const nativeArgs = args.map(vm.dump);
+        // @ts-ignore
+        const wrappedHtmlConfig = wrapHtml(...nativeArgs);
+        return vm.evalCode(`JSON.parse('${JSON.stringify(wrappedHtmlConfig)}')`);
+    });
+    vm.setProp(vm.global, 'ChartEditor', chartEditorHandle);
+    vm.setProp(chartEditorHandle, 'generateHtml', generateHtmlHandle);
+    chartEditorHandle.dispose();
+    generateHtmlHandle.dispose();
 };
 
 const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'];
@@ -161,7 +177,7 @@ const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWr
 
         vm.dispose();
 
-        return value;
+        return unwrapHtml(value);
     };
 };
 
@@ -223,3 +239,42 @@ export const shouldUseUISandbox = (target: TargetValue) => {
 
     return result;
 };
+
+export function processHtmlFields(target: unknown, options?: {allowHtml: boolean}) {
+    const allowHtml = Boolean(options?.allowHtml);
+
+    if (target && typeof target === 'object') {
+        if (Array.isArray(target)) {
+            target.forEach((item) => processHtmlFields(item, options));
+        } else {
+            const config = target as Record<string, unknown>;
+            Object.entries(config).forEach(([key, value]) => {
+                if (value) {
+                    if (typeof value === 'object') {
+                        if (WRAPPED_HTML_KEY in value) {
+                            // eslint-disable-next-line no-param-reassign
+                            config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+                        } else {
+                            processHtmlFields(value, options);
+                        }
+                    } else if (typeof value === 'string' && !allowHtml) {
+                        // eslint-disable-next-line no-param-reassign
+                        config[key] = escape(value);
+                    }
+                }
+            });
+        }
+    }
+}
+
+export function unwrapHtml(value: unknown) {
+    if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
+        return generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+    }
+
+    if (typeof value === 'string') {
+        return escape(value);
+    }
+
+    return value;
+}

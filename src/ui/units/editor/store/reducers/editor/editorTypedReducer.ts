@@ -73,6 +73,7 @@ export type EditorState = {
             type: string;
             data: Record<string, string>;
             key?: string;
+            createdAt?: string;
         };
         updateKey: number;
         logs?: null | string;
@@ -164,6 +165,7 @@ export function editorTypedReducer(state: EditorState, action: EditorActions): E
                         editMode: {
                             $set: {
                                 type: entry.type,
+                                createdAt: entry.fake ? undefined : entry.createdAt,
                                 data: Helper.formEntryData({scriptsValues, entry}),
                                 key: entry.fake ? undefined : entry.key,
                             },
