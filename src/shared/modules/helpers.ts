@@ -15,13 +15,7 @@ import type {
     ServerPlaceholderSettings,
     StringParams,
 } from '../types';
-import {
-    AxisMode,
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
-    TableFieldDisplayMode,
-    isDateField,
-} from '../types';
+import {AxisMode, DATASET_FIELD_TYPES, DatasetFieldType, isDateField} from '../types';
 
 import {
     Operations,
@@ -29,7 +23,6 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from './charts-shared';
-import {isMeasureName} from './wizard-helpers';
 
 function getEntryId(str: string): string | null {
     const possibleEntryId = str.slice(0, ENTRY_ID_LENGTH);
@@ -263,23 +256,3 @@ export const isEntryId = (value: string) => {
     const ENTRY_ID_FORMAT = /^[0-9a-z]{13}$/;
     return ENTRY_ID_FORMAT.test(value);
 };
-
-export function canHideTableHeader(field: Field, fields: Field[], measures: Field[]) {
-    if (isMeasureName(field) && measures.length > 1) {
-        return false;
-    }
-
-    // the table header must contain at least one header
-    return fields.length > 1;
-}
-
-export function getTableHeaderDisplayMode(field: Field, fields: Field[], measures: Field[]) {
-    if (
-        field.displayMode === TableFieldDisplayMode.Hidden &&
-        !canHideTableHeader(field, fields, measures)
-    ) {
-        return TableFieldDisplayMode.Auto;
-    }
-
-    return field.displayMode || TableFieldDisplayMode.Auto;
-}

@@ -5,23 +5,15 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
-import {
-    PlaceholderId,
-    TableFieldDisplayMode,
-    WizardVisualizationId,
-    canHideTableHeader,
-    getDefaultFormatting,
-    getTableHeaderDisplayMode,
-    isPseudoField,
-} from 'shared';
+import {PlaceholderId, WizardVisualizationId, getDefaultFormatting, isPseudoField} from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
@@ -48,7 +40,6 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
-import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
@@ -61,7 +52,7 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {getFormattingDataType, isOneOfPropChanged, shouldUseDisplayModeSetting} from './utils/misc';
+import {getFormattingDataType, isOneOfPropChanged} from './utils/misc';
 
 import './DialogField.scss';
 
@@ -103,7 +94,6 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     originTitle?: string;
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
-    displayMode?: TableFieldDisplayMode;
     hintSettings?: HintSettings;
 };
 
@@ -163,20 +153,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         if (initialState.isSubTotalsAvailable && props.item) {
             initialState.subTotalsSettings =
                 props.item.subTotalsSettings || getDefaultSubTotalsSettings();
-        }
-
-        if (
-            props.item &&
-            shouldUseDisplayModeSetting(props.item, visualizationId as WizardVisualizationId)
-        ) {
-            const measures =
-                props.visualization.placeholders.find((p) => p.id === PlaceholderId.Measures)
-                    ?.items || [];
-            initialState.displayMode = getTableHeaderDisplayMode(
-                props.item,
-                currentPlaceholder?.items || [],
-                measures,
-            );
         }
 
         this.state = initialState;
@@ -381,7 +357,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                     />
                 )}
                 {this.renderSubTotalsSettings()}
-                {this.renderTableHeaderDisplaySettings()}
                 {this.renderBarsSettings()}
                 {this.renderBackgroundSettings()}
             </>
@@ -451,59 +426,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                     state={subTotalsSettings}
                     onUpdate={this.handleSubTotalsSettingsUpdate}
                 />
-            </>
-        );
-    }
-
-    private renderTableHeaderDisplaySettings() {
-        const {item, visualization, placeholderId} = this.props;
-        const {displayMode} = this.state;
-        const currentPlaceholder = visualization.placeholders.find((pl) => pl.id === placeholderId);
-        const measuresPlaceholder = visualization.placeholders.find(
-            (pl) => pl.id === PlaceholderId.Measures,
-        );
-        const shouldShowVisibilitySettings =
-            item && shouldUseDisplayModeSetting(item, visualization.id as WizardVisualizationId);
-
-        if (!shouldShowVisibilitySettings) {
-            return null;
-        }
-
-        const radioButtonOptions = [
-            {
-                value: TableFieldDisplayMode.Auto,
-                content: i18n('wizard', 'label_auto'),
-            },
-            {
-                value: TableFieldDisplayMode.Visible,
-                content: i18n('wizard', 'label_show'),
-            },
-            {
-                value: TableFieldDisplayMode.Hidden,
-                content: i18n('wizard', 'label_hide'),
-                disabled: !canHideTableHeader(
-                    item,
-                    currentPlaceholder?.items || [],
-                    measuresPlaceholder?.items || [],
-                ),
-            },
-        ];
-
-        return (
-            <>
-                <DialogFieldRow
-                    title={i18n('wizard', 'label_table-header-display-mode')}
-                    setting={
-                        <DialogRadioButtons
-                            items={radioButtonOptions}
-                            value={displayMode}
-                            onUpdate={(value) => {
-                                this.setState({displayMode: value as TableFieldDisplayMode});
-                            }}
-                        />
-                    }
-                />
-                <Dialog.Divider className={b('divider')} />
             </>
         );
     }
