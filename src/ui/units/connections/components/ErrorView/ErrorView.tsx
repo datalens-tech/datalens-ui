@@ -1,15 +1,20 @@
 import React from 'react';
 
 import type {ButtonProps} from '@gravity-ui/uikit';
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {ErrorContentTypes} from 'shared';
+import omit from 'lodash/omit';
+import {useDispatch} from 'react-redux';
+import {ErrorCode, ErrorContentTypes} from 'shared';
 import type {PartialBy} from 'shared';
-import {ErrorContent} from 'ui';
 
+import {ErrorContent} from '../../../../';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
+import {openDialogErrorWithTabs} from '../../../../store/actions/dialog';
 import type {DataLensApiError} from '../../../../typings';
 import Utils from '../../../../utils';
+import {MOBILE_SIZE, isMobileView} from '../../../../utils/mobile';
 
 import './ErrorView.scss';
 
@@ -54,6 +59,7 @@ const getErrorData = (args: {
     scope?: ErrorScope;
     title?: string;
     description?: string;
+    code?: string;
 }) => {
     const {status, scope, title, description} = args;
 
@@ -104,21 +110,64 @@ export const ErrorView = ({
     description,
     showDebugInfo,
 }: ErrorViewProps) => {
-    const {requestId, traceId, status} = Utils.parseErrorResponse(error);
+    const dispatch = useDispatch();
+
+    const {requestId, traceId, status, code} = Utils.parseErrorResponse(error);
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
+
+    const errorData = getErrorData({status, scope, title, description});
+
     let action: ErrorContentAction | undefined;
+    const handleClickDetails = () => {
+        dispatch(
+            openDialogErrorWithTabs({
+                title: errorData.title,
+                error: omit(error, 'details') as DataLensApiError,
+            }),
+        );
+    };
 
     if (propsAction) {
         action = getErrorAction(propsAction);
     }
 
+    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
+    const buttonWidth = isMobileView ? 'max' : 'auto';
+
+    const errorClassname = className || 'actions';
+    const content = (
+        <div className={b(errorClassname, {mobile: isMobileView})}>
+            {code === ErrorCode.PlatformPermissionRequired ? (
+                <Button
+                    className={b('btn-details')}
+                    size={buttonSize}
+                    width={buttonWidth}
+                    view="outlined"
+                    onClick={handleClickDetails}
+                >
+                    {i18nForm('button_details')}
+                </Button>
+            ) : null}
+            <Button
+                className={b('btn-retry')}
+                view="action"
+                onClick={action?.handler}
+                size={buttonSize}
+                width={buttonWidth}
+                {...action?.buttonProps}
+            >
+                {action?.text}
+            </Button>
+        </div>
+    );
+
     return (
         <div className={b({'with-aside-header': isAsideHeaderEnabled}, className)}>
             <ErrorContent
-                {...getErrorData({status, scope, title, description})}
+                {...errorData}
                 reqId={requestId}
                 traceId={traceId}
-                action={action}
+                action={{content}}
                 showDebugInfo={showDebugInfo}
             />
         </div>

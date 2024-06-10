@@ -9,4 +9,12 @@
     &_with-aside-header {
         min-height: calc(100vh - #{$actionPanelHeight});
     }
+
+    &__actions {
+        margin-top: 20px;
+
+        button {
+            margin-right: 20px;
+        }
+    }
 }
