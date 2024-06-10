@@ -119,6 +119,41 @@ export const entriesActions = {
             return {body, headers};
         },
     }),
+    createUser: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/create_user` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
+    updateUser: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/update_user` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
+    passwordReset: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/password_reset` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
+    updateRoles: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/update_roles` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
+    users: createAction<any, any>({
+        method: 'POST',
+        path: () => { return `/users` },
+        params: (body, headers) => {
+            return {body, headers};
+        },
+    }),
     getAuth: createAction<any, any>({
         method: 'GET',
         path: (data) => { 

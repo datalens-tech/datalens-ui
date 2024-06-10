@@ -337,4 +337,59 @@ export default class Utils {
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
+
+    /**
+     * Создание пользователя
+     * @param propsData {"login": "user04", "password": "qwe-123", "email": "", "claims": ["datalens"]}
+     * @returns 
+     */
+    static createUser = async (propsData: any) => {
+        var result = await getSdk().us.createUser(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    /**
+     * Обновление пользователя
+     * @param propsData {"id": 12, "c_login": "user04", "с_email": ""}
+     * @returns 
+     */
+    static updateUser = async (propsData: any) => {
+        var result = await getSdk().us.updateUser(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    /**
+     * Сброс пароля пользователя
+     * @param propsData {"c_login": "user04", "c_password": ""}
+     * @returns 
+     */
+    static passwordReset = async (propsData: any) => {
+        var result = await getSdk().us.passwordReset(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    /**
+     * Обновление привязки к ролям
+     * @param propsData {"id": 12, "c_claims": "['datalens']"}
+     * @returns 
+     */
+    static updateRoles = async (propsData: any) => {
+        var result = await getSdk().us.updateRoles(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    /**
+     * Получение списка пользователей
+     * @param propsData {}
+     * @returns 
+     */
+    static users = async (propsData: any) => {
+        var result = await getSdk().us.users(propsData);
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
 }
