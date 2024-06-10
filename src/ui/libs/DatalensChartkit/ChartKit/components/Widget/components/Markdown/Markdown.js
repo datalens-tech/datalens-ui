@@ -62,6 +62,10 @@ export function Markdown({data, onLoad, id}) {
         }
     }, [generatedId, onLoad, refLink]);
 
+    if (!html && !markdown) {
+        return null;
+    }
+
     return html ? (
         <YfmWrapper
             className={b(false, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
