@@ -53,6 +53,7 @@ import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsSt
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogAssignClaimsArgs} from '../../components/OpenDialogAssignClaims/OpenDialogAssignClaims';
+import { OpenDialogShareArgs } from 'ui/components/OpenDialogShare/OpenDialogShare';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -107,4 +108,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogAddDemoWorkbookArgs
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
-    | OpenDialogAssignClaimsArgs;
+    | OpenDialogAssignClaimsArgs
+    | OpenDialogShareArgs;

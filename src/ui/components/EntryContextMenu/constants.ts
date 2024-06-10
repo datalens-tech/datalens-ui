@@ -1,4 +1,4 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin, LockOpen } from '@gravity-ui/icons';
+import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin, LockOpen, ArrowShapeTurnUpRight } from '@gravity-ui/icons';
 import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
@@ -22,7 +22,8 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY_LINK: 'copy-link',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
-    CLAIMS: 'claims'
+    CLAIMS: 'claims',
+    EMBED: 'embed'
 };
 
 const CONTEXT_MENU_COPY = {
@@ -196,6 +197,14 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         permissions: {admin: true, edit: true, read: false, execute: false},
         isStrictPermissions: true, // strict check with disallow when there are no permissions object
     },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.EMBED,
+        action: ENTRY_CONTEXT_MENU_ACTION.EMBED,
+        icon: ArrowShapeTurnUpRight,
+        text: 'value_embed',
+        enable: () => true,
+        scopes: ALL_SCOPES
+    },
     getContextMenuAccess(),
     {
         id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
@@ -203,7 +212,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Link,
         text: 'value_copy-link',
         enable: () => true,
-        scopes: ALL_SCOPES,
+        scopes: ALL_SCOPES
     },
     ...getAdditionalEntryContextMenuItems(),
     getContextMenuMoveToWorkbooks()

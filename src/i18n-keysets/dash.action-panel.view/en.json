@@ -38,5 +38,6 @@
   "value_rename": "Rename",
   "value_table-of-content": "Contents",
   "value_widget-ql": "Chart (QL)",
-  "value_widget-wizard": "Chart (Wizard)"
+  "value_widget-wizard": "Chart (Wizard)",
+  "value_embed": "Shared"
 }

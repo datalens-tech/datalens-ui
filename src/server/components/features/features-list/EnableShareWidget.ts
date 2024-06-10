@@ -5,6 +5,6 @@ export default createFeatureConfig({
     name: Feature.EnableShareWidget,
     state: {
         development: false,
-        production: false,
+        production: false
     },
 });

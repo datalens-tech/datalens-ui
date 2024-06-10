@@ -29,6 +29,7 @@ import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/w
 import {DIALOG_ASSIGN_CLAIMS} from 'components/OpenDialogAssignClaims/OpenDialogAssignClaims';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import { WorkbookId } from 'shared';
+import { DIALOG_SHARE_WIDGET } from '../OpenDialogShare/OpenDialogShare';
 
 
 const ConfiguredEntryContextMenu = withConfiguredEntryContextMenu(EntryContextMenuBase);
@@ -120,6 +121,10 @@ class EntryContextMenu extends React.PureComponent<Props> {
                 this.props.actions.openDialog(entry.entryId, entry.workbookId);
                 break;
             }
+            case ENTRY_CONTEXT_MENU_ACTION.EMBED: {
+                this.props.actions.openDialogShare(entry.entryId);
+                break;
+            }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
                 moveEntry(this.entryDialoguesRef, entry);
                 break;
@@ -189,7 +194,22 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                         },
                     }),
                 );
-            }
+            },
+            openDialogShare: (entryId:string) => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_SHARE_WIDGET,
+                        props: {
+                            entryId: entryId,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+
+            
         },
     };
 };

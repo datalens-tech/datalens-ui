@@ -33,7 +33,7 @@ const OVERRIDE_CONTEXT_MENU = {
                 </CopyToClipboard>
             );
         },
-    },
+    }
 };
 
 // eslint-disable-next-line complexity

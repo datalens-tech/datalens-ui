@@ -77,7 +77,7 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
                 onFullscreenClick,
             },
             [MenuItemsIds.GET_LINK]: {
-                isVisible: () => isEditVisible
+                isVisible: () => false
             },
             ...customOptions,
         } as GetChartkitMenuByType['customOptions'],
