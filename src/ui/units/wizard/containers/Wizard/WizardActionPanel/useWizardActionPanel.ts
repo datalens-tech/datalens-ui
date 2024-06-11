@@ -8,13 +8,14 @@ import {
 } from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {useHotkeys} from 'react-hotkeys-hook';
 import {useDispatch} from 'react-redux';
 
 import {Feature, WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
-import Utils from '../../../../../utils';
+import Utils, {isMacintosh} from '../../../../../utils';
 import {toggleFullscreen} from '../../../actions/settings';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
@@ -47,6 +48,14 @@ export const useWizardActionPanel = (
 
     const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
 
+    const onClickGoBack = () => {
+        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+    };
+
+    const onClickGoForward = () => {
+        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+    };
+
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
     >(() => {
@@ -61,9 +70,7 @@ export const useWizardActionPanel = (
             items = [
                 {
                     key: 'undo',
-                    action: () => {
-                        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-                    },
+                    action: onClickGoBack,
                     className: b('undo-btn'),
                     icon: {data: ArrowUturnCcwLeft, size: 16},
                     view: 'flat',
@@ -73,9 +80,7 @@ export const useWizardActionPanel = (
                 },
                 {
                     key: 'redo',
-                    action: () => {
-                        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-                    },
+                    action: onClickGoForward,
                     className: b('redo-btn'),
                     icon: {data: ArrowUturnCwRight, size: 16},
                     view: 'flat',
@@ -100,6 +105,7 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, chartKitRef.current, isFullscreen, canGoBack, canGoForward]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
@@ -113,6 +119,20 @@ export const useWizardActionPanel = (
             },
         ];
     }, [editButtonLoading, handleEditButtonClick]);
+
+    let undoHotkey;
+    let redoHotkey;
+
+    if (isMacintosh()) {
+        undoHotkey = 'meta+z';
+        redoHotkey = 'meta+shift+z';
+    } else {
+        undoHotkey = 'ctrl+z';
+        redoHotkey = 'ctrl+shift+z';
+    }
+
+    useHotkeys(undoHotkey, onClickGoBack, [onClickGoBack]);
+    useHotkeys(redoHotkey, onClickGoForward, [onClickGoForward]);
 
     return isViewOnlyMode ? editButton : defaultButtons;
 };
