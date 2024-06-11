@@ -39,8 +39,6 @@ export default {
     },
     chartkit: {
         error: 'Ошибка',
-        'legend-series-hide': 'Скрыть все линии',
-        'legend-series-show': 'Показать все линии',
 
         loading: 'Загрузка',
 
