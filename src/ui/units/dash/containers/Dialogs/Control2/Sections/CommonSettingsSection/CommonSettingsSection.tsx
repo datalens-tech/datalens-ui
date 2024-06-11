@@ -9,19 +9,18 @@ import {DatasetSettings} from './DatasetSettings/DatasetSettings';
 import {ExternalSelectorSettings} from './ExternalSelectorSettings/ExternalSelectorSettings';
 import {InputSettings} from './InputSettings/InputSettings';
 
-const CommonSettingsSection = () => {
+// TODO: Remove hideCommonFields and related fields after enabling DLPROJECTS-93
+export const CommonSettingsSection = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
     const {sourceType} = useSelector(selectSelectorDialog);
 
     switch (sourceType) {
         case DashTabItemControlSourceType.External:
             return <ExternalSelectorSettings />;
         case DashTabItemControlSourceType.Manual:
-            return <InputSettings />;
+            return <InputSettings hideCommonFields={hideCommonFields} />;
         case DashTabItemControlSourceType.Connection:
-            return <ConnectionSettings />;
+            return <ConnectionSettings hideCommonFields={hideCommonFields} />;
         default:
-            return <DatasetSettings />;
+            return <DatasetSettings hideCommonFields={hideCommonFields} />;
     }
 };
-
-export {CommonSettingsSection};

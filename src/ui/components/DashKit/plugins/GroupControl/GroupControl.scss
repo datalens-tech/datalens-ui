@@ -31,11 +31,7 @@
         align-items: center;
         justify-content: center;
         z-index: 3; // to overlay Datepicker
-        background-color: var(--g-color-base-float);
-
-        &_silent {
-            background-color: var(--g-color-sfx-fade);
-        }
+        background-color: var(--g-color-sfx-fade);
     }
 
     &__controls {
@@ -83,6 +79,10 @@
         #{$class}__item {
             padding-right: 0;
             margin-top: 10px;
+        }
+
+        #{$class}__item-label {
+            max-width: 95%;
         }
     }
 }

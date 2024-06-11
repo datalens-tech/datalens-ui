@@ -1,10 +1,10 @@
 import isNil from 'lodash/isNil';
 
-const isStringValueInPercent = (value = '') => {
+export const isStringValueInPercent = (value = '') => {
     return value.endsWith('%') && !Number.isNaN(Number.parseFloat(value));
 };
 
-const isStringValueInPixel = (value = '') => {
+export const isStringValueInPixel = (value = '') => {
     return value.endsWith('px') && !Number.isNaN(Number.parseFloat(value));
 };
 

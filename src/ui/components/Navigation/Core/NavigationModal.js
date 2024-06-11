@@ -43,6 +43,7 @@ class NavigationModal extends React.Component {
     };
     state = {
         breadCrumbs: [],
+        isSomeItemSelected: false,
     };
     static getDerivedStateFromProps(props, state) {
         const {path, place} = props;
@@ -105,6 +106,9 @@ class NavigationModal extends React.Component {
             this.setState({breadCrumbs});
         }
     };
+    onItemSelect = ({selectedItemsIds}) => {
+        this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
+    };
     render() {
         const {
             linkWrapper,
@@ -120,6 +124,7 @@ class NavigationModal extends React.Component {
         } = this.props;
         const {path, place} = this.state;
         const asideMode = Boolean(aside);
+
         const body = (
             <div className={b({modal: !asideMode, aside: asideMode})}>
                 {!hideSidebar && (
@@ -141,7 +146,7 @@ class NavigationModal extends React.Component {
                             place={place}
                             getPlaceParameters={this.props.getPlaceParameters}
                             onClick={this.onCrumbClick}
-                            enableMenu={true}
+                            enableMenu={!this.state.isSomeItemSelected}
                             getContextMenuItems={this.props.getContextMenuItems}
                             refresh={this.refresh}
                             onChangeLocation={this.props.onChangeLocation}
@@ -159,6 +164,7 @@ class NavigationModal extends React.Component {
                         getPlaceParameters={this.props.getPlaceParameters}
                         mode={MODE_MODAL}
                         setBreadCrumbs={this.setBreadCrumbs}
+                        onItemSelect={this.onItemSelect}
                     >
                         <CreateEntry
                             place={place}

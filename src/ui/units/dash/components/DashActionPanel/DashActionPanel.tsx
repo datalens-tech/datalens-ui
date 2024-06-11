@@ -167,11 +167,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
-        if (
-            Utils.isEnabledFeature(Feature.CustomAccessDescription) &&
-            this.props.accessDescription &&
-            !this.props.canEdit
-        ) {
+        if (this.props.accessDescription && !this.props.canEdit) {
             this.props.entryDialoguesRef.current?.open?.({
                 dialog: EntryDialogName.AccessDescription,
                 dialogProps: {
@@ -224,6 +220,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
             const response = await this.props.entryDialoguesRef.current.open({
                 dialog: EntryDialogName.SaveAsNew,
                 dialogProps: {
+                    entryId: this.props.entry.entryId,
                     initDestination: Utils.getPathBefore({path: entry.key}),
                     initName: Utils.getEntryNameFromKey(entry.key, true),
                     onSaveAsNewCallback: this.props.saveDashAsNewDash,
