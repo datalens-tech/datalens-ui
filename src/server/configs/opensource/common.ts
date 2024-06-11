@@ -211,6 +211,7 @@ export default {
     zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
 
     zitadelUri: process.env.ZITADEL_URI || '',
+    zitadelInternalUri: process.env.ZITADEL_INTERNAL_URI || process.env.ZITADEL_URI,
     appHostUri: process.env.APP_HOST_URI || '',
     zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
 
