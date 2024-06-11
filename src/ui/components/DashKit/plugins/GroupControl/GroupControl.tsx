@@ -101,27 +101,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         // to apply initial params from dash state inside group
         if (controlData.updateControlsOnChange) {
-            const initialQueue: string[] = [];
+            this.fillQueueWithInitial(true);
 
-            for (const groupItem of this.props.data.group || []) {
-                if (!groupItem.defaults) {
-                    continue;
-                }
-                const param = Object.keys(groupItem.defaults)[0];
-                const defaultItemParam = groupItem.defaults[param];
-
-                if (this.props.params[groupItem.id][param] !== defaultItemParam) {
-                    initialQueue.push(groupItem.id);
-                }
-            }
-
-            initialQueue.forEach((queueItemId) => {
-                this.localMeta.queue = addItemToLocalQueue(
-                    this.localMeta.queue,
-                    this.props.id,
-                    queueItemId,
-                );
-            });
             stateParams = this.getUpdatedGroupParams({
                 params: this.props.params,
             });
@@ -155,6 +136,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this.adjustWidgetLayout(true);
             }
         }
+
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
 
@@ -198,14 +180,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 }
             });
 
-            if (this.props.data.updateControlsOnChange && updatedItemsIds.length) {
-                updatedItemsIds.forEach((queueItemId) => {
-                    this.localMeta.queue = addItemToLocalQueue(
-                        this.localMeta.queue,
-                        this.props.id,
-                        queueItemId,
-                    );
-                });
+            if (
+                this.props.data.updateControlsOnChange &&
+                (updatedItemsIds.length || !prevProps.data.updateControlsOnChange)
+            ) {
+                if (prevProps.data.updateControlsOnChange) {
+                    updatedItemsIds.forEach((queueItemId) => {
+                        this.localMeta.queue = addItemToLocalQueue(
+                            this.localMeta.queue,
+                            this.props.id,
+                            queueItemId,
+                        );
+                    });
+                } else {
+                    // if the update setting is enabled in this render, then we must
+                    // apply the current internal parameters so fill queue for filled values
+                    this.fillQueueWithInitial();
+                }
                 const locallyUpdatedParams = this.getUpdatedGroupParams({
                     params: updatedStateParams,
                 });
@@ -251,6 +242,35 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             </div>
         );
     }
+
+    private fillQueueWithInitial = (checkByProps?: boolean) => {
+        const initialQueue: string[] = [];
+
+        for (const groupItem of this.props.data.group || []) {
+            if (!groupItem.defaults) {
+                continue;
+            }
+            const param = Object.keys(groupItem.defaults)[0];
+            const defaultItemParam = groupItem.defaults[param];
+
+            const passByProps =
+                checkByProps && this.props.params[groupItem.id][param] !== defaultItemParam;
+            const passByDefaults =
+                !checkByProps && this.state.stateParams[groupItem.id][param] !== defaultItemParam;
+
+            if (passByProps || passByDefaults) {
+                initialQueue.push(groupItem.id);
+            }
+        }
+
+        initialQueue.forEach((queueItemId) => {
+            this.localMeta.queue = addItemToLocalQueue(
+                this.localMeta.queue,
+                this.props.id,
+                queueItemId,
+            );
+        });
+    };
 
     private onChange = ({
         params,
