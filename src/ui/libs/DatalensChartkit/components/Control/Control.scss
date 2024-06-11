@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .chartkit-control {
     $class: &;
     $yc-control-bottom-padding: 5px;
@@ -57,6 +59,18 @@
         }
     }
 
+    &__error {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 10px 16px 6px 16px;
+    }
+
+    &__error-icon {
+        color: var(--g-color-text-danger);
+        flex: 0 0 auto;
+    }
+
     &_mobile {
         min-height: 64px;
 
@@ -69,6 +83,10 @@
         #{$class}__item {
             margin-right: 0;
             margin-top: 10px;
+        }
+
+        #{$class}__error {
+            @include text-body-2;
         }
     }
 }
