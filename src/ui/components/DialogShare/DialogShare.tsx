@@ -20,6 +20,9 @@ import {ShareLink} from './ShareLink/ShareLink';
 
 import './DialogShare.scss';
 import Utils from '../../utils/utils';
+import { AppDispatch } from 'ui/store';
+import { closeDialog as closeDialogConfirm, openDialogConfirm } from 'ui/store/actions/dialog';
+import { useDispatch } from 'react-redux';
 
 const i18n = I18n.keyset('component.dialog-share.view');
 export const DIALOG_SHARE = Symbol('DIALOG_SHARE');
@@ -77,6 +80,8 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     initialParams = {},
     hasDefaultSize,
 }) => {
+    const dispatch = useDispatch();
+
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
     );
@@ -141,6 +146,36 @@ export const DialogShare: React.FC<DialogShareProps> = ({
         }
         // if Web Share API is not supported
         await navigator.clipboard.writeText(getLink());
+    };
+
+    const setUpdateLink = (dispatch: AppDispatch) => {
+        dispatch(
+            openDialogConfirm({
+                onApply: () => {
+                    Utils.getEmbedToken(Object.assign({reject: true}, propsData)).then((response)=> {
+                        setEmbedToken(response);
+
+                        dispatch(closeDialogConfirm());
+                    });
+                },
+                message: 'Старая ссылка больше не будет доступна пользователям. Продолжить?',
+                cancelButtonView: 'flat',
+                confirmButtonView: 'normal',
+                isWarningConfirm: true,
+                showIcon: false,
+                onCancel: () => {
+                    dispatch(closeDialogConfirm());
+                },
+                widthType: 'medium',
+                confirmHeaderText: 'Предупреждение',
+                cancelButtonText: 'Отмена',
+                confirmButtonText: 'Продолжить',
+            }),
+        );
+    };
+
+    const handleRejectClick = () => {
+        dispatch(setUpdateLink)
     };
 
     const selectSize = DL.IS_MOBILE ? MOBILE_SIZE.SELECT : 'm';
@@ -208,6 +243,16 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                             {i18n('button_share')}
                         </Button>
                     )}
+                    <Button
+                            title='Отменяет ранее выданную ссылку'
+                            size="xl"
+                            width="max"
+                            view="action"
+                            onClick={handleRejectClick}
+                            className={b('reject-button')}
+                        >
+                            {i18n('button_reject')}
+                        </Button>
                 </div>
                 {!isMobileView && (
                     <div className={b('links')}>

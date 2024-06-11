@@ -176,9 +176,8 @@ export default class Utils {
     static setRpcAuthorization() {
         var loc:any = document.location;
         let params = (new URL(loc)).searchParams;
-
         let token:any = params.get("x-rpc-authorization");
-        if(token && loc.pathname.indexOf('/preview/') == -1) {
+        if(token && loc.search.indexOf('_embedded=1') == -1) {
             window.localStorage.setItem('x-rpc-authorization', token);
         }
     }
@@ -297,7 +296,7 @@ export default class Utils {
     }
 
     static getEmbedToken = async (propsData: any) => {
-        var result = await getSdk().us.getEmbed({workbookId: propsData.workbookId, entryId: propsData.id});
+        var result = await getSdk().us.getEmbed({workbookId: propsData.workbookId, entryId: propsData.id, reject: propsData.reject});
 
         return result.data && result.data.length > 0 ? result.data[0].embed : '';
     }

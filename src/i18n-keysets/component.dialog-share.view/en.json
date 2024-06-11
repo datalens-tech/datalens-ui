@@ -1,5 +1,6 @@
 {
   "button_share": "Share",
+  "button_reject": "Update Link",
   "field_language": "Language: ",
   "field_theme": "Theme: ",
   "label_editors-hint": "The editor type should match the service",

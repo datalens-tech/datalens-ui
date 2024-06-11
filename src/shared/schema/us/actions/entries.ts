@@ -60,7 +60,7 @@ const PRIVATE_PATH_PREFIX = '/private';
 export const entriesActions = {
     getEmbed: createAction<any, any>({
         method: 'GET',
-        path: (data) => { return `/embed?workbookId=${data.workbookId}&entryId=${data.entryId}` },
+        path: (data) => { return `/embed?workbookId=${data.workbookId}&entryId=${data.entryId}&reject=${data.reject}` },
         params: (_, headers) => ({
             headers: {
                 ...headers
