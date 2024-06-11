@@ -14,7 +14,7 @@ export function cleanUpConflictingParameters(args: {
     // Therefore, reset the sorting if there are parameters that potentially affect data
     const tableRowSortKey = '_sortRowMeta';
     if (prev && current && tableRowSortKey in current) {
-        if (!isEqual(omit(prev, tableRowSortKey), omit(prev, current))) {
+        if (!isEqual(omit(prev, tableRowSortKey), omit(current, tableRowSortKey))) {
             delete current[tableRowSortKey];
         }
     }

@@ -1,17 +1,14 @@
 import {expect} from '@playwright/test';
 
-import {
-    ChartKitQa,
-    SectionDatasetQA,
-    WizardPageQa,
-    WizardVisualizationId,
-} from '../../../../../src/shared';
+import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
 import {CommonUrls} from '../../../../page-objects/constants/common-urls';
 import {ChartSettingsItems} from '../../../../page-objects/wizard/ChartSettings';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+
+const chartNamePattern = 'e2e-wizard-pivot-table-sorting';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Pivot table', () => {
@@ -36,6 +33,16 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.PivotTableColumns,
                 'Id',
             );
+        });
+
+        datalensTest.afterEach(async ({page}) => {
+            await page.reload();
+            const pageUrl = page.url();
+
+            if (pageUrl.includes(chartNamePattern)) {
+                const wizardPage = new WizardPage({page});
+                await wizardPage.deleteEntry();
+            }
         });
 
         datalensTest('Click on last row header cell should sort columns', async ({page}) => {
@@ -85,6 +92,8 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Sorting a row by a field with a parameter', async ({page}) => {
             const parameterName = 'Param';
             const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             await wizardPage.chartSettings.open();
             await wizardPage.chartSettings.toggleSettingItem(ChartSettingsItems.Pagination, 'on');
@@ -100,8 +109,14 @@ datalensTest.describe('Wizard', () => {
                 'ParamField',
             );
 
-            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+            // Save chart with parameter
+            await expect(previewLoader).not.toBeVisible();
+            await wizardPage.saveWizardEntry(wizardPage.getUniqueEntryName(chartNamePattern));
+
+            // Add parameter from dashboard (to url)
+            const url = new URL(page.url());
+            url.searchParams.set(parameterName, 'City');
+            await page.goto(url.toString());
 
             await expect(previewLoader).not.toBeVisible();
             const firstRow = chartContainer.locator('tbody tr').first();
@@ -120,11 +135,12 @@ datalensTest.describe('Wizard', () => {
             apiRunRequest = wizardPage.page.waitForRequest(
                 (request) => new URL(request.url()).pathname === CommonUrls.ApiRun,
             );
-            const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
-            const parameterLocator = datasetFields.locator(slct(parameterName), {
-                hasText: parameterName,
-            });
-            await parameterLocator.locator(slct(SectionDatasetQA.ItemIcon)).click();
+            const parameterItem = page
+                .locator(slct(PlaceholderName.DashboardParameters))
+                .locator(slct(parameterName), {
+                    hasText: parameterName,
+                });
+            await parameterItem.click();
             await wizardPage.parameterEditor.setDefaultValue('Category');
             await wizardPage.parameterEditor.apply();
             await (await apiRunRequest).response();
