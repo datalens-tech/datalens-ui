@@ -18,6 +18,7 @@ import {
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
 } from 'shared';
+import {useMountedState} from 'ui/hooks';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -102,7 +103,8 @@ export const Control = ({
     workbookId,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
-    const [requestCancellation, setRequestCancellation] = React.useState<CancelTokenSource>();
+    const isMounted = useMountedState([]);
+    const requestCancellationRef = React.useRef<CancelTokenSource>();
 
     const [
         {
@@ -157,8 +159,8 @@ export const Control = ({
     };
 
     const cancelCurrentRunRequest = () => {
-        if (requestCancellation) {
-            requestCancellation.cancel();
+        if (requestCancellationRef.current) {
+            requestCancellationRef.current.cancel();
         }
     };
 
@@ -186,7 +188,7 @@ export const Control = ({
 
             cancelCurrentRunRequest();
 
-            setRequestCancellation(payloadCancellation);
+            requestCancellationRef.current = payloadCancellation;
 
             const response = await chartsDataProvider.makeRequest(payload);
 
@@ -249,11 +251,13 @@ export const Control = ({
     // removed from group
     React.useEffect(() => {
         return () => {
-            clearLoaderTimer(silentLoaderTimer);
-            onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
-            cancelCurrentRunRequest();
+            if (!isMounted()) {
+                clearLoaderTimer(silentLoaderTimer);
+                onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
+                cancelCurrentRunRequest();
+            }
         };
-    }, []);
+    }, [id, isMounted, onStatusChanged, silentLoaderTimer]);
 
     if (status !== LOAD_STATUS.PENDING && silentLoaderTimer) {
         clearLoaderTimer(silentLoaderTimer);

@@ -6,7 +6,7 @@ import {
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
-import {usePrevious} from 'hooks';
+import {useMountedState, usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
@@ -149,6 +149,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit: false,
         canBeLoaded: false,
     });
+
+    const isMounted = useMountedState([]);
 
     const setIsInit = React.useCallback((value: boolean) => setLoadingState({isInit: value}), []);
     const setCanBeLoaded = React.useCallback(
@@ -316,19 +318,23 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
      * fires before starting new request,
      * setting canceling status for any loading requests and cancel them via dataProvider
      */
-    const cancelAllLoadingRequests = React.useCallback(() => {
-        for (const [key, requestStatusData] of Object.entries(
-            requestCancellationRef.current || {},
-        )) {
-            const needToCancelReq =
-                requestStatusData.status === 'loading' ||
-                (requestStatusData.status === 'unset' && requestId !== key);
-            if (needToCancelReq && requestStatusData.requestCancellation) {
-                requestStatusData.status = 'canceled';
-                dataProvider.cancelRequests(requestStatusData.requestCancellation);
+    const cancelAllLoadingRequests = React.useCallback(
+        (isComponentMounted?: boolean) => {
+            for (const [key, requestStatusData] of Object.entries(
+                requestCancellationRef.current || {},
+            )) {
+                const needToCancelReq =
+                    requestStatusData.status === 'loading' ||
+                    (requestStatusData.status === 'unset' && requestId !== key) ||
+                    !isComponentMounted;
+                if (needToCancelReq && requestStatusData.requestCancellation) {
+                    requestStatusData.status = 'canceled';
+                    dataProvider.cancelRequests(requestStatusData.requestCancellation);
+                }
             }
-        }
-    }, [requestCancellationRef, dataProvider, requestId]);
+        },
+        [requestCancellationRef, dataProvider, requestId],
+    );
 
     /**
      * loading widget chart data
@@ -539,14 +545,12 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
      */
     React.useEffect(() => {
         return () => {
-            for (const requestStatusData of Object.values(requestCancellationRef.current || {})) {
-                if (requestStatusData.requestCancellation) {
-                    requestStatusData.status = 'canceled';
-                    requestStatusData.requestCancellation.cancel();
-                }
+            const isComponentMounted = isMounted();
+            if (!isComponentMounted) {
+                cancelAllLoadingRequests(isComponentMounted);
             }
         };
-    }, []);
+    }, [isMounted, cancelAllLoadingRequests]);
 
     /**
      * force initializing chart loading data, when widget became visible,
