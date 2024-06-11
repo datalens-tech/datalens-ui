@@ -14,8 +14,8 @@ axiosRetry(axiosInstance, {retries: 3});
 export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
     ctx.log('Token introspection');
 
-    if (!ctx.config.zitadelUri) {
-        throw new Error('Missing ZITADEL_URI in env');
+    if (!ctx.config.zitadelInternalUri) {
+        throw new Error('Missing ZITADEL_INTERNAL_URI in env');
     }
     if (!ctx.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
@@ -33,7 +33,7 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 
         const response = await axiosInstance({
             method: 'post',
-            url: `${ctx.config.zitadelUri}/oauth/v2/introspect`,
+            url: `${ctx.config.zitadelInternalUri}/oauth/v2/introspect`,
             auth: {
                 username: ctx.config.clientId,
                 password: ctx.config.clientSecret,
@@ -57,6 +57,9 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
 export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     ctx.log('Refreshing tokens');
 
+    if (!ctx.config.zitadelInternalUri) {
+        throw new Error('Missing ZITADEL_INTERNAL_URI in env');
+    }
     if (!ctx.config.clientId) {
         throw new Error('Missing CLIENT_ID in env');
     }
@@ -70,7 +73,7 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
     try {
         const response = await axiosInstance({
             method: 'post',
-            url: `${ctx.config.zitadelUri}/oauth/v2/token`,
+            url: `${ctx.config.zitadelInternalUri}/oauth/v2/token`,
             auth: {
                 username: ctx.config.clientId,
                 password: ctx.config.clientSecret,
@@ -92,8 +95,8 @@ export const refreshTokens = async (ctx: AppContext, refreshToken?: string) => {
 };
 
 export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
-    if (!ctx.config.zitadelUri) {
-        throw new Error('Missing ZITADEL_URI in env');
+    if (!ctx.config.zitadelInternalUri) {
+        throw new Error('Missing ZITADEL_INTERNAL_URI in env');
     }
     if (!ctx.config.serviceClientId) {
         throw new Error('Missing SERVICE_CLIENT_ID in env');
@@ -110,7 +113,7 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
 
         const response = await axiosInstance({
             method: 'post',
-            url: `${ctx.config.zitadelUri}/oauth/v2/token`,
+            url: `${ctx.config.zitadelInternalUri}/oauth/v2/token`,
             auth: {
                 username: ctx.config.serviceClientId,
                 password: ctx.config.serviceClientSecret,

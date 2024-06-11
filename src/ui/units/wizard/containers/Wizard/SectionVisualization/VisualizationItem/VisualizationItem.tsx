@@ -15,8 +15,8 @@ import {i18n} from 'i18n';
 import type {SDK} from 'libs';
 import {cloneDeep} from 'lodash';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
 import type {
     DatasetField,
     DatasetFieldCalcMode,
@@ -59,7 +59,13 @@ import {
 import type {DialogFieldState} from 'units/wizard/components/Dialogs/DialogField/DialogField';
 import {DIALOG_FIELD} from 'units/wizard/components/Dialogs/DialogField/DialogField';
 import {DIALOG_FIELD_INSPECTOR} from 'units/wizard/components/Dialogs/DialogFieldInspector/DialogFieldInspector';
-import {CONFLICT_TOOLTIPS, SETTINGS} from 'units/wizard/constants';
+import {
+    AVAILABLE_DATETIMETZ_FORMATS,
+    AVAILABLE_DATETIME_FORMATS,
+    AVAILABLE_DATE_FORMATS,
+    CONFLICT_TOOLTIPS,
+    SETTINGS,
+} from 'units/wizard/constants';
 import {
     selectDataset,
     selectDatasets,
@@ -79,11 +85,6 @@ import uuid from 'uuid/v1';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {updateVisualizationPlaceholderItems} from '../../../../actions/placeholder';
-import {
-    AVAILABLE_DATETIMETZ_FORMATS,
-    AVAILABLE_DATETIME_FORMATS,
-    AVAILABLE_DATE_FORMATS,
-} from '../../../../constants';
 import {parseFilterDate, parseParameterDefaultValue} from '../../../../utils/wizard';
 
 import './VisualizationItem.scss';
@@ -192,16 +193,7 @@ class VisualizationItem extends React.Component<Props, State> {
         const filterCountClassName = isFilterDisabled ? '' : `filter-counter__${itemType}`;
         const additionalTitleClassName = isFilterDisabled ? '' : `filter-title__${itemType}`;
         const itemTitleClassName = `item-title ${additionalTitleClassName}`;
-
-        const measureNamesItems = this.props.visualization.placeholders
-            .map((placeholder) => placeholder.items.filter(isMeasureName))
-            .flat(2);
-        const nonRemovableItem =
-            Utils.isEnabledFeature(Feature.PivotTableMeasureNames) &&
-            this.props.visualization.id === WizardVisualizationId.PivotTable &&
-            measureNamesItems.length <= 1 &&
-            isMeasureName(item);
-        const shouldShowRemoveIcon = !listNoRemove && !nonRemovableItem;
+        const shouldShowRemoveIcon = !listNoRemove;
 
         const showFormulaIcon = item.type !== 'PSEUDO' && !isParameter(item) && !item.formulaHidden;
 
@@ -742,7 +734,6 @@ class VisualizationItem extends React.Component<Props, State> {
             barsSettings,
             backgroundSettings,
             subTotalsSettings,
-            displayMode,
             hintSettings,
         }: DialogFieldState,
     ) => {
@@ -888,10 +879,6 @@ class VisualizationItem extends React.Component<Props, State> {
 
         if (subTotalsSettings && target.subTotalsSettings !== subTotalsSettings) {
             target.subTotalsSettings = subTotalsSettings;
-        }
-
-        if (displayMode) {
-            target.displayMode = displayMode;
         }
 
         target.hintSettings = hintSettings;
