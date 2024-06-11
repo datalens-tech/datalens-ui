@@ -55,6 +55,7 @@ import type {
     ResolveWidgetDataRef,
     WidgetDataRef,
 } from '../types';
+import {cleanUpConflictingParameters} from '../utils';
 
 import {useIntersectionObserver} from './useIntersectionObserver';
 
@@ -337,6 +338,11 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         if (!requestDataProps) {
             return;
         }
+
+        cleanUpConflictingParameters({
+            prev: prevInnerParamsRefCurrent,
+            current: requestDataProps.params,
+        });
 
         // need to prevent double request before get response
         if (changedInnerFlag) {

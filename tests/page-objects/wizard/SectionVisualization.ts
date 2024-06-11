@@ -120,7 +120,8 @@ export default class SectionVisualization {
             force: true,
         });
 
-        await this.page.click(`${slct('select-list')} >> text=${field}`);
+        const selectList = this.page.locator(slct('select-list'));
+        await selectList.getByText(new RegExp(`^${field}$`, 'i')).click();
 
         await promise;
     }
