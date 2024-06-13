@@ -60,7 +60,6 @@ export const mapFilterToApiV2FiltersFormat = (filter: FilterField): ApiV2Filter 
     const operation = filter.filter.operation.code;
 
     // Check legacy datetime value because of old configs
-    // @ts-expect-error
     if (isDateField(filter)) {
         return {
             values: ([] as string[]).concat(...prepareFilterValues({values})),
