@@ -138,6 +138,8 @@ export interface EntityRequestOptions {
 
 const STATS_COLLECT_TIMEOUT = 5 * 1000;
 
+const CANCEL_REQUEST_CODE = 'REQUEST_CANCELED';
+
 function isResponseSuccessNode(data: ResponseSuccess): data is ResponseSuccessNode {
     return 'type' in data;
 }
@@ -570,7 +572,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     cancelRequests(requestCancellation: CancelTokenSource) {
         if (requestCancellation) {
-            requestCancellation.cancel('REQUEST_CANCELED');
+            requestCancellation.cancel(CANCEL_REQUEST_CODE);
         }
     }
 

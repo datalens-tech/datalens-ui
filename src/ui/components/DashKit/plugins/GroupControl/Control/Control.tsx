@@ -1,6 +1,8 @@
 import React from 'react';
 
 import {Loader} from '@gravity-ui/uikit';
+import type {CancelTokenSource} from 'axios';
+import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
@@ -16,6 +18,7 @@ import {
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
 } from 'shared';
+import {useMountedState} from 'ui/hooks';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -23,7 +26,7 @@ import {
     ControlRangeDatepicker,
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import {type EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
@@ -43,7 +46,7 @@ import {
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {ExtendedLoadedData} from '../types';
-import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
+import {clearLoaderTimer, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -85,7 +88,6 @@ type ControlProps = {
         controlId?: string;
     }) => void;
     needReload: boolean;
-    cancelSource: any;
     workbookId?: WorkbookId;
 };
 
@@ -98,10 +100,11 @@ export const Control = ({
     getDistincts,
     onChange,
     needReload,
-    cancelSource,
     workbookId,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
+    const isMounted = useMountedState([]);
+    const requestCancellationRef = React.useRef<CancelTokenSource>();
 
     const [
         {
@@ -155,8 +158,15 @@ export const Control = ({
         }
     };
 
+    const cancelCurrentRunRequest = () => {
+        if (requestCancellationRef.current) {
+            requestCancellationRef.current.cancel();
+        }
+    };
+
     const init = async () => {
         try {
+            const payloadCancellation = chartsDataProvider.getRequestCancellation();
             const payload: EntityRequestOptions = {
                 data: {
                     config: {
@@ -170,10 +180,15 @@ export const Control = ({
                     params,
                     ...(workbookId ? {workbookId} : {}),
                 },
+                cancelToken: payloadCancellation.token,
             };
 
             dispatch(setStatus({status: LOAD_STATUS.PENDING}));
             onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
+
+            cancelCurrentRunRequest();
+
+            requestCancellationRef.current = payloadCancellation;
 
             const response = await chartsDataProvider.makeRequest(payload);
 
@@ -195,6 +210,9 @@ export const Control = ({
                 setLoadedDataState(newLoadedData, LOAD_STATUS.SUCCESS);
             }
         } catch (error) {
+            if (axios.isCancel(error)) {
+                return;
+            }
             logger.logError('DashKit: Control init failed', error);
             console.error('DASHKIT_CONTROL_RUN', error);
 
@@ -229,13 +247,17 @@ export const Control = ({
         init();
     };
 
+    // cancel requests, transfer status and remove timer if component is unmounted or selector is
+    // removed from group
     React.useEffect(() => {
         return () => {
-            clearLoaderTimer(silentLoaderTimer);
-            cancelCurrentRequests(cancelSource);
-            onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
+            if (!isMounted()) {
+                clearLoaderTimer(silentLoaderTimer);
+                onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
+                cancelCurrentRunRequest();
+            }
         };
-    }, []);
+    }, [id, isMounted, onStatusChanged, silentLoaderTimer]);
 
     if (status !== LOAD_STATUS.PENDING && silentLoaderTimer) {
         clearLoaderTimer(silentLoaderTimer);
@@ -294,9 +316,7 @@ export const Control = ({
     const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
         const newParam = {[param]: value};
 
-        if (!isEqual(param, newParam)) {
-            onChange({params: {[param]: value}, controlId: id});
-        }
+        onChange({params: newParam, controlId: id});
     };
 
     const getTypeProps = (
@@ -375,6 +395,7 @@ export const Control = ({
             ...props,
             value: '',
             param: '',
+            onChange: () => {},
         };
         switch (elementType) {
             case DashTabItemControlElementType.Input:
@@ -396,7 +417,7 @@ export const Control = ({
         const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
-        const viewProps: Record<string, unknown> = {
+        const initialProps: Record<string, unknown> = {
             innerLabel,
             label,
             className: b('item'),
@@ -441,7 +462,7 @@ export const Control = ({
         }
 
         if (!control) {
-            return renderLoadingStub(viewProps);
+            return renderLoadingStub(initialProps);
         }
 
         const {param} = control;
@@ -469,11 +490,13 @@ export const Control = ({
                 operation,
             });
 
-            onChangeParams({value: valueWithOperation, param});
+            if (valueWithOperation !== preparedValue) {
+                onChangeParams({value: valueWithOperation, param});
+            }
         };
 
         const props: Record<string, unknown> = {
-            ...viewProps,
+            ...initialProps,
             param,
             type: control.type,
             widgetId: id,
