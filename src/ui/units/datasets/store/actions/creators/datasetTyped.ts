@@ -254,14 +254,19 @@ export function refetchPreviewDataset() {
     };
 }
 
+// Lazy loading dataset preview
 export function queuedFetchPreviewDataset() {
     return (dispatch: DatasetDispatch, getState: GetState) => {
         const preview = datasetPreviewSelector(getState());
 
-        if (!preview.isVisible || !preview.isQueued) {
+        // If no actions were performed while preview were hidden
+        // or there is no queued tasks to load
+        if (!preview.isQueued || !preview.isVisible) {
             return;
         }
 
+        // If preview is visible and there were any changes performed
+        // we are loading new preview data
         if (preview.previewEnabled) {
             dispatch(queuePreviewToOpen(false));
             dispatch(refetchPreviewDataset());
