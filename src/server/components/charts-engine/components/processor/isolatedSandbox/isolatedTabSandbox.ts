@@ -18,7 +18,7 @@ import {Console} from './../console';
 import type {LogItem} from './../console';
 import {getSortParams} from './../paramsUtils';
 import type {NativeModule} from './../types';
-
+import {prepare} from './prepare';
 const {
     RUNTIME_ERROR,
     RUNTIME_TIMEOUT_ERROR,
@@ -221,57 +221,6 @@ const execute = async ({
         getLibsQlChartV1({jail, chartEditorApi: instance.ChartEditor});
         getLibsDatasetV2({jail, chartEditorApi: instance.ChartEditor});
         timeStart = process.hrtime();
-        const prepare = `
-           const console = {log};
-           function require(name) {
-               const lowerName = name.toLowerCase();
-               if (lowerName === 'libs/datalens/v3') {
-                   return {
-                       buildSources: (args) => JSON.parse(_libsDatalensV3_buildSources(JSON.stringify(args))),
-                       buildChartsConfig: (args) => JSON.parse(_libsDatalensV3_buildChartsConfig(JSON.stringify(args))),
-                       buildGraph: (...args) => JSON.parse(_libsDatalensV3_buildGraph(JSON.stringify(args))),
-                       buildHighchartsConfig: (args) => JSON.parse(_libsDatalensV3_buildHighchartsConfig(JSON.stringify(args))),
-                       buildD3Config: (args) => JSON.parse(_libsDatalensV3_buildD3Config(JSON.stringify(args))),
-                   }
-               } else if (lowerName === 'libs/control/v1') {
-                    return {
-                        buildSources: (args) => JSON.parse(_libsControlV1_buildSources(JSON.stringify(args))),
-                        buildGraph: (args) => _libsControlV1_buildGraph(JSON.stringify(args)),
-                        buildUI: (args) => JSON.parse(_libsControlV1_buildUI(JSON.stringify(args))),
-                        buildChartsConfig: () => ({}),
-                        buildHighchartsConfig: () => ({}),
-                    }
-                } else if (lowerName === 'libs/qlchart/v1') {
-                    return {
-                        buildSources: (args) => JSON.parse(_libsQlChartV1_buildSources(JSON.stringify(args))),
-                        buildGraph: (args) => JSON.parse(_libsQlChartV1_buildGraph(JSON.stringify(args))),
-                        buildChartsConfig: (args) => JSON.parse(_libsQlChartV1_buildChartsConfig(JSON.stringify(args))),
-                        buildLibraryConfig: (args) => JSON.parse(_libsQlChartV1_buildLibraryConfig(JSON.stringify(args))),
-                        buildD3Config: (args) => JSON.parse(_libsQlChartV1_buildD3Config(JSON.stringify(args))),
-                    }
-                } else if (lowerName === 'libs/dataset/v2') {
-                    return {
-                        buildSources: (arg) => JSON.parse(_libsDatasetV2_buildSources(JSON.stringify(arg))),
-                        processTableData: (...args) => JSON.parse(_libsDatasetV2_processTableData(JSON.stringify(args))),
-                        processData: (...args) => JSON.parse(_libsDatasetV2.ORDERS(JSON.stringify(args))),
-                        OPERATIONS: _libsDatasetV2.OPERATIONS,
-                        ORDERS: _libsDatasetV2.ORDERS,
-                    }
-               } else if (modules[lowerName]) {
-                   return modules[lowerName];     
-               } else {
-                   throw new Error(\`Module "\${lowerName}" is not resolved\`);
-               }
-           };
-            const ChartEditor = {};
-            ChartEditor.getParams = () => JSON.parse(_params);
-            ChartEditor.getActionParams = () => JSON.parse(_actionParams);
-            ChartEditor.getWidgetConfig = () => JSON.parse(_widgetConfig);
-            ChartEditor.getSharedData = () => JSON.parse(_shared);
-            ChartEditor.getLoadedData = () => JSON.parse(_getLoadedData);
-            ChartEditor.getSortParams = () => JSON.parse(_getSortParams());
-            const module = {}
-           `;
 
         sandboxResult = context.evalClosureSync(
             prepare + code + ` return JSON.stringify({module});`,
@@ -566,32 +515,9 @@ function getLibsDatasetV2({
         return JSON.stringify(result);
     });
 
-    /** 
-    const operations = context.newObject();
+    jail.setSync('_libsDatasetV2_OPERATIONS', JSON.stringify(datasetModule.OPERATIONS));
 
-    (Object.keys(datasetModule.OPERATIONS) as Array<keyof typeof datasetModule.OPERATIONS>).forEach(
-        (key) => {
-            context
-                .newString(datasetModule.OPERATIONS[key])
-                .consume((value) => context.setProp(operations, key, value));
-        },
-    );
+    jail.setSync('_libsDatasetV2_ORDERS', JSON.stringify(datasetModule.ORDERS));
 
-    context.setProp(libsDatasetV2, 'OPERATIONS', operations);
-    operations.dispose();
-
-    const orders = context.newObject();
-
-    (Object.keys(datasetModule.ORDERS) as Array<keyof typeof datasetModule.ORDERS>).forEach(
-        (key) => {
-            context
-                .newString(datasetModule.ORDERS[key])
-                .consume((value) => context.setProp(orders, key, value));
-        },
-    );
-
-    context.setProp(libsDatasetV2, 'ORDERS', orders);
-    orders.dispose();
-*/
     return jail;
 }
