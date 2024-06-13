@@ -1,4 +1,4 @@
-import {getQuickJS} from 'quickjs-emscripten';
+import ivm from 'isolated-vm';
 
 import {DashWidgetConfig, EDITOR_TYPE_CONFIG_TABS} from '../../../../../shared';
 import {ChartsEngine} from '../../index';
@@ -39,17 +39,14 @@ export const getSandboxChartBuilder = async (
         args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-    const QuickJS = await getQuickJS();
-    const runtime = QuickJS.newRuntime();
-
-    const modulesContext = runtime.newContext();
-    const modules = modulesContext.newArray();
+    const isolate = new ivm.Isolate({memoryLimit: 128});
+    const context = isolate.createContextSync();
+    // runtime.setMemoryLimit(1024 * 1024 * 10);
+    // runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
 
     return {
         dispose: () => {
-            modules.dispose();
-            modulesContext.dispose();
-            runtime.dispose();
+            context.release();
         },
         buildShared: async () => {
             shared = JSON.parse(config.data.shared || '{}');
@@ -71,13 +68,11 @@ export const getSandboxChartBuilder = async (
                 await ModulesSandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
-                    modules,
                     userLogin,
                     userLang,
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
-                    runtime,
-                    context: modulesContext,
+                    context,
                 });
                 onModuleBuild(processedModules[name]);
             }
@@ -101,11 +96,10 @@ export const getSandboxChartBuilder = async (
                 actionParams: options.actionParams,
                 widgetConfig,
                 shared,
-                modules,
                 userLogin,
                 userLang,
                 isScreenshoter,
-                runtime,
+                context,
             });
 
             return {
@@ -121,14 +115,13 @@ export const getSandboxChartBuilder = async (
                 hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
-                modules,
                 params: options.params,
                 actionParams: options.actionParams,
                 widgetConfig,
                 userLogin,
                 userLang,
                 isScreenshoter,
-                runtime,
+                context,
             });
 
             return {
@@ -149,7 +142,6 @@ export const getSandboxChartBuilder = async (
                     hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
-                    modules,
                     params: options.params,
                     actionParams: options.actionParams,
                     widgetConfig,
@@ -157,7 +149,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
-                    runtime,
+                    context,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
@@ -168,7 +160,6 @@ export const getSandboxChartBuilder = async (
                     hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
-                    modules,
                     params: options.params,
                     actionParams: options.actionParams,
                     widgetConfig,
@@ -176,7 +167,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
-                    runtime,
+                    context,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
@@ -187,7 +178,6 @@ export const getSandboxChartBuilder = async (
                     hooks: options.hooks,
                     nativeModules: chartsEngine.nativeModules,
                     shared,
-                    modules,
                     params: options.params,
                     actionParams: options.actionParams,
                     widgetConfig,
@@ -195,7 +185,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
-                    runtime,
+                    context,
                 });
             }
 
@@ -218,7 +208,6 @@ export const getSandboxChartBuilder = async (
                 hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
-                modules,
                 params: options.params,
                 actionParams: options.actionParams,
                 widgetConfig,
@@ -226,7 +215,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
-                runtime,
+                context,
             });
 
             return {
@@ -242,7 +231,6 @@ export const getSandboxChartBuilder = async (
                 timeout: JS_EXECUTION_TIMEOUT,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
-                modules,
                 params: options.params,
                 actionParams: options.actionParams,
                 widgetConfig,
@@ -252,7 +240,7 @@ export const getSandboxChartBuilder = async (
                 userLang,
                 hooks: options.hooks,
                 isScreenshoter,
-                runtime,
+                context,
             });
 
             return {
@@ -269,7 +257,6 @@ export const getSandboxChartBuilder = async (
                 hooks: options.hooks,
                 nativeModules: chartsEngine.nativeModules,
                 shared,
-                modules,
                 params: options.params,
                 actionParams: options.actionParams,
                 widgetConfig,
@@ -277,7 +264,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
-                runtime,
+                context,
             });
 
             return {

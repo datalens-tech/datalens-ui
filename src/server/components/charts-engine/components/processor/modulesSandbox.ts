@@ -1,9 +1,4 @@
-import {
-    QuickJSContext,
-    QuickJSHandle,
-    QuickJSRuntime,
-    shouldInterruptAfterDeadline,
-} from 'quickjs-emscripten';
+import IsolatedVM from 'isolated-vm';
 
 import {config} from '../../constants';
 
@@ -23,13 +18,11 @@ const {
 type ProcessModuleParams = {
     name: string;
     code: string;
-    modules: QuickJSHandle;
     userLogin: string | null;
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
-    runtime: QuickJSRuntime;
-    context: QuickJSContext;
+    context: IsolatedVM.Context;
 };
 
 export class SandboxError extends Error {
@@ -57,16 +50,13 @@ type ExecuteParams = {
     isScreenshoter: boolean;
     name: string;
     timeout: number;
-    runtime: QuickJSRuntime;
-    context: QuickJSContext;
-    modules: QuickJSHandle;
+    context: IsolatedVM.Context;
 };
 
 export type ModulesSandboxExecuteResult = {
     executionTiming: [number, number];
     logs: {type: string; value: string}[][];
     name: string;
-    modules: QuickJSHandle;
     stackTrace?: string;
 };
 
@@ -75,9 +65,7 @@ const execute = async ({
     name,
     isScreenshoter,
     timeout,
-    runtime,
     context,
-    modules,
 }: ExecuteParams): Promise<ModulesSandboxExecuteResult> => {
     if (!context) {
         throw new Error('Sandbox context is not initialized');
@@ -89,28 +77,17 @@ const execute = async ({
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
     const console = new Console({isScreenshoter});
 
+    const jail = context.global;
+    jail.setSync('global', jail.derefInto());
+
+    jail.setSync('log', function (...args: any[]) {
+        console.log(...args);
+    });
+
     try {
-        runtime.setMemoryLimit(1024 * 1024 * 10);
-        runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
-
-        const logHandle = context.newFunction('log', (...args) => {
-            const nativeArgs = args.map(context.dump);
-            console.log(...nativeArgs);
-        });
-        const consoleHandle = context.newObject();
-        context.setProp(consoleHandle, 'log', logHandle);
-        context.setProp(context.global, 'console', consoleHandle);
-        logHandle.dispose();
-        consoleHandle.dispose();
-
-        const module = context.newObject();
-        context.newObject().consume((exports) => context.setProp(module, 'exports', exports));
-        context.setProp(context.global, 'module', module);
-        module.dispose();
-
-        context.setProp(context.global, 'modules', modules);
-
         const prepare = `
+           const console = {log};
+           const modules = {};
            function require(name) => {
                const lowerName = name.toLowerCase();
                if (modules[lowerName]) {
@@ -122,9 +99,7 @@ const execute = async ({
            `;
 
         const after = ` modules[${name}] = module.exports`;
-        const moduleInit = context.evalCode(prepare + code + after);
-        context.unwrapResult(moduleInit).dispose();
-        context.dispose();
+        context.evalSync(prepare + code + after, {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -136,6 +111,7 @@ const execute = async ({
             errorStackTrace = 'Empty stack trace';
         }
     } finally {
+        jail.deleteSync('log');
         executionTiming = process.hrtime(timeStart);
     }
 
@@ -157,28 +133,18 @@ const execute = async ({
         executionTiming,
         name,
         logs: console.getLogs(),
-        modules,
     };
 };
 
 const MODULE_PROCESSING_TIMEOUT = 500;
 
-const processModule = async ({
-    name,
-    code,
-    modules,
-    isScreenshoter,
-    runtime,
-    context,
-}: ProcessModuleParams) => {
+const processModule = async ({name, code, isScreenshoter, context}: ProcessModuleParams) => {
     return execute({
         code,
         isScreenshoter,
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,
-        runtime,
         context,
-        modules,
     });
 };
 

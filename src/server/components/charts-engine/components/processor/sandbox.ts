@@ -1,26 +1,17 @@
 import vm from 'vm';
 
-import {
-    QuickJSContext,
-    QuickJSHandle,
-    QuickJSRuntime,
-    shouldInterruptAfterDeadline,
-} from 'quickjs-emscripten';
+import IsolatedVM from 'isolated-vm';
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import type {IChartEditor, QlConfig, Shared} from '../../../../../shared/types';
+import type {IChartEditor, Shared} from '../../../../../shared/types';
 import {ServerChartsConfig} from '../../../../../shared/types/config/wizard';
-import {SourceControlArgs} from '../../../../modes/charts/plugins/control/url/types';
-import {BuildWizardD3ConfigOptions} from '../../../../modes/charts/plugins/datalens/d3';
-import {BuildHighchartsConfigOptions} from '../../../../modes/charts/plugins/datalens/highcharts';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/module';
-import {SourcesArgs} from '../../../../modes/charts/plugins/datalens/url/build-sources/types';
 import {createI18nInstance} from '../../../../utils/language';
 import {config} from '../../constants';
 
 import controlModule from './../../../../modes/charts/plugins/control';
-import datasetModule, {BuildSourcePayload} from './../../../../modes/charts/plugins/dataset/v2';
+import datasetModule from './../../../../modes/charts/plugins/dataset/v2';
 import qlModule from './../../../../modes/charts/plugins/ql/module';
 import {getChartApiContext} from './chart-api-context';
 import {Console} from './console';
@@ -65,13 +56,12 @@ type ProcessTabParams = {
     dataStats?: any;
     timeout: number;
     shared: Record<string, object> | Shared | ServerChartsConfig;
-    modules: QuickJSHandle;
     hooks: Record<string, any>;
     userLogin: string | null;
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
-    runtime: QuickJSRuntime;
+    context: IsolatedVM.Context;
 };
 
 export class SandboxError extends Error {
@@ -151,11 +141,10 @@ const generateInstance = ({
 
 type ExecuteParams = {
     code: string;
-    modules: QuickJSHandle;
     instance: vm.Context;
     filename: string;
     timeout: number;
-    runtime: QuickJSRuntime;
+    context: IsolatedVM.Context;
 };
 
 export type SandboxExecuteResult = {
@@ -183,15 +172,11 @@ export type SandboxExecuteResult = {
 
 const execute = async ({
     code,
-    modules,
     instance,
     filename,
     timeout,
-    runtime,
+    context,
 }: ExecuteParams): Promise<SandboxExecuteResult> => {
-    if (!runtime) {
-        throw new Error('Sandbox runtime is not initialized');
-    }
     if (!code && filename === 'JavaScript') {
         const error = new SandboxError('You should provide code in JavaScript tab');
         error.code = RUNTIME_ERROR;
@@ -203,31 +188,19 @@ const execute = async ({
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
-    let quickJSResult: any;
-    runtime.setMemoryLimit(1024 * 1024 * 200);
-    runtime.setInterruptHandler(shouldInterruptAfterDeadline(Date.now() + timeout));
-    const context = runtime.newContext();
+    let sandboxResult: any;
+
+    const jail = context.global;
+    jail.setSync('global', jail.derefInto());
+
+    jail.setSync('log', function (...args: any[]) {
+        instance.console.log(...args);
+    });
+
     try {
-        const logHandle = context.newFunction('log', (...args) => {
-            const nativeArgs = args.map(context.dump);
-            instance.console.log(...nativeArgs);
-        });
-        const consoleHandle = context.newObject();
-        context.setProp(consoleHandle, 'log', logHandle);
-        context.setProp(context.global, 'console', consoleHandle);
-        logHandle.dispose();
-        consoleHandle.dispose();
-
-        const module = context.newObject();
-        context.newObject().consume((exports) => context.setProp(module, 'exports', exports));
-        context.setProp(context.global, 'module', module);
-        module.dispose();
-
-        context.setProp(context.global, 'modules', modules);
-
-        const ChartEditor = getChartEditorApi({
+        prepareChartEditorApi({
             name: filename,
-            context,
+            jail,
             shared: instance.ChartEditor.getSharedData
                 ? instance.ChartEditor.getSharedData()
                 : null,
@@ -243,56 +216,43 @@ const execute = async ({
                 : null,
         });
 
-        context.setProp(context.global, 'ChartEditor', ChartEditor);
-        ChartEditor.dispose();
-
-        getLibsDatalensV3({context, chartEditorApi: instance.ChartEditor}).consume(
-            (libsDatalensV3) => context.setProp(context.global, '_libsDatalensV3', libsDatalensV3),
-        );
-
-        getLibsControlV1({context, chartEditorApi: instance.ChartEditor}).consume((libsControlV1) =>
-            context.setProp(context.global, '_libsControlV1', libsControlV1),
-        );
-
-        getLibsQlChartV1({context, chartEditorApi: instance.ChartEditor}).consume((libsQlChartV1) =>
-            context.setProp(context.global, '_qlChartV1', libsQlChartV1),
-        );
-
-        getLibsDatasetV2({context, chartEditorApi: instance.ChartEditor}).consume((libsDatasetV2) =>
-            context.setProp(context.global, '_libsDatasetV2', libsDatasetV2),
-        );
+        getLibsDatalensV3({jail, chartEditorApi: instance.ChartEditor});
+        getLibsControlV1({jail, chartEditorApi: instance.ChartEditor});
+        getLibsQlChartV1({jail, chartEditorApi: instance.ChartEditor});
+        getLibsDatasetV2({jail, chartEditorApi: instance.ChartEditor});
         timeStart = process.hrtime();
         const prepare = `
-           function require(name) => {
+           const console = {log};
+           function require(name) {
                const lowerName = name.toLowerCase();
                if (lowerName === 'libs/datalens/v3') {
                    return {
-                       buildSources: (args) => JSON.parse(_libsDatalensV3.buildSources(args)),
-                       buildChartsConfig: (args) => JSON.parse(_libsDatalensV3.buildChartsConfig(args)),
-                       buildGraph: (args) => JSON.parse(_libsDatalensV3.buildGraph(args)),
-                       buildHighchartsConfig: (args) => JSON.parse(_libsDatalensV3.buildHighchartsConfig(args)),
-                       buildD3Config: (args) => JSON.parse(_libsDatalensV3.buildD3Config(args)),
+                       buildSources: (args) => JSON.parse(_libsDatalensV3_buildSources(JSON.stringify(args))),
+                       buildChartsConfig: (args) => JSON.parse(_libsDatalensV3_buildChartsConfig(JSON.stringify(args))),
+                       buildGraph: (...args) => JSON.parse(_libsDatalensV3_buildGraph(JSON.stringify(args))),
+                       buildHighchartsConfig: (args) => JSON.parse(_libsDatalensV3_buildHighchartsConfig(JSON.stringify(args))),
+                       buildD3Config: (args) => JSON.parse(_libsDatalensV3_buildD3Config(JSON.stringify(args))),
                    }
                } else if (lowerName === 'libs/control/v1') {
                     return {
-                        buildSources: (args) => JSON.parse(_libsControlV1.buildSources(args)),
-                        buildGraph: (args) => _libsControlV1.buildGraph(args),
-                        buildUI: (args) => JSON.parse(_libsControlV1.buildUI(args)),
+                        buildSources: (args) => JSON.parse(_libsControlV1_buildSources(JSON.stringify(args))),
+                        buildGraph: (args) => _libsControlV1_buildGraph(JSON.stringify(args)),
+                        buildUI: (args) => JSON.parse(_libsControlV1_buildUI(JSON.stringify(args))),
                         buildChartsConfig: () => ({}),
                         buildHighchartsConfig: () => ({}),
                     }
                 } else if (lowerName === 'libs/qlchart/v1') {
                     return {
-                        buildSources: (args) => JSON.parse(_qlChartV1.buildSources(args)),
-                        buildGraph: (args) => JSON.parse(_qlChartV1.buildGraph(args)),
-                        buildChartsConfig: (args) => JSON.parse(_qlChartV1.buildChartsConfig(args)),
-                        buildLibraryConfig: (args) => JSON.parse(_qlChartV1.buildLibraryConfig(args)),
-                        buildD3Config: (args) => JSON.parse(_qlChartV1.buildD3Config(args)),
+                        buildSources: (args) => JSON.parse(_libsQlChartV1_buildSources(args)),
+                        buildGraph: (args) => JSON.parse(_libsQlChartV1_buildGraph(args)),
+                        buildChartsConfig: (args) => JSON.parse(_libsQlChartV1_buildChartsConfig(args)),
+                        buildLibraryConfig: (args) => JSON.parse(_libsQlChartV1_buildLibraryConfig(args)),
+                        buildD3Config: (args) => JSON.parse(_libsQlChartV1_buildD3Config(args)),
                     }
                 } else if (lowerName === 'libs/dataset/v2') {
                     return {
-                        buildSources: (args) => JSON.parse(_libsDatasetV2.buildSources(args)),
-                        processTableData: (resultData, field, options) => JSON.parse(_libsDatasetV2.processTableData(resultData, field, options)),
+                        buildSources: (args) => JSON.parse(_libsDatasetV2_buildSources(args)),
+                        processTableData: (resultData, field, options) => JSON.parse(_libsDatasetV2_processTableData(resultData, field, options)),
                         processData: (data, field, options) => JSON.parse(_libsDatasetV2.ORDERS(data, field, options)),
                         OPERATIONS: _libsDatasetV2.OPERATIONS,
                         ORDERS: _libsDatasetV2.ORDERS,
@@ -303,23 +263,24 @@ const execute = async ({
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
            };
-            ChartEditor.getParams = () => JSON.parse(ChartEditor._params);
-            ChartEditor.getActionParams = () => JSON.parse(ChartEditor._actionParams);
-            ChartEditor.getWidgetConfig = () => JSON.parse(ChartEditor._widgetConfig);
-            ChartEditor.getSharedData = () => JSON.parse(ChartEditor._shared);
-            ChartEditor.getLoadedData = () => JSON.parse(ChartEditor._getLoadedData);
-            ChartEditor.getSortParams = () => JSON.parse(ChartEditor._getSortParams());
+            const ChartEditor = {};
+            ChartEditor.getParams = () => JSON.parse(_params);
+            ChartEditor.getActionParams = () => JSON.parse(_actionParams);
+            ChartEditor.getWidgetConfig = () => JSON.parse(_widgetConfig);
+            ChartEditor.getSharedData = () => JSON.parse(_shared);
+            ChartEditor.getLoadedData = () => JSON.parse(_getLoadedData);
+            ChartEditor.getSortParams = () => JSON.parse(_getSortParams());
+            const module = {}
            `;
 
-        const ok = context.evalCode(prepare + code);
-        context.unwrapResult(ok).dispose();
-
-        context.evalCode(`        
-        module = JSON.stringify(module);`);
-        quickJSResult = context.getProp(context.global, 'module').consume(context.getString);
-        quickJSResult = JSON.parse(quickJSResult);
-
-        // vm.runInNewContext(code, instance, {filename, timeout, microtaskMode: 'afterEvaluate'});
+        sandboxResult = context.evalClosureSync(
+            prepare + code + ` return JSON.stringify({module});`,
+            [],
+            {
+                timeout,
+            },
+        );
+        sandboxResult = JSON.parse(sandboxResult);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -331,8 +292,8 @@ const execute = async ({
             errorStackTrace = 'Empty stack trace';
         }
     } finally {
+        jail.deleteSync('log');
         executionTiming = process.hrtime(timeStart);
-        context.dispose();
     }
 
     const shared = instance.ChartEditor.getSharedData ? instance.ChartEditor.getSharedData() : null;
@@ -360,7 +321,7 @@ const execute = async ({
         executionTiming,
         logs: instance.console.getLogs(),
         filename,
-        exports: quickJSResult?.exports,
+        exports: sandboxResult.module?.exports,
         runtimeMetadata: instance.__runtimeMetadata,
     };
 };
@@ -374,17 +335,16 @@ const processTab = async ({
     dataStats,
     timeout = DEFAULT_PROCESSING_TIMEOUT,
     shared = {},
-    modules,
     hooks,
     userLogin,
     userLang,
     nativeModules,
     isScreenshoter,
-    runtime,
+    context,
 }: ProcessTabParams) => {
     const originalShared = shared;
     const originalParams = params;
-    const context = getChartApiContext({
+    const chartApiContext = getChartApiContext({
         name,
         params,
         actionParams,
@@ -398,9 +358,8 @@ const processTab = async ({
 
     const result = await execute({
         code,
-        modules,
         instance: generateInstance({
-            context,
+            context: chartApiContext,
             userLogin,
             userLang,
             nativeModules,
@@ -408,7 +367,7 @@ const processTab = async ({
         }),
         filename: name,
         timeout,
-        runtime,
+        context,
     });
 
     Object.assign(originalShared, result.shared);
@@ -417,9 +376,9 @@ const processTab = async ({
     return result;
 };
 
-function getChartEditorApi({
+function prepareChartEditorApi({
     name,
-    context,
+    jail,
     shared,
     loadedData,
     params,
@@ -427,259 +386,198 @@ function getChartEditorApi({
     actionParams,
 }: {
     name: string;
-    context: QuickJSContext;
+    jail: IsolatedVM.Reference;
     shared: Record<string, object>;
     loadedData: Record<string, any> | null;
     params: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig: DashWidgetConfig['widgetConfig'];
-}): QuickJSHandle {
-    const api = context.newObject();
-
-    context
-        .newString(JSON.stringify(shared))
-        .consume((handle) => context.setProp(api, '_shared', handle));
-
-    context
-        .newString(JSON.stringify(params))
-        .consume((handle) => context.setProp(api, '_params', handle));
-
-    context
-        .newString(JSON.stringify(actionParams))
-        .consume((handle) => context.setProp(api, '_actionParams', handle));
-
-    context
-        .newString(JSON.stringify(widgetConfig))
-        .consume((handle) => context.setProp(api, '_widgetConfig', handle));
+}) {
+    jail.setSync('_shared', JSON.stringify(shared));
+    jail.setSync('_params', JSON.stringify(params));
+    jail.setSync('_actionParams', JSON.stringify(actionParams));
+    jail.setSync('_widgetConfig', JSON.stringify(widgetConfig));
 
     if (name === 'Urls') {
-        context
-            .newFunction('_getSortParams', () =>
-                context.newString(JSON.stringify(getSortParams(params))),
-            )
-            .consume((handle) => context.setProp(api, '_getSortParams', handle));
+        jail.setSync('_getSortParams', JSON.stringify(getSortParams(params)));
     }
 
     if (name === 'Urls' || name === 'JavaScript') {
         const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-        context
-            .newFunction('getCurrentPage', () => context.newNumber(isNaN(page) ? 1 : page))
-            .consume((handle) => context.setProp(api, 'getCurrentPage', handle));
+        jail.setSync('_getCurrentPage', isNaN(page) ? 1 : page);
     }
 
     if (name === 'UI' || name === 'JavaScript') {
-        context
-            .newString(JSON.stringify(loadedData))
-            .consume((handle) => context.setProp(api, '_getLoadedData', handle));
-
-        // const getLoadedDataHandle = context.newFunction('getLoadedData', () => {
-        //     const result = loadedData ? defineVariable(loadedData, context) : context.newObject();
-        //     return result;
-        // });
-        // context.setProp(api, 'getLoadedData', getLoadedDataHandle);
-        // getLoadedDataHandle.dispose();
+        jail.setSync('_getLoadedData', JSON.stringify(loadedData));
     }
-
-    return api;
+    return jail;
 }
 
 function getLibsDatalensV3({
-    context,
+    jail,
     chartEditorApi,
 }: {
-    context: QuickJSContext;
+    jail: IsolatedVM.Reference;
     chartEditorApi: IChartEditor;
 }) {
-    const libsDatalensV3 = context.newObject();
-    context
-        .newFunction('buildSources', (arg) => {
-            const nativeArg: SourcesArgs = context.dump(arg);
-            const result = datalensModule.buildSources(nativeArg);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatalensV3, 'buildSources', handle));
+    jail.setSync('_libsDatalensV3_buildSources', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildSources>[0];
+        const result = datalensModule.buildSources(parsedArg);
+        return JSON.stringify(result);
+    });
 
-    context
-        .newFunction('buildChartsConfig', (arg) => {
-            const nativeArg = context.dump(arg);
-            const result = datalensModule.buildChartsConfig(nativeArg, {});
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatalensV3, 'buildChartsConfig', handle));
+    jail.setSync('_libsDatalensV3_buildChartsConfig', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildChartsConfig>[0];
+        const result = datalensModule.buildChartsConfig(parsedArg, {});
+        return JSON.stringify(result);
+    });
 
-    context
-        .newFunction('buildGraph', (arg) => {
-            const nativeArg = context.dump(arg);
-            nativeArg.ChartEditor = chartEditorApi;
-            const result = datalensModule.buildGraph(nativeArg);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatalensV3, 'buildGraph', handle));
+    jail.setSync('_libsDatalensV3_buildGraph', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildGraph>[0];
+        if ('shared' in parsedArg[0]) {
+            parsedArg[0].ChartEditor = chartEditorApi;
+        } else {
+            parsedArg[2] = chartEditorApi;
+        }
 
-    context
-        .newFunction('buildHighchartsConfig', (arg) => {
-            const nativeArg: BuildHighchartsConfigOptions = context.dump(arg);
-            const result = datalensModule.buildHighchartsConfig(nativeArg);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatalensV3, 'buildHighchartsConfig', handle));
-    context
-        .newFunction('buildD3Config', (arg) => {
-            const nativeArg: BuildWizardD3ConfigOptions = context.dump(arg);
-            const result = datalensModule.buildD3Config(nativeArg);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatalensV3, 'buildD3Config', handle));
-    return libsDatalensV3;
+        const result = datalensModule.buildGraph(...parsedArg);
+        return JSON.stringify(result);
+    });
+
+    jail.setSync('_libsDatalensV3_buildHighchartsConfig', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<
+            typeof datalensModule.buildHighchartsConfig
+        >[0];
+        const result = datalensModule.buildHighchartsConfig(parsedArg);
+        return JSON.stringify(result);
+    });
+
+    jail.setSync('_libsDatalensV3_buildD3Config', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildD3Config>[0];
+        const result = datalensModule.buildD3Config(parsedArg);
+        return JSON.stringify(result);
+    });
+    return jail;
 }
 
 function getLibsControlV1({
-    context,
+    jail,
     chartEditorApi,
 }: {
-    context: QuickJSContext;
+    jail: IsolatedVM.Reference;
     chartEditorApi: IChartEditor;
 }) {
-    const libsControlV1 = context.newObject();
-    context
-        .newFunction('buildSources', (arg) => {
-            const nativeArg: SourceControlArgs = context.dump(arg);
-            const result = controlModule.buildSources(nativeArg);
-            chartEditorApi.setSharedData(nativeArg.shared);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsControlV1, 'buildSources', handle));
-    context
-        .newFunction('buildGraph', (arg) => {
-            const nativeArg = context.dump(arg);
-            nativeArg.ChartEditor = chartEditorApi;
-            controlModule.buildGraph(nativeArg);
-            chartEditorApi.setSharedData(nativeArg.shared);
-        })
-        .consume((handle) => context.setProp(libsControlV1, 'buildGraph', handle));
+    jail.setSync('_libsControlV1_buildSources', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildSources>[0];
+        const result = controlModule.buildSources(parsedArg);
+        chartEditorApi.setSharedData(parsedArg.shared);
+        return JSON.stringify(result);
+    });
 
-    context
-        .newFunction('buildUI', (arg) => {
-            const nativeArg = context.dump(arg);
-            const result = controlModule.buildUI(nativeArg);
-            chartEditorApi.setSharedData(nativeArg.shared);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsControlV1, 'buildUI', handle));
+    jail.setSync('_libsControlV1_buildGraph', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildGraph>[0];
+        parsedArg.ChartEditor = chartEditorApi;
+        controlModule.buildGraph(parsedArg);
+        chartEditorApi.setSharedData(parsedArg.shared);
+    });
 
-    return libsControlV1;
+    jail.setSync('_libsControlV1_buildUI', (arg: string) => {
+        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildUI>[0];
+        const result = controlModule.buildUI(parsedArg);
+        chartEditorApi.setSharedData(parsedArg.shared);
+        return JSON.stringify(result);
+    });
+
+    return jail;
 }
 function getLibsQlChartV1({
-    context,
+    jail,
     chartEditorApi,
 }: {
-    context: QuickJSContext;
+    jail: IsolatedVM.Reference;
     chartEditorApi: IChartEditor;
 }) {
-    const libsQlChartV1 = context.newObject();
-    context
-        .newFunction('buildSources', (arg) => {
-            const nativeArg: {shared: QlConfig} = context.dump(arg);
-            const result = qlModule.buildSources({
-                shared: nativeArg.shared,
-                ChartEditor: chartEditorApi,
-            });
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsQlChartV1, 'buildSources', handle));
+    jail.setSync(
+        '_libsQlChartV1_buildSources',
+        (arg: Parameters<typeof qlModule.buildSources>[0]) => {
+            arg.ChartEditor = chartEditorApi;
+            const result = qlModule.buildSources(arg);
+            return JSON.stringify(result);
+        },
+    );
 
-    context
-        .newFunction('buildGraph', (arg) => {
-            const nativeArg: {shared: QlConfig} = context.dump(arg);
-            const result = qlModule.buildGraph({
-                shared: nativeArg.shared,
-                ChartEditor: chartEditorApi,
-            });
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsQlChartV1, 'buildGraph', handle));
+    jail.setSync('_libsQlChartV1_buildGraph', (arg: Parameters<typeof qlModule.buildGraph>[0]) => {
+        arg.ChartEditor = chartEditorApi;
+        const result = qlModule.buildGraph(arg);
+        return JSON.stringify(result);
+    });
 
-    context
-        .newFunction('buildLibraryConfig', (arg) => {
-            const nativeArg: {shared: QlConfig} = context.dump(arg);
-            const result = qlModule.buildLibraryConfig({
-                shared: nativeArg.shared,
-                ChartEditor: chartEditorApi,
-            });
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsQlChartV1, 'buildLibraryConfig', handle));
+    jail.setSync(
+        '_libsQlChartV1_buildLibraryConfig',
+        (arg: Parameters<typeof qlModule.buildLibraryConfig>[0]) => {
+            arg.ChartEditor = chartEditorApi;
+            const result = qlModule.buildLibraryConfig(arg);
+            return JSON.stringify(result);
+        },
+    );
 
-    context
-        .newFunction('buildChartsConfig', (arg) => {
-            const nativeArg: {shared: QlConfig} = context.dump(arg);
-            const result = qlModule.buildChartsConfig({
-                shared: nativeArg.shared,
-                ChartEditor: chartEditorApi,
-            });
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsQlChartV1, 'buildChartsConfig', handle));
+    jail.setSync(
+        '_libsQlChartV1_buildChartsConfig',
+        (arg: Parameters<typeof qlModule.buildChartsConfig>[0]) => {
+            arg.ChartEditor = chartEditorApi;
+            const result = qlModule.buildChartsConfig(arg);
+            return JSON.stringify(result);
+        },
+    );
 
-    context
-        .newFunction('buildD3Config', (arg) => {
-            const nativeArg: {shared: QlConfig} = context.dump(arg);
-            const result = qlModule.buildD3Config({
-                shared: nativeArg.shared,
-                ChartEditor: chartEditorApi,
-            });
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsQlChartV1, 'buildD3Config', handle));
+    jail.setSync(
+        '_libsQlChartV1_buildD3Config',
+        (arg: Parameters<typeof qlModule.buildD3Config>[0]) => {
+            arg.ChartEditor = chartEditorApi;
+            const result = qlModule.buildD3Config(arg);
+            return JSON.stringify(result);
+        },
+    );
 
-    return libsQlChartV1;
+    return jail;
 }
 
 function getLibsDatasetV2({
-    context,
+    jail,
     chartEditorApi,
 }: {
-    context: QuickJSContext;
+    jail: IsolatedVM.Reference;
     chartEditorApi: IChartEditor;
 }) {
-    const libsDatasetV2 = context.newObject();
-    context
-        .newFunction('buildSources', (arg) => {
-            const nativeArg: BuildSourcePayload = context.dump(arg);
-            const result = datasetModule.buildSource(nativeArg);
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatasetV2, 'buildSources', handle));
+    jail.setSync(
+        '_libsDatasetV2_buildSources',
+        (arg: Parameters<typeof datasetModule.buildSource>[0]) => {
+            const result = datasetModule.buildSource(arg);
+            return JSON.stringify(result);
+        },
+    );
 
-    context
-        .newFunction('processTableData', (resultData, field, options) => {
-            const nativeResultData = context.dump(resultData);
-            const nativeField = context.dump(field);
-            const nativeOptions = context.dump(options);
-            const result = datasetModule.processTableData(
-                nativeResultData,
-                nativeField,
-                nativeOptions,
-            );
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatasetV2, 'processTableData', handle));
-
-    context
-        .newFunction('processData', (data, field, options) => {
-            const nativeData = context.dump(data);
-            const nativeField = context.dump(field);
-            const nativeOptions = context.dump(options);
+    jail.setSync(
+        '_libsDatasetV2_processTableData',
+        (...params: Parameters<typeof datasetModule.processTableData>) => {
+            const result = datasetModule.processTableData(...params);
+            return JSON.stringify(result);
+        },
+    );
+    jail.setSync(
+        '_libsDatasetV2_processData',
+        (...params: Parameters<typeof datasetModule.processData>) => {
             const result = datasetModule.processData(
-                nativeData,
-                nativeField,
+                params[0],
+                params[1],
                 chartEditorApi,
-                nativeOptions,
+                params[2],
             );
-            return context.newString(JSON.stringify(result));
-        })
-        .consume((handle) => context.setProp(libsDatasetV2, 'processData', handle));
+            return JSON.stringify(result);
+        },
+    );
 
+    /** 
     const operations = context.newObject();
 
     (Object.keys(datasetModule.OPERATIONS) as Array<keyof typeof datasetModule.OPERATIONS>).forEach(
@@ -705,8 +603,8 @@ function getLibsDatasetV2({
 
     context.setProp(libsDatasetV2, 'ORDERS', orders);
     orders.dispose();
-
-    return libsDatasetV2;
+*/
+    return jail;
 }
 
 export const Sandbox = {
