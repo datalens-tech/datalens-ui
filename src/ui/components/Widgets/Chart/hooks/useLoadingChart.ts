@@ -319,7 +319,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
      * setting canceling status for any loading requests and cancel them via dataProvider
      */
     const cancelAllLoadingRequests = React.useCallback(
-        (isComponentMounted?: boolean) => {
+        (isComponentMounted: boolean) => {
             for (const [key, requestStatusData] of Object.entries(
                 requestCancellationRef.current || {},
             )) {
@@ -576,7 +576,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             return;
         }
 
-        cancelAllLoadingRequests();
+        cancelAllLoadingRequests(true);
 
         dispatch({type: WIDGET_CHART_SET_LOADING, payload: true});
 
