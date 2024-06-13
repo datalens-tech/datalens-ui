@@ -75,6 +75,8 @@ export enum Feature {
     WorkerChartBuilder = 'WorkerChartBuilder',
     /** Option in entity menu that allows to see all related entities for the current entity */
     RelatedEntitiesList = 'RelatedEntitiesList',
+    /** Enable Isolated VM Sandbox */
+    EnableIsolatedSandbox = 'EnableIsolatedSandbox',
 }
 
 export type FeatureConfig = Record<string, boolean>;

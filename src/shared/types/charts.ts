@@ -50,6 +50,11 @@ export interface IChartEditor {
     getSharedData(): {[key: string]: object};
 
     /**
+     * Update shared data
+     */
+    setSharedData(override: Record<string, object | string>): void;
+
+    /**
      * Return dash widget config
      */
     getWidgetConfig(): DashWidgetConfig['widgetConfig'];
@@ -136,6 +141,13 @@ export interface IChartEditor {
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
     generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
+
+    attachHandler(
+        handlerConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitHandler: true};
+    attachFormatter(
+        formatterConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitFormatter: true};
 }
 
 export interface Link {
