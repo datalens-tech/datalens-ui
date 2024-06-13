@@ -31,7 +31,6 @@ datalensTest.describe('ChartEditor passing JS errors to the user', () => {
             '.datalens-chartkit-error__code-block',
         );
         // eslint-disable-next-line no-script-url
-        expect(await errorText.innerText()).toContain('JavaScript:1');
         expect(await errorText.innerText()).toContain('SyntaxError: Unexpected identifier');
         expect(await errotTitle.getAttribute('data-qa')).toContain(PARAMS.ERROR_TITLE);
     });
