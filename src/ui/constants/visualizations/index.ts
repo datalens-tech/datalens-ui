@@ -21,6 +21,7 @@ export * from './metric';
 export * from './combined-chart';
 export * from './scatter';
 export * from './bar-x';
+export * from './bar-y';
 
 import {BAR_X_D3_VISUALIZATION} from './bar-x';
 import {COMBINED_CHART_VISUALIZATION} from './combined-chart';

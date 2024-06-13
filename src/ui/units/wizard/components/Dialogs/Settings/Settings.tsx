@@ -114,6 +114,8 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.PIE_D3,
         VISUALIZATION_IDS.BAR_X_D3,
         WizardVisualizationId.DonutD3,
+        WizardVisualizationId.BarYD3,
+        WizardVisualizationId.BarY100pD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
