@@ -391,18 +391,19 @@ export const Control = ({
             source: {elementType},
         } = data as unknown as DashTabItemControlSingle;
 
-        const initialProps = {
+        const stubProps = {
             ...props,
             value: '',
             param: '',
+            onChange: () => {},
         };
         switch (elementType) {
             case DashTabItemControlElementType.Input:
-                return <ControlInput {...initialProps} type="input" />;
+                return <ControlInput {...stubProps} type="input" />;
             case DashTabItemControlElementType.Date:
-                return <ControlDatepicker {...initialProps} type="datepicker" />;
+                return <ControlDatepicker {...stubProps} type="datepicker" />;
             case DashTabItemControlElementType.Checkbox:
-                return <ControlCheckbox {...initialProps} type="checkbox" />;
+                return <ControlCheckbox {...stubProps} type="checkbox" />;
         }
 
         return null;
@@ -425,8 +426,6 @@ export const Control = ({
             style,
             renderOverlay,
             hint: controlData.source.showHint ? controlData.source.hint : undefined,
-
-            onChange: () => {},
         };
 
         if (elementType === DashTabItemControlElementType.Select) {

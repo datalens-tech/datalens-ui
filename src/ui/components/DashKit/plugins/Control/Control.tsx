@@ -424,7 +424,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const {workbookId} = this.props;
 
-            const payloadCanccelation = chartsDataProvider.getRequestCancellation();
+            const payloadCancellation = chartsDataProvider.getRequestCancellation();
 
             const payload = {
                 data: {
@@ -439,14 +439,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
                 },
-                cancelToken: payloadCanccelation.token,
+                cancelToken: payloadCancellation.token,
             };
 
             if (data.sourceType !== DashTabItemControlSourceType.External) {
                 this.cancelCurrentRequests();
             }
 
-            this._cancelSource = payloadCanccelation;
+            this._cancelSource = payloadCancellation;
 
             const response =
                 data.sourceType === DashTabItemControlSourceType.External
