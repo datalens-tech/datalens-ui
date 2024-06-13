@@ -347,7 +347,8 @@ export function getFiltersFields(
             return;
         }
 
-        const parsedFiltersOperation = resolveOperation(urlValue);
+        const defaultOperation = isDateField(foundItem) ? Operations.EQ : undefined;
+        const parsedFiltersOperation = resolveOperation(urlValue, defaultOperation);
 
         if (!parsedFiltersOperation) {
             return;

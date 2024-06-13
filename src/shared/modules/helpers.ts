@@ -62,6 +62,7 @@ export function decodeURISafe(uri: string) {
 }
 
 type PrepareFilterValuesArgs = {
+    field?: ServerField;
     values: string[];
 };
 
@@ -70,15 +71,21 @@ type PreparedFilterValues = {
     operations: Operations[];
 };
 
-export function prepareFilterValuesWithOperations({values}: PrepareFilterValuesArgs) {
-    return prepareArrayFilterValues({values});
+export function prepareFilterValuesWithOperations({values, field}: PrepareFilterValuesArgs) {
+    return prepareArrayFilterValues({values, field});
 }
 
 export function prepareFilterValues({values}: {values: string[]}): (string[] | string)[] {
     return prepareArrayFilterValues({values}).values;
 }
 
-function prepareArrayFilterValues({values}: {values: string[]}): PreparedFilterValues {
+function prepareArrayFilterValues({
+    field,
+    values,
+}: {
+    field?: ServerField;
+    values: string[];
+}): PreparedFilterValues {
     return values.reduce(
         (
             acc: {
@@ -87,7 +94,9 @@ function prepareArrayFilterValues({values}: {values: string[]}): PreparedFilterV
             },
             rawValue: string,
         ) => {
-            const parsedFiltersOperation = resolveOperation(rawValue);
+            const defaultOperation =
+                field && isDateField(field) && values.length === 1 ? Operations.EQ : undefined;
+            const parsedFiltersOperation = resolveOperation(rawValue, defaultOperation);
 
             if (!parsedFiltersOperation) {
                 acc.values.push(rawValue);
