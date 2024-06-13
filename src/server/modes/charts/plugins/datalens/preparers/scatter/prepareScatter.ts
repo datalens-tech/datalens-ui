@@ -8,9 +8,7 @@ import {
     POINT_SHAPES_IN_ORDER,
     getFormatOptions,
     isDateField,
-    isEnabledServerFeature,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import type {ChartColorsConfig} from '../../types';
 import type {ExtendedSeriesScatterOptions} from '../../utils/color-helpers';
 import {
@@ -59,7 +57,6 @@ export type PrepareScatterResult = {
 
 // eslint-disable-next-line complexity
 export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResult {
-    const app = registry.getApp();
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const {
         placeholders,
@@ -71,6 +68,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapes,
         shapesConfig,
         ChartEditor,
+        features,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -107,10 +105,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const yDataType = idToDataType[y.guid];
     const yIsNumber = isNumericalDataType(yDataType);
     const yIsDate = isDateField({data_type: yDataType});
-    const shouldEscapeUserValue = isEnabledServerFeature(
-        app.nodekit.ctx,
-        Feature.EscapeUserHtmlInDefaultHcTooltip,
-    );
+    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const cDataType = color && idToDataType[color.guid];
 

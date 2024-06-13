@@ -3,11 +3,16 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
+import Utils from 'ui/utils/utils';
 
 import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
 import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitleRow} from '../../Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
 import {CommonSettingsSection} from '../../Control2/Sections/CommonSettingsSection/CommonSettingsSection';
+import {InputTypeSelector} from '../../Control2/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
+import {OperationSelector} from '../../Control2/Sections/OperationSelector/OperationSelector';
+import {ValueSelector} from '../../Control2/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from '../../Control2/SelectorTypeSelect/SelectorTypeSelect';
 
 import './../GroupControl.scss';
@@ -22,6 +27,10 @@ export const GroupControlBody = () => {
                 <SelectorTypeSelect showExternalType={false} mode="select" />
             </FormRow>
             <div className={b('section')}>
+                <CommonSettingsSection hideCommonFields={true} />
+            </div>
+
+            <div className={b('section', {'top-divider': true})}>
                 <TitleRow />
             </div>
             <div className={b('section')}>
@@ -30,8 +39,16 @@ export const GroupControlBody = () => {
             <div className={b('section')}>
                 <HintRow />
             </div>
+            <div className={b('section', {'bottom-divider': true})}>
+                <InputTypeSelector />
+            </div>
+            {!Utils.isEnabledFeature(Feature.ConnectionBasedControl) && (
+                <div className={b('section')}>
+                    <OperationSelector />
+                </div>
+            )}
             <div className={b('section')}>
-                <CommonSettingsSection />
+                <ValueSelector />
             </div>
         </React.Fragment>
     );

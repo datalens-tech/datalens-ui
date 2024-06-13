@@ -1087,6 +1087,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     result_schema: resultSchemaNext,
                 },
                 updates: [...updates, update],
+                ui: {
+                    ...state.ui,
+                    isDatasetChanged: true,
+                },
             };
         }
         case UPDATE_RLS: {

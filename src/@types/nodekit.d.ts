@@ -55,6 +55,21 @@ export interface SharedAppConfig {
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;
+
+    isZitadelEnabled: boolean;
+
+    clientId?: string;
+    clientSecret?: string;
+
+    zitadelProjectId?: string;
+
+    zitadelUri?: string;
+    zitadelInternalUri?: string;
+    appHostUri?: string;
+    zitadelCookieSecret?: string;
+
+    serviceClientId?: string;
+    serviceClientSecret?: string;
 }
 
 export interface SharedAppDynamicConfig {

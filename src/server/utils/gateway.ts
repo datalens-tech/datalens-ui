@@ -6,7 +6,7 @@ import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
 import {AppError} from '@gravity-ui/nodekit';
 
 import {Feature, isEnabledServerFeature} from '../../shared';
-import {getAuthHeadersNone} from '../../shared/schema/gateway-utils';
+import {getAuthArgs, getAuthHeaders} from '../../shared/schema/gateway-utils';
 import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
 
 export type GatewayApiErrorResponse<T = GatewayError> = {
@@ -81,8 +81,8 @@ export const getGatewayConfig = (
         grpcOptions: useGrpcOptions ? GRPC_OPTIONS : undefined,
         axiosConfig,
         withDebugHeaders: false,
-        getAuthArgs: () => undefined,
-        getAuthHeaders: getAuthHeadersNone,
+        getAuthArgs,
+        getAuthHeaders,
         ErrorConstructor: AppError,
         ...(config || {}),
     };

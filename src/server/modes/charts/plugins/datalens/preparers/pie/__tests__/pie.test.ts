@@ -10,14 +10,6 @@ import {
     piePrepareBaseArgs,
 } from './mocks/pie.mock';
 
-jest.mock('../../../../../../../registry', () => ({
-    registry: {
-        getApp() {
-            return {nodekit: {ctx: {config: {features: {}}}}};
-        },
-    },
-}));
-
 describe('preparePie', () => {
     test('dimension + measure: colorizing', () => {
         const options = getPrepareFunctionArgs(

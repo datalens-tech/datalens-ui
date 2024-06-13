@@ -4,6 +4,7 @@ import type {ColumnDef, Row} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 
 import type {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
+import {getColumnWidth} from '../../utils';
 
 const b = block('dl-table');
 
@@ -38,7 +39,12 @@ export const TableBody = (props: Props) => {
         }
     };
 
-    const canUseFixedColumns = columns.some((col) => !col.meta?.width);
+    const columnOptions: Record<number, {width?: string | number}> = {};
+    rows[0]?.getVisibleCells().forEach((cell, index) => {
+        const width = getColumnWidth(cell.column);
+        columnOptions[index] = {width};
+    });
+
     return (
         <tbody className={b('body')}>
             {rows.map((row) => {
@@ -48,9 +54,8 @@ export const TableBody = (props: Props) => {
                     <tr key={row.id} className={b('tr')}>
                         {visibleCells.map((cell, index) => {
                             const originalHeadData = cell.column.columnDef.meta?.head;
-                            const width = canUseFixedColumns
-                                ? cell.column.columnDef.meta?.width
-                                : undefined;
+                            const width = columnOptions[index]?.width;
+
                             const isFixedSize = Boolean(width);
                             const originalCellData = cell.row.original[index];
                             const pinned = Boolean(originalHeadData?.pinned);

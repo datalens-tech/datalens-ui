@@ -20,8 +20,6 @@
         font-weight: 500;
     }
 
-    .g-root .editor-page div.yfm p img,
-    .g-root .app div.yfm p img,
     img {
         background: transparent;
     }
@@ -153,6 +151,13 @@
     .yfm-term_dfn {
         background: var(--g-color-base-float);
     }
+}
+
+// fix for reassign style by weight
+
+.g-root .editor-page div.yfm p img,
+.g-root .app div.yfm p img {
+    background: transparent;
 }
 
 .g-root_theme_dark .yfm,

@@ -502,6 +502,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     disabled={isLoading}
                     renderOption={renderOptions}
                     renderSelectedOption={renderOptions}
+                    popupWidth="fit"
                 />
 
                 <Filters
