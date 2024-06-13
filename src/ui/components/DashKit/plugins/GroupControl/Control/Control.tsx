@@ -51,6 +51,7 @@ import {clearLoaderTimer, getControlWidthStyle} from '../utils';
 import {getInitialState, reducer} from './store/reducer';
 import {
     setErrorData,
+    setIsInit,
     setLoadedData,
     setLoadingItems,
     setSilentLoader,
@@ -232,15 +233,13 @@ export const Control = ({
     };
 
     const reload = () => {
-        if (!isInit) {
-            return;
-        }
-
         clearLoaderTimer(silentLoaderTimer);
 
         if (data.source.elementType !== ELEMENT_TYPE.SELECT) {
             silentLoaderTimer = setTimeout(() => {
-                dispatch(setSilentLoader({silentLoading}));
+                if (isInit) {
+                    dispatch(setSilentLoader({silentLoading}));
+                }
             }, 800);
         }
 
@@ -250,6 +249,8 @@ export const Control = ({
     // cancel requests, transfer status and remove timer if component is unmounted or selector is
     // removed from group
     React.useEffect(() => {
+        dispatch(setIsInit({isInit: true}));
+
         return () => {
             if (!isMounted()) {
                 clearLoaderTimer(silentLoaderTimer);
