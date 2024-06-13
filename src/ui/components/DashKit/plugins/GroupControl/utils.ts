@@ -20,12 +20,6 @@ export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
     }
 };
 
-export const cancelCurrentRequests = (cancelSource: any) => {
-    if (cancelSource) {
-        cancelSource.cancel('DASHKIT_CONTROL_CANCEL_CURRENT_REQUESTS');
-    }
-};
-
 export const addItemToLocalQueue = (queue: QueueItem[], widgetId: string, groupItemId: string) => {
     const updatedQueue = queue.filter((queueItem) => queueItem.groupItemId !== groupItemId);
 
