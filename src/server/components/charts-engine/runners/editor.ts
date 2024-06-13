@@ -4,7 +4,8 @@ import {isObject} from 'lodash';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
-import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
+// import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
+import {getIsolatedSandboxChartBuilder} from '../components/processor/isolatedSandbox/isolated-sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
@@ -32,7 +33,16 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getSandboxChartBuilder({
+    // const chartBuilder = await getSandboxChartBuilder({
+    //     userLang: res.locals && res.locals.lang,
+    //     userLogin: res.locals && res.locals.login,
+    //     widgetConfig,
+    //     config,
+    //     isScreenshoter: Boolean(req.headers['x-charts-scr']),
+    //     chartsEngine,
+    // });
+
+    const chartBuilder = await getIsolatedSandboxChartBuilder({
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,
@@ -40,6 +50,7 @@ export const runEditor = async (
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
     });
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
