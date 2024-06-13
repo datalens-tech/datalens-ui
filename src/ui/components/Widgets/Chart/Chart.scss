@@ -58,6 +58,7 @@ $fullscreenZIndex: 999;
 
     .chartkit {
         overflow: visible;
+        min-height: 0;
     }
 
     &__container {
