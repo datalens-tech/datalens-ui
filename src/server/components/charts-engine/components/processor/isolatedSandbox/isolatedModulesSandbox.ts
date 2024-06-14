@@ -15,6 +15,8 @@ const {
     TABLE_OVERSIZE,
 } = config;
 
+const DEFAULT_USER_LANG = 'ru';
+
 type ProcessModuleParams = {
     name: string;
     code: string;
@@ -47,6 +49,7 @@ export class SandboxError extends Error {
 
 type ExecuteParams = {
     code: string;
+    userLang: string | null;
     isScreenshoter: boolean;
     name: string;
     timeout: number;
@@ -56,12 +59,13 @@ type ExecuteParams = {
 export type ModulesSandboxExecuteResult = {
     executionTiming: [number, number];
     logs: {type: string; value: string}[][];
-    name: string;
+    filename: string;
     stackTrace?: string;
 };
 
 const execute = async ({
     code,
+    userLang = DEFAULT_USER_LANG,
     name,
     isScreenshoter,
     timeout,
@@ -86,20 +90,25 @@ const execute = async ({
 
     try {
         const prepare = `
-           const console = {log};
-           const modules = {};
-           function require(name) => {
+           const console = {log};   
+           const exports = {};
+           const module = {exports};
+           const ChartEditor = {
+                getUserLang: () => "${userLang}"
+           };
+           
+           function require(name) {
                const lowerName = name.toLowerCase();
                if (modules[lowerName]) {
-                   return extractedModules[lowerName];
+                   return modules[lowerName];
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
            };
            `;
 
-        const after = ` modules[${name}] = module.exports`;
-        context.evalSync(prepare + code + after, {timeout});
+        const after = ` modules["${name}"] = module.exports`;
+        context.evalClosureSync(prepare + code + after, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -131,16 +140,23 @@ const execute = async ({
 
     return {
         executionTiming,
-        name,
+        filename: name,
         logs: console.getLogs(),
     };
 };
 
 const MODULE_PROCESSING_TIMEOUT = 500;
 
-export const processModule = async ({name, code, isScreenshoter, context}: ProcessModuleParams) => {
+export const processModule = async ({
+    name,
+    code,
+    userLang,
+    isScreenshoter,
+    context,
+}: ProcessModuleParams) => {
     return execute({
         code,
+        userLang,
         isScreenshoter,
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,

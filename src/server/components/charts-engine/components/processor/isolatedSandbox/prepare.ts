@@ -52,5 +52,7 @@ ChartEditor.getWidgetConfig = () => JSON.parse(_widgetConfig);
 ChartEditor.getSharedData = () => JSON.parse(_shared);
 ChartEditor.getLoadedData = () => JSON.parse(_getLoadedData);
 ChartEditor.getSortParams = () => JSON.parse(_getSortParams());
+ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
 
-const module = {};`;
+const exports = {};
+const module = {exports};`;

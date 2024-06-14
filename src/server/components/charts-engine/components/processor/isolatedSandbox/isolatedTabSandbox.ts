@@ -1,5 +1,3 @@
-import type vm from 'vm';
-
 import type IsolatedVM from 'isolated-vm';
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../../shared';
@@ -17,7 +15,6 @@ import {getChartApiContext} from './../chart-api-context';
 import {Console} from './../console';
 import type {LogItem} from './../console';
 import {getSortParams} from './../paramsUtils';
-import type {NativeModule} from './../types';
 import {prepare} from './prepare';
 const {
     RUNTIME_ERROR,
@@ -88,9 +85,8 @@ const generateInstance = ({
     context = {},
     userLogin,
     userLang = DEFAULT_USER_LANG,
-    nativeModules,
     isScreenshoter,
-}: GenerateInstanceParams): vm.Context => {
+}: GenerateInstanceParams): NodeJS.Dict<any> => {
     const moduleObject = getOrphanedObject();
     moduleObject.exports = getOrphanedObject();
 
@@ -102,28 +98,8 @@ const generateInstance = ({
     ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
     const instance = {
-        module: moduleObject,
-        exports: moduleObject.exports,
         console: new Console({isScreenshoter}),
         ChartEditor,
-        Set,
-        Map,
-        require: (name: string) => {
-            const lowerName = name.toLowerCase();
-            if (nativeModules[lowerName]) {
-                const requiredNativeModule = nativeModules[lowerName] as NativeModule;
-
-                if (requiredNativeModule.setConsole) {
-                    requiredNativeModule.setConsole(instance.console);
-                }
-
-                return requiredNativeModule;
-                // } else if (modules[lowerName]) {
-                //     return modules[lowerName];
-            } else {
-                throw new Error(`Module "${lowerName}" is not resolved`);
-            }
-        },
     };
 
     const runtimeHelpers = Object.assign(
@@ -141,7 +117,7 @@ const generateInstance = ({
 
 type ExecuteParams = {
     code: string;
-    instance: vm.Context;
+    instance: NodeJS.Dict<any>;
     filename: string;
     timeout: number;
     context: IsolatedVM.Context;
@@ -214,6 +190,7 @@ const execute = async ({
             widgetConfig: instance.ChartEditor.getWidgetConfig
                 ? instance.ChartEditor.getWidgetConfig()
                 : null,
+            ChartEditor: instance.ChartEditor,
         });
 
         getLibsDatalensV3({jail, chartEditorApi: instance.ChartEditor});
@@ -333,6 +310,7 @@ function prepareChartEditorApi({
     params,
     widgetConfig,
     actionParams,
+    ChartEditor,
 }: {
     name: string;
     jail: IsolatedVM.Reference;
@@ -341,6 +319,7 @@ function prepareChartEditorApi({
     params: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig: DashWidgetConfig['widgetConfig'];
+    ChartEditor: NodeJS.Dict<any>;
 }) {
     jail.setSync('_shared', JSON.stringify(shared));
     jail.setSync('_params', JSON.stringify(params));
@@ -358,6 +337,12 @@ function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_getLoadedData', JSON.stringify(loadedData));
+        if (name === 'JavaScript') {
+            jail.setSync('_ChartEditor_updateHighchartsConfig', (updatedFragment: string) => {
+                const parsedUpdatedFragment = JSON.parse(updatedFragment);
+                ChartEditor.updateHighchartsConfig(parsedUpdatedFragment);
+            });
+        }
     }
     return jail;
 }

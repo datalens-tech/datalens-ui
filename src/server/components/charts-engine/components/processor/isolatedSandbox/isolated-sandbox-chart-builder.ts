@@ -5,9 +5,9 @@ import {EDITOR_TYPE_CONFIG_TABS} from '../../../../../../shared';
 import type {ChartsEngine} from '../../../index';
 import type {ResolvedConfig} from '../../storage/types';
 import {Processor} from '../index';
-import type {SandboxExecuteResult} from '../sandbox';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
 
+import type {ModulesSandboxExecuteResult} from './isolatedModulesSandbox';
 import {IsolatedSandbox} from './isolatedSandbox';
 
 const ONE_SECOND = 1000;
@@ -23,15 +23,6 @@ type IsolatedSandboxChartBuilderArgs = {
     workbookId?: string;
 };
 
-// const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
-//     const extracted = Object.keys(modules).reduce<Record<string, object>>((acc, moduleName) => {
-//         acc[moduleName] = modules[moduleName].exports as object;
-//         return acc;
-//     }, {});
-
-//     return extracted;
-// };
-
 export const getIsolatedSandboxChartBuilder = async (
     args: IsolatedSandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
@@ -39,9 +30,9 @@ export const getIsolatedSandboxChartBuilder = async (
         args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-    const isolate = new ivm.Isolate({memoryLimit: 128});
+    const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    // runtime.setMemoryLimit(1024 * 1024 * 10);
+    context.evalSync('const modules = {}');
 
     return {
         dispose: () => {
@@ -61,10 +52,10 @@ export const getIsolatedSandboxChartBuilder = async (
                 workbookId,
             })) as ResolvedConfig[];
 
-            const processedModules: Record<string, SandboxExecuteResult> = {};
+            const processedModules: Record<string, ModulesSandboxExecuteResult> = {};
             for await (const resolvedModule of resolvedModules) {
                 const name = resolvedModule.key;
-                await IsolatedSandbox.processModule({
+                const result = await IsolatedSandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
                     userLogin,
@@ -73,13 +64,9 @@ export const getIsolatedSandboxChartBuilder = async (
                     isScreenshoter,
                     context,
                 });
-                onModuleBuild(processedModules[name]);
+                onModuleBuild(result);
+                processedModules[name] = result;
             }
-
-            // Object.keys(processedModules).forEach((moduleName) => {
-            //     const module = processedModules[moduleName];
-            //     modules[moduleName] = module.exports;
-            // });
 
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },
