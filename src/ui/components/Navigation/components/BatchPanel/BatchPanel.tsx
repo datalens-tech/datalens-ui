@@ -6,7 +6,7 @@ import {FolderArrowDown, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
-import {BatchAction} from '../../types';
+import type {BatchAction} from '../../types';
 
 const i18n = I18n.keyset('component.navigation.view');
 
@@ -28,12 +28,12 @@ export const BatchPanel = ({count, className, onAction, onClose}: BatchPanelProp
                             <Icon key="icon" data={FolderArrowDown} size="16" />,
                             i18n('button_move'),
                         ],
-                        onClick: () => onAction(BatchAction.Move),
+                        onClick: () => onAction('move'),
                     },
                 },
                 dropdown: {
                     item: {
-                        action: () => onAction(BatchAction.Move),
+                        action: () => onAction('move'),
                         text: i18n('button_move'),
                     },
                 },
@@ -46,12 +46,12 @@ export const BatchPanel = ({count, className, onAction, onClose}: BatchPanelProp
                             <Icon key="icon" data={TrashBin} size="16" />,
                             i18n('button_delete'),
                         ],
-                        onClick: () => onAction(BatchAction.Delete),
+                        onClick: () => onAction('delete'),
                     },
                 },
                 dropdown: {
                     item: {
-                        action: () => onAction(BatchAction.Delete),
+                        action: () => onAction('delete'),
                         text: i18n('button_delete'),
                     },
                 },

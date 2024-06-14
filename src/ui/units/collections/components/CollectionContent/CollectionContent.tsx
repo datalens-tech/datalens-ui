@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
-import {BatchAction} from 'ui/components/Navigation/types';
+import type {BatchAction} from 'ui/components/Navigation/types';
 import {isMobileView} from 'ui/utils/mobile';
 
 import type {
@@ -100,9 +100,9 @@ export const CollectionContent: React.FC<Props> = ({
 
     const onAction = React.useCallback(
         (action: BatchAction) => {
-            if (action === BatchAction.Move) {
+            if (action === 'move') {
                 onMoveSelectedEntitiesClick();
-            } else if (action === BatchAction.Delete) {
+            } else if (action === 'delete') {
                 onDeleteSelectedEntitiesClick();
             }
         },
