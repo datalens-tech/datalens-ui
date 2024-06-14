@@ -146,16 +146,9 @@ export function getSelectorDialogFromData(data, defaults) {
 }
 
 export function getSelectorGroupDialogFromData(data) {
-    const items = Object.values(data.group).map(getSelectorDialogFromData);
-
     return {
-        autoHeight: data.autoHeight,
-        buttonApply: data.buttonApply,
-        buttonReset: data.buttonReset,
-
-        updateControlsOnChange: data.updateControlsOnChange,
-
-        group: items,
+        ...data,
+        group: data.group.map(getSelectorDialogFromData),
     };
 }
 
