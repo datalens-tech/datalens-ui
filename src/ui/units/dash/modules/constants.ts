@@ -1,5 +1,7 @@
 import {ShareOptions} from '@gravity-ui/components';
 
+import {ITEM_TYPE} from '../containers/Dialogs/constants';
+
 export const LOCK_DURATION = 5 * 60 * 1000;
 export const LOCK_EXTEND_TIMEOUT = 4 * 60 * 1000;
 export const EMPTY_VALUE = '—';
@@ -74,3 +76,5 @@ export enum Mode {
 }
 
 export const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
+
+export const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];

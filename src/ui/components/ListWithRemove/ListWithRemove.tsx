@@ -4,7 +4,6 @@ import {Xmark} from '@gravity-ui/icons';
 import type {ButtonSize, ListProps} from '@gravity-ui/uikit';
 import {Button, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import isEqual from 'lodash/isEqual';
 import {TabMenuQA} from 'shared';
 
 import './ListWithRemove.scss';
@@ -16,7 +15,7 @@ export interface ListWithRemoveProps<T> {
     /* * Properties of the List component*/
     list: ListProps<T>;
     /* * Callback to delete an element*/
-    onRemove: (item: T, list: T[]) => void;
+    onRemove: (item: number) => void;
     /* * Do not show the delete button if there is only one item in the list*/
     disableSingleItemRemove?: boolean;
     /* * Size of the delete icon*/
@@ -45,12 +44,7 @@ export const ListWithRemove = <T extends object | string>({
                         qa={TabMenuQA.ItemRemove}
                         view="flat"
                         size={iconSize}
-                        onClick={() =>
-                            onRemove(
-                                item,
-                                list.items.filter((listItem) => !isEqual(listItem, item)),
-                            )
-                        }
+                        onClick={() => onRemove(itemIndex)}
                     >
                         <Icon data={Xmark} />
                     </Button>

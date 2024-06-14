@@ -1,6 +1,7 @@
 {
-  "button_add-selector": "Добавить селектор",
+  "button_add-selector": "Добавить",
   "button_cancel": "Отменить",
+  "button_paste-selector": "Вставить",
   "button_save": "Сохранить",
   "button_selectors-placement": "Размещение селекторов",
   "context_apply-button": "Опция включает кнопку для применения селекторов",
