@@ -146,9 +146,7 @@ export function getSelectorDialogFromData(data, defaults) {
 }
 
 export function getSelectorGroupDialogFromData(data) {
-    const items = Object.values(data.group)
-        .map((item) => getSelectorDialogFromData(item))
-        .sort((a, b) => a.index - b.index);
+    const items = Object.values(data.group).map(getSelectorDialogFromData);
 
     return {
         autoHeight: data.autoHeight,
