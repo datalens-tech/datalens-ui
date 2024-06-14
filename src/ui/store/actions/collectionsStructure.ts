@@ -5,7 +5,12 @@ import type {DatalensGlobalState} from 'index';
 import {waitOperation} from '../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
 
-import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../constants/collectionsStructure';
+import type {
+    DELETE_COLLECTIONS_FAILED,
+    DELETE_COLLECTIONS_LOADING,
+    DELETE_COLLECTIONS_SUCCESS,
+    GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
+} from '../constants/collectionsStructure';
 import {
     RESET_STATE,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
@@ -81,6 +86,7 @@ import type {
     DeleteCollectionResponse,
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
+    DeleteCollectionsResponse,
 } from '../../../shared/schema';
 
 type ResetStateAction = {
@@ -566,6 +572,69 @@ export const createWorkbook = ({
 
                 dispatch({
                     type: CREATE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type DeleteCollectionsLoadingAction = {
+    type: typeof DELETE_COLLECTIONS_LOADING;
+};
+type DeleteCollectionsSuccessAction = {
+    type: typeof DELETE_COLLECTIONS_SUCCESS;
+    data: DeleteCollectionsResponse;
+};
+type DeleteCollectionsFailedAction = {
+    type: typeof DELETE_COLLECTIONS_FAILED;
+    error: Error | null;
+};
+type DeleteCollectionsAction =
+    | DeleteCollectionsLoadingAction
+    | DeleteCollectionsSuccessAction
+    | DeleteCollectionsFailedAction;
+
+export const deleteCollections = ({
+    collectionIds,
+    parentId,
+}: {
+    collectionIds: string[];
+    parentId: string | null;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: MOVE_COLLECTIONS_LOADING,
+        });
+
+        return getSdk()
+            .us.moveCollections({
+                collectionIds,
+                parentId,
+            })
+            .then((data) => {
+                dispatch({
+                    type: MOVE_COLLECTIONS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/moveCollections failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: MOVE_COLLECTIONS_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -1240,6 +1309,7 @@ export type CollectionsStructureAction =
     | MoveWorkbookAction
     | MoveCollectionsAction
     | MoveWorkbooksAction
+    | DeleteCollectionsAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
     | UpdateCollectionAction

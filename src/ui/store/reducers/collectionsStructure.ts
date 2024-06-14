@@ -154,6 +154,11 @@ export type CollectionsStructureState = {
         data: DeleteCollectionResponse | null;
         error: Error | null;
     };
+    deleteCollections: {
+        isLoading: boolean;
+        data: DeleteCollectionResponse | null;
+        error: Error | null;
+    };
     deleteWorkbook: {
         isLoading: boolean;
         data: DeleteWorkbookResponse | null;
@@ -239,6 +244,11 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     deleteCollection: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    deleteCollections: {
         isLoading: false,
         data: null,
         error: null,

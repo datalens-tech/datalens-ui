@@ -60,6 +60,11 @@ export const CREATE_WORKBOOK_LOADING = Symbol('collectionsStructure/CREATE_WORKB
 export const CREATE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/CREATE_WORKBOOK_SUCCESS');
 export const CREATE_WORKBOOK_FAILED = Symbol('collectionsStructure/CREATE_WORKBOOK_FAILED');
 
+// Delete collections
+export const DELETE_COLLECTIONS_LOADING = Symbol('collectionsStructure/DELETE_COLLECTIONS_LOADING');
+export const DELETE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/DELETE_COLLECTIONS_SUCCESS');
+export const DELETE_COLLECTIONS_FAILED = Symbol('collectionsStructure/DELETE_COLLECTIONS_FAILED');
+
 // Moving collections
 export const MOVE_COLLECTIONS_LOADING = Symbol('collectionsStructure/MOVE_COLLECTIONS_LOADING');
 export const MOVE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTIONS_SUCCESS');
