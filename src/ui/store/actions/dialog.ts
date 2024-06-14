@@ -21,10 +21,13 @@ export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');
 export const CLOSE_DIALOG = Symbol('dialog/CLOSE_DIALOG');
 export const SET_CONFIRM_DIALOG_LOADING_STATUS = Symbol('dialog/SET_CONFIRM_DIALOG_LOADING_STATUS');
 
-export type OpenDialogAction = {
+export type OpenDialogOptions = {singleton?: boolean};
+
+export type OpenDialogAction = OpenDialogOptions & {
     type: typeof OPEN_DIALOG;
     id: symbol;
     props?: any;
+    options?: OpenDialogOptions;
 };
 
 export type CloseDialogAction = {
@@ -37,11 +40,15 @@ export type UpdateDialogStateAction = {
     props?: any;
 };
 
-export const openDialog = <T extends unknown>(args: OpenDialogArgs<T>): OpenDialogAction => {
+export const openDialog = <T extends unknown>(
+    args: OpenDialogArgs<T>,
+    options?: OpenDialogOptions,
+): OpenDialogAction => {
     return {
         type: OPEN_DIALOG,
         id: args.id,
         props: args.props,
+        ...(options ? {options} : {}),
     };
 };
 

@@ -11,11 +11,22 @@ const getInitialDialogState = (): DialogState => ({
 
 function dialog(state: DialogState = getInitialDialogState(), action: DialogAction): DialogState {
     switch (action.type) {
-        case OPEN_DIALOG:
+        case OPEN_DIALOG: {
+            let dialogs: DialogState['dialogs'];
+
+            if (action.options?.singleton) {
+                dialogs = state.dialogs.filter(({id}) => id !== action.id);
+            } else {
+                dialogs = [...state.dialogs];
+            }
+
+            dialogs.push({id: action.id, props: action.props});
+
             return {
                 ...state,
-                dialogs: [...state.dialogs, {id: action.id, props: action.props}],
+                dialogs,
             };
+        }
 
         case CLOSE_DIALOG: {
             return {
