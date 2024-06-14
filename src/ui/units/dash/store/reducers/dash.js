@@ -421,22 +421,22 @@ function dash(state = initialState, action) {
 
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
-                openedDialog === 'control' &&
+                openedDialog === DashTabItemType.Control &&
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data);
 
                 // migration forward to group
-                openedDialog = 'group_control';
+                openedDialog = DashTabItemType.GroupControl;
                 newState.selectorsGroup = {
                     ...getGroupSelectorDialogInitialState(),
                     group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;
-            } else if (openedDialog === 'group_control') {
+            } else if (openedDialog === DashTabItemType.GroupControl) {
                 newState.selectorsGroup = getSelectorGroupDialogFromData(data);
                 newState.selectorDialog = newState.selectorsGroup.group[0];
-            } else if (openedDialog === 'control') {
+            } else if (openedDialog === DashTabItemType.Control) {
                 newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 

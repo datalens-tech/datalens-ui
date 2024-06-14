@@ -1936,7 +1936,7 @@ function processWidget(args: ProcessWidgetArgs) {
                 urlSearchParams,
                 datasets.reduce(
                     (acc, dataset) => [...acc, ...getResultSchemaFromDataset(dataset)],
-                    [] as DatasetField[],
+                    [] as Field[],
                 ),
             );
             const preparedFiltersParams = prepareUrlParams(filtersParams);

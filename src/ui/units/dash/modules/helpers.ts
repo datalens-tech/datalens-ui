@@ -180,7 +180,7 @@ export function deepAssign(...args: any) {
     });
 }
 
-export const stringifyMemoize = (func: (...args: unknown[]) => unknown) =>
+export const stringifyMemoize = <T = unknown>(func: (...args: any[]) => T) =>
     memoize(func, (...args) => JSON.stringify(args));
 
 export const getHashStateParam = (hashStates: TabsHashStates | null | undefined, tabId: string) => {
