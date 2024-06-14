@@ -58,7 +58,7 @@ $fullscreenZIndex: 999;
 
     .chartkit {
         overflow: visible;
-        min-height: 40px;
+        min-height: 0;
     }
 
     &__container {
@@ -185,6 +185,10 @@ $fullscreenZIndex: 999;
         &#{$class}_wait-for-init {
             opacity: 0;
             min-height: 1px;
+        }
+
+        .chartkit {
+            min-height: 40px;
         }
 
         // block below: without tabs, maps and metrics

@@ -223,6 +223,9 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
+    get ZITADEL_ENABLED() {
+        return window.DL.isZitadelEnabled === true;
+    },
 };
 
 export const LIGHT_THEME = 'light';

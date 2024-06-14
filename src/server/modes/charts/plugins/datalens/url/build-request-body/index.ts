@@ -65,7 +65,7 @@ function formatParamsFilters({
     datasetId,
 }: {
     datasetId: string;
-    datasetSchema: ServerDatasetField[];
+    datasetSchema: (ServerDatasetField | ServerField)[];
     links: Link[];
     params: StringParams;
 }) {
@@ -96,7 +96,10 @@ function formatParamsFilters({
                 (item) => item.guid === param || item.title === param,
             );
 
-            const valuesWithOperations = prepareFilterValuesWithOperations({values});
+            const valuesWithOperations = prepareFilterValuesWithOperations({
+                values,
+                field: foundField as ServerField,
+            });
 
             let guid = param;
 

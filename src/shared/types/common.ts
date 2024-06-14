@@ -202,6 +202,7 @@ export type DLGlobalData = {
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
+    isZitadelEnabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
