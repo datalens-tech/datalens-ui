@@ -47,7 +47,10 @@ export type ItemSelectArgs = {
     selectedItemsIds: Set<string>;
 };
 
-export type BatchAction = 'move';
+export enum BatchAction {
+    Move = 'move',
+    Delete = 'delete',
+}
 
 export type ChangeLocation = (place: string, path: string) => void;
 

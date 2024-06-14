@@ -48,6 +48,7 @@ export const CollectionPage = () => {
     const {
         selectedMap,
         selectedMapWithMovePermission,
+        selectedMapWithDeletePermission,
         itemsAvailableForSelection,
         isOpenSelectionMode,
         openSelectionMode,
@@ -150,6 +151,47 @@ export const CollectionPage = () => {
         fetchCollectionContent,
     ]);
 
+    const handleDeleteSelectedEntities = React.useCallback(() => {
+        const workbookIds: string[] = [];
+        const collectionIds: string[] = [];
+
+        Object.keys(selectedMapWithDeletePermission).forEach((key) => {
+            const type = selectedMap[key];
+            if (type === 'workbook') {
+                workbookIds.push(key);
+            } else {
+                collectionIds.push(key);
+            }
+        });
+
+        dispatch(
+            openDialog({
+                id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+                props: {
+                    open: true,
+                    onApply: () => {
+                        closeSelectionMode();
+                        resetSelected();
+                        fetchCollectionContent();
+                    },
+                    onClose: handeCloseMoveDialog,
+                    initialParentId: collection?.collectionId,
+                    workbookIds,
+                    collectionIds,
+                },
+            }),
+        );
+    }, [
+        selectedMapWithDeletePermission,
+        dispatch,
+        handeCloseMoveDialog,
+        collection?.collectionId,
+        selectedMap,
+        closeSelectionMode,
+        resetSelected,
+        fetchCollectionContent,
+    ]);
+
     useLayout({
         curCollectionId,
         filters,
@@ -229,6 +271,7 @@ export const CollectionPage = () => {
                         });
                     }}
                     onMoveSelectedEntitiesClick={handleMoveSelectedEntities}
+                    onDeleteSelectedEntitiesClick={handleDeleteSelectedEntities}
                     resetSelected={resetSelected}
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}

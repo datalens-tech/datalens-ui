@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
+import {BatchAction} from 'ui/components/Navigation/types';
 import {isMobileView} from 'ui/utils/mobile';
 
 import type {
@@ -54,6 +55,7 @@ interface Props {
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
     onMoveSelectedEntitiesClick: () => void;
+    onDeleteSelectedEntitiesClick: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
@@ -73,6 +75,7 @@ export const CollectionContent: React.FC<Props> = ({
     onCreateWorkbookClick,
     onClearFiltersClick,
     onMoveSelectedEntitiesClick,
+    onDeleteSelectedEntitiesClick,
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
@@ -94,6 +97,17 @@ export const CollectionContent: React.FC<Props> = ({
             setWaypointDisabled(true);
         }
     }, [collectionContentError]);
+
+    const onAction = React.useCallback(
+        (action: BatchAction) => {
+            if (action === BatchAction.Move) {
+                onMoveSelectedEntitiesClick();
+            } else if (action === BatchAction.Delete) {
+                onDeleteSelectedEntitiesClick();
+            }
+        },
+        [onDeleteSelectedEntitiesClick, onMoveSelectedEntitiesClick],
+    );
 
     const onWaypointEnter = React.useCallback(() => {
         if (
@@ -224,7 +238,7 @@ export const CollectionContent: React.FC<Props> = ({
                 <div className={b('batch-panel-placeholder')}>
                     <BatchPanel
                         count={Object.keys(selectedMap).length}
-                        onAction={onMoveSelectedEntitiesClick}
+                        onAction={onAction}
                         className={b('batch-panel')}
                         onClose={resetSelected}
                     />
