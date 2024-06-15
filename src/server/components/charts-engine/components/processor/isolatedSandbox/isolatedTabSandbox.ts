@@ -2,19 +2,21 @@ import type IsolatedVM from 'isolated-vm';
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
-import type {IChartEditor, Shared} from '../../../../../../shared/types';
+import type {Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
-import {datalensModule} from '../../../../../modes/charts/plugins/datalens/module';
 import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 
-import controlModule from './../../../../../modes/charts/plugins/control';
-import datasetModule from './../../../../../modes/charts/plugins/dataset/v2';
-import qlModule from './../../../../../modes/charts/plugins/ql/module';
 import {getChartApiContext} from './../chart-api-context';
 import {Console} from './../console';
 import type {LogItem} from './../console';
 import {getSortParams} from './../paramsUtils';
+import {
+    libsControlV1Interop,
+    libsDatalensV3Interop,
+    libsDatasetV2Interop,
+    libsQlChartV1Interop,
+} from './interop';
 import {prepare} from './prepare';
 const {
     RUNTIME_ERROR,
@@ -193,10 +195,10 @@ const execute = async ({
             ChartEditor: instance.ChartEditor,
         });
 
-        getLibsDatalensV3({jail, chartEditorApi: instance.ChartEditor});
-        getLibsControlV1({jail, chartEditorApi: instance.ChartEditor});
-        getLibsQlChartV1({jail, chartEditorApi: instance.ChartEditor});
-        getLibsDatasetV2({jail, chartEditorApi: instance.ChartEditor});
+        libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
+        libsControlV1Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
+        libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
+        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
         timeStart = process.hrtime();
 
         sandboxResult = context.evalClosureSync(
@@ -344,165 +346,5 @@ function prepareChartEditorApi({
             });
         }
     }
-    return jail;
-}
-
-function getLibsDatalensV3({
-    jail,
-    chartEditorApi,
-}: {
-    jail: IsolatedVM.Reference;
-    chartEditorApi: IChartEditor;
-}) {
-    jail.setSync('_libsDatalensV3_buildSources', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildSources>[0];
-        const result = datalensModule.buildSources(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatalensV3_buildChartsConfig', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildChartsConfig>[0];
-        const result = datalensModule.buildChartsConfig(parsedArg, {});
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatalensV3_buildGraph', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildGraph>[0];
-        if ('shared' in parsedArg[0]) {
-            parsedArg[0].ChartEditor = chartEditorApi;
-        } else {
-            parsedArg[2] = chartEditorApi;
-        }
-
-        const result = datalensModule.buildGraph(...parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatalensV3_buildHighchartsConfig', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<
-            typeof datalensModule.buildHighchartsConfig
-        >[0];
-        const result = datalensModule.buildHighchartsConfig(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatalensV3_buildD3Config', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildD3Config>[0];
-        const result = datalensModule.buildD3Config(parsedArg);
-        return JSON.stringify(result);
-    });
-    return jail;
-}
-
-function getLibsControlV1({
-    jail,
-    chartEditorApi,
-}: {
-    jail: IsolatedVM.Reference;
-    chartEditorApi: IChartEditor;
-}) {
-    jail.setSync('_libsControlV1_buildSources', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildSources>[0];
-        const result = controlModule.buildSources(parsedArg);
-        chartEditorApi.setSharedData(parsedArg.shared);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsControlV1_buildGraph', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildGraph>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        controlModule.buildGraph(parsedArg);
-        chartEditorApi.setSharedData(parsedArg.shared);
-    });
-
-    jail.setSync('_libsControlV1_buildUI', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildUI>[0];
-        const result = controlModule.buildUI(parsedArg);
-        chartEditorApi.setSharedData(parsedArg.shared);
-        return JSON.stringify(result);
-    });
-
-    return jail;
-}
-function getLibsQlChartV1({
-    jail,
-    chartEditorApi,
-}: {
-    jail: IsolatedVM.Reference;
-    chartEditorApi: IChartEditor;
-}) {
-    jail.setSync('_libsQlChartV1_buildSources', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildSources>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        const result = qlModule.buildSources(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsQlChartV1_buildGraph', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildGraph>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        const result = qlModule.buildGraph(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsQlChartV1_buildLibraryConfig', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildLibraryConfig>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        const result = qlModule.buildLibraryConfig(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsQlChartV1_buildChartsConfig', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildChartsConfig>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        const result = qlModule.buildChartsConfig(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsQlChartV1_buildD3Config', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildD3Config>[0];
-        parsedArg.ChartEditor = chartEditorApi;
-        const result = qlModule.buildD3Config(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    return jail;
-}
-
-function getLibsDatasetV2({
-    jail,
-    chartEditorApi,
-}: {
-    jail: IsolatedVM.Reference;
-    chartEditorApi: IChartEditor;
-}) {
-    jail.setSync('_libsDatasetV2_buildSources', (arg: string) => {
-        const parsedArg = JSON.parse(arg) as Parameters<typeof datasetModule.buildSource>[0];
-        const result = datasetModule.buildSource(parsedArg);
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatasetV2_processTableData', (params: string) => {
-        const parsedParams = JSON.parse(params) as Parameters<
-            typeof datasetModule.processTableData
-        >;
-        const result = datasetModule.processTableData(...parsedParams);
-        return JSON.stringify(result);
-    });
-    jail.setSync('_libsDatasetV2_processData', (params: string) => {
-        const parsedParams = JSON.parse(params) as Parameters<typeof datasetModule.processData>;
-        const result = datasetModule.processData(
-            parsedParams[0],
-            parsedParams[1],
-            chartEditorApi,
-            parsedParams[2],
-        );
-        return JSON.stringify(result);
-    });
-
-    jail.setSync('_libsDatasetV2_OPERATIONS', JSON.stringify(datasetModule.OPERATIONS));
-
-    jail.setSync('_libsDatasetV2_ORDERS', JSON.stringify(datasetModule.ORDERS));
-
     return jail;
 }
