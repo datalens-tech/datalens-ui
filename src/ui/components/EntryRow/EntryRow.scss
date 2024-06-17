@@ -17,14 +17,15 @@
     }
 
     &__text-block {
-        @include text-body-1;
-        margin-left: 10px;
-        display: flex;
+        @include overflow-ellipsis;
         overflow: hidden;
+        display: flex;
     }
 
     &__name {
+        @include text-body-1;
         @include overflow-ellipsis;
+        margin-left: 10px;
     }
 
     &__entry {

@@ -63,7 +63,7 @@ export const EntryRow = ({
                 />
                 {nonInteractive ? (
                     <React.Fragment>
-                        <div className={b('text-block')} title={entryName}>
+                        <div className={b('name')} title={entryName}>
                             {entryName}
                             {renderLock()}
                         </div>
