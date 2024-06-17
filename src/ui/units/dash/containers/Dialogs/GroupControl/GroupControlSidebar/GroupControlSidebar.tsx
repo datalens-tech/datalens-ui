@@ -6,8 +6,10 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DialogGroupControlQa} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -15,13 +17,18 @@ import {
 } from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
+    getSelectorDialogFromData,
+    getSelectorGroupDialogFromData,
+} from 'ui/units/dash/store/reducers/dash';
+import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
 import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
-import type {ListState} from '../../Widget/TabMenu/TabMenu';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
+import type {TabMenuItemData, UpdateState} from '../../Widget/TabMenu/types';
+import {TabActionType} from '../../Widget/TabMenu/types';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';
@@ -33,6 +40,32 @@ const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
     autoHeight: false,
+};
+
+const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
+    if (
+        pasteConfig &&
+        isItemPasteAllowed(pasteConfig, workbookId) &&
+        (pasteConfig.type === DashTabItemType.Control ||
+            pasteConfig.type === DashTabItemType.GroupControl) &&
+        pasteConfig.data.sourceType !== DashTabItemControlSourceType.External
+    ) {
+        return true;
+    }
+
+    return false;
+};
+
+const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
+    if (!pasteConfig) {
+        return null;
+    }
+
+    const pasteItems = pasteConfig?.data.group
+        ? getSelectorGroupDialogFromData(pasteConfig?.data).group
+        : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
+
+    return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
 export const GroupControlSidebar = () => {
@@ -47,11 +80,13 @@ export const GroupControlSidebar = () => {
     const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
-        ({items, selectedItemIndex, action}: ListState<SelectorDialogState>) => {
-            if (action === 'add') {
+        ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
+            if (action === TabActionType.Skipped) {
+                return;
+            } else if (action === TabActionType.Add) {
                 const newSelector = items[items.length - 1];
                 dispatch(addSelectorToGroup(newSelector));
-            } else if (action !== 'changeChosen') {
+            } else if (action !== TabActionType.ChangeChosen) {
                 dispatch(
                     updateSelectorsGroup({
                         ...selectorsGroup,
@@ -145,10 +180,14 @@ export const GroupControlSidebar = () => {
                 <TabMenu
                     items={selectorsGroup.group}
                     selectedItemIndex={activeSelectorIndex}
-                    update={updateSelectorsList}
+                    onUpdate={updateSelectorsList}
                     addButtonText={i18n('button_add-selector')}
+                    pasteButtonText={i18n('button_paste-selector')}
                     defaultTabText={getDefaultTabText}
                     enableActionMenu={true}
+                    onPasteItems={handlePasteItems}
+                    canPasteItems={canPasteItems}
+                    addButtonView="outlined"
                 />
             </div>
             <div className={b('settings')}>
