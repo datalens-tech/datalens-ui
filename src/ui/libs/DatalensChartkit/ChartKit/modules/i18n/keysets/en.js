@@ -39,8 +39,6 @@ export default {
     },
     chartkit: {
         error: 'Error',
-        'legend-series-hide': 'Hide all lines',
-        'legend-series-show': 'Show all lines',
 
         'tooltip-point-format-size': 'Size',
         'tooltip-sum': 'Sum',

@@ -2,6 +2,7 @@ import type {ChartsConfig, ExtendedChartsConfig, ServerChartsConfig, Shared} fro
 import {ChartsConfigVersion} from '../../../types';
 
 import {mapV1ConfigToV2} from './v1/mapV1ConfigToV2';
+import {mapV10ConfigToV11} from './v10/mapV10ConfigToV11';
 import {mapV2ConfigToV3} from './v2/mapV2ConfigToV3';
 import {mapV3ConfigToV4, migrateDatetime} from './v3/mapV3ConfigToV4';
 import {mapV4ConfigToV5} from './v4/mapV4ConfigToV5';
@@ -61,6 +62,10 @@ export const mapChartsConfigToLatestVersion = (
 
     if (config.version === ChartsConfigVersion.V9) {
         config = mapV9ConfigToV10(config);
+    }
+
+    if (config.version === ChartsConfigVersion.V10) {
+        config = mapV10ConfigToV11(config);
     }
 
     return config as ChartsConfig;
