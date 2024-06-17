@@ -56,6 +56,20 @@ export const useWizardActionPanel = (
         dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
     };
 
+    let undoHotkey;
+    let redoHotkey;
+
+    if (isMacintosh()) {
+        undoHotkey = 'meta+z';
+        redoHotkey = 'meta+shift+z';
+    } else {
+        undoHotkey = 'ctrl+z';
+        redoHotkey = 'ctrl+shift+z';
+    }
+
+    useHotkeys(undoHotkey, onClickGoBack, {scopes: 'wizard'});
+    useHotkeys(redoHotkey, onClickGoForward, {scopes: 'wizard'});
+
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
     >(() => {
@@ -119,20 +133,6 @@ export const useWizardActionPanel = (
             },
         ];
     }, [editButtonLoading, handleEditButtonClick]);
-
-    let undoHotkey;
-    let redoHotkey;
-
-    if (isMacintosh()) {
-        undoHotkey = 'meta+z';
-        redoHotkey = 'meta+shift+z';
-    } else {
-        undoHotkey = 'ctrl+z';
-        redoHotkey = 'ctrl+shift+z';
-    }
-
-    useHotkeys(undoHotkey, onClickGoBack, [onClickGoBack]);
-    useHotkeys(redoHotkey, onClickGoForward, [onClickGoForward]);
 
     return isViewOnlyMode ? editButton : defaultButtons;
 };

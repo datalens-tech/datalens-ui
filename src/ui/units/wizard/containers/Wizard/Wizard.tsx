@@ -13,9 +13,7 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {ChartsConfig} from 'shared';
-import {ChartSaveControlsQA, EntryUpdateMode, Feature} from 'shared';
-import type {DatalensGlobalState} from 'ui';
+
 import {
     DL,
     EntryDialogName,
@@ -28,37 +26,18 @@ import {
     URL_QUERY,
     Utils,
     sdk,
-} from 'ui';
-import {registry} from 'ui/registry';
-import {
-    selectConfig,
-    selectConfigForSaving,
-    selectConfigType,
-    selectInitialPreviewHash,
-    selectPreviewEntryId,
-    selectPreviewHash,
-} from 'units/wizard/selectors/preview';
-import {
-    selectDefaultPath,
-    selectIsDefaultsSet,
-    selectIsFullscreen,
-    selectSettings,
-} from 'units/wizard/selectors/settings';
-import {selectVisualization} from 'units/wizard/selectors/visualization';
-import {
-    selectExtraSettings,
-    selectIsWidgetLoading,
-    selectWidget,
-    selectWidgetError,
-    selectWidgetHash,
-} from 'units/wizard/selectors/widget';
-
+} from '../../../../';
+import type {DatalensGlobalState} from '../../../../';
+import {ChartSaveControlsQA, EntryUpdateMode, Feature} from '../../../../../shared';
+import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
+import {withHotkeysHook} from '../../../../hoc/withHotkeysHook';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
     addEditHistoryPoint,
@@ -84,6 +63,28 @@ import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
 import type {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
+import {
+    selectConfig,
+    selectConfigForSaving,
+    selectConfigType,
+    selectInitialPreviewHash,
+    selectPreviewEntryId,
+    selectPreviewHash,
+} from '../../selectors/preview';
+import {
+    selectDefaultPath,
+    selectIsDefaultsSet,
+    selectIsFullscreen,
+    selectSettings,
+} from '../../selectors/settings';
+import {selectVisualization} from '../../selectors/visualization';
+import {
+    selectExtraSettings,
+    selectIsWidgetLoading,
+    selectWidget,
+    selectWidgetError,
+    selectWidgetHash,
+} from '../../selectors/widget';
 import {getDefaultChartName, shouldComponentUpdateWithDeepComparison} from '../../utils/helpers';
 import {mapClientConfigToChartsConfig} from '../../utils/mappers/mapClientToChartsConfig';
 import {getAvailableVisualizations} from '../../utils/visualization';
@@ -99,6 +100,8 @@ const b = block('wizard');
 
 const SPLIT_PANE_MIN_SIZE = 256;
 const SPLIT_PANE_MAX_SIZE = 512;
+
+const EntryDialoguesWithHotkeysHook = withHotkeysHook(EntryDialogues, 'entry-dialogues');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -494,7 +497,7 @@ class Wizard extends React.Component<Props, State> {
                                 this.openSaveAsWidgetDialog();
                             }}
                         />
-                        <EntryDialogues ref={entryDialoguesRef} />
+                        <EntryDialoguesWithHotkeysHook ref={entryDialoguesRef} />
                         {Boolean(widget) && !widget.fake && (
                             <React.Fragment>
                                 <SlugifyUrl

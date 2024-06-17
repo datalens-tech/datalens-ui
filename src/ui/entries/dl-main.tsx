@@ -4,6 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router} from 'react-router-dom';
 import {Provider, useSelector} from 'react-redux';
+import {HotkeysProvider} from 'react-hotkeys-hook';
+
 import DialogManager from 'components/DialogManager/DialogManagerContainer';
 import {registerSDKDispatch} from 'libs/schematic-sdk/parse-error';
 import {Utils, DL} from 'ui';
@@ -33,10 +35,12 @@ const Content = () => {
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >
             <MobileProvider mobile={DL.IS_MOBILE}>
-                <React.Fragment>
-                    <DialogManager />
-                    <DatalensPage />
-                </React.Fragment>
+                <HotkeysProvider>
+                    <React.Fragment>
+                        <DialogManager />
+                        <DatalensPage />
+                    </React.Fragment>
+                </HotkeysProvider>
             </MobileProvider>
         </ThemeProvider>
     );

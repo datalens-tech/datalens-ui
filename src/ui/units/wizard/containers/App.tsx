@@ -1,14 +1,15 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {useHotkeysContext} from 'react-hotkeys-hook';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {setCurrentPageEntry} from 'store/actions/asideHeader';
-import type {DatalensGlobalState} from 'ui';
 
+import type {DatalensGlobalState} from '../../..';
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
+import {setCurrentPageEntry} from '../../../store/actions/asideHeader';
 import {selectWidget} from '../selectors/widget';
 
 import Wizard from './Wizard/Wizard';
@@ -24,9 +25,15 @@ interface Props extends StateProps, DispatchProps {}
 const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
 
+    const hotkeysContext = useHotkeysContext();
+
     React.useEffect(() => {
+        hotkeysContext.enableScope('wizard');
+
         return () => {
             setCurrentPageEntry(null);
+
+            hotkeysContext.disableScope('wizard');
         };
     }, []);
 
@@ -38,6 +45,7 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
         if (isAsideHeaderEnabled) {
             setCurrentPageEntry(widgetFake ? null : widget);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [widgetFake, widgetKey, widgetEntryId, isAsideHeaderEnabled]);
 
     return (
