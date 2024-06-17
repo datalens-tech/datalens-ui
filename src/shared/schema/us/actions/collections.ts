@@ -4,6 +4,8 @@ import type {
     CreateCollectionResponse,
     DeleteCollectionArgs,
     DeleteCollectionResponse,
+    DeleteCollectionsArgs,
+    DeleteCollectionsResponse,
     GetCollectionArgs,
     GetCollectionBreadcrumbsArgs,
     GetCollectionBreadcrumbsResponse,
@@ -131,7 +133,7 @@ export const collectionsActions = {
             headers,
         }),
     }),
-    deleteCollections: createAction<MoveCollectionsResponse, MoveCollectionsArgs>({
+    deleteCollections: createAction<DeleteCollectionsResponse, DeleteCollectionsArgs>({
         method: 'DELETE',
         path: () => COLLECTION_DELETE_LIST_PATH_PREFIX,
         params: ({collectionIds}, headers) => ({

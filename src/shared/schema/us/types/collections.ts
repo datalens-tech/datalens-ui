@@ -111,6 +111,10 @@ export type MoveCollectionsResponse = {
     collections: Collection[];
 };
 
+export type DeleteCollectionsArgs = {
+    collectionIds: string[];
+};
+
 export type DeleteCollectionsResponse = {
     collections: Collection[];
 };

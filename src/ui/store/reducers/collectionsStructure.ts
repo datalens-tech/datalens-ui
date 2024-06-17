@@ -53,6 +53,9 @@ import {
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
+    DELETE_COLLECTIONS_LOADING,
+    DELETE_COLLECTIONS_SUCCESS,
+    DELETE_COLLECTIONS_FAILED,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -780,6 +783,38 @@ export const collectionsStructure = (
                 ...state,
                 deleteCollection: {
                     ...state.deleteCollection,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Delete collections
+        case DELETE_COLLECTIONS_LOADING: {
+            return {
+                ...state,
+                deleteCollections: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTIONS_SUCCESS: {
+            return {
+                ...state,
+                deleteCollections: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTIONS_FAILED: {
+            return {
+                ...state,
+                deleteCollections: {
+                    ...state.deleteCollections,
                     isLoading: false,
                     error: action.error,
                 },

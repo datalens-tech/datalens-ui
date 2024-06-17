@@ -24,7 +24,6 @@ import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
-    selectCollectionContentItems,
     selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
 import {CollectionContentGrid} from '../CollectionContentGrid';
@@ -59,6 +58,7 @@ interface Props {
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
+    items: (CollectionWithPermissions | WorkbookWithPermissions)[];
 }
 
 export const CollectionContent: React.FC<Props> = ({
@@ -79,8 +79,8 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
+    items,
 }) => {
-    const items = useSelector(selectCollectionContentItems);
     const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
     const collectionContentError = useSelector(selectCollectionContentError);
     const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);

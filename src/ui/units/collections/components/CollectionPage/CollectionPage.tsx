@@ -10,6 +10,7 @@ import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
     DIALOG_CREATE_WORKBOOK,
+    DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from '../../../../components/CollectionsStructure';
 import {ViewError} from '../../../../components/ViewError/ViewError';
@@ -20,6 +21,7 @@ import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
     selectCollection,
+    selectCollectionContentItems,
     selectCollectionError,
     selectRootCollectionPermissions,
 } from '../../store/selectors';
@@ -44,6 +46,8 @@ export const CollectionPage = () => {
     const collectionError = useSelector(selectCollectionError);
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
+
+    const items = useSelector(selectCollectionContentItems);
 
     const {
         selectedMap,
@@ -153,20 +157,27 @@ export const CollectionPage = () => {
 
     const handleDeleteSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
+        const workbookTitles: string[] = [];
         const collectionIds: string[] = [];
+        const collectionTitles: string[] = [];
 
-        Object.keys(selectedMapWithDeletePermission).forEach((key) => {
-            const type = selectedMap[key];
-            if (type === 'workbook') {
-                workbookIds.push(key);
-            } else {
-                collectionIds.push(key);
+        items.forEach((item) => {
+            if ('workbookId' in item && selectedMapWithDeletePermission[item.workbookId]) {
+                workbookIds.push(item.workbookId);
+                workbookTitles.push(item.title);
+            } else if (
+                'collectionId' in item &&
+                item.collectionId &&
+                selectedMapWithDeletePermission[item.collectionId]
+            ) {
+                collectionIds.push(item.collectionId);
+                collectionTitles.push(item.title);
             }
         });
 
         dispatch(
             openDialog({
-                id: DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+                id: DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
                 props: {
                     open: true,
                     onApply: () => {
@@ -174,19 +185,19 @@ export const CollectionPage = () => {
                         resetSelected();
                         fetchCollectionContent();
                     },
-                    onClose: handeCloseMoveDialog,
-                    initialParentId: collection?.collectionId,
-                    workbookIds,
+                    onClose: () => dispatch(closeDialog()),
+
                     collectionIds,
+                    collectionTitles,
+                    workbookIds,
+                    workbookTitles,
                 },
             }),
         );
     }, [
         selectedMapWithDeletePermission,
+        items,
         dispatch,
-        handeCloseMoveDialog,
-        collection?.collectionId,
-        selectedMap,
         closeSelectionMode,
         resetSelected,
         fetchCollectionContent,
@@ -275,6 +286,7 @@ export const CollectionPage = () => {
                     resetSelected={resetSelected}
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
+                    items={items}
                 />
             </div>
         </div>
