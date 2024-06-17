@@ -41,7 +41,7 @@
   "label_error-404-title": "Ошибка: датасет не найден",
   "label_error-500-title": "Ошибка: не удалось загрузить датасет",
   "label_field": "Поле",
-  "label_load_preview_by_default": "Показывать предпросмотр по-умолчанию",
+  "label_load_preview_by_default": "Включить предпросмотр по умолчанию",
   "label_loading-dataset": "Загрузка датасета",
   "label_loading-dataset-preview": "Загрузка данных для предпросмотра",
   "label_materialization-not-finished": "Материализация данных еще не завершилась, это может занять несколько минут.",
