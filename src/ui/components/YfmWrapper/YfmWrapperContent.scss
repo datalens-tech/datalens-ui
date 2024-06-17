@@ -155,8 +155,8 @@
 
 // fix for reassign style by weight
 
-.g-root .editor-page div.yfm p img,
-.g-root .app div.yfm p img {
+.g-root .editor-page div.yfm * img,
+.g-root .app div.yfm * img {
     background: transparent;
 }
 

@@ -95,6 +95,7 @@ export enum TabMenuQA {
     Item = 'tab-menu-list-item',
     ItemRemove = 'tab-menu-list-item-remove',
     Add = 'tab-menu-add',
+    Paste = 'tab-menu-paste',
 }
 
 export enum DialogConfirmQA {

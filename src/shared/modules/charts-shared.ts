@@ -199,7 +199,10 @@ export function resolveIntervalDate(value: FilterValue) {
     return null;
 }
 
-export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL | null {
+export function resolveOperation(
+    urlValue: FilterValue,
+    defaultOperation?: Operations,
+): FiltersOperationFromURL | null {
     if (!urlValue) {
         return null;
     }
@@ -207,13 +210,13 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
     // In an ideal world, urlValue should always be string. However, in ChartEditor, the user can put in params
     // absolutely anything. Therefore, if it is not a string, then we make a fallback to the old behavior.
     if (typeof urlValue !== 'string') {
-        return getFallbackForUrlFilters(urlValue);
+        return getFallbackForUrlFilters(urlValue, defaultOperation);
     }
 
     const match = urlValue.match(/^_{2}([^_]+)_([\s\S]+)?$/);
 
     if (!match) {
-        return getFallbackForUrlFilters(urlValue);
+        return getFallbackForUrlFilters(urlValue, defaultOperation);
     }
 
     const operation = match[1]?.toUpperCase();
@@ -238,8 +241,11 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
     return getFallbackForUrlFilters(urlValue);
 }
 
-function getFallbackForUrlFilters(urlValue: any): FiltersOperationFromURL {
-    let operation = Operations.IN;
+function getFallbackForUrlFilters(
+    urlValue: any,
+    defaultOperation?: Operations,
+): FiltersOperationFromURL {
+    let operation = defaultOperation ?? Operations.IN;
 
     if (typeof urlValue === 'string' && urlValue.indexOf('__interval') > -1) {
         operation = Operations.BETWEEN;

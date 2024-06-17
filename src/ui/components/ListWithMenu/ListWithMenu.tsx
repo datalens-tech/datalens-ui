@@ -6,7 +6,7 @@ import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DialogGroupControlQa, TabMenuQA} from 'shared';
-import type {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/TabMenu';
+import {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/types';
 
 import './ListWithMenu.scss';
 
@@ -24,7 +24,7 @@ export interface ListWithMenuProps<T> {
         action,
         index,
     }: {
-        action: TabActionType;
+        action: Exclude<TabActionType, 'skipped'>;
         index: number;
     }) => React.MouseEventHandler<HTMLDivElement>;
     /* * Show the icon only when hovering over a list item*/
@@ -78,7 +78,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
             >
                 <div
                     className={b('item')}
-                    onClick={onAction({action: 'changeChosen', index: itemIndex})}
+                    onClick={onAction({action: TabActionType.ChangeChosen, index: itemIndex})}
                     key={itemIndex}
                 >
                     <div className={b('item-content')}>

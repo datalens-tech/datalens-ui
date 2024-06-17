@@ -177,7 +177,7 @@ describe('charts-shared resolveOperation', () => {
 
         const expectedResult = [null, null, null];
 
-        const result = falsyValues.map(resolveOperation);
+        const result = falsyValues.map((val) => resolveOperation(val));
 
         expect(result).toEqual(expectedResult);
     });

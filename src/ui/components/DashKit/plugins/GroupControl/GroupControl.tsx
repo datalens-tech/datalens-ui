@@ -1,6 +1,8 @@
 import React from 'react';
 
 import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
+import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -10,20 +12,23 @@ import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
 import {connect} from 'react-redux';
 import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
-import {ControlQA} from 'shared';
+import {ControlQA, DashTabItemType} from 'shared';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
-import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
+import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isMobileView} from 'ui/utils/mobile';
 
 import {
+    selectCurrentTab,
+    selectDashGlobalDefaultParams,
     selectIsNewRelations,
     selectSkipReload,
+    selectTabHashState,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
@@ -37,6 +42,7 @@ import type {
     PluginGroupControlState,
     ResolveMetaResult,
 } from './types';
+import {addItemToLocalQueue} from './utils';
 
 import './GroupControl.scss';
 
@@ -44,18 +50,18 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-interface PluginGroupControlProps
-    extends PluginWidgetProps<Record<string, StringParams>>,
-        ControlSettings,
-        StateProps,
-        ContextProps {}
+type OwnProps = ControlSettings & PluginWidgetProps<Record<string, StringParams>> & ContextProps;
 
-interface PluginGroupControl extends Plugin<PluginGroupControlProps, Record<string, StringParams>> {
+type PluginGroupControlProps = OwnProps & StateProps;
+
+type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
     setSettings: (settings: ControlSettings) => Plugin;
     getDistincts?: GetDistincts;
-}
+};
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
+
+const LOCAL_META_VERSION = 2;
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
@@ -71,15 +77,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsStatus: Record<string, LoadStatus> = {};
     controlsData: Record<string, ExtendedLoadedData | null> = {};
 
-    // a quick loader for click on apply button
-    actionLoader = false;
+    // a quick loader for imitating action by clicking on apply button
+    quickActionLoader = false;
 
-    /**
-     * can't use it in state because of doubling requests
-     */
-    initialParams: ChartInitialParams = {
-        params: {} as StringParams,
-    };
+    // params of current dash state
+    initialParams: Record<string, StringParams> = {};
+
+    localMeta: StateAndParamsMetaData = {version: LOCAL_META_VERSION, queue: []};
 
     constructor(props: PluginGroupControlProps) {
         super(props);
@@ -92,12 +96,28 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsData[item.id] = null;
         });
 
+        let stateParams: Record<string, StringParams>;
+
+        // to apply initial params from dash state inside group
+        if (controlData.updateControlsOnChange) {
+            this.fillQueueWithInitial(true);
+
+            stateParams = this.getUpdatedGroupParams({
+                params: this.props.params,
+            });
+        } else {
+            stateParams = this.props.params;
+        }
+
+        this.initialParams = stateParams;
+
         this.state = {
             status: LOAD_STATUS.INITIAL,
             silentLoading: false,
             isInit: false,
-            stateParams: this.props.params,
+            stateParams,
             needReload: false,
+            localUpdateLoader: false,
         };
     }
 
@@ -115,6 +135,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this.adjustWidgetLayout(true);
             }
         }
+
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
 
@@ -123,14 +144,68 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.PENDING,
                 needReload: true,
                 silentLoading: true,
-                stateParams: this.props.params,
             });
-            return;
         }
 
-        if (hasParamsChanged) {
+        if (hasParamsChanged || hasDataChanged) {
+            if (!this.props.data.buttonApply) {
+                this.setState({
+                    stateParams: this.props.params,
+                });
+                return;
+            }
+
+            const updatedStateParams: Record<string, StringParams> = {};
+            const updatedItemsIds: string[] = [];
+            this.props.data.group?.forEach((groupItem) => {
+                const newPropsParams = this.filterSignificantParams(
+                    this.props.params[groupItem.id],
+                    this.controlsData[groupItem.id],
+                    groupItem.defaults,
+                );
+
+                const initialParams = this.filterSignificantParams(
+                    this.initialParams[groupItem.id],
+                    this.controlsData[groupItem.id],
+                    groupItem.defaults,
+                );
+
+                if (isEqual(initialParams, newPropsParams)) {
+                    updatedStateParams[groupItem.id] = {...this.state.stateParams[groupItem.id]};
+                } else {
+                    updatedStateParams[groupItem.id] = {...this.props.params[groupItem.id]};
+                    this.initialParams[groupItem.id] = {...this.props.params[groupItem.id]};
+                    updatedItemsIds.push(groupItem.id);
+                }
+            });
+
+            if (
+                this.props.data.updateControlsOnChange &&
+                (updatedItemsIds.length || !prevProps.data.updateControlsOnChange)
+            ) {
+                if (prevProps.data.updateControlsOnChange) {
+                    updatedItemsIds.forEach((queueItemId) => {
+                        this.localMeta.queue = addItemToLocalQueue(
+                            this.localMeta.queue,
+                            this.props.id,
+                            queueItemId,
+                        );
+                    });
+                } else {
+                    // if the update setting is enabled in this render, then we must
+                    // apply the current internal parameters so fill queue for filled values
+                    this.fillQueueWithInitial();
+                }
+                const locallyUpdatedParams = this.getUpdatedGroupParams({
+                    params: updatedStateParams,
+                });
+
+                this.setState({stateParams: locallyUpdatedParams});
+                return;
+            }
+
             this.setState({
-                stateParams: this.props.params,
+                stateParams: updatedStateParams,
             });
         }
     }
@@ -142,7 +217,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     render() {
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.actionLoader;
+            this.quickActionLoader ||
+            this.state.localUpdateLoader;
 
         return (
             <div
@@ -166,6 +242,34 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
+    private fillQueueWithInitial = (checkByProps?: boolean) => {
+        const initialQueue: string[] = [];
+
+        for (const groupItem of this.props.data.group || []) {
+            if (!groupItem.defaults) {
+                continue;
+            }
+            const param = Object.keys(groupItem.defaults)[0];
+            const defaultItemParam = groupItem.defaults[param];
+
+            const isItemSignificant = checkByProps
+                ? this.props.params[groupItem.id][param] !== defaultItemParam
+                : this.state.stateParams[groupItem.id][param] !== defaultItemParam;
+
+            if (isItemSignificant) {
+                initialQueue.push(groupItem.id);
+            }
+        }
+
+        initialQueue.forEach((queueItemId) => {
+            this.localMeta.queue = addItemToLocalQueue(
+                this.localMeta.queue,
+                this.props.id,
+                queueItemId,
+            );
+        });
+    };
+
     private onChange = ({
         params,
         callChangeByClick,
@@ -184,30 +288,26 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         if (controlId) {
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
-                const updatedStateParams: Record<string, StringParams> = {};
-                // update all controls params in case some of them are influenced by the changed params
-                // if their influencing params have changed, the controls will reload on their own
-                Object.keys(this.state.stateParams).forEach((itemId) => {
-                    updatedStateParams[itemId] = {
-                        ...this.state.stateParams[itemId],
-                        ...(params as StringParams),
-                    };
-                });
-                // loader turns off in handleStatusChanged when all controls are loaded
-                this.actionLoader = true;
                 this.setState({
-                    stateParams: updatedStateParams,
-                    status: LOAD_STATUS.PENDING,
+                    stateParams: this.getLocalUpdatedParams(controlId, params),
+                    localUpdateLoader: true,
                 });
             } else {
                 this.setState({
-                    stateParams: {...this.state.stateParams, [controlId]: params as StringParams},
+                    stateParams: {
+                        ...this.state.stateParams,
+                        [controlId]: {
+                            ...this.state.stateParams[controlId],
+                            ...params,
+                        } as StringParams,
+                    },
                 });
             }
             return;
         }
         // if onChange is triggered by button
         this.setState({stateParams: params as Record<string, StringParams>});
+        this.localMeta.queue = [];
     };
 
     private filterSignificantParams(
@@ -228,6 +328,56 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
     }
+
+    private getUpdatedGroupParams = ({
+        params,
+        meta,
+    }: {
+        params: Record<string, StringParams>;
+        meta?: StateAndParamsMetaData;
+    }) => {
+        const defaultGlobalParams = this.props.defaultGlobalParams || {};
+
+        const currentConfigItem = {
+            id: this.props.id,
+            data: this.props.data,
+            type: DashTabItemType.GroupControl,
+            namespace: this.props.namespace,
+        };
+
+        // we simulate the dash config and include only the context of group control in it
+        // to get changed params considering aliases and relations only inside group
+        const updatedStateParams = getItemsParams({
+            config: {
+                ...this.props.currentTabConfig,
+                items: [currentConfigItem],
+            } as Config,
+            itemsStateAndParams: {
+                [this.props.id]: {params},
+                __meta__: meta || this.localMeta,
+            },
+            plugins: [pluginGroupControlBaseDL],
+            defaultGlobalParams,
+            globalParams: getUrlGlobalParams(window.location.search, defaultGlobalParams) || {},
+            useStateAsInitial: true,
+        });
+
+        return updatedStateParams[this.props.id] as Record<string, StringParams>;
+    };
+
+    private getLocalUpdatedParams = (
+        controlId: string,
+        params: StringParams | Record<string, StringParams>,
+    ) => {
+        const newParams: Record<string, StringParams> = {
+            ...this.state.stateParams,
+            [controlId]: {...this.state.stateParams[controlId], ...params} as StringParams,
+        };
+
+        this.localMeta.queue = addItemToLocalQueue(this.localMeta.queue, this.props.id, controlId);
+
+        return this.getUpdatedGroupParams({params: newParams});
+    };
 
     // public
     // @ts-ignore
@@ -394,12 +544,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
 
             this.resolveMetaInControl();
-            this.actionLoader = false;
             this.setState({
                 needReload: false,
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
+                localUpdateLoader: false,
             });
         }
 
@@ -441,22 +591,26 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             case CLICK_ACTION_TYPE.SET_PARAMS:
                 newParams = this.state.stateParams;
                 break;
-            case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS:
-                if (this.props.data.group) {
-                    newParams = this.props.data.group.reduce(
-                        (initialParams: Record<string, StringParams>, data) => {
-                            initialParams[data.id] = data.defaults || {};
-                            return initialParams;
+            case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS: {
+                const defaultParams =
+                    this.props.data?.group?.reduce(
+                        (paramsState: Record<string, StringParams>, data) => {
+                            paramsState[data.id] = data.defaults || {};
+                            return paramsState;
                         },
                         {},
-                    );
-                }
+                    ) || this.state.stateParams;
+                newParams = this.getUpdatedGroupParams({
+                    params: defaultParams,
+                    meta: {version: LOCAL_META_VERSION, queue: []},
+                });
 
                 // if apply button is enabled, we apply new params only via click on 'Apply'
                 if (this.props.data.buttonApply) {
                     callChangeByClick = false;
                 }
                 break;
+            }
         }
 
         // changes are applied if:
@@ -470,9 +624,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.actionLoader = true;
+                this.quickActionLoader = true;
                 setTimeout(() => {
-                    this.actionLoader = false;
+                    this.quickActionLoader = false;
                 });
             }
             this.onChange({params: newParams, callChangeByClick});
@@ -571,8 +725,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
+    defaultGlobalParams: selectDashGlobalDefaultParams(state),
+    currentTabConfig: selectCurrentTab(state),
     skipReload: selectSkipReload(state),
     isNewRelations: selectIsNewRelations(state),
+    currentState: selectTabHashState(state),
 });
 
 const GroupControlWithStore = connect(mapStateToProps, null, null, {
@@ -580,7 +737,7 @@ const GroupControlWithStore = connect(mapStateToProps, null, null, {
 })(GroupControl);
 
 const plugin: PluginGroupControl = {
-    type: 'group_control',
+    type: DashTabItemType.GroupControl,
     defaultLayout: {w: 8, h: 2},
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
