@@ -5,6 +5,9 @@ CONNECTORS:
     CONN_CHYT_FORBIDDEN_CLIQUES: []
     CONN_CHYT_PUBLIC_CLIQUES: []
 CONNECTOR_AVAILABILITY:
+  icon_src:
+    icon_type: data
+    data: "blank"
   sections: []
   uncategorized:
     - availability: free
