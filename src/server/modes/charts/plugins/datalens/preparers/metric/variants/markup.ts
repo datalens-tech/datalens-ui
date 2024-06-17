@@ -6,14 +6,10 @@ import type {
     ServerCommonSharedExtraSettings,
     ServerField,
 } from '../../../../../../../../shared';
-import {
-    MINIMUM_FRACTION_DIGITS,
-    formatNumber,
-    getFakeTitleOrTitle,
-    isDateField,
-} from '../../../../../../../../shared';
+import {MINIMUM_FRACTION_DIGITS, formatNumber, isDateField} from '../../../../../../../../shared';
 import {prepareMetricObject} from '../../../utils/markup-helpers';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
+import {getTitle} from '../utils';
 
 export const prepareMarkupMetricVariant = ({
     measure,
@@ -28,10 +24,7 @@ export const prepareMarkupMetricVariant = ({
         return {};
     }
 
-    const title =
-        extraSettings && extraSettings.title && extraSettings.titleMode === 'show'
-            ? extraSettings.title
-            : getFakeTitleOrTitle(measure);
+    const title = getTitle(extraSettings, measure);
 
     if (typeof value === 'object' && value !== null) {
         if (title) {

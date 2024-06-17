@@ -177,3 +177,7 @@ export const enum ChartSaveControlsQA {
     SaveMoreDropdown = 'save-more-dropdown',
     SaveAsEditorScript = 'save-as-editor-script',
 }
+
+export const enum ChartSettingsDialogQA {
+    IndicatorTitleMode = 'indicator-title-mode',
+}
