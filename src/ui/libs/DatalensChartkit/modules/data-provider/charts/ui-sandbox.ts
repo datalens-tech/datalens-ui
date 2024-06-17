@@ -72,7 +72,7 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     generateHtmlHandle.dispose();
 };
 
-const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'];
+const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
 
 function clearVmProp(prop: unknown) {
@@ -82,9 +82,14 @@ function clearVmProp(prop: unknown) {
             return undefined;
         }
 
-        const item: Record<string, unknown> = {...(prop as object)};
+        const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
+                if (attr === 'this' && Array.isArray(item[attr]?.points)) {
+                    item[attr].points = item[attr].points.map(clearVmProp);
+                    return;
+                }
+
                 delete item[attr];
             }
         });
