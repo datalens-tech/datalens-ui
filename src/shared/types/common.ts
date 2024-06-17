@@ -130,7 +130,7 @@ export interface DLUser extends DLUserAccount {
     isFederationUser?: boolean;
     isGlobalFederationUser?: boolean;
     isLocalFederationUser?: boolean;
-    isFederationUserOnCommunity?: boolean;
+    withNavigation?: boolean;
 }
 
 export type MainLayoutConfigData = {

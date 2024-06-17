@@ -129,13 +129,14 @@ class ErrorContent extends React.PureComponent {
             return null;
         }
 
-        if (isHtmlInDescription)
+        if (isHtmlInDescription) {
             return (
                 <div
                     className={b('description')}
                     dangerouslySetInnerHTML={{__html: description}}
                 ></div>
             );
+        }
 
         return <div className={b('description')}>{description}</div>;
     }
