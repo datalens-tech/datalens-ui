@@ -237,7 +237,7 @@ export const TabMenu = <T extends unknown>({
                 <Button
                     className={b('action-button')}
                     onClick={onAction({action: TabActionType.Add})}
-                    data-qa={TabMenuQA.Add}
+                    qa={TabMenuQA.Add}
                     view="outlined"
                     width="max"
                 >
@@ -253,7 +253,7 @@ export const TabMenu = <T extends unknown>({
                         view="outlined"
                         className={b('action-button')}
                         onClick={onAction({action: TabActionType.Paste})}
-                        data-qa={TabMenuQA.Paste}
+                        qa={TabMenuQA.Paste}
                         width="max"
                     >
                         <Icon
