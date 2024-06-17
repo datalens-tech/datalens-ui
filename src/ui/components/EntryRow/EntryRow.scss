@@ -20,6 +20,7 @@
         @include text-body-1;
         margin-left: 10px;
         display: flex;
+        overflow: hidden;
     }
 
     &__name {
