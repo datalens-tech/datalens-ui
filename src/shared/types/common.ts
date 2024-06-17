@@ -203,6 +203,7 @@ export type DLGlobalData = {
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;
+    hideNavigation?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

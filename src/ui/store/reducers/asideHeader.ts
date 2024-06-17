@@ -46,7 +46,7 @@ export function getLandingNavigationSettings() {
 
 const initialSettings: AsideHeaderSettings = {
     withHelpCenter: true,
-    withNavigation: DL.withNavigation,
+    withNavigation: !DL.HIDE_NAVIGATION,
     navigationType: 'aside',
     ...(DL.IS_LANDING ? getLandingNavigationSettings() : {}),
 };
