@@ -104,10 +104,6 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
             enabled: isHighchartsEnabled,
         },
         {
-            value: BAR_VISUALIZATION,
-            enabled: isHighchartsEnabled,
-        },
-        {
             value: {...BAR_Y_D3_VISUALIZATION, hidden: isHighchartsEnabled},
             enabled: true,
         },
