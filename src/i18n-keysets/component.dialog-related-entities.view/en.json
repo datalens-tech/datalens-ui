@@ -1,0 +1,13 @@
+{
+  "label_current-object": "Current object",
+  "label_no-relatives": "There are no related objects",
+  "label_request-error": "Error during data request",
+  "label_scope-chart": "Charts",
+  "label_scope-connection": "Connections",
+  "label_scope-dash": "Dashboards",
+  "label_scope-dataset": "Datasets",
+  "label_scope-other": "Other",
+  "label_title": "Related objects",
+  "value_includes": "Includes",
+  "value_where-contained": "Where is contained"
+}

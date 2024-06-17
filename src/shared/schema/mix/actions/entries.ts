@@ -13,6 +13,8 @@ import type {
     GetEntriesInFolderResponse,
     GetEntryMetaStatusArgs,
     GetEntryMetaStatusResponse,
+    GetEntryRelationsArgs,
+    GetEntryRelationsResponse,
     GetPublicationPreviewArgs,
     GetPublicationPreviewResponse,
     MixedSwitchPublicationStatusArgs,
@@ -154,6 +156,17 @@ export const entriesActions = {
             });
             const yqlFolderKey = 'yql/charts/';
             return entries.filter(({key}) => !key.toLowerCase().startsWith(yqlFolderKey));
+        },
+    ),
+    getEntryRelations: createAction<GetEntryRelationsResponse, GetEntryRelationsArgs>(
+        async (api, {entryId, direction = 'parent'}) => {
+            const typedApi = getTypedApi(api);
+            const relations = (await typedApi.us.getRelations({
+                entryId,
+                direction,
+            })) as Required<GetRelationsEntry, 'permissions'>[];
+
+            return relations;
         },
     ),
 };

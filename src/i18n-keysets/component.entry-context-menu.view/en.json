@@ -1,13 +1,14 @@
 {
   "value_access": "Permissions",
+  "value_add-favorites-alias": "Add label",
   "value_copy": "Copy",
   "value_copy-link": "Copy link",
   "value_delete": "Delete",
   "value_duplicate": "Duplicate",
+  "value_edit-favorites-alias": "Rename label",
   "value_migrate-to-workbook": "Migrate to workbook",
   "value_move": "Move",
   "value_rename": "Rename",
   "value_revisions": "Change history",
-  "value_add-favorites-alias": "Add label",
-  "value_edit-favorites-alias": "Rename label"
+  "value_show-related-entities": "Find relatives"
 }

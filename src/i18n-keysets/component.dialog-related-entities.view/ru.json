@@ -1,0 +1,13 @@
+{
+  "label_current-object": "Текущий объект",
+  "label_no-relatives": "Нет связанных объектов",
+  "label_request-error": "Ошибка во время запроса данных",
+  "label_scope-chart": "Чарты",
+  "label_scope-connection": "Подключения",
+  "label_scope-dash": "Дашборды",
+  "label_scope-dataset": "Датасеты",
+  "label_scope-other": "Другое",
+  "label_title": "Связанные объекты",
+  "value_includes": "Включает в себя",
+  "value_where-contained": "Где содержится"
+}

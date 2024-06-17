@@ -3,6 +3,7 @@ import {
     AppEnvironment,
     DeviceType,
     DlsAcl,
+    EntryScope,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
@@ -282,6 +283,13 @@ export enum Scope {
 export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
+
+export const OBJECT_SCOPES = [
+    EntryScope.Widget,
+    EntryScope.Dataset,
+    EntryScope.Dash,
+    EntryScope.Connection,
+];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
 
