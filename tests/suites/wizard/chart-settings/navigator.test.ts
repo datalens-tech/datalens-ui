@@ -1,13 +1,14 @@
-import {Page, expect} from '@playwright/test';
+import type {Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 
 import {VISUALIZATIONS_WITH_NAVIGATOR} from '../../../../src/shared/constants';
+import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {ChartSettingsItems} from '../../../page-objects/wizard/ChartSettings';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {WIZARD_VISULAIZATIONS} from '../constants';
 
 datalensTest.describe('Wizard - chartkit', () => {
