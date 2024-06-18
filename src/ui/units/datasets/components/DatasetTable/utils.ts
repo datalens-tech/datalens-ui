@@ -9,6 +9,7 @@ import type {
     DatasetOptionFieldItem,
     DatasetOptions,
     DatasetRls,
+    DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
 import {Feature} from 'shared';
@@ -35,6 +36,7 @@ const WIDTH_15 = '15%';
 const WIDTH_20 = '20%';
 
 type GetColumnsArgs = {
+    selectedRows: DatasetSelectionMap;
     fields: DatasetOptionFieldItem[];
     showFieldsId: boolean;
     avatars?: DatasetSourceAvatar[];
@@ -53,6 +55,7 @@ type GetColumnsArgs = {
     ) => void;
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
+    onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
 };
 
 export const getLabelValue = (key: string) => {
@@ -92,9 +95,11 @@ export const getFieldSourceTitle = (field: DatasetField, avatars?: DatasetSource
 
 export const getColumns = (args: GetColumnsArgs) => {
     const {
+        selectedRows,
         avatars,
         fields,
         showFieldsId,
+        onSelectChange,
         setActiveRow,
         openDialogFieldEditor,
         handleTitleUpdate,
@@ -109,7 +114,18 @@ export const getColumns = (args: GetColumnsArgs) => {
         permissions,
     } = args;
     const width = showFieldsId ? WIDTH_15 : WIDTH_20;
-    const index = getIndexColumn();
+
+    const index = getIndexColumn({
+        selectedRows,
+        isSelectedAll: Object.keys(selectedRows).length === fields.length,
+        onSelectChange,
+        onSelectAllChange: (state: boolean) =>
+            onSelectChange(
+                state,
+                fields.map(({guid}) => guid),
+            ),
+    });
+
     const title = getTitleColumn({
         width,
         setActiveRow,

@@ -12,6 +12,7 @@ import type {
     DatasetFieldAggregation,
     DatasetOptions,
     DatasetRls,
+    DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
@@ -21,6 +22,8 @@ import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
+import {BrachActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import type {BatchFieldAction} from './constants';
 import {FieldAction} from './constants';
 import {getAggregationSwitchTo, getColumns} from './utils';
 
@@ -58,6 +61,7 @@ type DatasetTableProps = {
 
 type DatasetTableState = {
     activeRow?: number;
+    selectedRows: DatasetSelectionMap;
     editableFieldGuid?: string;
     waitingForOpenFieldEditor?: boolean;
 };
@@ -65,6 +69,7 @@ type DatasetTableState = {
 class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState> {
     state: DatasetTableState = {
         activeRow: undefined,
+        selectedRows: {},
         editableFieldGuid: undefined,
         waitingForOpenFieldEditor: false,
     };
@@ -88,39 +93,73 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     render() {
         const {fields = [], itemsToDisplay} = this.props;
+        const {activeRow} = this.state;
+        const {count: selectedCount, map: selectedRows} = this.getFilteredSelectedRows();
 
         return (
-            <div className={b(null, 'dataset__tab')}>
-                <DisplaySettings
-                    value={itemsToDisplay}
-                    onUpdate={this.props.onDisplaySettingsUpdate}
-                />
-                <DataTable
-                    columns={this.columns}
-                    data={fields}
-                    emptyDataMessage={i18n('label_no-data')}
-                    settings={{
-                        stickyHead: DataTable.MOVING,
-                        stickyTop: 0,
-                        dynamicRender: true,
-                        dynamicRenderThreshold: 0,
-                        dynamicRenderUseStaticSize: true,
-                        syncHeadOnResize: true,
-                        highlightRows: true,
-                        stripedRows: false,
-                        displayIndices: false,
-                    }}
-                    theme={'dataset'}
-                    rowClassName={(_row, index) => {
-                        return b('row', {active: this.state.activeRow === index});
-                    }}
-                />
-            </div>
+            <React.Fragment>
+                <div className={b(null, 'dataset__tab')}>
+                    <DisplaySettings
+                        value={itemsToDisplay}
+                        onUpdate={this.props.onDisplaySettingsUpdate}
+                    />
+                    <DataTable
+                        columns={this.getColumns(selectedRows)}
+                        data={fields}
+                        emptyDataMessage={i18n('label_no-data')}
+                        settings={{
+                            stickyHead: DataTable.MOVING,
+                            stickyTop: 0,
+                            dynamicRender: true,
+                            dynamicRenderThreshold: 0,
+                            dynamicRenderUseStaticSize: true,
+                            syncHeadOnResize: true,
+                            highlightRows: true,
+                            stripedRows: false,
+                            displayIndices: false,
+                        }}
+                        theme={'dataset'}
+                        rowClassName={(row, index) => {
+                            return b('row', {
+                                active: activeRow === index,
+                                selected: selectedRows[row.guid],
+                            });
+                        }}
+                    />
+                </div>
+
+                {selectedCount > 0 && (
+                    <BrachActionPanel
+                        className={b('batch-actions')}
+                        count={selectedCount}
+                        onClose={this.resetSelection}
+                        onAction={this.handleBatchUpdate}
+                    />
+                )}
+            </React.Fragment>
         );
     }
 
-    get columns() {
+    private getFilteredSelectedRows() {
+        const {selectedRows} = this.state;
+        const {fields} = this.props;
+
+        let count = 0;
+        const map = fields.reduce<DatasetSelectionMap>((memo, {guid}) => {
+            if (selectedRows[guid]) {
+                count++;
+                memo[guid] = true;
+            }
+
+            return memo;
+        }, {});
+
+        return {count, map};
+    }
+
+    private getColumns(selectedRows: DatasetSelectionMap = {}) {
         return getColumns({
+            selectedRows,
             avatars: this.props.sourceAvatars,
             rls: this.props.rls,
             permissions: this.props.permissions,
@@ -136,10 +175,36 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleAggregationSelectUpdate: this.handleAggregationSelectUpdate,
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
+            onSelectChange: this.onSelectChange,
         });
     }
 
+    private resetSelection = () => {
+        this.setState({selectedRows: {}});
+    };
+
+    private onSelectChange = (isSelected: boolean, guids: (keyof DatasetSelectionMap)[]) => {
+        const selectedRows = {...this.state.selectedRows};
+
+        guids.forEach((guid) => {
+            if (isSelected) {
+                selectedRows[guid] = true;
+            } else {
+                delete selectedRows[guid];
+            }
+        });
+
+        this.setState({
+            selectedRows,
+        });
+    };
+
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
+
+    private handleBatchUpdate = (action: BatchFieldAction) => {
+        // eslint-disable-next-line no-console
+        console.log(action);
+    };
 
     private handleHiddenUpdate = ({guid, hidden}: DatasetField) => {
         this.props.updateField({

@@ -39,6 +39,12 @@
         }
     }
 
+    &__batch-actions {
+        position: sticky;
+        bottom: 15px;
+        margin: 0 15px 15px;
+    }
+
     &__sort-icon {
         position: relative;
         left: 5px;
@@ -105,6 +111,24 @@
             #{$class}__more-dropdown {
                 visibility: visible;
             }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
+        }
+
+        &_selected {
+            background-color: var(--g-color-base-selection);
+
+            &:hover,
+            &:active,
+            &#{$class}__row_active {
+                background-color: var(--g-color-base-selection-hover);
+            }
         }
 
         &:hover {
@@ -115,7 +139,23 @@
             #{$class}__hidden {
                 visibility: visible;
             }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
         }
+    }
+
+    &__title-index {
+        display: block;
+    }
+
+    &__btn-select {
+        display: none;
     }
 
     &__btn {
