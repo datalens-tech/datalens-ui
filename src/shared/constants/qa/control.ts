@@ -58,6 +58,8 @@ export const DialogGroupControlQa = {
     placementApplyButton: 'selectors-placement-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
+    copyControlButton: 'copy-control-button',
+    duplicateControlButton: 'duplicate-control-button',
 };
 
 export const DialogControlDateQa = {

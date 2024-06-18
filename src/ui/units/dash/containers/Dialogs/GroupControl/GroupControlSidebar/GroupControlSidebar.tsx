@@ -1,15 +1,19 @@
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
+import type {ConfigItemGroup, PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import {Gear} from '@gravity-ui/icons';
 import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {DashTabItemGroupControlData} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
+import {defaultControlLayout} from 'ui/components/DashKit/constants';
+import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
-import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
+import type {CopiedConfigContext, CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import {getPreparedCopyItemOptions, isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -17,9 +21,14 @@ import {
 } from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
+    getGroupSelectorDialogInitialState,
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
 } from 'ui/units/dash/store/reducers/dash';
+import {
+    selectDashWorkbookId,
+    selectOpenedItemData,
+} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
@@ -71,6 +80,9 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
+    const openedItemData = useSelector(selectOpenedItemData);
+    const workbookId = useSelector(selectDashWorkbookId);
+
     const dispatch = useDispatch();
 
     const initialTabIndex =
@@ -170,6 +182,34 @@ export const GroupControlSidebar = () => {
         );
     };
 
+    const handleCopyItem = (itemIndex: number) => {
+        if (!openedItemData) {
+            return;
+        }
+        // logic is copied from dashkit
+        const itemToCopy = (openedItemData as DashTabItemGroupControlData).group[itemIndex];
+
+        const options: PreparedCopyItemOptions<CopiedConfigContext> = {
+            timestamp: Date.now(),
+            data: {
+                ...getGroupSelectorDialogInitialState(),
+                group: [itemToCopy as unknown as ConfigItemGroup],
+            },
+            type: DashTabItemType.GroupControl,
+            defaults: itemToCopy.defaults,
+            namespace: itemToCopy.namespace,
+            layout: defaultControlLayout,
+        };
+
+        const preparedOptions = getPreparedCopyItemOptions(options, null, {
+            workbookId: workbookId ?? null,
+        });
+
+        localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));
+        // https://stackoverflow.com/questions/35865481/storage-event-not-firing
+        window.dispatchEvent(new Event('storage'));
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
@@ -188,6 +228,7 @@ export const GroupControlSidebar = () => {
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
+                    onCopyItem={handleCopyItem}
                 />
             </div>
             <div className={b('settings')}>

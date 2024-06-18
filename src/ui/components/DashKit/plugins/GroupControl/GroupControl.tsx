@@ -30,6 +30,7 @@ import {
     selectSkipReload,
     selectTabHashState,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {defaultControlLayout} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
@@ -738,7 +739,7 @@ const GroupControlWithStore = connect(mapStateToProps, null, null, {
 
 const plugin: PluginGroupControl = {
     type: DashTabItemType.GroupControl,
-    defaultLayout: {w: 8, h: 2},
+    defaultLayout: defaultControlLayout,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 

@@ -46,7 +46,11 @@
         visibility: hidden;
     }
 
-    &__delete-btn {
+    &__delete-button {
         color: var(--g-color-text-danger);
+    }
+
+    &__menu-button {
+        color: var(--g-color-text-complementary);
     }
 }

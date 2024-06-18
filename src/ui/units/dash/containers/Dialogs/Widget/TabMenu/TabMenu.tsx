@@ -34,6 +34,7 @@ export const TabMenu = <T extends unknown>({
     tabIconMixin,
     addButtonText,
     pasteButtonText,
+    onCopyItem,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -77,19 +78,20 @@ export const TabMenu = <T extends unknown>({
         };
     };
 
-    const pasteItem = (): UpdateState<T> => {
-        const pasteItems = onPasteItems?.(pasteConfig);
+    const pasteItem = (item?: TabMenuItemData<T>, index?: number): UpdateState<T> => {
+        const pasteItems = item ? [item] : onPasteItems?.(pasteConfig);
         if (!pasteItems) {
             return {
                 action: TabActionType.Skipped,
             };
         }
 
-        const updatedItems = [...items, ...pasteItems];
+        const updatedItems = [...items];
+        updatedItems.splice(index || updatedItems.length, 0, ...pasteItems);
 
         return {
             items: updatedItems,
-            selectedItemIndex: items.length || 0,
+            selectedItemIndex: index || items.length || 0,
             action: TabActionType.Paste,
         };
     };
@@ -176,6 +178,11 @@ export const TabMenu = <T extends unknown>({
 
     const onRemove = (removeItemdItemIndex: number) => {
         onUpdate(removeItem(removeItemdItemIndex));
+    };
+
+    const onDuplicate = (itemIndex: number) => {
+        const item = items[itemIndex];
+        onUpdate(pasteItem({...item}, itemIndex + 1));
     };
 
     const moveItem = (dragIndex: number, hoverIndex: number) => {
@@ -286,7 +293,9 @@ export const TabMenu = <T extends unknown>({
                 }}
                 onRemove={onRemove}
                 onAction={onAction}
+                onDuplicate={onDuplicate}
                 iconOnHover={true}
+                onCopy={onCopyItem}
             />
         );
     };

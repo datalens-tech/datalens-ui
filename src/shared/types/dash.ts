@@ -185,6 +185,7 @@ export interface DashTabItemControlData {
     placementMode?: string;
     width?: string;
     defaults?: StringParams;
+    namespace: string;
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
