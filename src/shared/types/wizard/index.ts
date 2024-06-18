@@ -192,6 +192,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.Column100p
             | WizardVisualizationId.Bar
             | WizardVisualizationId.Bar100p
+            | WizardVisualizationId.BarYD3
+            | WizardVisualizationId.BarY100pD3
             | WizardVisualizationId.Pie
             | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut

@@ -8,6 +8,7 @@ import type {BaseSource} from '../types';
 export const typesSelector = (state: DatalensGlobalState) => state.dataset.types.data;
 
 export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.key;
+export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
 
@@ -34,6 +35,8 @@ export const rlsSelector = (state: DatalensGlobalState) => state.dataset.content
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;
+export const isLoadPreviewByDefaultSelector = (state: DatalensGlobalState) =>
+    state.dataset.content.load_preview_by_default;
 export const datasetValidationSelector = (state: DatalensGlobalState) => state.dataset.validation;
 export const sourceTemplateSelector = (state: DatalensGlobalState) => state.dataset.sourceTemplate;
 

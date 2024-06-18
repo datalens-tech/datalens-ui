@@ -56,6 +56,7 @@ import type {
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
+    SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -64,6 +65,7 @@ import type {
     SOURCE_UPDATE,
     TOGGLE_ALLOWANCE_SAVE,
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
+    TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
@@ -269,6 +271,7 @@ export type DatasetReduxState = {
         view: 'full' | 'bottom' | 'right'; // VIEW_PREVIEW
         data: string[]; // TODO: correctly describe the type
         error: DatasetError;
+        isQueued: boolean;
     };
     errors: {
         previewError: DatasetError;
@@ -453,6 +456,20 @@ type ToggleViewPreview = {
 
 type TogglePreview = {
     type: typeof TOGGLE_PREVIEW;
+};
+
+type SetQueueToLoadPreview = {
+    type: typeof SET_QUEUE_TO_LOAD_PREVIEW;
+    payload: {
+        enable: boolean;
+    };
+};
+
+type ToggleLoadPreviewByDefault = {
+    type: typeof TOGGLE_LOAD_PREVIEW_BY_DEFAULT;
+    payload: {
+        enable: boolean;
+    };
 };
 
 type ClosePreview = {
@@ -721,6 +738,8 @@ export type DatasetReduxAction =
     | AddField
     | ToggleViewPreview
     | TogglePreview
+    | SetQueueToLoadPreview
+    | ToggleLoadPreviewByDefault
     | ClosePreview
     | OpenPreview
     | ChangeAmountPreviewRows

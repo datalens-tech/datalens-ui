@@ -2,7 +2,8 @@ import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'constants/common';
 
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Gear} from '@gravity-ui/icons';
+import {Button, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import omit from 'lodash/omit';
@@ -27,6 +28,7 @@ import {
     refreshSources,
     saveDataset,
     setAsideHeaderWidth,
+    toggleLoadPreviewByDefault,
     togglePreview,
     updateDatasetByValidation,
 } from 'units/datasets/store/actions/creators';
@@ -63,6 +65,7 @@ import {
     isDatasetChangedDatasetSelector,
     isDatasetRevisionMismatchSelector,
     isFavoriteDatasetSelector,
+    isLoadPreviewByDefaultSelector,
     isLoadingDatasetSelector,
     isSavingDatasetDisabledSelector,
     isSavingDatasetSelector,
@@ -81,6 +84,8 @@ const i18nError = I18n.keyset('component.view-error.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
+
+const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 
 class Dataset extends React.Component {
     constructor(props) {
@@ -406,8 +411,17 @@ class Dataset extends React.Component {
         });
     };
 
+    getDatasetSettings = () => {
+        return this.props.isPreviewLoadByDefault ? [ITEM_SHOW_PREVIEW_BY_DEFAULT] : [];
+    };
+
+    setDatasetSettings = (value) => {
+        this.props.toggleLoadPreviewByDefault(value.includes(ITEM_SHOW_PREVIEW_BY_DEFAULT));
+    };
+
     getRightItems = () => {
         const {
+            isLoading,
             isDatasetRevisionMismatch,
             savingDatasetDisabled,
             isProcessingSavingDataset,
@@ -415,6 +429,7 @@ class Dataset extends React.Component {
             isCreationProcess,
         } = this.props;
         const saveButtonDisabled = savingDatasetDisabled || isDatasetRevisionMismatch;
+
         const rightItems = [
             <Button
                 key="save-dataset"
@@ -434,11 +449,42 @@ class Dataset extends React.Component {
             <NavigationPrompt key="navigation-prompt" when={!saveButtonDisabled} />,
         ];
 
+        const leftItems = [
+            <Select
+                key={'settings'}
+                value={this.getDatasetSettings()}
+                multiple={true}
+                onUpdate={this.setDatasetSettings}
+                popupPlacement={'bottom-end'}
+                renderControl={(args) => {
+                    const {onClick, onKeyDown, ref} = args;
+
+                    return (
+                        <Button
+                            ref={ref}
+                            size="s"
+                            view="flat"
+                            onClick={onClick}
+                            extraProps={{onKeyDown}}
+                        >
+                            <Icon data={Gear} height={18} width={18} />
+                        </Button>
+                    );
+                }}
+                className={b('settings-cog')}
+            >
+                <Select.Option value={ITEM_SHOW_PREVIEW_BY_DEFAULT} disabled={isLoading}>
+                    {i18n('label_load_preview_by_default')}
+                </Select.Option>
+            </Select>,
+        ];
+
         return [
+            ...leftItems,
             <Button
                 key="create-widget"
                 className={b('create-widget-btn')}
-                view="flat"
+                view="normal"
                 size="m"
                 disabled={isCreationProcess}
                 onClick={this.openCreationWidgetPage}
@@ -635,12 +681,14 @@ Dataset.propTypes = {
     isAuto: PropTypes.bool.isRequired,
     previewEnabled: PropTypes.bool.isRequired,
     isDatasetRevisionMismatch: PropTypes.bool.isRequired,
+    isPreviewLoadByDefault: PropTypes.bool,
     fetchFieldTypes: PropTypes.func.isRequired,
     initializeDataset: PropTypes.func.isRequired,
     initialFetchDataset: PropTypes.func.isRequired,
     fetchDataset: PropTypes.func.isRequired,
     openPreview: PropTypes.func.isRequired,
     closePreview: PropTypes.func.isRequired,
+    toggleLoadPreviewByDefault: PropTypes.func.isRequired,
     togglePreview: PropTypes.func.isRequired,
     updateDatasetByValidation: PropTypes.func.isRequired,
     saveDataset: PropTypes.func.isRequired,
@@ -681,6 +729,7 @@ const mapStateToProps = createStructuredSelector({
     isLoading: isLoadingDatasetSelector,
     isFavorite: isFavoriteDatasetSelector,
     savingDatasetDisabled: isSavingDatasetDisabledSelector,
+    isPreviewLoadByDefault: isLoadPreviewByDefaultSelector,
     isDatasetRevisionMismatch: isDatasetRevisionMismatchSelector,
     isProcessingSavingDataset: isSavingDatasetSelector,
     previewEnabled: previewEnabledSelector,
@@ -697,6 +746,7 @@ const mapDispatchToProps = {
     saveDataset,
     openPreview,
     closePreview,
+    toggleLoadPreviewByDefault,
     togglePreview,
     updateDatasetByValidation,
     changeAmountPreviewRows,
