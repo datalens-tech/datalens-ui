@@ -150,7 +150,9 @@ export const getDistinctsRequestBody = ({
         let operation;
         const paramValue = params[param];
         if (Array.isArray(paramValue)) {
-            const valuesWithOperations = paramValue.filter((value) => value).map(resolveOperation);
+            const valuesWithOperations = paramValue
+                .filter((value) => value)
+                .map((value) => resolveOperation(value));
 
             values = valuesWithOperations.map(
                 (item: FiltersOperationFromURL | null) => item!.value,
