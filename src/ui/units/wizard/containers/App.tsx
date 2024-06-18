@@ -8,7 +8,9 @@ import {bindActionCreators} from 'redux';
 
 import type {DatalensGlobalState} from '../../..';
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
+import {HOTKEYS_SCOPES} from '../../../constants/misc';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
+import {useAutodetectHotkeysScope} from '../../../hooks/useAutodetectHotkeysScope';
 import {setCurrentPageEntry} from '../../../store/actions/asideHeader';
 import {selectWidget} from '../selectors/widget';
 
@@ -27,13 +29,14 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
 
     const hotkeysContext = useHotkeysContext();
 
-    React.useEffect(() => {
-        hotkeysContext.enableScope('wizard');
+    useAutodetectHotkeysScope({
+        hotkeysContext,
+        scope: HOTKEYS_SCOPES.WIZARD,
+    });
 
+    React.useEffect(() => {
         return () => {
             setCurrentPageEntry(null);
-
-            hotkeysContext.disableScope('wizard');
         };
     }, []);
 

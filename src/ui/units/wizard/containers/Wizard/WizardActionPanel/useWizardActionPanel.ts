@@ -8,14 +8,15 @@ import {
 } from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {useHotkeys} from 'react-hotkeys-hook';
 import {useDispatch} from 'react-redux';
 
 import {Feature, WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import {META_KEY} from '../../../../../constants/misc';
+import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
-import Utils, {isMacintosh} from '../../../../../utils';
+import Utils from '../../../../../utils';
 import {toggleFullscreen} from '../../../actions/settings';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
@@ -56,19 +57,17 @@ export const useWizardActionPanel = (
         dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
     };
 
-    let undoHotkey;
-    let redoHotkey;
+    useBindHotkey({
+        key: [META_KEY, 'z'],
+        handler: onClickGoBack,
+        options: {scopes: 'wizard'},
+    });
 
-    if (isMacintosh()) {
-        undoHotkey = 'meta+z';
-        redoHotkey = 'meta+shift+z';
-    } else {
-        undoHotkey = 'ctrl+z';
-        redoHotkey = 'ctrl+shift+z';
-    }
-
-    useHotkeys(undoHotkey, onClickGoBack, {scopes: 'wizard'});
-    useHotkeys(redoHotkey, onClickGoForward, {scopes: 'wizard'});
+    useBindHotkey({
+        key: [META_KEY, 'shift', 'z'],
+        handler: onClickGoForward,
+        options: {scopes: 'wizard'},
+    });
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]

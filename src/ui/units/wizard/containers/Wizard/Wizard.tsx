@@ -35,7 +35,8 @@ import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
-import {withHotkeysHook} from '../../../../hoc/withHotkeysHook';
+import {HOTKEYS_SCOPES} from '../../../../constants/misc';
+import {withHotkeys} from '../../../../hoc/withHotkeys';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
@@ -101,7 +102,7 @@ const b = block('wizard');
 const SPLIT_PANE_MIN_SIZE = 256;
 const SPLIT_PANE_MAX_SIZE = 512;
 
-const EntryDialoguesWithHotkeysHook = withHotkeysHook(EntryDialogues, 'entry-dialogues');
+const EntryDialoguesWithHotkeys = withHotkeys(EntryDialogues, HOTKEYS_SCOPES.DIALOG_MANAGER);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -497,7 +498,7 @@ class Wizard extends React.Component<Props, State> {
                                 this.openSaveAsWidgetDialog();
                             }}
                         />
-                        <EntryDialoguesWithHotkeysHook ref={entryDialoguesRef} />
+                        <EntryDialoguesWithHotkeys ref={entryDialoguesRef} />
                         {Boolean(widget) && !widget.fake && (
                             <React.Fragment>
                                 <SlugifyUrl

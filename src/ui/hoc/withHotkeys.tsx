@@ -4,11 +4,11 @@ import {useHotkeysContext} from 'react-hotkeys-hook';
 
 import {useSetHotkeysScope} from '../hooks/useSetHotkeysScope';
 
-export function withHotkeysHook<T>(
-    WrappedComponent: React.ComponentType<T>,
-    componentScope: string,
-) {
-    const WithHotkeysHook = forwardRef((props: T, ref) => {
+/**
+ * Adds methods to set or unset needed hotkeys context
+ */
+export function withHotkeys<T>(WrappedComponent: React.ComponentType<T>, componentScope: string) {
+    const WithHotkeys = forwardRef((props: T, ref) => {
         const hotkeysContext = useHotkeysContext();
 
         const {setHotkeysScope, unsetHotkeysScope} = useSetHotkeysScope({
@@ -27,9 +27,9 @@ export function withHotkeysHook<T>(
         );
     });
 
-    WithHotkeysHook.displayName = `WithHotkeysHook(${
+    WithHotkeys.displayName = `WithHotkeys(${
         WrappedComponent.displayName || WrappedComponent.name || 'Component'
     }`;
 
-    return WithHotkeysHook;
+    return WithHotkeys;
 }
