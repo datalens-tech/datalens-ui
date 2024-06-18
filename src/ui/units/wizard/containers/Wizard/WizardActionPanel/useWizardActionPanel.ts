@@ -41,7 +41,6 @@ export const useWizardActionPanel = (
         editButtonLoading,
         handleEditButtonClick,
         isViewOnlyMode,
-        chartKitRef,
         isFullscreen,
         canGoBack,
         canGoForward,
@@ -49,13 +48,17 @@ export const useWizardActionPanel = (
 
     const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
 
-    const onClickGoBack = () => {
-        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-    };
+    const onClickGoBack = React.useCallback(() => {
+        if (canGoBack) {
+            dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+        }
+    }, [canGoBack, dispatch]);
 
-    const onClickGoForward = () => {
-        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-    };
+    const onClickGoForward = React.useCallback(() => {
+        if (canGoForward) {
+            dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+        }
+    }, [canGoForward, dispatch]);
 
     useBindHotkey({
         key: [META_KEY, 'z'],
@@ -118,8 +121,15 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, chartKitRef.current, isFullscreen, canGoBack, canGoForward]);
+    }, [
+        isFullscreen,
+        enableEditHistory,
+        onClickGoBack,
+        canGoBack,
+        onClickGoForward,
+        canGoForward,
+        dispatch,
+    ]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
         return [
