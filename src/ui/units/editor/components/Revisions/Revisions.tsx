@@ -209,12 +209,49 @@ class Revisions extends React.Component<Props, RevisionsState> {
         }
     };
 
+    private renderActions = ({
+        item,
+        current,
+        published,
+    }: {
+        item: RevisionEntry;
+        current: boolean;
+        published: boolean;
+    }) => {
+        const {entry, progress} = this.props;
+        const editable = entry.permissions.edit;
+        const latest = item.revId === item.savedId;
+
+        const showActions = !current || (editable && (!latest || !published));
+
+        if (!showActions) {
+            return null;
+        }
+
+        return (
+            <div onClick={(event) => event.stopPropagation()} className={b('dropdown')}>
+                <DropdownActions
+                    editable={editable}
+                    disabled={Boolean(progress)}
+                    published={published}
+                    latest={latest}
+                    current={current}
+                    onClick={(action: RevisionAction) =>
+                        this.onItemClick({
+                            action,
+                            revisionEntry: item,
+                        })
+                    }
+                />
+            </div>
+        );
+    };
+
     private rowRenderer = ({item}: {item: RevisionEntry}) => {
         const {entry, progress} = this.props;
         const current = entry.revId === item.revId;
         const published = entry.publishedId === item.revId;
         const isReleased: boolean = get(item, ['meta', 'is_release'], false);
-        const editable = entry.permissions.edit;
         const updatedBy = item.updatedBy;
 
         const {getLoginById} = registry.common.functions.getAll();
@@ -270,21 +307,7 @@ class Revisions extends React.Component<Props, RevisionsState> {
                             </div>
                         </div>
                     ) : (
-                        <div onClick={(event) => event.stopPropagation()} className={b('dropdown')}>
-                            <DropdownActions
-                                editable={editable}
-                                disabled={Boolean(progress)}
-                                published={published}
-                                latest={item.revId === item.savedId}
-                                current={current}
-                                onClick={(action: RevisionAction) =>
-                                    this.onItemClick({
-                                        action,
-                                        revisionEntry: item,
-                                    })
-                                }
-                            />
-                        </div>
+                        this.renderActions({item, current, published})
                     )}
                 </div>
             </div>

@@ -6,13 +6,15 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import omit from 'lodash/omit';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
-import {DatasetActionQA, ErrorContentTypes} from 'shared';
+import {DatasetActionQA, ErrorCode, ErrorContentTypes} from 'shared';
+import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {
     addAvatar,
     addSource,
@@ -78,6 +80,7 @@ import './Dataset.scss';
 
 const b = block('dataset');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
+const i18nError = I18n.keyset('component.view-error.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -268,11 +271,10 @@ class Dataset extends React.Component {
     };
 
     getErrorMessageByCode = ({status, data = {}}) => {
-        const {message: code} = data;
-
+        const {message, code} = data;
         switch (status) {
             case 400:
-                switch (code) {
+                switch (message) {
                     case 'NO_CONNECTION':
                         return {
                             type: 'error',
@@ -286,14 +288,28 @@ class Dataset extends React.Component {
                 }
             case 403:
             case ErrorContentTypes.NO_ACCESS:
-                return {
-                    type: 'not-found',
-                    title: i18n('label_error-403-title'),
-                    action: {
-                        text: i18n('button_ask-access-rights'),
-                        handler: this.askAccessRights,
-                    },
-                };
+                if (code === ErrorCode.PlatformPermissionRequired) {
+                    return {
+                        type: 'no-access',
+                        title: i18n('label_error-403-title'),
+                        action: {
+                            text: i18nError('button_details'),
+                            handler: this.openDialogDetails,
+                            buttonProps: {
+                                view: 'outlined',
+                            },
+                        },
+                    };
+                } else {
+                    return {
+                        type: 'no-access',
+                        title: i18n('label_error-403-title'),
+                        action: {
+                            text: i18n('button_ask-access-rights'),
+                            handler: this.askAccessRights,
+                        },
+                    };
+                }
             case 404:
             case ErrorContentTypes.NOT_FOUND:
                 return {
@@ -479,12 +495,22 @@ class Dataset extends React.Component {
         ];
     };
 
+    openDialogDetails = () => {
+        const {datasetError} = this.props;
+
+        this.props.openDialogErrorWithTabs({
+            title: datasetError.details.title,
+            error: omit(datasetError, 'details'),
+        });
+    };
+
     renderErrorContent() {
         const {sdk, datasetError} = this.props;
-        const {status, requestId, traceId, message} = UIUtils.parseErrorResponse(datasetError);
+        const {status, requestId, traceId, message, code} =
+            UIUtils.parseErrorResponse(datasetError);
         const {type, title, description, action} = this.getErrorMessageByCode({
             status,
-            data: {message},
+            data: {message, code},
         });
 
         return (
@@ -728,6 +754,7 @@ const mapDispatchToProps = {
     setAsideHeaderWidth,
     addSource,
     addAvatar,
+    openDialogErrorWithTabs,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps))(withRouter(Dataset));
