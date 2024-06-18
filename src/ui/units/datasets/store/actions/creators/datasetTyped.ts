@@ -1,18 +1,35 @@
 import type {Toaster} from '@gravity-ui/uikit';
 import type {DatalensGlobalState} from 'index';
+import _debounce from 'lodash/debounce';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
-import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
-import {TIMEOUT_65_SEC} from 'shared';
-import type {ValidateDatasetResponse} from 'shared/schema';
+import type {
+    Dataset,
+    DatasetAvatarRelation,
+    DatasetField,
+    DatasetSource,
+    DatasetSourceAvatar,
+    WorkbookId,
+} from 'shared';
+import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
+import type {GetPreviewResponse, ValidateDatasetResponse} from 'shared/schema';
+import {sdk} from 'ui';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {TOASTERS_NAMES} from '../../../../../units/datasets/constants';
 import {getFilteredObject} from '../../../../../utils';
-import {workbookIdSelector} from '../../selectors';
+import {
+    datasetContentSelector,
+    datasetFieldsSelector,
+    datasetIdSelector,
+    datasetPreviewSelector,
+    datasetValidationSelector,
+    isLoadPreviewByDefaultSelector,
+    workbookIdSelector,
+} from '../../selectors';
 import type {
     BaseSource,
     ConnectionEntry,
@@ -34,6 +51,15 @@ type ValidateDatasetArgs = {
     compareContent?: boolean;
     initial?: boolean;
 };
+
+type DispatchFetchPreviewParams = {
+    datasetId: string;
+    workbookId: WorkbookId;
+    resultSchema: DatasetField[];
+    limit: number;
+};
+
+type FetchPreviewParams = DispatchFetchPreviewParams & {debounceEnabled?: boolean};
 
 export function setFreeformSources(freeformSources: FreeformSource[]) {
     return (dispatch: Dispatch<DatasetReduxAction>) => {
@@ -85,6 +111,8 @@ export function openPreview() {
         dispatch({
             type: DATASET_ACTION_TYPES.OPEN_PREVIEW,
         });
+
+        dispatch(queuedFetchPreviewDataset());
     };
 }
 export function closePreview() {
@@ -99,6 +127,163 @@ export function togglePreview() {
         dispatch({
             type: DATASET_ACTION_TYPES.TOGGLE_PREVIEW,
         });
+
+        dispatch(queuedFetchPreviewDataset());
+    };
+}
+
+export function queuePreviewToOpen(enable: boolean) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_QUEUE_TO_LOAD_PREVIEW,
+            payload: {
+                enable,
+            },
+        });
+    };
+}
+
+export function clearDatasetPreview() {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.CLEAR_PREVIEW,
+            payload: {},
+        });
+    };
+}
+
+const dispatchFetchPreviewDataset = async (
+    {datasetId, workbookId, resultSchema, limit}: DispatchFetchPreviewParams,
+    dispatch: DatasetDispatch,
+    getState: GetState,
+) => {
+    try {
+        dispatch({
+            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_REQUEST,
+            payload: {},
+        });
+        const state = getState();
+        const {isLoading} = datasetValidationSelector(state);
+        const content = datasetContentSelector(state) as Dataset['dataset'];
+
+        let previewDataset: GetPreviewResponse = {};
+
+        if (resultSchema.length && !isLoading) {
+            previewDataset = await getSdk().bi.getPreview(
+                {
+                    datasetId,
+                    workbookId,
+                    limit,
+                    dataset: content,
+                    version: 'draft',
+                },
+                {timeout: TIMEOUT_100_SEC},
+            );
+        } else {
+            return dispatch(clearDatasetPreview());
+        }
+        const {result: {regular, data} = {}} = previewDataset;
+
+        dispatch({
+            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_SUCCESS,
+            payload: {
+                data: data || regular,
+            },
+        });
+    } catch (error) {
+        if (!sdk.isCancel(error)) {
+            logger.logError('dataset: dispatchFetchPreviewDataset failed', error);
+            dispatch({
+                type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_FAILURE,
+                payload: {
+                    error,
+                },
+            });
+        }
+    }
+};
+
+const debouncedFetchPreviewDataset = _debounce(dispatchFetchPreviewDataset, 3000);
+
+export function fetchPreviewDataset({
+    datasetId,
+    workbookId,
+    resultSchema,
+    limit = 100,
+    debounceEnabled = false,
+}: FetchPreviewParams) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        if (getState().dataset.preview.isVisible) {
+            return dispatch(
+                debounceEnabled
+                    ? debouncedFetchPreviewDataset.bind(null, {
+                          datasetId,
+                          workbookId,
+                          resultSchema,
+                          limit,
+                      })
+                    : dispatchFetchPreviewDataset.bind(null, {
+                          datasetId,
+                          workbookId,
+                          resultSchema,
+                          limit,
+                      }),
+            );
+        } else {
+            return dispatch(queuePreviewToOpen(true));
+        }
+    };
+}
+
+export function refetchPreviewDataset() {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        const state = getState();
+        const resultSchema = datasetFieldsSelector(state);
+        const datasetId = datasetIdSelector(state);
+        const workbookId = workbookIdSelector(state);
+        const {amountPreviewRows} = datasetPreviewSelector(state);
+
+        dispatch(
+            fetchPreviewDataset({
+                datasetId,
+                workbookId,
+                resultSchema,
+                limit: amountPreviewRows,
+            }),
+        );
+    };
+}
+
+// Lazy loading dataset preview
+export function queuedFetchPreviewDataset() {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        const preview = datasetPreviewSelector(getState());
+
+        // If no actions were performed while preview were hidden
+        // or there is no queued tasks to load
+        if (!preview.isQueued || !preview.isVisible) {
+            return;
+        }
+
+        // If preview is visible and there were any changes performed
+        // we are loading new preview data
+        if (preview.previewEnabled) {
+            dispatch(queuePreviewToOpen(false));
+            dispatch(refetchPreviewDataset());
+        }
+    };
+}
+
+export function toggleLoadPreviewByDefault(enable: boolean) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        if (isLoadPreviewByDefaultSelector(getState()) !== enable) {
+            dispatch({
+                type: DATASET_ACTION_TYPES.TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
+                payload: {enable},
+            });
+
+            dispatch(enableSaveDataset());
+        }
     };
 }
 
