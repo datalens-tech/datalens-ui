@@ -23,8 +23,7 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BrachActionPanel} from './components/BatchActionPanel/BatchActionPanel';
-import type {BatchFieldAction} from './constants';
-import {FieldAction} from './constants';
+import {BatchFieldAction, FieldAction} from './constants';
 import {getAggregationSwitchTo, getColumns} from './utils';
 
 import './DatasetTable.scss';
@@ -51,6 +50,7 @@ type DatasetTableProps = {
     }) => void;
     duplicateField: (data: {field: DatasetField}) => void;
     removeField: (data: {field: DatasetField}) => void;
+    batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
     openRLSDialog: (data: {field: DatasetField}) => void;
     openDialog: typeof openDialog;
@@ -202,8 +202,19 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
 
     private handleBatchUpdate = (action: BatchFieldAction) => {
-        // eslint-disable-next-line no-console
-        console.log(action);
+        const {map} = this.getFilteredSelectedRows();
+        const fields = this.props.fields.filter((field) => map[field.guid]);
+
+        switch (action) {
+            case BatchFieldAction.Remove: {
+                this.props.batchRemoveFields({fields});
+                return;
+            }
+
+            default: {
+                return;
+            }
+        }
     };
 
     private handleHiddenUpdate = ({guid, hidden}: DatasetField) => {

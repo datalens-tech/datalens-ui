@@ -14,6 +14,7 @@ import {
     ADD_OBLIGATORY_FILTER,
     AVATAR_ADD,
     AVATAR_DELETE,
+    BATCH_DELETE_FIELDS,
     CHANGE_AMOUNT_PREVIEW_ROWS,
     CLEAR_PREVIEW,
     CLICK_CONNECTION,
@@ -1024,6 +1025,43 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     result_schema: resultSchemaNext,
                 },
                 updates: [...updates, update],
+            };
+        }
+        case BATCH_DELETE_FIELDS: {
+            const {fields} = action.payload;
+            const {
+                updates,
+                content: {result_schema: resultSchema},
+            } = state;
+            const guids = fields.reduce<Record<string, true>>((memo, {guid}) => {
+                if (guid) {
+                    memo[guid] = true;
+                }
+
+                return memo;
+            }, {});
+
+            const deleteUpdates: Update[] = [];
+            const resultSchemaNext = (resultSchema || []).filter(({guid: currentGuid}) => {
+                if (guids[currentGuid]) {
+                    deleteUpdates.push({
+                        action: 'delete_field',
+                        field: {
+                            guid: currentGuid,
+                        },
+                    });
+                }
+
+                return !guids[currentGuid];
+            });
+
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    result_schema: resultSchemaNext,
+                },
+                updates: [...updates, ...deleteUpdates],
             };
         }
         case DELETE_FIELD: {

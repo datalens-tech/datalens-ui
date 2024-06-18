@@ -129,6 +129,14 @@
             &#{$class}__row_active {
                 background-color: var(--g-color-base-selection-hover);
             }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
         }
 
         &:hover {

@@ -318,6 +318,16 @@ export function deleteField(field: Partial<DatasetField>) {
         });
     };
 }
+export function batchDeleteFields(fields: Partial<DatasetField>[]) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.BATCH_DELETE_FIELDS,
+            payload: {
+                fields,
+            },
+        });
+    };
+}
 export function addField(field: Partial<DatasetField>, ignoreMergeWithSchema?: boolean) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
