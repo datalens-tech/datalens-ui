@@ -112,6 +112,14 @@ export type MoveWorkbooksResponse = {
     workbooks: Workbook[];
 };
 
+export type DeleteWorkbooksArgs = {
+    workbookIds: string[];
+};
+
+export type DeleteWorkbooksResponse = {
+    workbooks: Workbook[];
+};
+
 export type DeleteWorkbookArgs = {
     workbookId: string;
 };

@@ -2,15 +2,12 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-// import type {CollectionsStructureDispatch} from '../../store/actions/collectionsStructure';
-// import {moveCollections, moveWorkbooks} from '../../store/actions/collectionsStructure';
 import type {CollectionsStructureDispatch} from 'ui/store/actions/collectionsStructure';
-import {deleteCollections} from 'ui/store/actions/collectionsStructure';
+import {deleteCollections, deleteWorkbooks} from 'ui/store/actions/collectionsStructure';
 
-import {selectMoveIsLoading} from '../../store/selectors/collectionsStructure';
+import {selectDeleteIsLoading} from '../../store/selectors/collectionsStructure';
 import DialogManager from '../DialogManager/DialogManager';
 
-// import {CollectionStructureDialog, ResourceType} from './CollectionStructureDialog';
 import {DeleteCollectionsWorkbooksContent} from './DeleteCollectionsWorkbooksContent';
 import {DeleteDialog} from './DeleteDialog';
 
@@ -22,7 +19,6 @@ export type Props = {
     workbookIds: string[];
     collectionTitles: string[];
     workbookTitles: string[];
-    initialParentId?: string | null;
     onApply: () => void;
     onClose: () => void;
 };
@@ -43,12 +39,12 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
     onApply,
     onClose,
 }) => {
-    const deleteIsLoading = useSelector(selectMoveIsLoading);
+    const deleteIsLoading = useSelector(selectDeleteIsLoading);
     const dispatch = useDispatch<CollectionsStructureDispatch>();
 
     const handleDelete = React.useCallback(async () => {
         let deleteCollectionsPromise: Promise<unknown> = Promise.resolve();
-        const deleteWorkbooksPromise: Promise<unknown> = Promise.resolve();
+        let deleteWorkbooksPromise: Promise<unknown> = Promise.resolve();
 
         if (collectionIds?.length) {
             deleteCollectionsPromise = dispatch(
@@ -59,10 +55,9 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
         }
 
         if (workbookIds?.length) {
-            moveWorkbooksPromise = dispatch(
-                moveWorkbooks({
+            deleteWorkbooksPromise = dispatch(
+                deleteWorkbooks({
                     workbookIds,
-                    collectionId: targetCollectionId,
                 }),
             );
         }
@@ -70,7 +65,7 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
         await Promise.all([deleteCollectionsPromise, deleteWorkbooksPromise]);
 
         onApply();
-    }, [collectionIds, onApply, workbookIds]);
+    }, [collectionIds, dispatch, onApply, workbookIds]);
 
     return (
         <DeleteDialog

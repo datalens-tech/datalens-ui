@@ -60,6 +60,9 @@ import {
     DELETE_WORKBOOK_LOADING,
     DELETE_WORKBOOK_SUCCESS,
     DELETE_WORKBOOK_FAILED,
+    DELETE_WORKBOOKS_FAILED,
+    DELETE_WORKBOOKS_LOADING,
+    DELETE_WORKBOOKS_SUCCESS,
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
@@ -85,6 +88,7 @@ import type {
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
     DeleteCollectionsResponse,
+    DeleteWorkbooksResponse,
 } from '../../../shared/schema';
 
 type ResetStateAction = {
@@ -570,6 +574,62 @@ export const createWorkbook = ({
 
                 dispatch({
                     type: CREATE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type DeleteWorkbooksLoadingAction = {
+    type: typeof DELETE_WORKBOOKS_LOADING;
+};
+type DeleteWorkbooksSuccessAction = {
+    type: typeof DELETE_WORKBOOKS_SUCCESS;
+    data: DeleteWorkbooksResponse;
+};
+type DeleteWorkbooksFailedAction = {
+    type: typeof DELETE_WORKBOOKS_FAILED;
+    error: Error | null;
+};
+type DeleteWorkbooksAction =
+    | DeleteWorkbooksLoadingAction
+    | DeleteWorkbooksSuccessAction
+    | DeleteWorkbooksFailedAction;
+
+export const deleteWorkbooks = ({workbookIds}: {workbookIds: string[]}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_WORKBOOKS_LOADING,
+        });
+
+        return getSdk()
+            .us.deleteWorkbooks({
+                workbookIds,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_WORKBOOKS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteWorkbooks failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_WORKBOOKS_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -1301,6 +1361,7 @@ export type CollectionsStructureAction =
     | MoveCollectionsAction
     | MoveWorkbooksAction
     | DeleteCollectionsAction
+    | DeleteWorkbooksAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
     | UpdateCollectionAction

@@ -65,6 +65,11 @@ export const DELETE_COLLECTIONS_LOADING = Symbol('collectionsStructure/DELETE_CO
 export const DELETE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/DELETE_COLLECTIONS_SUCCESS');
 export const DELETE_COLLECTIONS_FAILED = Symbol('collectionsStructure/DELETE_COLLECTIONS_FAILED');
 
+// Delete workbookss
+export const DELETE_WORKBOOKS_LOADING = Symbol('collectionsStructure/DELETE_WORKBOOKS_LOADING');
+export const DELETE_WORKBOOKS_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOKS_SUCCESS');
+export const DELETE_WORKBOOKS_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOKS_FAILED');
+
 // Moving collections
 export const MOVE_COLLECTIONS_LOADING = Symbol('collectionsStructure/MOVE_COLLECTIONS_LOADING');
 export const MOVE_COLLECTIONS_SUCCESS = Symbol('collectionsStructure/MOVE_COLLECTIONS_SUCCESS');
