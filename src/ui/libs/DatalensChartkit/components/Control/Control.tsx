@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Loader} from '@gravity-ui/uikit';
+import {TriangleExclamationFill} from '@gravity-ui/icons';
+import {Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
@@ -10,7 +11,6 @@ import {isMobileView} from 'ui/utils/mobile';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
-import {i18n} from '../../ChartKit/modules/i18n/i18n';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
 import type {
@@ -52,6 +52,7 @@ const STATUS = {
 const b = block('chartkit-control');
 
 const dashI18n = I18n.keyset('dash.dashkit-plugin-control.view');
+const controlI18n = I18n.keyset('chartkit.control');
 
 class Control<TProviderData> extends React.PureComponent<
     ControlProps<TProviderData>,
@@ -254,7 +255,12 @@ class Control<TProviderData> extends React.PureComponent<
         const {status} = this.state;
 
         if (status === STATUS.ERROR) {
-            return <div className={b('error')}>{i18n('chartkit', 'label-control-error')}</div>;
+            return (
+                <div className={b('error')}>
+                    {controlI18n('label_error')}
+                    <Icon data={TriangleExclamationFill} className={b('error-icon')} />
+                </div>
+            );
         }
 
         return (
