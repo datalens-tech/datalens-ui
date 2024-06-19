@@ -5,9 +5,9 @@ import noop from 'lodash/noop';
 import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
-
-import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
 import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
+import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
+
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
 import {DialogAccess} from './DialogAccess/DialogAccess';
 import type {DialogAccessDescriptionProps} from './DialogAccessDescription/DialogAccessDescription';
