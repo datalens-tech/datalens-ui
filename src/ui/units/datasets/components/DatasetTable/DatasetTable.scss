@@ -40,6 +40,7 @@
     }
 
     &__batch-actions {
+        flex-shrink: 0;
         position: sticky;
         bottom: 15px;
         margin: 0 15px 15px;
