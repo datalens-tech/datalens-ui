@@ -9,6 +9,7 @@ import {createStructuredSelector} from 'reselect';
 import {
     addField,
     batchDeleteFields,
+    batchUpdateFields,
     disableSaveDataset,
     duplicateField,
     editorSetItemsToDisplay,
@@ -130,48 +131,72 @@ class DatasetEditor extends React.Component {
 
     debouncedUpdate2000 = _debounce(this.props.updateDatasetByValidation, 2000);
 
-    updateDataset = ({debounce = false, updatePreview = false, validateEnabled = true}) => {
-        const {updateDatasetByValidation} = this.props;
-
+    updateDataset = ({debounce, updatePreview, validateEnabled}) => {
         if (debounce) {
             this.debouncedUpdate2000({
                 updatePreview,
                 validateEnabled,
             });
         } else {
-            updateDatasetByValidation({
+            this.props.updateDatasetByValidation({
                 updatePreview,
                 validateEnabled,
             });
         }
     };
 
-    modifyFields = ({
+    setValidateDataset = (validateEnabled) => {
+        if (validateEnabled) {
+            this.props.disableSaveDataset();
+        } else {
+            this.props.enableSaveDataset();
+        }
+    };
+
+    batchModifyFields = ({
         actionType,
         fields,
         debounce = false,
         updatePreview = false,
         validateEnabled = true,
     }) => {
-        const {
-            addField,
-            duplicateField,
-            batchDeleteFields,
-            updateField,
-            disableSaveDataset,
-            enableSaveDataset,
-        } = this.props;
-
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
-            if (validateEnabled) {
-                disableSaveDataset();
-            } else {
-                enableSaveDataset();
+            this.setValidateDataset(validateEnabled);
+
+            switch (actionType) {
+                case 'delete': {
+                    this.props.batchDeleteFields(fields);
+
+                    this.updateDataset({
+                        debounce,
+                        updatePreview,
+                        validateEnabled,
+                    });
+
+                    break;
+                }
+                case 'update': {
+                    this.props.batchUpdateFields(fields);
+
+                    this.updateDataset({
+                        debounce,
+                        updatePreview,
+                        validateEnabled,
+                    });
+
+                    break;
+                }
             }
+        }
+    };
+
+    modifyFields = ({actionType, field, updatePreview = false, validateEnabled = true}) => {
+        if (field.guid) {
+            this.setValidateDataset(validateEnabled);
 
             switch (actionType) {
                 case 'duplicate': {
-                    duplicateField(fields[0]);
+                    this.props.duplicateField(field);
 
                     this.updateDataset({
                         debounce: true,
@@ -181,33 +206,11 @@ class DatasetEditor extends React.Component {
 
                     break;
                 }
-                case 'delete': {
-                    batchDeleteFields(fields);
-
-                    this.updateDataset({
-                        debounce,
-                        updatePreview,
-                        validateEnabled,
-                    });
-
-                    break;
-                }
                 case 'add': {
-                    addField(fields[0]);
+                    this.props.addField(field);
 
                     this.updateDataset({
                         debounce: false,
-                        updatePreview,
-                        validateEnabled,
-                    });
-
-                    break;
-                }
-                case 'update': {
-                    updateField(fields[0]);
-
-                    this.updateDataset({
-                        debounce,
                         updatePreview,
                         validateEnabled,
                     });
@@ -219,7 +222,7 @@ class DatasetEditor extends React.Component {
     };
 
     updateField = ({field, ...data}) => {
-        this.modifyFields({
+        this.batchModifyFields({
             ...data,
             fields: [field],
             updatePreview: true,
@@ -227,25 +230,8 @@ class DatasetEditor extends React.Component {
         });
     };
 
-    addField = ({field, ...data}) => {
-        this.modifyFields({
-            ...data,
-            fields: [field],
-            actionType: 'add',
-        });
-    };
-
-    duplicateField = ({field, ...data}) => {
-        this.modifyFields({
-            ...data,
-            fields: [field],
-            actionType: 'duplicate',
-            updatePreview: true,
-        });
-    };
-
     removeField = ({field, ...data}) => {
-        this.modifyFields({
+        this.batchModifyFields({
             ...data,
             fields: [field],
             actionType: 'delete',
@@ -254,25 +240,36 @@ class DatasetEditor extends React.Component {
         });
     };
 
+    addField = ({field, ...data}) => {
+        this.modifyFields({
+            ...data,
+            field,
+            actionType: 'add',
+        });
+    };
+
+    duplicateField = ({field, ...data}) => {
+        this.modifyFields({
+            ...data,
+            field,
+            actionType: 'duplicate',
+            updatePreview: true,
+        });
+    };
+
     batchRemoveFields = (data) => {
-        this.props.openDialogConfirm({
-            onApply: () => {
-                this.modifyFields({
-                    ...data,
-                    actionType: 'delete',
-                    updatePreview: true,
-                });
-                this.props.closeDialog();
-            },
-            onCancel: this.props.closeDialog,
-            message: 'Delete message',
-            confirmHeaderText: 'confirmHeaderText',
-            confirmButtonText: 'Delete',
-            cancelButtonText: 'Cancel',
-            cancelButtonView: 'flat',
-            confirmButtonView: 'normal',
-            isWarningConfirm: true,
-            confirmOnEnterPress: true,
+        this.batchModifyFields({
+            ...data,
+            actionType: 'delete',
+            updatePreview: true,
+        });
+    };
+
+    batchUpdateFields = (data) => {
+        this.batchModifyFields({
+            ...data,
+            actionType: 'update',
+            updatePreview: true,
         });
     };
 
@@ -333,11 +330,14 @@ class DatasetEditor extends React.Component {
                     validationInProgress={validation.isLoading}
                     onClickRow={this.openDialogFieldEditor}
                     updateField={this.updateField}
+                    batchUpdateFields={this.batchUpdateFields}
                     duplicateField={this.duplicateField}
                     removeField={this.removeField}
                     batchRemoveFields={this.batchRemoveFields}
                     openRLSDialog={this.openRLSDialog}
                     openDialog={this.props.openDialog}
+                    closeDialog={this.props.closeDialog}
+                    openDialogConfirm={this.props.openDialogConfirm}
                     onDisplaySettingsUpdate={this.handleItemsToDisplayUpdate}
                 />
                 <RLSDialog
@@ -353,6 +353,21 @@ class DatasetEditor extends React.Component {
 }
 
 DatasetEditor.propTypes = {
+    updateDatasetByValidation: PropTypes.func.isRequired,
+    addField: PropTypes.func.isRequired,
+    duplicateField: PropTypes.func.isRequired,
+    updateField: PropTypes.func.isRequired,
+    disableSaveDataset: PropTypes.func.isRequired,
+    enableSaveDataset: PropTypes.func.isRequired,
+    updateRLS: PropTypes.func.isRequired,
+    toggleFieldEditorModuleLoader: PropTypes.func.isRequired,
+    editorSetItemsToDisplay: PropTypes.func.isRequired,
+    batchDeleteFields: PropTypes.func.isRequired,
+    batchUpdateFields: PropTypes.func.isRequired,
+    openDialog: PropTypes.func.isRequired,
+    closeDialog: PropTypes.func.isRequired,
+    openDialogConfirm: PropTypes.func.isRequired,
+
     dataset: PropTypes.object.isRequired,
     rls: PropTypes.object.isRequired,
     fields: PropTypes.array.isRequired,
@@ -360,12 +375,6 @@ DatasetEditor.propTypes = {
     datasetFields: PropTypes.array.isRequired,
     types: PropTypes.array.isRequired,
     sources: PropTypes.array.isRequired,
-    updateRLS: PropTypes.func.isRequired,
-    disableSaveDataset: PropTypes.func.isRequired,
-    enableSaveDataset: PropTypes.func.isRequired,
-    toggleFieldEditorModuleLoader: PropTypes.func.isRequired,
-    editorSetItemsToDisplay: PropTypes.func.isRequired,
-    openDialog: PropTypes.func.isRequired,
     ui: PropTypes.object.isRequired,
     options: PropTypes.object.isRequired,
     validation: PropTypes.object.isRequired,
@@ -401,14 +410,15 @@ const mapDispatchToProps = {
     duplicateField,
     batchDeleteFields,
     updateField,
+    batchUpdateFields,
     updateRLS,
     disableSaveDataset,
     enableSaveDataset,
     toggleFieldEditorModuleLoader,
     editorSetItemsToDisplay,
-    openDialogConfirm,
     openDialog,
     closeDialog,
+    openDialogConfirm,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true}))(

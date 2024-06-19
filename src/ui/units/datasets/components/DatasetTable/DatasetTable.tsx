@@ -17,7 +17,7 @@ import type {
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
 
-import type {openDialog} from '../../../../store/actions/dialog';
+import type {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
@@ -48,12 +48,20 @@ type DatasetTableProps = {
         validateEnabled?: boolean;
         updatePreview?: boolean;
     }) => void;
+    batchUpdateFields: (data: {
+        fields: Partial<DatasetField>[] & {new_id?: string}[];
+        debounce?: boolean;
+        validateEnabled?: boolean;
+        updatePreview?: boolean;
+    }) => void;
     duplicateField: (data: {field: DatasetField}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
     openRLSDialog: (data: {field: DatasetField}) => void;
     openDialog: typeof openDialog;
+    openDialogConfirm: typeof openDialogConfirm;
+    closeDialog: typeof closeDialog;
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
@@ -201,13 +209,67 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
 
+    private batchConfirmDialog = (options: any) => {
+        this.props.openDialogConfirm({
+            cancelButtonText: 'Cancel', // TODO i18n
+            onCancel: this.props.closeDialog,
+            cancelButtonView: 'flat',
+            confirmButtonView: 'normal',
+            isWarningConfirm: true,
+            confirmOnEnterPress: true,
+            ...options,
+        });
+    };
+
+    private handleBatchRemove = (fields: DatasetField[]) => {
+        this.batchConfirmDialog({
+            onApply: () => {
+                this.props.batchRemoveFields({fields});
+                this.props.closeDialog();
+            },
+            message: 'Delete message',
+            confirmHeaderText: 'Delete confirm text',
+            confirmButtonText: 'Delete',
+        });
+    };
+
+    private handleBrachToggleVisibility = (fields: DatasetField[], hidden: boolean) => {
+        this.batchConfirmDialog({
+            onApply: () => {
+                this.props.batchUpdateFields({
+                    validateEnabled: false,
+                    updatePreview: true,
+                    fields: fields.map(({guid}) => ({
+                        guid,
+                        hidden,
+                    })),
+                });
+                this.resetSelection();
+                this.props.closeDialog();
+            },
+            message: hidden ? 'Hide message' : 'Show message',
+            confirmHeaderText: hidden ? 'Hide confirm text' : 'Show confirm text',
+            confirmButtonText: hidden ? 'Hide' : 'Show',
+        });
+    };
+
     private handleBatchUpdate = (action: BatchFieldAction) => {
         const {map} = this.getFilteredSelectedRows();
         const fields = this.props.fields.filter((field) => map[field.guid]);
 
         switch (action) {
             case BatchFieldAction.Remove: {
-                this.props.batchRemoveFields({fields});
+                this.handleBatchRemove(fields);
+                return;
+            }
+
+            case BatchFieldAction.Hide: {
+                this.handleBrachToggleVisibility(fields, true);
+                return;
+            }
+
+            case BatchFieldAction.Show: {
+                this.handleBrachToggleVisibility(fields, false);
                 return;
             }
 
@@ -225,6 +287,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             },
             validateEnabled: false,
             updatePreview: true,
+            debounce: true,
         });
     };
 

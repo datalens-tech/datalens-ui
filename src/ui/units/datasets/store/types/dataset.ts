@@ -19,6 +19,7 @@ import type {
     AVATAR_ADD,
     AVATAR_DELETE,
     BATCH_DELETE_FIELDS,
+    BATCH_UPDATE_FIELDS,
     CHANGE_AMOUNT_PREVIEW_ROWS,
     CLEAR_PREVIEW,
     CLICK_CONNECTION,
@@ -169,6 +170,10 @@ type DeleteFieldUpdate = {
     action: 'delete_field';
     field: Partial<DatasetField>;
 };
+type ChangeFieldUpdate = {
+    action: 'update_field';
+    field: Partial<DatasetField>;
+};
 type AddSourceUpdate = {
     action: 'add_source';
     source: StandaloneSource | DatasetSource;
@@ -243,6 +248,7 @@ type UpdateConnection = {
 export type Update =
     | AddFieldUpdate
     | DeleteFieldUpdate
+    | ChangeFieldUpdate
     | AddSourceUpdate
     | UpdSourceUpdate
     | AddSourceAvatarUpdate
@@ -424,6 +430,14 @@ type UpdateField = {
     type: typeof UPDATE_FIELD;
     payload: {
         field: Partial<DatasetField>;
+        ignoreMergeWithSchema?: boolean;
+    };
+};
+
+type BatchUpdateFields = {
+    type: typeof BATCH_UPDATE_FIELDS;
+    payload: {
+        fields: Partial<DatasetField>[];
         ignoreMergeWithSchema?: boolean;
     };
 };
@@ -746,6 +760,7 @@ export type DatasetReduxAction =
     | SetIsDatasetChangedFlag
     | UpdateRls
     | UpdateField
+    | BatchUpdateFields
     | DeleteField
     | BatchDeleteFields
     | DuplicateField

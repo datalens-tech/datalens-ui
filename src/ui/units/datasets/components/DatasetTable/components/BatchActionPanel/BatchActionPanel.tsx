@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ActionsPanelProps} from '@gravity-ui/components';
 import {ActionsPanel} from '@gravity-ui/components';
-import {EyeSlash, TrashBin} from '@gravity-ui/icons';
+import {Eye, EyeSlash, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 
 import {BatchFieldAction} from '../../constants';
@@ -46,6 +46,21 @@ export const BrachActionPanel = ({
                 dropdown: {
                     item: {
                         action: () => onAction(BatchFieldAction.Hide),
+                        text: 'Hide',
+                    },
+                },
+            },
+            {
+                id: 'show',
+                button: {
+                    props: {
+                        children: [<Icon key="icon" data={Eye} size="16" />, 'Show'],
+                        onClick: () => onAction(BatchFieldAction.Show),
+                    },
+                },
+                dropdown: {
+                    item: {
+                        action: () => onAction(BatchFieldAction.Show),
                         text: 'Hide',
                     },
                 },
