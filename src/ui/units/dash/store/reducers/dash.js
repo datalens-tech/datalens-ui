@@ -142,6 +142,9 @@ export function getSelectorDialogFromData(data, defaults) {
         required: data.source.required,
         showHint: data.source.showHint,
         hint: data.source.hint,
+
+        id: data.id,
+        namespace: data.namespace,
     };
 }
 
