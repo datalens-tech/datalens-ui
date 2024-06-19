@@ -283,11 +283,11 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
 
-            this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
+            this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', () => {
                 this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
             });
 
-            this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
+            this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', () => {
                 this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
             });
         }
