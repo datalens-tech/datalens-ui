@@ -867,7 +867,7 @@ export const collectionsStructure = (
             };
         }
 
-        // Delete workbookss
+        // Delete workbooks
         case DELETE_WORKBOOKS_LOADING: {
             return {
                 ...state,
