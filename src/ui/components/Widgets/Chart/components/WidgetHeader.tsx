@@ -14,6 +14,8 @@ import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 
+import {MarkdownContent} from './MarkdownContent';
+
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
 import './WidgetHeader.scss';
@@ -150,7 +152,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                             </div>
                         )}
                         {warning && (
-                            <Popover content={warning}>
+                            <Popover content={<MarkdownContent value={warning} />}>
                                 <Icon
                                     size={20}
                                     data={ShieldExclamation}

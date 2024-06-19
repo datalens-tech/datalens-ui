@@ -33,12 +33,12 @@ function isHtmlString(value: unknown) {
 export function getChartDebugInfo(widgetData?: Widget & Optional<WithControls> & ChartsData) {
     const pathToFunction = isObjectWithFunction(widgetData);
     if (pathToFunction) {
-        return `has functions at ${pathToFunction}`;
+        return `has functions at \`${pathToFunction}\``;
     }
 
     const pathToHtml = isObjectWith(widgetData, isHtmlString);
     if (pathToHtml) {
-        return `has HTML string at ${pathToHtml}`;
+        return `has HTML string at \`${pathToHtml}\``;
     }
 
     return undefined;
