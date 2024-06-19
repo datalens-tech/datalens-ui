@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
 import {i18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
+import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
@@ -36,7 +37,7 @@ import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
-import {withHotkeys} from '../../../../hoc/withHotkeys';
+import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
@@ -102,8 +103,6 @@ const b = block('wizard');
 const SPLIT_PANE_MIN_SIZE = 256;
 const SPLIT_PANE_MAX_SIZE = 512;
 
-const EntryDialoguesWithHotkeys = withHotkeys(EntryDialogues, HOTKEYS_SCOPES.DIALOG_MANAGER);
-
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
@@ -117,6 +116,7 @@ type OwnProps = {
         params: Record<string, string>;
     };
     location: Location;
+    hotkeysContext?: HotkeysContextType;
 };
 
 interface Props extends OwnProps, StateProps, DispatchProps {}
@@ -130,6 +130,7 @@ interface State {
 class Wizard extends React.Component<Props, State> {
     private toaster: Toaster;
     private entryDialoguesRef: React.RefObject<EntryDialogues>;
+    private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
     private chartKitRef: React.RefObject<ChartKit> = React.createRef<ChartKit>();
 
@@ -157,7 +158,9 @@ class Wizard extends React.Component<Props, State> {
         }
 
         this.toaster = new Toaster();
+
         this.entryDialoguesRef = React.createRef();
+        this.hotkeysAreaRef = React.createRef();
 
         this.state = {
             editButtonLoading: false,
@@ -186,6 +189,14 @@ class Wizard extends React.Component<Props, State> {
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.unloadConfirmation);
+
+        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
+            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+        });
+
+        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
+            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+        });
     }
 
     shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
@@ -498,7 +509,7 @@ class Wizard extends React.Component<Props, State> {
                                 this.openSaveAsWidgetDialog();
                             }}
                         />
-                        <EntryDialoguesWithHotkeys ref={entryDialoguesRef} />
+                        <EntryDialogues ref={entryDialoguesRef} />
                         {Boolean(widget) && !widget.fake && (
                             <React.Fragment>
                                 <SlugifyUrl
@@ -511,66 +522,72 @@ class Wizard extends React.Component<Props, State> {
                         )}
                     </>
                 )}
-                <PageTitle entry={widget} />
-                <WizardActionPanel
-                    config={config}
-                    configType={configType}
-                    entry={widget}
-                    onSaveCallback={this.openSaveWidgetDialog}
-                    onNoRightsDialogCallback={this.openNoRightsDialog}
-                    onSetActualVersionCallback={this.handleSetActualVersion}
-                    dropdownItems={this.getSaveMenuItems()}
-                    onSaveAsNewClick={this.openSaveAsWidgetDialog}
-                    onSaveAsDraftClick={this.handleSaveDraftClick}
-                    onSaveAndPublishClick={this.handleSavePublishClick}
-                    chartKitRef={this.chartKitRef}
-                />
-                <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
-                    <SplitPane
-                        resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
-                        className="top-pane"
-                        split="vertical"
-                        minSize={SPLIT_PANE_MIN_SIZE}
-                        maxSize={SPLIT_PANE_MAX_SIZE}
-                        onChange={this.handleSplitPaneSizeChange}
-                    >
-                        <div className={`column data-column${hidden}`}>
+                <div
+                    className={b('hotkeyes-area')}
+                    ref={this.hotkeysAreaRef}
+                    key={'wizard-hotkeyes-area'}
+                >
+                    <PageTitle entry={widget} />
+                    <WizardActionPanel
+                        config={config}
+                        configType={configType}
+                        entry={widget}
+                        onSaveCallback={this.openSaveWidgetDialog}
+                        onNoRightsDialogCallback={this.openNoRightsDialog}
+                        onSetActualVersionCallback={this.handleSetActualVersion}
+                        dropdownItems={this.getSaveMenuItems()}
+                        onSaveAsNewClick={this.openSaveAsWidgetDialog}
+                        onSaveAsDraftClick={this.handleSaveDraftClick}
+                        onSaveAndPublishClick={this.handleSavePublishClick}
+                        chartKitRef={this.chartKitRef}
+                    />
+                    <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
+                        <SplitPane
+                            resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
+                            className="top-pane"
+                            split="vertical"
+                            minSize={SPLIT_PANE_MIN_SIZE}
+                            maxSize={SPLIT_PANE_MAX_SIZE}
+                            onChange={this.handleSplitPaneSizeChange}
+                        >
+                            <div className={`column data-column${hidden}`}>
+                                {isWidgetLoading ? (
+                                    <div className={b('loader')}>
+                                        <Loader size={'l'} />
+                                    </div>
+                                ) : (
+                                    <SectionDataset
+                                        workbookId={widget.workbookId as string}
+                                        entryDialoguesRef={entryDialoguesRef}
+                                        toaster={toaster}
+                                        sdk={sdk}
+                                    />
+                                )}
+                            </div>
                             {isWidgetLoading ? (
                                 <div className={b('loader')}>
                                     <Loader size={'l'} />
                                 </div>
                             ) : (
-                                <SectionDataset
-                                    workbookId={widget.workbookId as string}
-                                    entryDialoguesRef={entryDialoguesRef}
-                                    toaster={toaster}
-                                    sdk={sdk}
-                                />
+                                <SplitPane
+                                    resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
+                                    split="vertical"
+                                    minSize={SPLIT_PANE_MIN_SIZE}
+                                    maxSize={SPLIT_PANE_MAX_SIZE}
+                                    onChange={this.handleSplitPaneSizeChange}
+                                >
+                                    <div className={`column visual-column${hidden}`}>
+                                        <SectionVisualization
+                                            availableVisualizations={getAvailableVisualizations()}
+                                        />
+                                    </div>
+                                    <div className="column preview-column">
+                                        <SectionPreview chartKitRef={this.chartKitRef} />
+                                    </div>
+                                </SplitPane>
                             )}
-                        </div>
-                        {isWidgetLoading ? (
-                            <div className={b('loader')}>
-                                <Loader size={'l'} />
-                            </div>
-                        ) : (
-                            <SplitPane
-                                resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
-                                split="vertical"
-                                minSize={SPLIT_PANE_MIN_SIZE}
-                                maxSize={SPLIT_PANE_MAX_SIZE}
-                                onChange={this.handleSplitPaneSizeChange}
-                            >
-                                <div className={`column visual-column${hidden}`}>
-                                    <SectionVisualization
-                                        availableVisualizations={getAvailableVisualizations()}
-                                    />
-                                </div>
-                                <div className="column preview-column">
-                                    <SectionPreview chartKitRef={this.chartKitRef} />
-                                </div>
-                            </SplitPane>
-                        )}
-                    </SplitPane>
+                        </SplitPane>
+                    </div>
                 </div>
             </div>
         );
@@ -639,4 +656,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 export default compose<Props, State>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
-)(withErrorPage(Wizard));
+)(withErrorPage(withHotkeysContext(Wizard)));

@@ -181,10 +181,6 @@ class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialogues
         dialogProps,
     }: MethodOpen<T, P>): Promise<EntryDialogOnCloseArg> {
         return new Promise((resolveOpenDialog) => {
-            if (this.props.setHotkeysScope) {
-                this.props.setHotkeysScope();
-            }
-
             this.setState({
                 dialog,
                 resolveOpenDialog,
@@ -195,10 +191,6 @@ class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialogues
     }
 
     private onClose: EntryDialogOnClose = ({status, data = {}}) => {
-        if (this.props.unsetHotkeysScope) {
-            this.props.unsetHotkeysScope();
-        }
-
         const {resolveOpenDialog} = this.state;
 
         this.setState({...initState});

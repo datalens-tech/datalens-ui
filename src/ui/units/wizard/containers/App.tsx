@@ -7,6 +7,7 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 
 import type {DatalensGlobalState} from '../../..';
+import {useEffectOnce} from '../../..';
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
 import {HOTKEYS_SCOPES} from '../../../constants/misc';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
@@ -34,11 +35,11 @@ const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Prop
         scope: HOTKEYS_SCOPES.WIZARD,
     });
 
-    React.useEffect(() => {
+    useEffectOnce(() => {
         return () => {
             setCurrentPageEntry(null);
         };
-    }, []);
+    });
 
     const widgetFake = (widget && widget.fake) || false;
     const widgetKey = (widget && widget.key) || '';
