@@ -49,32 +49,28 @@ export const useWizardActionPanel = (
     const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
 
     const onClickGoBack = React.useCallback(() => {
-        if (canGoBack) {
+        if (canGoBack && enableEditHistory) {
             dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoBack, dispatch]);
+    }, [canGoBack, dispatch, enableEditHistory]);
 
     const onClickGoForward = React.useCallback(() => {
-        if (canGoForward) {
+        if (canGoForward && enableEditHistory) {
             dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoForward, dispatch]);
+    }, [canGoForward, dispatch, enableEditHistory]);
 
-    if (enableEditHistory) {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useBindHotkey({
-            key: [META_KEY, 'z'],
-            handler: onClickGoBack,
-            options: {scopes: 'wizard'},
-        });
+    useBindHotkey({
+        key: [META_KEY, 'z'],
+        handler: onClickGoBack,
+        options: {scopes: 'wizard'},
+    });
 
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useBindHotkey({
-            key: [META_KEY, 'shift', 'z'],
-            handler: onClickGoForward,
-            options: {scopes: 'wizard'},
-        });
-    }
+    useBindHotkey({
+        key: [META_KEY, 'shift', 'z'],
+        handler: onClickGoForward,
+        options: {scopes: 'wizard'},
+    });
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
