@@ -38,7 +38,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
     );
 
     const itemsWithDeletePermission = React.useMemo(
-        () => items.filter((item) => item.permissions.move),
+        () => items.filter((item) => item.permissions.delete),
         [items],
     );
 
