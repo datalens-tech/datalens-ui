@@ -309,7 +309,11 @@ export enum ChartsInsightLocator {
     UsingDeprecatedDatetimeFields = 'using_deprecated_datetime_fields',
 }
 
-export function isObjectWith(value: unknown, check: (value: unknown) => boolean, path = '') {
+export function isObjectWith(
+    value: unknown,
+    check: (value: unknown) => boolean,
+    path = '',
+): string | false {
     if (!value) {
         return false;
     }

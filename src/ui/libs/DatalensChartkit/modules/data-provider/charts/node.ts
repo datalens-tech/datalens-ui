@@ -337,7 +337,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             }
 
             if (debugInfoEnabled) {
-                result.debugInfo = getChartDebugInfo(result, loaded);
+                result.debugInfo = getChartDebugInfo(result);
             }
         }
 

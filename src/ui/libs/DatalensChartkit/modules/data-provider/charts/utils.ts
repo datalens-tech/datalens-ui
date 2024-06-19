@@ -7,8 +7,9 @@ import {DL} from '../../../../../constants';
 
 export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
 
-function isHighchartTemplateString(value: string) {
-    return typeof window.Highcharts !== 'undefined' && Highcharts.format(value, {}) !== value;
+function isHighchartsTemplateString(value: string) {
+    const hc = window.Highcharts;
+    return typeof hc !== 'undefined' && hc.format(value, {}) !== value;
 }
 
 function isHtmlString(value: unknown) {
@@ -20,7 +21,7 @@ function isHtmlString(value: unknown) {
             return true;
         }
 
-        if (isHighchartTemplateString(value)) {
+        if (isHighchartsTemplateString(value)) {
             return true;
         }
     }
