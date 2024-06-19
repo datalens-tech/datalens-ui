@@ -9,6 +9,7 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {useSelector} from 'react-redux';
 import {TabMenuQA} from 'shared';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {getPastedWidgetData} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
@@ -86,8 +87,13 @@ export const TabMenu = <T extends unknown>({
             };
         }
 
+        const pastItemsWithId = pasteItems.map((controlItem) => ({
+            ...controlItem,
+            draftId: getRandomKey(),
+        }));
+
         const updatedItems = [...items];
-        updatedItems.splice(index || updatedItems.length, 0, ...pasteItems);
+        updatedItems.splice(index || updatedItems.length, 0, ...pastItemsWithId);
 
         return {
             items: updatedItems,
