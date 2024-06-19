@@ -7,7 +7,7 @@ import {Icon} from '@gravity-ui/uikit';
 
 import {BatchFieldAction} from '../../constants';
 
-export const BrachActionPanel = ({
+export const BatchActionPanel = ({
     count,
     className,
     onAction,

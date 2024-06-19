@@ -22,7 +22,7 @@ import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
-import {BrachActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
 import {BatchFieldAction, FieldAction} from './constants';
 import {getAggregationSwitchTo, getColumns} from './utils';
 
@@ -137,7 +137,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 </div>
 
                 {selectedCount > 0 && (
-                    <BrachActionPanel
+                    <BatchActionPanel
                         className={b('batch-actions')}
                         count={selectedCount}
                         onClose={this.resetSelection}
@@ -233,7 +233,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         });
     };
 
-    private handleBrachToggleVisibility = (fields: DatasetField[], hidden: boolean) => {
+    private handleBatchToggleVisibility = (fields: DatasetField[], hidden: boolean) => {
         this.batchConfirmDialog({
             onApply: () => {
                 this.props.batchUpdateFields({
@@ -264,12 +264,12 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
 
             case BatchFieldAction.Hide: {
-                this.handleBrachToggleVisibility(fields, true);
+                this.handleBatchToggleVisibility(fields, true);
                 return;
             }
 
             case BatchFieldAction.Show: {
-                this.handleBrachToggleVisibility(fields, false);
+                this.handleBatchToggleVisibility(fields, false);
                 return;
             }
 
