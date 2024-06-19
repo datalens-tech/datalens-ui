@@ -2,10 +2,7 @@ import {ArrowDown, ArrowRight, ArrowUp} from '@gravity-ui/icons';
 import type {Field, GraphShared, Placeholder, Shared} from 'shared';
 import {AxisNullsMode, WizardVisualizationId, isMeasureValue} from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
-import {
-    prepareFieldToDimensionTransformation,
-    prepareFieldToMeasureTransformation,
-} from 'units/wizard/utils/visualization';
+import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {
     lineCommonCheckColor,
@@ -14,6 +11,8 @@ import {
 } from '../../utils/visualizations/line';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
+
+import {prepareFieldToDimensionTransformation} from './utils';
 
 const LineXPlaceholder = {
     allowedTypes: ITEM_TYPES.ALL,

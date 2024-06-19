@@ -1,12 +1,11 @@
 import {ChevronsExpandUpRight, GeoPolygons} from '@gravity-ui/icons';
 import type {Field, GraphShared, Placeholder, Shared} from 'shared';
 import {WizardVisualizationId, createMeasureNames, isMeasureNameOrValue} from 'shared';
-import {
-    prepareFieldToDimensionTransformation,
-    prepareFieldToMeasureTransformation,
-} from 'units/wizard/utils/visualization';
+import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
+
+import {prepareFieldToDimensionTransformation} from './utils';
 
 type OnTreemapDimensionsChangeArgs = {
     colors: Field[];

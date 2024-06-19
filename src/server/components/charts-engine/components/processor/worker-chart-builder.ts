@@ -15,15 +15,8 @@ import type {WizardWorker} from '../worker/types';
 import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder} from './types';
 
-const pool = workerpool.pool(path.resolve(__dirname, '../worker'));
-async function getWorker(options: {timeout: number}) {
-    return pool
-        .proxy<WizardWorker>()
-        .timeout(options.timeout)
-        .catch((e) => {
-            pool.terminate();
-            throw e;
-        });
+async function getWizardWorker() {
+    return workerpool.pool(path.resolve(__dirname, '../worker')).proxy<WizardWorker>();
 }
 
 const ONE_SECOND = 1000;
@@ -45,6 +38,7 @@ export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
     const {config, widgetConfig, userLang} = args;
+    const wizardWorker = await getWizardWorker();
     let shared: Record<string, any>;
 
     const app = registry.getApp();
@@ -90,15 +84,16 @@ export const getWizardChartBuilder = async (
         buildUrls: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const worker = await getWorker({timeout: ONE_SECOND});
-            const {exports, runtimeMetadata} = await worker.buildSources({
-                shared: shared as Shared,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-                palettes,
-            });
+            const {exports, runtimeMetadata} = await wizardWorker
+                .buildSources({
+                    shared: shared as Shared,
+                    params,
+                    actionParams,
+                    widgetConfig,
+                    userLang,
+                    palettes,
+                })
+                .timeout(ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -111,15 +106,16 @@ export const getWizardChartBuilder = async (
         buildChartLibraryConfig: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const worker = await getWorker({timeout: ONE_SECOND});
-            const {exports, runtimeMetadata} = await worker.buildLibraryConfig({
-                shared: shared as ServerChartsConfig,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-                features,
-            });
+            const {exports, runtimeMetadata} = await wizardWorker
+                .buildLibraryConfig({
+                    shared: shared as ServerChartsConfig,
+                    params,
+                    actionParams,
+                    widgetConfig,
+                    userLang,
+                    features,
+                })
+                .timeout(ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -132,15 +128,16 @@ export const getWizardChartBuilder = async (
         buildChartConfig: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const worker = await getWorker({timeout: ONE_SECOND});
-            const {exports, runtimeMetadata} = await worker.buildChartConfig({
-                shared: shared as ServerChartsConfig,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-                features,
-            });
+            const {exports, runtimeMetadata} = await wizardWorker
+                .buildChartConfig({
+                    shared: shared as ServerChartsConfig,
+                    params,
+                    actionParams,
+                    widgetConfig,
+                    userLang,
+                    features,
+                })
+                .timeout(ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -153,17 +150,18 @@ export const getWizardChartBuilder = async (
         buildChart: async (options) => {
             const {data, params, actionParams} = options;
             const timeStart = process.hrtime();
-            const worker = await getWorker({timeout: JS_EXECUTION_TIMEOUT});
-            const {exports, runtimeMetadata} = await worker.buildChart({
-                shared: shared as ServerChartsConfig,
-                params,
-                actionParams,
-                widgetConfig,
-                userLang,
-                data,
-                palettes,
-                features,
-            });
+            const {exports, runtimeMetadata} = await wizardWorker
+                .buildChart({
+                    shared: shared as ServerChartsConfig,
+                    params,
+                    actionParams,
+                    widgetConfig,
+                    userLang,
+                    data,
+                    palettes,
+                    features,
+                })
+                .timeout(JS_EXECUTION_TIMEOUT);
 
             return {
                 executionTiming: process.hrtime(timeStart),

@@ -1,6 +1,7 @@
 import type React from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {DashTabItemControlElement} from 'shared';
 
 import {DL} from '../../constants';
 import {
@@ -258,4 +259,8 @@ function collectBelowLyingNodesHeight(
     } else {
         return height;
     }
+}
+
+export function getControlHint(source: DashTabItemControlElement) {
+    return source.showHint ? source.hint : undefined;
 }
