@@ -17,6 +17,7 @@ import {
     sdk,
 } from 'ui';
 
+import {EditorPageQA} from '../../../../../../../shared/constants/qa/editor';
 import {
     DIALOG_RESOLVE_STATUS,
     ENTRY_ACTION,
@@ -162,6 +163,7 @@ function ButtonSave({
         <div className={b()}>
             <NavigationPrompt when={!disabledSave} />
             <Button
+                qa={EditorPageQA.SaveButton}
                 view={getBtnSaveTheme()}
                 size="m"
                 disabled={disabledSave}

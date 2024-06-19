@@ -2,12 +2,12 @@ import {Page} from '@playwright/test';
 
 import EditorPage from '../../page-objects/editor/EditorPage';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../utils';
+import {openTestPage, slct} from '../../utils';
 import {RobotChartsEditorUrls} from '../../utils/constants';
 import {DEFAULT_QUERY} from '../../page-objects/constants/base';
+import {EditorPageQA} from '../../../../shared/constants/qa/editor';
 
 const SELECTORS = {
-    RUN_BUTTON: '[data-qa=button-draw-preview]',
     CHARKIT_ERROR: '[data-qa=chartkit-error]',
 };
 
@@ -23,7 +23,7 @@ datalensTest.describe('ChartEditor passing JS errors to the user', () => {
         const editor = await page.waitForSelector('.view-line');
         await editor.click();
         await editor.type('Hello World!');
-        const runButton = await page.waitForSelector(SELECTORS.RUN_BUTTON);
+        const runButton = await page.waitForSelector(slct(EditorPageQA.RunButton));
         await runButton.click();
         const charkitError = await page.waitForSelector(SELECTORS.CHARKIT_ERROR);
         const errotTitle = await charkitError.waitForSelector('.datalens-chartkit-error__title');

@@ -10,6 +10,7 @@ export const enum CommonSelectors {
 }
 
 export const enum DialogSelectors {
+    CloseDialogButton = '.g-dialog-btn-close__btn',
     ApplyButton = '.g-dialog-footer__button_action_apply',
 }
 

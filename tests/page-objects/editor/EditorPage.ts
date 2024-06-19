@@ -1,6 +1,7 @@
-import {slct} from '../../utils';
+import {deleteEntity, entryDialogFillAndSave, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import ChartKit from '../wizard/ChartKit';
+import {EditorPageQA} from '../../../../shared/constants/qa/editor';
 
 interface EditorPageProps extends BasePageProps {}
 
@@ -18,7 +19,17 @@ class EditorPage extends BasePage {
     }
 
     async drawPreview() {
-        await this.page.click(slct('button-draw-preview'));
+        await this.page.click(slct(EditorPageQA.RunButton));
+    }
+
+    async saveChartEntry(entryName: string) {
+        await this.page.locator(slct(EditorPageQA.SaveButton)).click();
+
+        await entryDialogFillAndSave(this.page, entryName);
+    }
+
+    async deleteEntry() {
+        await deleteEntity(this.page);
     }
 }
 

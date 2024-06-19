@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 
+import {EditorPageQA} from '../../../../../../../shared/constants/qa/editor';
 import {EVENT_DRAW_PREVIEW} from '../../constants/common';
 
 const b = block('btn-draw-preview');
@@ -35,7 +36,7 @@ function ButtonDrawPreview({onDrawPreview, className, disabled}) {
             size="m"
             onClick={() => onDrawPreview()}
             disabled={disabled}
-            qa="button-draw-preview"
+            qa={EditorPageQA.RunButton}
         >
             {i18n('editor.common.view', 'button_show-preview')}
         </Button>
