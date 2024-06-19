@@ -33,6 +33,7 @@
     &__content-panel {
         justify-content: center;
         overflow: hidden auto;
+        display: flex;
 
         &_right {
             height: 100%;
