@@ -1,7 +1,6 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {useHotkeysContext} from 'react-hotkeys-hook';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -9,9 +8,7 @@ import {bindActionCreators} from 'redux';
 import type {DatalensGlobalState} from '../../..';
 import {useEffectOnce} from '../../..';
 import {getIsAsideHeaderEnabled} from '../../../components/AsideHeaderAdapter';
-import {HOTKEYS_SCOPES} from '../../../constants/misc';
 import withInaccessibleOnMobile from '../../../hoc/withInaccessibleOnMobile';
-import {useAutodetectHotkeysScope} from '../../../hooks/useAutodetectHotkeysScope';
 import {setCurrentPageEntry} from '../../../store/actions/asideHeader';
 import {selectWidget} from '../selectors/widget';
 
@@ -27,13 +24,6 @@ interface Props extends StateProps, DispatchProps {}
 
 const App = ({widget, setCurrentPageEntry, asideHeaderData, ...routeProps}: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
-
-    const hotkeysContext = useHotkeysContext();
-
-    useAutodetectHotkeysScope({
-        hotkeysContext,
-        scope: HOTKEYS_SCOPES.WIZARD,
-    });
 
     useEffectOnce(() => {
         return () => {

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import noop from 'lodash/noop';
-import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
 
 import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
@@ -136,9 +135,6 @@ type MethodOpen<T, P> = T extends keyof MapDialoguesProps
 
 interface EntryDialoguesProps {
     sdk?: SDK;
-    hotkeysContext?: HotkeysContextType;
-    setHotkeysScope?: () => void;
-    unsetHotkeysScope?: () => void;
 }
 
 interface EntryDialoguesState {

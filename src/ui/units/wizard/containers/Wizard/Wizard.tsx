@@ -197,6 +197,8 @@ class Wizard extends React.Component<Props, State> {
         this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
             this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
         });
+
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
     }
 
     shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
@@ -276,6 +278,8 @@ class Wizard extends React.Component<Props, State> {
             this.props.resetEditHistoryUnit({
                 unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
             });
+
+            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
         }
     }
 
