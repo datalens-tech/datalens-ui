@@ -299,6 +299,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
 
+            if (showSafeChartInfo) {
+                result.safeChartInfo = getSafeChartWarnings(result);
+            }
+
             applyChartkitHandlers(result.config, result.libraryConfig);
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
@@ -336,10 +340,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if (result.type === 'ymap' && result.libraryConfig) {
                 result.libraryConfig.apiKey = DL.YAMAP_API_KEY;
-            }
-
-            if (showSafeChartInfo) {
-                result.safeChartInfo = getSafeChartWarnings(loaded);
             }
         }
 
