@@ -156,7 +156,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                                 <Icon
                                     size={20}
                                     data={ShieldExclamation}
-                                    className={b('debug-info-icon')}
+                                    className={b('chart-info-icon')}
                                 />
                             </Popover>
                         )}
