@@ -45,6 +45,7 @@ export const EntitiesList = ({scope, entities, isCurrent}: EntitiesListProps) =>
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
+                    disableHover={true}
                 />
             ))}
         </div>

@@ -28,6 +28,7 @@ export type EntryRowProps = {
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
     clasName?: string;
+    disableHover?: boolean;
 };
 
 export const EntryRow = ({
@@ -35,6 +36,7 @@ export const EntryRow = ({
     rightSectionSlot = null,
     nonInteractive,
     clasName,
+    disableHover,
 }: EntryRowProps) => {
     const entryName = entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
 
@@ -49,20 +51,33 @@ export const EntryRow = ({
         );
     };
 
+    const renderIcon = () => {
+        return (
+            <EntryIcon
+                entry={entry}
+                width={20}
+                height={20}
+                className={b('icon', {disabled: entry.disabled})}
+            />
+        );
+    };
+
     return (
         <div
             key={entry.entryId}
-            className={b({'non-interactive': nonInteractive, locked: entry.isLocked}, clasName)}
+            className={b(
+                {
+                    'non-interactive': nonInteractive,
+                    locked: entry.isLocked,
+                    'no-hover': disableHover,
+                },
+                clasName,
+            )}
         >
             <div className={b('entry')}>
-                <EntryIcon
-                    entry={entry}
-                    width={20}
-                    height={20}
-                    className={b('icon', {disabled: entry.disabled})}
-                />
                 {nonInteractive ? (
                     <React.Fragment>
+                        {renderIcon()}
                         <div className={b('name')} title={entryName}>
                             {entryName}
                             {renderLock()}
@@ -76,6 +91,7 @@ export const EntryRow = ({
                         title={entryName}
                         href={navigateHelper.redirectUrlSwitcher(entry)}
                     >
+                        {renderIcon()}
                         <span className={b('name')}>{entryName}</span>
                         {renderLock()}
                     </Link>

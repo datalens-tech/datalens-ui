@@ -1,5 +1,8 @@
 {
   "label_current-object": "Current object",
+  "label_dataset-hint": "Some charts created in the Editor will not be displayed in the list",
+  "label_editor-hint": "For charts in which the dataset is not explicitly specified in the Shared tab, the display of related objects in Includes not available",
+  "label_entities-count": "Number of related entities:",
   "label_no-relatives": "There are no related objects",
   "label_request-error": "Error during data request",
   "label_scope-chart": "Charts",

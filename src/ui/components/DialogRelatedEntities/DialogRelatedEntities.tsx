@@ -1,12 +1,14 @@
 import React from 'react';
 
-import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {HelpPopover} from '@gravity-ui/components';
+import {Alert, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
-import {EntryScope} from 'shared';
+import {EDITOR_TYPE, EntryScope, Feature} from 'shared';
 import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
+import Utils from 'ui/utils';
 import {groupEntitiesByScope} from 'ui/utils/helpers';
 
 import {type EntryDialogProps, EntryDialogResolveStatus} from '../EntryDialogues';
@@ -29,6 +31,8 @@ enum Direction {
     Child = 'child',
 }
 
+const CONCURRENT_ID = 'list-related-entities';
+
 export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEntitiesProps) => {
     const [currentDirection, setCurrentDirection] = React.useState<Direction>(
         entry.scope === EntryScope.Dash ? Direction.Parent : Direction.Child,
@@ -38,23 +42,31 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const [relations, setRelations] = React.useState<Record<string, GetRelationsEntry[]> | null>(
         null,
     );
+    const [relationsCount, setRelationsCount] = React.useState<null | number>(null);
 
     React.useEffect(() => {
         setIsLoading(true);
         setIsError(false);
+        getSdk().cancelRequest(CONCURRENT_ID);
         getSdk()
-            .mix.getEntryRelations({
-                entryId: entry.entryId,
-                workbookId: entry.workbookId,
-                direction: currentDirection,
-            })
+            .mix.getEntryRelations(
+                {
+                    entryId: entry.entryId,
+                    workbookId: entry.workbookId,
+                    direction: currentDirection,
+                },
+                {concurrentId: CONCURRENT_ID},
+            )
             .then((response) => {
+                setRelationsCount(response.length);
                 setRelations(groupEntitiesByScope(response));
+                setIsLoading(false);
             })
-            .catch(() => {
+            .catch((error) => {
+                if (error.isCancelled) {
+                    return;
+                }
                 setIsError(true);
-            })
-            .finally(() => {
                 setIsLoading(false);
             });
     }, [entry, currentDirection]);
@@ -79,6 +91,15 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             );
         }
 
+        if (
+            isEmpty(relations) &&
+            entry.scope === EntryScope.Widget &&
+            Object.values(EDITOR_TYPE).includes(entry.type) &&
+            currentDirection === Direction.Parent
+        ) {
+            return <Alert theme="warning" message={i18n('label_editor-hint')} />;
+        }
+
         if (!relations || isEmpty(relations) || isError) {
             const name = isError ? 'error' : 'emptyDirectory';
             const title = isError ? i18n('label_request-error') : i18n('label_no-relatives');
@@ -94,26 +115,40 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         ));
     };
 
+    const showRelationsCount = Boolean(relationsCount && !isLoading);
+    const showDatasetHint =
+        Utils.isEnabledFeature(Feature.EnableChartEditor) &&
+        entry.scope === EntryScope.Dataset &&
+        currentDirection === Direction.Child;
+
     return (
         <Dialog onClose={handleClose} open={visible} className={b()}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList isCurrent={true} entities={[entry]} />
                 {showDirectionControl && (
-                    <RadioButton
-                        value={currentDirection}
-                        onUpdate={handleDirectionParentdate}
-                        width="auto"
-                    >
-                        <RadioButton.Option value={Direction.Child}>
-                            {i18n('value_where-contained')}
-                        </RadioButton.Option>
-                        <RadioButton.Option value={Direction.Parent}>
-                            {i18n('value_includes')}
-                        </RadioButton.Option>
-                    </RadioButton>
+                    <div className={b('direction-row')}>
+                        <RadioButton
+                            value={currentDirection}
+                            onUpdate={handleDirectionParentdate}
+                            width="auto"
+                        >
+                            <RadioButton.Option value={Direction.Child}>
+                                {i18n('value_where-contained')}
+                            </RadioButton.Option>
+                            <RadioButton.Option value={Direction.Parent}>
+                                {i18n('value_includes')}
+                            </RadioButton.Option>
+                        </RadioButton>
+                        {showDatasetHint && <HelpPopover content={i18n('label_dataset-hint')} />}
+                    </div>
                 )}
-                {renderRelations()}
+                <div className={b('list')}>{renderRelations()}</div>
+                {showRelationsCount && (
+                    <div
+                        className={b('relations-count')}
+                    >{`${i18n('label_entities-count')} ${relationsCount}`}</div>
+                )}
             </Dialog.Body>
         </Dialog>
     );

@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 import {EntryScope} from 'shared';
 import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
+import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
@@ -58,6 +59,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         chunks,
     }) => {
         const dispatch: AppDispatch = useDispatch();
+        const entryDialoguesRef = React.useRef<EntryDialogues>(null);
 
         React.useEffect(() => {
             const resolveUsersByIds = getResolveUsersByIdsAction();
@@ -143,6 +145,15 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             [dispatch, workbook.collectionId],
         );
 
+        const onShowRelated = async (entity: WorkbookEntry) => {
+            await entryDialoguesRef.current?.open({
+                dialog: EntryDialogName.ShowRelatedEntities,
+                dialogProps: {
+                    entry: entity,
+                },
+            });
+        };
+
         const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
         const isWidgetEmpty = widgetChunk.length === 0;
@@ -185,6 +196,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         onDuplicateEntry={onDuplicateEntry}
                         onCopyEntry={onCopyEntry}
                         clearView={clearViewDash}
+                        onShowRelatedClick={onShowRelated}
                     />
 
                     <MainTabContent
@@ -206,6 +218,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             <CreateEntry className={b('controls')} scope={EntryScope.Widget} />
                         }
                         clearView={clearViewWidget}
+                        onShowRelatedClick={onShowRelated}
                     />
 
                     {showDataEntities && (
@@ -226,6 +239,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
+                            onShowRelatedClick={onShowRelated}
                         />
                     )}
 
@@ -247,6 +261,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
+                            onShowRelatedClick={onShowRelated}
                         />
                     )}
                 </React.Fragment>
@@ -279,11 +294,13 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                                     onDeleteEntry={onDeleteEntry}
                                     onDuplicateEntry={onDuplicateEntry}
                                     onCopyEntry={onCopyEntry}
+                                    onShowRelatedClick={onShowRelated}
                                 />
                             ))}
                     </div>
                 </div>
                 {renderTabs()}
+                <EntryDialogues ref={entryDialoguesRef} />
             </React.Fragment>
         );
     },

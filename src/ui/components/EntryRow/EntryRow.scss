@@ -7,8 +7,9 @@
     align-items: center;
     display: flex;
     transition: background ease-in-out 0.2s;
+    padding-left: 4px;
 
-    &:not(#{$class}_non-interactive):hover {
+    &:not(#{$class}_non-interactive, #{$class}_no-hover):hover {
         background: var(--g-color-base-simple-hover);
     }
 
@@ -20,6 +21,7 @@
         @include overflow-ellipsis;
         overflow: hidden;
         display: flex;
+        align-items: center;
     }
 
     &__name {
@@ -30,7 +32,7 @@
 
     &__entry {
         margin-right: 10px;
-        margin-left: 4px;
+
         overflow: hidden;
         display: flex;
         align-items: center;
