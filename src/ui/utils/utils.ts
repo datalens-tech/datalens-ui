@@ -232,6 +232,7 @@ export default class Utils {
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === 'true', // deprecated
             actionParamsEnabled: searchParams.get(URL_OPTIONS.ACTION_PARAMS_ENABLED) === '1',
             autoupdateInterval: Number(searchParams.get(URL_OPTIONS.AUTOUPDATE)),
+            debugInfoEnabled: searchParams.get(URL_OPTIONS.DEBUG) === '1',
         };
     }
 

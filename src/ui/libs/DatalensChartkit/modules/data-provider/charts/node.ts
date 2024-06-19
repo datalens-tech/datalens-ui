@@ -6,6 +6,8 @@ import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
+import {Utils} from 'ui';
+import {getChartDebugInfo} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/utils';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -238,6 +240,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
+        const {debugInfoEnabled} = Utils.getOptionsFromSearch(window.location.search);
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -331,6 +334,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if (result.type === 'ymap' && result.libraryConfig) {
                 result.libraryConfig.apiKey = DL.YAMAP_API_KEY;
+            }
+
+            if (debugInfoEnabled) {
+                result.debugInfo = getChartDebugInfo(result, loaded);
             }
         }
 

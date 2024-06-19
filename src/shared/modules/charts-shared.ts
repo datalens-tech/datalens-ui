@@ -1,5 +1,6 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils/build/typings';
+import isFunction from 'lodash/isFunction';
 
 import type {ServerDatasetField} from '../types';
 
@@ -306,4 +307,40 @@ export type ChartsInsight = {
 
 export enum ChartsInsightLocator {
     UsingDeprecatedDatetimeFields = 'using_deprecated_datetime_fields',
+}
+
+export function isObjectWith(value: unknown, check: (value: unknown) => boolean, path = '') {
+    if (!value) {
+        return false;
+    }
+
+    if (check(value)) {
+        return path;
+    }
+
+    if (Array.isArray(value)) {
+        for (let index = 0; index < value.length; index++) {
+            const pathToFunction = isObjectWith(value[index], check, `${path}[${index}]`);
+            if (pathToFunction) {
+                return pathToFunction;
+            }
+        }
+    }
+
+    if (typeof value === 'object') {
+        const entries = Object.entries(value as object);
+        for (let index = 0; index < entries.length; index++) {
+            const [key, val] = entries[index];
+            const pathToFunction = isObjectWith(val, check, path ? `${path}.${key}` : key);
+            if (pathToFunction) {
+                return pathToFunction;
+            }
+        }
+    }
+
+    return false;
+}
+
+export function isObjectWithFunction(value: unknown) {
+    return isObjectWith(value, isFunction);
 }

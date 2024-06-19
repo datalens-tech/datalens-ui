@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
-import {ArrowLeft} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {ArrowLeft, ShieldExclamation} from '@gravity-ui/icons';
+import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
@@ -38,6 +38,7 @@ type HeaderProps = {
     showActionParamsFilter?: boolean;
     onFiltersClear?: () => void;
     title?: string;
+    warning?: string;
 };
 
 const b = block('widget-header');
@@ -57,6 +58,7 @@ export const WidgetHeader = (props: HeaderProps) => {
         showActionParamsFilter,
         onFiltersClear,
         title,
+        warning,
     } = props;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
@@ -101,6 +103,8 @@ export const WidgetHeader = (props: HeaderProps) => {
         </div>
     );
 
+    const showIcons = Boolean(showFiltersClear || warning);
+
     return (
         <React.Fragment>
             {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
@@ -132,15 +136,28 @@ export const WidgetHeader = (props: HeaderProps) => {
                         />
                     </div>
                 )}
-                {showFiltersClear && (
-                    <div className={b('filters-controls')}>
-                        <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
-                            <Icon
-                                data={iconClearActionParams}
-                                size={16}
-                                className={b('icon-filter-clear')}
-                            />
-                        </Button>
+                {showIcons && (
+                    <div className={b('icons')}>
+                        {showFiltersClear && (
+                            <div className={b('filters-controls')}>
+                                <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
+                                    <Icon
+                                        data={iconClearActionParams}
+                                        size={16}
+                                        className={b('icon-filter-clear')}
+                                    />
+                                </Button>
+                            </div>
+                        )}
+                        {warning && (
+                            <Popover content={warning}>
+                                <Icon
+                                    size={20}
+                                    data={ShieldExclamation}
+                                    className={b('debug-info-icon')}
+                                />
+                            </Popover>
+                        )}
                     </div>
                 )}
             </div>
