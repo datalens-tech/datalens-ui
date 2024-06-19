@@ -74,7 +74,7 @@ const PrivateFileAlert = (props: {onLogin: (oauthToken: string) => void; authori
 
 const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
     const {authorized, caption, onApply, onClose, onError, onSuccess, onLogin} = props;
-    const docsEndpoint = DL.ENDPOINTS.docs;
+    const docsEndpoint = DL.ENDPOINTS.datalensDocs;
     const mounted = React.useRef(false);
     const [value, setValue] = React.useState('');
     const [mode, setMode] = React.useState(FILE_MODE.PUBLIC);
@@ -192,7 +192,7 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                                         ),
                                         link: (match) => (
                                             <Link
-                                                href={`${docsEndpoint}/cloud/datalens/operations/connection/create-yadocs`}
+                                                href={`${docsEndpoint}/operations/connection/create-yadocs`}
                                                 target="_blank"
                                             >
                                                 {match}

@@ -4,9 +4,10 @@ import type {ValidateDatasetUpdate} from 'shared/schema';
 
 import type {DatasetReduxState, Update} from '../../types';
 
-type ContetntKey = keyof DatasetReduxState['content'];
+type ContentKey = keyof DatasetReduxState['content'];
 
-const OBSERVED_KEYS: ContetntKey[] = [
+const OBSERVED_KEYS: ContentKey[] = [
+    'load_preview_by_default',
     'avatar_relations',
     'obligatory_filters',
     'result_schema',

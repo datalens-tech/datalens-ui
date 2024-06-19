@@ -2,12 +2,7 @@ import _ from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartkitGlobalSettings, Field, Shared} from '../../../../shared';
-import {
-    DatasetFieldAggregation,
-    WizardVisualizationId,
-    isFieldHierarchy,
-    isParameter,
-} from '../../../../shared';
+import {DatasetFieldAggregation, WizardVisualizationId, isParameter} from '../../../../shared';
 import {DL} from '../../../../ui';
 import {
     AREA_100P_VISUALIZATION,
@@ -15,6 +10,8 @@ import {
     BAR_100P_VISUALIZATION,
     BAR_VISUALIZATION,
     BAR_X_D3_VISUALIZATION,
+    BAR_Y_100P_D3_VISUALIZATION,
+    BAR_Y_D3_VISUALIZATION,
     COLUMN_100P_VISUALIZATION,
     COLUMN_VISUALIZATION,
     COMBINED_CHART_VISUALIZATION,
@@ -56,19 +53,6 @@ export const prepareFieldToMeasureTransformation = (item: Field): Field => {
             commonDataType === 'number'
                 ? DatasetFieldAggregation.Sum
                 : DatasetFieldAggregation.Countunique,
-    };
-};
-
-export const prepareFieldToDimensionTransformation = (item: Field): Field => {
-    if (ITEM_TYPES.DIMENSIONS_AND_PSEUDO.has(item.type) || isFieldHierarchy(item)) {
-        return item;
-    }
-
-    return {
-        ...item,
-        transformed: true,
-        fakeTitle: item.fakeTitle || item.title,
-        aggregation: DatasetFieldAggregation.None,
     };
 };
 
@@ -118,6 +102,14 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
         {
             value: SCATTER_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...BAR_Y_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
+        },
+        {
+            value: {...BAR_Y_100P_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: {...SCATTER_D3_VISUALIZATION, hidden: isHighchartsEnabled},
@@ -195,6 +187,8 @@ const highchartsD3Map = [
     [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
     [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
     [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3],
+    [WizardVisualizationId.Bar, WizardVisualizationId.BarYD3],
+    [WizardVisualizationId.Bar100p, WizardVisualizationId.BarY100pD3],
 ];
 
 export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {

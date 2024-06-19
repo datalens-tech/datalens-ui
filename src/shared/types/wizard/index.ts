@@ -83,9 +83,16 @@ export const enum LegendDisplayMode {
     Hide = 'hide',
 }
 
+export const enum IndicatorTitleMode {
+    ByField = 'by-field',
+    Manual = 'manual',
+    Hide = 'hide',
+}
+
 export interface CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
+    indicatorTitleMode?: IndicatorTitleMode;
     legendMode?: LegendDisplayMode;
     overlap?: 'on' | 'off';
     metricFontSize?: string;
@@ -185,6 +192,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.Column100p
             | WizardVisualizationId.Bar
             | WizardVisualizationId.Bar100p
+            | WizardVisualizationId.BarYD3
+            | WizardVisualizationId.BarY100pD3
             | WizardVisualizationId.Pie
             | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut

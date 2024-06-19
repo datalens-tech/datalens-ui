@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {TriangleExclamationFill} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -10,8 +11,6 @@ import {isMobileView} from 'ui/utils/mobile';
 
 import type {ErrorData} from '../types';
 import {prepareSelectorError} from '../utils';
-
-import iconAlert from 'assets/icons/alert.svg';
 
 import './Error.scss';
 
@@ -48,7 +47,7 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     return (
         <div className={b({mobile: isMobileView})} onClick={handleClick}>
             <span className={b('label')}>{i18n('label_error')}</span>
-            <Icon data={iconAlert} className={b('icon')} />
+            <Icon data={TriangleExclamationFill} className={b('icon')} />
         </div>
     );
 }
