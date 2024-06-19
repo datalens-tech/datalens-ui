@@ -60,17 +60,21 @@ export const useWizardActionPanel = (
         }
     }, [canGoForward, dispatch]);
 
-    useBindHotkey({
-        key: [META_KEY, 'z'],
-        handler: onClickGoBack,
-        options: {scopes: 'wizard'},
-    });
+    if (enableEditHistory) {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useBindHotkey({
+            key: [META_KEY, 'z'],
+            handler: onClickGoBack,
+            options: {scopes: 'wizard'},
+        });
 
-    useBindHotkey({
-        key: [META_KEY, 'shift', 'z'],
-        handler: onClickGoForward,
-        options: {scopes: 'wizard'},
-    });
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useBindHotkey({
+            key: [META_KEY, 'shift', 'z'],
+            handler: onClickGoForward,
+            options: {scopes: 'wizard'},
+        });
+    }
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
