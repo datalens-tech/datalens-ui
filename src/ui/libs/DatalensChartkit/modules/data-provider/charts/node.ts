@@ -6,18 +6,19 @@ import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
-import {Utils} from 'ui';
-import {getChartDebugInfo} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/utils';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
-import {EDITOR_CHART_NODE, QL_CHART_NODE, WIZARD_CHART_NODE} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
-} from '../../../../../../shared/constants/chartkit-handlers';
+    EDITOR_CHART_NODE,
+    QL_CHART_NODE,
+    WIZARD_CHART_NODE,
+} from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
+import Utils from '../../../../../utils';
 import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
@@ -29,6 +30,7 @@ import {
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
+import {getChartDebugInfo} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 

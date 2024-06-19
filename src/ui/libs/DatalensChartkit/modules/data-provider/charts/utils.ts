@@ -1,9 +1,10 @@
 import {isObjectWith, isObjectWithFunction} from 'shared';
-import type {ChartsData} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import type {Widget, WithControls} from 'ui/libs/DatalensChartkit/types';
 import type {Optional} from 'utility-types';
 
 import {DL} from '../../../../../constants';
+import type {Widget, WithControls} from '../../../types';
+
+import type {ChartsData} from './types';
 
 export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
 
