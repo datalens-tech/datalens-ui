@@ -204,7 +204,7 @@ export interface ChartsData {
         datasetFields?: Record<string, string>;
     };
     publicAuthor?: EntryPublicAuthor;
-    debugInfo?: any;
+    safeChartInfo?: string;
 }
 
 export type DatasetFieldsListItem = {

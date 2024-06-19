@@ -30,7 +30,7 @@ import {
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
-import {getChartDebugInfo} from './utils';
+import {getSafeChartWarnings} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -242,7 +242,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
-        const {debugInfoEnabled} = Utils.getOptionsFromSearch(window.location.search);
+        const {showSafeChartInfo} = Utils.getOptionsFromSearch(window.location.search);
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -338,8 +338,8 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.libraryConfig.apiKey = DL.YAMAP_API_KEY;
             }
 
-            if (debugInfoEnabled) {
-                result.debugInfo = getChartDebugInfo(result);
+            if (showSafeChartInfo) {
+                result.safeChartInfo = getSafeChartWarnings(result);
             }
         }
 

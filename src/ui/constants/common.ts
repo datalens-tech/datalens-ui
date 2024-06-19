@@ -264,7 +264,7 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
-    DEBUG: '_debug',
+    SAFE_CHART: '_safe_chart',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;

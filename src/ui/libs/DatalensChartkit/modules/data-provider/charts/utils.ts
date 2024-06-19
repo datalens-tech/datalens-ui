@@ -30,7 +30,7 @@ function isHtmlString(value: unknown) {
     return false;
 }
 
-export function getChartDebugInfo(widgetData?: Widget & Optional<WithControls> & ChartsData) {
+export function getSafeChartWarnings(widgetData?: Widget & Optional<WithControls> & ChartsData) {
     const pathToFunction = isObjectWithFunction(widgetData);
     if (pathToFunction) {
         return `has functions at \`${pathToFunction}\``;
