@@ -339,7 +339,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             }
 
             if (showSafeChartInfo) {
-                result.safeChartInfo = getSafeChartWarnings(result);
+                result.safeChartInfo = getSafeChartWarnings(loaded);
             }
         }
 

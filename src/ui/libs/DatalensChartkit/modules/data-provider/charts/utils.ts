@@ -1,10 +1,6 @@
 import {isObjectWith, isObjectWithFunction} from 'shared';
-import type {Optional} from 'utility-types';
 
 import {DL} from '../../../../../constants';
-import type {Widget, WithControls} from '../../../types';
-
-import type {ChartsData} from './types';
 
 export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
 
@@ -30,7 +26,7 @@ function isHtmlString(value: unknown) {
     return false;
 }
 
-export function getSafeChartWarnings(widgetData?: Widget & Optional<WithControls> & ChartsData) {
+export function getSafeChartWarnings(widgetData?: unknown) {
     const pathToFunction = isObjectWithFunction(widgetData);
     if (pathToFunction) {
         return `has functions at \`${pathToFunction}\``;
