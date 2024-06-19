@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 
-import {EditorPageQA} from '../../../../../../../shared/constants/qa/editor';
+import {EditorPageQA} from '../../../../../shared';
 import {EVENT_DRAW_PREVIEW} from '../../constants/common';
 
 const b = block('btn-draw-preview');

@@ -1,7 +1,7 @@
 import {deleteEntity, entryDialogFillAndSave, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import ChartKit from '../wizard/ChartKit';
-import {EditorPageQA} from '../../../../shared/constants/qa/editor';
+import {EditorPageQA} from '../../../src/shared';
 
 interface EditorPageProps extends BasePageProps {}
 

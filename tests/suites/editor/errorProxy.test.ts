@@ -5,7 +5,7 @@ import datalensTest from '../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../utils';
 import {RobotChartsEditorUrls} from '../../utils/constants';
 import {DEFAULT_QUERY} from '../../page-objects/constants/base';
-import {EditorPageQA} from '../../../../shared/constants/qa/editor';
+import {EditorPageQA} from '../../../src/shared';
 
 const SELECTORS = {
     CHARKIT_ERROR: '[data-qa=chartkit-error]',

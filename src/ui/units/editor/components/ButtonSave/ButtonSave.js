@@ -17,7 +17,7 @@ import {
     sdk,
 } from 'ui';
 
-import {EditorPageQA} from '../../../../../../../shared/constants/qa/editor';
+import {EditorPageQA} from '../../../../../shared';
 import {
     DIALOG_RESOLVE_STATUS,
     ENTRY_ACTION,
