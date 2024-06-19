@@ -128,6 +128,14 @@ const DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG = {
     '1400': 20,
 };
 
+export const META_KEY = 'META';
+
+export const HOTKEYS_SCOPES = {
+    WIZARD: 'wizard',
+    ENTRY_DIALOGUES: 'entry-dialogues',
+    DIALOG_MANAGER: 'dialog-manager',
+};
+
 export {
     ITEM_TYPES,
     CONFLICT_TOOLTIPS,
