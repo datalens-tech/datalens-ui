@@ -43,6 +43,8 @@ interface Props {
     filters: CollectionContentFilters;
     viewMode: CollectionPageViewMode;
     selectedMap: SelectedMap;
+    selectedMapWithMovePermission: SelectedMap;
+    selectedMapWithDeletePermission: SelectedMap;
     itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
@@ -66,6 +68,8 @@ export const CollectionContent: React.FC<Props> = ({
     filters,
     viewMode,
     selectedMap,
+    selectedMapWithMovePermission,
+    selectedMapWithDeletePermission,
     itemsAvailableForSelection,
     isOpenSelectionMode,
     canCreateWorkbook,
@@ -238,6 +242,8 @@ export const CollectionContent: React.FC<Props> = ({
                 <div className={b('batch-panel-placeholder')}>
                     <BatchPanel
                         count={Object.keys(selectedMap).length}
+                        countForMove={Object.keys(selectedMapWithMovePermission).length}
+                        countForDelete={Object.keys(selectedMapWithDeletePermission).length}
                         onAction={onAction}
                         className={b('batch-panel')}
                         onClose={resetSelected}

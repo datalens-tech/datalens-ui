@@ -267,6 +267,8 @@ export const CollectionPage = () => {
                     filters={filters}
                     viewMode={viewMode}
                     selectedMap={selectedMap}
+                    selectedMapWithMovePermission={selectedMapWithMovePermission}
+                    selectedMapWithDeletePermission={selectedMapWithDeletePermission}
                     itemsAvailableForSelection={itemsAvailableForSelection}
                     isOpenSelectionMode={isOpenSelectionMode}
                     canCreateWorkbook={canCreateWorkbook}
