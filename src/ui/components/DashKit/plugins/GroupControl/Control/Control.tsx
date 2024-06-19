@@ -29,7 +29,11 @@ import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants
 import {type EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
-import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
+import {
+    addOperationForValue,
+    unwrapFromArray,
+    unwrapFromArrayAndSkipOperation,
+} from 'ui/units/dash/modules/helpers';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -491,7 +495,7 @@ export const Control = ({
                 operation,
             });
 
-            if (valueWithOperation !== preparedValue) {
+            if (!isEqual(valueWithOperation, unwrapFromArray(params[param]))) {
                 onChangeParams({value: valueWithOperation, param});
             }
         };

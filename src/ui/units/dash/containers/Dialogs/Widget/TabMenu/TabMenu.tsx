@@ -89,6 +89,7 @@ export const TabMenu = <T extends unknown>({
 
         const pastItemsWithId = pasteItems.map((controlItem) => ({
             ...controlItem,
+            id: undefined,
             draftId: getRandomKey(),
         }));
 
