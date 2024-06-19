@@ -47,7 +47,7 @@ import {
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {adjustWidgetLayout} from '../../utils';
+import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {ControlItemSelect} from './ControlItems/ControlItemSelect';
@@ -653,7 +653,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 label,
                 required,
                 hasValidationError: Boolean(validationError),
-                hint: source.showHint ? source.hint : undefined,
+                hint: getControlHint(source),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
