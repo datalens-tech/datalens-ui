@@ -6,6 +6,7 @@ import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -300,7 +301,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
 
             if (showSafeChartInfo) {
-                result.safeChartInfo = getSafeChartWarnings(result);
+                result.safeChartInfo = getSafeChartWarnings(
+                    pick(result, 'config', 'libraryConfig', 'data'),
+                );
             }
 
             applyChartkitHandlers(result.config, result.libraryConfig);

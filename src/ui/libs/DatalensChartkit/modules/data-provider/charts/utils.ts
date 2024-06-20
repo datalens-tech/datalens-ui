@@ -4,7 +4,20 @@ import {DL} from '../../../../../constants';
 
 export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
 
+function isJson(value: string) {
+    try {
+        JSON.parse(value);
+        return true;
+    } catch (_e) {
+        return false;
+    }
+}
+
 function isHighchartsTemplateString(value: string) {
+    if (isJson(value)) {
+        return false;
+    }
+
     const hc = window.Highcharts;
     return typeof hc !== 'undefined' && hc.format(value, {}) !== value;
 }
