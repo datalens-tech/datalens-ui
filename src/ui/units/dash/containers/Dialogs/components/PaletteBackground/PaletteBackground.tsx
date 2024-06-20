@@ -1,8 +1,9 @@
 import React from 'react';
 
 import type {PaletteOption} from '@gravity-ui/uikit';
-import {Icon, Palette, Popover} from '@gravity-ui/uikit';
+import {ActionTooltip, Icon, Palette, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
 
 import ChartColumnIcon from '@gravity-ui/icons/svgs/chart-column.svg';
 
@@ -15,14 +16,21 @@ export enum CustomPaletteColors {
     NONE = 'transparent',
 }
 
+const PALETTE_HINTS = {
+    [CustomPaletteColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
+    [CustomPaletteColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
+} as const;
+
 const ColorItem = ({
     color,
     isSelected,
     classNameMod,
+    isPreview,
 }: {
     color: string;
     classNameMod?: string;
     isSelected?: boolean;
+    isPreview?: boolean;
 }) => {
     const isTransparent = color === CustomPaletteColors.NONE;
     const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
@@ -39,6 +47,11 @@ const ColorItem = ({
             })}
         >
             {isLikeChartBg && <Icon data={ChartColumnIcon} className={b('color-icon')} />}
+            {!isPreview && color in PALETTE_HINTS && (
+                <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColors]}>
+                    <span className={b('tooltip-trigger')} />
+                </ActionTooltip>
+            )}
         </span>
     );
 };
@@ -118,7 +131,12 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
             className={b()}
             content={<PaletteList onSelect={handleSelectColor} selectedColor={selectedColor} />}
         >
-            <ColorItem color={selectedColor} isSelected={true} classNameMod={'small'} />
+            <ColorItem
+                color={selectedColor}
+                isSelected={true}
+                classNameMod={'small'}
+                isPreview={true}
+            />
         </Popover>
     );
 };

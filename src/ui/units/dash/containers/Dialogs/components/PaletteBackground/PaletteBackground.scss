@@ -80,7 +80,14 @@
             height: 30px;
             border: 1px solid var(--g-color-line-misc);
             border-radius: 6px;
+            z-index: 0;
         }
+    }
+
+    &__tooltip-trigger {
+        position: absolute;
+        inset: 0;
+        z-index: 1000;
     }
 
     &__palette-list-btn &__color-item_selected &__color-icon {
