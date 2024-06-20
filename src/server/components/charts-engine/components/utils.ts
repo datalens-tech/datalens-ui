@@ -1,5 +1,3 @@
-import isFunction from 'lodash/isFunction';
-
 import type {FilterValue, IntervalPart} from '../../../../shared';
 import {
     URL_ACTION_PARAMS_PREFIX,
@@ -151,28 +149,4 @@ export function hideSensitiveData<T extends Test>(data: T = '' as T): T {
 
 export function getSourceAuthorizationHeaders() {
     return {};
-}
-
-function withFn(value: unknown) {
-    if (!value) {
-        return false;
-    }
-
-    if (isFunction(value)) {
-        return true;
-    }
-
-    if (Array.isArray(value)) {
-        return value.some(withFn);
-    }
-
-    if (typeof value === 'object') {
-        return Object.values(value).some(withFn);
-    }
-
-    return false;
-}
-
-export function isConfigWithFunction(config?: unknown) {
-    return withFn(config);
 }
