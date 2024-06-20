@@ -12,7 +12,7 @@ import {useDispatch} from 'react-redux';
 
 import {Feature, WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
-import {META_KEY} from '../../../../../constants/misc';
+import {REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
@@ -61,13 +61,13 @@ export const useWizardActionPanel = (
     }, [canGoForward, dispatch, enableEditHistory]);
 
     useBindHotkey({
-        key: [META_KEY, 'z'],
+        key: UNDO_HOTKEY,
         handler: onClickGoBack,
         options: {scopes: 'wizard'},
     });
 
     useBindHotkey({
-        key: [META_KEY, 'shift', 'z'],
+        key: REDO_HOTKEY,
         handler: onClickGoForward,
         options: {scopes: 'wizard'},
     });
@@ -93,6 +93,7 @@ export const useWizardActionPanel = (
                     disabled: !canGoBack,
                     qa: WizardPageQa.UndoButton,
                     title: i18n('component.action-panel.view', 'button_undo'),
+                    hotkey: UNDO_HOTKEY.join('+'),
                 },
                 {
                     key: 'redo',
@@ -103,6 +104,7 @@ export const useWizardActionPanel = (
                     disabled: !canGoForward,
                     qa: WizardPageQa.RedoButton,
                     title: i18n('component.action-panel.view', 'button_redo'),
+                    hotkey: REDO_HOTKEY.join('+'),
                 },
             ];
         }
