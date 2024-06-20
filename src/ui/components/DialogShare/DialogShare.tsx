@@ -21,7 +21,7 @@ import {ShareLink} from './ShareLink/ShareLink';
 import './DialogShare.scss';
 
 const i18n = I18n.keyset('component.dialog-share.view');
-const DIALOG_SHARE = Symbol('DIALOG_SHARE');
+export const DIALOG_SHARE = Symbol('DIALOG_SHARE');
 
 const languageOptions = [
     {content: i18n('value_language-auto'), value: ''},

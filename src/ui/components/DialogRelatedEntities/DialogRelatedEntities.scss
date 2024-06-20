@@ -32,7 +32,8 @@
         flex: 1;
     }
 
-    &__empty-state {
+    &__empty-state,
+    &__error-state {
         display: flex;
         justify-content: center;
         align-items: center;

@@ -160,13 +160,10 @@ export const entriesActions = {
     ),
     getEntryRelations: createAction<GetEntryRelationsResponse, GetEntryRelationsArgs>(
         async (api, {entryId, direction = 'parent'}) => {
-            const typedApi = getTypedApi(api);
-            const relations = (await typedApi.us.getRelations({
+            return await getTypedApi(api).us.getRelations({
                 entryId,
                 direction,
-            })) as Required<GetRelationsEntry, 'permissions'>[];
-
-            return relations;
+            });
         },
     ),
 };

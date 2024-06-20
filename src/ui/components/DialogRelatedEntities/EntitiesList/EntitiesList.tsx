@@ -29,7 +29,7 @@ const getLabelByScope = (scope?: string) => {
         case EntryScope.Widget:
             return i18n('label_scope-chart');
         default:
-            return i18n('label_scope-chart');
+            return i18n('label_scope-other');
     }
 };
 

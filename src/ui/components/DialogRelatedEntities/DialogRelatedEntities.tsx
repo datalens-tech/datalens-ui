@@ -91,26 +91,39 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             );
         }
 
-        if (
-            isEmpty(relations) &&
-            entry.scope === EntryScope.Widget &&
-            Object.values(EDITOR_TYPE).includes(entry.type) &&
-            currentDirection === Direction.Parent
-        ) {
-            return <Alert theme="warning" message={i18n('label_editor-hint')} />;
-        }
-
-        if (!relations || isEmpty(relations) || isError) {
-            const name = isError ? 'error' : 'emptyDirectory';
-            const title = isError ? i18n('label_request-error') : i18n('label_no-relatives');
+        if (isError) {
             return (
-                <div className={b('empty-state')}>
-                    <PlaceholderIllustration direction="column" name={name} title={title} />
+                <div className={b('error-state')}>
+                    <PlaceholderIllustration
+                        direction="column"
+                        name="error"
+                        title={i18n('label_request-error')}
+                    />
                 </div>
             );
         }
 
-        return Object.entries(relations).map(([key, value]) => (
+        if (isEmpty(relations)) {
+            if (
+                entry.scope === EntryScope.Widget &&
+                Object.values(EDITOR_TYPE).includes(entry.type) &&
+                currentDirection === Direction.Parent
+            ) {
+                return <Alert theme="warning" message={i18n('label_editor-hint')} />;
+            }
+
+            return (
+                <div className={b('empty-state')}>
+                    <PlaceholderIllustration
+                        direction="column"
+                        name="emptyDirectory"
+                        title={i18n('label_no-relatives')}
+                    />
+                </div>
+            );
+        }
+
+        return Object.entries(relations || []).map(([key, value]) => (
             <EntitiesList scope={key} entities={value} key={key} />
         ));
     };
