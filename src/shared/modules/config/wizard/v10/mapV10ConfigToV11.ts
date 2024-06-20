@@ -11,13 +11,11 @@ export const mapV10ConfigToV11 = (config: V10ChartsConfig): V11ChartsConfig => {
     if (config.visualization?.id === WizardVisualizationId.Metric) {
         extraSettings = {...config.extraSettings};
 
-        if (extraSettings.titleMode === 'hide') {
-            extraSettings.indicatorTitleMode = IndicatorTitleMode.Hide;
-        } else if (extraSettings.titleMode === 'show' && extraSettings.title) {
+        if (extraSettings.titleMode === 'show' && extraSettings.title) {
             extraSettings.indicatorTitleMode = IndicatorTitleMode.Manual;
+        } else {
+            extraSettings.indicatorTitleMode = IndicatorTitleMode.ByField;
         }
-
-        extraSettings.indicatorTitleMode = IndicatorTitleMode.ByField;
     }
 
     return {
