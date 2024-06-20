@@ -35,6 +35,7 @@ import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
 import logger from '../../../../../libs/logger';
+import {getControlHint} from '../../../utils';
 import {LIMIT, LOAD_STATUS, TYPE} from '../constants';
 import type {
     ErrorData,
@@ -364,7 +365,7 @@ export const ControlItemSelect = ({
         loadingItems,
         placeholder,
         required: source.required,
-        hint: source.hint,
+        hint: getControlHint(source),
         hasValidationError: Boolean(selectValidationError),
         renderOverlay,
         ...selectProps,

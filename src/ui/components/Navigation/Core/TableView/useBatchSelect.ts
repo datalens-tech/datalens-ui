@@ -2,12 +2,16 @@ import React from 'react';
 
 import type {HookBatchSelectResult, TableViewProps} from './types';
 
-type HookBatchSelectArgs = Pick<TableViewProps, 'entries' | 'mode' | 'isMobileNavigation'>;
+type HookBatchSelectArgs = Pick<
+    TableViewProps,
+    'entries' | 'mode' | 'isMobileNavigation' | 'onItemSelect'
+>;
 
 export function useBatchSelect({
     entries,
     mode,
     isMobileNavigation,
+    onItemSelect,
 }: HookBatchSelectArgs): HookBatchSelectResult {
     const isBatchEnabled = checkBatchEnabled(mode, isMobileNavigation);
 
@@ -35,7 +39,15 @@ export function useBatchSelect({
                 } else {
                     newSelectedIds.add(entryId);
                 }
+
                 setSelectedIds(newSelectedIds);
+
+                if (onItemSelect) {
+                    onItemSelect({
+                        selectedItemId: entryId,
+                        selectedItemsIds: newSelectedIds,
+                    });
+                }
             }
         },
         [allActiveIds, selectedIds],

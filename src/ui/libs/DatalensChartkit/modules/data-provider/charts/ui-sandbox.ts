@@ -2,8 +2,8 @@ import escape from 'lodash/escape';
 import pick from 'lodash/pick';
 import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
-import {WRAPPED_HTML_KEY} from '../../../../../../shared';
-import {WRAPPED_FN_KEY} from '../../../../../../shared/constants/ui-sandbox';
+import type {ChartKitHtmlItem} from '../../../../../../shared';
+import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
@@ -72,7 +72,7 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     generateHtmlHandle.dispose();
 };
 
-const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'];
+const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
 
 function clearVmProp(prop: unknown) {
@@ -82,9 +82,14 @@ function clearVmProp(prop: unknown) {
             return undefined;
         }
 
-        const item: Record<string, unknown> = {...(prop as object)};
+        const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
+                if (attr === 'this' && Array.isArray(item[attr]?.points)) {
+                    item[attr].points = item[attr].points.map(clearVmProp);
+                    return;
+                }
+
                 delete item[attr];
             }
         });
@@ -240,31 +245,36 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type ItemValue = any;
+export function processHtmlFields(target: unknown, options?: {allowHtml: boolean}) {
+    const allowHtml = Boolean(options?.allowHtml);
 
-export function generateSafeHtml(target: ItemValue) {
-    if (!target || typeof target !== 'object') {
-        return;
-    }
-
-    Object.keys(target).forEach((key) => {
-        const value = target[key];
-
-        if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
-            // eslint-disable-next-line no-param-reassign
-            target[key] = generateHtml(value[WRAPPED_HTML_KEY]);
-        } else if (Array.isArray(value)) {
-            value.forEach(generateSafeHtml);
-        } else if (value && typeof value === 'object') {
-            generateSafeHtml(value);
+    if (target && typeof target === 'object') {
+        if (Array.isArray(target)) {
+            target.forEach((item) => processHtmlFields(item, options));
+        } else {
+            const config = target as Record<string, unknown>;
+            Object.entries(config).forEach(([key, value]) => {
+                if (value) {
+                    if (typeof value === 'object') {
+                        if (WRAPPED_HTML_KEY in value) {
+                            // eslint-disable-next-line no-param-reassign
+                            config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+                        } else {
+                            processHtmlFields(value, options);
+                        }
+                    } else if (typeof value === 'string' && !allowHtml) {
+                        // eslint-disable-next-line no-param-reassign
+                        config[key] = escape(value);
+                    }
+                }
+            });
         }
-    });
+    }
 }
 
-export function unwrapHtml(value: ItemValue) {
+export function unwrapHtml(value: unknown) {
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
-        return generateHtml(value[WRAPPED_HTML_KEY]);
+        return generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
     }
 
     if (typeof value === 'string') {

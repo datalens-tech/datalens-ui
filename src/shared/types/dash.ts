@@ -216,10 +216,11 @@ export interface DashTabItemControlManual extends DashTabItemControlData {
     } & DashTabItemControlElement;
 }
 
-type DashTabItemControlElement =
+export type DashTabItemControlElement =
     | DashTabItemControlElementSelect
     | DashTabItemControlElementInput
-    | DashTabItemControlElementDate;
+    | DashTabItemControlElementDate
+    | DashTabItemControlElementCheckbox;
 
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
@@ -247,6 +248,11 @@ export interface DashTabItemControlElementInput extends DashTabItemControlElemen
 export interface DashTabItemControlElementDate extends DashTabItemControlElementBase {
     elementType: DashTabItemControlElementType.Date;
     isRange: boolean;
+    defaultValue: string;
+}
+
+export interface DashTabItemControlElementCheckbox extends DashTabItemControlElementBase {
+    elementType: DashTabItemControlElementType.Checkbox;
     defaultValue: string;
 }
 

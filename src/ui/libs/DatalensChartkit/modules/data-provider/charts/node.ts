@@ -5,6 +5,7 @@ import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
+import get from 'lodash/get';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -21,8 +22,8 @@ import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/da
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {
-    generateSafeHtml,
     getUISandbox,
+    processHtmlFields,
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
@@ -267,7 +268,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         }
 
         if (isNodeResponse(loaded)) {
-            const jsonParse = noJsonFn ? JSON.parse : JSONfn.parse;
+            const parsedConfig = JSON.parse(loaded.config);
+            const enableJsAndHtml = get(parsedConfig, 'enableJsAndHtml', true);
+
+            const jsonParse = noJsonFn || enableJsAndHtml === false ? JSON.parse : JSONfn.parse;
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
@@ -287,9 +291,8 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 unwrapPossibleFunctions(uiSandbox, result.data);
             }
 
-            // TODO: escape html
-            generateSafeHtml(result.data);
-            generateSafeHtml(result.libraryConfig);
+            processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
+            processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
 
             applyChartkitHandlers(result.config, result.libraryConfig);
 

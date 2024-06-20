@@ -23,3 +23,12 @@ export const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
 export function getMessageFromUnknownError(e: unknown) {
     return isObject(e) && 'message' in e && isString(e.message) ? e.message : '';
 }
+
+const ESCAPE_CHART_FIELDS_DATE = new Date('2030-01-01').valueOf();
+export function isChartWithJSAndHtmlAllowed(config: {createdAt: string}) {
+    if (!config.createdAt) {
+        return true;
+    }
+
+    return new Date(config.createdAt).valueOf() < ESCAPE_CHART_FIELDS_DATE;
+}

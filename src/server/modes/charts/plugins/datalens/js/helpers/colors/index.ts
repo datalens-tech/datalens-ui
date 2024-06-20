@@ -40,13 +40,11 @@ export const getChartColorsConfig = ({
         colors = loadedColorPalettes[colorsConfig.palette]?.colors || fallbackColors;
     }
 
-    const chartColors: ChartColorsConfig = {
+    return {
         ...colorsConfig,
         colors,
         gradientColors,
         loadedColorPalettes,
         availablePalettes,
     };
-
-    return chartColors;
 };

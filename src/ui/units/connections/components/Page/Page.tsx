@@ -1,7 +1,10 @@
 import React from 'react';
 
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {get} from 'lodash';
+import omit from 'lodash/omit';
 import {connect} from 'react-redux';
 import type {RouteChildrenProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
@@ -12,6 +15,8 @@ import type {ConnectorType} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, Utils} from 'ui';
 import {registry} from 'ui/registry';
+import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import type {DataLensApiError} from 'ui/typings';
 
 import type {ErrorViewProps} from '../';
 import {ErrorView, Router, WrappedLoader} from '../';
@@ -36,6 +41,7 @@ import {isListPageOpened, isS3BasedConnForm} from './utils';
 import './Page.scss';
 
 const b = block('conn-page');
+const i18n = I18n.keyset('connections.form');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -48,18 +54,41 @@ type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     getConnectionData: () => void;
     getConnectors: () => void;
     getConnectorSchema: (type: ConnectorType) => void;
+    openDialogErrorWithTabs: typeof openDialogErrorWithTabs;
 };
 
 const PageContent = (props: PageContentProps) => {
     const {type, apiErrors, flattenConnectors, groupedConnectors, connectionData} = props;
-    const {error, scope} = useApiErrors({apiErrors});
+    const {error, scope, details} = useApiErrors({apiErrors});
 
     if (error) {
         let handler: NonNullable<ErrorViewProps['action']>['handler'];
+        let content: React.ReactNode | undefined;
 
         switch (scope) {
             case 'connection': {
-                handler = props.getConnectionData;
+                if (details.includes('platform-permission-required')) {
+                    content = (
+                        <div style={{display: 'flex', columnGap: 10, marginTop: 20}}>
+                            <Button view="action" onClick={props.getConnectionData}>
+                                {i18n('button_retry')}
+                            </Button>
+                            <Button
+                                view="outlined"
+                                onClick={() => {
+                                    props.openDialogErrorWithTabs({
+                                        error: omit(error, 'details') as DataLensApiError,
+                                        title: i18n('label_error-403-title'),
+                                    });
+                                }}
+                            >
+                                {i18n('button_details')}
+                            </Button>
+                        </div>
+                    );
+                } else {
+                    handler = props.getConnectionData;
+                }
                 break;
             }
             case 'connectors': {
@@ -71,7 +100,7 @@ const PageContent = (props: PageContentProps) => {
             }
         }
 
-        const action: ErrorViewProps['action'] = {handler};
+        const action: ErrorViewProps['action'] = {handler, content};
 
         return <ErrorView error={error} scope={scope} action={action} />;
     }
@@ -165,6 +194,7 @@ const PageComponent = (props: PageProps) => {
                         getConnectionData={actions.getConnectionData}
                         getConnectors={actions.getConnectors}
                         getConnectorSchema={actions.getConnectorSchema}
+                        openDialogErrorWithTabs={actions.openDialogErrorWithTabs}
                     />
                 )}
             </div>
@@ -193,6 +223,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 getConnectionData,
                 getConnectors,
                 getConnectorSchema,
+                openDialogErrorWithTabs,
             },
             dispatch,
         ),

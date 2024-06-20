@@ -1,17 +1,18 @@
-import type {Shared, SharedData, V10PlaceholderSettings} from '../../index';
+import type {Shared, SharedData, V11PlaceholderSettings} from '../../index';
 
+import type {V10ChartsConfig} from './v10';
 import type {
-    V10ChartsConfig,
-    V10ChartsConfigDatasetField,
-    V10ColorsConfig,
-    V10CommonPlaceholders,
-    V10CommonSharedExtraSettings,
-    V10Field,
-    V10Filter,
-    V10Formatting,
-    V10HierarchyField,
-    V10Layer,
-} from './v10';
+    V11ChartsConfig,
+    V11ChartsConfigDatasetField,
+    V11ColorsConfig,
+    V11CommonPlaceholders,
+    V11CommonSharedExtraSettings,
+    V11Field,
+    V11Filter,
+    V11Formatting,
+    V11HierarchyField,
+    V11Layer,
+} from './v11';
 import type {V2ChartsConfig} from './v2';
 import type {V3ChartsConfig} from './v3';
 import type {V4ChartsConfig} from './v4';
@@ -30,8 +31,9 @@ export * from './v7';
 export * from './v8';
 export * from './v9';
 export * from './v10';
+export * from './v11';
 
-export type ChartsConfig = V10ChartsConfig;
+export type ChartsConfig = V11ChartsConfig;
 export type PreviousChartsConfigs =
     | Shared
     | V2ChartsConfig
@@ -41,8 +43,9 @@ export type PreviousChartsConfigs =
     | V6ChartsConfig
     | V7ChartsConfig
     | V8ChartsConfig
-    | V9ChartsConfig;
-export type CommonPlaceholders = V10CommonPlaceholders;
+    | V9ChartsConfig
+    | V10ChartsConfig;
+export type CommonPlaceholders = V11CommonPlaceholders;
 
 export type ExtendedChartsConfig = ChartsConfig | PreviousChartsConfigs;
 
@@ -68,26 +71,26 @@ export type ServerLayerSettings = NonNullable<
     ChartsConfig['visualization']['layers']
 >[0]['layerSettings'];
 
-export type ServerFieldFormatting = V10Formatting;
+export type ServerFieldFormatting = V11Formatting;
 
 export type ServerShapesConfig = ChartsConfig['shapesConfig'];
 
-export type ServerColorsConfig = V10ColorsConfig;
+export type ServerColorsConfig = V11ColorsConfig;
 
 export type ServerPointSizeConfig = NonNullable<ChartsConfig['geopointsConfig']>;
 
-export type ServerField = V10Field;
+export type ServerField = V11Field;
 
-export type ServerFilter = V10Filter;
+export type ServerFilter = V11Filter;
 
-export type ServerDatasetField = V10ChartsConfigDatasetField;
+export type ServerDatasetField = V11ChartsConfigDatasetField;
 
-export type ServerVisualizationLayer = V10Layer;
+export type ServerVisualizationLayer = V11Layer;
 
 export type ServerLink = ChartsConfig['links'][0];
 
-export type ServerHierarchy = V10HierarchyField;
+export type ServerHierarchy = V11HierarchyField;
 
-export type ServerCommonSharedExtraSettings = V10CommonSharedExtraSettings;
+export type ServerCommonSharedExtraSettings = V11CommonSharedExtraSettings;
 
-export type ServerPlaceholderSettings = V10PlaceholderSettings;
+export type ServerPlaceholderSettings = V11PlaceholderSettings;

@@ -20,8 +20,9 @@ const i18nList = I18n.keyset('connections.connectors-list.view');
 export type ErrorScope = 'connectors' | 'connection' | 'schema' | 'unknown';
 
 export type ErrorContentAction = {
-    text: string;
+    text?: string;
     buttonProps?: Partial<ButtonProps>;
+    content?: React.ReactNode;
     handler?: () => void;
 };
 
@@ -91,7 +92,10 @@ const getErrorData = (args: {
 };
 
 const getErrorAction = (action: NonNullable<ErrorViewProps['action']>): ErrorContentAction => {
-    const {text, buttonProps, handler} = action;
+    const {content, text, buttonProps, handler} = action;
+    if (content) {
+        return {content};
+    }
     return {text: text || i18nList('button_retry'), buttonProps, handler};
 };
 

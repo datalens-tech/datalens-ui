@@ -3,6 +3,7 @@ import React from 'react';
 import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
+import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
@@ -46,7 +47,7 @@ import {
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {adjustWidgetLayout} from '../../utils';
+import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {ControlItemSelect} from './ControlItems/ControlItemSelect';
@@ -423,6 +424,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             const {workbookId} = this.props;
 
+            const payloadCancellation = chartsDataProvider.getRequestCancellation();
+
             const payload = {
                 data: {
                     config: {
@@ -436,7 +439,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
                 },
+                cancelToken: payloadCancellation.token,
             };
+
+            if (data.sourceType !== DashTabItemControlSourceType.External) {
+                this.cancelCurrentRequests();
+            }
+
+            this._cancelSource = payloadCancellation;
 
             const response =
                 data.sourceType === DashTabItemControlSourceType.External
@@ -469,6 +479,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this.setState({isInit: true});
             }
         } catch (error) {
+            if (axios.isCancel(error)) {
+                return;
+            }
             if (this.state.isInit === false) {
                 this.setState({isInit: true});
             }
@@ -640,7 +653,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 label,
                 required,
                 hasValidationError: Boolean(validationError),
-                hint: source.showHint ? source.hint : undefined,
+                hint: getControlHint(source),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {

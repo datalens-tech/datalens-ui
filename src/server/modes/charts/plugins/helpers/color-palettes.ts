@@ -1,14 +1,24 @@
-import type {ServerChartsConfig} from '../../../../../shared';
-import {isVisualizationWithLayers} from '../../../../../shared';
+import type {Palette, ServerChartsConfig} from '../../../../../shared';
+import {
+    isEntryId,
+    isSystemGradientPaletteId,
+    isSystemPaletteId,
+    isVisualizationWithLayers,
+} from '../../../../../shared';
 import type {SourceRequest} from '../datalens/url/build-sources/types';
-import {isCustomColorPaletteId} from '../datalens/url/helpers';
 
 type GetColorPalettesRequestArgs = {
     config: ServerChartsConfig;
+    palettes: Record<string, Palette>;
 };
 
+function isCustomColorPaletteId(value: string, systemPalettes: Record<string, Palette>) {
+    const isSystem = isSystemGradientPaletteId(value) || isSystemPaletteId(value, systemPalettes);
+    return !isSystem && isEntryId(value);
+}
+
 export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
-    const {config} = args;
+    const {config, palettes} = args;
     const visualization = config.visualization;
     const result: Record<string, SourceRequest> = {};
 
@@ -25,7 +35,7 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
     }
 
     colorPalettes.forEach((colorPaletteId) => {
-        if (isCustomColorPaletteId(colorPaletteId)) {
+        if (isCustomColorPaletteId(colorPaletteId, palettes)) {
             result[`colorPalettes_${colorPaletteId}`] = {
                 method: 'GET',
                 url: `/_us_color_palettes/${colorPaletteId}`,
@@ -42,7 +52,7 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
                 const gradientPaletteId =
                     backgroundSettings.settings?.gradientState?.gradientPalette;
 
-                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId)) {
+                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId, palettes)) {
                     result[`colorPalettes_${gradientPaletteId}`] = {
                         method: 'GET',
                         url: `/_us_color_palettes/${gradientPaletteId}`,
@@ -52,7 +62,7 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
 
                 const regularPaletteId = backgroundSettings.settings?.paletteState?.palette;
 
-                if (regularPaletteId && isCustomColorPaletteId(regularPaletteId)) {
+                if (regularPaletteId && isCustomColorPaletteId(regularPaletteId, palettes)) {
                     result[`colorPalettes_${regularPaletteId}`] = {
                         method: 'GET',
                         url: `/_us_color_palettes/${regularPaletteId}`,
@@ -64,7 +74,7 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
             if (barsSettings && barsSettings.enabled) {
                 const gradientPaletteId = barsSettings.colorSettings.settings?.palette;
 
-                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId)) {
+                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId, palettes)) {
                     result[`colorPalettes_${gradientPaletteId}`] = {
                         method: 'GET',
                         url: `/_us_color_palettes/${gradientPaletteId}`,

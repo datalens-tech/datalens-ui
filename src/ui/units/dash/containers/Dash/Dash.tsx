@@ -10,7 +10,7 @@ import {getSdk} from 'libs/schematic-sdk';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
-import {DashTabItemType, Feature} from 'shared';
+import {Feature} from 'shared';
 import type {EntryDialogues} from 'ui/components/EntryDialogues';
 import {EntryDialogName} from 'ui/components/EntryDialogues';
 import {PageTitle} from 'ui/components/PageTitle';
@@ -38,7 +38,7 @@ import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryC
 import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
-import {getTabTitleById} from '../../modules/helpers';
+import {getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
 import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
@@ -62,8 +62,6 @@ import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
-
-const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -320,19 +318,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditDash();
     };
 
-    private isItemPasteAllowed(itemData: CopiedConfigData) {
-        if (
-            CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
-            (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
-        ) {
-            return true;
-        }
-        const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
-        const dashWorkbookId = this.props.entry.workbookId ?? null;
-
-        return itemWorkbookId === dashWorkbookId;
-    }
-
     private showErrorPasteItemFromWorkbook() {
         const message = (
             <Interpolate
@@ -373,7 +358,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     }
 
     private onPasteItem = (itemData: CopiedConfigData, updateLayout?: ConfigLayout[]) => {
-        if (!this.isItemPasteAllowed(itemData)) {
+        if (!isItemPasteAllowed(itemData, this.props.entry.workbookId)) {
             this.showErrorPasteItemFromWorkbook();
             return;
         }
