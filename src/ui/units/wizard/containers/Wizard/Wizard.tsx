@@ -7,15 +7,14 @@ import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
 import {i18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
+import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {ChartsConfig} from 'shared';
-import {ChartSaveControlsQA, EntryUpdateMode, Feature} from 'shared';
-import type {DatalensGlobalState} from 'ui';
+
 import {
     DL,
     EntryDialogName,
@@ -28,37 +27,19 @@ import {
     URL_QUERY,
     Utils,
     sdk,
-} from 'ui';
-import {registry} from 'ui/registry';
-import {
-    selectConfig,
-    selectConfigForSaving,
-    selectConfigType,
-    selectInitialPreviewHash,
-    selectPreviewEntryId,
-    selectPreviewHash,
-} from 'units/wizard/selectors/preview';
-import {
-    selectDefaultPath,
-    selectIsDefaultsSet,
-    selectIsFullscreen,
-    selectSettings,
-} from 'units/wizard/selectors/settings';
-import {selectVisualization} from 'units/wizard/selectors/visualization';
-import {
-    selectExtraSettings,
-    selectIsWidgetLoading,
-    selectWidget,
-    selectWidgetError,
-    selectWidgetHash,
-} from 'units/wizard/selectors/widget';
-
+} from '../../../../';
+import type {DatalensGlobalState} from '../../../../';
+import {ChartSaveControlsQA, EntryUpdateMode, Feature} from '../../../../../shared';
+import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
+import {HOTKEYS_SCOPES} from '../../../../constants/misc';
+import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
     addEditHistoryPoint,
@@ -84,6 +65,28 @@ import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../constants';
 import type {WizardGlobalState} from '../../reducers';
 import {reloadWizardEntryByRevision, setActualWizardChart} from '../../reducers/revisions/reducers';
 import {selectDataset} from '../../selectors/dataset';
+import {
+    selectConfig,
+    selectConfigForSaving,
+    selectConfigType,
+    selectInitialPreviewHash,
+    selectPreviewEntryId,
+    selectPreviewHash,
+} from '../../selectors/preview';
+import {
+    selectDefaultPath,
+    selectIsDefaultsSet,
+    selectIsFullscreen,
+    selectSettings,
+} from '../../selectors/settings';
+import {selectVisualization} from '../../selectors/visualization';
+import {
+    selectExtraSettings,
+    selectIsWidgetLoading,
+    selectWidget,
+    selectWidgetError,
+    selectWidgetHash,
+} from '../../selectors/widget';
 import {getDefaultChartName, shouldComponentUpdateWithDeepComparison} from '../../utils/helpers';
 import {mapClientConfigToChartsConfig} from '../../utils/mappers/mapClientToChartsConfig';
 import {getAvailableVisualizations} from '../../utils/visualization';
@@ -113,6 +116,7 @@ type OwnProps = {
         params: Record<string, string>;
     };
     location: Location;
+    hotkeysContext?: HotkeysContextType;
 };
 
 interface Props extends OwnProps, StateProps, DispatchProps {}
@@ -126,6 +130,7 @@ interface State {
 class Wizard extends React.Component<Props, State> {
     private toaster: Toaster;
     private entryDialoguesRef: React.RefObject<EntryDialogues>;
+    private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
     private chartKitRef: React.RefObject<ChartKit> = React.createRef<ChartKit>();
 
@@ -153,7 +158,9 @@ class Wizard extends React.Component<Props, State> {
         }
 
         this.toaster = new Toaster();
+
         this.entryDialoguesRef = React.createRef();
+        this.hotkeysAreaRef = React.createRef();
 
         this.state = {
             editButtonLoading: false,
@@ -182,6 +189,18 @@ class Wizard extends React.Component<Props, State> {
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.unloadConfirmation);
+
+        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
+            this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
+                this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+            });
+
+            this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
+                this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+            });
+
+            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+        }
     }
 
     shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
@@ -260,6 +279,16 @@ class Wizard extends React.Component<Props, State> {
         if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
             this.props.resetEditHistoryUnit({
                 unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
+
+            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+
+            this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', () => {
+                this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+            });
+
+            this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', () => {
+                this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
             });
         }
     }
@@ -507,66 +536,72 @@ class Wizard extends React.Component<Props, State> {
                         )}
                     </>
                 )}
-                <PageTitle entry={widget} />
-                <WizardActionPanel
-                    config={config}
-                    configType={configType}
-                    entry={widget}
-                    onSaveCallback={this.openSaveWidgetDialog}
-                    onNoRightsDialogCallback={this.openNoRightsDialog}
-                    onSetActualVersionCallback={this.handleSetActualVersion}
-                    dropdownItems={this.getSaveMenuItems()}
-                    onSaveAsNewClick={this.openSaveAsWidgetDialog}
-                    onSaveAsDraftClick={this.handleSaveDraftClick}
-                    onSaveAndPublishClick={this.handleSavePublishClick}
-                    chartKitRef={this.chartKitRef}
-                />
-                <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
-                    <SplitPane
-                        resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
-                        className="top-pane"
-                        split="vertical"
-                        minSize={SPLIT_PANE_MIN_SIZE}
-                        maxSize={SPLIT_PANE_MAX_SIZE}
-                        onChange={this.handleSplitPaneSizeChange}
-                    >
-                        <div className={`column data-column${hidden}`}>
+                <div
+                    className={b('hotkeyes-area')}
+                    ref={this.hotkeysAreaRef}
+                    key={'wizard-hotkeyes-area'}
+                >
+                    <PageTitle entry={widget} />
+                    <WizardActionPanel
+                        config={config}
+                        configType={configType}
+                        entry={widget}
+                        onSaveCallback={this.openSaveWidgetDialog}
+                        onNoRightsDialogCallback={this.openNoRightsDialog}
+                        onSetActualVersionCallback={this.handleSetActualVersion}
+                        dropdownItems={this.getSaveMenuItems()}
+                        onSaveAsNewClick={this.openSaveAsWidgetDialog}
+                        onSaveAsDraftClick={this.handleSaveDraftClick}
+                        onSaveAndPublishClick={this.handleSavePublishClick}
+                        chartKitRef={this.chartKitRef}
+                    />
+                    <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
+                        <SplitPane
+                            resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
+                            className="top-pane"
+                            split="vertical"
+                            minSize={SPLIT_PANE_MIN_SIZE}
+                            maxSize={SPLIT_PANE_MAX_SIZE}
+                            onChange={this.handleSplitPaneSizeChange}
+                        >
+                            <div className={`column data-column${hidden}`}>
+                                {isWidgetLoading ? (
+                                    <div className={b('loader')}>
+                                        <Loader size={'l'} />
+                                    </div>
+                                ) : (
+                                    <SectionDataset
+                                        workbookId={widget.workbookId as string}
+                                        entryDialoguesRef={entryDialoguesRef}
+                                        toaster={toaster}
+                                        sdk={sdk}
+                                    />
+                                )}
+                            </div>
                             {isWidgetLoading ? (
                                 <div className={b('loader')}>
                                     <Loader size={'l'} />
                                 </div>
                             ) : (
-                                <SectionDataset
-                                    workbookId={widget.workbookId as string}
-                                    entryDialoguesRef={entryDialoguesRef}
-                                    toaster={toaster}
-                                    sdk={sdk}
-                                />
+                                <SplitPane
+                                    resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
+                                    split="vertical"
+                                    minSize={SPLIT_PANE_MIN_SIZE}
+                                    maxSize={SPLIT_PANE_MAX_SIZE}
+                                    onChange={this.handleSplitPaneSizeChange}
+                                >
+                                    <div className={`column visual-column${hidden}`}>
+                                        <SectionVisualization
+                                            availableVisualizations={getAvailableVisualizations()}
+                                        />
+                                    </div>
+                                    <div className="column preview-column">
+                                        <SectionPreview chartKitRef={this.chartKitRef} />
+                                    </div>
+                                </SplitPane>
                             )}
-                        </div>
-                        {isWidgetLoading ? (
-                            <div className={b('loader')}>
-                                <Loader size={'l'} />
-                            </div>
-                        ) : (
-                            <SplitPane
-                                resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
-                                split="vertical"
-                                minSize={SPLIT_PANE_MIN_SIZE}
-                                maxSize={SPLIT_PANE_MAX_SIZE}
-                                onChange={this.handleSplitPaneSizeChange}
-                            >
-                                <div className={`column visual-column${hidden}`}>
-                                    <SectionVisualization
-                                        availableVisualizations={getAvailableVisualizations()}
-                                    />
-                                </div>
-                                <div className="column preview-column">
-                                    <SectionPreview chartKitRef={this.chartKitRef} />
-                                </div>
-                            </SplitPane>
-                        )}
-                    </SplitPane>
+                        </SplitPane>
+                    </div>
                 </div>
             </div>
         );
@@ -635,4 +670,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 export default compose<Props, State>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
-)(withErrorPage(Wizard));
+)(withErrorPage(withHotkeysContext(Wizard)));

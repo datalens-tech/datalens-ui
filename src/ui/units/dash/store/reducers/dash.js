@@ -151,7 +151,11 @@ export function getSelectorDialogFromData(data, defaults) {
 export function getSelectorGroupDialogFromData(data) {
     return {
         ...data,
-        group: data.group.map(getSelectorDialogFromData),
+        group: data.group.map((item) => ({
+            ...getSelectorDialogFromData(item),
+            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+            width: item.width || '',
+        })),
     };
 }
 

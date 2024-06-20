@@ -226,6 +226,9 @@ export const DL = {
     get ZITADEL_ENABLED() {
         return window.DL.isZitadelEnabled === true;
     },
+    get HIDE_NAVIGATION() {
+        return window.DL.hideNavigation;
+    },
 };
 
 export const LIGHT_THEME = 'light';

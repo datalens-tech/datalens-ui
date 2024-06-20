@@ -155,7 +155,9 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
-    dropdownActions.push([...otherActions]);
+    if (otherActions.length > 0) {
+        dropdownActions.push([...otherActions]);
+    }
 
     return (
         <div className={b()}>

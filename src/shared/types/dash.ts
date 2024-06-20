@@ -217,7 +217,7 @@ export interface DashTabItemControlManual extends DashTabItemControlData {
     } & DashTabItemControlElement;
 }
 
-type DashTabItemControlElement =
+export type DashTabItemControlElement =
     | DashTabItemControlElementSelect
     | DashTabItemControlElementInput
     | DashTabItemControlElementDate

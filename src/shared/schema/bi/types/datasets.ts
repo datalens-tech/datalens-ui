@@ -31,14 +31,13 @@ type DatasetWithOptions = {
     options: Dataset['options'];
 };
 
-export type DistinctResult = {
-    result: {
-        data: {
-            Data: string[][];
-            Type: [string, [string, [string, [string, string[]]][]]];
-        };
-    };
+type DistinctResultData = {
+    Data: string[][];
+    Type: [string, [string, [string, [string, string[]]][]]];
 };
+
+export type DistinctResult = {result: {data: DistinctResultData}};
+export type DistinctRegularResult = {result: {regular: DistinctResultData}};
 
 export type DatasetDistinctWhere = {
     column: string;
@@ -147,7 +146,7 @@ export type UpdateDatasetArgs = {
     multisource: boolean;
 } & DatasetId;
 
-export type GetPreviewResponse = DistinctResult;
+export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;
 
 export type GetPreviewArgs = {
     dataset: Dataset['dataset'];

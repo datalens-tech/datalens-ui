@@ -1,11 +1,11 @@
 import React from 'react';
 
 import noop from 'lodash/noop';
-import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
 
 import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
+import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
 import {DialogAccess} from './DialogAccess/DialogAccess';
@@ -151,10 +151,7 @@ const initState: EntryDialoguesState = {
     dialogProps: {},
 };
 
-export default class EntryDialogues extends React.Component<
-    EntryDialoguesProps,
-    EntryDialoguesState
-> {
+class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialoguesState> {
     state = {...initState};
 
     render() {
@@ -174,7 +171,7 @@ export default class EntryDialogues extends React.Component<
         return content;
     }
 
-    // public via ref
+    // Public method via ref
     open<T extends string, P extends Record<string, any> = any>({
         dialog,
         dialogProps,
@@ -191,7 +188,11 @@ export default class EntryDialogues extends React.Component<
 
     private onClose: EntryDialogOnClose = ({status, data = {}}) => {
         const {resolveOpenDialog} = this.state;
+
         this.setState({...initState});
+
         resolveOpenDialog({status, data});
     };
 }
+
+export default EntryDialogues;

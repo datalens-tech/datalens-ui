@@ -37,6 +37,7 @@ import {
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
+import {getControlHint} from '../../../utils';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
@@ -430,7 +431,7 @@ export const Control = ({
 
             style,
             renderOverlay,
-            hint: controlData.source.showHint ? controlData.source.hint : undefined,
+            hint: getControlHint(controlData.source),
         };
 
         if (elementType === DashTabItemControlElementType.Select) {

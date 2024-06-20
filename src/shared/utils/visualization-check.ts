@@ -36,6 +36,8 @@ export function isD3Visualization(id: WizardVisualizationId) {
         WizardVisualizationId.BarXD3,
         WizardVisualizationId.LineD3,
         WizardVisualizationId.DonutD3,
+        WizardVisualizationId.BarYD3,
+        WizardVisualizationId.BarY100pD3,
     ];
     return d3Visualizations.includes(id);
 }
