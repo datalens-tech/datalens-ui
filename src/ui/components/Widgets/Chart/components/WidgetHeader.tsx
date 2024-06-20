@@ -1,20 +1,19 @@
 import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
-import {ArrowLeft, ShieldExclamation} from '@gravity-ui/icons';
-import {Button, Icon, Popover} from '@gravity-ui/uikit';
+import {ArrowLeft} from '@gravity-ui/icons';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
+import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
-
-import {MarkdownContent} from './MarkdownContent';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
@@ -151,15 +150,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                                 </Button>
                             </div>
                         )}
-                        {warning && (
-                            <Popover content={<MarkdownContent value={warning} />}>
-                                <Icon
-                                    size={20}
-                                    data={ShieldExclamation}
-                                    className={b('chart-info-icon')}
-                                />
-                            </Popover>
-                        )}
+                        {warning && <ChartInfoIcon msg={warning} />}
                     </div>
                 )}
             </div>
