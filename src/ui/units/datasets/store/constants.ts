@@ -12,6 +12,7 @@ const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     source_avatars: [],
     source_features: {},
     sources: [],
+    load_preview_by_default: true,
 });
 
 export const initialPreview: DatasetReduxState['preview'] = {

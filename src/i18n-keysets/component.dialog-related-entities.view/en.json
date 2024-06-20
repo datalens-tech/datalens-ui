@@ -1,16 +1,16 @@
 {
   "label_current-object": "Current object",
-  "label_dataset-hint": "Some charts created in the Editor will not be displayed in the list",
-  "label_editor-hint": "For charts in which the dataset is not explicitly specified in the Shared tab, the display of related objects in Includes not available",
-  "label_entities-count": "Number of related entities:",
+  "label_dataset-hint": "The list will not display charts created in ChartEditor without a clearly defined relation with a dataset on the \"Shared\" tab.",
+  "label_editor-hint": "\"Contains objects\" relations are unavailable for ChartEditor charts without a dataset clearly specified on the \"Shared\" tab.",
+  "label_entities-count": "Number of related objects:",
   "label_no-relatives": "There are no related objects",
-  "label_request-error": "Error during data request",
+  "label_request-error": "Data request error",
   "label_scope-chart": "Charts",
   "label_scope-connection": "Connections",
   "label_scope-dash": "Dashboards",
   "label_scope-dataset": "Datasets",
   "label_scope-other": "Other",
   "label_title": "Related objects",
-  "value_includes": "Includes",
-  "value_where-contained": "Where is contained"
+  "value_includes": "Contains objects",
+  "value_where-contained": "Used in objects"
 }

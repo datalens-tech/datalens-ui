@@ -1,16 +1,16 @@
 {
   "label_current-object": "Текущий объект",
-  "label_dataset-hint": "В списке не будут отображаться некоторые чарты, созданные в Editor",
-  "label_editor-hint": "Для чартов, в которых явно не указан датасет во вкладке Shared,  отображение связей Включает в себя недоступно",
-  "label_entities-count": "Количество связанных сущностей:",
-  "label_no-relatives": "Нет связанных объектов",
-  "label_request-error": "Ошибка во время запроса данных",
+  "label_dataset-hint": "В список не попадают чарты ChartEditor, у которых явно не указана связь с датасетом на вкладке «Shared».",
+  "label_editor-hint": "Для чартов ChartEditor, у которых на вкладке «Shared» явно не указан датасет, отображение связей «Содержит объекты» недоступно.",
+  "label_entities-count": "Количество связанных объектов:",
+  "label_no-relatives": "Связанные объекты отсутствуют",
+  "label_request-error": "При запросе данных произошла ошибка",
   "label_scope-chart": "Чарты",
   "label_scope-connection": "Подключения",
   "label_scope-dash": "Дашборды",
   "label_scope-dataset": "Датасеты",
   "label_scope-other": "Другое",
   "label_title": "Связанные объекты",
-  "value_includes": "Включает в себя",
-  "value_where-contained": "Где содержится"
+  "value_includes": "Содержит объекты",
+  "value_where-contained": "Используется в объектах"
 }
