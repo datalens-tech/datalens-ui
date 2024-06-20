@@ -1,4 +1,5 @@
-import {isObjectWith, isObjectWithFunction} from 'shared';
+import isFunction from 'lodash/isFunction';
+import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
 
 import {DL} from '../../../../../constants';
 
@@ -40,12 +41,13 @@ function isHtmlString(value: unknown) {
 }
 
 export function getSafeChartWarnings(widgetData?: unknown) {
-    const pathToFunction = isObjectWithFunction(widgetData);
+    const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
+    const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
     if (pathToFunction) {
         return `has functions at \`${pathToFunction}\``;
     }
 
-    const pathToHtml = isObjectWith(widgetData, isHtmlString);
+    const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
     if (pathToHtml) {
         return `has HTML string at \`${pathToHtml}\``;
     }

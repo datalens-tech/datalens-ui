@@ -312,6 +312,7 @@ export enum ChartsInsightLocator {
 export function isObjectWith(
     value: unknown,
     check: (value: unknown) => boolean,
+    ignore?: string[],
     path = '',
 ): string | false {
     if (!value) {
@@ -324,9 +325,9 @@ export function isObjectWith(
 
     if (Array.isArray(value)) {
         for (let index = 0; index < value.length; index++) {
-            const pathToFunction = isObjectWith(value[index], check, `${path}[${index}]`);
-            if (pathToFunction) {
-                return pathToFunction;
+            const pathToItem = isObjectWith(value[index], check, ignore, `${path}[${index}]`);
+            if (pathToItem) {
+                return pathToItem;
             }
         }
     }
@@ -335,9 +336,13 @@ export function isObjectWith(
         const entries = Object.entries(value as object);
         for (let index = 0; index < entries.length; index++) {
             const [key, val] = entries[index];
-            const pathToFunction = isObjectWith(val, check, path ? `${path}.${key}` : key);
-            if (pathToFunction) {
-                return pathToFunction;
+            if (ignore?.includes(key)) {
+                continue;
+            }
+
+            const pathToItem = isObjectWith(val, check, ignore, path ? `${path}.${key}` : key);
+            if (pathToItem) {
+                return pathToItem;
             }
         }
     }
@@ -346,5 +351,5 @@ export function isObjectWith(
 }
 
 export function isObjectWithFunction(value: unknown) {
-    return isObjectWith(value, isFunction);
+    return isObjectWith(value, isFunction, []);
 }

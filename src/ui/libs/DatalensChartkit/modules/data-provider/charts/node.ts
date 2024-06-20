@@ -286,6 +286,12 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 noJsonFn ? replacer : undefined,
             );
 
+            if (showSafeChartInfo) {
+                result.safeChartInfo = getSafeChartWarnings(
+                    pick(result, 'config', 'libraryConfig', 'data'),
+                );
+            }
+
             if (
                 shouldUseUISandbox(result.config) ||
                 shouldUseUISandbox(result.libraryConfig) ||
@@ -299,12 +305,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
-
-            if (showSafeChartInfo) {
-                result.safeChartInfo = getSafeChartWarnings(
-                    pick(result, 'config', 'libraryConfig', 'data'),
-                );
-            }
 
             applyChartkitHandlers(result.config, result.libraryConfig);
 
