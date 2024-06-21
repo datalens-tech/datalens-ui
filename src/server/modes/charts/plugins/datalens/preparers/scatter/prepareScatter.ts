@@ -30,6 +30,7 @@ import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {mapPointsByShape} from './helpers/shape';
+import {getScatterTooltipOptions} from './helpers/tooltip';
 import type {ScatterPoint} from './types';
 
 export type ScatterGraph = {
@@ -69,6 +70,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapesConfig,
         ChartEditor,
         features,
+        shared,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -386,16 +388,17 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
+        graph.custom = {
+            ...graph.custom,
+            tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
+        };
 
         if (isActionParamsEnable) {
             const actionParams: Record<string, any> = {};
             addActionParamValue(actionParams, color, graph.data?.[0]?.colorValue);
             addActionParamValue(actionParams, shape, graph.data?.[0]?.shapeValue);
 
-            graph.custom = {
-                ...graph.custom,
-                actionParams,
-            };
+            graph.custom.actionParams = actionParams;
         }
     });
 

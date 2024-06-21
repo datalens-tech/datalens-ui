@@ -1,5 +1,3 @@
-import escape from 'lodash/escape';
-
 import type {
     DATASET_FIELD_TYPES,
     FeatureConfig,
@@ -9,12 +7,9 @@ import type {
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
-    Feature,
     LabelsPositions,
     LegendDisplayMode,
-    PlaceholderId,
     VISUALIZATIONS_WITH_LABELS_POSITION,
-    getFakeTitleOrTitle,
     getIsNavigatorEnabled,
     getServerFeatures,
     isDateField,
@@ -24,7 +19,7 @@ import {registry} from '../../../../registry';
 import type {IgnoreProps} from './utils/axis-helpers';
 import {applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from './utils/config-helpers';
-import {getFieldTitle, isNumericalDataType, log} from './utils/misc-helpers';
+import {isNumericalDataType, log} from './utils/misc-helpers';
 
 type ExtendedHighchartsLegendOptions = Omit<Highcharts.LegendOptions, 'labelFormatter'> & {
     labelFormatter?:
@@ -41,7 +36,6 @@ export const buildHighchartsConfigPrivate = (args: {
     shared: ServerChartsConfig;
     features: FeatureConfig;
 }) => {
-    const {features} = args;
     const shared = mapChartsConfigToServerConfig(args.shared);
 
     if (
@@ -81,7 +75,7 @@ export const buildHighchartsConfigPrivate = (args: {
         chart.type = '';
     }
 
-    const plotOptions: Highcharts.PlotOptions = {};
+    const plotOptions: any = {};
 
     // By default, ChartKit enables navigator when there is a highstock object in config
     const navigator: Highcharts.Options['navigator'] = {
@@ -125,60 +119,12 @@ export const buildHighchartsConfigPrivate = (args: {
     });
 
     if (shared.visualization.id === 'scatter') {
-        const placeholders = shared.visualization.placeholders;
-
         plotOptions.series = {turboThreshold: 100000};
-
-        const xField = placeholders[0].items[0];
-        const yField = placeholders[1].items[0];
-        const pointField = placeholders[2].items[0];
-        const colorField = shared.colors[0];
-        const shapeField = shared.shapes?.[0];
-        const sizeField = placeholders.find((pl) => pl.id === PlaceholderId.Size)?.items[0];
-
-        let xTitle = getFieldTitle(xField);
-        let yTitle = getFieldTitle(yField);
-        let pointTitle = getFakeTitleOrTitle(pointField);
-        let colorTitle = getFieldTitle(colorField);
-        let shapeTitle = getFieldTitle(shapeField);
-        let sizeTitle = getFieldTitle(sizeField);
-
-        if (features[Feature.EscapeUserHtmlInDefaultHcTooltip]) {
-            xTitle = escape(xTitle);
-            yTitle = escape(yTitle);
-            pointTitle = escape(pointTitle);
-            colorTitle = escape(colorTitle);
-            shapeTitle = escape(shapeTitle);
-            sizeTitle = escape(sizeTitle);
-        }
-
         plotOptions.scatter = {
-            tooltip: {},
+            tooltip: {
+                formatter: ChartkitHandlers.WizardScatterTooltipFormatter,
+            },
         };
-
-        if (plotOptions.scatter.tooltip) {
-            if (pointTitle) {
-                plotOptions.scatter.tooltip.headerFormat = `${pointTitle}: <b>{point.key}</b><br>`;
-            } else {
-                plotOptions.scatter.tooltip.headerFormat = '';
-            }
-
-            const lines = [`${xTitle}: {point.xLabel}`, `${yTitle}: {point.yLabel}`];
-
-            if (shapeTitle && shapeTitle !== colorTitle) {
-                lines.unshift(`${shapeTitle}: {point.sLabel}`);
-            }
-
-            if (colorTitle) {
-                lines.unshift(`${colorTitle}: {point.cLabel}`);
-            }
-
-            if (sizeTitle) {
-                lines.unshift(`${sizeTitle}: {point.sizeLabel}`);
-            }
-
-            plotOptions.scatter.tooltip.pointFormat = lines.join('<br>');
-        }
 
         chart.zoomType = 'xy';
 
