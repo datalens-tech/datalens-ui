@@ -6,6 +6,7 @@ import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
+import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
 import {DialogAccess} from './DialogAccess/DialogAccess';
@@ -66,6 +67,7 @@ export enum EntryDialogName {
     SetActualConfirm = 'set-actual-confirm',
     SaveAsNew = 'save-as-new',
     MigrateToWorkbook = 'migrate-to-workbook',
+    ShowRelatedEntities = 'show-related-entities',
 }
 
 const getMapDialogues = (): Record<string, any> => {
@@ -90,6 +92,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.SetActualConfirm]: DialogMakeActualConfirm,
         [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNew,
         [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbook,
+        [EntryDialogName.ShowRelatedEntities]: DialogRelatedEntities,
         ...getAdditionalEntryDialoguesMap(),
     };
 };

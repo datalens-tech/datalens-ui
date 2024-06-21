@@ -252,6 +252,14 @@ class NavigationBase extends React.Component {
             this.closeNavigation();
         }
     }
+    async showRelatedEntities(entry) {
+        await this.refDialogues.current.open({
+            dialog: EntryDialogName.ShowRelatedEntities,
+            dialogProps: {
+                entry,
+            },
+        });
+    }
     getOnActionDestination(entry) {
         const {path} = this.props;
         return !path || path === ROOT_PATH ? Utils.getPathBefore({path: entry.key}) : path;
@@ -439,6 +447,9 @@ class NavigationBase extends React.Component {
             }
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {
                 return this.migrateToWorkbookEntry(entry);
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES: {
+                return this.showRelatedEntities(entry);
             }
             default:
                 return false;
