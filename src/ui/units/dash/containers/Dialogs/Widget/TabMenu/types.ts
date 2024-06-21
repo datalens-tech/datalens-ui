@@ -36,4 +36,5 @@ export type TabMenuProps<T> = {
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
     addButtonView?: 'flat' | 'outlined';
+    onCopyItem?: (itemIndex: number) => void;
 };

@@ -1,6 +1,12 @@
 import type React from 'react';
 
-import type {Config, ConfigItem, ConfigItemData, ConfigLayout} from '@gravity-ui/dashkit';
+import type {
+    Config,
+    ConfigItem,
+    ConfigItemData,
+    ConfigLayout,
+    PreparedCopyItemOptions,
+} from '@gravity-ui/dashkit';
 import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
@@ -351,4 +357,41 @@ export const getUniqIdsFromDashData = (dashData: DashData) => {
     });
 
     return ids.filter(Boolean);
+};
+
+export const getPreparedCopyItemOptions = (
+    itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+    tabData: DashTab | null,
+    copyContext?: CopiedConfigContext,
+) => {
+    if (copyContext) {
+        itemToCopy.copyContext = copyContext;
+    }
+
+    if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+        return itemToCopy;
+    }
+
+    const copyItemTabsWidgetParams: Record<string, StringParams> = {};
+    itemToCopy.data.tabs.forEach((copiedTabItem) => {
+        const {id, params} = copiedTabItem;
+        copyItemTabsWidgetParams[id] = params || {};
+    });
+
+    tabData.items.forEach((dashTabItem) => {
+        if ('tabs' in dashTabItem.data) {
+            dashTabItem.data.tabs.forEach((item) => {
+                if (item.id in copyItemTabsWidgetParams) {
+                    copyItemTabsWidgetParams[item.id] = item.params;
+                }
+            });
+        }
+    });
+    itemToCopy.data.tabs.forEach((copiedTabItem) => {
+        if (copiedTabItem.id in copyItemTabsWidgetParams) {
+            const {id} = copiedTabItem;
+            copiedTabItem.params = copyItemTabsWidgetParams[id];
+        }
+    });
+    return itemToCopy;
 };

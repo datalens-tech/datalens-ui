@@ -1,3 +1,5 @@
 {
-  "button_delete": "Delete"
+  "button_copy": "Copy to clipboard",
+  "button_delete": "Delete",
+  "button_duplicate": "Duplicate"
 }
