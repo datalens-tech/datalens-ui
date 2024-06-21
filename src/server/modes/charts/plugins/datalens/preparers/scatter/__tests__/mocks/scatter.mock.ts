@@ -96,6 +96,7 @@ export const scatterPrepareBaseArgs = {
         totals: [],
     },
     features: [],
+    shared: {},
 };
 
 export const scatterPrepareForQLArgs = {
@@ -272,6 +273,16 @@ export const scatterPrepareForQLResult = {
             color: '#4DA2F1',
             marker: {symbol: 'circle'},
             keys: ['y'],
+            custom: {
+                tooltipOptions: {
+                    colorTitle: '',
+                    pointTitle: '',
+                    shapeTitle: '',
+                    sizeTitle: '',
+                    xTitle: 'built_year',
+                    yTitle: 'iznos',
+                },
+            },
         },
     ],
     categories: ['1976', '1970', '1950'],

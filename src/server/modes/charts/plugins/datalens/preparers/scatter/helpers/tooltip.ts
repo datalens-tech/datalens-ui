@@ -13,12 +13,12 @@ type GetScatterTooltipOptionsArgs = {
 export function getScatterTooltipOptions(args: GetScatterTooltipOptionsArgs) {
     const {shared, placeholders, features} = args;
 
-    const xField = placeholders[0].items[0];
-    const yField = placeholders[1].items[0];
-    const pointField = placeholders[2].items[0];
-    const colorField = shared.colors[0];
+    const xField = placeholders[0]?.items?.[0];
+    const yField = placeholders[1]?.items?.[0];
+    const pointField = placeholders[2]?.items?.[0];
+    const colorField = shared.colors?.[0];
     const shapeField = shared.shapes?.[0];
-    const sizeField = placeholders.find((pl) => pl.id === PlaceholderId.Size)?.items[0];
+    const sizeField = placeholders.find((pl) => pl.id === PlaceholderId.Size)?.items?.[0];
 
     let xTitle = getFieldTitle(xField);
     let yTitle = getFieldTitle(yField);
