@@ -240,18 +240,16 @@ class DatasetEditor extends React.Component {
         });
     };
 
-    addField = ({field, ...data}) => {
+    addField = (data) => {
         this.modifyFields({
             ...data,
-            field,
             actionType: 'add',
         });
     };
 
-    duplicateField = ({field, ...data}) => {
+    duplicateField = (data) => {
         this.modifyFields({
             ...data,
-            field,
             actionType: 'duplicate',
             updatePreview: true,
         });
