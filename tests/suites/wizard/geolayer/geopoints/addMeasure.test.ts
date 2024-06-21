@@ -24,8 +24,7 @@ datalensTest.describe('Wizard - Geo Points', () => {
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Size, '_someMeasure');
 
-        // The appearance of the legend signals that the points have been redrawn
-        await wizardPage.waitForSelector(wizardPage.chartkit.legendMapSelector);
+        await wizardPage.chartkit.waitForMapReady();
 
         point = await page.waitForSelector(wizardPage.chartkit.geopointSelector);
         styleAttr = await point?.getAttribute('style');
