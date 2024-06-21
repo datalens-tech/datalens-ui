@@ -17,14 +17,19 @@ import type {
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
 
-import type {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
+import type {
+    OpenDialogConfirmArguments,
+    closeDialog,
+    openDialog,
+    openDialogConfirm,
+} from '../../../../store/actions/dialog';
 import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
 import {BatchFieldAction, FieldAction} from './constants';
-import {getAggregationSwitchTo, getColumns} from './utils';
+import {getAggregationSwitchTo, getColumns, isHiddenSupported} from './utils';
 
 import './DatasetTable.scss';
 
@@ -36,24 +41,28 @@ DataTable.setCustomIcons({
     ICON_DESC: <Icon className={b('sort-icon')} data={ArrowUp} />,
 });
 
+type UpdatePayload = {
+    debounce?: boolean;
+    validateEnabled?: boolean;
+    updatePreview?: boolean;
+};
+
 type DatasetTableProps = {
     options: DatasetOptions;
     fields: DatasetField[];
     itemsToDisplay: EditorItemToDisplay[];
     validationInProgress: boolean;
     sourceAvatars?: DatasetSourceAvatar[];
-    updateField: (data: {
-        field: Partial<DatasetField> & {new_id?: string};
-        debounce?: boolean;
-        validateEnabled?: boolean;
-        updatePreview?: boolean;
-    }) => void;
-    batchUpdateFields: (data: {
-        fields: Partial<DatasetField>[] & {new_id?: string}[];
-        debounce?: boolean;
-        validateEnabled?: boolean;
-        updatePreview?: boolean;
-    }) => void;
+    updateField: (
+        data: UpdatePayload & {
+            field: Partial<DatasetField> & {new_id?: string};
+        },
+    ) => void;
+    batchUpdateFields: (
+        data: UpdatePayload & {
+            fields: Partial<DatasetField>[] & {new_id?: string}[];
+        },
+    ) => void;
     duplicateField: (data: {field: DatasetField}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
@@ -102,7 +111,12 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     render() {
         const {fields = [], itemsToDisplay} = this.props;
         const {activeRow} = this.state;
-        const {count: selectedCount, map: selectedRows} = this.getFilteredSelectedRows();
+        const {
+            count: selectedCount,
+            map: selectedRows,
+            canBeHidden,
+            canBeShown,
+        } = this.getFilteredSelectedRows();
 
         return (
             <React.Fragment>
@@ -142,6 +156,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         count={selectedCount}
                         onClose={this.resetSelection}
                         onAction={this.handleBatchUpdate}
+                        disableActions={[
+                            ...(canBeHidden.count > 0 ? [] : (['hide'] as const)),
+                            ...(canBeShown.count > 0 ? [] : (['show'] as const)),
+                        ]}
                     />
                 )}
             </React.Fragment>
@@ -153,16 +171,35 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         const {fields} = this.props;
 
         let count = 0;
-        const map = fields.reduce<DatasetSelectionMap>((memo, {guid}) => {
-            if (selectedRows[guid]) {
-                count++;
-                memo[guid] = true;
+        const canBeHidden: {count: number; fields: DatasetField[]} = {count: 0, fields: []};
+        const canBeShown: {count: number; fields: DatasetField[]} = {count: 0, fields: []};
+        const filteredFields: DatasetField[] = [];
+
+        const map = fields.reduce<DatasetSelectionMap>((memo, field) => {
+            const {guid} = field;
+            if (!selectedRows[guid]) {
+                return memo;
+            }
+
+            count++;
+            // eslint-disable-next-line no-param-reassign
+            memo[guid] = true;
+            filteredFields.push(field);
+
+            if (isHiddenSupported(field)) {
+                if (field.hidden) {
+                    canBeShown.count++;
+                    canBeShown.fields.push(field);
+                } else {
+                    canBeHidden.count++;
+                    canBeHidden.fields.push(field);
+                }
             }
 
             return memo;
         }, {});
 
-        return {count, map};
+        return {count, map, fields: filteredFields, canBeHidden, canBeShown};
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
@@ -209,31 +246,38 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
 
-    private batchConfirmDialog = (options: any) => {
+    private batchConfirmDialog = (
+        options: Partial<OpenDialogConfirmArguments> &
+            Pick<
+                OpenDialogConfirmArguments,
+                'onApply' | 'message' | 'confirmHeaderText' | 'confirmButtonText'
+            >,
+    ) => {
         this.props.openDialogConfirm({
-            cancelButtonText: 'Cancel', // TODO i18n
+            cancelButtonText: i18n('button_batch-cancel'),
             onCancel: this.props.closeDialog,
             cancelButtonView: 'flat',
             confirmButtonView: 'normal',
             isWarningConfirm: true,
+            showIcon: false,
             confirmOnEnterPress: true,
             ...options,
         });
     };
 
-    private handleBatchRemove = (fields: DatasetField[]) => {
+    private openBatchRemoveDialog = (fields: DatasetField[]) => {
         this.batchConfirmDialog({
             onApply: () => {
                 this.props.batchRemoveFields({fields});
                 this.props.closeDialog();
             },
-            message: 'Delete message',
-            confirmHeaderText: 'Delete confirm text',
-            confirmButtonText: 'Delete',
+            message: i18n('text_batch-remove-message'),
+            confirmHeaderText: i18n('text_batch-remove-header'),
+            confirmButtonText: i18n('button_batch-remove'),
         });
     };
 
-    private handleBatchToggleVisibility = (fields: DatasetField[], hidden: boolean) => {
+    private openBatchToggleVisibilityDialog = (fields: DatasetField[], hidden: boolean) => {
         this.batchConfirmDialog({
             onApply: () => {
                 this.props.batchUpdateFields({
@@ -247,29 +291,30 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 this.resetSelection();
                 this.props.closeDialog();
             },
-            message: hidden ? 'Hide message' : 'Show message',
-            confirmHeaderText: hidden ? 'Hide confirm text' : 'Show confirm text',
-            confirmButtonText: hidden ? 'Hide' : 'Show',
+            message: hidden ? i18n('text_batch-hide-message') : i18n('text_batch-show-message'),
+            confirmHeaderText: hidden
+                ? i18n('text_batch-hide-header')
+                : i18n('text_batch-show-header'),
+            confirmButtonText: hidden ? i18n('button_batch-hide') : i18n('button_batch-show'),
         });
     };
 
     private handleBatchUpdate = (action: BatchFieldAction) => {
-        const {map} = this.getFilteredSelectedRows();
-        const fields = this.props.fields.filter((field) => map[field.guid]);
+        const {fields, canBeShown, canBeHidden} = this.getFilteredSelectedRows();
 
         switch (action) {
             case BatchFieldAction.Remove: {
-                this.handleBatchRemove(fields);
+                this.openBatchRemoveDialog(fields);
                 return;
             }
 
             case BatchFieldAction.Hide: {
-                this.handleBatchToggleVisibility(fields, true);
+                this.openBatchToggleVisibilityDialog(canBeHidden.fields, true);
                 return;
             }
 
             case BatchFieldAction.Show: {
-                this.handleBatchToggleVisibility(fields, false);
+                this.openBatchToggleVisibilityDialog(canBeShown.fields, false);
                 return;
             }
 

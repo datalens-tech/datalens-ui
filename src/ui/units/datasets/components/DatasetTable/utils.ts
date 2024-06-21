@@ -3,7 +3,6 @@ import {i18n} from 'i18n';
 import {get} from 'lodash';
 import type {
     AvailableFieldType,
-    DATASET_FIELD_TYPES,
     DatasetField,
     DatasetFieldAggregation,
     DatasetOptionFieldItem,
@@ -12,7 +11,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
-import {Feature} from 'shared';
+import {DATASET_FIELD_TYPES, Feature} from 'shared';
 import type {Permissions} from 'shared/types/dls';
 import Utils from 'ui/utils';
 
@@ -117,7 +116,7 @@ export const getColumns = (args: GetColumnsArgs) => {
 
     const index = getIndexColumn({
         selectedRows,
-        isSelectedAll: Object.keys(selectedRows).length === fields.length,
+        isAllSelected: Object.keys(selectedRows).length === fields.length,
         onSelectChange,
         onSelectAllChange: (state: boolean) =>
             onSelectChange(
@@ -255,4 +254,8 @@ export const sortDescriptionColumn = (
     const description2 = get(row2, ['row', 'description']);
 
     return description1.localeCompare(description2, undefined, {numeric: true});
+};
+
+export const isHiddenSupported = (row: DatasetField) => {
+    return row.initial_data_type !== DATASET_FIELD_TYPES.UNSUPPORTED;
 };

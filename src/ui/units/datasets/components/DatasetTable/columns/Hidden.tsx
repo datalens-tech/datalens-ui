@@ -7,7 +7,8 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
-import {DATASET_FIELD_TYPES} from 'shared';
+
+import {isHiddenSupported} from '../utils';
 
 const b = block('dataset-table');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
@@ -24,7 +25,7 @@ export const getHiddenColumn = ({onUpdate}: GetHiddenColumnArgs): Column<Dataset
     sortable: true,
     header: <Icon className={b('header-icon')} data={EyeSlash} width="24" />,
     render: function HiddenColumnItem({value, index, row}) {
-        const unsupported = row.initial_data_type === DATASET_FIELD_TYPES.UNSUPPORTED;
+        const unsupported = !isHiddenSupported(row);
 
         return (
             <Button
