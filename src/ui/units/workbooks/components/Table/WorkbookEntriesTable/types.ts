@@ -7,6 +7,7 @@ interface WorkbookEntriesTableProps {
     onDeleteEntry: (data: WorkbookEntry) => void;
     onDuplicateEntry: (data: WorkbookEntry) => void;
     onCopyEntry: (data: WorkbookEntry) => void;
+    onShowRelatedClick: (data: WorkbookEntry) => void;
 }
 
 export {WorkbookEntriesTableProps};

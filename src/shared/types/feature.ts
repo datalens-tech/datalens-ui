@@ -73,6 +73,8 @@ export enum Feature {
     EnableDashDNDPanel = 'EnableDashDNDPanel',
     /** Chart runner for the execution of trusted code in wizard/ql. */
     WorkerChartBuilder = 'WorkerChartBuilder',
+    /** Option in entity menu that allows to see all related entities for the current entity */
+    RelatedEntitiesList = 'RelatedEntitiesList',
 }
 
 export type FeatureConfig = Record<string, boolean>;
