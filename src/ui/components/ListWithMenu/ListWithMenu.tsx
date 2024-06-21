@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {TrashBin} from '@gravity-ui/icons';
+import {Copy, CopyArrowRight, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem, ListProps} from '@gravity-ui/uikit';
 import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -18,7 +18,9 @@ export interface ListWithMenuProps<T> {
     /* * Properties of the List component*/
     list: ListProps<T>;
     /* * Callback to delete an element*/
-    onRemove: (item: number) => void;
+    onRemove: (itemIndex: number) => void;
+    onDuplicate: (itemIndex: number) => void;
+    onCopy?: (itemIndex: number) => void;
     /* * Callback to an action with an element*/
     onAction: ({
         action,
@@ -40,6 +42,8 @@ export const ListWithMenu = <T extends ItemWithTitle>({
     onRemove,
     iconOnHover,
     onAction,
+    onDuplicate,
+    onCopy,
 }: ListWithMenuProps<T>): React.ReactElement => {
     const {items, className, ...restListProps} = list;
 
@@ -54,21 +58,50 @@ export const ListWithMenu = <T extends ItemWithTitle>({
         [setExpandedItemIndex, expandedItemIndex],
     );
 
-    const onRemoveItem = React.useCallback(() => {
+    const onRemoveItem = () => {
         if (expandedItemIndex !== undefined) {
             onRemove(expandedItemIndex);
         }
-    }, [onRemove, expandedItemIndex]);
+    };
+
+    const onDuplicateItem = () => {
+        if (expandedItemIndex !== undefined) {
+            onDuplicate(expandedItemIndex);
+        }
+    };
+
+    const onCopyItem = () => {
+        if (expandedItemIndex !== undefined) {
+            onCopy?.(expandedItemIndex);
+        }
+    };
 
     const customMenuOptions: DropdownMenuItem[] = [
         {
-            action: () => onRemoveItem(),
-            text: i18n('button_delete'),
-            icon: <Icon data={TrashBin} />,
-            className: b('delete-btn'),
-            qa: DialogGroupControlQa.removeControlButton,
+            action: onDuplicateItem,
+            text: i18n('button_duplicate'),
+            icon: <Icon data={Copy} />,
+            className: b('menu-button'),
+            qa: DialogGroupControlQa.duplicateControlButton,
+        },
+        {
+            action: onCopyItem,
+            text: i18n('button_copy'),
+            icon: <Icon data={CopyArrowRight} />,
+            className: b('menu-button'),
+            qa: DialogGroupControlQa.copyControlButton,
         },
     ];
+
+    if (isMultipleItems) {
+        customMenuOptions.push({
+            action: onRemoveItem,
+            text: i18n('button_delete'),
+            icon: <Icon data={TrashBin} />,
+            className: b('delete-button'),
+            qa: DialogGroupControlQa.removeControlButton,
+        });
+    }
 
     const wrappedRenderItem = (item: T, active: boolean, itemIndex: number) => {
         return (
@@ -88,16 +121,14 @@ export const ListWithMenu = <T extends ItemWithTitle>({
                     </div>
                 </div>
 
-                {isMultipleItems && (
-                    <div className={b('controls')}>
-                        <DropdownMenu
-                            size="m"
-                            onOpenToggle={handleMenuToggle(itemIndex)}
-                            items={customMenuOptions}
-                            defaultSwitcherProps={{qa: DialogGroupControlQa.controlMenu}}
-                        />
-                    </div>
-                )}
+                <div className={b('controls')}>
+                    <DropdownMenu
+                        size="m"
+                        onOpenToggle={handleMenuToggle(itemIndex)}
+                        items={customMenuOptions}
+                        defaultSwitcherProps={{qa: DialogGroupControlQa.controlMenu}}
+                    />
+                </div>
             </div>
         );
     };
