@@ -150,7 +150,7 @@ const deleteFields = (state: DatasetReduxState, fields: Partial<DatasetField>[])
     const resultSchemaNext = (resultSchema || []).filter(({guid: currentGuid}) => {
         if (guids[currentGuid]) {
             deleteUpdates.push({
-                action: DATASET_UPDATE_ACTIONS.FIELD_DELETE as 'delete_field', // TODO enum?
+                action: DATASET_UPDATE_ACTIONS.FIELD_DELETE as 'delete_field',
                 field: {
                     guid: currentGuid,
                 },
