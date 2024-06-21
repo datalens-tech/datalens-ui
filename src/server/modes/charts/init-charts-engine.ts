@@ -3,10 +3,9 @@ import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import get from 'lodash/get';
 import sizeof from 'object-sizeof';
 
-import {Feature, isEnabledServerFeature} from '../../../shared';
+import {Feature, isEnabledServerFeature, isObjectWithFunction} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
-import {isConfigWithFunction} from '../../components/charts-engine/components/utils';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {startMonitoring} from '../../components/monitoring';
@@ -129,7 +128,7 @@ export function initChartsEngine({
 
             if (
                 shouldLogChartWithFunction &&
-                (isConfigWithFunction(chartConfig) || isConfigWithFunction(highchartsConfig))
+                (isObjectWithFunction(chartConfig) || isObjectWithFunction(highchartsConfig))
             ) {
                 ctx.stats('chartsWithFn', {datetime, entryId: chartEntryId});
             }

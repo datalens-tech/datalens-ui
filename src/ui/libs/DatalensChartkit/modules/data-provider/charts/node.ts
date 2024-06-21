@@ -6,16 +6,20 @@ import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
-import {EDITOR_CHART_NODE, QL_CHART_NODE, WIZARD_CHART_NODE} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
-} from '../../../../../../shared/constants/chartkit-handlers';
+    EDITOR_CHART_NODE,
+    QL_CHART_NODE,
+    WIZARD_CHART_NODE,
+} from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
+import Utils from '../../../../../utils';
 import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
@@ -27,6 +31,7 @@ import {
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
+import {getSafeChartWarnings} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -238,6 +243,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
+        const {showSafeChartInfo} = Utils.getOptionsFromSearch(window.location.search);
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -279,6 +285,12 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 loaded.highchartsConfig,
                 noJsonFn ? replacer : undefined,
             );
+
+            if (showSafeChartInfo) {
+                result.safeChartInfo = getSafeChartWarnings(
+                    pick(result, 'config', 'libraryConfig', 'data'),
+                );
+            }
 
             if (
                 shouldUseUISandbox(result.config) ||
