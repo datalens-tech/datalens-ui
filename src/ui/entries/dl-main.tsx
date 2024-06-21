@@ -16,6 +16,8 @@ import {getStore} from '../store/configure';
 import {selectTheme, selectThemeSettings} from '../store/selectors/user';
 import history from '../utils/history';
 
+import {HOTKEYS_SCOPES} from '../constants/misc';
+
 import '@gravity-ui/uikit/styles/styles.scss';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'katex/dist/katex.min.css';
@@ -35,7 +37,7 @@ const Content = () => {
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >
             <MobileProvider mobile={DL.IS_MOBILE}>
-                <HotkeysProvider>
+                <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
                     <React.Fragment>
                         <DialogManager />
                         <DatalensPage />
