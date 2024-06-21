@@ -1,10 +1,19 @@
-import {Clock, Copy, FolderArrowDown, FontCursor, Link, Tag, TrashBin} from '@gravity-ui/icons';
+import {
+    Clock,
+    CodeTrunk,
+    Copy,
+    FolderArrowDown,
+    FontCursor,
+    Link,
+    Tag,
+    TrashBin,
+} from '@gravity-ui/icons';
 import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
-import {ALL_SCOPES, URL_QUERY} from '../../constants';
+import {ALL_SCOPES, OBJECT_SCOPES, URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
 import {getAvailableScopes} from '../RevisionsPanel/utils';
@@ -22,6 +31,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY_LINK: 'copy-link',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
+    SHOW_RELATED_ENTITIES: 'show-related-entities',
 };
 
 const CONTEXT_MENU_COPY = {
@@ -190,6 +200,14 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         text: 'value_copy-link',
         enable: () => true,
         scopes: ALL_SCOPES,
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+        icon: CodeTrunk,
+        text: 'value_show-related-entities',
+        enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
+        scopes: OBJECT_SCOPES,
     },
     ...getAdditionalEntryContextMenuItems(),
     getContextMenuMoveToWorkbooks(),
