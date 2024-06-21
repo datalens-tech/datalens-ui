@@ -560,7 +560,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 key={item.id}
                 id={item.id}
                 data={item}
-                params={this.state.stateParams[item.id]}
+                params={this.state.stateParams[item.id] || {}}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
                 getDistincts={getDistincts}
