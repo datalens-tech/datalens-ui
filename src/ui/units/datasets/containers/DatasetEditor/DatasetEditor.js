@@ -145,7 +145,7 @@ class DatasetEditor extends React.Component {
         }
     };
 
-    setValidateDataset = (validateEnabled) => {
+    setValidateSaveDataset = (validateEnabled) => {
         if (validateEnabled) {
             this.props.disableSaveDataset();
         } else {
@@ -161,7 +161,7 @@ class DatasetEditor extends React.Component {
         validateEnabled = true,
     }) => {
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
-            this.setValidateDataset(validateEnabled);
+            this.setValidateSaveDataset(validateEnabled);
 
             switch (actionType) {
                 case 'delete': {
@@ -192,7 +192,7 @@ class DatasetEditor extends React.Component {
 
     modifyFields = ({actionType, field, updatePreview = false, validateEnabled = true}) => {
         if (field.guid) {
-            this.setValidateDataset(validateEnabled);
+            this.setValidateSaveDataset(validateEnabled);
 
             switch (actionType) {
                 case 'duplicate': {
