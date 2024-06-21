@@ -406,6 +406,16 @@ function applyChartkitHandlers(
             libraryConfigRef.exporting.csv.columnHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardExportColumnNamesFormatter];
         }
+
+        if (
+            libraryConfigRef.plotOptions?.scatter?.tooltip?.formatter ===
+            ChartkitHandlers.WizardScatterTooltipFormatter
+        ) {
+            delete libraryConfigRef.plotOptions.scatter.tooltip.formatter;
+            libraryConfigRef.plotOptions.scatter.tooltip.headerFormat = '';
+            libraryConfigRef.plotOptions.scatter.tooltip.pointFormatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
+        }
     }
 
     if (
