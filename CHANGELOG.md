@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Fixed:
 
-- исправлена ошибка с интерфейсов "Поделиться" для объектов widget
+- исправлена ошибка с интерфейсов "Поделиться" для объектов widget;
+- исправлена ошибка экспорта в ODS.
 
 ## [0.1675.1] 10.06.2024
 
