@@ -31,6 +31,7 @@ export const SET_VISUALIZATION_PLACEHOLDER_ITEMS = Symbol(
 export const SET_FILTERS = Symbol('wizard/visualization/SET_FILTERS');
 export const SET_COLORS = Symbol('wizard/visualization/SET_COLORS');
 export const SET_AVAILABLE = Symbol('wizard/visualization/SET_AVAILABLE');
+export const SET_Y_AXIS_CONFLICT = Symbol('wizard/visualization/SET_Y_AXIS_CONFLICT');
 export const SET_DISTINCTS = Symbol('wizard/visualization/SET_DISTINCTS');
 export const SET_COLORS_CONFIG = Symbol('wizard/visualization/SET_COLORS_CONFIG');
 export const SET_POINTS_SIZE_CONFIG = Symbol('wizard/visualization/SET_POINTS_SIZE_CONFIG');
@@ -126,6 +127,22 @@ export function setAvailable({available}: {available: Field[]}): SetAvailableAct
     return {
         type: SET_AVAILABLE,
         available,
+    };
+}
+
+interface SetYAxisConflictAction {
+    type: typeof SET_Y_AXIS_CONFLICT;
+    yAxisConflict?: boolean;
+}
+
+export function setYAxisConflict({
+    yAxisConflict,
+}: {
+    yAxisConflict?: boolean;
+}): SetYAxisConflictAction {
+    return {
+        type: SET_Y_AXIS_CONFLICT,
+        yAxisConflict,
     };
 }
 
@@ -483,6 +500,7 @@ export type VisualizationAction =
     | SetColorsConfigAction
     | SetColorsAction
     | SetAvailableAction
+    | SetYAxisConflictAction
     | SetDistinctsAction
     | SetFiltersAction
     | SetVisualizationPlaceholderItemsAction

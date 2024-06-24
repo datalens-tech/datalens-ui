@@ -313,7 +313,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 distincts: resultDistincts,
             };
         } else {
+            const yAxisConflict = result.graphs.some((graph: any) => graph.yAxisConflict);
+
             result.metadata = {
+                yAxisConflict,
                 visualization: newVisualization,
                 available,
                 colors: newColors,

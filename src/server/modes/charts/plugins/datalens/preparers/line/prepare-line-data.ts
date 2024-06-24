@@ -432,6 +432,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     measureFieldTitle: line.fieldTitle,
                 };
 
+                if (line.yAxisConflict) {
+                    graph.yAxisConflict = true;
+                }
+
                 if (line.segmentNameKey) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;

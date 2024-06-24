@@ -8,6 +8,7 @@ export const selectHierarchies = (state: DatalensGlobalState) =>
     state.wizard.visualization.hierarchies;
 
 export const selectVisualization = (state: DatalensGlobalState) =>
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     state.wizard.visualization.visualization!;
 
 export const selectFilters = (state: DatalensGlobalState) => state.wizard.visualization.filters;
@@ -35,6 +36,9 @@ export const selectShapesConfig = (state: DatalensGlobalState) =>
 
 export const selectAvailable = (state: DatalensGlobalState) => state.wizard.visualization.available;
 
+export const selectYAxisConflict = (state: DatalensGlobalState) =>
+    state.wizard.visualization.yAxisConflict;
+
 export const selectDistincts = (state: DatalensGlobalState) => state.wizard.visualization.distincts;
 
 export const selectSubVisualization = createSelector(
@@ -60,22 +64,6 @@ export const selectHierarchyEditorData = (state: DatalensGlobalState) => {
     }
 
     return {hierarchy, visible, fields};
-};
-
-export const selectUsedItems = (state: DatalensGlobalState) => {
-    const visualization = selectVisualization(state);
-
-    const usedPlaceholdersItems: Field[] = [];
-
-    visualization.placeholders.forEach((placeholder) => {
-        placeholder.items.forEach((item) => {
-            usedPlaceholdersItems.push(item);
-        });
-    });
-
-    const usedColorItems = selectColors(state);
-
-    return [...usedPlaceholdersItems, ...usedColorItems];
 };
 
 export const selectDashboardParameters = (state: DatalensGlobalState) =>

@@ -90,10 +90,14 @@ export const mapDataToMeasureColoredLines = (args: MapDataToMeasureColoredLinesA
 
     const lastKey = typeof xValue === 'undefined' || xValue === null ? shownTitle : xValue;
 
-    lines[key].data[lastKey as string | number] = {
+    const targetLineKey = lastKey as string | number;
+
+    const yAxisConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+
+    lines[key].data[targetLineKey] = {
         value: yValue,
         colorValue,
     };
 
-    return {key, lastKey, colorValue};
+    return {key, lastKey, colorValue, yAxisConflict};
 };

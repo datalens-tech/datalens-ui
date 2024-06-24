@@ -191,7 +191,11 @@ export const mapDataToDimensionColoredLines = ({
         pointData.colorValue = Number(lines[key].colorValue);
     }
 
-    lines[key].data[lastKey as string | number] = pointData;
+    const targetLineKey = lastKey as string | number;
 
-    return {key, lastKey};
+    const yAxisConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+
+    lines[key].data[targetLineKey] = pointData;
+
+    return {key, lastKey, yAxisConflict};
 };
