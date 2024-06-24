@@ -122,7 +122,7 @@ class EntryContextMenu extends React.PureComponent<Props> {
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.EMBED: {
-                this.props.actions.openDialogShare(entry.entryId);
+                this.props.actions.openDialogShare(entry.entryId, entry.scope);
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {
@@ -195,12 +195,13 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                     }),
                 );
             },
-            openDialogShare: (entryId:string) => {
+            openDialogShare: (entryId:string, scope: string) => { // см. DialogShareProps
                 dispatch(
                     openDialog({
                         id: DIALOG_SHARE_WIDGET,
                         props: {
                             entryId: entryId,
+                            scope: scope,
                             onClose: () => {
                                 dispatch(closeDialog());
                             },

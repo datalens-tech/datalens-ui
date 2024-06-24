@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Checkbox, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {ChartkitMenuDialogsQA} from 'shared';
+import {ChartkitMenuDialogsQA, EntryScope} from 'shared';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL, PRODUCT_NAME, SHEET_IDS} from 'ui/constants';
 import type {ChartKitProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {URL_OPTIONS as CHARTKIT_URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
@@ -50,6 +50,7 @@ type DialogShareProps = {
     loadedData?: Widget & ChartsData;
     urlIdPrefix?: string;
     initialParams?: Record<string, number>;
+    scope?: string;
     hasDefaultSize?: boolean;
 };
 
@@ -79,6 +80,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     urlIdPrefix,
     initialParams = {},
     hasDefaultSize,
+    scope
 }) => {
     const dispatch = useDispatch();
 
@@ -122,7 +124,15 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     React.useEffect(() => {
         setCurrentUrl((paramsUrl: URI) => {
-            const updatedLink = new URI(paramsUrl.toString());
+            debugger;
+            let updatedLink = null;
+            
+            if(scope == EntryScope.Dash) {
+                updatedLink = new URI(paramsUrl.toString());
+            } else {
+                paramsUrl.pathname = '/preview' + paramsUrl.pathname;
+                updatedLink = new URI(paramsUrl.toString());
+            }   
             updatedLink.updateParams({
                 [COMMON_URL_OPTIONS.LANGUAGE]: selectedLang || null,
                 [COMMON_URL_OPTIONS.THEME]: selectedTheme || null,

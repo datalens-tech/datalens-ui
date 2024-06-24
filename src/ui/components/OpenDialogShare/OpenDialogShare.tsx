@@ -6,6 +6,7 @@ import {URL_OPTIONS as COMMON_URL_OPTIONS} from 'ui/constants';
 
 export interface DialogShareProps {
     entryId: string | undefined;
+    scope: string,
     onClose: () => void;
 }
 
@@ -20,6 +21,7 @@ function DialogShareWidget(props: DialogShareProps) {
 
     const {
         onClose,
+        scope,
         entryId,
     } = props;
 
@@ -28,6 +30,7 @@ function DialogShareWidget(props: DialogShareProps) {
         <DialogShare
             onClose={onClose}
             propsData={{id: entryId}}
+            scope={scope}
             initialParams={{
                 [COMMON_URL_OPTIONS.EMBEDDED]: 1,
                 [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
