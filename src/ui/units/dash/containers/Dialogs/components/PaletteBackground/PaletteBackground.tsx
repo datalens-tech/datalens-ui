@@ -1,11 +1,10 @@
 import React from 'react';
 
+import {ChartColumn} from '@gravity-ui/icons';
 import type {PaletteOption} from '@gravity-ui/uikit';
 import {ActionTooltip, Icon, Palette, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-
-import ChartColumnIcon from '@gravity-ui/icons/svgs/chart-column.svg';
 
 import './PaletteBackground.scss';
 
@@ -46,7 +45,7 @@ const ColorItem = ({
                 ...mod,
             })}
         >
-            {isLikeChartBg && <Icon data={ChartColumnIcon} className={b('color-icon')} />}
+            {isLikeChartBg && <Icon data={ChartColumn} className={b('color-icon')} />}
             {!isPreview && color in PALETTE_HINTS && (
                 <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColors]}>
                     <span className={b('tooltip-trigger')} />
