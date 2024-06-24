@@ -1,4 +1,4 @@
 {
-  "value_default": "Default widget background",
-  "value_transparent": "No background"
+  "value_default": "Default background (matches background of controls)",
+  "value_transparent": "Transparent"
 }
