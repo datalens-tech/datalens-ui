@@ -5,7 +5,10 @@ import {PLUGIN_ROOT_ATTR_NAME, PluginTitle, pluginTitle} from '@gravity-ui/dashk
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemTitle} from 'shared';
-import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {
+    adjustWidgetLayout as dashkitAdjustWidgetLayout,
+    getPreparedWrapSettings,
+} from 'ui/components/DashKit/utils';
 
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -53,19 +56,20 @@ const titlePlugin = {
 
         const content = <PluginTitle {...props} ref={forwardedRef} />;
 
-        const showBgColor =
+        const showBgColor = Boolean(
             data.background?.enabled &&
-            data.background?.color &&
-            data.background?.color !== 'transparent';
+                data.background?.color &&
+                data.background?.color !== 'transparent',
+        );
 
-        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
         return (
             <RendererWrapper
                 type="title"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={showBgColor ? 'with-color' : undefined}
+                classMod={classMod}
             >
                 <div
                     className={b({

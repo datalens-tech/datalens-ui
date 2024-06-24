@@ -6,6 +6,10 @@
             width: 100%;
         }
 
+        &_with-default-color {
+            background-color: var(--g-color-base-float);
+        }
+
         &_title {
             overflow: hidden;
             display: flex;
