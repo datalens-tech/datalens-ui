@@ -62,6 +62,22 @@ export const selectHierarchyEditorData = (state: DatalensGlobalState) => {
     return {hierarchy, visible, fields};
 };
 
+export const selectUsedItems = (state: DatalensGlobalState) => {
+    const visualization = selectVisualization(state);
+
+    const usedPlaceholdersItems: Field[] = [];
+
+    visualization.placeholders.forEach((placeholder) => {
+        placeholder.items.forEach((item) => {
+            usedPlaceholdersItems.push(item);
+        });
+    });
+
+    const usedColorItems = selectColors(state);
+
+    return [...usedPlaceholdersItems, ...usedColorItems];
+};
+
 export const selectDashboardParameters = (state: DatalensGlobalState) =>
     state.wizard.visualization.dashboardParameters;
 export const selectDrillDownLevel = (state: DatalensGlobalState) =>
