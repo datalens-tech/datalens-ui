@@ -91,4 +91,5 @@ export interface EntryRelationFields {
     tenantId: string;
     public: boolean;
     workbookId: WorkbookId;
+    isLocked: boolean;
 }
