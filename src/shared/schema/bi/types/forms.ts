@@ -56,6 +56,7 @@ export type SelectItem = BaseItem &
         hintText?: MarkdownString;
         controlProps?: Partial<SelectProps>;
         loading?: boolean;
+        beforeUpdate?: (nextValue: string[]) => void;
     };
 
 export type RadioButtonItemOption = {
