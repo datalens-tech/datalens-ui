@@ -302,4 +302,10 @@ export default class ChartKit {
 
         return labels.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
     }
+
+    async waitForMapReady() {
+        // The appearance of the legend signals that the points have been redrawn
+        const mapLegendSelector = this.page.locator(this.legendMapSelector);
+        await mapLegendSelector.waitFor({state: 'attached'});
+    }
 }

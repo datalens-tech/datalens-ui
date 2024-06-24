@@ -1,8 +1,9 @@
-import {Page} from '@playwright/test';
+import type {Page} from '@playwright/test';
+import {expect} from '@playwright/test';
 
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../../utils';
+import {openTestPage} from '../../../../utils';
 import {RobotChartsWizardUrls} from '../../../../utils/constants';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 
@@ -16,21 +17,17 @@ datalensTest.describe('Wizard - Geo Points', () => {
             '93ae409d-2352-43f1-8c21-e29f6321d698': '10267',
         });
 
-        await wizardPage.waitForSelector(wizardPage.chartkit.geopointSelector);
-
         await wizardPage.sectionVisualization.addFieldByClick(
             PlaceholderName.Tooltips,
             '_someMeasure',
         );
 
-        await waitForCondition(async () => {
-            const point = await wizardPage.waitForSelector(wizardPage.chartkit.geopointSelector);
+        await wizardPage.chartkit.waitForMapReady();
 
-            await point.hover({force: true});
+        const geoMarker = page.locator(wizardPage.chartkit.geopointSelector);
+        await geoMarker.hover({force: true});
 
-            return (await page.$$(wizardPage.chartkit.tooltipSelector)).length > 0;
-        }).catch(() => {
-            throw new Error('The tooltip did not appear');
-        });
+        const tooltip = page.locator(wizardPage.chartkit.tooltipSelector).first();
+        await expect(tooltip).toBeVisible();
     });
 });
