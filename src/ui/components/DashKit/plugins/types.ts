@@ -1,3 +1,4 @@
+import type {SettingsProps} from '@gravity-ui/dashkit';
 import type {DashTabItemControlSourceType, DashTabItemType, StringParams} from 'shared';
 
 import type {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
@@ -65,4 +66,8 @@ export type DatasetsFieldsListData = {
     title: string;
     guid: string;
     dataType?: string;
+};
+
+export type ControlSettingsProps = SettingsProps & {
+    dependentSelectors: boolean;
 };

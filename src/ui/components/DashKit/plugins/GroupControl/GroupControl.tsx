@@ -34,6 +34,7 @@ import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
+import type {ControlSettingsProps} from '../types';
 
 import {Control} from './Control/Control';
 import type {
@@ -245,8 +246,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     private get dependentSelectors() {
-        //@ts-ignore
-        return this.props.settings.dependentSelectors;
+        return (this.props.settings as ControlSettingsProps).dependentSelectors;
     }
 
     private fillQueueWithInitial = (checkByProps?: boolean) => {

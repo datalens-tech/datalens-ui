@@ -50,6 +50,7 @@ import {
 import {defaultControlLayout} from '../../constants';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
+import type {ControlSettingsProps} from '../types';
 
 import {ControlItemSelect} from './ControlItems/ControlItemSelect';
 import {Error} from './Error/Error';
@@ -237,8 +238,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
 
         const loadedData = this.state.loadedData;
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
+        const dependentSelectors = (this.props.settings as ControlSettingsProps).dependentSelectors;
 
         if (loadedData && loadedData.usedParams && dependentSelectors) {
             return pick(params, Object.keys(loadedData.usedParams));
