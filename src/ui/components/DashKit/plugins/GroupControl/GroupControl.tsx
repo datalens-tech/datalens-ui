@@ -9,7 +9,6 @@ import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
-import pick from 'lodash/pick';
 import {connect} from 'react-redux';
 import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
 import {ControlQA, DashTabItemType} from 'shared';
@@ -30,6 +29,7 @@ import {
     selectSkipReload,
     selectTabHashState,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {defaultControlLayout} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
@@ -42,7 +42,7 @@ import type {
     PluginGroupControlState,
     ResolveMetaResult,
 } from './types';
-import {addItemToLocalQueue} from './utils';
+import {addItemToLocalQueue, filterSignificantParams} from './utils';
 
 import './GroupControl.scss';
 
@@ -158,17 +158,19 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const updatedStateParams: Record<string, StringParams> = {};
             const updatedItemsIds: string[] = [];
             this.props.data.group?.forEach((groupItem) => {
-                const newPropsParams = this.filterSignificantParams(
-                    this.props.params[groupItem.id],
-                    this.controlsData[groupItem.id],
-                    groupItem.defaults,
-                );
+                const newPropsParams = filterSignificantParams({
+                    params: this.props.params[groupItem.id],
+                    loadedData: this.controlsData[groupItem.id],
+                    defaults: groupItem.defaults,
+                    dependentSelectors: this.dependentSelectors,
+                });
 
-                const initialParams = this.filterSignificantParams(
-                    this.initialParams[groupItem.id],
-                    this.controlsData[groupItem.id],
-                    groupItem.defaults,
-                );
+                const initialParams = filterSignificantParams({
+                    params: this.initialParams[groupItem.id],
+                    loadedData: this.controlsData[groupItem.id],
+                    defaults: groupItem.defaults,
+                    dependentSelectors: this.dependentSelectors,
+                });
 
                 if (isEqual(initialParams, newPropsParams)) {
                     updatedStateParams[groupItem.id] = {...this.state.stateParams[groupItem.id]};
@@ -242,6 +244,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
+    private get dependentSelectors() {
+        //@ts-ignore
+        return this.props.settings.dependentSelectors;
+    }
+
     private fillQueueWithInitial = (checkByProps?: boolean) => {
         const initialQueue: string[] = [];
 
@@ -309,25 +316,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.setState({stateParams: params as Record<string, StringParams>});
         this.localMeta.queue = [];
     };
-
-    private filterSignificantParams(
-        params: StringParams,
-        loadedData?: ExtendedLoadedData | null,
-        defaults?: StringParams,
-    ) {
-        if (!params) {
-            return {};
-        }
-
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
-
-        if (loadedData && loadedData.usedParams && dependentSelectors) {
-            return pick(params, Object.keys(loadedData.usedParams));
-        }
-
-        return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
-    }
 
     private getUpdatedGroupParams = ({
         params,
@@ -428,11 +416,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             itemId: id,
             usedParams: loadedData?.usedParams
                 ? Object.keys(
-                      this.filterSignificantParams(
-                          loadedData.usedParams,
+                      filterSignificantParams({
+                          params: loadedData.usedParams,
                           loadedData,
-                          currentItem?.defaults,
-                      ),
+                          defaults: currentItem?.defaults,
+                          dependentSelectors: this.dependentSelectors,
+                      }),
                   )
                 : null,
             datasets: loadedData?.extra?.datasets || null,
@@ -456,7 +445,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             result = {
                 id,
                 usedParams: usedParams
-                    ? Object.keys(this.filterSignificantParams(usedParams, loadedData))
+                    ? Object.keys(
+                          filterSignificantParams({
+                              params: usedParams,
+                              loadedData,
+                              dependentSelectors: this.dependentSelectors,
+                          }),
+                      )
                     : null,
                 datasets: extra.datasets,
                 // deprecated
@@ -560,25 +555,19 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const {getDistincts, workbookId} = this.props;
         const {silentLoading} = this.state;
 
-        const loadedData = this.controlsData[item.id];
-        const significantParams = this.filterSignificantParams(
-            this.state.stateParams[item.id],
-            loadedData,
-            item.defaults,
-        );
-
         return (
             <Control
                 key={item.id}
                 id={item.id}
                 data={item}
-                params={significantParams}
+                params={this.state.stateParams[item.id] || {}}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
                 getDistincts={getDistincts}
                 onChange={this.onChange}
                 needReload={this.state.needReload}
                 workbookId={workbookId}
+                dependentSelectors={this.dependentSelectors}
             />
         );
     }
@@ -738,7 +727,7 @@ const GroupControlWithStore = connect(mapStateToProps, null, null, {
 
 const plugin: PluginGroupControl = {
     type: DashTabItemType.GroupControl,
-    defaultLayout: {w: 8, h: 2},
+    defaultLayout: defaultControlLayout,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 
