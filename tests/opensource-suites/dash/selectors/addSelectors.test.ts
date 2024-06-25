@@ -24,18 +24,18 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             await openTestPage(page, WorkbooksUrls.E2EWorkbook);
 
             // filling in the values for the selector
-            const controlItems: string[] = [];
+            const items: string[] = [];
             for (let i = 0; i < CONTROL_ITEM_COUNT; i++) {
-                controlItems.push(`${PARAMS.CONTROL_ITEM_PREFIX}-${i + 1}`);
+                items.push(`${PARAMS.CONTROL_ITEM_PREFIX}-${i + 1}`);
             }
-            const controlDefaultValue = controlItems[controlItems.length - 1];
+            const controlDefaultValue = items[items.length - 1];
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlItems,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE},
+                        items,
+                        fieldName: PARAMS.CONTROL_FIELD_NAME,
                         defaultValue: controlDefaultValue,
                     });
                 },

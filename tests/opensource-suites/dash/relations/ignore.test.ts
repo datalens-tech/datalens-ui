@@ -27,15 +27,15 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                        controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE},
+                        fieldName: PARAMS.CONTROL_FIELD_NAME,
+                        items: PARAMS.CONTROL_ITEMS,
                     });
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE_2,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME_2,
-                        controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE_2},
+                        fieldName: PARAMS.CONTROL_FIELD_NAME_2,
+                        items: PARAMS.CONTROL_ITEMS,
                     });
 
                     await dashboardPage.addChart({

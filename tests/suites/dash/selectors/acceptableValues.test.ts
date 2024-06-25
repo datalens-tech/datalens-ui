@@ -5,6 +5,7 @@ import {ControlQA} from '../../../../src/shared/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import ControlActions from '../../../page-objects/dashboard/ControlActions';
 
 const PARAMS = {
     ORIGINAL_VALUES_COUNT: 2,
@@ -34,12 +35,12 @@ datalensTest.describe('Dashboards - Possible selector values', () => {
 
             // click on the button for setting possible values
             const acceptableValuesButton = await page.waitForSelector(
-                slct(DashboardPage.selectors.acceptableValuesBtn),
+                slct(ControlActions.selectors.acceptableValuesBtn),
             );
             await acceptableValuesButton.click();
 
             // waiting for the possible values dialog to appear
-            await page.waitForSelector(slct(DashboardPage.selectors.dialogAcceptable));
+            await page.waitForSelector(slct(ControlActions.selectors.dialogAcceptable));
 
             // getting the number of values in the list
             await expect(page.locator(slct(ControlQA.selectAcceptableItem))).toHaveCount(
