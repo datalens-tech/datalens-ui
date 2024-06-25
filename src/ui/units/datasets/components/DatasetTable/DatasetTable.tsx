@@ -75,7 +75,6 @@ type DatasetTableProps = {
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
-    vertical?: boolean;
 };
 
 type DatasetTableState = {
@@ -111,7 +110,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }
 
     render() {
-        const {fields = [], itemsToDisplay, vertical} = this.props;
+        const {fields = [], itemsToDisplay} = this.props;
         const {activeRow} = this.state;
         const {
             count: selectedCount,
@@ -154,7 +153,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
                 {selectedCount > 0 && (
                     <BatchActionPanel
-                        className={b('batch-actions', {vertical})}
+                        className={b('batch-actions')}
                         count={selectedCount}
                         onClose={this.resetSelection}
                         onAction={this.handleBatchUpdate}
