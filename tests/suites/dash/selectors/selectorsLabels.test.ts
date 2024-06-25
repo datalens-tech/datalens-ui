@@ -49,6 +49,7 @@ async function checkLabels(
     await dashboardPage.controlActions.editSelectorBySettings({
         appearance: {title, titleEnabled: true, innerTitle, innerTitleEnabled: true},
     });
+    await dashboardPage.controlActions.applyControlSettings();
     await dashboardPage.saveChanges();
 
     //checking label

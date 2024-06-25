@@ -67,6 +67,10 @@ class ControlActions {
         await this.dialogControl.waitForVisible();
     }
 
+    async applyControlSettings() {
+        await this.dialogControl.applyControlSettings();
+    }
+
     async clickAddExternalSelector() {
         await this.page.click(slct(DashboardAddWidgetQa.AddControl));
     }
@@ -127,7 +131,7 @@ class ControlActions {
         await this.page.click(slct(ControlActions.selectors.dialogApplyBtn));
 
         // adding a selector to the dashboard
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+        await this.applyControlSettings();
     }
 
     async addSelectorToGroup(params: SelectorSettings) {
