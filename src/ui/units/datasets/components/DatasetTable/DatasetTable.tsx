@@ -28,6 +28,7 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import {ObservedTableResizer} from './components/ObservedDataTable';
 import {BatchFieldAction, FieldAction} from './constants';
 import {getAggregationSwitchTo, getColumns, isHiddenSupported} from './utils';
 
@@ -74,6 +75,7 @@ type DatasetTableProps = {
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
+    vertical?: boolean;
 };
 
 type DatasetTableState = {
@@ -109,7 +111,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }
 
     render() {
-        const {fields = [], itemsToDisplay} = this.props;
+        const {fields = [], itemsToDisplay, vertical} = this.props;
         const {activeRow} = this.state;
         const {
             count: selectedCount,
@@ -125,7 +127,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         value={itemsToDisplay}
                         onUpdate={this.props.onDisplaySettingsUpdate}
                     />
-                    <DataTable
+                    <ObservedTableResizer
                         columns={this.getColumns(selectedRows)}
                         data={fields}
                         emptyDataMessage={i18n('label_no-data')}
@@ -152,7 +154,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
                 {selectedCount > 0 && (
                     <BatchActionPanel
-                        className={b('batch-actions')}
+                        className={b('batch-actions', {vertical})}
                         count={selectedCount}
                         onClose={this.resetSelection}
                         onAction={this.handleBatchUpdate}

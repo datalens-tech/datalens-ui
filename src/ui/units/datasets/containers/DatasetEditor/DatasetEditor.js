@@ -25,12 +25,14 @@ import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
 import RLSDialog from '../../components/RLSDialog/RLSDialog';
+import {VIEW_PREVIEW} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
     datasetContentSelector,
     datasetFieldsSelector,
     datasetPermissionsSelector,
+    datasetPreviewSelector,
     datasetValidationSelector,
     editorFilterSelector,
     editorItemsToDisplaySelector,
@@ -313,7 +315,15 @@ class DatasetEditor extends React.Component {
     };
 
     render() {
-        const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
+        const {
+            sourceAvatars,
+            validation,
+            options,
+            itemsToDisplay,
+            rls,
+            permissions,
+            datasetPreview,
+        } = this.props;
         const {field, visibleRLSDialog, currentRLSField} = this.state;
 
         return (
@@ -337,6 +347,7 @@ class DatasetEditor extends React.Component {
                     closeDialog={this.props.closeDialog}
                     openDialogConfirm={this.props.openDialogConfirm}
                     onDisplaySettingsUpdate={this.handleItemsToDisplayUpdate}
+                    vertical={datasetPreview.view === VIEW_PREVIEW.RIGHT}
                 />
                 <RLSDialog
                     visible={visibleRLSDialog}
@@ -378,6 +389,7 @@ DatasetEditor.propTypes = {
     validation: PropTypes.object.isRequired,
     filter: PropTypes.string.isRequired,
     itemsToDisplay: PropTypes.array.isRequired,
+    datasetPreview: PropTypes.object.isRequired,
     datasetId: PropTypes.string,
     sourceAvatars: PropTypes.array,
     permissions: PropTypes.object,
@@ -394,6 +406,7 @@ const mapStateToProps = createStructuredSelector({
     sourceAvatars: avatarsSelector,
     rls: rlsSelector,
     previewEnabled: previewEnabledSelector,
+    datasetPreview: datasetPreviewSelector,
     ui: UISelector,
     options: optionsSelector,
     validation: datasetValidationSelector,
