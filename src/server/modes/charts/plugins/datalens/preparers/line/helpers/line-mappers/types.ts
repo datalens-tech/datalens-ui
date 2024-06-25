@@ -157,5 +157,5 @@ export type ColorAndShapesValues = {colorValue?: string; shapeValue?: string};
 export type MappedLinesKeys = {
     key: string;
     lastKey: string | number | Date | null;
-    dataConflict?: boolean;
+    pointConflict?: boolean;
 };

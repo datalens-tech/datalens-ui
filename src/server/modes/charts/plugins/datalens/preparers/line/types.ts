@@ -30,7 +30,7 @@ export type LineTemplate = {
     segmentNameKey: string | null | undefined;
     fieldTitle: string;
     id?: string;
-    dataConflict?: boolean;
+    pointConflict?: boolean;
 };
 
 export type LineData = {

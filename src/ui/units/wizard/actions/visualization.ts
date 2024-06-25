@@ -130,15 +130,19 @@ export function setAvailable({available}: {available: Field[]}): SetAvailableAct
     };
 }
 
-interface SetDataConflictAction {
+interface SetPointConflictAction {
     type: typeof SET_Y_AXIS_CONFLICT;
-    dataConflict?: boolean;
+    pointConflict?: boolean;
 }
 
-export function setDataConflict({dataConflict}: {dataConflict?: boolean}): SetDataConflictAction {
+export function setPointConflict({
+    pointConflict,
+}: {
+    pointConflict?: boolean;
+}): SetPointConflictAction {
     return {
         type: SET_Y_AXIS_CONFLICT,
-        dataConflict,
+        pointConflict,
     };
 }
 
@@ -496,7 +500,7 @@ export type VisualizationAction =
     | SetColorsConfigAction
     | SetColorsAction
     | SetAvailableAction
-    | SetDataConflictAction
+    | SetPointConflictAction
     | SetDistinctsAction
     | SetFiltersAction
     | SetVisualizationPlaceholderItemsAction

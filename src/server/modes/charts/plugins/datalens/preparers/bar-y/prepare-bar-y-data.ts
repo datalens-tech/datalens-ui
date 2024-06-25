@@ -382,8 +382,8 @@ export function prepareBarYData({
                     measureFieldTitle: line.fieldTitle,
                 };
 
-                if (line.dataConflict) {
-                    graph.dataConflict = true;
+                if (line.pointConflict) {
+                    graph.pointConflict = true;
                 }
 
                 if (lineKeysIndex === 0 || ySectionItems.length === 0) {

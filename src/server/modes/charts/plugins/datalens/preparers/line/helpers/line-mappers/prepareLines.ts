@@ -359,8 +359,8 @@ export const prepareLines = (args: PrepareLinesArgs) => {
             };
         }
 
-        if (keys.dataConflict) {
-            lines[keys.key].dataConflict = true;
+        if (keys.pointConflict) {
+            lines[keys.key].pointConflict = true;
         }
 
         lines[keys.key].fieldTitle = getFakeTitleOrTitle(field);

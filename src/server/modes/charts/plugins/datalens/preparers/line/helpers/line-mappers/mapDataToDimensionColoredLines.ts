@@ -193,9 +193,9 @@ export const mapDataToDimensionColoredLines = ({
 
     const targetLineKey = lastKey as string | number;
 
-    const dataConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+    const pointConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
 
     lines[key].data[targetLineKey] = pointData;
 
-    return {key, lastKey, dataConflict};
+    return {key, lastKey, pointConflict};
 };

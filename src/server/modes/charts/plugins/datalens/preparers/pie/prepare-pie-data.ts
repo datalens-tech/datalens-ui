@@ -26,7 +26,7 @@ export type PieConfig = {
     tooltip: any;
     data?: (PiePoint & ExtendedSeriesLineOptions)[];
     showInLegend?: boolean;
-    dataConflict?: boolean;
+    pointConflict?: boolean;
 };
 
 function mapAndColorizePieByGradient(
@@ -251,7 +251,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
         }
 
         if (acc.get(point.name)) {
-            pie.dataConflict = true;
+            pie.pointConflict = true;
         }
 
         acc.set(point.name, point);

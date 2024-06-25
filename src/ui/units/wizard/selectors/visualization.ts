@@ -36,8 +36,8 @@ export const selectShapesConfig = (state: DatalensGlobalState) =>
 
 export const selectAvailable = (state: DatalensGlobalState) => state.wizard.visualization.available;
 
-export const selectDataConflict = (state: DatalensGlobalState) =>
-    state.wizard.visualization.dataConflict;
+export const selectPointConflict = (state: DatalensGlobalState) =>
+    state.wizard.visualization.pointConflict;
 
 export const selectDistincts = (state: DatalensGlobalState) => state.wizard.visualization.distincts;
 

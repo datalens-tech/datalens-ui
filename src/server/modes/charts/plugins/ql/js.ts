@@ -323,10 +323,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             };
 
             if (result.graphs) {
-                const dataConflict = result.graphs.some((graph: any) => graph.dataConflict);
+                const pointConflict = result.graphs.some((graph: any) => graph.pointConflict);
 
-                if (dataConflict) {
-                    result.metadata.dataConflict = dataConflict;
+                if (pointConflict) {
+                    result.metadata.pointConflict = pointConflict;
                 }
             }
         }
