@@ -464,10 +464,9 @@ class DashboardPage extends BasePage {
 
     async getDashControlLinksIconElem(controlQa: string, counter?: number) {
         // open dialog relations by click on dashkit item links icon (via parents nodes)
-        const dashkitItemElem = await this.page
-            .locator(slct(ControlQA.chartkitControl))
-            .nth(counter === undefined ? 0 : counter)
-            .locator('../../../..');
+        const dashkitItemElem = this.page
+            .locator(slct(DashkitQa.GRID_ITEM))
+            .nth(counter === undefined ? 0 : counter);
         return dashkitItemElem.locator(slct(controlQa));
     }
 

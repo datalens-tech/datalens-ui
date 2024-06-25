@@ -136,13 +136,15 @@ class ControlActions {
         await this.editSelectorBySettings(params);
     }
 
-    async addSelector({items = ['Richmond', 'Springfield'], ...params}: SelectorSettings) {
+    async addSelector({
+        items = ['Richmond', 'Springfield'],
+        sourceType = DashTabItemControlSourceType.Manual,
+        ...params
+    }: SelectorSettings) {
         // adding a selector
         await this.clickAddSelector();
 
-        await this.editSelectorBySettings({...params, items});
-
-        await this.page.pause();
+        await this.editSelectorBySettings({...params, items, sourceType});
 
         // adding a selector to the dashboard
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
@@ -212,9 +214,7 @@ class ControlActions {
         await expect(openDatasetButton).toBeVisible();
     }
 
-    async editSelectorBySettings(
-        setting: SelectorSettings = {sourceType: DashTabItemControlSourceType.Manual},
-    ) {
+    async editSelectorBySettings(setting: SelectorSettings = {}) {
         const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
 
         await this.dialogControl.waitForVisible();
