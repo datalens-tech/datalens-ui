@@ -51,6 +51,7 @@ import {
     setColorsConfig,
     setDistincts,
     setLabels,
+    setPointConflict,
     setShapes,
     setShapesConfig,
     updatePlaceholderSettings,
@@ -306,6 +307,7 @@ export interface SetQueryMetadataProps {
         labels?: Field[];
         shapes?: Field[];
         distincts?: Record<string, string[]>;
+        pointConflict?: boolean;
     };
 }
 
@@ -352,6 +354,8 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
             if (metadata.distincts) {
                 dispatch(setDistincts({distincts: metadata.distincts}));
             }
+
+            dispatch(setPointConflict({pointConflict: metadata.pointConflict}));
 
             dispatch(
                 setColumnsOrder({

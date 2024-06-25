@@ -261,7 +261,6 @@ function prepareTreemap({
             allowTraversingTree: true,
             interactByLeaf: true,
             tooltip: {
-                pointFormat: '{point.name}<br/><b>{point.label}</b>',
                 ...(isFloat && {valueDecimals: MINIMUM_FRACTION_DIGITS}),
             },
             dataLabels: {
