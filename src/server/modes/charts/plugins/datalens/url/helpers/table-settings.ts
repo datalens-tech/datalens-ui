@@ -1,5 +1,3 @@
-import _unionBy from 'lodash/unionBy';
-
 import type {
     ServerCommonSharedExtraSettings,
     ServerField,
@@ -11,7 +9,7 @@ import {
     getCurrentPage,
     getSortParams,
 } from '../../../../../../components/charts-engine/components/processor/paramsUtils';
-import type {BaseUrlPayload} from '../../types';
+import type {BaseUrlPayload, OrderByPayloadItem} from '../../types';
 import {SORT_ORDER} from '../../utils/constants';
 import {getSortData} from '../../utils/misc-helpers';
 
@@ -28,16 +26,16 @@ const getOrderByItemForColumnClickSort = ({
     visualization,
 }: GetOrderByItemForColumnSortClickArgs) => {
     const {columnId, order} = getSortData(getSortParams(params), isPivotTable);
+    let sortItem: OrderByPayloadItem | undefined;
 
     // If the data for sorting and the column exist, then
     // We process tabular sorting, it is in priority
-    const isSortColumnExists = columnId && order && allItemsIds[columnId];
-    const sortItem = isSortColumnExists
-        ? {
-              direction: order,
-              column: columnId,
-          }
-        : undefined;
+    if (columnId && order && allItemsIds[columnId]) {
+        sortItem = {
+            direction: order,
+            column: columnId,
+        };
+    }
 
     if (isPivotTable && columnId && sortItem) {
         const columnsPlaceholder = (visualization.placeholders || []).find(
@@ -63,7 +61,6 @@ type GetUpdatedOrderByForColumnClickSortArgs = {
     isPivotTable: boolean;
     allItemsIds: Record<string, boolean>;
     orderBy: BaseUrlPayload['order_by'];
-    dimensionsFromCurrentDataset: BaseUrlPayload['order_by'];
     visualization: ServerVisualization;
 };
 const getUpdatedOrderByForColumnClickSort = ({
@@ -71,7 +68,6 @@ const getUpdatedOrderByForColumnClickSort = ({
     allItemsIds,
     isPivotTable,
     orderBy,
-    dimensionsFromCurrentDataset,
     visualization,
 }: GetUpdatedOrderByForColumnClickSortArgs) => {
     const columnSort = getOrderByItemForColumnClickSort({
@@ -81,19 +77,11 @@ const getUpdatedOrderByForColumnClickSort = ({
         visualization,
     });
 
-    let updatedOrderBy = orderBy ? [...orderBy] : [];
+    const updatedOrderBy: OrderByPayloadItem[] = orderBy ? [...orderBy] : [];
 
     if (columnSort) {
         updatedOrderBy.unshift(columnSort);
     }
-
-    // Adding all dimensions to order_by, excluding those that are in sort
-    // CHARTS-3421#5fda2052b806202d36837f7f
-    updatedOrderBy = _unionBy(
-        updatedOrderBy || [],
-        dimensionsFromCurrentDataset,
-        ({column}) => column,
-    );
 
     return updatedOrderBy;
 };
@@ -149,7 +137,6 @@ export const getPayloadWithCommonTableSettings = (
             allItemsIds,
             isPivotTable,
             orderBy: payload.order_by,
-            dimensionsFromCurrentDataset,
             visualization,
         });
     }

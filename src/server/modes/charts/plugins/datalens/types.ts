@@ -7,22 +7,24 @@ import type {
     ServerColorsConfig,
     ServerField,
     TableBarsSettings,
+    TableFieldBackgroundSettings,
     Update,
 } from '../../../../../shared';
-import type {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
 
 export type PayloadParameter = {
     id: string;
     value: ParameterDefaultValue;
 };
 
+export type OrderByPayloadItem = {
+    direction: string;
+    column: string;
+};
+
 export type BaseUrlPayload = {
     columns: string[];
     where?: PayloadFilter[];
-    order_by?: {
-        direction: string;
-        column: string;
-    }[];
+    order_by?: OrderByPayloadItem[];
     updates?: Update[];
     ignore_nonexistent_filters?: boolean;
     disable_group_by?: boolean;
