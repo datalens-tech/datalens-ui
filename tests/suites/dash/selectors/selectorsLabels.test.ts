@@ -6,6 +6,7 @@ import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {ControlQA} from '../../../../src/shared/constants';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {DashTabItemControlSourceType} from '../../../../src/shared';
 
 const PARAMS = {
     DATASET: {
@@ -47,7 +48,13 @@ async function checkLabels(
     await dashboardPage.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     await dashboardPage.clickFirstControlSettingsButton();
     await dashboardPage.controlActions.editSelectorBySettings({
-        appearance: {title, titleEnabled: true, innerTitle, innerTitleEnabled: true},
+        appearance: {
+            title,
+            titleEnabled: true,
+            innerTitle,
+            innerTitleEnabled: true,
+        },
+        sourceType: DashTabItemControlSourceType.Dataset,
     });
     await dashboardPage.controlActions.applyControlSettings();
     await dashboardPage.saveChanges();
