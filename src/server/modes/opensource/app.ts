@@ -24,6 +24,8 @@ import {configurableRequestWithDatasetPlugin} from '../charts/plugins/request-wi
 import {setSubrequestHeaders} from './middlewares';
 import {getRoutes} from './routes';
 
+const { auth } = require('express-openid-connect');
+
 export default function initApp(nodekit: NodeKit) {
     const beforeAuth: AppMiddleware[] = [];
     const afterAuth: AppMiddleware[] = [];
@@ -53,7 +55,27 @@ export default function initApp(nodekit: NodeKit) {
         routes[route] = params;
     });
 
-    return new ExpressKit(nodekit, routes);
+    
+    var oidcRoutes = auth({
+        issuerBaseURL: 'https://51e6-94-232-56-134.ngrok-free.app/dev/.well-known/openid-configuration',
+        baseURL: 'http://localhost:3030/auth/v1/oidc',
+        clientID: 'oidcCLIENT',
+        secret: 'secret777',
+        clientSecret: 'secret777',
+        idpLogout: true,
+        authorizationParams: {
+            response_type: 'code',
+            //response_mode: 'form_post',
+            scope: 'openid profile email'
+        },
+    });
+    var expressKit = new ExpressKit(nodekit, routes);
+    //debugger;
+    expressKit.express.use('/auth/v1/oidc/', oidcRoutes);
+    expressKit.express.get('/auth/v1/oidc/', (req, res, next) => {
+        res.redirect('/')
+    });
+    return expressKit;
 }
 
 function initDataLensApp({
