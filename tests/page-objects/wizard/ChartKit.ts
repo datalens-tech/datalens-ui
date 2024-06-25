@@ -23,8 +23,6 @@ export default class ChartKit {
     geopointSelector = '.chartkit-yandex-map-chips';
     tooltipSelector = '.chartkit-tooltip';
     yMapSelector = '.chartkit-ymap';
-    legendMapSelector = '.chartkit-ymap-legend';
-    legendSelector = '.highcharts-legend-box';
     legendItemSelector = '.highcharts-legend-item';
     chartMenuSwitcher = slct('chart-dropdown-switcher');
     chartMenuList = slct('chart-dropdown-menu');
@@ -301,11 +299,5 @@ export default class ChartKit {
         const labels = await locator.allTextContents();
 
         return labels.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
-    }
-
-    async waitForMapReady() {
-        // The appearance of the legend signals that the points have been redrawn
-        const mapLegendSelector = this.page.locator(this.legendMapSelector);
-        await mapLegendSelector.waitFor({state: 'attached'});
     }
 }

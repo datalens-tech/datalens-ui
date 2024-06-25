@@ -1,9 +1,8 @@
 import type {Page} from '@playwright/test';
-import {expect} from '@playwright/test';
 
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
-import {openTestPage} from '../../../../utils';
+import {openTestPage, waitForCondition} from '../../../../utils';
 import {RobotChartsWizardUrls} from '../../../../utils/constants';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 
@@ -22,12 +21,15 @@ datalensTest.describe('Wizard - Geo Points', () => {
             '_someMeasure',
         );
 
-        await wizardPage.chartkit.waitForMapReady();
-
-        const geoMarker = page.locator(wizardPage.chartkit.geopointSelector);
-        await geoMarker.hover({force: true});
-
+        const geoMarker = page.locator(wizardPage.chartkit.geopointSelector).first();
         const tooltip = page.locator(wizardPage.chartkit.tooltipSelector).first();
-        await expect(tooltip).toBeVisible();
+
+        await waitForCondition(async () => {
+            await page.mouse.move(0, 0);
+            await geoMarker.hover({force: true});
+            return await tooltip.isVisible();
+        }).catch(() => {
+            throw new Error('The tooltip did not appear');
+        });
     });
 });

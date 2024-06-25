@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
 import {Loader} from '@gravity-ui/uikit';
@@ -50,7 +50,13 @@ const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
-type OwnProps = ControlSettings & PluginWidgetProps<Record<string, StringParams>> & ContextProps;
+type OwnProps = ControlSettings &
+    ContextProps &
+    PluginWidgetProps<Record<string, StringParams>> & {
+        settings: SettingsProps & {
+            dependentSelectors?: boolean;
+        };
+    };
 
 type PluginGroupControlProps = OwnProps & StateProps;
 
@@ -245,8 +251,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     private get dependentSelectors() {
-        //@ts-ignore
-        return this.props.settings.dependentSelectors;
+        return this.props.settings.dependentSelectors ?? false;
     }
 
     private fillQueueWithInitial = (checkByProps?: boolean) => {
