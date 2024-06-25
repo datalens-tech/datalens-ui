@@ -250,7 +250,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
             };
         }
 
-        if (acc.get(point.name) && !pie.dataConflict) {
+        if (acc.get(point.name)) {
             pie.dataConflict = true;
         }
 

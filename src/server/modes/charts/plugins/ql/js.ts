@@ -313,10 +313,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 distincts: resultDistincts,
             };
         } else {
-            const dataConflict = result.graphs.some((graph: any) => graph.dataConflict);
-
             result.metadata = {
-                dataConflict,
                 visualization: newVisualization,
                 available,
                 colors: newColors,
@@ -324,6 +321,14 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 shapes: newShapes,
                 distincts: resultDistincts,
             };
+
+            if (result.graphs) {
+                const dataConflict = result.graphs.some((graph: any) => graph.dataConflict);
+
+                if (dataConflict) {
+                    result.metadata.dataConflict = dataConflict;
+                }
+            }
         }
 
         ChartEditor.setExtra('datasets', [
