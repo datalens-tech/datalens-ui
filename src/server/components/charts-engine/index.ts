@@ -12,12 +12,10 @@ import {chartsController} from './controllers/charts';
 import {configController} from './controllers/config';
 import {embedsController} from './controllers/embeds';
 import {exportController} from './controllers/export';
-import {oidcController} from './controllers/oidc';
 import {markdownController} from './controllers/markdown';
 import {runController} from './controllers/run';
 const defaultControllers = {
     export: exportController,
-    oidc: oidcController,
     markdown: markdownController,
     run: runController,
     config: configController,
@@ -31,7 +29,6 @@ import {MiddlewareStage} from './types';
 
 type Controllers = {
     export: ReturnType<typeof exportController>;
-    oidc: ReturnType<typeof oidcController>;
     markdown: typeof markdownController;
     run: ReturnType<typeof runController>;
     config: ReturnType<typeof configController>;
@@ -98,7 +95,6 @@ class ChartsEngine {
 
         this.controllers = {
             export: defaultControllers.export(),
-            oidc: defaultControllers.oidc(),
             markdown: defaultControllers.markdown,
             run: defaultControllers.run(this),
             config: defaultControllers.config(this),
