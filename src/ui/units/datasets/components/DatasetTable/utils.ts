@@ -113,10 +113,13 @@ export const getColumns = (args: GetColumnsArgs) => {
         permissions,
     } = args;
     const width = showFieldsId ? WIDTH_15 : WIDTH_20;
+    const selectedCount = Object.keys(selectedRows).length;
+    const fieldsCount = fields.length;
 
     const index = getIndexColumn({
         selectedRows,
-        isAllSelected: Object.keys(selectedRows).length === fields.length,
+        isAllSelected: fieldsCount > 0 ? selectedCount === fieldsCount : false,
+        indeterminate: fieldsCount > 0 && selectedCount > 0 ? selectedCount !== fieldsCount : false,
         onSelectChange,
         onSelectAllChange: (state: boolean) =>
             onSelectChange(

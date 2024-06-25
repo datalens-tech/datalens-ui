@@ -10,12 +10,14 @@ const b = block('dataset-table');
 
 export const getIndexColumn = ({
     selectedRows,
-    isAllSelected: isSelectedAll,
+    isAllSelected,
+    indeterminate,
     onSelectChange,
     onSelectAllChange,
 }: {
     selectedRows: DatasetSelectionMap;
     isAllSelected?: boolean;
+    indeterminate?: boolean;
     onSelectChange: (isSelected: boolean, fields: (keyof DatasetSelectionMap)[]) => void;
     onSelectAllChange: (isSelected: boolean) => void;
 }): Column<DatasetField> => ({
@@ -24,7 +26,14 @@ export const getIndexColumn = ({
     align: DataTable.CENTER,
     width: 50,
     sortable: false,
-    header: <Checkbox size={'l'} checked={isSelectedAll} onUpdate={onSelectAllChange} />,
+    header: (
+        <Checkbox
+            size={'l'}
+            checked={isAllSelected}
+            indeterminate={indeterminate}
+            onUpdate={onSelectAllChange}
+        />
+    ),
     render: function IndexColumnItem({index, row}) {
         const {guid} = row;
 

@@ -210,7 +210,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             avatars: this.props.sourceAvatars,
             rls: this.props.rls,
             permissions: this.props.permissions,
-            fields: get(this.props, ['options', 'fields', 'items']),
+            fields: get(this.props, ['options', 'fields', 'items'], []),
             showFieldsId: this.props.itemsToDisplay.includes('fieldsId'),
             setActiveRow: this.setActiveRow,
             openDialogFieldEditor: this.openDialogFieldEditor,
