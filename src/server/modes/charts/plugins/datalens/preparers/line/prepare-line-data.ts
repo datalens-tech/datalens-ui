@@ -432,8 +432,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     measureFieldTitle: line.fieldTitle,
                 };
 
-                if (line.yAxisConflict) {
-                    graph.yAxisConflict = true;
+                if (line.dataConflict) {
+                    graph.dataConflict = true;
                 }
 
                 if (line.segmentNameKey) {

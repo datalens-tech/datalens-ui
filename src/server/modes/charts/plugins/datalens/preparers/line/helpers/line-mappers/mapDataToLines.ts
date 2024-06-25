@@ -90,9 +90,9 @@ export const mapDataToLines = ({
 
     const targetLineKey = lastKey as string | number;
 
-    const yAxisConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+    const dataConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
 
     lines[key].data[targetLineKey] = {value: yValue};
 
-    return {key, lastKey, yAxisConflict};
+    return {key, lastKey, dataConflict};
 };

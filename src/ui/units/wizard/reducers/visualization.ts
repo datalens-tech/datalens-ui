@@ -82,7 +82,7 @@ export interface VisualizationState {
     dashboardParameters: Field[];
     distincts?: Record<string, string[]>;
     drillDownLevel: number;
-    yAxisConflict?: boolean;
+    dataConflict?: boolean;
 }
 
 const initialState: VisualizationState = {
@@ -932,11 +932,11 @@ export function visualization(
             };
         }
         case SET_Y_AXIS_CONFLICT: {
-            const {yAxisConflict} = action;
+            const {dataConflict} = action;
 
             return {
                 ...state,
-                yAxisConflict,
+                dataConflict,
             };
         }
         case SET_DISTINCTS: {

@@ -30,7 +30,7 @@ export type LineTemplate = {
     segmentNameKey: string | null | undefined;
     fieldTitle: string;
     id?: string;
-    yAxisConflict?: boolean;
+    dataConflict?: boolean;
 };
 
 export type LineData = {

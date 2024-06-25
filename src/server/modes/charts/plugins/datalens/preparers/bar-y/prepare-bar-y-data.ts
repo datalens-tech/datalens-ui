@@ -382,6 +382,10 @@ export function prepareBarYData({
                     measureFieldTitle: line.fieldTitle,
                 };
 
+                if (line.dataConflict) {
+                    graph.dataConflict = true;
+                }
+
                 if (lineKeysIndex === 0 || ySectionItems.length === 0) {
                     graph.yAxis = 0;
                 } else {

@@ -49,11 +49,11 @@ import {
     setAvailable,
     setColors,
     setColorsConfig,
+    setDataConflict,
     setDistincts,
     setLabels,
     setShapes,
     setShapesConfig,
-    setYAxisConflict,
     updatePlaceholderSettings,
 } from '../../../wizard/actions/visualization';
 import {setExtraSettings as setWizardExtraSettings} from '../../../wizard/actions/widget';
@@ -307,7 +307,7 @@ export interface SetQueryMetadataProps {
         labels?: Field[];
         shapes?: Field[];
         distincts?: Record<string, string[]>;
-        yAxisConflict?: boolean;
+        dataConflict?: boolean;
     };
 }
 
@@ -355,7 +355,7 @@ export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
                 dispatch(setDistincts({distincts: metadata.distincts}));
             }
 
-            dispatch(setYAxisConflict({yAxisConflict: metadata.yAxisConflict}));
+            dispatch(setDataConflict({dataConflict: metadata.dataConflict}));
 
             dispatch(
                 setColumnsOrder({

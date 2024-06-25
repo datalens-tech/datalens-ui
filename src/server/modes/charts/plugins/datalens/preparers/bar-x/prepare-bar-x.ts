@@ -414,6 +414,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     measureFieldTitle: line.fieldTitle,
                 };
 
+                if (line.dataConflict) {
+                    graph.dataConflict = true;
+                }
+
                 if (line.segmentNameKey) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;

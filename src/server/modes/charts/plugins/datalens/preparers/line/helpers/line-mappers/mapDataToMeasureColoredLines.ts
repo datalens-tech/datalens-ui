@@ -92,12 +92,12 @@ export const mapDataToMeasureColoredLines = (args: MapDataToMeasureColoredLinesA
 
     const targetLineKey = lastKey as string | number;
 
-    const yAxisConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+    const dataConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
 
     lines[key].data[targetLineKey] = {
         value: yValue,
         colorValue,
     };
 
-    return {key, lastKey, colorValue, yAxisConflict};
+    return {key, lastKey, colorValue, dataConflict};
 };
