@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 import {ControlQA} from '../../../src/shared/constants';
-import {getControlByTitle, slct} from '../../utils';
+import {slct} from '../../utils';
 import {SourceType} from './DialogControlPO/SourceType';
 import {SourceTypeSelect} from './DialogControlPO/SourceTypeSelect';
 import {SelectDatasetButton} from './DialogControlPO/SelectDatasetButton';
@@ -50,9 +50,5 @@ export default class DialogControl {
             slct(ControlQA.dialogControlApplyBtn),
         );
         await dialogControlApplyBtn.click();
-    }
-
-    async getControlByTitle(controlTitle: string) {
-        return getControlByTitle(this.page, controlTitle);
     }
 }

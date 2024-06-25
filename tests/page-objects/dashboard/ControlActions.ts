@@ -8,7 +8,13 @@ import {
     TabMenuQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
-import {clickGSelectOption, fillDatePicker, isEnabledFeature, slct} from '../../utils';
+import {
+    clickGSelectOption,
+    fillDatePicker,
+    getControlByTitle,
+    isEnabledFeature,
+    slct,
+} from '../../utils';
 
 import {BasePageProps} from '../BasePage';
 
@@ -89,7 +95,7 @@ class ControlActions {
 
         await this.editSelectorBySettings({
             appearance: {title},
-            fieldName: fieldName,
+            fieldName,
         });
 
         await this.dialogControl.elementType.click();
@@ -206,7 +212,9 @@ class ControlActions {
         await expect(openDatasetButton).toBeVisible();
     }
 
-    async editSelectorBySettings(setting: SelectorSettings = {}) {
+    async editSelectorBySettings(
+        setting: SelectorSettings = {sourceType: DashTabItemControlSourceType.Manual},
+    ) {
         const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
 
         await this.dialogControl.waitForVisible();
@@ -290,6 +298,10 @@ class ControlActions {
         await this.editSelectorBySettings({...defaultSettings, ...setting});
 
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
+    }
+
+    async getControlByTitle(controlTitle: string) {
+        return getControlByTitle(this.page, controlTitle);
     }
 }
 

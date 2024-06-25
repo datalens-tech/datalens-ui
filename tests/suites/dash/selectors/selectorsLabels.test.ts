@@ -40,8 +40,6 @@ async function checkLabels(
     innerTitle: string,
     innerSelector: string,
 ) {
-    const {dialogControl} = dashboardPage;
-
     await dashboardPage.changeTab({tabName: tab});
     await dashboardPage.enterEditMode();
 
@@ -54,7 +52,7 @@ async function checkLabels(
     await dashboardPage.saveChanges();
 
     //checking label
-    const selectorControl = await dialogControl.getControlByTitle(title);
+    const selectorControl = await dashboardPage.controlActions.getControlByTitle(title);
 
     //checking innerLabel
     await selectorControl.waitForSelector(`${innerSelector} >> text=${innerTitle}`);
