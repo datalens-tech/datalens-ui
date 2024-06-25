@@ -136,15 +136,11 @@ class ControlActions {
         await this.editSelectorBySettings(params);
     }
 
-    async addSelector({
-        items = ['Richmond', 'Springfield'],
-        sourceType = DashTabItemControlSourceType.Manual,
-        ...params
-    }: SelectorSettings) {
+    async addSelector({items = ['Richmond', 'Springfield'], ...params}: SelectorSettings) {
         // adding a selector
         await this.clickAddSelector();
 
-        await this.editSelectorBySettings({...params, items, sourceType});
+        await this.editSelectorBySettings({...params, items});
 
         // adding a selector to the dashboard
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
@@ -214,24 +210,25 @@ class ControlActions {
         await expect(openDatasetButton).toBeVisible();
     }
 
-    async editSelectorBySettings(setting: SelectorSettings = {}) {
+    async editSelectorBySettings({
+        sourceType = DashTabItemControlSourceType.Manual,
+        ...setting
+    }: SelectorSettings = {}) {
         const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
 
         await this.dialogControl.waitForVisible();
 
-        if (setting.sourceType) {
+        if (sourceType) {
             if (isEnabledGroupControls) {
                 await this.dialogControl.sourceTypeSelect.click();
-                await this.dialogControl.sourceTypeSelect.selectListItemByQa(
-                    slct(setting.sourceType),
-                );
+                await this.dialogControl.sourceTypeSelect.selectListItemByQa(slct(sourceType));
             } else {
                 // will be removed after enabling of GroupControls
-                await this.dialogControl.sourceType.selectByName(setting.sourceType);
+                await this.dialogControl.sourceType.selectByName(sourceType);
             }
         }
 
-        if (setting.sourceType === DashTabItemControlSourceType.Manual) {
+        if (sourceType === DashTabItemControlSourceType.Manual) {
             if (setting.fieldName) {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
