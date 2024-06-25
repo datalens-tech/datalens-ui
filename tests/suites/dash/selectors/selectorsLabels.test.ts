@@ -40,6 +40,7 @@ async function checkLabels(
     title: string,
     innerTitle: string,
     innerSelector: string,
+    sourceType?: DashTabItemControlSourceType,
 ) {
     await dashboardPage.changeTab({tabName: tab});
     await dashboardPage.enterEditMode();
@@ -54,7 +55,7 @@ async function checkLabels(
             innerTitle,
             innerTitleEnabled: true,
         },
-        sourceType: DashTabItemControlSourceType.Dataset,
+        sourceType,
     });
     await dashboardPage.controlActions.applyControlSettings();
     await dashboardPage.saveChanges();
@@ -90,6 +91,7 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
                 PARAMS.DATASET.SELECT_TITLE,
                 PARAMS.DATASET.SELECT_INNER_TITLE,
                 `${slct(ControlQA.controlSelect)} > span`,
+                DashTabItemControlSourceType.Dataset,
             );
 
             await checkLabels(
@@ -98,6 +100,7 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
                 PARAMS.DATASET.INPUT_TITLE,
                 PARAMS.DATASET.INPUT_INNER_TITLE,
                 `${slct(ControlQA.controlInput)} label`,
+                DashTabItemControlSourceType.Dataset,
             );
         },
     );
