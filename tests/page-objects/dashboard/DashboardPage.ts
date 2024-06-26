@@ -315,7 +315,7 @@ class DashboardPage extends BasePage {
     }
 
     getDashKitTextItem(text: string) {
-        return this.page.locator(DashkitQa.GRID_ITEM).getByText(text, {exact: true});
+        return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
     async deleteSelector(controlTitle: string) {
