@@ -20,6 +20,7 @@ export const ControlQA = {
     selectAcceptableItem: 'select-acceptable-item',
     selectAcceptableRemoveButton: 'select-acceptable-remove',
     chartkitControl: 'chartkit-control',
+    groupChartkitControl: 'group-chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
     filtersClear: 'filters-clear',

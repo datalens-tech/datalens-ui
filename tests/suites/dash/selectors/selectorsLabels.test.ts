@@ -6,6 +6,7 @@ import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {ControlQA} from '../../../../src/shared/constants';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {DashTabItemControlSourceType} from '../../../../src/shared';
 
 const PARAMS = {
     DATASET: {
@@ -39,22 +40,28 @@ async function checkLabels(
     title: string,
     innerTitle: string,
     innerSelector: string,
+    sourceType?: DashTabItemControlSourceType,
 ) {
-    const {dialogControl} = dashboardPage;
-
     await dashboardPage.changeTab({tabName: tab});
     await dashboardPage.enterEditMode();
 
     // enable the internal title and title in the selector settings
     await dashboardPage.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     await dashboardPage.clickFirstControlSettingsButton();
-    await dashboardPage.editSelectorBySettings({
-        appearance: {title, titleEnabled: true, innerTitle, innerTitleEnabled: true},
+    await dashboardPage.controlActions.editSelectorBySettings({
+        appearance: {
+            title,
+            titleEnabled: true,
+            innerTitle,
+            innerTitleEnabled: true,
+        },
+        sourceType,
     });
+    await dashboardPage.controlActions.applyControlSettings();
     await dashboardPage.saveChanges();
 
     //checking label
-    const selectorControl = await dialogControl.getControlByTitle(title);
+    const selectorControl = await dashboardPage.controlActions.getControlByTitle(title);
 
     //checking innerLabel
     await selectorControl.waitForSelector(`${innerSelector} >> text=${innerTitle}`);
@@ -84,6 +91,7 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
                 PARAMS.DATASET.SELECT_TITLE,
                 PARAMS.DATASET.SELECT_INNER_TITLE,
                 `${slct(ControlQA.controlSelect)} > span`,
+                DashTabItemControlSourceType.Dataset,
             );
 
             await checkLabels(
@@ -92,6 +100,7 @@ datalensTest.describe('Dashboards - the internal header of selectors', () => {
                 PARAMS.DATASET.INPUT_TITLE,
                 PARAMS.DATASET.INPUT_INNER_TITLE,
                 `${slct(ControlQA.controlInput)} label`,
+                DashTabItemControlSourceType.Dataset,
             );
         },
     );
