@@ -168,7 +168,7 @@ class ControlActions {
             // specify the value
             await this.page.fill(`${slct(ControlQA.controlSelectAcceptableInput)} input`, items[i]);
             // adding
-            await this.page.click(slct(ControlQA.acceptableDialogButton));
+            await this.page.click(slct(ControlQA.controlSelectAcceptableButton));
         }
 
         // saving the added possible values
