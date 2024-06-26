@@ -46,12 +46,12 @@ export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
         const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
         const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
         if (pathToFunction) {
-            return `has functions at \`${pathToFunction}\``;
+            return `has functions at \`${pathToFunction.replace('libraryConfig.', '')}\``;
         }
 
         const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
         if (pathToHtml) {
-            return `has HTML string at \`${pathToHtml}\``;
+            return `has HTML string at \`${pathToHtml.replace('libraryConfig.', '')}\``;
         }
     }
 
