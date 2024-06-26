@@ -117,9 +117,6 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
     datalensTest(
         "Loading charts that didn't get into the viewport when opening links",
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            // we set small viewport sizes for a more stable check
-            page.setViewportSize({width: 1000, height: 300});
-
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
@@ -128,6 +125,9 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
                 dashId: config.dash.urls.DashboardWithLongContentBeforeChart,
                 useUserFolder: true,
             });
+
+            // we set small viewport sizes for a more stable check
+            page.setViewportSize({width: 1000, height: 300});
 
             const initPromise = page.waitForRequest('/api/run');
 
