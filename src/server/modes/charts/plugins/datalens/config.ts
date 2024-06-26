@@ -258,7 +258,6 @@ export const buildChartsConfigPrivate = (
         (config as MetricConfig).metricVersion = 2;
     } else if (visualizationId === 'pivotTable') {
         (config as TableConfig).settings = {
-            highlightRows: false,
             externalSort: true,
         };
     }
