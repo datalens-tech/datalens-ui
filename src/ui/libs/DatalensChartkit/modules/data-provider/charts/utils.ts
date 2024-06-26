@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
 
@@ -34,15 +35,25 @@ function isHtmlString(value: unknown) {
 }
 
 export function getSafeChartWarnings(widgetData?: unknown) {
-    const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
-    const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
-    if (pathToFunction) {
-        return `has functions at \`${pathToFunction}\``;
-    }
+    const chartTypesToCheck = [
+        'graph_node',
+        'map_node',
+        'ymap_node',
+        'timeseries_node',
+        'table_node',
+    ];
+    const chartType = get(widgetData, 'type');
+    if (chartTypesToCheck.includes(chartType)) {
+        const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
+        const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
+        if (pathToFunction) {
+            return `has functions at \`${pathToFunction}\``;
+        }
 
-    const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
-    if (pathToHtml) {
-        return `has HTML string at \`${pathToHtml}\``;
+        const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
+        if (pathToHtml) {
+            return `has HTML string at \`${pathToHtml}\``;
+        }
     }
 
     return undefined;

@@ -288,7 +288,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if (showSafeChartInfo) {
                 result.safeChartInfo = getSafeChartWarnings(
-                    pick(result, 'config', 'libraryConfig', 'data'),
+                    pick(result, 'type', 'config', 'libraryConfig', 'data'),
                 );
             }
 
