@@ -49,7 +49,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             // adding links to controls
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
                 0,
             );
@@ -61,7 +61,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
                 widgetElem: selectorElem,
             });
 
-            const selectorElem2 = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem2 = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
                 1,
             );
@@ -80,12 +80,12 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     });
     datalensTest('Ignore relations by manual change', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+        const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
             ControlQA.controlLinks,
             0,
         );
 
-        const selectorElem2 = await dashboardPage.getDashControlLinksIconElem(
+        const selectorElem2 = await dashboardPage.controlActions.getDashControlLinksIconElem(
             ControlQA.controlLinks,
             1,
         );
@@ -107,7 +107,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     });
     datalensTest('Ignore relations by ignore all button', async ({page}: {page: Page}) => {
         const dashboardPage = new DashboardPage({page});
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+        const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
             ControlQA.controlLinks,
             0,
         );

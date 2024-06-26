@@ -462,14 +462,6 @@ class DashboardPage extends BasePage {
         await this.clickOnLinksBtn();
     }
 
-    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
-        // open dialog relations by click on dashkit item links icon (via parents nodes)
-        const dashkitItemElem = this.page
-            .locator(slct(DashkitQa.GRID_ITEM))
-            .nth(counter === undefined ? 0 : counter);
-        return dashkitItemElem.locator(slct(controlQa));
-    }
-
     async applyAliasesChanges() {
         await this.page.locator(slct(DashCommonQa.AliasAddApplyBtn)).click();
     }
@@ -489,7 +481,9 @@ class DashboardPage extends BasePage {
     async openControlRelationsDialog() {
         await this.enterEditMode();
         // open dialog relations by control icon click
-        const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
+        const selectorElem = await this.controlActions.getDashControlLinksIconElem(
+            ControlQA.controlLinks,
+        );
         await selectorElem.click();
     }
 

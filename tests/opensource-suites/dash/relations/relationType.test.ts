@@ -52,7 +52,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
 
             // adding links to controls
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 
@@ -98,7 +98,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 
@@ -133,7 +133,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 

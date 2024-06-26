@@ -304,6 +304,16 @@ class ControlActions {
     async getControlByTitle(controlTitle: string) {
         return getControlByTitle(this.page, controlTitle);
     }
+
+    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
+        // open dialog relations by click on dashkit item links icon (via parents nodes)
+        const dashkitItemElem = this.page
+            .locator(slct(ControlQA.groupChartkitControl))
+            .or(this.page.locator(slct(ControlQA.chartkitControl)))
+            .nth(counter === undefined ? 0 : counter)
+            .locator('../../../..');
+        return dashkitItemElem.locator(slct(controlQa));
+    }
 }
 
 export default ControlActions;

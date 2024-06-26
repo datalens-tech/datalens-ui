@@ -33,7 +33,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 

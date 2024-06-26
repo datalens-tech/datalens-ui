@@ -50,7 +50,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 
@@ -87,7 +87,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.enterEditMode();
 
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+        const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
             ControlQA.controlLinks,
         );
 

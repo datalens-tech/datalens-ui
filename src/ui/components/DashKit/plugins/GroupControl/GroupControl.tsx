@@ -227,7 +227,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 ref={this.rootNode}
                 className={b({mobile: isMobileView, static: !this.props.data.autoHeight})}
             >
-                <div className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}>
+                <div
+                    className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
+                    data-qa={ControlQA.groupChartkitControl}
+                >
                     <DebugInfoTool
                         label="widgetId"
                         value={this.props.id}
