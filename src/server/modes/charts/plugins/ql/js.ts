@@ -103,21 +103,13 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const datasetId = 'ql-mocked-dataset';
 
-        const orderedColumns = [...columns].sort((columnA, columnB) => {
-            return columnA.name > columnB.name ? 1 : -1;
-        });
-
         // Converting dashsql columns to wizard fields
         const fields = columns.map((column) => {
             const guessedType = (column.biType ||
                 DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
 
-            const orderedIndex = orderedColumns.findIndex(
-                (orderedColumn) => orderedColumn.name === column.name,
-            );
-
             return {
-                guid: `${column.name}-${orderedIndex}`,
+                guid: column.name,
                 title: column.name,
                 datasetId,
                 data_type: guessedType,
@@ -283,6 +275,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             ].includes(newVisualization.id)
                 ? PlaceholderId.Y
                 : PlaceholderId.X;
+
             const targetPlaceholder = newVisualization.placeholders.find(
                 ({id}) => id === targetPlaceholderId,
             );
