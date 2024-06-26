@@ -352,6 +352,7 @@ export const piePrepareForQLResult = {
     graphs: [
         {
             name: 'iznos',
+            pointConflict: true,
             tooltip: {chartKitFormatting: true, chartKitPrecision: 2},
             dataLabels: {chartKitFormatting: true, chartKitPrecision: 0},
             data: [

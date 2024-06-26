@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import axios from 'axios';
@@ -84,7 +84,11 @@ export interface PluginControlProps
     extends PluginWidgetProps,
         ContextProps,
         ControlSettings,
-        StateProps {}
+        StateProps {
+    settings: SettingsProps & {
+        dependentSelectors?: boolean;
+    };
+}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -237,8 +241,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
 
         const loadedData = this.state.loadedData;
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
+        const dependentSelectors = this.props.settings.dependentSelectors ?? false;
 
         if (loadedData && loadedData.usedParams && dependentSelectors) {
             return pick(params, Object.keys(loadedData.usedParams));

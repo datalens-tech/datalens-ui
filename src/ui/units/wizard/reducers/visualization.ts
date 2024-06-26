@@ -51,6 +51,7 @@ import {
     SET_TOOLTIPS,
     SET_VISUALIZATION,
     SET_VISUALIZATION_PLACEHOLDER_ITEMS,
+    SET_Y_AXIS_CONFLICT,
     UPDATE_LAYERS,
     UPDATE_PLACEHOLDER_SETTINGS,
 } from '../actions/visualization';
@@ -81,6 +82,7 @@ export interface VisualizationState {
     dashboardParameters: Field[];
     distincts?: Record<string, string[]>;
     drillDownLevel: number;
+    pointConflict?: boolean;
 }
 
 const initialState: VisualizationState = {
@@ -927,6 +929,14 @@ export function visualization(
             return {
                 ...state,
                 available: [...available],
+            };
+        }
+        case SET_Y_AXIS_CONFLICT: {
+            const {pointConflict} = action;
+
+            return {
+                ...state,
+                pointConflict,
             };
         }
         case SET_DISTINCTS: {

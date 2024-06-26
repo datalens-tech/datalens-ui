@@ -321,6 +321,14 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
                 shapes: newShapes,
                 distincts: resultDistincts,
             };
+
+            if (result.graphs) {
+                const pointConflict = result.graphs.some((graph: any) => graph.pointConflict);
+
+                if (pointConflict) {
+                    result.metadata.pointConflict = pointConflict;
+                }
+            }
         }
 
         ChartEditor.setExtra('datasets', [
