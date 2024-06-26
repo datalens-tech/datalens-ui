@@ -23,16 +23,9 @@ function isHighchartsTemplateString(value: string) {
     return typeof hc !== 'undefined' && hc.format(value, {}) !== value;
 }
 
-function hasChildNodes(value: string) {
-    const el = document.createElement('div');
-    el.innerHTML = value;
-
-    return Array.from(el.childNodes).some((node) => node.nodeName !== '#text');
-}
-
 function isHtmlString(value: unknown) {
     if (typeof value === 'string') {
-        if (hasChildNodes(value) || isHighchartsTemplateString(value)) {
+        if (/<\/?[a-z][\s\S]*>/i.test(value) || isHighchartsTemplateString(value)) {
             return true;
         }
     }
