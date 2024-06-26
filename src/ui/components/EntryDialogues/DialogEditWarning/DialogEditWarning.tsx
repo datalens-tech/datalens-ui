@@ -4,6 +4,7 @@ import {Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
+import {DialogDraftWarningQA} from 'shared';
 import type {DatalensGlobalState, EntryDialogProps} from 'ui';
 import {EntryDialogResolveStatus, Interpolate} from 'ui';
 
@@ -28,7 +29,11 @@ class DialogEditWarning extends React.PureComponent<DialogEditWarningProps> {
         const {visible, entryName = ''} = this.props;
 
         return (
-            <Dialog open={visible || false} onClose={this.handlerClose} qa="dialog-draft-warning">
+            <Dialog
+                open={visible || false}
+                onClose={this.handlerClose}
+                qa={DialogDraftWarningQA.Dialog}
+            >
                 <div className={b()}>
                     <Dialog.Header caption={i18n('label_dash-warning-title')} />
                     <Dialog.Body>
@@ -51,7 +56,7 @@ class DialogEditWarning extends React.PureComponent<DialogEditWarningProps> {
                             size="l"
                             className={b('button')}
                             onClick={this.handlerEditEntryClick}
-                            qa="dialog-draft-warning-edit-btn"
+                            qa={DialogDraftWarningQA.EditButton}
                         >
                             {i18n('button_edit')}
                         </Button>

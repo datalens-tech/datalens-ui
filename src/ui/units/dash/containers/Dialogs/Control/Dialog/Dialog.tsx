@@ -1,9 +1,9 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
 import {Dialog as CommonDialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {DialogControlParamsQa} from 'shared/constants';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
 
 import './Dialog.scss';
@@ -42,8 +42,8 @@ const Dialog: React.FunctionComponent<DialogProps> = ({
                     onClickButtonApply={onApply}
                     textButtonApply={i18n('dash.control-dialog.edit', 'button_apply')}
                     textButtonCancel={i18n('dash.control-dialog.edit', 'button_cancel')}
-                    propsButtonApply={{disabled, qa: 'dialog-apply-button'} as ButtonProps}
-                    propsButtonCancel={{qa: 'dialog-cancel-button'}}
+                    propsButtonApply={{disabled, qa: DialogControlParamsQa.buttonApply}}
+                    propsButtonCancel={{qa: DialogControlParamsQa.buttonCancel}}
                 />
             </div>
         </CommonDialog>

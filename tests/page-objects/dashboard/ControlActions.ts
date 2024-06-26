@@ -3,6 +3,7 @@ import {Page} from '@playwright/test';
 import {
     ControlQA,
     DialogControlDateQa,
+    DialogControlParamsQa,
     DialogQLParameterQA,
     NavigationInputQA,
     TabMenuQA,
@@ -42,18 +43,6 @@ export type SelectorSettings = {
 export interface DashboardPageProps extends BasePageProps {}
 
 class ControlActions {
-    static selectors = {
-        acceptableValuesSelect: ControlQA.selectDefaultAcceptable,
-        acceptableValuesBtn: ControlQA.acceptableDialogButton,
-        dialogAcceptable: 'select-acceptable',
-        inputSelectAcceptable: 'select-acceptable-input',
-        acceptableSelectBtn: 'select-acceptable-button',
-
-        radioManualControl: DialogControlQa.radioSourceType,
-
-        dialogApplyBtn: 'dialog-apply-button',
-    };
-
     page: Page;
 
     dialogControl: DialogControl;
@@ -111,7 +100,7 @@ class ControlActions {
         await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
 
         // click on the button for setting possible values
-        await this.page.click(slct(ControlActions.selectors.acceptableValuesBtn));
+        await this.page.click(slct(ControlQA.acceptableDialogButton));
 
         await this.page.locator(`${slct(DialogControlDateQa.defaultSelectValue)} label`).click();
 
@@ -128,7 +117,7 @@ class ControlActions {
         });
 
         // saving the added possible values
-        await this.page.click(slct(ControlActions.selectors.dialogApplyBtn));
+        await this.page.click(slct(DialogControlParamsQa.buttonApply));
 
         // adding a selector to the dashboard
         await this.applyControlSettings();
@@ -170,34 +159,31 @@ class ControlActions {
         }
 
         // click on the button for setting possible values
-        await this.page.click(slct(ControlActions.selectors.acceptableValuesBtn));
+        await this.page.click(slct(ControlQA.acceptableDialogButton));
 
         // waiting for the dialog for setting possible values to appear
-        await this.page.waitForSelector(slct(ControlActions.selectors.dialogAcceptable));
+        await this.page.waitForSelector(slct(ControlQA.controlSelectAcceptable));
 
         for (let i = 0; i < items.length; i++) {
             // specify the value
-            await this.page.fill(
-                `${slct(ControlActions.selectors.inputSelectAcceptable)} input`,
-                items[i],
-            );
+            await this.page.fill(`${slct(ControlQA.controlSelectAcceptableInput)} input`, items[i]);
             // adding
-            await this.page.click(slct(ControlActions.selectors.acceptableSelectBtn));
+            await this.page.click(slct(ControlQA.acceptableDialogButton));
         }
 
         // saving the added possible values
-        await this.page.click(slct(ControlActions.selectors.dialogApplyBtn));
+        await this.page.click(slct(DialogControlParamsQa.buttonApply));
 
         // specify the default value if there is
         if (defaultValue !== undefined) {
             await clickGSelectOption({
                 page: this.page,
-                key: ControlActions.selectors.acceptableValuesSelect,
+                key: ControlQA.selectDefaultAcceptable,
                 optionText: defaultValue,
             });
 
             // check that the number of available values has not changed
-            await this.page.waitForSelector(slct(ControlActions.selectors.acceptableValuesBtn));
+            await this.page.waitForSelector(slct(ControlQA.acceptableDialogButton));
             await this.page.waitForSelector(
                 slct(`${DashboardDialogControl.AcceptableValues}${items.length}`),
             );
