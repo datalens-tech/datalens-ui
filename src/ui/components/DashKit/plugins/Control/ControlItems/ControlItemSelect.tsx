@@ -306,7 +306,7 @@ export const ControlItemSelect = ({
                     if (status === LOAD_STATUS.PENDING) {
                         setItemsLoader(true);
                     }
-                }, 30);
+                });
             }
         }
     };
