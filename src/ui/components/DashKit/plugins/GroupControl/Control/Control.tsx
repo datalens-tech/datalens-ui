@@ -318,8 +318,11 @@ export const Control = ({
         init();
     }
 
-    const showItemsLoader = () => {
-        dispatch(setLoadingItems({loadingItems: true}));
+    const setItemsLoader = (isLoadingItems: boolean) => {
+        if (!isMounted) {
+            return;
+        }
+        dispatch(setLoadingItems({loadingItems: isLoadingItems}));
     };
 
     const validateValue = (args: ValidationErrorData) => {
@@ -479,7 +482,7 @@ export const Control = ({
                     actualParams={currentParams || params}
                     onChange={onChangeParams}
                     init={init}
-                    showItemsLoader={showItemsLoader}
+                    setItemsLoader={setItemsLoader}
                     validationError={validationError}
                     errorData={errorData}
                     validateValue={validateValue}
