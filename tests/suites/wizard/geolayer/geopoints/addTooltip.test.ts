@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import type {Page} from '@playwright/test';
 
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
@@ -16,19 +16,18 @@ datalensTest.describe('Wizard - Geo Points', () => {
             '93ae409d-2352-43f1-8c21-e29f6321d698': '10267',
         });
 
-        await wizardPage.waitForSelector(wizardPage.chartkit.geopointSelector);
-
         await wizardPage.sectionVisualization.addFieldByClick(
             PlaceholderName.Tooltips,
             '_someMeasure',
         );
 
+        const geoMarker = page.locator(wizardPage.chartkit.geopointSelector).first();
+        const tooltip = page.locator(wizardPage.chartkit.tooltipSelector).first();
+
         await waitForCondition(async () => {
-            const point = await wizardPage.waitForSelector(wizardPage.chartkit.geopointSelector);
-
-            await point.hover({force: true});
-
-            return (await page.$$(wizardPage.chartkit.tooltipSelector)).length > 0;
+            await page.mouse.move(0, 0);
+            await geoMarker.hover({force: true});
+            return await tooltip.isVisible();
         }).catch(() => {
             throw new Error('The tooltip did not appear');
         });

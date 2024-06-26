@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import axios from 'axios';
@@ -47,6 +47,7 @@ import {
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {defaultControlLayout} from '../../constants';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
@@ -83,7 +84,11 @@ export interface PluginControlProps
     extends PluginWidgetProps,
         ContextProps,
         ControlSettings,
-        StateProps {}
+        StateProps {
+    settings: SettingsProps & {
+        dependentSelectors?: boolean;
+    };
+}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -236,8 +241,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
 
         const loadedData = this.state.loadedData;
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
+        const dependentSelectors = this.props.settings.dependentSelectors ?? false;
 
         if (loadedData && loadedData.usedParams && dependentSelectors) {
             return pick(params, Object.keys(loadedData.usedParams));
@@ -822,7 +826,7 @@ const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true}
 
 const plugin: PluginControl = {
     type: 'control',
-    defaultLayout: {w: 8, h: 2},
+    defaultLayout: defaultControlLayout,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 

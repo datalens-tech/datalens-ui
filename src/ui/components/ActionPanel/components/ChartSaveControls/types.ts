@@ -17,4 +17,5 @@ export type AdditionalButtonTemplate = {
     disabled?: boolean;
     qa?: string;
     title?: string;
+    hotkey?: string;
 };

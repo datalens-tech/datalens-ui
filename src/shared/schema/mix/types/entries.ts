@@ -37,6 +37,13 @@ export interface GetPublicationPreviewArgs {
     workbookId: WorkbookId;
 }
 
+export type GetEntryRelationsResponse = GetRelationsEntry[];
+export type GetEntryRelationsArgs = {
+    entryId: string;
+    workbookId: WorkbookId;
+    direction?: 'child' | 'parent';
+};
+
 export type MixedSwitchPublicationStatusArgsUnversionedData = {
     publicAuthor?: {
         text?: string;

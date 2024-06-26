@@ -1,12 +1,10 @@
 import React from 'react';
 
-import {Button, Link, Switch} from '@gravity-ui/uikit';
+import {Button, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 
-import {getEntryNameByKey} from '../../../../../../shared';
-import navigateHelper from '../../../../../libs/navigateHelper';
-import {EntryIcon} from '../../../../EntryIcon/EntryIcon';
 import AlertTooltip from '../AlertTooltip/AlertTooltip';
 import type {EntryRelationExtended} from '../types';
 
@@ -47,6 +45,22 @@ function RelationsList({className, groups, progress, onChange}: Props) {
         }
     }
 
+    const renderRightSection = (entry: EntryRelationExtended) => {
+        return (
+            <div className={b('right-section')}>
+                {Boolean(entry.tooltip) && (
+                    <AlertTooltip className={b('alert')} text={entry.tooltip} />
+                )}
+                <Switch
+                    size="m"
+                    checked={entry.checked}
+                    disabled={entry.disabled}
+                    onUpdate={() => onChangeTumbler(entry)}
+                />
+            </div>
+        );
+    };
+
     function renderGroup(group: RelationGroup, relationScope: GroupScope) {
         const allDisabled = group.every((entry) => entry.disabled);
         const btnDisabled = progress || allDisabled;
@@ -74,36 +88,11 @@ function RelationsList({className, groups, progress, onChange}: Props) {
                     )}
                 </div>
                 {group.map((entry) => (
-                    <div key={entry.entryId} className={b('group-item')}>
-                        <div className={b('group-entry')}>
-                            <EntryIcon
-                                entry={entry}
-                                width={20}
-                                height={20}
-                                className={b('entry-icon', {disabled: entry.disabled})}
-                            />
-                            <Link
-                                view={entry.disabled ? 'secondary' : 'primary'}
-                                target="_blank"
-                                className={b('entry-name')}
-                                title={entry.key}
-                                href={navigateHelper.redirectUrlSwitcher(entry)}
-                            >
-                                {getEntryNameByKey({key: entry.key, index: -1})}
-                            </Link>
-                        </div>
-                        <div className={b('right-section')}>
-                            {Boolean(entry.tooltip) && (
-                                <AlertTooltip className={b('alert')} text={entry.tooltip} />
-                            )}
-                            <Switch
-                                size="m"
-                                checked={entry.checked}
-                                disabled={entry.disabled}
-                                onUpdate={() => onChangeTumbler(entry)}
-                            />
-                        </div>
-                    </div>
+                    <EntryRow
+                        key={entry.entryId}
+                        entry={entry}
+                        rightSectionSlot={renderRightSection(entry)}
+                    />
                 ))}
             </div>
         );

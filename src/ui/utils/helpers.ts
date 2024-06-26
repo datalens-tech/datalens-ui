@@ -1,4 +1,5 @@
 import {cloneDeep, unset} from 'lodash';
+import type {GetRelationsEntry} from 'shared/schema';
 
 /**
  * @param{object} obj object for filter
@@ -26,4 +27,18 @@ export const getSelectedValueForSelect = (value: string[], valueList: string[]):
     );
 
     return valueList.filter((v) => map[v]);
+};
+
+export const groupEntitiesByScope = <T = GetRelationsEntry>(relations: ({scope: string} & T)[]) => {
+    const relationsByScope: Record<string, T[]> = {};
+
+    relations.forEach((relation) => {
+        if (!relationsByScope[relation.scope]) {
+            relationsByScope[relation.scope] = [];
+        }
+
+        relationsByScope[relation.scope].push(relation);
+    });
+
+    return relationsByScope;
 };

@@ -8,6 +8,7 @@ export const selectHierarchies = (state: DatalensGlobalState) =>
     state.wizard.visualization.hierarchies;
 
 export const selectVisualization = (state: DatalensGlobalState) =>
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     state.wizard.visualization.visualization!;
 
 export const selectFilters = (state: DatalensGlobalState) => state.wizard.visualization.filters;
@@ -34,6 +35,9 @@ export const selectShapesConfig = (state: DatalensGlobalState) =>
     state.wizard.visualization.shapesConfig;
 
 export const selectAvailable = (state: DatalensGlobalState) => state.wizard.visualization.available;
+
+export const selectPointConflict = (state: DatalensGlobalState) =>
+    state.wizard.visualization.pointConflict;
 
 export const selectDistincts = (state: DatalensGlobalState) => state.wizard.visualization.distincts;
 
