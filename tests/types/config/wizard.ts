@@ -4,7 +4,7 @@ type Dataset = {
 };
 
 export type WizardParametrizationConfig = {
-    datasets?: {
+    datasets: {
         Basic: Dataset;
         Orders: Dataset;
     };
