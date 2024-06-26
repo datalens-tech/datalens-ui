@@ -113,7 +113,8 @@ export const Control = ({
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
     const [prevParams, setPrevParams] = React.useState<StringParams | null>(null);
-    const [currentParams, setCurrentParams] = React.useState<StringParams | null>(null);
+    // it is filled in for the first time when the data is loaded, then it is updated when the params change
+    const currentSignificantParams = React.useRef<StringParams | null>();
     const requestCancellationRef = React.useRef<CancelTokenSource>();
 
     const [
@@ -152,15 +153,13 @@ export const Control = ({
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
             // first fill of current params
-            if (!currentParams) {
-                setCurrentParams(
-                    filterSignificantParams({
-                        params,
-                        loadedData: newLoadedData,
-                        defaults: data.defaults,
-                        dependentSelectors,
-                    }),
-                );
+            if (!currentSignificantParams.current) {
+                currentSignificantParams.current = filterSignificantParams({
+                    params,
+                    loadedData: newLoadedData,
+                    defaults: data.defaults,
+                    dependentSelectors,
+                });
             }
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
             onStatusChanged({
@@ -197,7 +196,7 @@ export const Control = ({
                         },
                     },
                     // currentParams are filled in after the first receiving of loadedData
-                    params: currentParams || params,
+                    params: currentSignificantParams.current || params,
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
@@ -275,8 +274,8 @@ export const Control = ({
             defaults: data.defaults,
             dependentSelectors,
         });
-        if (!needReload && !isEqual(currentParams, significantParams)) {
-            setCurrentParams(significantParams);
+        if (!needReload && !isEqual(currentSignificantParams.current, significantParams)) {
+            currentSignificantParams.current = significantParams;
             reload();
         }
     };
@@ -300,7 +299,7 @@ export const Control = ({
     }
 
     if (loadedData && !isEqual(params, prevParams)) {
-        if (currentParams) {
+        if (currentSignificantParams.current) {
             reloadAfterParamsChanges();
         }
         setPrevParams(params);
@@ -476,7 +475,7 @@ export const Control = ({
                     status={status}
                     loadedData={loadedData}
                     loadingItems={loadingItems}
-                    actualParams={currentParams || params}
+                    actualParams={currentSignificantParams.current || params}
                     onChange={onChangeParams}
                     init={init}
                     showItemsLoader={showItemsLoader}
