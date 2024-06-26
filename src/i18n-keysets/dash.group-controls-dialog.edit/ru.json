@@ -9,6 +9,7 @@
   "context_update-controls-on-change": "При включении опции зависимые селекторы будут влиять друг на друга до нажатия кнопки «Применить».",
   "label_apply-button-checkbox": "Кнопка «‎Применить»‎",
   "label_autoheight-checkbox": "Автовысота",
+  "label_copy-invalid-control": "Не удалось скопировать селектор, не прошедший валидацию",
   "label_default-tab": "Селектор {{index}}",
   "label_reset-button-checkbox": "Кнопка «‎Сбросить»",
   "label_selector-settings": "Настройки селектора",

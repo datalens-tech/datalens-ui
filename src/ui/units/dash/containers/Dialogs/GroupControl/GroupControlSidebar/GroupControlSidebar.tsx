@@ -12,9 +12,9 @@ import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
+    copyControlToStorage,
     setActiveSelectorIndex,
     updateSelectorsGroup,
-    validateAndCopyControl,
 } from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
@@ -173,7 +173,7 @@ export const GroupControlSidebar = () => {
     };
 
     const handleCopyItem = (itemIndex: number) => {
-        dispatch(validateAndCopyControl(itemIndex));
+        dispatch(copyControlToStorage(itemIndex));
     };
 
     const showAutoHeight =
