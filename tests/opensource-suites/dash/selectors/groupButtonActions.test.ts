@@ -15,15 +15,15 @@ import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const PARAMS = {
     FIRST_CONTROL: {
-        controlTitle: 'test-control',
-        controlItems: ['91000', '98800', '90000'],
-        controlFieldName: 'test-control-field',
+        appearance: {title: 'test-control'},
+        items: ['91000', '98800', '90000'],
+        fieldName: 'test-control-field',
         defaultValue: '98800',
     },
     SECOND_CONTROL: {
-        controlTitle: 'test-control-2',
-        controlItems: ['1', '2', '3'],
-        controlFieldName: 'test-control-field-2',
+        appearance: {title: 'test-control-2'},
+        items: ['1', '2', '3'],
+        fieldName: 'test-control-field-2',
         defaultValue: '2',
     },
 };
@@ -48,7 +48,7 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addSelectorsGroup([
+                await dashboardPage.controlActions.addSelectorsGroup([
                     PARAMS.FIRST_CONTROL,
                     PARAMS.SECOND_CONTROL,
                 ]);
@@ -92,8 +92,8 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             expect(getUrlStateParam(page)).toEqual(null);
 
             await dashboardPage.setSelectWithTitle(
-                {title: PARAMS.FIRST_CONTROL.controlTitle},
-                PARAMS.FIRST_CONTROL.controlItems[0],
+                {title: PARAMS.FIRST_CONTROL.appearance.title},
+                PARAMS.FIRST_CONTROL.items[0],
             );
 
             // timeout so state has time to be written  in search params
@@ -126,11 +126,11 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             await dashboardPage.saveChanges();
 
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.FIRST_CONTROL.controlTitle,
+                title: PARAMS.FIRST_CONTROL.appearance.title,
                 value: PARAMS.FIRST_CONTROL.defaultValue,
             });
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.SECOND_CONTROL.controlTitle,
+                title: PARAMS.SECOND_CONTROL.appearance.title,
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
 
@@ -147,12 +147,12 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             const changedState = await dashboardPage.getNewStateHashAfterAction(async () => {
                 await dashboardPage.setSelectWithTitle(
-                    {title: PARAMS.FIRST_CONTROL.controlTitle},
-                    PARAMS.FIRST_CONTROL.controlItems[0],
+                    {title: PARAMS.FIRST_CONTROL.appearance.title},
+                    PARAMS.FIRST_CONTROL.items[0],
                 );
                 await dashboardPage.setSelectWithTitle(
-                    {title: PARAMS.SECOND_CONTROL.controlTitle},
-                    PARAMS.SECOND_CONTROL.controlItems[0],
+                    {title: PARAMS.SECOND_CONTROL.appearance.title},
+                    PARAMS.SECOND_CONTROL.items[0],
                 );
             });
 
@@ -167,11 +167,11 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             expect(resetState).toEqual(defaultState);
 
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.FIRST_CONTROL.controlTitle,
+                title: PARAMS.FIRST_CONTROL.appearance.title,
                 value: PARAMS.FIRST_CONTROL.defaultValue,
             });
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.SECOND_CONTROL.controlTitle,
+                title: PARAMS.SECOND_CONTROL.appearance.title,
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
         },
@@ -191,11 +191,11 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             // check default values in selectors
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.FIRST_CONTROL.controlTitle,
+                title: PARAMS.FIRST_CONTROL.appearance.title,
                 value: PARAMS.FIRST_CONTROL.defaultValue,
             });
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.SECOND_CONTROL.controlTitle,
+                title: PARAMS.SECOND_CONTROL.appearance.title,
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
 
@@ -210,12 +210,12 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             // change values
             await dashboardPage.setSelectWithTitle(
-                {title: PARAMS.FIRST_CONTROL.controlTitle},
-                PARAMS.FIRST_CONTROL.controlItems[0],
+                {title: PARAMS.FIRST_CONTROL.appearance.title},
+                PARAMS.FIRST_CONTROL.items[0],
             );
             await dashboardPage.setSelectWithTitle(
-                {title: PARAMS.SECOND_CONTROL.controlTitle},
-                PARAMS.SECOND_CONTROL.controlItems[0],
+                {title: PARAMS.SECOND_CONTROL.appearance.title},
+                PARAMS.SECOND_CONTROL.items[0],
             );
 
             // there should be NO state changes after value selecting (to change it, you need to click "Apply")
@@ -244,21 +244,21 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
 
             // check that values in selectors are defaults now
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.FIRST_CONTROL.controlTitle,
+                title: PARAMS.FIRST_CONTROL.appearance.title,
                 value: PARAMS.FIRST_CONTROL.defaultValue,
             });
             await dashboardPage.checkSelectValueByTitle({
-                title: PARAMS.SECOND_CONTROL.controlTitle,
+                title: PARAMS.SECOND_CONTROL.appearance.title,
                 value: PARAMS.SECOND_CONTROL.defaultValue,
             });
 
             await dashboardPage.setSelectWithTitle(
-                {title: PARAMS.FIRST_CONTROL.controlTitle},
-                PARAMS.FIRST_CONTROL.controlItems[2],
+                {title: PARAMS.FIRST_CONTROL.appearance.title},
+                PARAMS.FIRST_CONTROL.items[2],
             );
             await dashboardPage.setSelectWithTitle(
-                {title: PARAMS.SECOND_CONTROL.controlTitle},
-                PARAMS.SECOND_CONTROL.controlItems[2],
+                {title: PARAMS.SECOND_CONTROL.appearance.title},
+                PARAMS.SECOND_CONTROL.items[2],
             );
 
             // wait for debounce timeout to detect the extra request
