@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import isFunction from 'lodash/isFunction';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
 
@@ -34,7 +33,7 @@ function isHtmlString(value: unknown) {
     return false;
 }
 
-export function getSafeChartWarnings(widgetData?: unknown) {
+export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
     const chartTypesToCheck = [
         'graph_node',
         'map_node',
@@ -42,7 +41,7 @@ export function getSafeChartWarnings(widgetData?: unknown) {
         'timeseries_node',
         'table_node',
     ];
-    const chartType = get(widgetData, 'type');
+
     if (chartTypesToCheck.includes(chartType)) {
         const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
         const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
