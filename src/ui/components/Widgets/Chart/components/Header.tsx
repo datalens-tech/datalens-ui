@@ -1,8 +1,10 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import get from 'lodash/get';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
+import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
@@ -110,9 +112,11 @@ export const Header = (props: HeaderProps) => {
     const chartData = (dataProps ? dataProps : {}) as unknown as ChartsProps & {
         params: StringParams;
     };
+    const safeChartWarning = get(loadedData, 'safeChartInfo');
 
     return (
         <div className={b('chart-header')}>
+            {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
             {chartsInsightsData && (
                 <ChartsInsights
                     items={chartsInsightsData.items}
