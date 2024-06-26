@@ -209,7 +209,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
             const head = get(data, ['data', 'head'], []) as TableHead[];
             const hasGroups = head.some((th) => get(th, 'group', false));
 
-            if (data?.config?.settings) {
+            if (data?.config) {
                 data.config.settings = {
                     ...data.config.settings,
                     highlightRows: !hasGroups,
