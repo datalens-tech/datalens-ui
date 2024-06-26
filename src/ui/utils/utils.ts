@@ -296,19 +296,23 @@ export default class Utils {
     }
 
     static getEmbedToken = async (propsData: any) => {
-        var result = await getSdk().us.getEmbed({workbookId: propsData.workbookId, entryId: propsData.id, reject: propsData.reject});
+
+        var workbookId = await this.decodeId({id: propsData.workbookId || propsData.id});
+        var entryId = await this.decodeId({id: propsData.entryId || propsData.id});
+        
+        var result = await this.universalService({"action": "datalens", "method": "embed", "data": [{workbookId: workbookId, entryId: entryId, reject: propsData.reject}]});
 
         return result.data && result.data.length > 0 ? result.data[0].embed : '';
     }
 
     static getRoles = async (propsData: any) => {
-        var result = await getSdk().us.getRoles(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "roles", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
 
     static getAccesses = async (propsData: any) => {
-        var result = await getSdk().us.getAccesses({dl: propsData.id});
+        var result = await this.universalService({"action": "datalens", "method": "accesses", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -316,23 +320,23 @@ export default class Utils {
     static encodeId = async (propsData: any) => {
         var result = await getSdk().us.encodeId({ id: propsData.id});
 
-        return result.data && result.data.length > 0 ? result.data : [];
+        return result.id;
     }
 
     static decodeId = async (propsData: any) => {
         var result = await getSdk().us.decodeId({ id: propsData.id});
 
-        return result.data && result.data.length > 0 ? result.data : [];
+        return result.id;
     }
 
     static setAccesses = async (propsData: any) => {
-        var result = await getSdk().us.setAccesses({dl: propsData.id, role_id: propsData.role_id, select: propsData.select, add: propsData.add, update: propsData.update, delete: propsData.delete, destroy: propsData.destroy});
+        var result = await this.universalService({"action": "datalens", "method": "updateAccesses", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
 
     static tables = async (propsData: any) => {
-        var result = await getSdk().us.tables(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "tables", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -343,7 +347,7 @@ export default class Utils {
      * @returns 
      */
     static createUser = async (propsData: any) => {
-        var result = await getSdk().us.createUser(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "create_user", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -354,7 +358,7 @@ export default class Utils {
      * @returns 
      */
     static updateUser = async (propsData: any) => {
-        var result = await getSdk().us.updateUser(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "update_user", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -365,7 +369,7 @@ export default class Utils {
      * @returns 
      */
     static passwordReset = async (propsData: any) => {
-        var result = await getSdk().us.passwordReset(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "password_reset", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -376,7 +380,7 @@ export default class Utils {
      * @returns 
      */
     static updateRoles = async (propsData: any) => {
-        var result = await getSdk().us.updateRoles(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "update_roles", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
@@ -387,8 +391,20 @@ export default class Utils {
      * @returns 
      */
     static users = async (propsData: any) => {
-        var result = await getSdk().us.users(propsData);
+        var result = await this.universalService({"action": "datalens", "method": "users", "data": [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
+    }
+
+    /**
+     * Универсальный метод для запросов RPC через frontend UI
+     * 
+     * @param propsData данные в формате RPC {action:string, method:string, data:any[], tid: number}
+     * @returns объект {err:any, data:any}, если err заполнен, то ошибка
+     */
+    static universalService = async (propsData: any) => {
+        var result = await getSdk().us.universalService(propsData);
+
+        return result;
     }
 }

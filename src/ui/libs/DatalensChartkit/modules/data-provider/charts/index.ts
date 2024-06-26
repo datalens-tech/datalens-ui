@@ -708,11 +708,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                         Array.isArray(paramValue) && paramValue.length < 1 ? [''] : paramValue;
                 }
             });
-
-            if(Utils.getRpcAuthorization()) {
-                var decodedString = atob(Utils.getRpcAuthorization());
-                requestOptions.data.params['__f_user'] = decodedString.split(':')[0];
-            }
         }
 
         const path = isEmbeddedChart() ? '/embeds/api/run' : '/api/run';
