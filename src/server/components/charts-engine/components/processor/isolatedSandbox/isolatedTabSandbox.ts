@@ -179,19 +179,6 @@ const execute = async ({
         prepareChartEditorApi({
             name: filename,
             jail,
-            shared: instance.ChartEditor.getSharedData
-                ? instance.ChartEditor.getSharedData()
-                : null,
-            loadedData: instance.ChartEditor.getLoadedData
-                ? instance.ChartEditor.getLoadedData()
-                : null,
-            params: instance.ChartEditor.getParams ? instance.ChartEditor.getParams() : null,
-            actionParams: instance.ChartEditor.getActionParams
-                ? instance.ChartEditor.getActionParams()
-                : null,
-            widgetConfig: instance.ChartEditor.getWidgetConfig
-                ? instance.ChartEditor.getWidgetConfig()
-                : null,
             ChartEditor: instance.ChartEditor,
         });
 
@@ -307,26 +294,37 @@ export const processTab = async ({
 function prepareChartEditorApi({
     name,
     jail,
-    shared,
-    loadedData,
-    params,
-    widgetConfig,
-    actionParams,
     ChartEditor,
 }: {
     name: string;
     jail: IsolatedVM.Reference;
-    shared: Record<string, object>;
-    loadedData: Record<string, any> | null;
-    params: Record<string, string | string[]>;
-    actionParams: Record<string, string | string[]>;
-    widgetConfig: DashWidgetConfig['widgetConfig'];
     ChartEditor: NodeJS.Dict<any>;
 }) {
-    jail.setSync('_ChartEditor_shared', JSON.stringify(shared));
-    jail.setSync('_ChartEditor_params', JSON.stringify(params));
-    jail.setSync('_ChartEditor_actionParams', JSON.stringify(actionParams));
-    jail.setSync('_ChartEditor_widgetConfig', JSON.stringify(widgetConfig));
+    const params = ChartEditor.getParams ? ChartEditor.getParams() : null;
+
+    jail.setSync('_ChartEditor_getSharedData', () => {
+        const shared = ChartEditor.getSharedData ? ChartEditor.getSharedData() : null;
+        return JSON.stringify(shared);
+    });
+
+    jail.setSync('_ChartEditor_setSharedData', (override: string) => {
+        const parsedOverride = JSON.parse(override);
+        ChartEditor.setSharedData(parsedOverride);
+    });
+
+    jail.setSync('_ChartEditor_getParams', () => {
+        return JSON.stringify(params);
+    });
+
+    jail.setSync('_ChartEditor_getActionParams', () => {
+        const actionParams = ChartEditor.getActionParams ? ChartEditor.getActionParams() : null;
+        return JSON.stringify(actionParams);
+    });
+
+    jail.setSync('_ChartEditor_widgetConfig', () => {
+        const widgetConfig = ChartEditor.getWidgetConfig ? ChartEditor.getWidgetConfig() : null;
+        return JSON.stringify(widgetConfig);
+    });
 
     if (name === 'Urls') {
         jail.setSync('_ChartEditor_getSortParams', JSON.stringify(getSortParams(params)));
@@ -338,7 +336,10 @@ function prepareChartEditorApi({
     }
 
     if (name === 'UI' || name === 'JavaScript') {
-        jail.setSync('_ChartEditor_getLoadedData', JSON.stringify(loadedData));
+        jail.setSync('_ChartEditor_getLoadedData', () => {
+            const loadedData = ChartEditor.getLoadedData ? ChartEditor.getLoadedData() : null;
+            return JSON.stringify(loadedData);
+        });
         jail.setSync('_ChartEditor_setDataSourceInfo', (dataSourceKey: string, info: string) => {
             const parsedInfo = JSON.parse(info);
             ChartEditor.setDataSourceInfo(dataSourceKey, parsedInfo);

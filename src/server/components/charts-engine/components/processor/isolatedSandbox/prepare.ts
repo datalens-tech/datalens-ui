@@ -21,11 +21,12 @@ function require(name) {
     }
 }
 const ChartEditor = {};
-ChartEditor.getParams = () => JSON.parse(_ChartEditor_params);
-ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_actionParams);
-ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_widgetConfig);
-ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_shared);
-ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData);
+ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_getSharedData());
+ChartEditor.setSharedData = () => _ChartEditor_setSharedData(JSON.stringify(override));
+ChartEditor.getParams = () => JSON.parse(_ChartEditor_getParams());
+ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_getActionParams());
+ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_getWidgetConfig());
+ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData());
 ChartEditor.getSortParams = () => JSON.parse(_ChartEditor_getSortParams());
 ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
 ChartEditor.setDataSourceInfo = (dataSourceKey, info) => _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info));
