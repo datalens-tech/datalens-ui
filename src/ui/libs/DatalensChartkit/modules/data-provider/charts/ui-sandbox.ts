@@ -6,7 +6,12 @@ import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
-import {ChartKitCustomError} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
+import {
+    ChartKitCustomError,
+    ERROR_CODE,
+} from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import Performance from '../../../ChartKit/modules/perfomance';
 import {generateHtml} from '../../html-generator';
 
 /**
@@ -74,7 +79,7 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     generateHtmlHandle.dispose();
 };
 
-const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label'] as const;
+const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label', 'axis'] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
 
 function clearVmProp(prop: unknown) {
@@ -155,13 +160,24 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
 };
 
 const UI_SANDBOX_EXEC_TIMEOUT = 100;
-const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
+const getUnwrappedFunction = (
+    sandbox: QuickJSWASMModule,
+    wrappedFn: UISandboxWrappedFunction,
+    options?: UiSandboxRuntimeOptions,
+) => {
     return function (this: unknown, ...args: unknown[]) {
+        if (options?.totalTimeLimit <= 0) {
+            throw new ChartKitCustomError('The allowed execution time has been exceeded', {
+                code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
+            });
+        }
+
+        const runId = getRandomCKId();
+        Performance.mark(runId);
         const runtime = sandbox.newRuntime();
 
-        runtime.setInterruptHandler(
-            getInterruptAfterDeadlineHandler(Date.now() + UI_SANDBOX_EXEC_TIMEOUT),
-        );
+        const execTimeout = Math.min(UI_SANDBOX_EXEC_TIMEOUT, options?.totalTimeLimit ?? Infinity);
+        runtime.setInterruptHandler(getInterruptAfterDeadlineHandler(Date.now() + execTimeout));
 
         const vm = runtime.newContext();
         defineVmArguments(vm, args, wrappedFn.args);
@@ -192,11 +208,25 @@ const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWr
         vm.dispose();
         runtime.dispose();
 
-        return unwrapHtml(value);
+        const resultValue = unwrapHtml(value);
+        const performance: number = Performance.getDuration(runId);
+        if (options?.totalTimeLimit) {
+            options.totalTimeLimit = Math.max(0, options.totalTimeLimit - performance);
+        }
+
+        return resultValue;
     };
 };
 
-export const unwrapPossibleFunctions = (sandbox: QuickJSWASMModule, target: TargetValue) => {
+export type UiSandboxRuntimeOptions = {
+    totalTimeLimit?: number;
+};
+
+export const unwrapPossibleFunctions = (
+    sandbox: QuickJSWASMModule,
+    target: TargetValue,
+    options?: UiSandboxRuntimeOptions,
+) => {
     if (!target || typeof target !== 'object') {
         return;
     }
@@ -210,11 +240,11 @@ export const unwrapPossibleFunctions = (sandbox: QuickJSWASMModule, target: Targ
             wrappedFn.fn = String(wrappedFn.fn);
             // Do argument mutation on purpose
             // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction(sandbox, wrappedFn);
+            target[key] = getUnwrappedFunction(sandbox, wrappedFn, options);
         } else if (Array.isArray(value)) {
-            value.forEach((item) => unwrapPossibleFunctions(sandbox, item));
+            value.forEach((item) => unwrapPossibleFunctions(sandbox, item, options));
         } else if (value && typeof value === 'object') {
-            unwrapPossibleFunctions(sandbox, value);
+            unwrapPossibleFunctions(sandbox, value, options);
         }
     });
 };
