@@ -8,7 +8,7 @@ import {selectEntryFromNavigationMenu} from '../../utils';
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Datasets', () => {
         datalensTest('Add dataset', async ({page, config}) => {
-            const datasetName = config.wizard.datasets.Basic.name;
+            const datasetName = config.datasets.entities.Basic.name;
             await openTestPage(page, config.wizard.urls.NewWizardChart);
 
             const datasetContainer = page.locator(slct(SectionDatasetQA.DatasetContainer));
