@@ -285,7 +285,11 @@ export const TabMenu = <T extends unknown>({
         );
     };
 
-    const renderListWithMenu = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
+    const renderListWithMenu = (
+        items: TabMenuItemData<T>[],
+        selectedItemIndex: number,
+        onUpdateItem: TabsWithMenu['onUpdateItem'],
+    ) => {
         return (
             <ListWithMenu
                 list={{
@@ -304,7 +308,7 @@ export const TabMenu = <T extends unknown>({
                 onDuplicate={onDuplicate}
                 iconOnHover={true}
                 onCopy={onCopyItem}
-                onUpdateItem={onUpdateItem as TabsWithMenu['onUpdateItem']}
+                onUpdateItem={onUpdateItem}
             />
         );
     };
@@ -372,7 +376,7 @@ export const TabMenu = <T extends unknown>({
     return (
         <div className={b({view: addButtonView})}>
             {enableActionMenu
-                ? renderListWithMenu(items, selectedItemIndex)
+                ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}
             {renderButtons()}
         </div>
