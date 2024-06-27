@@ -168,7 +168,7 @@ const getUnwrappedFunction = (
     options?: UiSandboxRuntimeOptions,
 ) => {
     return function (this: unknown, ...args: unknown[]) {
-        if (options?.totalTimeLimit && options?.totalTimeLimit <= 0) {
+        if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
                 code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
             });
