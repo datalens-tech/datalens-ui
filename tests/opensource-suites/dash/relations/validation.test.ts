@@ -22,7 +22,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelectorBySettings({});
+                    await dashboardPage.controlActions.addSelectorWithDefaultSettings({});
 
                     await dashboardPage.addChart({
                         name: config.dash.charts.ChartCityPie.name,
@@ -33,7 +33,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 

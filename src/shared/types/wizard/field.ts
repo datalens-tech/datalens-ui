@@ -11,7 +11,6 @@ import type {
     FloatNumberFormattingOptions,
     IntegerNumberFormattingOptions,
 } from './formatting';
-import type {TableFieldDisplayMode} from './misc';
 import type {TableSubTotalsSettings} from './sub-totals';
 
 export interface WizardDatasetField extends DatasetField {
@@ -44,7 +43,6 @@ export interface WizardDatasetField extends DatasetField {
     columnSettings?: ColumnSettings;
     backgroundSettings?: TableFieldBackgroundSettings;
     distincts?: string[];
-    displayMode?: TableFieldDisplayMode;
     hintSettings?: HintSettings;
 }
 

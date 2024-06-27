@@ -1,4 +1,5 @@
-import type {ChartKitWidgetAxisType, ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetAxisType} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetData} from '@gravity-ui/chartkit/build/types/widget-data';
 
 import type {
     ServerChartsConfig,
@@ -6,7 +7,7 @@ import type {
     ServerSort,
     ServerVisualization,
 } from '../../../../../../shared';
-import {PlaceholderId, isDateField} from '../../../../../../shared';
+import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../shared';
 import {getAxisType} from '../preparers/helpers/axis';
 import {getAllVisualizationsIds} from '../preparers/helpers/visualizations';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
@@ -72,7 +73,6 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
                 ticks: {
                     pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
                 },
-                lineColor: 'transparent',
             },
         ],
         series: {
@@ -101,6 +101,20 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
             },
         },
     };
+
+    const visualizationWithYMainAxis = [
+        WizardVisualizationId.BarYD3,
+        WizardVisualizationId.BarY100pD3,
+    ];
+
+    if (visualizationWithYMainAxis.includes(visualization.id as WizardVisualizationId)) {
+        chartWidgetData.xAxis = {...chartWidgetData.xAxis, lineColor: 'transparent'};
+    } else {
+        chartWidgetData.yAxis = (chartWidgetData.yAxis || []).map((yAxis) => ({
+            ...yAxis,
+            lineColor: 'transparent',
+        }));
+    }
 
     return chartWidgetData;
 }

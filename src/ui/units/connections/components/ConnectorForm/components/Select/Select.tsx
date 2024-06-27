@@ -41,6 +41,7 @@ const SelectComponent = (props: SelectComponentProps) => {
         availableValues = [],
         inner = false,
         loading,
+        beforeUpdate,
         prepareValue,
     } = props;
     const disabled = get(props.controlProps, 'disabled');
@@ -56,6 +57,8 @@ const SelectComponent = (props: SelectComponentProps) => {
             const resultValue = nextValue.join(VALUES_DELIMITER);
             const preparedValue = prepareValue ? prepareValue(resultValue) : resultValue;
 
+            beforeUpdate?.(nextValue);
+
             if (inner) {
                 actions.changeInnerForm({[name]: preparedValue});
             } else {
@@ -67,7 +70,7 @@ const SelectComponent = (props: SelectComponentProps) => {
                 actions.setValidationErrors({errors});
             }
         },
-        [actions, name, inner, validationErrors, error, prepareValue],
+        [actions, name, inner, validationErrors, error, beforeUpdate, prepareValue],
     );
 
     const renderLoadingControl = React.useCallback(() => {
@@ -97,7 +100,7 @@ const SelectComponent = (props: SelectComponentProps) => {
             renderControl={loading ? renderLoadingControl : undefined}
             renderOption={renderOptionWithDescription}
             getOptionHeight={(option) => {
-                return option.data ? OPTION_WITH_META_HEIGHT : DEFAULT_OPTION_HEIGHT;
+                return option.data?.description ? OPTION_WITH_META_HEIGHT : DEFAULT_OPTION_HEIGHT;
             }}
         />
     );

@@ -73,6 +73,8 @@ class NavigationEntries extends React.Component {
         focusSearchInput: PropTypes.func,
         clearSearchInput: PropTypes.func,
 
+        onItemSelect: PropTypes.func,
+
         getPlaceParameters: PropTypes.func.isRequired,
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
         isMobileNavigation: PropTypes.bool,
@@ -663,6 +665,7 @@ class NavigationEntries extends React.Component {
                     refreshNavigation={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}
                     onMenuClick={this.props.onContextMenuClick}
+                    onItemSelect={this.props.onItemSelect}
                 />
             </div>
         );

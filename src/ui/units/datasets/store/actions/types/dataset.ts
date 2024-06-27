@@ -34,6 +34,8 @@ export const OPEN_PREVIEW = Symbol('dataset/OPEN_PREVIEW');
 export const CLOSE_PREVIEW = Symbol('dataset/CLOSE_PREVIEW');
 export const TOGGLE_PREVIEW = Symbol('dataset/TOGGLE_PREVIEW');
 export const TOGGLE_VIEW_PREVIEW = Symbol('dataset/TOGGLE_VIEW_PREVIEW');
+export const SET_QUEUE_TO_LOAD_PREVIEW = Symbol('dataset/SET_QUEUE_TO_LOAD_PREVIEW');
+export const TOGGLE_LOAD_PREVIEW_BY_DEFAULT = Symbol('dataset/TOGGLE_LOAD_PREVIEW_BY_DEFAULT');
 
 export const ADD_FIELD = Symbol('dataset/ADD_FIELD');
 export const DUPLICATE_FIELD = Symbol('dataset/DUPLICATE_FIELD');

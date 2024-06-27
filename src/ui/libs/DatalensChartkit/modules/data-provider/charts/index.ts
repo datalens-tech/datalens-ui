@@ -112,6 +112,7 @@ type EntitiesType =
 export type EntityConfig = {
     data: Object | undefined;
     meta: {stype: EntitiesType | WizardType | undefined};
+    createdAt?: string;
 };
 
 export interface EntityRequestOptions {
@@ -136,6 +137,8 @@ export interface EntityRequestOptions {
 }
 
 const STATS_COLLECT_TIMEOUT = 5 * 1000;
+
+const CANCEL_REQUEST_CODE = 'REQUEST_CANCELED';
 
 function isResponseSuccessNode(data: ResponseSuccess): data is ResponseSuccessNode {
     return 'type' in data;
@@ -569,7 +572,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     cancelRequests(requestCancellation: CancelTokenSource) {
         if (requestCancellation) {
-            requestCancellation.cancel('REQUEST_CANCELED');
+            requestCancellation.cancel(CANCEL_REQUEST_CODE);
         }
     }
 
@@ -781,7 +784,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             params,
             widgetType,
             widgetConfig,
-            config: {type, data: configData, key} = {},
+            config: {type, data: configData, key, createdAt} = {},
             workbookId,
         } = data;
 
@@ -799,6 +802,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 config: isEditMode
                     ? {
                           data: configData,
+                          createdAt: createdAt,
                           meta: {stype: type},
                       }
                     : undefined,

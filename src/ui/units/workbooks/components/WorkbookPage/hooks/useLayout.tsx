@@ -71,7 +71,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
         setLayout({
             actionsPanelLeftBlock: {
                 content: (
-                    <React.Fragment>
+                    <div className={b('action-bar-left-item')}>
                         <ActionPanelEntrySelect />
                         <CollectionBreadcrumbs
                             className={b('breadcrumbs', {'is-mobile': DL.IS_MOBILE})}
@@ -96,7 +96,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                                 }
                             }}
                         />
-                    </React.Fragment>
+                    </div>
                 ),
             },
         });

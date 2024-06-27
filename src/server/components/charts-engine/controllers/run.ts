@@ -7,6 +7,7 @@ import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
+import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
@@ -88,6 +89,7 @@ export const runController = (
                 headers: {
                     ...res.locals.subrequestHeaders,
                     ...ctx.getMetadata(),
+                    ...(ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
                 },
                 requestId: req.id,
                 ...extraSettings,

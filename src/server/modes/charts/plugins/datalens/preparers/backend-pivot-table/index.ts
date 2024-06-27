@@ -178,7 +178,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
     const rowHeadersLength = rowHeaders.length;
 
     if (columns.length === 1 && columns[0].length === 0) {
-        const rowValues = tableRows.values;
+        const rowValues = tableRows?.values || [];
         const rowValuesLength = rowValues.length;
         lineHeaderLength = rowHeadersLength + rowValuesLength;
     } else {

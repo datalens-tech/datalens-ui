@@ -128,6 +128,16 @@ const DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG = {
     '1400': 20,
 };
 
+export const MOD_KEY = 'MOD';
+
+export const UNDO_HOTKEY = [MOD_KEY, 'z'];
+export const REDO_HOTKEY = [MOD_KEY, 'shift', 'z'];
+
+export const HOTKEYS_SCOPES = {
+    GLOBAL: 'global',
+    WIZARD: 'wizard',
+};
+
 export {
     ITEM_TYPES,
     CONFLICT_TOOLTIPS,

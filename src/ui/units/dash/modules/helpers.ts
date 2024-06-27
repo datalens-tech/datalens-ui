@@ -1,6 +1,12 @@
 import type React from 'react';
 
-import type {Config, ConfigItem, ConfigItemData, ConfigLayout} from '@gravity-ui/dashkit';
+import type {
+    Config,
+    ConfigItem,
+    ConfigItemData,
+    ConfigLayout,
+    PreparedCopyItemOptions,
+} from '@gravity-ui/dashkit';
 import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
@@ -14,12 +20,13 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {Feature, resolveOperation} from 'shared';
+import {DashTabItemType, Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 
 import {ITEM_TYPE} from '../containers/Dialogs/constants';
 import type {TabsHashStates} from '../store/actions/dashTyped';
 
+import {CROSS_PASTE_ITEMS_ALLOWED} from './constants';
 import {PostMessage} from './postMessage';
 
 export type CopiedConfigContext = {
@@ -44,6 +51,19 @@ export const getPastedWidgetData: () => CopiedConfigData | null = () => {
         return null;
     }
     return itemData;
+};
+
+export const isItemPasteAllowed = (itemData: CopiedConfigData, workbookId?: string | null) => {
+    if (
+        CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
+        (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
+    ) {
+        return true;
+    }
+    const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
+    const dashWorkbookId = workbookId ?? null;
+
+    return itemWorkbookId === dashWorkbookId;
 };
 
 export function getTabTitleById({
@@ -166,7 +186,7 @@ export function deepAssign(...args: any) {
     });
 }
 
-export const stringifyMemoize = (func: (...args: unknown[]) => unknown) =>
+export const stringifyMemoize = <T = unknown>(func: (...args: any[]) => T) =>
     memoize(func, (...args) => JSON.stringify(args));
 
 export const getHashStateParam = (hashStates: TabsHashStates | null | undefined, tabId: string) => {
@@ -337,4 +357,41 @@ export const getUniqIdsFromDashData = (dashData: DashData) => {
     });
 
     return ids.filter(Boolean);
+};
+
+export const getPreparedCopyItemOptions = (
+    itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+    tabData: DashTab | null,
+    copyContext?: CopiedConfigContext,
+) => {
+    if (copyContext) {
+        itemToCopy.copyContext = copyContext;
+    }
+
+    if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
+        return itemToCopy;
+    }
+
+    const copyItemTabsWidgetParams: Record<string, StringParams> = {};
+    itemToCopy.data.tabs.forEach((copiedTabItem) => {
+        const {id, params} = copiedTabItem;
+        copyItemTabsWidgetParams[id] = params || {};
+    });
+
+    tabData.items.forEach((dashTabItem) => {
+        if ('tabs' in dashTabItem.data) {
+            dashTabItem.data.tabs.forEach((item) => {
+                if (item.id in copyItemTabsWidgetParams) {
+                    copyItemTabsWidgetParams[item.id] = item.params;
+                }
+            });
+        }
+    });
+    itemToCopy.data.tabs.forEach((copiedTabItem) => {
+        if (copiedTabItem.id in copyItemTabsWidgetParams) {
+            const {id} = copiedTabItem;
+            copiedTabItem.params = copyItemTabsWidgetParams[id];
+        }
+    });
+    return itemToCopy;
 };

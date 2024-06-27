@@ -23,20 +23,20 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             const dashboardPage = new DashboardPage({page});
 
             // filling in the values for the selector
-            const controlItems: string[] = [];
+            const items: string[] = [];
             for (let i = 0; i < CONTROL_ITEM_COUNT; i++) {
-                controlItems.push(`${PARAMS.CONTROL_ITEM_PREFIX}-${i + 1}`);
+                items.push(`${PARAMS.CONTROL_ITEM_PREFIX}-${i + 1}`);
             }
-            const controlDefaultValue = controlItems[controlItems.length - 1];
+            const controlDefaultValue = items[items.length - 1];
 
             // creating a new dashboard
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     // adding a selector with a default value
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                        controlItems,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE},
+                        fieldName: PARAMS.CONTROL_FIELD_NAME,
+                        items,
                         defaultValue: controlDefaultValue,
                     });
                 },

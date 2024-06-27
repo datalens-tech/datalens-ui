@@ -9,6 +9,7 @@ import type {
 } from '../../../../../../../shared';
 import {
     AxisMode,
+    AxisNullsMode,
     PlaceholderId,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
@@ -340,7 +341,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                             const colorValue = lineData?.colorValue;
                             let value = lineData?.value;
 
-                            if (typeof value === 'undefined' && nulls === 'as-0') {
+                            if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
                                 value = 0;
                             }
 
@@ -409,9 +410,13 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     drillDownFilterValue: line.drillDownFilterValue,
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
-                    connectNulls: nulls === 'connect',
+                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
+
+                if (line.pointConflict) {
+                    graph.pointConflict = true;
+                }
 
                 if (line.segmentNameKey) {
                     const currentSegment = segmentsMap[line.segmentNameKey];

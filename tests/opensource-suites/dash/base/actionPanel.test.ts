@@ -29,9 +29,9 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
         await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
-        await dashboardPage.addSelector({
-            controlTitle: PARAMS.CONTROL_TITLE,
-            controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+        await dashboardPage.controlActions.addSelector({
+            appearance: {title: PARAMS.CONTROL_TITLE},
+            fieldName: PARAMS.CONTROL_FIELD_NAME,
         });
 
         await expect(saveButton, 'Save button is active').not.toBeDisabled();
@@ -46,9 +46,9 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
             await expect(saveButton, 'Save button is disabled').toBeDisabled();
 
-            await dashboardPage.addSelector({
-                controlTitle: PARAMS.CONTROL_TITLE,
-                controlFieldName: PARAMS.CONTROL_FIELD_NAME,
+            await dashboardPage.controlActions.addSelector({
+                appearance: {title: PARAMS.CONTROL_TITLE},
+                fieldName: PARAMS.CONTROL_FIELD_NAME,
             });
 
             await dashboardPage.deleteSelector(PARAMS.CONTROL_TITLE);

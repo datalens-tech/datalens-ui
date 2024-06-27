@@ -1,14 +1,15 @@
 {
   "value_access": "Права доступа",
+  "value_add-favorites-alias": "Добавить лейбл",
   "value_copy": "Копировать",
   "value_copy-link": "Копировать ссылку",
   "value_delete": "Удалить",
   "value_embed": "Поделиться",
   "value_duplicate": "Дублировать",
+  "value_edit-favorites-alias": "Изменить лейбл",
   "value_migrate-to-workbook": "Мигрировать в воркбук",
   "value_move": "Переместить",
   "value_rename": "Переименовать",
   "value_revisions": "История изменений",
-  "value_add-favorites-alias": "Добавить лейбл",
-  "value_edit-favorites-alias": "Изменить лейбл"
+  "value_show-related-entities": "Связанные объекты"
 }

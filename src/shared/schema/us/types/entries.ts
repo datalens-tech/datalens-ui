@@ -199,6 +199,7 @@ export type GetRelationsResponse = GetRelationsEntry[];
 
 export interface GetRelationsArgs {
     entryId: string;
+    direction?: 'parent' | 'child';
     includePermissionsInfo?: boolean;
     excludeUnregistredDlsEntries?: boolean;
 }

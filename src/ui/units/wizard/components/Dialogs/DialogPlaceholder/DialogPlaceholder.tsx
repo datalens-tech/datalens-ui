@@ -193,6 +193,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             };
             nullsOptions.splice(1, 0, connectOption);
         }
+
         return (
             <DialogPlaceholderRow
                 settingCustomWidth="400px"

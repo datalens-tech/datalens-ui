@@ -23,7 +23,6 @@ import {
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
-import type {Search} from 'history';
 import {i18n} from 'i18n';
 import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEditor/PaletteEditor';
 import logger from 'libs/logger';
@@ -34,7 +33,7 @@ import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {DashTab, DashTabItem, StringParams} from 'shared';
+import type {DashTab, DashTabItem} from 'shared';
 import {
     ControlQA,
     DashEntryQa,
@@ -59,9 +58,9 @@ import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers'
 import {
     getLayoutMap,
     getPastedWidgetData,
+    getPreparedCopyItemOptions,
     memoizedGetLocalTabs,
     sortByOrderIdOrLayoutComparator,
-    stringifyMemoize,
 } from '../../modules/helpers';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
 import {
@@ -88,6 +87,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getUrlGlobalParams} from '../../utils/url';
 import {DIALOG_TYPE} from '../Dialogs/constants';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -160,18 +160,6 @@ class Body extends React.PureComponent<BodyProps> {
             search: `?${searchParams.toString()}`,
         });
     }, UPDATE_STATE_DEBOUNCE_TIME);
-
-    getUrlGlobalParams = stringifyMemoize((search, globalParams) => {
-        if (!search || !globalParams) {
-            return null;
-        }
-        const searchParams = new URLSearchParams(search as Search);
-        return Object.keys(globalParams).reduce(
-            (result, key) =>
-                searchParams.has(key) ? {...result, [key]: searchParams.getAll(key)} : result,
-            {},
-        );
-    });
 
     state: DashBodyState = {
         isGlobalDragging: false,
@@ -336,43 +324,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    getPreparedCopyItemOptions = (
-        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-        tabData: DashTab | null,
-        copyContext?: CopiedConfigContext,
-    ) => {
-        if (copyContext) {
-            itemToCopy.copyContext = copyContext;
-        }
-
-        if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
-            return itemToCopy;
-        }
-
-        const copyItemTabsWidgetParams: Record<string, StringParams> = {};
-        itemToCopy.data.tabs.forEach((copiedTabItem) => {
-            const {id, params} = copiedTabItem;
-            copyItemTabsWidgetParams[id] = params || {};
-        });
-
-        tabData.items.forEach((dashTabItem) => {
-            if ('tabs' in dashTabItem.data) {
-                dashTabItem.data.tabs.forEach((item) => {
-                    if (item.id in copyItemTabsWidgetParams) {
-                        copyItemTabsWidgetParams[item.id] = item.params;
-                    }
-                });
-            }
-        });
-        itemToCopy.data.tabs.forEach((copiedTabItem) => {
-            if (copiedTabItem.id in copyItemTabsWidgetParams) {
-                const {id} = copiedTabItem;
-                copiedTabItem.params = copyItemTabsWidgetParams[id];
-            }
-        });
-        return itemToCopy;
-    };
-
     render() {
         return (
             <div className={b()}>
@@ -449,7 +400,7 @@ class Body extends React.PureComponent<BodyProps> {
                     getPreparedCopyItemOptions: (
                         itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
                     ) => {
-                        return this.getPreparedCopyItemOptions(itemToCopy, tabData, {
+                        return getPreparedCopyItemOptions(itemToCopy, tabData, {
                             workbookId: this.props.workbookId ?? null,
                         });
                     },
@@ -459,12 +410,10 @@ class Body extends React.PureComponent<BodyProps> {
                 onChange={this.onChange}
                 settings={dashkitSettings}
                 defaultGlobalParams={settings.globalParams}
-                globalParams={
-                    this.getUrlGlobalParams(
-                        this.props.location.search,
-                        this.props.settings.globalParams,
-                    ) as DashKitProps['globalParams']
-                }
+                globalParams={getUrlGlobalParams(
+                    this.props.location.search,
+                    this.props.settings.globalParams,
+                )}
                 overlayControls={overlayControls}
             />
         );

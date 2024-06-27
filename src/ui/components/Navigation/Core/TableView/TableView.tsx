@@ -16,7 +16,7 @@ import './TableView.scss';
 const b = block('dl-core-navigation-table-view');
 
 export const TableView = (props: TableViewProps) => {
-    const {isMobileNavigation, ...listProps} = props;
+    const {isMobileNavigation, onItemSelect, ...listProps} = props;
 
     const [batchAction, setBatchAction] = React.useState<BatchAction | null>(null);
 
@@ -29,6 +29,7 @@ export const TableView = (props: TableViewProps) => {
         resetSelected,
     } = useBatchSelect({
         isMobileNavigation,
+        onItemSelect,
         mode: props.mode,
         entries: props.entries,
     });

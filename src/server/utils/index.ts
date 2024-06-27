@@ -14,6 +14,7 @@ import {
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
     RPC_AUTHORIZATION,
+    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
@@ -47,6 +48,13 @@ class Utils {
         return pick(headers, headersList);
     }
 
+    static pickZitadelHeaders(req: Request) {
+        return {
+            authorization: 'Bearer ' + req.user?.accessToken,
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
+        };
+    }
+
     static pickSuperuserHeaders(headers: IncomingHttpHeaders) {
         return pick(headers, [SuperuserHeader.XDlSudo, SuperuserHeader.XDlAllowSuperuser]);
     }
@@ -70,7 +78,8 @@ class Utils {
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
             ...Utils.pickRpcAuthorizationHeaders(req.headers),
-            [REQUEST_ID_HEADER]: req.id
+            [REQUEST_ID_HEADER]: req.id,
+            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {})
         };
     }
 

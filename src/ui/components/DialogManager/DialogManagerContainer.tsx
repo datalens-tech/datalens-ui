@@ -1,10 +1,11 @@
 import React from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
-import type {DatalensGlobalState} from 'ui';
-import {useEffectOnce} from 'ui';
-import {closeDialog} from 'ui/store/actions/dialog';
-import history from 'ui/utils/history';
+
+import type {DatalensGlobalState} from '../../';
+import {useEffectOnce} from '../../';
+import {closeDialog} from '../../store/actions/dialog';
+import history from '../../utils/history';
 
 import DialogManager from './DialogManager';
 

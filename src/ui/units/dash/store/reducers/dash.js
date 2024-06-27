@@ -80,8 +80,8 @@ export function getSelectorDialogInitialState(args = {}) {
 
     return {
         elementType: ELEMENT_TYPE.SELECT,
-        sourceType,
         validation: {},
+        sourceType,
         defaults: {},
         datasetId: args.lastUsedDatasetId,
         connectionId: args.lastUsedConnectionId,
@@ -142,51 +142,20 @@ export function getSelectorDialogFromData(data, defaults) {
         required: data.source.required,
         showHint: data.source.showHint,
         hint: data.source.hint,
+
+        id: data.id,
+        namespace: data.namespace,
     };
 }
 
 export function getSelectorGroupDialogFromData(data) {
-    const items = Object.values(data.group)
-        .map((item) => ({
-            validation: {},
-            isManualTitle: true,
-
-            title: item.title,
-            sourceType: item.sourceType,
-
-            datasetId: item.source.datasetId,
-            elementType: item.source.elementType || ELEMENT_TYPE.SELECT,
-            defaultValue: item.source.defaultValue,
-            datasetFieldId: item.source.datasetFieldId,
-            showTitle: item.source.showTitle,
-            multiselectable: item.source.multiselectable,
-            isRange: item.source.isRange,
-            fieldName: item.source.fieldName,
-            fieldType: item.source.fieldType,
-            datasetFieldType: item.source.datasetFieldType,
-            acceptableValues: item.source.acceptableValues,
-            chartId: item.source.chartId,
-            operation: item.source.operation,
-            innerTitle: item.source.innerTitle,
-            showInnerTitle: item.source.showInnerTitle,
-            id: item.id,
-            required: item.source.required,
+    return {
+        ...data,
+        group: data.group.map((item) => ({
+            ...getSelectorDialogFromData(item),
             placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
             width: item.width || '',
-            namespace: item.namespace,
-            showHint: item.source.showHint,
-            hint: item.source.hint,
-        }))
-        .sort((a, b) => a.index - b.index);
-
-    return {
-        autoHeight: data.autoHeight,
-        buttonApply: data.buttonApply,
-        buttonReset: data.buttonReset,
-
-        updateControlsOnChange: data.updateControlsOnChange,
-
-        group: items,
+        })),
     };
 }
 
@@ -452,22 +421,22 @@ function dash(state = initialState, action) {
 
             if (
                 Utils.isEnabledFeature(Feature.GroupControls) &&
-                openedDialog === 'control' &&
+                openedDialog === DashTabItemType.Control &&
                 data.sourceType !== 'external'
             ) {
                 const selectorDialog = getSelectorDialogFromData(data);
 
                 // migration forward to group
-                openedDialog = 'group_control';
+                openedDialog = DashTabItemType.GroupControl;
                 newState.selectorsGroup = {
                     ...getGroupSelectorDialogInitialState(),
                     group: [selectorDialog],
                 };
                 newState.selectorDialog = selectorDialog;
-            } else if (openedDialog === 'group_control') {
+            } else if (openedDialog === DashTabItemType.GroupControl) {
                 newState.selectorsGroup = getSelectorGroupDialogFromData(data);
                 newState.selectorDialog = newState.selectorsGroup.group[0];
-            } else if (openedDialog === 'control') {
+            } else if (openedDialog === DashTabItemType.Control) {
                 newState.selectorDialog = getSelectorDialogFromData(data, defaults);
             }
 

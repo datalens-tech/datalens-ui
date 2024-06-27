@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 import type {ExtendedExportingCsvOptions, HighchartsSeriesCustomObject} from '../types';
 
 export enum ChartkitHandlers {
@@ -7,6 +9,7 @@ export enum ChartkitHandlers {
     WizardManageTooltipConfig = 'wizard-manage-tooltip-config',
     WizardXAxisFormatter = 'wizard-x-axis-formatter',
     WizardExportColumnNamesFormatter = 'wizard-export-column-names-formatter',
+    WizardScatterTooltipFormatter = 'wizard-scatter-tooltip-formatter',
 }
 
 export const ChartkitHandlersDict = {
@@ -16,6 +19,7 @@ export const ChartkitHandlersDict = {
     [ChartkitHandlers.WizardManageTooltipConfig]: wizardManageTooltipConfig,
     [ChartkitHandlers.WizardXAxisFormatter]: wizardXAxisFormatter,
     [ChartkitHandlers.WizardExportColumnNamesFormatter]: wizardExportColumnNamesFormatter,
+    [ChartkitHandlers.WizardScatterTooltipFormatter]: wizardScatterTooltipFormatter,
 };
 
 export interface GraphTooltipLine {
@@ -113,3 +117,31 @@ function DCMonitoringLabelFormatter(this: any) {
 
     return `${Math.round(this.value * 100) / 100} ${units}`;
 }
+
+function wizardScatterTooltipFormatter(this: any) {
+    const point = this;
+    const seriesTooltipOptions = get(point, 'series.userOptions.custom.tooltipOptions', {});
+    const {pointTitle, xTitle, yTitle, shapeTitle, colorTitle, sizeTitle} = seriesTooltipOptions;
+
+    const result: string[] = [`${xTitle}: ${point.xLabel}`, `${yTitle}: ${point.yLabel}`];
+
+    if (shapeTitle && shapeTitle !== colorTitle) {
+        result.unshift(`${shapeTitle}: ${point.sLabel}`);
+    }
+
+    if (colorTitle) {
+        result.unshift(`${colorTitle}: ${point.cLabel}`);
+    }
+
+    if (sizeTitle) {
+        result.unshift(`${sizeTitle}: ${point.sizeLabel}`);
+    }
+
+    if (pointTitle) {
+        result.unshift(`${pointTitle}: <b>${point.name}</b>`);
+    }
+
+    return result.join('<br/>');
+}
+
+export const WRAPPED_HTML_KEY = '__wrappedHTML__';

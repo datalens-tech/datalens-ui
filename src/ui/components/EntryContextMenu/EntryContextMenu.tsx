@@ -23,6 +23,7 @@ import {
     migrateToWorkbookEntry,
     moveEntry,
     renameEntry,
+    showRelatedEntities,
 } from './helpers';
 import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 
@@ -151,6 +152,10 @@ class EntryContextMenu extends React.PureComponent<Props> {
             }
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {
                 migrateToWorkbookEntry(this.entryDialoguesRef, entry);
+                break;
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES: {
+                showRelatedEntities(this.entryDialoguesRef, entry);
                 break;
             }
             default: {

@@ -6,6 +6,7 @@ import {
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     PROJECT_ID_HEADER,
+    SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
     RPC_AUTHORIZATION
@@ -22,6 +23,7 @@ export default {
         limit: '50mb',
         extended: false,
     },
+    expressTrustProxyNumber: 3,
     errorBooster,
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
     python: process.env.PYTHON || 'python3',
@@ -39,6 +41,7 @@ export default {
         SuperuserHeader.XDlAllowSuperuser,
         SuperuserHeader.XDlSudo,
         AuthHeader.Authorization,
+        SERVICE_USER_ACCESS_TOKEN_HEADER,
         CSRF_TOKEN_HEADER,
         DL_COMPONENT_HEADER,
         DL_EMBED_TOKEN_HEADER,

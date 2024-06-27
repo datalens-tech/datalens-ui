@@ -8,9 +8,7 @@ import {
     POINT_SHAPES_IN_ORDER,
     getFormatOptions,
     isDateField,
-    isEnabledServerFeature,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import type {ChartColorsConfig} from '../../types';
 import type {ExtendedSeriesScatterOptions} from '../../utils/color-helpers';
 import {
@@ -32,6 +30,7 @@ import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {mapPointsByShape} from './helpers/shape';
+import {getScatterTooltipOptions} from './helpers/tooltip';
 import type {ScatterPoint} from './types';
 
 export type ScatterGraph = {
@@ -59,7 +58,6 @@ export type PrepareScatterResult = {
 
 // eslint-disable-next-line complexity
 export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResult {
-    const app = registry.getApp();
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const {
         placeholders,
@@ -71,6 +69,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapes,
         shapesConfig,
         ChartEditor,
+        features,
+        shared,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -107,10 +107,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const yDataType = idToDataType[y.guid];
     const yIsNumber = isNumericalDataType(yDataType);
     const yIsDate = isDateField({data_type: yDataType});
-    const shouldEscapeUserValue = isEnabledServerFeature(
-        app.nodekit.ctx,
-        Feature.EscapeUserHtmlInDefaultHcTooltip,
-    );
+    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const cDataType = color && idToDataType[color.guid];
 
@@ -391,16 +388,17 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
+        graph.custom = {
+            ...graph.custom,
+            tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
+        };
 
         if (isActionParamsEnable) {
             const actionParams: Record<string, any> = {};
             addActionParamValue(actionParams, color, graph.data?.[0]?.colorValue);
             addActionParamValue(actionParams, shape, graph.data?.[0]?.shapeValue);
 
-            graph.custom = {
-                ...graph.custom,
-                actionParams,
-            };
+            graph.custom.actionParams = actionParams;
         }
     });
 

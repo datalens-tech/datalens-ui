@@ -7,6 +7,7 @@ import type {
     FieldRoleSpec,
     FilterField,
 } from '../../../types';
+import {isDateField} from '../../../types';
 import {resolveIntervalDate, resolveRelativeDate} from '../../charts-shared';
 import {prepareFilterValues} from '../../helpers';
 
@@ -59,8 +60,7 @@ export const mapFilterToApiV2FiltersFormat = (filter: FilterField): ApiV2Filter 
     const operation = filter.filter.operation.code;
 
     // Check legacy datetime value because of old configs
-    // @ts-expect-error
-    if (filter.data_type === 'datetime' || filter.data_type === 'date') {
+    if (isDateField(filter)) {
         return {
             values: ([] as string[]).concat(...prepareFilterValues({values})),
             operation,

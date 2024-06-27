@@ -1,11 +1,12 @@
 import React from 'react';
 
 import {Loader} from '@gravity-ui/uikit';
+import type {CancelTokenSource} from 'axios';
+import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {
-    DashTabItemControlData,
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
@@ -17,6 +18,7 @@ import {
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
 } from 'shared';
+import {useMountedState} from 'ui/hooks';
 import {
     ControlCheckbox,
     ControlDatepicker,
@@ -24,13 +26,18 @@ import {
     ControlRangeDatepicker,
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import type {EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import {type EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
-import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
+import {
+    addOperationForValue,
+    unwrapFromArray,
+    unwrapFromArrayAndSkipOperation,
+} from 'ui/units/dash/modules/helpers';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
+import {getControlHint} from '../../../utils';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
@@ -44,11 +51,12 @@ import {
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {ExtendedLoadedData} from '../types';
-import {cancelCurrentRequests, clearLoaderTimer, getControlWidthStyle} from '../utils';
+import {clearLoaderTimer, filterSignificantParams, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
     setErrorData,
+    setIsInit,
     setLoadedData,
     setLoadingItems,
     setSilentLoader,
@@ -86,8 +94,8 @@ type ControlProps = {
         controlId?: string;
     }) => void;
     needReload: boolean;
-    cancelSource: any;
     workbookId?: WorkbookId;
+    dependentSelectors?: boolean;
 };
 
 export const Control = ({
@@ -99,10 +107,15 @@ export const Control = ({
     getDistincts,
     onChange,
     needReload,
-    cancelSource,
     workbookId,
+    dependentSelectors,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
+    const isMounted = useMountedState([]);
+    const [prevParams, setPrevParams] = React.useState<StringParams | null>(null);
+    // it is filled in for the first time when the data is loaded, then it is updated when the params change
+    const currentSignificantParams = React.useRef<StringParams | null>();
+    const requestCancellationRef = React.useRef<CancelTokenSource>();
 
     const [
         {
@@ -117,8 +130,6 @@ export const Control = ({
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
-
-    const [prevParams, setPrevParams] = React.useState<StringParams | null>(params);
 
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
@@ -141,6 +152,15 @@ export const Control = ({
     ) => {
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
+            // first fill of current params
+            if (!currentSignificantParams.current) {
+                currentSignificantParams.current = filterSignificantParams({
+                    params,
+                    loadedData: newLoadedData,
+                    defaults: data.defaults,
+                    dependentSelectors,
+                });
+            }
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
             onStatusChanged({
                 controlId: id,
@@ -156,8 +176,15 @@ export const Control = ({
         }
     };
 
+    const cancelCurrentRunRequest = () => {
+        if (requestCancellationRef.current) {
+            requestCancellationRef.current.cancel();
+        }
+    };
+
     const init = async () => {
         try {
+            const payloadCancellation = chartsDataProvider.getRequestCancellation();
             const payload: EntityRequestOptions = {
                 data: {
                     config: {
@@ -168,13 +195,22 @@ export const Control = ({
                             stype: 'control_dash',
                         },
                     },
-                    params,
+                    // currentParams are filled in after the first receiving of loadedData
+                    params: currentSignificantParams.current || params,
                     ...(workbookId ? {workbookId} : {}),
                 },
+                cancelToken: payloadCancellation.token,
             };
 
-            dispatch(setStatus({status: LOAD_STATUS.PENDING}));
-            onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
+            cancelCurrentRunRequest();
+
+            // if the previous request is canceled, but we make a new one, we do not need to send status again
+            if (status !== LOAD_STATUS.PENDING) {
+                dispatch(setStatus({status: LOAD_STATUS.PENDING}));
+                onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
+            }
+
+            requestCancellationRef.current = payloadCancellation;
 
             const response = await chartsDataProvider.makeRequest(payload);
 
@@ -196,6 +232,9 @@ export const Control = ({
                 setLoadedDataState(newLoadedData, LOAD_STATUS.SUCCESS);
             }
         } catch (error) {
+            if (axios.isCancel(error)) {
+                return;
+            }
             logger.logError('DashKit: Control init failed', error);
             console.error('DASHKIT_CONTROL_RUN', error);
 
@@ -215,33 +254,58 @@ export const Control = ({
     };
 
     const reload = () => {
-        if (!isInit) {
-            return;
-        }
-
         clearLoaderTimer(silentLoaderTimer);
 
         if (data.source.elementType !== ELEMENT_TYPE.SELECT) {
             silentLoaderTimer = setTimeout(() => {
-                dispatch(setSilentLoader({silentLoading}));
+                if (isInit) {
+                    dispatch(setSilentLoader({silentLoading}));
+                }
             }, 800);
         }
 
         init();
     };
 
+    const reloadAfterParamsChanges = () => {
+        const significantParams = filterSignificantParams({
+            params,
+            loadedData,
+            defaults: data.defaults,
+            dependentSelectors,
+        });
+        if (!needReload && !isEqual(currentSignificantParams.current, significantParams)) {
+            currentSignificantParams.current = significantParams;
+            reload();
+        }
+    };
+
+    // cancel requests, transfer status and remove timer if component is unmounted or selector is
+    // removed from group
     React.useEffect(() => {
+        dispatch(setIsInit({isInit: true}));
+
         return () => {
-            clearLoaderTimer(silentLoaderTimer);
-            cancelCurrentRequests(cancelSource);
-            onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
+            if (!isMounted()) {
+                clearLoaderTimer(silentLoaderTimer);
+                onStatusChanged({controlId: id, status: LOAD_STATUS.DESTROYED});
+                cancelCurrentRunRequest();
+            }
         };
-    }, []);
+    }, [id, isMounted, onStatusChanged, silentLoaderTimer]);
 
     if (status !== LOAD_STATUS.PENDING && silentLoaderTimer) {
         clearLoaderTimer(silentLoaderTimer);
     }
 
+    if (loadedData && !isEqual(params, prevParams)) {
+        if (currentSignificantParams.current) {
+            reloadAfterParamsChanges();
+        }
+        setPrevParams(params);
+    }
+
+    // control needs to be reloaded after autoupdate or update in data (changes in group configuration)
     if (prevNeedReload !== needReload) {
         setPrevNeedReload(needReload);
         if (needReload) {
@@ -249,17 +313,15 @@ export const Control = ({
         }
     }
 
-    if (control?.param && !isEqual(prevParams, params)) {
-        setPrevParams(params);
-        reload();
-    }
-
     if (!isInit && status === LOAD_STATUS.INITIAL) {
         init();
     }
 
-    const showItemsLoader = () => {
-        dispatch(setLoadingItems({loadingItems: true}));
+    const setItemsLoader = (isLoadingItems: boolean) => {
+        if (!isMounted) {
+            return;
+        }
+        dispatch(setLoadingItems({loadingItems: isLoadingItems}));
     };
 
     const validateValue = (args: ValidationErrorData) => {
@@ -295,9 +357,7 @@ export const Control = ({
     const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
         const newParam = {[param]: value};
 
-        if (!isEqual(param, newParam)) {
-            onChange({params: {[param]: value}, controlId: id});
-        }
+        onChange({params: newParam, controlId: id});
     };
 
     const getTypeProps = (
@@ -336,7 +396,7 @@ export const Control = ({
     };
 
     const renderSilentLoader = () => {
-        if (showSilentLoader) {
+        if (showSilentLoader || (!control && status === LOAD_STATUS.SUCCESS)) {
             return (
                 <div className={b('loader', {silent: true})}>
                     <Loader size="s" />
@@ -367,15 +427,49 @@ export const Control = ({
         );
     };
 
+    const renderLoadingStub = (props: Record<string, unknown>) => {
+        const {
+            source: {elementType},
+        } = data as unknown as DashTabItemControlSingle;
+
+        const stubProps = {
+            ...props,
+            value: '',
+            param: '',
+            onChange: () => {},
+        };
+        switch (elementType) {
+            case DashTabItemControlElementType.Input:
+                return <ControlInput {...stubProps} type="input" />;
+            case DashTabItemControlElementType.Date:
+                return <ControlDatepicker {...stubProps} type="datepicker" />;
+            case DashTabItemControlElementType.Checkbox:
+                return <ControlCheckbox {...stubProps} type="checkbox" />;
+        }
+
+        return null;
+    };
+
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
-        const {required, operation} = source;
+        const {required, operation, elementType} = source;
 
         const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
-        if (controlData.source.elementType === DashTabItemControlElementType.Select) {
+        const initialProps: Record<string, unknown> = {
+            innerLabel,
+            label,
+            className: b('item'),
+            labelClassName: b('item-label'),
+
+            style,
+            renderOverlay,
+            hint: getControlHint(controlData.source),
+        };
+
+        if (elementType === DashTabItemControlElementType.Select) {
             return (
                 <ControlItemSelect
                     id={id}
@@ -384,10 +478,10 @@ export const Control = ({
                     status={status}
                     loadedData={loadedData}
                     loadingItems={loadingItems}
-                    actualParams={params}
+                    actualParams={currentSignificantParams.current || params}
                     onChange={onChangeParams}
                     init={init}
-                    showItemsLoader={showItemsLoader}
+                    setItemsLoader={setItemsLoader}
                     validationError={validationError}
                     errorData={errorData}
                     validateValue={validateValue}
@@ -400,12 +494,16 @@ export const Control = ({
             );
         }
 
-        if (status === LOAD_STATUS.FAIL || !control) {
+        if (status === LOAD_STATUS.FAIL) {
             return (
                 <div className={b('item-stub', {error: true})} style={style}>
                     <Error errorData={errorData} onClickRetry={handleClickRetry} />
                 </div>
             );
+        }
+
+        if (!control) {
+            return renderLoadingStub(initialProps);
         }
 
         const {param} = control;
@@ -433,24 +531,20 @@ export const Control = ({
                 operation,
             });
 
-            onChangeParams({value: valueWithOperation, param});
+            if (!isEqual(valueWithOperation, unwrapFromArray(params[param]))) {
+                onChangeParams({value: valueWithOperation, param});
+            }
         };
 
         const props: Record<string, unknown> = {
+            ...initialProps,
             param,
             type: control.type,
             widgetId: id,
-            className: b('item'),
-            labelClassName: b('item-label'),
             value: preparedValue,
-            onChange: onChangeControl,
-            label,
-            innerLabel,
             required,
+            onChange: onChangeControl,
             hasValidationError: Boolean(currentValidationError),
-            style,
-            renderOverlay,
-            hint: controlData.source.showHint ? controlData.source.hint : undefined,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 
@@ -471,17 +565,6 @@ export const Control = ({
     const handleClickRetry = () => {
         reload();
     };
-
-    const {placementMode, width} = data as unknown as DashTabItemControlData;
-    const style = getControlWidthStyle(placementMode, width);
-
-    if ((status === LOAD_STATUS.INITIAL || status === LOAD_STATUS.PENDING) && !control) {
-        return (
-            <div className={b('item-stub')} style={style}>
-                <Loader size="s" />
-            </div>
-        );
-    }
 
     return renderControl();
 };

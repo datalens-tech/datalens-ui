@@ -228,8 +228,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Access,
             dialogProps: {
                 entry,
-                showCustomAccess:
-                    Utils.isEnabledFeature(Feature.CustomAccessDescription) && !hasEditPermissions,
+                showCustomAccess: !hasEditPermissions,
             },
         });
     }
@@ -238,7 +237,7 @@ class NavigationBase extends React.Component {
             dialog: EntryDialogName.Unlock,
             dialogProps: {
                 entry,
-                showCustomAccess: Utils.isEnabledFeature(Feature.CustomAccessDescription),
+                showCustomAccess: true,
             },
         });
     }
@@ -252,6 +251,14 @@ class NavigationBase extends React.Component {
         if (response.status === EntryDialogResolveStatus.Success) {
             this.closeNavigation();
         }
+    }
+    async showRelatedEntities(entry) {
+        await this.refDialogues.current.open({
+            dialog: EntryDialogName.ShowRelatedEntities,
+            dialogProps: {
+                entry,
+            },
+        });
     }
     getOnActionDestination(entry) {
         const {path} = this.props;
@@ -440,6 +447,9 @@ class NavigationBase extends React.Component {
             }
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {
                 return this.migrateToWorkbookEntry(entry);
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES: {
+                return this.showRelatedEntities(entry);
             }
             default:
                 return false;

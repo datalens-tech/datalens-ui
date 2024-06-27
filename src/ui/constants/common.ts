@@ -3,6 +3,7 @@ import {
     AppEnvironment,
     DeviceType,
     DlsAcl,
+    EntryScope,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
@@ -223,6 +224,12 @@ export const DL = {
     get HEADERS_MAP() {
         return window.DL.headersMap || {};
     },
+    get ZITADEL_ENABLED() {
+        return window.DL.isZitadelEnabled === true;
+    },
+    get HIDE_NAVIGATION() {
+        return window.DL.hideNavigation;
+    },
 };
 
 export const LIGHT_THEME = 'light';
@@ -258,6 +265,7 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
+    SAFE_CHART: '_safe_chart',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;
@@ -279,6 +287,13 @@ export enum Scope {
 export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
+
+export const OBJECT_SCOPES = [
+    EntryScope.Widget,
+    EntryScope.Dataset,
+    EntryScope.Dash,
+    EntryScope.Connection,
+];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
 

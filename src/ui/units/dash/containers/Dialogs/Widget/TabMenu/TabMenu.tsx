@@ -1,163 +1,198 @@
 import React from 'react';
 
-import {Plus, Star, StarFill} from '@gravity-ui/icons';
-import type {ListItemData} from '@gravity-ui/uikit';
+import {CopyPlus, Plus, Star, StarFill} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ListWithMenu} from 'components/ListWithMenu/ListWithMenu';
 import {ListWithRemove} from 'components/ListWithRemove/ListWithRemove';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
+import {useSelector} from 'react-redux';
 import {TabMenuQA} from 'shared';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import {getPastedWidgetData} from 'ui/units/dash/modules/helpers';
+import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+
+import {TabActionType} from './types';
+import type {TabMenuItemData, TabMenuProps, UpdateState} from './types';
 
 import './TabMenu.scss';
 
 const b = block('tab-menu');
 
-type TabMenuItemData<T> = ListItemData<T> & {title?: string; isDefault?: boolean};
+const ADD_BUTTON_DEFAULT_SIZE = 16;
 
-type TabMenuProps<T> = {
-    items: TabMenuItemData<T>[];
-    selectedItemIndex: number;
-    update: ({items, selectedItemIndex, action}: ListState<T>) => void;
-    enableActionMenu?: boolean;
-    addButtonText?: string;
-    defaultTabText?: () => string;
-    tabIconMixin?: string;
-};
+export const TabMenu = <T extends unknown>({
+    canPasteItems,
+    enableActionMenu,
+    items,
+    selectedItemIndex,
+    addButtonView = 'flat',
+    onUpdate,
+    defaultTabText,
+    onPasteItems,
+    tabIconMixin,
+    addButtonText,
+    pasteButtonText,
+    onCopyItem,
+}: TabMenuProps<T>) => {
+    const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
+    const workbookId = useSelector(selectDashWorkbookId);
 
-export type ListState<T> = {
-    items: TabMenuItemData<T>[];
-    selectedItemIndex: number;
-    action?: TabActionType;
-};
-
-export type TabActionType = 'add' | 'delete' | 'changeChosen' | 'changeDefault';
-
-export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
-    render() {
-        const {enableActionMenu, addButtonText, items, selectedItemIndex, tabIconMixin} =
-            this.props;
-
-        return (
-            <div className={b()}>
-                {enableActionMenu
-                    ? this.renderListWithMenu(items, selectedItemIndex)
-                    : this.renderListWithRemove(items, selectedItemIndex)}
-                <div
-                    className={b('add-tab')}
-                    onClick={this.onAction({action: 'add'})}
-                    data-qa={TabMenuQA.Add}
-                >
-                    <Icon data={Plus} className={b('add-tab-icon', tabIconMixin)} width={16} />
-                    <span>
-                        {addButtonText || i18n('dash.widget-dialog.edit', 'button_add', {index: 1})}
-                    </span>
-                </div>
-            </div>
-        );
-    }
-
-    onAction =
-        ({action, index}: {action: TabActionType; index?: number}) =>
-        (event: React.MouseEvent) => {
-            event.stopPropagation();
-            let data;
-
-            if (index === undefined) {
-                data = this[action as Extract<'add', TabActionType>]();
-            } else {
-                data = this[action](index);
+    React.useEffect(() => {
+        const storageHandler = () => {
+            const pastedWidget = getPastedWidgetData();
+            if (canPasteItems?.(pastedWidget, workbookId)) {
+                setPasteConfig(pastedWidget);
+                return;
             }
-
-            if (data) {
-                this.props.update(data);
-            }
+            setPasteConfig(null);
         };
 
-    onRemove = (deletedItem: TabMenuItemData<T> | number) => {
-        let deletedItemIndex = deletedItem;
-        if (!Number.isFinite(deletedItem)) {
-            deletedItemIndex = this.props.items.findIndex((item) => deletedItem === item);
+        if (canPasteItems) {
+            storageHandler();
+            window.addEventListener('storage', storageHandler);
         }
-        this.props.update(this.delete(deletedItemIndex as number));
-    };
 
-    tabText(index = this.props.items.length) {
+        return () => {
+            window.removeEventListener('storage', storageHandler);
+        };
+    }, [canPasteItems, workbookId]);
+
+    const getTabText = (index = items.length) => {
         return (
-            this.props.defaultTabText?.() ||
+            defaultTabText?.() ||
             i18n('dash.widget-dialog.edit', 'value_title-default', {index: index + 1})
         );
-    }
+    };
 
-    add() {
-        const newItem = {title: this.tabText()} as TabMenuItemData<T>;
-        const items = [...this.props.items, newItem];
-        const len = this.props.items.length;
+    const addItem = () => {
+        const newItem = {title: getTabText()} as TabMenuItemData<T>;
+        const updatedItems = [...items, newItem];
+        const len = items.length;
 
         return {
-            items,
-            selectedItemIndex: len ? items.length - 1 : 0,
-            action: 'add',
+            items: updatedItems,
+            selectedItemIndex: len ? updatedItems.length - 1 : 0,
+            action: TabActionType.Add,
         };
-    }
+    };
 
-    changeDefault(index: number) {
-        const items = this.props.items.map((item, itemIndex) => ({
+    const pasteItem = (item?: TabMenuItemData<T>, index?: number): UpdateState<T> => {
+        const pasteItems = item ? [item] : onPasteItems?.(pasteConfig);
+        if (!pasteItems) {
+            return {
+                action: TabActionType.Skipped,
+            };
+        }
+
+        const pastItemsWithId = pasteItems.map((controlItem) => ({
+            ...controlItem,
+            id: undefined,
+            draftId: getRandomKey(),
+        }));
+
+        const updatedItems = [...items];
+        updatedItems.splice(index || updatedItems.length, 0, ...pastItemsWithId);
+
+        return {
+            items: updatedItems,
+            selectedItemIndex: index || items.length || 0,
+            action: TabActionType.Paste,
+        };
+    };
+
+    const changeDefault = (index: number) => {
+        const updatedItems = items.map((item, itemIndex) => ({
             ...item,
             isDefault: index === itemIndex,
         }));
 
         return {
-            items,
-            selectedItemIndex: this.props.selectedItemIndex,
+            items: updatedItems,
+            selectedItemIndex,
         };
-    }
+    };
 
-    changeChosen(index: number) {
-        const {selectedItemIndex} = this.props;
+    const changeChosen = (index: number) => {
         if (selectedItemIndex === index) {
             return null;
         }
-        let items = this.props.items;
-        if (items[selectedItemIndex].title?.trim() === '') {
-            items = items.map((item, i) => {
+        let updatedItems = items;
+        if (updatedItems[selectedItemIndex].title?.trim() === '') {
+            updatedItems = updatedItems.map((item, i) => {
                 if (i === selectedItemIndex) {
-                    return {...item, title: this.tabText(selectedItemIndex)};
+                    return {...item, title: getTabText(selectedItemIndex)};
                 }
                 return item;
             });
         }
         return {
-            items,
+            items: updatedItems,
             selectedItemIndex: index,
-            action: 'changeChosen',
+            action: TabActionType.ChangeChosen,
         };
-    }
+    };
 
-    delete(index: number) {
-        const items = this.props.items.filter((_, itemIndex) => index !== itemIndex);
-        const isDeletingChosenItem = this.props.selectedItemIndex === index;
-        let {selectedItemIndex} = this.props;
+    const removeItem = (index: number) => {
+        const updatedItems = items.filter((_, itemIndex) => index !== itemIndex);
+        const isDeletingChosenItem = selectedItemIndex === index;
+        let updatedSelectedItemIndex = selectedItemIndex;
 
-        if (this.props.items[index].isDefault) {
-            items[Math.min(index, items.length - 1)].isDefault = true;
+        if (items[index].isDefault) {
+            updatedItems[Math.min(index, updatedItems.length - 1)].isDefault = true;
         }
 
         if (isDeletingChosenItem) {
-            selectedItemIndex = Math.min(index, items.length - 1);
+            updatedSelectedItemIndex = Math.min(index, updatedItems.length - 1);
         } else if (index < selectedItemIndex) {
-            selectedItemIndex = selectedItemIndex - 1;
+            updatedSelectedItemIndex = selectedItemIndex - 1;
         }
 
         return {
-            items,
-            selectedItemIndex,
+            items: updatedItems,
+            selectedItemIndex: updatedSelectedItemIndex,
         };
-    }
+    };
 
-    moveItem = (dragIndex: number, hoverIndex: number) => {
-        const {items} = this.props;
+    const onAction =
+        ({action, index}: {action: Exclude<TabActionType, 'skipped'>; index?: number}) =>
+        (event: React.MouseEvent) => {
+            event.stopPropagation();
+            let data;
+
+            if (index === undefined) {
+                data = action === TabActionType.Paste ? pasteItem() : addItem();
+            } else {
+                switch (action) {
+                    case TabActionType.ChangeChosen:
+                        data = changeChosen(index);
+                        break;
+                    case TabActionType.ChangeDefault:
+                        data = changeDefault(index);
+                        break;
+                    case TabActionType.Delete:
+                        data = removeItem(index);
+                        break;
+                }
+            }
+
+            if (data) {
+                onUpdate(data);
+            }
+        };
+
+    const onRemove = (removeItemdItemIndex: number) => {
+        onUpdate(removeItem(removeItemdItemIndex));
+    };
+
+    const onDuplicate = (itemIndex: number) => {
+        const item = items[itemIndex];
+        onUpdate(pasteItem({...item}, itemIndex + 1));
+    };
+
+    const moveItem = (dragIndex: number, hoverIndex: number) => {
         const dragItem = items[dragIndex];
 
         const newItems = update(items, {
@@ -166,8 +201,7 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                 [hoverIndex, 0, dragItem],
             ],
         });
-
-        let {selectedItemIndex} = this.props;
+        let updatedSelectedItemIndex = selectedItemIndex;
 
         const selectedItemIndexWasChanged =
             (dragIndex <= selectedItemIndex && hoverIndex >= selectedItemIndex) ||
@@ -177,22 +211,80 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
 
         if (selectedItemIndexWasChanged) {
             if (selectedItemIndex === dragIndex) {
-                selectedItemIndex = hoverIndex; // if the active element itself was dragged
+                updatedSelectedItemIndex = hoverIndex; // if the active element itself was dragged
             } else {
-                selectedItemIndex =
-                    dragIndex < hoverIndex
-                        ? this.props.selectedItemIndex - 1
-                        : this.props.selectedItemIndex + 1;
+                updatedSelectedItemIndex =
+                    dragIndex < hoverIndex ? selectedItemIndex - 1 : selectedItemIndex + 1;
             }
         }
 
-        this.props.update({
+        onUpdate({
             items: newItems,
-            selectedItemIndex,
+            selectedItemIndex: updatedSelectedItemIndex,
         });
     };
 
-    renderListWithMenu = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
+    const renderButtons = () => {
+        if (addButtonView === 'flat') {
+            return (
+                <div className={b('buttons-row', {flat: true})}>
+                    <div
+                        className={b('action-button')}
+                        onClick={onAction({action: TabActionType.Add})}
+                        data-qa={TabMenuQA.Add}
+                    >
+                        <Icon
+                            data={Plus}
+                            className={b('action-button-icon', tabIconMixin)}
+                            width={ADD_BUTTON_DEFAULT_SIZE}
+                        />
+                        <span>
+                            {addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}
+                        </span>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className={b('buttons-row', {outlined: true})}>
+                <Button
+                    className={b('action-button')}
+                    onClick={onAction({action: TabActionType.Add})}
+                    qa={TabMenuQA.Add}
+                    view="outlined"
+                    width="max"
+                >
+                    <Icon
+                        data={Plus}
+                        className={b('action-button-icon', tabIconMixin)}
+                        width={ADD_BUTTON_DEFAULT_SIZE}
+                    />
+                    <span>{addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}</span>
+                </Button>
+                {pasteConfig && (
+                    <Button
+                        view="outlined"
+                        className={b('action-button')}
+                        onClick={onAction({action: TabActionType.Paste})}
+                        qa={TabMenuQA.Paste}
+                        width="max"
+                    >
+                        <Icon
+                            data={CopyPlus}
+                            className={b('action-button-icon', tabIconMixin)}
+                            width={ADD_BUTTON_DEFAULT_SIZE}
+                        />
+                        <span>
+                            {pasteButtonText || i18n('dash.widget-dialog.edit', 'button_add')}
+                        </span>
+                    </Button>
+                )}
+            </div>
+        );
+    };
+
+    const renderListWithMenu = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
         return (
             <ListWithMenu
                 list={{
@@ -203,43 +295,28 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                     deactivateOnLeave: true,
                     selectedItemIndex,
                     className: b('list'),
-                    onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
+                    onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
                     itemClassName: b('list-item'),
                 }}
-                onRemove={this.onRemove}
-                onAction={this.onAction}
+                onRemove={onRemove}
+                onAction={onAction}
+                onDuplicate={onDuplicate}
                 iconOnHover={true}
+                onCopy={onCopyItem}
             />
         );
     };
 
-    renderListWithRemove = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
-        return (
-            <ListWithRemove
-                list={{
-                    items,
-                    filterable: false,
-                    sortable: true,
-                    virtualized: false,
-                    selectedItemIndex,
-                    className: b('list'),
-                    onSortEnd: ({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex),
-                    renderItem: this.starListRenderer,
-                    itemClassName: b('list-item'),
-                }}
-                onRemove={this.onRemove}
-                iconOnHover={true}
-                disableSingleItemRemove={true}
-            />
-        );
-    };
-
-    starListRenderer = ({title, isDefault}: TabMenuItemData<T>, _: boolean, itemIndex: number) => {
+    const renderStarListItem = (
+        {title, isDefault}: TabMenuItemData<T>,
+        _: boolean,
+        itemIndex: number,
+    ) => {
         return (
             <div
                 className={b('item')}
-                onClick={this.onAction({
-                    action: 'changeChosen',
+                onClick={onAction({
+                    action: TabActionType.ChangeChosen,
                     index: itemIndex,
                 })}
                 key={itemIndex}
@@ -248,8 +325,8 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
                 <div className={b('item-content')}>
                     <span
                         className={b('item-star')}
-                        onClick={this.onAction({
-                            action: 'changeDefault',
+                        onClick={onAction({
+                            action: TabActionType.ChangeDefault,
                             index: itemIndex,
                         })}
                     >
@@ -268,4 +345,34 @@ export class TabMenu<T> extends React.PureComponent<TabMenuProps<T>> {
             </div>
         );
     };
-}
+
+    const renderListWithRemove = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
+        return (
+            <ListWithRemove
+                list={{
+                    items,
+                    filterable: false,
+                    sortable: true,
+                    virtualized: false,
+                    selectedItemIndex,
+                    className: b('list'),
+                    onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
+                    renderItem: renderStarListItem,
+                    itemClassName: b('list-item'),
+                }}
+                onRemove={onRemove}
+                iconOnHover={true}
+                disableSingleItemRemove={true}
+            />
+        );
+    };
+
+    return (
+        <div className={b({view: addButtonView})}>
+            {enableActionMenu
+                ? renderListWithMenu(items, selectedItemIndex)
+                : renderListWithRemove(items, selectedItemIndex)}
+            {renderButtons()}
+        </div>
+    );
+};

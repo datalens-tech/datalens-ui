@@ -8,8 +8,8 @@ import {selectEntryFromNavigationMenu} from '../../utils';
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Datasets', () => {
         datalensTest('Replace dataset', async ({page, config}) => {
-            const prevDatasetName = config.wizard.datasets.Basic.name;
-            const nextDatasetName = config.wizard.datasets.Orders.name;
+            const prevDatasetName = config.datasets.entities.Basic.name;
+            const nextDatasetName = config.datasets.entities.Orders.name;
 
             await openTestPage(page, config.wizard.urls.NewWizardChart);
 

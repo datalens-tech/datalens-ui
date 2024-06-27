@@ -47,7 +47,6 @@ export const reducer = (state: State, action: Action) => {
                 status,
                 loadedData,
                 loadingItems: false,
-                isInit: true,
                 showSilentLoader: false,
                 control,
             };
@@ -61,7 +60,6 @@ export const reducer = (state: State, action: Action) => {
                 status,
                 errorData,
                 loadingItems: false,
-                isInit: true,
                 showSilentLoader: false,
             };
         }
