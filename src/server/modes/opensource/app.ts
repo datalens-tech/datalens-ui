@@ -55,9 +55,8 @@ export default function initApp(nodekit: NodeKit) {
         routes[route] = params;
     });
 
-    
     var oidcRoutes = auth({
-        issuerBaseURL: 'https://51e6-94-232-56-134.ngrok-free.app/dev/.well-known/openid-configuration',
+        issuerBaseURL: 'https://a3f6-94-232-56-134.ngrok-free.app/dev/.well-known/openid-configuration',
         baseURL: 'http://localhost:3030/auth/v1/oidc',
         clientID: 'oidcCLIENT',
         secret: 'secret777',
@@ -70,9 +69,14 @@ export default function initApp(nodekit: NodeKit) {
         },
     });
     var expressKit = new ExpressKit(nodekit, routes);
-    //debugger;
+  
     expressKit.express.use('/auth/v1/oidc/', oidcRoutes);
-    expressKit.express.get('/auth/v1/oidc/', (req, res, next) => {
+    expressKit.express.get('/auth/v1/oidc/', async (req, res, next) => {
+        var r:any = req;
+        if(await r.oidc.isAuthenticated()) {
+            const userInfo = await r.oidc.fetchUserInfo();
+            console.log(userInfo);
+        }
         res.redirect('/')
     });
     return expressKit;
