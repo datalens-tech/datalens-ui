@@ -113,7 +113,7 @@ export const getCellOnClick = (row: DataTableData | undefined, columnName: strin
     return onClick;
 };
 
-export const hasGroups = (head: TableHead[]): boolean => {
+export const hasGroups = (head: TableHead[] = []): boolean => {
     return head.some(
         (column) =>
             (column && 'group' in column && column.group) ||
