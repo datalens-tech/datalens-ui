@@ -323,22 +323,26 @@ function prepareChartEditorApi({
     widgetConfig: DashWidgetConfig['widgetConfig'];
     ChartEditor: NodeJS.Dict<any>;
 }) {
-    jail.setSync('_shared', JSON.stringify(shared));
-    jail.setSync('_params', JSON.stringify(params));
-    jail.setSync('_actionParams', JSON.stringify(actionParams));
-    jail.setSync('_widgetConfig', JSON.stringify(widgetConfig));
+    jail.setSync('_ChartEditor_shared', JSON.stringify(shared));
+    jail.setSync('_ChartEditor_params', JSON.stringify(params));
+    jail.setSync('_ChartEditor_actionParams', JSON.stringify(actionParams));
+    jail.setSync('_ChartEditor_widgetConfig', JSON.stringify(widgetConfig));
 
     if (name === 'Urls') {
-        jail.setSync('_getSortParams', JSON.stringify(getSortParams(params)));
+        jail.setSync('_ChartEditor_getSortParams', JSON.stringify(getSortParams(params)));
     }
 
     if (name === 'Urls' || name === 'JavaScript') {
         const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-        jail.setSync('_getCurrentPage', isNaN(page) ? 1 : page);
+        jail.setSync('getCurrentPage', isNaN(page) ? 1 : page);
     }
 
     if (name === 'UI' || name === 'JavaScript') {
-        jail.setSync('_getLoadedData', JSON.stringify(loadedData));
+        jail.setSync('_ChartEditor_getLoadedData', JSON.stringify(loadedData));
+        jail.setSync('_ChartEditor_setDataSourceInfo', (dataSourceKey: string, info: string) => {
+            const parsedInfo = JSON.parse(info);
+            ChartEditor.setDataSourceInfo(dataSourceKey, parsedInfo);
+        });
         if (name === 'JavaScript') {
             jail.setSync('_ChartEditor_updateHighchartsConfig', (updatedFragment: string) => {
                 const parsedUpdatedFragment = JSON.parse(updatedFragment);
