@@ -14,6 +14,9 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import {generateHtml} from '../../html-generator';
 
+export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
+export const UI_SANDBOX_FN_TIME_LIMIT = 100;
+
 /**
  * Config value to check. It could have any type.
  *
@@ -159,14 +162,13 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
     vmFunctionContext.dispose();
 };
 
-const UI_SANDBOX_EXEC_TIMEOUT = 100;
 const getUnwrappedFunction = (
     sandbox: QuickJSWASMModule,
     wrappedFn: UISandboxWrappedFunction,
     options?: UiSandboxRuntimeOptions,
 ) => {
     return function (this: unknown, ...args: unknown[]) {
-        if (options?.totalTimeLimit <= 0) {
+        if (options?.totalTimeLimit && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
                 code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
             });
@@ -176,7 +178,7 @@ const getUnwrappedFunction = (
         Performance.mark(runId);
         const runtime = sandbox.newRuntime();
 
-        const execTimeout = Math.min(UI_SANDBOX_EXEC_TIMEOUT, options?.totalTimeLimit ?? Infinity);
+        const execTimeout = Math.min(UI_SANDBOX_FN_TIME_LIMIT, options?.totalTimeLimit ?? Infinity);
         runtime.setInterruptHandler(getInterruptAfterDeadlineHandler(Date.now() + execTimeout));
 
         const vm = runtime.newContext();
@@ -209,9 +211,9 @@ const getUnwrappedFunction = (
         runtime.dispose();
 
         const resultValue = unwrapHtml(value);
-        const performance: number = Performance.getDuration(runId);
+        const performance = Performance.getDuration(runId);
         if (options?.totalTimeLimit) {
-            options.totalTimeLimit = Math.max(0, options.totalTimeLimit - performance);
+            options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
         }
 
         return resultValue;

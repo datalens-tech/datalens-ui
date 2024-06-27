@@ -28,6 +28,7 @@ import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import type {UiSandboxRuntimeOptions} from './ui-sandbox';
 import {
+    UI_SANDBOX_TOTAL_TIME_LIMIT,
     getUISandbox,
     processHtmlFields,
     shouldUseUISandbox,
@@ -301,9 +302,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 shouldUseUISandbox(result.data)
             ) {
                 const uiSandbox = await getUISandbox();
-                const uiSandboxOptions: UiSandboxRuntimeOptions = {totalTimeLimit: 3000};
-                if (get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
-                    delete uiSandboxOptions.totalTimeLimit;
+                const uiSandboxOptions: UiSandboxRuntimeOptions = {};
+                if (!get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                    uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
                 unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
