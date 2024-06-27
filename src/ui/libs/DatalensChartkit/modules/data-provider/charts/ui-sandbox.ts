@@ -1,6 +1,6 @@
 import escape from 'lodash/escape';
 import pick from 'lodash/pick';
-import type {QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
+import type {InterruptHandler, QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
@@ -18,14 +18,16 @@ import {generateHtml} from '../../html-generator';
 type TargetValue = any;
 
 let uiSandbox: QuickJSWASMModule | undefined;
+let getInterruptAfterDeadlineHandler: (deadline: Date | number) => InterruptHandler;
 
 export const getUISandbox = async () => {
     try {
-        const {getQuickJS} = await import(
+        const {getQuickJS, shouldInterruptAfterDeadline} = await import(
             /* webpackChunkName: "ui-sandbox" */ 'quickjs-emscripten'
         );
         if (!uiSandbox) {
             uiSandbox = await getQuickJS();
+            getInterruptAfterDeadlineHandler = shouldInterruptAfterDeadline;
         }
     } catch {
         throw new ChartKitCustomError(null, {details: 'Failed to load QuickJSWASMModule'});
@@ -152,9 +154,16 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
     vmFunctionContext.dispose();
 };
 
+const UI_SANDBOX_EXEC_TIMEOUT = 100;
 const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWrappedFunction) => {
     return function (this: unknown, ...args: unknown[]) {
-        const vm = sandbox.newContext();
+        const runtime = sandbox.newRuntime();
+
+        runtime.setInterruptHandler(
+            getInterruptAfterDeadlineHandler(Date.now() + UI_SANDBOX_EXEC_TIMEOUT),
+        );
+
+        const vm = runtime.newContext();
         defineVmArguments(vm, args, wrappedFn.args);
         defineVmContext(vm, this);
         defineVmGlobalAPI(vm);
@@ -181,6 +190,7 @@ const getUnwrappedFunction = (sandbox: QuickJSWASMModule, wrappedFn: UISandboxWr
         }
 
         vm.dispose();
+        runtime.dispose();
 
         return unwrapHtml(value);
     };
