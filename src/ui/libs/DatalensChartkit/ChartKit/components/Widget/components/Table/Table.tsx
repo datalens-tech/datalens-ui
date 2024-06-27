@@ -293,7 +293,6 @@ export class Table extends React.PureComponent<TableProps, TableState> {
 
         const tableSettings: Settings = {
             displayIndices: false,
-            highlightRows: !isHasGroups,
             headerMod: 'multiline',
             // width of the columns is buggy if not static (use on demand)
             dynamicRender: dynamicMode,

@@ -4,12 +4,10 @@ import get from 'lodash/get';
 import has from 'lodash/has';
 import set from 'lodash/set';
 import {Feature} from 'shared';
-import type {TableHead} from 'shared';
 import Utils from 'ui/utils';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
-import type {TableWidgetProps} from '../plugins/Table/types';
 import type {ChartKitAdapterProps} from '../types';
 
 import {applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
@@ -203,20 +201,6 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                 loadedData: data,
                 onChange,
             });
-        }
-        case 'table': {
-            const data = cloneDeep(loadedData || {}) as TableWidgetProps['data'];
-            const head = get(data, ['data', 'head'], []) as TableHead[];
-            const hasGroups = head.some((th) => get(th, 'group', false));
-
-            if (data?.config) {
-                data.config.settings = {
-                    ...data.config.settings,
-                    highlightRows: !hasGroups,
-                };
-            }
-
-            return data;
         }
         default: {
             return loadedData as ChartKitProps<T>['data'];

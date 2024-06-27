@@ -1,21 +1,48 @@
 import React from 'react';
 
-import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartkit';
+import type {ChartKitLang, ChartKitProps, ChartKitRef, ChartKitType} from '@gravity-ui/chartkit';
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
+import get from 'lodash/get';
+import type {TableHead} from 'shared';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 
 import {registry} from '../../../registry';
 import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError/ChartkitError';
 import DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import type {LoadedWidgetData} from '../types';
 
 import {ChartKit} from './ChartKit';
 import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkit-adapter';
 import {I18N as modulesI18n} from './modules/i18n/i18n';
+import type {TableWidgetProps} from './plugins/Table/types';
 import type {ChartKitAdapterProps} from './types';
+
+/**
+ * Temporary hook for preparing `loadedData` that will being sharing between OS ChartKit and local ChartKit
+ */
+const useLoadedData = (props: {chartkitType?: ChartKitType; loadedData?: LoadedWidgetData}) => {
+    const loadedData = React.useMemo(() => {
+        if (props.chartkitType === 'table') {
+            const data = (props.loadedData || {}) as TableWidgetProps['data'];
+            const head = get(data, ['data', 'head'], []) as TableHead[];
+            const hasGroups = head.some((th) => get(th, 'group', false));
+
+            if (data?.config && typeof data?.config?.settings?.highlightRows === 'undefined') {
+                data.config.settings = {
+                    ...data.config.settings,
+                    highlightRows: !hasGroups,
+                };
+            }
+        }
+
+        return props.loadedData;
+    }, [props.chartkitType, props.loadedData]);
+
+    return {loadedData};
+};
 
 const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
     const {
-        loadedData,
         lang,
         isMobile,
         splitTooltip,
@@ -30,9 +57,9 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
 
     const chartkitType = React.useMemo(() => {
         const getChartkitType = registry.chart.functions.get('getChartkitType');
-        return getChartkitType(loadedData);
-    }, [loadedData]);
-
+        return getChartkitType(props.loadedData);
+    }, [props.loadedData]);
+    const {loadedData} = useLoadedData({chartkitType, loadedData: props.loadedData});
     const opensourceChartKitProps = React.useMemo(() => {
         const getFormatNumber = registry.common.functions.get('getFormatNumber');
         const {getChartkitHolidays, getChartkitPlugins} = registry.chart.functions.getAll();

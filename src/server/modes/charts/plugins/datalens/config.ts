@@ -77,7 +77,6 @@ type GraphConfig = BaseConfig &
 
 type TableConfig = BaseConfig & {
     settings: {
-        highlightRows?: boolean;
         externalSort?: boolean;
     };
     paginator?: {
