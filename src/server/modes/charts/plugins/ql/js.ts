@@ -103,13 +103,33 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         const datasetId = 'ql-mocked-dataset';
 
+        const orderedColumns = [...columns].sort((columnA, columnB) => {
+            return columnA.name > columnB.name ? 1 : -1;
+        });
+
+        const columnNames = new Set();
+
         // Converting dashsql columns to wizard fields
         const fields = columns.map((column) => {
             const guessedType = (column.biType ||
                 DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
 
+            let fieldGuid;
+
+            if (columnNames.has(column.name)) {
+                const orderedIndex = orderedColumns.findIndex(
+                    (orderedColumn) => orderedColumn.name === column.name,
+                );
+
+                fieldGuid = `${column.name}-${orderedIndex}`;
+            } else {
+                columnNames.add(column.name);
+
+                fieldGuid = column.name;
+            }
+
             return {
-                guid: column.name,
+                guid: fieldGuid,
                 title: column.name,
                 datasetId,
                 data_type: guessedType,
