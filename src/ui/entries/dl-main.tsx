@@ -4,6 +4,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router} from 'react-router-dom';
 import {Provider, useSelector} from 'react-redux';
+import {HotkeysProvider} from 'react-hotkeys-hook';
+
 import DialogManager from 'components/DialogManager/DialogManagerContainer';
 import {registerSDKDispatch} from 'libs/schematic-sdk/parse-error';
 import {Utils, DL} from 'ui';
@@ -13,6 +15,8 @@ import {renderDatalens} from '../datalens/render';
 import {getStore} from '../store/configure';
 import {selectTheme, selectThemeSettings} from '../store/selectors/user';
 import history from '../utils/history';
+
+import {HOTKEYS_SCOPES} from '../constants/misc';
 
 import '@gravity-ui/uikit/styles/styles.scss';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -33,10 +37,12 @@ const Content = () => {
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >
             <MobileProvider mobile={DL.IS_MOBILE}>
-                <React.Fragment>
-                    <DialogManager />
-                    <DatalensPage />
-                </React.Fragment>
+                <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
+                    <React.Fragment>
+                        <DialogManager />
+                        <DatalensPage />
+                    </React.Fragment>
+                </HotkeysProvider>
             </MobileProvider>
         </ThemeProvider>
     );

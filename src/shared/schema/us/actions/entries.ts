@@ -58,33 +58,6 @@ const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
-    getEmbed: createAction<any, any>({
-        method: 'GET',
-        path: (data) => { return `/embed?workbookId=${data.workbookId}&entryId=${data.entryId}&reject=${data.reject}` },
-        params: (_, headers) => ({
-            headers: {
-                ...headers
-            },
-        }),
-    }),
-    getRoles: createAction<any, any>({
-        method: 'GET',
-        path: (_) => { return `/roles` },
-        params: (_, headers) => ({
-            headers: {
-                ...headers
-            },
-        }),
-    }),
-    getAccesses: createAction<any, any>({
-        method: 'GET',
-        path: (data) => { return `/accesses?dl=${data.dl}` },
-        params: (_, headers) => ({
-            headers: {
-                ...headers
-            },
-        }),
-    }),
     encodeId: createAction<any, any>({
         method: 'GET',
         path: (data) => { return `/encodeId?id=${data.id}` },
@@ -103,57 +76,14 @@ export const entriesActions = {
             },
         }),
     }),
-    setAccesses: createAction<any, any>({
-        method: 'GET',
-        path: (data) => { return `/updateAccesses?dl=${data.dl}&role_id=${data.role_id}&select=${data.select}&add=${data.add}&update=${data.update}&delete=${data.delete}&destroy=${data.destroy}` },
-        params: (_, headers) => ({
-            headers: {
-                ...headers
-            },
-        }),
-    }),
-    tables: createAction<any, any>({
+    universalService: createAction<any, any>({
         method: 'POST',
-        path: () => { return `/tables` },
+        path: () => { return `/universal_service` },
         params: (body, headers) => {
             return {body, headers};
         },
     }),
-    createUser: createAction<any, any>({
-        method: 'POST',
-        path: () => { return `/create_user` },
-        params: (body, headers) => {
-            return {body, headers};
-        },
-    }),
-    updateUser: createAction<any, any>({
-        method: 'POST',
-        path: () => { return `/update_user` },
-        params: (body, headers) => {
-            return {body, headers};
-        },
-    }),
-    passwordReset: createAction<any, any>({
-        method: 'POST',
-        path: () => { return `/password_reset` },
-        params: (body, headers) => {
-            return {body, headers};
-        },
-    }),
-    updateRoles: createAction<any, any>({
-        method: 'POST',
-        path: () => { return `/update_roles` },
-        params: (body, headers) => {
-            return {body, headers};
-        },
-    }),
-    users: createAction<any, any>({
-        method: 'POST',
-        path: () => { return `/users` },
-        params: (body, headers) => {
-            return {body, headers};
-        },
-    }),
+
     getAuth: createAction<any, any>({
         method: 'GET',
         path: (data) => { 

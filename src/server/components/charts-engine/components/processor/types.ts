@@ -93,6 +93,7 @@ export type UserConfig = {
     overlayControls?: Record<string, string>;
     notOverlayControls?: boolean;
     comments?: CommentsFetcherPrepareCommentsParams['config'];
+    enableJsAndHtml?: boolean;
 };
 
 export type NativeModule = {

@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.CustomAccessDescription,
+    name: Feature.RelatedEntitiesList,
     state: {
-        development: false,
-        production: false,
+        development: true,
+        production: true,
     },
 });

@@ -1,3 +1,5 @@
 {
-  "button_delete": "Удалить"
+  "button_copy": "Копировать в буфер",
+  "button_delete": "Удалить",
+  "button_duplicate": "Дублировать"
 }

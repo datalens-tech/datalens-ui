@@ -41,12 +41,6 @@ export type HighchartsSeriesCustomObject = {
     segmentTitle?: string;
 };
 
-export const enum TableFieldDisplayMode {
-    Auto = 'auto',
-    Visible = 'visible',
-    Hidden = 'hidden',
-}
-
 export const enum AxisMode {
     Discrete = 'discrete',
     Continuous = 'continuous',
@@ -55,4 +49,10 @@ export const enum AxisMode {
 export const enum AxisLabelFormatMode {
     Auto = 'auto',
     ByField = 'by-field',
+}
+
+export const enum AxisNullsMode {
+    Ignore = 'ignore',
+    Connect = 'connect',
+    AsZero = 'as-0',
 }

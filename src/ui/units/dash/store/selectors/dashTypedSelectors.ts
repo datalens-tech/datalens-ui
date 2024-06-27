@@ -338,6 +338,17 @@ export const selectOpenedItemData = createSelector(
     },
 );
 
+export const selectOpenedItem = createSelector(
+    [selectCurrentTab, selectDash],
+    (currentTab, dash) => {
+        if (dash.openedItemId && currentTab) {
+            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            return item;
+        }
+        return undefined;
+    },
+);
+
 export const selectIsControlSourceTypeHasChanged = createSelector(
     [selectOpenedItemData, selectSelectorSourceType],
     (openedItemData, sourceType) => {

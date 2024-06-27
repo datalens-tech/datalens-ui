@@ -7,6 +7,7 @@ import type {
     ServerField,
 } from '../../../../../../../../../shared';
 import {
+    AxisNullsMode,
     getFakeTitleOrTitle,
     isDateField,
     isMarkupField,
@@ -205,6 +206,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
         : undefined;
 
     const yFields = ySectionItems.map((ySectionItem) => ySectionItem.field);
+
     // eslint-disable-next-line complexity
     ySectionItems.forEach((mergedItem) => {
         const {field, lines, labelsValues, nullsSetting, isFirstSection} = mergedItem;
@@ -228,7 +230,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
 
         if (isNumericalDataType(yDataType)) {
             if (yValue === null) {
-                yValue = nullsSetting === 'as-0' ? 0 : null;
+                yValue = nullsSetting === AxisNullsMode.AsZero ? 0 : null;
             } else {
                 yValue = Number(yValue);
             }
@@ -356,6 +358,11 @@ export const prepareLines = (args: PrepareLinesArgs) => {
                 id: currentLine.legendTitle || currentLine.title,
             };
         }
+
+        if (keys.pointConflict) {
+            lines[keys.key].pointConflict = true;
+        }
+
         lines[keys.key].fieldTitle = getFakeTitleOrTitle(field);
     });
 };

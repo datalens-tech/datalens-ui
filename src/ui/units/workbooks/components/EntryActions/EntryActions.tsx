@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Copy, CopyArrowRight, FontCursor, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {CodeTrunk, Copy, CopyArrowRight, FontCursor, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
@@ -17,6 +17,7 @@ import {registry} from '../../../../registry';
 import type {WorkbookEntry} from '../../types';
 
 const i18n = I18n.keyset('new-workbooks');
+const commonMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const copyEntriesToWorkbookEnabled = Utils.isEnabledFeature(Feature.CopyEntriesToWorkbook);
 
@@ -28,6 +29,7 @@ type EntryActionsProps = {
     onAssignClaims: () => void;
     onDuplicateEntry: () => void;
     onCopyEntry: () => void;
+    onShowRelatedClick: () => void;
 };
 
 export const EntryActions = ({
@@ -38,6 +40,7 @@ export const EntryActions = ({
     onAssignClaims,
     onDuplicateEntry,
     onCopyEntry,
+    onShowRelatedClick,
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
@@ -74,6 +77,20 @@ export const EntryActions = ({
             : []),
         ...useAdditionalWorkbookEntryActions(entry, workbook),
     ];
+
+    if (Utils.isEnabledFeature(Feature.RelatedEntitiesList)) {
+        items.push([
+            {
+                action: onShowRelatedClick,
+                text: (
+                    <DropdownAction
+                        icon={CodeTrunk}
+                        text={commonMenuI18n('value_show-related-entities')}
+                    />
+                ),
+            },
+        ]);
+    }
 
     const otherActions: DropdownMenuItemMixed<unknown>[] = [];
 

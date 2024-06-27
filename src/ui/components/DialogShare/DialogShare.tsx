@@ -124,7 +124,6 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     React.useEffect(() => {
         setCurrentUrl((paramsUrl: URI) => {
-            debugger;
             let updatedLink = null;
             
             if(scope == EntryScope.Dash) {

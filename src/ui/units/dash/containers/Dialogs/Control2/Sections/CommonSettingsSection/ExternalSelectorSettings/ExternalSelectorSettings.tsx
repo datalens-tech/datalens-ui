@@ -10,6 +10,7 @@ import update, {Context} from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {ControlQA} from 'shared';
+import {EntryTypeNode} from 'ui/units/dash/modules/constants';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
@@ -96,6 +97,7 @@ const ExternalSelectorSettings = () => {
                 label={i18n('dash.control-dialog.edit', 'field_source')}
                 entryId={chartId}
                 onChange={handleChartIdChange}
+                includeClickableType={EntryTypeNode.CONTROL_NODE}
             />
 
             <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>

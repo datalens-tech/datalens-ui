@@ -1,7 +1,6 @@
 import type {SelectOption} from '@gravity-ui/uikit';
-import type {Field, Field as TField} from 'shared';
-import {DATASET_FIELD_TYPES, Feature, WizardVisualizationId, isMeasureName} from 'shared';
-import Utils from 'ui/utils';
+import type {Field as TField} from 'shared';
+import {DATASET_FIELD_TYPES} from 'shared';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -42,15 +41,3 @@ export const getFormattingDataType = (item: TField, cast: DATASET_FIELD_TYPES | 
 
     return item.data_type;
 };
-
-export function shouldUseDisplayModeSetting(
-    field: Field,
-    visualizationId: WizardVisualizationId | undefined,
-) {
-    return (
-        field &&
-        isMeasureName(field) &&
-        visualizationId === WizardVisualizationId.PivotTable &&
-        Utils.isEnabledFeature(Feature.PivotTableMeasureNames)
-    );
-}

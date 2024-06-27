@@ -24,6 +24,8 @@ $titleFontFamily: 'Arial', 'HelveticaNeue', 'Helvetica', sans-serif;
 $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
 .g-root {
+    --dl-navigation-breadcrumbs-height: 28px;
+
     --dl-color-border: var(--g-color-line-generic);
     --dl-color-border-solid: var(--g-color-line-generic-solid);
     --dl-color-progress-bar: var(--g-color-text-info);
@@ -42,6 +44,8 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-connection: #9a32a6;
     --dl-color-entity-dataset: #0abe05;
     --dl-color-entity-dashboard: #ff8c3c;
+
+    --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 
     &_theme_light {
         --ds-color-relation-line: #d9d9d9;

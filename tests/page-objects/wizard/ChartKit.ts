@@ -23,8 +23,6 @@ export default class ChartKit {
     geopointSelector = '.chartkit-yandex-map-chips';
     tooltipSelector = '.chartkit-tooltip';
     yMapSelector = '.chartkit-ymap';
-    legendMapSelector = '.chartkit-ymap-legend';
-    legendSelector = '.highcharts-legend-box';
     legendItemSelector = '.highcharts-legend-item';
     chartMenuSwitcher = slct('chart-dropdown-switcher');
     chartMenuList = slct('chart-dropdown-menu');
@@ -35,7 +33,7 @@ export default class ChartKit {
     navigator = '.highcharts-navigator';
     metricItemSelector = ['.chartkit-indicator__item', slct(ChartQa.Chart)].join();
     metricItemValueSelector = '.chartkit-indicator__item-value,.markup-metric-value';
-
+    metricItemTitleSelector = '.chartkit-indicator__item-title,.markup-metric-title';
     private drillArrowsSelector = '.chartkit-drill__drill-action';
     private breadcrumbsItemSelector = '.chartkit-drill .g-breadcrumbs__item';
     private breadcrumbsSwitcherSelector = '.chartkit-drill .g-breadcrumbs__switcher';

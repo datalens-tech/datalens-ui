@@ -1,12 +1,14 @@
 import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
 import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
+import passport from 'passport';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
+import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
 import {
     beforeAuthDefaults,
@@ -32,6 +34,10 @@ export default function initApp(nodekit: NodeKit) {
 
     registry.setupXlsxConverter(xlsxConverter);
 
+    if (nodekit.config.isZitadelEnabled) {
+        initZitadel({nodekit, beforeAuth});
+    }
+
     if (isFullMode || isDatalensMode) {
         initDataLensApp({beforeAuth, afterAuth});
     }
@@ -45,6 +51,7 @@ export default function initApp(nodekit: NodeKit) {
     const extendedRoutes = getRoutes({
         ctx: nodekit.ctx,
         chartsEngine,
+        passport,
         beforeAuth,
         afterAuth,
     });
@@ -113,7 +120,9 @@ function initChartsApp({
             configuredDashApiPlugin({
                 basePath: DASH_API_BASE_URL,
                 routeParams: {
-                    authPolicy: AuthPolicy.disabled,
+                    authPolicy: nodekit.config.isZitadelEnabled
+                        ? AuthPolicy.required
+                        : AuthPolicy.disabled,
                 },
                 privatePath: PUBLIC_API_DASH_API_BASE_URL,
                 privateRouteParams: {

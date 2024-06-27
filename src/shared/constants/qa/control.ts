@@ -20,6 +20,7 @@ export const ControlQA = {
     selectAcceptableItem: 'select-acceptable-item',
     selectAcceptableRemoveButton: 'select-acceptable-remove',
     chartkitControl: 'chartkit-control',
+    groupChartkitControl: 'group-chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
     filtersClear: 'filters-clear',
@@ -58,6 +59,8 @@ export const DialogGroupControlQa = {
     placementApplyButton: 'selectors-placement-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
+    copyControlButton: 'copy-control-button',
+    duplicateControlButton: 'duplicate-control-button',
 };
 
 export const DialogControlDateQa = {

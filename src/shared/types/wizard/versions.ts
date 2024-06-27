@@ -23,4 +23,6 @@ export enum ChartsConfigVersion {
     V9 = '9',
     // A new 'dimensions' section has been added to the pie chart, the old section 'dimensions' has been moved to 'colors'.
     V10 = '10',
+    // Added new field for displaying the title in the indicator charts.
+    V11 = '11',
 }

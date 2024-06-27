@@ -95,6 +95,8 @@ export const scatterPrepareBaseArgs = {
         order: [xField, yField, shapeField, colorField],
         totals: [],
     },
+    features: [],
+    shared: {},
 };
 
 export const scatterPrepareForQLArgs = {
@@ -257,6 +259,7 @@ export const scatterPrepareForQLArgs = {
     shapesConfig: {},
     segments: [],
     disableDefaultSorting: false,
+    features: [],
 };
 
 export const scatterPrepareForQLResult = {
@@ -270,6 +273,16 @@ export const scatterPrepareForQLResult = {
             color: '#4DA2F1',
             marker: {symbol: 'circle'},
             keys: ['y'],
+            custom: {
+                tooltipOptions: {
+                    colorTitle: '',
+                    pointTitle: '',
+                    shapeTitle: '',
+                    sizeTitle: '',
+                    xTitle: 'built_year',
+                    yTitle: 'iznos',
+                },
+            },
         },
     ],
     categories: ['1976', '1970', '1950'],

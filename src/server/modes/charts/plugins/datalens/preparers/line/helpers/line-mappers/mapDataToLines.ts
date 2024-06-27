@@ -88,6 +88,11 @@ export const mapDataToLines = ({
 
     const lastKey = typeof xValue === 'undefined' ? shownTitle : xValue;
 
-    lines[key].data[lastKey as string | number] = {value: yValue};
-    return {key, lastKey};
+    const targetLineKey = lastKey as string | number;
+
+    const pointConflict = typeof lines[key].data[targetLineKey] !== 'undefined';
+
+    lines[key].data[targetLineKey] = {value: yValue};
+
+    return {key, lastKey, pointConflict};
 };

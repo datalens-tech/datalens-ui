@@ -31,12 +31,16 @@ class NavigationInline extends React.Component {
     };
     state = {
         breadCrumbs: [],
+        isSomeItemSelected: false,
     };
     refEntries = React.createRef();
     setBreadCrumbs = (breadCrumbs) => {
         if (!isEqual(this.state.breadCrumbs, breadCrumbs)) {
             this.setState({breadCrumbs});
         }
+    };
+    onItemSelect = ({selectedItemsIds}) => {
+        this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
     };
     refresh = () => {
         if (this.refEntries.current) {
@@ -58,7 +62,7 @@ class NavigationInline extends React.Component {
                     place={place}
                     getPlaceParameters={getPlaceParameters}
                     onClick={onCrumbClick}
-                    enableMenu={true}
+                    enableMenu={!this.state.isSomeItemSelected}
                     getContextMenuItems={this.props.getContextMenuItems}
                     refresh={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}
@@ -96,6 +100,7 @@ class NavigationInline extends React.Component {
                         linkWrapper={linkWrapper}
                         getPlaceParameters={this.props.getPlaceParameters}
                         setBreadCrumbs={this.setBreadCrumbs}
+                        onItemSelect={this.onItemSelect}
                     />
                 </div>
             </div>

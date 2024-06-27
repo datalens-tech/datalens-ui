@@ -1,4 +1,10 @@
-import {AxisLabelFormatMode, AxisMode, LabelsPositions, LegendDisplayMode} from 'shared';
+import {
+    AxisLabelFormatMode,
+    AxisMode,
+    AxisNullsMode,
+    LabelsPositions,
+    LegendDisplayMode,
+} from 'shared';
 
 export * from './flatTable';
 export * from './pivotTable';
@@ -15,8 +21,10 @@ export * from './metric';
 export * from './combined-chart';
 export * from './scatter';
 export * from './bar-x';
+export * from './bar-y';
 
 import {BAR_X_D3_VISUALIZATION} from './bar-x';
+import {BAR_Y_100P_D3_VISUALIZATION, BAR_Y_D3_VISUALIZATION} from './bar-y';
 import {COMBINED_CHART_VISUALIZATION} from './combined-chart';
 import {DONUT_D3_VISUALIZATION, DONUT_VISUALIZATION} from './donut';
 import {FLAT_TABLE_VISUALIZATION} from './flatTable';
@@ -82,9 +90,9 @@ export const SETTINGS = {
         ANGLE: 'angle',
     },
     NULLS: {
-        IGNORE: 'ignore',
-        CONNECT: 'connect',
-        AS_ZERO: 'as-0',
+        IGNORE: AxisNullsMode.Ignore,
+        CONNECT: AxisNullsMode.Connect,
+        AS_ZERO: AxisNullsMode.AsZero,
     },
     HOLIDAYS: {
         ON: 'on',
@@ -159,7 +167,9 @@ export const VISUALIZATION_IDS = {
     COLUMN: COLUMN_VISUALIZATION.id,
     COLUMN_100P: COLUMN_100P_VISUALIZATION.id,
     BAR: BAR_VISUALIZATION.id,
+    BAR_Y_D3: BAR_Y_D3_VISUALIZATION.id,
     BAR_100P: BAR_100P_VISUALIZATION.id,
+    BAR_Y_100P_D3: BAR_Y_100P_D3_VISUALIZATION.id,
     SCATTER: SCATTER_VISUALIZATION.id,
     PIE: PIE_VISUALIZATION.id,
     METRIC: METRIC_VISUALIZATION.id,

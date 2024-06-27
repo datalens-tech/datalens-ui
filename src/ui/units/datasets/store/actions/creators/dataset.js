@@ -4,6 +4,7 @@ import _debounce from 'lodash/debounce';
 import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import {Utils, sdk} from 'ui';
 
+
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
@@ -15,8 +16,12 @@ import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
     addAvatarPrototypes,
+    clearDatasetPreview,
     clearToasters,
+    closePreview,
     disableSaveDataset,
+    fetchPreviewDataset,
+    queuePreviewToOpen,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
@@ -109,29 +114,6 @@ export function updateDatasetByValidation({
             updates,
             sourceErrors,
         });
-    };
-}
-
-export function refetchPreviewDataset() {
-    return (dispatch, getState) => {
-        const {
-            dataset: {
-                id: datasetId,
-                content: {result_schema: resultSchema},
-                preview: {amountPreviewRows} = {},
-            } = {},
-        } = getState();
-
-        const workbookId = workbookIdSelector(getState());
-
-        dispatch(
-            fetchPreviewDataset({
-                datasetId,
-                workbookId,
-                resultSchema,
-                limit: amountPreviewRows,
-            }),
-        );
     };
 }
 
@@ -245,20 +227,28 @@ export function initialFetchDataset({datasetId}) {
 
             const {
                 dataset: {
-                    content: {result_schema: resultSchema},
+                    content: {
+                        result_schema: resultSchema,
+                        load_preview_by_default: loadPreviewByDefault,
+                    },
                     preview: {amountPreviewRows} = {},
                 } = {},
             } = getState();
 
             if (previewEnabled) {
-                dispatch(
-                    fetchPreviewDataset({
-                        datasetId,
-                        workbookId,
-                        resultSchema,
-                        limit: amountPreviewRows,
-                    }),
-                );
+                if (loadPreviewByDefault) {
+                    dispatch(
+                        fetchPreviewDataset({
+                            datasetId,
+                            workbookId,
+                            resultSchema,
+                            limit: amountPreviewRows,
+                        }),
+                    );
+                } else {
+                    dispatch(closePreview());
+                    dispatch(queuePreviewToOpen(true));
+                }
             }
         } catch (error) {
             logger.logError('dataset: initialFetchDataset failed', error);
@@ -304,93 +294,6 @@ export function fetchDataset({datasetId}) {
             });
         }
     };
-}
-
-function clearDatasetPreview() {
-    return (dispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.CLEAR_PREVIEW,
-            payload: {},
-        });
-    };
-}
-
-const dispatchFetchPreviewDataset = async (
-    {datasetId, workbookId, resultSchema, limit},
-    dispatch,
-    getState,
-) => {
-    try {
-        dispatch({
-            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_REQUEST,
-            payload: {},
-        });
-        const {
-            dataset: {
-                content,
-                validation: {isLoading},
-            },
-        } = getState();
-        let previewDataset = {};
-
-        if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview(
-                {
-                    datasetId,
-                    workbookId,
-                    limit,
-                    dataset: content,
-                    version: 'draft',
-                },
-                {timeout: TIMEOUT_100_SEC},
-            );
-        } else {
-            return dispatch(clearDatasetPreview());
-        }
-
-        const {result: {regular, data} = {}} = previewDataset;
-
-        dispatch({
-            type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_SUCCESS,
-            payload: {
-                data: data || regular,
-            },
-        });
-    } catch (error) {
-        if (!sdk.isCancel(error)) {
-            logger.logError('dataset: dispatchFetchPreviewDataset failed', error);
-            dispatch({
-                type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_FAILURE,
-                payload: {
-                    error,
-                },
-            });
-        }
-    }
-};
-
-const debouncedFetchPreviewDataset = _debounce(dispatchFetchPreviewDataset, 3000);
-
-export function fetchPreviewDataset({
-    datasetId,
-    workbookId,
-    resultSchema,
-    limit = 100,
-    debounceEnabled = false,
-}) {
-    return debounceEnabled
-        ? debouncedFetchPreviewDataset.bind(this, {
-              datasetId,
-              workbookId,
-              resultSchema,
-              limit,
-          })
-        : dispatchFetchPreviewDataset.bind(this, {
-              datasetId,
-              workbookId,
-              resultSchema,
-              limit,
-          });
 }
 
 // There is no key field in the workbooks when creating

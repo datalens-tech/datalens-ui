@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {FormRow} from '@gravity-ui/components';
+import {FormRow, HelpPopover} from '@gravity-ui/components';
 import {TextInput} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
@@ -11,14 +11,13 @@ import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedS
 
 export type ParameterNameInputProps = {
     label: string;
+    note?: string;
 };
 export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
     props: ParameterNameInputProps,
 ) => {
     const dispatch = useDispatch();
     const {fieldName, validation} = useSelector(selectSelectorDialog);
-
-    const {label} = props;
 
     const handleFieldNameUpdate = React.useCallback((value: string) => {
         dispatch(
@@ -29,6 +28,19 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
     }, []);
 
     const value = fieldName ?? '';
+
+    const label = props.note ? (
+        <React.Fragment>
+            <span>{props.label}</span>
+            <HelpPopover
+                htmlContent={props.note}
+                placement={['bottom', 'top']}
+                offset={{top: -1, left: 5}}
+            />
+        </React.Fragment>
+    ) : (
+        props.label
+    );
 
     return (
         <FormRow label={label}>

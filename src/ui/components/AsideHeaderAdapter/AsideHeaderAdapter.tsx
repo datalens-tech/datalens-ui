@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
+import {ArrowRightFromSquare, CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
 import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import {List} from '@gravity-ui/uikit';
@@ -151,6 +151,20 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
                 },
             },
+            ...(DL.ZITADEL_ENABLED
+                ? [
+                      {
+                          id: 'logout',
+                          title: i18n('label_logout'),
+                          icon: ArrowRightFromSquare,
+                          iconSize: 16,
+                          tooltipText: i18n('label_logout'),
+                          onItemClick: () => {
+                              window.location.assign('/logout');
+                          },
+                      },
+                  ]
+                : []),
         ],
         [pathname],
     );

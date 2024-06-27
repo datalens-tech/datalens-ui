@@ -1,14 +1,6 @@
 import {mapColumnsToHeadCellData} from '../table-head-generator';
 import type {PivotDataColumn} from '../types';
 
-jest.mock('../../../../../../../registry', () => ({
-    registry: {
-        getApp() {
-            return {};
-        },
-    },
-}));
-
 const input1: PivotDataColumn[] = [
     [[['Furniture', 90, 90]]],
     [[['Office Supplies', 90, 90]]],

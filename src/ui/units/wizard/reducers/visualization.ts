@@ -51,6 +51,7 @@ import {
     SET_TOOLTIPS,
     SET_VISUALIZATION,
     SET_VISUALIZATION_PLACEHOLDER_ITEMS,
+    SET_Y_AXIS_CONFLICT,
     UPDATE_LAYERS,
     UPDATE_PLACEHOLDER_SETTINGS,
 } from '../actions/visualization';
@@ -81,6 +82,7 @@ export interface VisualizationState {
     dashboardParameters: Field[];
     distincts?: Record<string, string[]>;
     drillDownLevel: number;
+    pointConflict?: boolean;
 }
 
 const initialState: VisualizationState = {
@@ -175,31 +177,41 @@ export function visualization(
                     case 'line-column':
                     case 'line-column100p':
                     case 'line-bar':
+                    case 'line-bar-y-d3':
                     case 'line-bar100p':
+                    case 'line-bar-y-100p-d3':
                     case 'line-treemap':
                     case 'area-line':
                     case 'area-area100p':
                     case 'area-column':
                     case 'area-column100p':
                     case 'area-bar':
+                    case 'area-bar-y-d3':
                     case 'area-bar100p':
+                    case 'area-bar-y-100p-d3':
                     case 'area100p-line':
                     case 'area100p-area':
                     case 'area100p-column':
                     case 'area100p-column100p':
                     case 'area100p-bar':
+                    case 'area100p-bar-y-d3':
                     case 'area100p-bar100p':
+                    case 'area100p-bar-y-100p-d3':
                     case 'column-line':
                     case 'column-area':
                     case 'column-area100p':
                     case 'column-bar':
+                    case 'column-bar-y-d3':
                     case 'column-bar100p':
+                    case 'column-bar-y-100p-d3':
                     case 'column-column100p':
                     case 'column100p-line':
                     case 'column100p-area':
                     case 'column100p-column':
                     case 'column100p-bar':
+                    case 'column100p-bar-y-d3':
                     case 'column100p-bar100p':
+                    case 'column100p-bar-y-100p-d3':
                     case 'column100p-area100p':
                     case 'bar-line':
                     case 'bar-area':
@@ -207,19 +219,30 @@ export function visualization(
                     case 'bar-column':
                     case 'bar-column100p':
                     case 'bar-bar100p':
+                    case 'bar-bar-y-100p-d3':
+                    case 'bar-y-d3-line':
+                    case 'bar-y-d3-area':
+                    case 'bar-y-d3-area100p':
+                    case 'bar-y-d3-column':
+                    case 'bar-y-d3-column100p':
+                    case 'bar-y-d3-bar100p':
+                    case 'bar-y-d3-bar-y-100p-d3':
                     case 'bar100p-line':
                     case 'bar100p-area':
                     case 'bar100p-area100p':
                     case 'bar100p-column':
                     case 'bar100p-column100p':
                     case 'bar100p-bar':
+                    case 'bar100p-bar-y-d3':
                     case 'treemap-line':
                     case 'treemap-area':
                     case 'treemap-area100p':
                     case 'treemap-column':
                     case 'treemap-column100p':
                     case 'treemap-bar':
+                    case 'treemap-bar-y-d3':
                     case 'treemap-bar100p':
+                    case 'treemap-bar-y-100p-d3':
                     case 'line-line-d3':
                     case 'line-d3-line':
                         if (oldPlaceholders[0].items.length) {
@@ -249,7 +272,9 @@ export function visualization(
                     case 'pie-column':
                     case 'pie-column100p':
                     case 'pie-bar':
+                    case 'pie-bar-y-d3':
                     case 'pie-bar100p':
+                    case 'pie-bar-y-100p-d3':
                     case 'pie-scatter':
                     case 'donut-line':
                     case 'donut-area':
@@ -257,7 +282,9 @@ export function visualization(
                     case 'donut-column':
                     case 'donut-column100p':
                     case 'donut-bar':
+                    case 'donut-bar-y-d3':
                     case 'donut-bar100p':
+                    case 'donut-bar-y-100p-d3':
                     case 'donut-scatter':
                     case 'pie-treemap':
                     case 'donut-treemap': {
@@ -295,6 +322,7 @@ export function visualization(
                     case 'column-pie':
                     case 'column100p-pie':
                     case 'bar-pie':
+                    case 'bar-y-d3-pie':
                     case 'bar100p-pie':
                     case 'treemap-pie':
                     case 'line-donut':
@@ -303,6 +331,7 @@ export function visualization(
                     case 'column-donut':
                     case 'column100p-donut':
                     case 'bar-donut':
+                    case 'bar-y-donut':
                     case 'bar100p-donut':
                     case 'treemap-donut': {
                         const colorPlaceholder = placeholders.find(
@@ -333,6 +362,7 @@ export function visualization(
                     case 'column-treemap':
                     case 'column100p-treemap':
                     case 'bar-treemap':
+                    case 'bar-y-d3-treemap':
                     case 'bar100p-treemap':
                     case 'line-scatter':
                     case 'area-scatter':
@@ -340,6 +370,7 @@ export function visualization(
                     case 'column-scatter':
                     case 'column100p-scatter':
                     case 'bar-scatter':
+                    case 'bar-y-d3-scatter':
                     case 'bar100p-scatter':
                     case 'treemap-scatter':
                         if (oldPlaceholders[0].items.length) {
@@ -358,6 +389,7 @@ export function visualization(
                     case 'column-flatTable':
                     case 'column100p-flatTable':
                     case 'bar-flatTable':
+                    case 'bar-y-d3-flatTable':
                     case 'bar100p-flatTable':
                     case 'pie-flatTable':
                     case 'donut-flatTable':
@@ -388,6 +420,7 @@ export function visualization(
                     case 'column-pivotTable':
                     case 'column100p-pivotTable':
                     case 'bar-pivotTable':
+                    case 'bar-y-d3-pivotTable':
                     case 'bar100p-pivotTable':
                     case 'pie-pivotTable':
                     case 'donut-pivotTable':
@@ -430,7 +463,9 @@ export function visualization(
                     case 'flatTable-column':
                     case 'flatTable-column100p':
                     case 'flatTable-bar':
+                    case 'flatTable-bar-y-d3':
                     case 'flatTable-bar100p':
+                    case 'flatTable-bar-y-100p-d3':
                     case 'flatTable-pie':
                     case 'flatTable-donut':
                     case 'flatTable-treemap':
@@ -440,7 +475,9 @@ export function visualization(
                     case 'scatter-column':
                     case 'scatter-column100p':
                     case 'scatter-bar':
+                    case 'scatter-bar-y-d3':
                     case 'scatter-bar100p':
+                    case 'scatter-bar-y-100p-d3':
                     case 'scatter-pie':
                     case 'scatter-donut':
                     case 'scatter-treemap': {
@@ -516,7 +553,9 @@ export function visualization(
                     case 'pivotTable-column':
                     case 'pivotTable-column100p':
                     case 'pivotTable-bar':
+                    case 'pivotTable-bar-y-d3':
                     case 'pivotTable-bar100p':
+                    case 'pivotTable-bar-y-100p-d3':
                     case 'pivotTable-pie':
                     case 'pivotTable-donut':
                     case 'pivotTable-treemap': {
@@ -890,6 +929,14 @@ export function visualization(
             return {
                 ...state,
                 available: [...available],
+            };
+        }
+        case SET_Y_AXIS_CONFLICT: {
+            const {pointConflict} = action;
+
+            return {
+                ...state,
+                pointConflict,
             };
         }
         case SET_DISTINCTS: {

@@ -20,6 +20,7 @@ import type {
 } from 'shared';
 import {
     Feature,
+    IndicatorTitleMode,
     NavigatorLinesMode,
     PlaceholderId,
     WizardVisualizationId,
@@ -45,6 +46,7 @@ import {
     getHighchartsAnalog,
 } from '../../../utils/visualization';
 
+import IndicatorTitleSetting from './IndicatorTitleSetting/IndicatorTitleSetting';
 import LimitInput from './LimitInput/LimitInput';
 import SettingFeed from './SettingFeed/SettingFeed';
 import SettingNavigator from './SettingNavigator/SettingNavigator';
@@ -59,6 +61,7 @@ type SettingsKeys = keyof State;
 
 const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'titleMode',
+    'indicatorTitleMode',
     'title',
     'legendMode',
     'tooltipSum',
@@ -114,6 +117,8 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.PIE_D3,
         VISUALIZATION_IDS.BAR_X_D3,
         WizardVisualizationId.DonutD3,
+        WizardVisualizationId.BarYD3,
+        WizardVisualizationId.BarY100pD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -143,6 +148,7 @@ type InnerProps = GeneralProps & StateProps;
 interface State {
     valid: boolean;
     titleMode: string;
+    indicatorTitleMode: IndicatorTitleMode;
     title: string;
     legendMode: string;
     tooltipSum: string;
@@ -191,6 +197,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const {
             titleMode = CHART_SETTINGS.TITLE_MODE.HIDE,
+            indicatorTitleMode = IndicatorTitleMode.ByField,
             title = (widget && widget.key && widget.key.replace(/.+\//, '')) ||
                 getDefaultChartName({dataset, visualization}),
             legendMode = CHART_SETTINGS.LEGEND.SHOW,
@@ -244,6 +251,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             valid: true,
 
             titleMode,
+            indicatorTitleMode,
             qlAutoExecuteChart: getQlAutoExecuteChartValue(qlAutoExecuteChart, props.chartType),
             title,
             legendMode,
@@ -484,6 +492,19 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderTitleMode() {
+        const {visualization} = this.props;
+        if (visualization.id === WizardVisualizationId.Metric) {
+            return (
+                <IndicatorTitleSetting
+                    mode={this.state.indicatorTitleMode}
+                    title={this.state.title}
+                    onUpdate={(settings) => {
+                        this.setState({indicatorTitleMode: settings.mode, title: settings.title});
+                    }}
+                />
+            );
+        }
+
         const titleMode = this.state.titleMode || CHART_SETTINGS.TITLE_MODE.HIDE;
         const inputTitleValue = this.state.title;
 

@@ -1,5 +1,6 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils/build/typings';
+import isFunction from 'lodash/isFunction';
 
 import type {ServerDatasetField} from '../types';
 
@@ -199,7 +200,10 @@ export function resolveIntervalDate(value: FilterValue) {
     return null;
 }
 
-export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL | null {
+export function resolveOperation(
+    urlValue: FilterValue,
+    defaultOperation?: Operations,
+): FiltersOperationFromURL | null {
     if (!urlValue) {
         return null;
     }
@@ -207,13 +211,13 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
     // In an ideal world, urlValue should always be string. However, in ChartEditor, the user can put in params
     // absolutely anything. Therefore, if it is not a string, then we make a fallback to the old behavior.
     if (typeof urlValue !== 'string') {
-        return getFallbackForUrlFilters(urlValue);
+        return getFallbackForUrlFilters(urlValue, defaultOperation);
     }
 
     const match = urlValue.match(/^_{2}([^_]+)_([\s\S]+)?$/);
 
     if (!match) {
-        return getFallbackForUrlFilters(urlValue);
+        return getFallbackForUrlFilters(urlValue, defaultOperation);
     }
 
     const operation = match[1]?.toUpperCase();
@@ -238,8 +242,11 @@ export function resolveOperation(urlValue: FilterValue): FiltersOperationFromURL
     return getFallbackForUrlFilters(urlValue);
 }
 
-function getFallbackForUrlFilters(urlValue: any): FiltersOperationFromURL {
-    let operation = Operations.IN;
+function getFallbackForUrlFilters(
+    urlValue: any,
+    defaultOperation?: Operations,
+): FiltersOperationFromURL {
+    let operation = defaultOperation ?? Operations.IN;
 
     if (typeof urlValue === 'string' && urlValue.indexOf('__interval') > -1) {
         operation = Operations.BETWEEN;
@@ -300,4 +307,49 @@ export type ChartsInsight = {
 
 export enum ChartsInsightLocator {
     UsingDeprecatedDatetimeFields = 'using_deprecated_datetime_fields',
+}
+
+export function isObjectWith(
+    value: unknown,
+    check: (value: unknown) => boolean,
+    ignore?: string[],
+    path = '',
+): string | false {
+    if (!value) {
+        return false;
+    }
+
+    if (check(value)) {
+        return path;
+    }
+
+    if (Array.isArray(value)) {
+        for (let index = 0; index < value.length; index++) {
+            const pathToItem = isObjectWith(value[index], check, ignore, `${path}[${index}]`);
+            if (pathToItem) {
+                return pathToItem;
+            }
+        }
+    }
+
+    if (typeof value === 'object') {
+        const entries = Object.entries(value as object);
+        for (let index = 0; index < entries.length; index++) {
+            const [key, val] = entries[index];
+            if (ignore?.includes(key)) {
+                continue;
+            }
+
+            const pathToItem = isObjectWith(val, check, ignore, path ? `${path}.${key}` : key);
+            if (pathToItem) {
+                return pathToItem;
+            }
+        }
+    }
+
+    return false;
+}
+
+export function isObjectWithFunction(value: unknown) {
+    return isObjectWith(value, isFunction, []);
 }

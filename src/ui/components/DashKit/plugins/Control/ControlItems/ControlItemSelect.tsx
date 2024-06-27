@@ -35,6 +35,7 @@ import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
 import logger from '../../../../../libs/logger';
+import {getControlHint} from '../../../utils';
 import {LIMIT, LOAD_STATUS, TYPE} from '../constants';
 import type {
     ErrorData,
@@ -62,7 +63,7 @@ type ControlItemSelectProps = {
     actualParams: StringParams;
     onChange: ({param, value}: {param: string; value: string | string[]}) => void;
     init: () => void;
-    showItemsLoader: () => void;
+    setItemsLoader: (loadingItems: boolean) => void;
     getDistincts?: GetDistincts;
     validationError: string | null;
     errorData: null | ErrorData;
@@ -89,7 +90,7 @@ export const ControlItemSelect = ({
     errorData,
     validationError,
     init,
-    showItemsLoader,
+    setItemsLoader,
     validateValue,
     classMixin,
     selectProps,
@@ -261,7 +262,7 @@ export const ControlItemSelect = ({
                     <Button
                         size={buttonsSize}
                         onClick={() => {
-                            showItemsLoader();
+                            setItemsLoader(true);
                             init();
                         }}
                         width={buttonsWidth}
@@ -291,16 +292,21 @@ export const ControlItemSelect = ({
     const onOpenChange = ({open}: {open: boolean}) => {
         clearTimeout(_loadingItemsTimer);
 
+        // can be time lag in group controls because of timeout
+        if (status !== LOAD_STATUS.PENDING && loadingItems) {
+            setItemsLoader(false);
+        }
+
         if (status === LOAD_STATUS.PENDING) {
             if (open) {
-                showItemsLoader();
+                setItemsLoader(true);
             } else {
                 // A delay for displaying the Loader in the Popup, to prevent loading blinking while closing.
                 _loadingItemsTimer = setTimeout(() => {
                     if (status === LOAD_STATUS.PENDING) {
-                        showItemsLoader();
+                        setItemsLoader(true);
                     }
-                }, 150);
+                });
             }
         }
     };
@@ -364,7 +370,7 @@ export const ControlItemSelect = ({
         loadingItems,
         placeholder,
         required: source.required,
-        hint: source.hint,
+        hint: getControlHint(source),
         hasValidationError: Boolean(selectValidationError),
         renderOverlay,
         ...selectProps,

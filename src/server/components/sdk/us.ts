@@ -19,162 +19,37 @@ import type {
 import {getAxios} from '../axios';
 
 class US {
-    static async decodeId(
+    /**
+     * Универсальный метод для запросов RPC через backend UI
+     * 
+     * @param data данные в формате RPC {action:string, method:string, data:any[], tid: number}
+     * @param headers заголовки запроса, главное чтобы был x-rpc-authorization
+     * @param ctx 
+     * @returns объект {err:any, data:any}, если err заполнен, то ошибка
+     */
+    static async universalService(
+        data: any,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
-        query: String
-    ): Promise<Entry> {
+    ): Promise<any> {
         try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/decodeId${query}`,
-                headers,
-                'axios-retry': {retries: 1},
-            });
-
-            ctx.log('SDK_US_DECODE_ID_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_DECODE_ID_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async encodeId(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-        query: String
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/encodeId${query}`,
-                headers,
-                'axios-retry': {retries: 1},
-            });
-
-            ctx.log('SDK_US_ENCODE_ID_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_ENCODE_ID_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async updateAccesses(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-        query: String
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/updateAccesses${query}`,
-                headers,
-                'axios-retry': {retries: 1},
-            });
-
-            ctx.log('SDK_US_UPDATE_ACCESSES_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_UPDATE_ACCESSES_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async tables(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-        data: any[]
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
+            var axios = getAxios(ctx.config);
+            const {data: result}  = await axios({
                 method: 'POST',
-                url: `${ctx.config.endpoints.api.us}/tables`,
-                headers,
-                'axios-retry': {retries: 1},
-                data
-            });
-
-            ctx.log('SDK_US_UPDATE_ACCESSES_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_UPDATE_ACCESSES_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async getAccesses(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-        query: String
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/accesses${query}`,
-                headers,
+                url: `${ctx.config.endpoints.api.us}/universal_service`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rpc-authorization': headers['x-rpc-authorization']
+                },
+                data,
                 'axios-retry': {retries: 1},
             });
 
-            ctx.log('SDK_US_GET_ACCESSES_SUCCESS', US.getLoggedEntry(result));
+            ctx.log('SDK_US_UNIVERSAL_SERVICE_SUCCESS', US.getLoggedEntry(result));
 
             return result;
         } catch (error) {
-            ctx.logError('SDK_US_GET_ACCESSES_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async getRoles(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/roles`,
-                headers,
-                'axios-retry': {retries: 1},
-            });
-
-            ctx.log('SDK_US_GET_ROLES_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_GET_ROLES_FAILED', error, {});
-
-            throw error;
-        }
-    }
-
-    static async createEmbed(
-        headers: IncomingHttpHeaders,
-        ctx: AppContext,
-    ): Promise<Entry> {
-        try {
-            const {data: result} = await getAxios(ctx.config)({
-                method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/embed`,
-                headers,
-                'axios-retry': {retries: 1},
-            });
-
-            ctx.log('SDK_US_CREATE_EMBED_SUCCESS', US.getLoggedEntry(result));
-
-            return result;
-        } catch (error) {
-            ctx.logError('SDK_US_CREATE_EMBED_FAILED', error, {});
-
+            ctx.logError('SDK_US_UNIVERSAL_SERVICE_FAILED', error, {});
             throw error;
         }
     }

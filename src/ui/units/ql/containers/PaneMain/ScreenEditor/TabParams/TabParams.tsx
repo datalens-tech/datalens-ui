@@ -125,22 +125,6 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                 <TextInput
                                     view="normal"
                                     size="m"
-                                    className={b('param-label')}
-                                    placeholder={i18n('sql', 'label_placeholder-label')}
-                                    value={param.label}
-                                    onUpdate={(label) => {
-                                        const newParam = {...param};
-
-                                        newParam.label = label;
-
-                                        this.onEditParam({param: newParam, paramIndex});
-                                    }}
-                                    qa={TabParamsQA.ParamLabel}
-                                />
-                                <span className={b('delimeter')}>:</span>
-                                <TextInput
-                                    view="normal"
-                                    size="m"
                                     className={b('param-name')}
                                     placeholder={i18n('sql', 'label_placeholder-name')}
                                     value={param.name}
@@ -165,6 +149,23 @@ class TabParams extends React.PureComponent<TabParamsProps, TabParamsState> {
                                         this.onClickButtonRemoveParamValue
                                     }
                                 />
+                                <span className={b('delimeter')}>:</span>
+                                <TextInput
+                                    view="normal"
+                                    size="m"
+                                    className={b('param-label')}
+                                    placeholder={i18n('sql', 'label_placeholder-label')}
+                                    value={param.label}
+                                    onUpdate={(label) => {
+                                        const newParam = {...param};
+
+                                        newParam.label = label;
+
+                                        this.onEditParam({param: newParam, paramIndex});
+                                    }}
+                                    qa={TabParamsQA.ParamLabel}
+                                />
+                                
                                 <Button
                                     view="flat-secondary"
                                     size="m"

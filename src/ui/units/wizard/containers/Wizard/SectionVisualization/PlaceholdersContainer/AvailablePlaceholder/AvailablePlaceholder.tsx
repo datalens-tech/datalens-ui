@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {LayoutRows3} from '@gravity-ui/icons';
+import {LayoutRows3, TriangleExclamation} from '@gravity-ui/icons';
+import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, Shared} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {selectAvailable} from 'units/wizard/selectors/visualization';
+import {selectAvailable, selectPointConflict} from 'units/wizard/selectors/visualization';
 
 import {updateAvailable} from '../../../../../actions/placeholder';
 import PlaceholderComponent from '../Placeholder/Placeholder';
@@ -23,7 +24,7 @@ type Props = {
 
 class AvailablePlaceholder extends React.Component<Props> {
     render() {
-        const {available, wrapTo, datasetError} = this.props;
+        const {available, pointConflict, wrapTo, datasetError} = this.props;
 
         return (
             <PlaceholderComponent
@@ -32,6 +33,10 @@ class AvailablePlaceholder extends React.Component<Props> {
                 id="available"
                 iconProps={{data: LayoutRows3}}
                 title="section_available"
+                placeholderTooltipText={
+                    pointConflict ? i18n('sql', 'hint_available-warning') : undefined
+                }
+                placeholderTooltipIcon={TriangleExclamation}
                 hasSettings={false}
                 onActionIconClick={() => {}}
                 items={available}
@@ -67,6 +72,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         available: selectAvailable(state),
+        pointConflict: selectPointConflict(state),
     };
 };
 

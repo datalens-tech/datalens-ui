@@ -59,6 +59,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         chartkitSettings: config.chartkitSettings,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
+        isZitadelEnabled: req.ctx.config.isZitadelEnabled,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

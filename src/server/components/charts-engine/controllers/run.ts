@@ -7,9 +7,11 @@ import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
+import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
+import { US } from '../../sdk';
 
 type RunControllerExtraSettings = {
     storageApiPath?: string;
@@ -87,6 +89,7 @@ export const runController = (
                 headers: {
                     ...res.locals.subrequestHeaders,
                     ...ctx.getMetadata(),
+                    ...(ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
                 },
                 requestId: req.id,
                 ...extraSettings,
@@ -97,7 +100,28 @@ export const runController = (
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {key, id});
 
-        Promise.resolve(configPromise)
+        US.universalService({
+                "action": "datalens", 
+                "method": "currentUser", 
+                "data": [{}]
+            }, req.headers, req.ctx)
+        .then((value)=>{
+            if(!value.err) {
+                var params = req.body.params;
+                for(var i in params) {
+                    if(i.startsWith('__')) {
+                        delete req.body.params[i];
+                    }
+                }
+
+                req.body.params['__user_id'] = value.data[0].id;
+                req.body.params['__embed'] = value.data[0].isEmbed == true ? 1 : -1;
+            }
+        })
+        .catch((reason)=>{
+            console.error(reason);
+        }).finally(()=>{
+            Promise.resolve(configPromise)
             .catch((error) => {
                 const result: {
                     error: {
@@ -222,5 +246,6 @@ export const runController = (
                     error: 'Internal error',
                 });
             });
+        });
     };
 };

@@ -15,13 +15,7 @@ import type {
     ServerPlaceholderSettings,
     StringParams,
 } from '../types';
-import {
-    AxisMode,
-    DATASET_FIELD_TYPES,
-    DatasetFieldType,
-    TableFieldDisplayMode,
-    isDateField,
-} from '../types';
+import {AxisMode, DATASET_FIELD_TYPES, DatasetFieldType, isDateField} from '../types';
 
 import {
     Operations,
@@ -29,7 +23,6 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from './charts-shared';
-import {isMeasureName} from './wizard-helpers';
 
 function getEntryId(str: string): string | null {
     const possibleEntryId = str.slice(0, ENTRY_ID_LENGTH);
@@ -69,6 +62,7 @@ export function decodeURISafe(uri: string) {
 }
 
 type PrepareFilterValuesArgs = {
+    field?: ServerField;
     values: string[];
 };
 
@@ -77,15 +71,21 @@ type PreparedFilterValues = {
     operations: Operations[];
 };
 
-export function prepareFilterValuesWithOperations({values}: PrepareFilterValuesArgs) {
-    return prepareArrayFilterValues({values});
+export function prepareFilterValuesWithOperations({values, field}: PrepareFilterValuesArgs) {
+    return prepareArrayFilterValues({values, field});
 }
 
 export function prepareFilterValues({values}: {values: string[]}): (string[] | string)[] {
     return prepareArrayFilterValues({values}).values;
 }
 
-function prepareArrayFilterValues({values}: {values: string[]}): PreparedFilterValues {
+function prepareArrayFilterValues({
+    field,
+    values,
+}: {
+    field?: ServerField;
+    values: string[];
+}): PreparedFilterValues {
     return values.reduce(
         (
             acc: {
@@ -94,7 +94,9 @@ function prepareArrayFilterValues({values}: {values: string[]}): PreparedFilterV
             },
             rawValue: string,
         ) => {
-            const parsedFiltersOperation = resolveOperation(rawValue);
+            const defaultOperation =
+                field && isDateField(field) && values.length === 1 ? Operations.EQ : undefined;
+            const parsedFiltersOperation = resolveOperation(rawValue, defaultOperation);
 
             if (!parsedFiltersOperation) {
                 acc.values.push(rawValue);
@@ -263,23 +265,3 @@ export const isEntryId = (value: string) => {
     const ENTRY_ID_FORMAT = /^[0-9a-z]{13}$/;
     return ENTRY_ID_FORMAT.test(value);
 };
-
-export function canHideTableHeader(field: Field, fields: Field[], measures: Field[]) {
-    if (isMeasureName(field) && measures.length > 1) {
-        return false;
-    }
-
-    // the table header must contain at least one header
-    return fields.length > 1;
-}
-
-export function getTableHeaderDisplayMode(field: Field, fields: Field[], measures: Field[]) {
-    if (
-        field.displayMode === TableFieldDisplayMode.Hidden &&
-        !canHideTableHeader(field, fields, measures)
-    ) {
-        return TableFieldDisplayMode.Auto;
-    }
-
-    return field.displayMode || TableFieldDisplayMode.Auto;
-}

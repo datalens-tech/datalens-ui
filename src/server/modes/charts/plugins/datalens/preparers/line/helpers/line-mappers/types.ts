@@ -154,4 +154,8 @@ export interface ExtendLineWithSegmentDataArgs {
 
 export type ColorAndShapesValues = {colorValue?: string; shapeValue?: string};
 
-export type MappedLinesKeys = {key: string; lastKey: string | number | Date | null};
+export type MappedLinesKeys = {
+    key: string;
+    lastKey: string | number | Date | null;
+    pointConflict?: boolean;
+};
