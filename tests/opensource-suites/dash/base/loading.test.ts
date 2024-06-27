@@ -6,7 +6,7 @@ import {openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../../../suites/dash/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
-import {DashCommonQa} from '../../../../src/shared';
+import {ChartkitMenuDialogsQA, DashCommonQa} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -96,13 +96,13 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
 
             // waiting for the widget container to be rendered
-            await page.waitForSelector(DashboardPage.selectors.dashPluginWidgetBody);
+            await page.waitForSelector(slct(ChartkitMenuDialogsQA.chartWidget));
 
             // check that the widget content is not loaded
             await dashboardPage.shouldNotContainsChartItems();
 
             // scroll the screen to the widget with the chart to start loading
-            const widgetBody = page.locator(DashboardPage.selectors.dashPluginWidgetBody);
+            const widgetBody = page.locator(slct(ChartkitMenuDialogsQA.chartWidget));
             // this is an tradeoff https://github.com/facebook/react/issues/23396
             await page.waitForTimeout(1000);
             await widgetBody.evaluate((element) => element?.scrollIntoView(true));
@@ -165,7 +165,7 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
 
             // waiting for the drawing of the graph on the first tab
-            await page.waitForSelector(DashboardPage.selectors.dashPluginWidgetBody);
+            await page.waitForSelector(slct(ChartkitMenuDialogsQA.chartWidget));
 
             // go to the 2nd tab, where there are no graphs
             await dashboardPage.changeTab({tabName: TEXTS.TAB2});

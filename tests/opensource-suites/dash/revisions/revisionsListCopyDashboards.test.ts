@@ -7,6 +7,7 @@ import {cssSlct, slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {DialogDraftWarningQA} from '../../../../src/shared';
 
 datalensTest.describe('Dashboards - Versioning', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -38,10 +39,10 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
 
             // waiting for the warning dialog to open
-            await page.waitForSelector(slct(DashboardPage.selectors.dialogWarning));
+            await page.waitForSelector(slct(DialogDraftWarningQA.Dialog));
 
             // click "Edit current version"
-            await page.click(slct(DashboardPage.selectors.dialogWarningEditBtn));
+            await page.click(slct(DialogDraftWarningQA.EditButton));
             await dashboardPage.editDashWithoutSaving();
 
             // check the corresponding button

@@ -80,12 +80,9 @@ type LocatorClickOptionsType = Parameters<Locator['click']>[0];
 
 class DashboardPage extends BasePage {
     static selectors = {
-        title: 'dashkit-plugin-title',
-        text: 'dashkit-plugin-text',
-        dialogWarning: 'dialog-draft-warning',
-        dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
-        dialogConfirm: DialogConfirmQA.Dialog,
-        dialogConfirmApplyBtn: DialogConfirmQA.ApplyButton,
+        title: '.dashkit-plugin-title',
+        text: '.dashkit-plugin-text',
+
         mobileModal: '.g-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
@@ -97,15 +94,8 @@ class DashboardPage extends BasePage {
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
         selectItemTitleDisabled: '.g-select-list__option_disabled',
-        chartkitControlSelect: slct(ControlQA.controlSelectItems),
 
-        dialogCancelBtn: 'dialog-cancel-button',
         chartGridItemContainer: `${slct(DashkitQa.GRID_ITEM)} .chartkit`,
-        dashPluginWidgetBody: slct('chart-widget'),
-        dashkitGridItem: slct('dashkit-grid-item'),
-
-        chartResetButton: slct(ControlQA.filtersClear),
-        yfmContentWrapper: slct(YfmQa.WrapperHtml),
     };
 
     revisions: Revisions;
@@ -156,9 +146,7 @@ class DashboardPage extends BasePage {
     }
 
     async getMarkdownText(gridItemLocator?: Locator) {
-        const yfmLocator = (gridItemLocator || this.page).locator(
-            DashboardPage.selectors.yfmContentWrapper,
-        );
+        const yfmLocator = (gridItemLocator || this.page).locator(slct(YfmQa.WrapperHtml));
 
         return yfmLocator.innerText();
     }
@@ -327,9 +315,7 @@ class DashboardPage extends BasePage {
     }
 
     getDashKitTextItem(text: string) {
-        return this.page
-            .locator(DashboardPage.selectors.dashkitGridItem)
-            .getByText(text, {exact: true});
+        return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
     async deleteSelector(controlTitle: string) {
@@ -372,20 +358,18 @@ class DashboardPage extends BasePage {
 
         // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
-            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
-                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
-            )}`,
+            `${slct(DialogConfirmQA.Dialog)}, ${slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN)}`,
         );
 
         const qaAttr = await elem.getAttribute('data-qa');
 
-        if (qaAttr !== DashboardPage.selectors.dialogConfirm) {
+        if (qaAttr !== DialogConfirmQA.Dialog) {
             await createLockPromise;
             return;
         }
 
         // click "Edit anyway"
-        await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+        await this.page.click(slct(DialogConfirmQA.ApplyButton));
         await createLockPromise;
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     }
@@ -398,9 +382,7 @@ class DashboardPage extends BasePage {
             await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
 
             // if there are changes, a dialog with a warning about the unsaved changes will appear
-            const warningCancelDialog = this.page.locator(
-                slct(DashboardPage.selectors.dialogConfirm),
-            );
+            const warningCancelDialog = this.page.locator(slct(DialogConfirmQA.Dialog));
             const editButton = this.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
 
             await expect(editButton.or(warningCancelDialog)).toBeVisible();
@@ -411,9 +393,7 @@ class DashboardPage extends BasePage {
             }
 
             // if there is a dialog, click the apply button
-            const applyBtn = await this.page.waitForSelector(
-                slct(DashboardPage.selectors.dialogConfirmApplyBtn),
-            );
+            const applyBtn = await this.page.waitForSelector(slct(DialogConfirmQA.ApplyButton));
             await applyBtn.click();
             await deleteLockPromise;
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
@@ -446,16 +426,14 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
         // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
-            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
-                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
-            )}`,
+            `${slct(DialogConfirmQA.Dialog)}, ${slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN)}`,
         );
 
         const qaAttr = await elem.getAttribute('data-qa');
 
-        if (qaAttr === DashboardPage.selectors.dialogConfirm) {
+        if (qaAttr === DialogConfirmQA.Dialog) {
             // click "Edit anyway"
-            await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+            await this.page.click(slct(DialogConfirmQA.ApplyButton));
         }
 
         // click on the "connections" button
@@ -870,7 +848,7 @@ class DashboardPage extends BasePage {
         await selectLocator.click();
 
         await this.page
-            .locator(DashboardPage.selectors.chartkitControlSelect)
+            .locator(slct(ControlQA.controlSelectItems))
             .locator(`[data-value] >> text="${valueTitle}"`)
             .click();
         await expect(selectLocator).toContainText(valueTitle);
@@ -960,7 +938,7 @@ class DashboardPage extends BasePage {
     }
 
     async resetChartFiltering(gridItemLocator: Locator) {
-        return gridItemLocator.locator(DashboardPage.selectors.chartResetButton).click();
+        return gridItemLocator.locator(slct(ControlQA.filtersClear)).click();
     }
 
     // it cannot be used with single selectors as they have different loading times
