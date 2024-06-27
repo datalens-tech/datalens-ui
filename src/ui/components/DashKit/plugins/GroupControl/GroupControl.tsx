@@ -299,8 +299,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         if (!controlData.buttonApply || callChangeByClick) {
             const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
             this.props.onStateAndParamsChange({params}, {groupItemIds});
+            this.localMeta.queue = [];
+            return;
         }
-
         if (controlId) {
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 this.setState({
@@ -318,11 +319,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     },
                 });
             }
-            return;
         }
-        // if onChange is triggered by button
-        this.setState({stateParams: params as Record<string, StringParams>});
-        this.localMeta.queue = [];
     };
 
     private getUpdatedGroupParams = ({
