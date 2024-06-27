@@ -4,7 +4,7 @@ import {TextInput} from '@gravity-ui/uikit';
 import {DialogTabsQA} from 'shared/constants/qa';
 
 type EditTabItemProps = {
-    onCommit: (test: string) => void;
+    onCommit: (text: string) => void;
     id: string;
     title: string;
     className?: string;
@@ -16,7 +16,7 @@ function EditedTabItem({onCommit, id, title, className}: EditTabItemProps) {
     return (
         <div className={className} key={id}>
             <TextInput
-                size="l"
+                size="m"
                 autoFocus
                 value={text}
                 onUpdate={(newText) => {

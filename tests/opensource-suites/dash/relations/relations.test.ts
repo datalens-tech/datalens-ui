@@ -25,10 +25,10 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                        controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE},
+                        fieldName: PARAMS.CONTROL_FIELD_NAME,
+                        items: PARAMS.CONTROL_ITEMS,
                     });
 
                     await dashboardPage.addChart({
@@ -50,7 +50,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
                 ControlQA.controlLinks,
             );
 
@@ -87,7 +87,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.enterEditMode();
 
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
+        const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
             ControlQA.controlLinks,
         );
 

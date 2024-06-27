@@ -1,6 +1,7 @@
-import {ConnectionsParametrizationConfig} from './connections';
-import {DashParametrizationConfig} from './dash';
-import {QlParametrizationConfig} from './ql';
+import type {ConnectionsParametrizationConfig} from './connections';
+import type {DashParametrizationConfig} from './dash';
+import type {DatasetsParametrizationConfig} from './datasets';
+import type {QlParametrizationConfig} from './ql';
 import type {WizardParametrizationConfig} from './wizard';
 
 export type TestParametrizationConfig = {
@@ -8,4 +9,5 @@ export type TestParametrizationConfig = {
     connections: ConnectionsParametrizationConfig;
     ql: QlParametrizationConfig;
     dash: DashParametrizationConfig;
+    datasets: DatasetsParametrizationConfig;
 };

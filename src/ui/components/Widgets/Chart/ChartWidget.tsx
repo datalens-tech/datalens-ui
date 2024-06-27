@@ -516,7 +516,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 hideDebugTool={true}
                 showActionParamsFilter={showActionParamsFilter}
                 onFiltersClear={handleFiltersClear}
-                warning={loadedData?.safeChartInfo}
             />
             <Content
                 initialParams={initialParams}

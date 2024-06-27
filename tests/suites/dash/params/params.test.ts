@@ -14,6 +14,7 @@ import {dragAndDropListItem} from '../helpers';
 import {RobotChartsDashboardUrls, RobotChartsEditorUrls} from '../../../utils/constants';
 import {
     ControlQA,
+    DialogControlQa,
     DialogDashWidgetQA,
     NavigationInputQA,
     ParamsSettingsQA,
@@ -172,17 +173,17 @@ const addExternalSelector = async (dashboardPage: DashboardPage, page: Page) => 
     const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
 
     if (isEnabledGroupControls) {
-        await dashboardPage.clickAddExternalSelector();
+        await dashboardPage.controlActions.clickAddExternalSelector();
     } else {
         // adding a selector
-        await dashboardPage.clickAddSelector();
+        await dashboardPage.controlActions.clickAddSelector();
 
         // waiting for the selector settings dialog to appear
         await page.waitForSelector(slct(ControlQA.dialogControl));
 
         // select 'external selector'
         await page.click(
-            `${slct(DashboardPage.selectors.radioManualControl)} ${
+            `${slct(DialogControlQa.radioSourceType)} ${
                 CommonSelectors.RadioButtonOptionControl
             }[value="external"]`,
             {

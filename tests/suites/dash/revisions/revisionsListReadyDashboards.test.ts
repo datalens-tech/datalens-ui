@@ -29,8 +29,8 @@ const waitCheckRevisionListStatuses = async ({
     draftRevId: string;
 }> => {
     // Check that the content and the get parameter correspond to the open version
-    await page.waitForSelector(`.${DashboardPage.selectors.title}`);
-    const selector = await page.$(`.${DashboardPage.selectors.title}`);
+    await page.waitForSelector(DashboardPage.selectors.title);
+    const selector = await page.$(DashboardPage.selectors.title);
     const selectorText = (await selector?.innerText()) || '';
     const revId = Revisions.getUrlRevIdParam(page);
 
@@ -120,8 +120,8 @@ datalensTest.describe('Dashboards - Versioning', () => {
             // we are waiting for the drawing of the blue upper panel with the author and the revision date
             await page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL));
             // Check that the revision has changed, because there is a header and the corresponding get parameter
-            await page.waitForSelector(`.${DashboardPage.selectors.title}`);
-            const selector = await page.$(`.${DashboardPage.selectors.title}`);
+            await page.waitForSelector(DashboardPage.selectors.title);
+            const selector = await page.$(DashboardPage.selectors.title);
             const selectorText = await selector?.innerText();
 
             expect(selectorText).toMatch(PARAMS.REVISION_PREV_TITLE);
@@ -158,8 +158,8 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await dashboardPage.waitForLoaderDisappear();
 
             // Check that the revision has changed, because there is a new header and there is no get parameter
-            await page.waitForSelector(`.${DashboardPage.selectors.title}`);
-            const selector = await page.$(`.${DashboardPage.selectors.title}`);
+            await page.waitForSelector(DashboardPage.selectors.title);
+            const selector = await page.$(DashboardPage.selectors.title);
             const selectorText = await selector?.innerText();
             expect(selectorText).toMatch(PARAMS.REVISION_ACTUAL_TITLE);
             const revId = Revisions.getUrlRevIdParam(page);

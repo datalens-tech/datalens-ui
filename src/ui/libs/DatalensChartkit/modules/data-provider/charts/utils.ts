@@ -23,16 +23,9 @@ function isHighchartsTemplateString(value: string) {
     return typeof hc !== 'undefined' && hc.format(value, {}) !== value;
 }
 
-function hasChildNodes(value: string) {
-    const el = document.createElement('div');
-    el.innerHTML = value;
-
-    return Array.from(el.childNodes).some((node) => node.nodeName !== '#text');
-}
-
 function isHtmlString(value: unknown) {
     if (typeof value === 'string') {
-        if (hasChildNodes(value) || isHighchartsTemplateString(value)) {
+        if (/<\/?[a-z][\s\S]*>/i.test(value) || isHighchartsTemplateString(value)) {
             return true;
         }
     }
@@ -40,16 +33,26 @@ function isHtmlString(value: unknown) {
     return false;
 }
 
-export function getSafeChartWarnings(widgetData?: unknown) {
-    const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
-    const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
-    if (pathToFunction) {
-        return `has functions at \`${pathToFunction}\``;
-    }
+export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
+    const chartTypesToCheck = [
+        'graph_node',
+        'map_node',
+        'ymap_node',
+        'timeseries_node',
+        'table_node',
+    ];
 
-    const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
-    if (pathToHtml) {
-        return `has HTML string at \`${pathToHtml}\``;
+    if (chartTypesToCheck.includes(chartType)) {
+        const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
+        const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
+        if (pathToFunction) {
+            return `has functions at \`${pathToFunction.replace('libraryConfig.', '')}\``;
+        }
+
+        const pathToHtml = isObjectWith(widgetData, isHtmlString, ignoreAttrs);
+        if (pathToHtml) {
+            return `has HTML string at \`${pathToHtml.replace('libraryConfig.', '')}\``;
+        }
     }
 
     return undefined;

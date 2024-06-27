@@ -19,7 +19,7 @@ import Dialog from '../../../../../Control/Dialog/Dialog';
 
 import './Acceptable.scss';
 
-const b = block('select-acceptable');
+const b = block('control-select-acceptable');
 
 type AcceptableProps = ReturnType<typeof mapStateToProps> &
     ResolveThunks<typeof mapDispatchToProps>;
@@ -96,12 +96,12 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
     }) {
         const {item, itemIndex, acceptableValues} = args;
         return (
-            <div className={b('item')} key={item} data-qa={ControlQA.selectAcceptableItem}>
+            <div className={b('item')} key={item} data-qa={ControlQA.controlSelectAcceptableItem}>
                 <span title={item}>{item}</span>
                 <span
                     onClick={() => this.handleRemoveItemClick(itemIndex, acceptableValues)}
                     className={b('remove')}
-                    data-qa={ControlQA.selectAcceptableRemoveButton}
+                    data-qa={ControlQA.controlSelectAcceptableRemoveButton}
                 >
                     <Icon data={Xmark} width="16" />
                 </span>
@@ -113,10 +113,10 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
         const isEmpty = !acceptableValues.length;
         return (
             <React.Fragment>
-                <div className={b('header')} data-qa={ControlQA.selectAcceptable}>
+                <div className={b('header')} data-qa={ControlQA.controlSelectAcceptable}>
                     <TextInput
                         size="m"
-                        qa={ControlQA.selectAcceptableInput}
+                        qa={ControlQA.controlSelectAcceptableInput}
                         placeholder={i18n('dash.control-dialog.edit', 'context_add-value')}
                         onUpdate={(newValue) => this.setState({newValue})}
                         value={newValue}
@@ -129,7 +129,7 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                     <CommonButton
                         view="normal"
                         size="m"
-                        qa={ControlQA.selectAcceptableButton}
+                        qa={ControlQA.controlSelectAcceptableButton}
                         onClick={this.addItem}
                     >
                         {i18n('dash.control-dialog.edit', 'button_add')}

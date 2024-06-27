@@ -58,8 +58,8 @@ datalensTest.describe('Dashboards - Versioning', () => {
         // we are waiting for the drawing of the blue upper panel with the author and the revision date
         await page.waitForSelector(slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL));
         // Check that the revision has changed, because there is a header and the corresponding get parameter
-        await page.waitForSelector(`.${DashboardPage.selectors.text}`);
-        const selector = await page.$(`.${DashboardPage.selectors.text}`);
+        await page.waitForSelector(DashboardPage.selectors.text);
+        const selector = await page.$(DashboardPage.selectors.text);
         const selectorText = await selector?.innerText();
 
         expect(selectorText).toMatch(revTexts[0]);
@@ -95,8 +95,8 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await dashboardPage.waitForLoaderDisappear();
 
             // Check that the revision has changed, because there is a new header and there is no get parameter
-            await page.waitForSelector(`.${DashboardPage.selectors.text}`);
-            const selector = await page.$(`.${DashboardPage.selectors.text}`);
+            await page.waitForSelector(DashboardPage.selectors.text);
+            const selector = await page.$(DashboardPage.selectors.text);
             const selectorText = await selector?.innerText();
             expect(selectorText).toMatch(revTexts[2]);
             const revId = Revisions.getUrlRevIdParam(page);
