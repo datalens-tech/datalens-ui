@@ -20,6 +20,7 @@ export interface PluginGroupControlState {
     stateParams: Record<string, StringParams>;
     needReload: boolean;
     localUpdateLoader: boolean;
+    paramsUpdated: boolean;
 }
 
 export type ResolveMetaResult = {
