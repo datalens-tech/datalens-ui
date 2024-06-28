@@ -1,10 +1,19 @@
+import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
+import {type ConfigItemGroup, DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
+import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared/types';
 import {DashTabItemType} from 'shared/types';
-import type {DatalensGlobalState} from 'ui/index';
+import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
+import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
+import {showToast} from 'ui/store/actions/toaster';
+import {CONTROLS_PLACEMENT_MODE} from 'ui/units/dash/containers/Dialogs/constants';
+import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
+import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
-import {selectOpenedItemData} from '../../selectors/dashTypedSelectors';
+import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
+import {selectOpenedItem, selectOpenedItemData} from '../../selectors/dashTypedSelectors';
 import type {SetSelectorDialogItemArgs} from '../dashTyped';
 import {setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
@@ -12,6 +21,8 @@ import {getExtendedItemDataAction} from '../helpers';
 
 import {getControlDefaultsForField, getControlValidation, getItemDataSource} from './helpers';
 import type {SelectorsGroupDialogState} from './types';
+
+const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
 
@@ -54,6 +65,74 @@ export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['pa
     return {
         type: SET_ACTIVE_SELECTOR_INDEX,
         payload,
+    };
+};
+
+export const copyControlToStorage = (controlIndex: number) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const {
+            selectorsGroup,
+            activeSelectorIndex,
+            entry: {workbookId},
+        } = state.dash;
+        const openedItem = selectOpenedItem(state);
+
+        const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+
+        if (!isEmpty(validation)) {
+            if (activeSelectorIndex !== controlIndex) {
+                dispatch(setActiveSelectorIndex({activeSelectorIndex: controlIndex}));
+            }
+
+            dispatch(
+                setSelectorDialogItem({
+                    validation,
+                }),
+            );
+
+            dispatch(
+                showToast({
+                    type: 'danger',
+                    title: dialogI18n('label_copy-invalid-control'),
+                }),
+            );
+
+            return;
+        }
+
+        // logic is copied from dashkit
+        const selectorToCopy = selectorsGroup.group[controlIndex];
+
+        const copiedItem = {
+            title: selectorToCopy.title,
+            sourceType: selectorToCopy.sourceType,
+            source: getItemDataSource(selectorToCopy) as DashTabItemControlData['source'],
+            defaults: getControlDefaultsForField(selectorToCopy),
+            namespace: openedItem?.namespace || DEFAULT_NAMESPACE,
+            width: '',
+            placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+        };
+
+        const options: PreparedCopyItemOptions<CopiedConfigContext> = {
+            timestamp: Date.now(),
+            data: {
+                ...getGroupSelectorDialogInitialState(),
+                group: [copiedItem as unknown as ConfigItemGroup],
+            },
+            type: DashTabItemType.GroupControl,
+            defaults: copiedItem.defaults,
+            namespace: copiedItem.namespace,
+            layout: DEFAULT_CONTROL_LAYOUT,
+        };
+
+        const preparedOptions = getPreparedCopyItemOptions(options, null, {
+            workbookId: workbookId ?? null,
+        });
+
+        localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));
+        // https://stackoverflow.com/questions/35865481/storage-event-not-firing
+        window.dispatchEvent(new Event('storage'));
     };
 };
 

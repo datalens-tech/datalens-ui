@@ -9,6 +9,7 @@
   "context_update-controls-on-change": "Once you enable this option, the dependent selectors will have influence on each other before you click Apply.",
   "label_apply-button-checkbox": "Apply button",
   "label_autoheight-checkbox": "Autoheight",
+  "label_copy-invalid-control": "Failed to copy selector: some fields did not pass validation",
   "label_default-tab": "Selector {{index}}",
   "label_reset-button-checkbox": "Reset button",
   "label_selector-settings": "Selector settings",
