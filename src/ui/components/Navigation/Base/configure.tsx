@@ -114,6 +114,58 @@ export const getQuickItems = memoize(() => {
     ];
 });
 
+export const Title: React.FC<{title: string; className: string}> = ({title, className}) => (
+    <div className={className}>{title}</div>
+);
+
+interface EntrySettings {
+    icon: React.ReactNode;
+    text: {title: string};
+    place?: string;
+    submenu?: string;
+    condition?: () => boolean;
+}
+
+export const entriesSettings: {[key in CreateMenuValue]?: EntrySettings} = {
+    [CreateMenuValue.Script]: {
+        icon: <EntityIcon type="editor" />,
+        text: {title: i18n('value_create-editor')},
+        place: PLACE.WIDGETS,
+        submenu: 'charts',
+        condition: () => Utils.isEnabledFeature(Feature.EntryMenuEditor),
+    },
+    [CreateMenuValue.Widget]: {
+        icon: <EntityIcon type="chart-wizard" />,
+        text: {title: i18n('value_create-wizard')},
+        place: PLACE.WIDGETS,
+        submenu: 'charts',
+    },
+    [CreateMenuValue.QL]: {
+        icon: <EntityIcon type="chart-ql" />,
+        text: {title: i18n('value_create-ql')},
+        place: PLACE.WIDGETS,
+        submenu: 'charts',
+    },
+    [CreateMenuValue.Dashboard]: {
+        icon: <EntityIcon type="dashboard" />,
+        text: {title: i18n('value_create-dashboard')},
+        place: PLACE.DASHBOARDS,
+        submenu: 'other',
+    },
+    [CreateMenuValue.Connection]: {
+        icon: <EntityIcon type="connection" />,
+        text: {title: i18n('value_create-connection')},
+        place: PLACE.CONNECTIONS,
+        submenu: 'other',
+    },
+    [CreateMenuValue.Dataset]: {
+        icon: <EntityIcon type="dataset" />,
+        text: {title: i18n('value_create-dataset')},
+        place: PLACE.DATASETS,
+        submenu: 'other',
+    },
+};
+
 export const getCreatableEntries = memoize(
     ({
         onClick,
@@ -121,149 +173,51 @@ export const getCreatableEntries = memoize(
         isOnlyCollectionsMode,
         b,
     }: CreateEntryProps & {b: (title: string) => string}) => {
-        const Title: React.FC<{title: string}> = ({title}) => (
-            <div className={b('item-title')}>{title}</div>
-        );
+        const menuItems: DropdownMenuItemMixed<() => void>[] = [];
+        const menuChartItems: DropdownMenuItem<() => void>[] = [];
+        const menuOtherItems: DropdownMenuItem<() => void>[] = [];
 
-        let menuItems: DropdownMenuItemMixed<() => void>[] = [];
-        let menuChartItems: DropdownMenuItem<() => void>[] = [];
-        let menuOtherItems: DropdownMenuItem<() => void>[] = [];
+        Object.keys(entriesSettings).forEach((entryMenuValue) => {
+            const entrySettings = entriesSettings[
+                entryMenuValue as CreateMenuValue
+            ] as EntrySettings;
 
-        if (Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
-            // Chart creation elements subset
-            menuChartItems = [
-                // Editor
-                {
-                    action: () => onClick(CreateMenuValue.Script),
-                    icon: <EntityIcon type="editor" />,
-                    text: <Title title={i18n('value_create-editor')} />,
-                },
-
-                // Wizard
-                {
-                    action: () => onClick(CreateMenuValue.Widget),
-                    icon: <EntityIcon type="chart-wizard" />,
-                    text: <Title title={i18n('value_create-wizard')} />,
-                },
-            ];
-
-            if (Utils.isEnabledFeature(Feature.Ql)) {
-                menuChartItems = [
-                    ...menuChartItems,
-
-                    // QL-charts
-                    {
-                        action: () => onClick(CreateMenuValue.QL),
-                        icon: <EntityIcon type="chart-ql" />,
-                        text: <Title title={i18n('value_create-ql')} />,
-                    },
-                ];
+            if (entrySettings.condition && entrySettings.condition() === false) {
+                return;
             }
 
-            // If current menu contains Charts only then return Charts creation subset
-            if (place === PLACE.WIDGETS) {
-                return menuChartItems;
+            let targetMenu;
+            if (entrySettings.submenu === 'charts') {
+                targetMenu = menuChartItems;
+            } else if (entrySettings.submenu === 'other') {
+                targetMenu = menuOtherItems;
+            } else {
+                targetMenu = menuItems;
             }
 
-            // Other Items - subsets with Dashboards, Datasets, Connections and other independent entity types
-            menuOtherItems = [
-                {
-                    action: () => onClick(CreateMenuValue.Dashboard),
-                    icon: <EntityIcon type="dashboard" />,
-                    text: <Title title={i18n('value_create-dashboard')} />,
-                },
-            ];
+            targetMenu.push({
+                action: () => onClick(entryMenuValue as CreateMenuValue),
+                icon: entrySettings.icon,
+                text: <Title className={b('item-title')} title={entrySettings.text.title} />,
+            });
+        });
 
-            menuOtherItems = menuOtherItems.concat([
-                {
-                    action: () => onClick(CreateMenuValue.Connection),
-                    icon: <EntityIcon type="connection" />,
-                    text: <Title title={i18n('value_create-connection')} />,
-                },
-                {
-                    action: () => onClick(CreateMenuValue.Dataset),
-                    icon: <EntityIcon type="dataset" />,
-                    text: <Title title={i18n('value_create-dataset')} />,
-                },
-            ]);
-
-            if (isOnlyCollectionsMode === false) {
-                menuItems = [
-                    [
-                        {
-                            action: () => onClick(CreateMenuValue.Folder),
-                            icon: <EntityIcon type="folder" iconSize={18} />,
-                            text: <Title title={i18n('value_create-folder')} />,
-                        },
-                    ],
-                ];
-            }
-
-            menuItems.push(menuChartItems, menuOtherItems);
-
-            return menuItems;
-        } else {
-            // Wizard charts only - by default
-            menuChartItems = [
-                {
-                    action: () => onClick(CreateMenuValue.Widget),
-                    icon: <EntityIcon type="chart-wizard" />,
-                    text: <Title title={i18n('value_create-widget')} />,
-                },
-            ];
-
-            if (Utils.isEnabledFeature(Feature.Ql)) {
-                menuChartItems = [
-                    ...menuChartItems,
-
-                    // QL-charts
-                    {
-                        action: () => onClick(CreateMenuValue.SQL),
-                        icon: <EntityIcon type="chart-ql" />,
-                        text: <Title title={i18n('value_create-ql')} />,
-                    },
-                ];
-            }
-
-            // If current menu contains Charts only then return Charts creation subset
-            if (place === PLACE.WIDGETS) {
-                return menuChartItems;
-            }
-
-            menuOtherItems = [
-                {
-                    action: () => onClick(CreateMenuValue.Connection),
-                    icon: <EntityIcon type="connection" />,
-                    text: <Title title={i18n('value_create-connection')} />,
-                },
-                {
-                    action: () => onClick(CreateMenuValue.Dataset),
-                    icon: <EntityIcon type="dataset" />,
-                    text: <Title title={i18n('value_create-dataset')} />,
-                },
-                {
-                    action: () => onClick(CreateMenuValue.Dashboard),
-                    icon: <EntityIcon type="dashboard" />,
-                    text: <Title title={i18n('value_create-dashboard')} />,
-                },
-            ];
-
-            if (isOnlyCollectionsMode === false) {
-                menuItems = [
-                    [
-                        {
-                            action: () => onClick(CreateMenuValue.Folder),
-                            icon: <EntityIcon type="folder" iconSize={18} />,
-                            text: <Title title={i18n('value_create-folder')} />,
-                        },
-                    ],
-                ];
-            }
-
-            menuItems.push(menuChartItems, menuOtherItems);
-
-            return menuItems;
+        // If current menu contains Charts only then return Charts creation subset
+        if (place === PLACE.WIDGETS) {
+            return menuChartItems;
         }
+
+        if (isOnlyCollectionsMode === false) {
+            menuItems.push({
+                action: () => onClick(CreateMenuValue.Folder),
+                icon: <EntityIcon type="folder" iconSize={18} />,
+                text: <Title className={b('item-title')} title={i18n('value_create-folder')} />,
+            });
+        }
+
+        menuItems.push(menuChartItems, menuOtherItems);
+
+        return menuItems;
     },
 );
 
