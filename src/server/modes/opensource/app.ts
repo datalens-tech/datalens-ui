@@ -25,6 +25,7 @@ import {configurableRequestWithDatasetPlugin} from '../charts/plugins/request-wi
 
 import {setSubrequestHeaders} from './middlewares';
 import {getRoutes} from './routes';
+import { US } from '../../components/sdk';
 
 const { auth } = require('express-openid-connect');
 
@@ -63,29 +64,40 @@ export default function initApp(nodekit: NodeKit) {
     });
 
     var oidcRoutes = auth({
-        issuerBaseURL: 'https://a3f6-94-232-56-134.ngrok-free.app/dev/.well-known/openid-configuration',
-        baseURL: 'http://localhost:3030/auth/v1/oidc',
-        clientID: 'oidcCLIENT',
-        secret: 'secret777',
-        clientSecret: 'secret777',
+        issuerBaseURL: nodekit.config.oidc_issuer,
+        baseURL: nodekit.config.oidc_base_url,
+        clientID: nodekit.config.oidc_client_id,
+        secret: nodekit.config.oidc_secret,
+        clientSecret: nodekit.config.oidc_secret,
         idpLogout: true,
         authorizationParams: {
             response_type: 'code',
-            //response_mode: 'form_post',
-            scope: 'openid profile email'
+            scope: 'openid email profile'
         },
     });
     var expressKit = new ExpressKit(nodekit, routes);
   
-    expressKit.express.use('/auth/v1/oidc/', oidcRoutes);
-    expressKit.express.get('/auth/v1/oidc/', async (req, res, next) => {
-        var r:any = req;
-        if(await r.oidc.isAuthenticated()) {
-            const userInfo = await r.oidc.fetchUserInfo();
-            console.log(userInfo);
-        }
-        res.redirect('/')
-    });
+    if(nodekit.config.oidc) {
+        expressKit.express.get('/auth/v1/oidc/callback', async (req, res, next) => {
+            if(req.query['error'] == 'access_denied') {
+                res.redirect(`/?x-rpc-authorization=`)
+            }
+            next();
+        });
+        expressKit.express.use('/auth/v1/oidc/', oidcRoutes);
+        expressKit.express.get('/auth/v1/oidc/', async (req, res, next) => {
+            var r:any = req;
+
+            if(await r.oidc.isAuthenticated()) {
+                const token: string = r.oidc.accessToken.access_token;
+                const user = await r.oidc.user;
+                var result = await US.oidcAuth({"login": user.sub, "token": token}, req.ctx)
+                res.redirect(`/?x-rpc-authorization=${result.data.token}`)
+            }
+            next();
+        });
+    }
+
     return expressKit;
 }
 

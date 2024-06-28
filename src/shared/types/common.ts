@@ -203,6 +203,9 @@ export type DLGlobalData = {
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;
+    oidc?: boolean;
+    oidc_name?: string;
+    oidc_base_url?: string;
     hideNavigation?: boolean;
 } & MainLayoutConfigData;
 

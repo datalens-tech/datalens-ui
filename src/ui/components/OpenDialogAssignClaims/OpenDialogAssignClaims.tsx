@@ -32,7 +32,6 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
     } = props;
     const itemId = entryId || workbookId;
 
-    console.log(itemId);
     useEffect(()=>{
         Utils.getRoles({}).then(_roles=>{
             Utils.getAccesses({id: itemId}).then(_accesses=>{

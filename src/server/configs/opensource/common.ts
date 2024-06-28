@@ -217,4 +217,11 @@ export default {
 
     serviceClientId: process.env.SERVICE_CLIENT_ID || '',
     serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
+
+    oidc: isTrueArg(process.env.OIDC),
+    oidc_issuer: process.env.OIDC_ISSUER || '',
+    oidc_base_url: process.env.OIDC_BASE_URL || '',
+    oidc_client_id: process.env.OIDC_CLIENT_ID || '',
+    oidc_secret: process.env.OIDC_SECRET || '',
+    oidc_name: process.env.OIDC_NAME || '',
 };

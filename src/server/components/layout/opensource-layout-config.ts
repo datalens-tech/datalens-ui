@@ -60,6 +60,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled: req.ctx.config.isZitadelEnabled,
+        oidc: req.ctx.config.oidc,
+        oidc_name: req.ctx.config.oidc_name,
+        oidc_base_url: req.ctx.config.oidc_base_url,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

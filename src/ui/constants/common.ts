@@ -230,6 +230,15 @@ export const DL = {
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
+    get OIDC() {
+        return window.DL.oidc === true;
+    },
+    get OIDC_BASE_URL() {
+        return window.DL.oidc_base_url || '';
+    },
+    get OIDC_NAME() {
+        return window.DL.oidc_name || 'OIDC';
+    },
 };
 
 export const LIGHT_THEME = 'light';

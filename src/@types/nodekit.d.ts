@@ -70,6 +70,13 @@ export interface SharedAppConfig {
 
     serviceClientId?: string;
     serviceClientSecret?: string;
+
+    oidc?: boolean;
+    oidc_issuer?: string;
+    oidc_base_url?: string;
+    oidc_client_id?: string;
+    oidc_secret?: string;
+    oidc_name?: string;
 }
 
 export interface SharedAppDynamicConfig {

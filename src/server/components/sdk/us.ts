@@ -54,6 +54,30 @@ class US {
         }
     }
 
+    static async oidcAuth(
+        data: any,
+        ctx: AppContext,
+    ): Promise<any> {
+        try {
+            var axios = getAxios(ctx.config);
+            const {data: result}  = await axios({
+                method: 'GET',
+                url: `${ctx.config.endpoints.api.us}/oidc/auth?login=${data.login}&token=${data.token}`,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                'axios-retry': {retries: 1},
+            });
+
+            ctx.log('SDK_US_UNIVERSAL_SERVICE_SUCCESS', US.getLoggedEntry(result));
+
+            return result;
+        } catch (error) {
+            ctx.logError('SDK_US_UNIVERSAL_SERVICE_FAILED', error, {});
+            throw error;
+        }
+    }
+
     static async createEntry(
         data: CreateEntryRequest,
         headers: IncomingHttpHeaders,

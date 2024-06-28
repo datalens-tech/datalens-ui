@@ -6,6 +6,7 @@ import Utils from '../../../utils/utils';
 import {useDispatch} from 'react-redux';
 
 import {showToast} from 'store/actions/toaster';
+import { DL } from 'ui/constants';
 
 
 const b = block('dl-collection-filters');
@@ -15,6 +16,10 @@ const AuthPage = ({setToken}) => {
     const dispatch = useDispatch();
 
     const controlSize = 'm';
+
+    var oidc = DL.OIDC;
+    var oidc_name = DL.OIDC_NAME;
+    var oidc_base_url = DL.OIDC_BASE_URL;
 
     function onAuth() {
         Utils.getAuthToken({login: encodeURIComponent(login), password: encodeURIComponent(password)}).then((response)=> {
@@ -26,6 +31,10 @@ const AuthPage = ({setToken}) => {
         }).catch(error=>{
             dispatch(showToast({title: "Ошибка авторизации", error: new Error("Ошибка авторизации"), withReport: false}));
         });
+    }
+
+    function onOIDCAuth() {
+        window.location.href = oidc_base_url;
     }
 
     return <div style={{
@@ -63,6 +72,11 @@ const AuthPage = ({setToken}) => {
             <Button view="outlined" onClick={onAuth}>
                 Войти
             </Button>
+            {oidc && (
+                        <Button view="outlined" onClick={onOIDCAuth}>
+                            {oidc_name}
+                        </Button>
+            )}
         </div>
     </div>
 }

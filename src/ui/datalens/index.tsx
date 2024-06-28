@@ -46,7 +46,9 @@ const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 
 export const AuthContext = React.createContext({
     token: "",
-    setToken: function(token:string){console.log(token)}
+    setToken: function(token:string){
+        console.log(token)
+    }
 });
 
 const DatalensPageView = (props: any) => {
