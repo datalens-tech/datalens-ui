@@ -15,6 +15,7 @@ import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHead
 import {
     getCreatableEntries,
     getCreateEntrySwitcher,
+    getPlaceParameters,
     getQuickItems,
 } from '../../../components/Navigation/Base/configure';
 import {getInitDestination} from '../../../components/Navigation/Base/utils';
@@ -55,7 +56,8 @@ export const registerCommonPlugins = () => {
         getInitDestination,
         getNavigationQuickItems: getQuickItems,
         getNavigationCreatableEntries: getCreatableEntries,
-        getCreateEntrySwitcher: getCreateEntrySwitcher,
+        getNavigationCreateEntrySwitcher: getCreateEntrySwitcher,
+        getNavigationPlaceParameters: getPlaceParameters,
         getUpdatedUserSettings,
         getUIEntryRoute,
         getFormatNumber: formatNumber,

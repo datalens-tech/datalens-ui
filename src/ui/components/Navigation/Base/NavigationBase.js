@@ -19,8 +19,6 @@ import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
 import NavigationInline from '../Core/NavigationInline';
 import {PLACE, ROOT_PATH} from '../constants';
 
-import {getPlaceParameters} from './configure';
-
 const SPA_ENTRIES_SCOPE = new Set([EntryScope.Connection, EntryScope.Dataset, EntryScope.Dash]);
 
 const SPA_ENTRIES_TYPES = new Set([
@@ -478,6 +476,7 @@ class NavigationBase extends React.Component {
     }
     render() {
         const {root, navConstructor, sdk, navigationUrl, closeNavigation, ...props} = this.props;
+
         const getMenuItems = (params) => {
             const items = getEntryContextMenuItems(params);
             const menu = getGroupedMenu(items, {
@@ -486,6 +485,9 @@ class NavigationBase extends React.Component {
             });
             return menu;
         };
+
+        const {getNavigationPlaceParameters} = registry.common.functions.getAll();
+
         const navigationNode = React.createElement(navConstructor, {
             ref: this.refNavigation,
             sdk,
@@ -495,7 +497,7 @@ class NavigationBase extends React.Component {
             linkWrapper: linkWrapper({navigationUrl, closeNavigation, onClose: this.props.onClose}),
             getContextMenuItems: getMenuItems,
             onContextMenuClick: this.onContextMenuClick,
-            getPlaceParameters,
+            getPlaceParameters: getNavigationPlaceParameters,
             ...props,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,

@@ -27,7 +27,6 @@ import './NavigationBase.scss';
 const i18n = I18n.keyset('component.navigation.view');
 const b = block('dl-navigation-base');
 
-// used in the MobileNavigationPage component
 export const getPlaceParameters = memoize((place) => {
     const placesParameters: PlaceParameterItem[] = [
         {

@@ -3,9 +3,9 @@ import React from 'react';
 import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 
+import {registry} from '../../registry';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
 
-import {getPlaceParameters} from './Base/configure';
 import NavigationMinimal from './Core/NavigationMinimal';
 import PlaceSelect from './PlaceSelect/PlaceSelect';
 import {PLACE} from './constants';
@@ -150,6 +150,8 @@ class NavigationMinimalService extends React.PureComponent {
             />
         ) : null;
 
+        const {getNavigationPlaceParameters} = registry.common.functions.getAll();
+
         return (
             <React.Fragment>
                 <NavigationMinimal
@@ -166,7 +168,7 @@ class NavigationMinimalService extends React.PureComponent {
                     onEntryParentClick={this.onEntryParentClick}
                     onCrumbClick={this.onCrumbClick}
                     ref={this.refNavigation}
-                    getPlaceParameters={getPlaceParameters}
+                    getPlaceParameters={getNavigationPlaceParameters}
                     placeSelectNode={placeSelectNode}
                     ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
                     onPermissionError={this.onPermissionError}

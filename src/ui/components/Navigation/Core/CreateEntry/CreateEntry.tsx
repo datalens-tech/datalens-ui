@@ -52,7 +52,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
             place === PLACE.WIDGETS &&
             Utils.isEnabledFeature(Feature.Ql));
 
-    const {getNavigationCreatableEntries, getCreateEntrySwitcher} =
+    const {getNavigationCreatableEntries, getNavigationCreateEntrySwitcher} =
         registry.common.functions.getAll();
 
     const items = React.useMemo(() => {
@@ -74,7 +74,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            switcher={getCreateEntrySwitcher({place, onClick, withMenu})}
+            switcher={getNavigationCreateEntrySwitcher({place, onClick, withMenu})}
         />
     );
 };

@@ -17,6 +17,7 @@ import type {ContextMenuItem} from '../../../components/EntryContextMenu/types';
 import type {EntryData} from '../../../components/EntryTitle/types';
 import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
 import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
+import type {PlaceParameterItem} from '../../../components/Navigation/types';
 import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
@@ -77,7 +78,7 @@ export const commonFunctionsMap = {
                 () => void
             >[]
         >(),
-    getCreateEntrySwitcher:
+    getNavigationCreateEntrySwitcher:
         makeFunctionTemplate<
             ({
                 place,
@@ -89,6 +90,11 @@ export const commonFunctionsMap = {
                 withMenu: boolean;
             }) => React.ReactNode
         >(),
+    getNavigationPlaceParameters:
+        makeFunctionTemplate<
+            (place: string) => PlaceParameterItem | PlaceParameterItem[] | undefined
+        >(),
+
     getUpdatedUserSettings:
         makeFunctionTemplate<
             (settings: Partial<DLUserSettings>) => Promise<Partial<DLUserSettings> | undefined>
