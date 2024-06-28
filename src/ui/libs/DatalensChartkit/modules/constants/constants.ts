@@ -4,6 +4,7 @@ export const URL_OPTIONS = {
     NORMALIZE_SUB: '_normalize_sub',
     NORMALIZE_DIV: '_normalize_div',
     WITHOUT_LINE_LIMIT: '_graph_without_line_limit',
+    WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',
 };
 
 export const CONTROL_TYPE = {
