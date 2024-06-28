@@ -234,12 +234,13 @@ class ControlActions {
             }
         }
 
-        if (sourceType === DashTabItemControlSourceType.Manual && !setting.dataset) {
+        if (sourceType === DashTabItemControlSourceType.Manual) {
             if (setting.fieldName) {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
 
-            if (!setting.elementType) {
+            // TODO: remove condition with innerText after removing addSelectorWithDefaultSettings
+            if (!setting.elementType || setting.elementType.innerText === 'List') {
                 await this.fillSelectSelectorItems({
                     items: setting.items,
                     defaultValue: setting.defaultValue,
