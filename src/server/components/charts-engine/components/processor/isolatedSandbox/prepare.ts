@@ -22,7 +22,12 @@ function require(name) {
 }
 const ChartEditor = {};
 ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_getSharedData());
-ChartEditor.setSharedData = () => _ChartEditor_setSharedData(JSON.stringify(override));
+ChartEditor.setSharedData = (override) => _ChartEditor_setSharedData(JSON.stringify(override));
+ChartEditor.getLang = () => _ChartEditor_userLang;
+ChartEditor.attachHandler = (handlerConfig) => JSON.parse(_ChartEditor_attachHandler(JSON.stringify(handlerConfig)));
+ChartEditor.attachFormatter = (formatterConfig) => JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig)));
+ChartEditor.getSecrets = () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets());
+
 ChartEditor.getParams = () => JSON.parse(_ChartEditor_getParams());
 ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_getActionParams());
 ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_getWidgetConfig());

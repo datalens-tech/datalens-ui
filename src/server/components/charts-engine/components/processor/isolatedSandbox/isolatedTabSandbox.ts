@@ -312,6 +312,30 @@ function prepareChartEditorApi({
         ChartEditor.setSharedData(parsedOverride);
     });
 
+    jail.setSync('_ChartEditor_userLang', ChartEditor.getLang());
+
+    jail.setSync('_ChartEditor_attachHandler', (handlerConfig: string) => {
+        const parsedHandlerConfig = JSON.parse(handlerConfig);
+        // @ts-ignore
+        return JSON.stringify(ChartEditor.attachHandler(parsedHandlerConfig));
+    });
+
+    jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
+        const parsedFormatterConfig = JSON.parse(formatterConfig);
+        // @ts-ignore
+        return JSON.stringify(ChartEditor.attachFormatter(parsedFormatterConfig));
+    });
+
+    if (ChartEditor.getSecrets) {
+        jail.setSync('_ChartEditor_getSecrets', () => JSON.stringify(ChartEditor.getSecrets()));
+    }
+
+    jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
+        const parsedFormatterConfig = JSON.parse(formatterConfig);
+        // @ts-ignore
+        ChartEditor.attachFormatter(parsedFormatterConfig);
+    });
+
     jail.setSync('_ChartEditor_getParams', () => {
         return JSON.stringify(params);
     });
