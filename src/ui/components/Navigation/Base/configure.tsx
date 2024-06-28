@@ -1,0 +1,269 @@
+import React from 'react';
+
+import {
+    ChartColumn,
+    CirclesIntersection,
+    FolderHouse,
+    Folders,
+    LayoutCellsLarge,
+    Star,
+    Thunderbolt,
+} from '@gravity-ui/icons';
+import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
+import memoize from 'lodash/memoize';
+import {Feature, NavigationMinimalPlaceSelectQa} from 'shared';
+import {EntityIcon} from 'ui/components/EntityIcon/EntityIcon';
+import Utils from 'ui/utils';
+
+import type {CreateEntryProps} from '../Core/CreateEntry/CreateEntry';
+import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
+import {PLACE, QUICK_ITEMS} from '../constants';
+import type {PlaceParameterItem} from '../types';
+
+import './NavigationBase.scss';
+
+const i18n = I18n.keyset('component.navigation.view');
+const b = block('dl-navigation-base');
+
+// used in the MobileNavigationPage component
+export const getPlaceParameters = memoize((place) => {
+    const placesParameters: PlaceParameterItem[] = [
+        {
+            place: PLACE.ROOT,
+            icon: Folders,
+            iconClassName: b('sidebar-icon-root'),
+            text: i18n('switch_root'),
+            displayParentFolder: false,
+            filters: {
+                ownership: false,
+                order: true,
+            },
+        },
+        {
+            place: PLACE.FAVORITES,
+            icon: Star,
+            iconClassName: b('sidebar-icon-favorites'),
+            text: i18n('switch_favorites'),
+            displayParentFolder: true,
+            filters: {
+                ownership: false,
+                order: true,
+            },
+        },
+        {
+            place: PLACE.CONNECTIONS,
+            icon: Thunderbolt,
+            iconClassName: b('sidebar-icon-connections'),
+            text: i18n('switch_connections'),
+            displayParentFolder: true,
+            filters: {
+                ownership: true,
+                order: true,
+            },
+            qa: NavigationMinimalPlaceSelectQa.Connections,
+        },
+        {
+            place: PLACE.DATASETS,
+            icon: CirclesIntersection,
+            iconClassName: b('sidebar-icon-datasets'),
+            text: i18n('switch_datasets'),
+            displayParentFolder: true,
+            filters: {
+                ownership: true,
+                order: true,
+            },
+            qa: NavigationMinimalPlaceSelectQa.Datasets,
+        },
+        {
+            place: PLACE.WIDGETS,
+            icon: ChartColumn,
+            iconClassName: b('sidebar-icon-widgets'),
+            text: i18n('switch_widgets'),
+            displayParentFolder: true,
+            filters: {
+                ownership: true,
+                order: true,
+            },
+        },
+        {
+            place: PLACE.DASHBOARDS,
+            icon: LayoutCellsLarge,
+            iconClassName: b('sidebar-icon-dashboards'),
+            text: i18n('switch_dashboards'),
+            displayParentFolder: true,
+            filters: {
+                ownership: true,
+                order: true,
+            },
+        },
+    ];
+
+    return place ? placesParameters.find((param) => param.place === place) : placesParameters;
+});
+
+export const getQuickItems = memoize(() => {
+    return [
+        {
+            icon: FolderHouse,
+            iconClassName: b('sidebar-icon-personal-folder'),
+            text: i18n('switch_personal-folder'),
+            scope: 'folder',
+            key: QUICK_ITEMS.USER_FOLDER,
+        },
+    ];
+});
+
+export const getCreatableEntries = memoize(
+    ({
+        onClick,
+        place,
+        isOnlyCollectionsMode,
+        b,
+    }: CreateEntryProps & {b: (title: string) => string}) => {
+        const Title: React.FC<{title: string}> = ({title}) => (
+            <div className={b('item-title')}>{title}</div>
+        );
+
+        let menuItems: DropdownMenuItemMixed<() => void>[] = [];
+        let menuChartItems: DropdownMenuItem<() => void>[] = [];
+        let menuOtherItems: DropdownMenuItem<() => void>[] = [];
+
+        if (Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
+            // Chart creation elements subset
+            menuChartItems = [
+                // Editor
+                {
+                    action: () => onClick(CreateMenuValue.Script),
+                    icon: <EntityIcon type="editor" />,
+                    text: <Title title={i18n('value_create-editor')} />,
+                },
+
+                // Wizard
+                {
+                    action: () => onClick(CreateMenuValue.Widget),
+                    icon: <EntityIcon type="chart-wizard" />,
+                    text: <Title title={i18n('value_create-wizard')} />,
+                },
+            ];
+
+            if (Utils.isEnabledFeature(Feature.Ql)) {
+                menuChartItems = [
+                    ...menuChartItems,
+
+                    // QL-charts
+                    {
+                        action: () => onClick(CreateMenuValue.QL),
+                        icon: <EntityIcon type="chart-ql" />,
+                        text: <Title title={i18n('value_create-ql')} />,
+                    },
+                ];
+            }
+
+            // If current menu contains Charts only then return Charts creation subset
+            if (place === PLACE.WIDGETS) {
+                return menuChartItems;
+            }
+
+            // Other Items - subsets with Dashboards, Datasets, Connections and other independent entity types
+            menuOtherItems = [
+                {
+                    action: () => onClick(CreateMenuValue.Dashboard),
+                    icon: <EntityIcon type="dashboard" />,
+                    text: <Title title={i18n('value_create-dashboard')} />,
+                },
+            ];
+
+            menuOtherItems = menuOtherItems.concat([
+                {
+                    action: () => onClick(CreateMenuValue.Connection),
+                    icon: <EntityIcon type="connection" />,
+                    text: <Title title={i18n('value_create-connection')} />,
+                },
+                {
+                    action: () => onClick(CreateMenuValue.Dataset),
+                    icon: <EntityIcon type="dataset" />,
+                    text: <Title title={i18n('value_create-dataset')} />,
+                },
+            ]);
+
+            if (isOnlyCollectionsMode === false) {
+                menuItems = [
+                    [
+                        {
+                            action: () => onClick(CreateMenuValue.Folder),
+                            icon: <EntityIcon type="folder" iconSize={18} />,
+                            text: <Title title={i18n('value_create-folder')} />,
+                        },
+                    ],
+                ];
+            }
+
+            menuItems.push(menuChartItems, menuOtherItems);
+
+            return menuItems;
+        } else {
+            // Wizard charts only - by default
+            menuChartItems = [
+                {
+                    action: () => onClick(CreateMenuValue.Widget),
+                    icon: <EntityIcon type="chart-wizard" />,
+                    text: <Title title={i18n('value_create-widget')} />,
+                },
+            ];
+
+            if (Utils.isEnabledFeature(Feature.Ql)) {
+                menuChartItems = [
+                    ...menuChartItems,
+
+                    // QL-charts
+                    {
+                        action: () => onClick(CreateMenuValue.SQL),
+                        icon: <EntityIcon type="chart-ql" />,
+                        text: <Title title={i18n('value_create-ql')} />,
+                    },
+                ];
+            }
+
+            // If current menu contains Charts only then return Charts creation subset
+            if (place === PLACE.WIDGETS) {
+                return menuChartItems;
+            }
+
+            menuOtherItems = [
+                {
+                    action: () => onClick(CreateMenuValue.Connection),
+                    icon: <EntityIcon type="connection" />,
+                    text: <Title title={i18n('value_create-connection')} />,
+                },
+                {
+                    action: () => onClick(CreateMenuValue.Dataset),
+                    icon: <EntityIcon type="dataset" />,
+                    text: <Title title={i18n('value_create-dataset')} />,
+                },
+                {
+                    action: () => onClick(CreateMenuValue.Dashboard),
+                    icon: <EntityIcon type="dashboard" />,
+                    text: <Title title={i18n('value_create-dashboard')} />,
+                },
+            ];
+
+            if (isOnlyCollectionsMode === false) {
+                menuItems = [
+                    [
+                        {
+                            action: () => onClick(CreateMenuValue.Folder),
+                            icon: <EntityIcon type="folder" iconSize={18} />,
+                            text: <Title title={i18n('value_create-folder')} />,
+                        },
+                    ],
+                ];
+            }
+
+            menuItems.push(menuChartItems, menuOtherItems);
+
+            return menuItems;
+        }
+    },
+);

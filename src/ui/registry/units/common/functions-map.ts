@@ -1,6 +1,8 @@
 import type {CancellablePromise} from '@gravity-ui/sdk';
+import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {GetEntryResponse} from 'shared/schema';
+import type {CreateEntryProps} from 'ui/components/Navigation/Core/CreateEntry/CreateEntry';
 
 import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -62,6 +64,17 @@ export const commonFunctionsMap = {
     getEntryName: makeFunctionTemplate<(entry: EntryData) => string>(),
     getInitDestination: makeFunctionTemplate<(path?: string) => string>(),
     getNavigationQuickItems: makeFunctionTemplate<() => NavigationQuickItem[]>(),
+    getNavigationCreatableEntries:
+        makeFunctionTemplate<
+            ({
+                onClick,
+                place,
+                isOnlyCollectionsMode,
+                b,
+            }: CreateEntryProps & {b: (title: string) => string}) => DropdownMenuItemMixed<
+                () => void
+            >[]
+        >(),
     getUpdatedUserSettings:
         makeFunctionTemplate<
             (settings: Partial<DLUserSettings>) => Promise<Partial<DLUserSettings> | undefined>
