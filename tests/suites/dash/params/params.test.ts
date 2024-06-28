@@ -14,6 +14,7 @@ import {dragAndDropListItem} from '../helpers';
 import {RobotChartsDashboardUrls, RobotChartsEditorUrls} from '../../../utils/constants';
 import {
     ControlQA,
+    DialogControlQa,
     DialogDashWidgetQA,
     NavigationInputQA,
     ParamsSettingsQA,
@@ -23,7 +24,6 @@ import {RESTRICTED_PARAM_NAMES} from '../../../../src/shared/constants/dash';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
 import {Feature} from '../../../../src/shared/types';
-import ControlActions from '../../../page-objects/dashboard/ControlActions';
 
 const DASH_PARAMS: Array<[string, string]> = [
     ['param1', ''],
@@ -183,7 +183,7 @@ const addExternalSelector = async (dashboardPage: DashboardPage, page: Page) => 
 
         // select 'external selector'
         await page.click(
-            `${slct(ControlActions.selectors.radioManualControl)} ${
+            `${slct(DialogControlQa.radioSourceType)} ${
                 CommonSelectors.RadioButtonOptionControl
             }[value="external"]`,
             {

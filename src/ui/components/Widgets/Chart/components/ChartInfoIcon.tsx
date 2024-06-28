@@ -6,7 +6,9 @@ import block from 'bem-cn-lite';
 
 import {useMarkdown} from '../../../../hooks/useMarkdown';
 
-const b = block('widget-header');
+import './ChartInfoIcon.scss';
+
+const b = block('chart-info');
 
 const MarkdownContent = (props: {value: string; onRender: () => void}) => {
     const {value, onRender} = props;
@@ -34,9 +36,9 @@ export const ChartInfoIcon = (props: Props) => {
             content={<MarkdownContent value={msg} onRender={() => setLoaded(true)} />}
             key={String(isLoaded)}
             initialOpen={isLoaded}
-            tooltipClassName={b('chart-info-tooltip', {hidden: !isLoaded})}
+            tooltipClassName={b('tooltip', {hidden: !isLoaded})}
         >
-            <Icon size={20} data={ShieldExclamation} className={b('chart-info-icon')} />
+            <Icon size={20} data={ShieldExclamation} className={b('icon')} />
         </Popover>
     );
 };

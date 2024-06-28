@@ -26,7 +26,7 @@ import {
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
-import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
+import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from '../../Widget/TabMenu/types';
 import {TabActionType} from '../../Widget/TabMenu/types';
@@ -176,6 +176,14 @@ export const GroupControlSidebar = () => {
         dispatch(copyControlToStorage(itemIndex));
     };
 
+    const handleUpdateItem = (title: string) => {
+        dispatch(
+            setSelectorDialogItem({
+                title,
+            }),
+        );
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
@@ -195,6 +203,7 @@ export const GroupControlSidebar = () => {
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
                     onCopyItem={handleCopyItem}
+                    onUpdateItem={handleUpdateItem}
                 />
             </div>
             <div className={b('settings')}>

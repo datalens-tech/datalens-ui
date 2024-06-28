@@ -14,11 +14,11 @@ export const ControlQA = {
     controlLinks: 'dashkit-overlay-control-links',
     controlMenu: 'dashkit-overlay-control-menu',
     controlSettings: 'dashkit-overlay-control-settings',
-    selectAcceptable: 'select-acceptable',
-    selectAcceptableInput: 'select-acceptable-input',
-    selectAcceptableButton: 'select-acceptable-button',
-    selectAcceptableItem: 'select-acceptable-item',
-    selectAcceptableRemoveButton: 'select-acceptable-remove',
+    controlSelectAcceptable: 'control-select-acceptable',
+    controlSelectAcceptableInput: 'control-select-acceptable-input',
+    controlSelectAcceptableButton: 'control-select-acceptable-button',
+    controlSelectAcceptableItem: 'control-select-acceptable-item',
+    controlSelectAcceptableRemoveButton: 'control-select-acceptable-remove',
     chartkitControl: 'chartkit-control',
     groupChartkitControl: 'group-chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
@@ -47,6 +47,11 @@ export const DialogControlQa = {
     typeControlSelect: 'type-control-select',
     typeControlInput: 'type-control-input',
     typeControlCheckbox: 'type-control-checkbox',
+};
+
+export const DialogControlParamsQa = {
+    buttonApply: 'dialog-control-params-apply-button',
+    buttonCancel: 'dialog-control-params-cancel-button',
 };
 
 export const DialogGroupControlQa = {
