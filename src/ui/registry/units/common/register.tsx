@@ -12,7 +12,11 @@ import {getIllustrationStore} from '../../../components/Illustration/getIllustra
 import {getLoginById} from '../../../components/Login/utils';
 import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
-import {getCreatableEntries, getQuickItems} from '../../../components/Navigation/Base/configure';
+import {
+    getCreatableEntries,
+    getCreateEntrySwitcher,
+    getQuickItems,
+} from '../../../components/Navigation/Base/configure';
 import {getInitDestination} from '../../../components/Navigation/Base/utils';
 import {getPlaceSelectParameters} from '../../../components/Navigation/util';
 import {UserAvatarById} from '../../../components/UserAvatar/UserAvatarById';
@@ -51,6 +55,7 @@ export const registerCommonPlugins = () => {
         getInitDestination,
         getNavigationQuickItems: getQuickItems,
         getNavigationCreatableEntries: getCreatableEntries,
+        getCreateEntrySwitcher: getCreateEntrySwitcher,
         getUpdatedUserSettings,
         getUIEntryRoute,
         getFormatNumber: formatNumber,

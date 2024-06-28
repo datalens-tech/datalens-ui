@@ -9,7 +9,7 @@ import {
     Star,
     Thunderbolt,
 } from '@gravity-ui/icons';
-import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import {Button, type DropdownMenuItem, type DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import memoize from 'lodash/memoize';
@@ -265,5 +265,60 @@ export const getCreatableEntries = memoize(
 
             return menuItems;
         }
+    },
+);
+
+export const getCreateEntrySwitcher = memoize(
+    ({
+        place,
+        onClick,
+        withMenu,
+    }: {
+        place: string;
+        onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
+        withMenu: boolean;
+    }) => {
+        const getButtonText = () => {
+            switch (place) {
+                case PLACE.CONNECTIONS:
+                    return i18n('button_create-connection');
+                case PLACE.DASHBOARDS:
+                    return i18n('button_create-dashboard');
+                case PLACE.DATASETS:
+                    return i18n('button_create-dataset');
+                case PLACE.WIDGETS:
+                    return i18n('button_create-widget');
+                default:
+                    return i18n('button_create');
+            }
+        };
+
+        const onClickButton = () => {
+            switch (place) {
+                case PLACE.CONNECTIONS:
+                    onClick(CreateMenuValue.Connection);
+                    break;
+                case PLACE.DASHBOARDS:
+                    onClick(CreateMenuValue.Dashboard);
+                    break;
+                case PLACE.DATASETS:
+                    onClick(CreateMenuValue.Dataset);
+                    break;
+                case PLACE.WIDGETS:
+                    onClick(CreateMenuValue.Widget);
+                    break;
+            }
+        };
+
+        return (
+            <Button
+                view="action"
+                qa="create-entry-button"
+                className={b('button-create')}
+                onClick={withMenu ? undefined : onClickButton}
+            >
+                {getButtonText()}
+            </Button>
+        );
     },
 );
