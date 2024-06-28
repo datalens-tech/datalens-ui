@@ -374,6 +374,10 @@ function prepareChartEditorApi({
         return JSON.stringify(params);
     });
 
+    jail.setSync('_ChartEditor_getParam', (paramName: string) => {
+        return JSON.stringify(ChartEditor.getParam(paramName));
+    });
+
     if (name === 'Urls') {
         jail.setSync('_ChartEditor_getSortParams', JSON.stringify(getSortParams(params)));
     }
@@ -381,6 +385,17 @@ function prepareChartEditorApi({
     if (name === 'Urls' || name === 'JavaScript') {
         const page = getCurrentPage(params);
         jail.setSync('_ChartEditor_currentPage', page);
+    }
+
+    if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
+        jail.setSync('_ChartEditor_updateParams', (params: string) => {
+            const parsedParams = JSON.parse(params);
+            JSON.stringify(ChartEditor.updateParams(parsedParams));
+        });
+        jail.setSync('_ChartEditor_updateActionParams', (params: string) => {
+            const parsedParams = JSON.parse(params);
+            JSON.stringify(ChartEditor.updateActionParams(parsedParams));
+        });
     }
 
     if (name === 'UI' || name === 'JavaScript') {
