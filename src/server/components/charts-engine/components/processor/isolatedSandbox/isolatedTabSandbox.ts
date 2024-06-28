@@ -400,17 +400,38 @@ function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', () => {
-            const loadedData = ChartEditor.getLoadedData ? ChartEditor.getLoadedData() : null;
+            const loadedData = ChartEditor.getLoadedData();
             return JSON.stringify(loadedData);
+        });
+        jail.setSync('_ChartEditor_getLoadedDataStats', () => {
+            const loadedDataStats = ChartEditor.getLoadedDataStats();
+            return JSON.stringify(loadedDataStats);
         });
         jail.setSync('_ChartEditor_setDataSourceInfo', (dataSourceKey: string, info: string) => {
             const parsedInfo = JSON.parse(info);
             ChartEditor.setDataSourceInfo(dataSourceKey, parsedInfo);
         });
         if (name === 'JavaScript') {
+            jail.setSync('_ChartEditor_updateConfig', (updatedFragment: string) => {
+                const parsedUpdatedFragment = JSON.parse(updatedFragment);
+                ChartEditor.updateConfig(parsedUpdatedFragment);
+            });
             jail.setSync('_ChartEditor_updateHighchartsConfig', (updatedFragment: string) => {
                 const parsedUpdatedFragment = JSON.parse(updatedFragment);
                 ChartEditor.updateHighchartsConfig(parsedUpdatedFragment);
+            });
+            jail.setSync('_ChartEditor_setSideHtml', (html: string) => {
+                ChartEditor.setSideHtml(html);
+            });
+            jail.setSync('_ChartEditor_setSideMarkdown', (markdown: string) => {
+                ChartEditor.setSideMarkdown(markdown);
+            });
+            jail.setSync('_ChartEditor_setExtra', (key: string, value: string) => {
+                const parsedValue = JSON.parse(value);
+                ChartEditor.setExtra(key, parsedValue);
+            });
+            jail.setSync('_ChartEditor_setExportFilename', (filename: string) => {
+                ChartEditor.setExportFilename(filename);
             });
         }
     }

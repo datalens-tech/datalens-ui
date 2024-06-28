@@ -64,10 +64,17 @@ ChartEditor.updateParams = (params) => _ChartEditor_updateParams(JSON.stringify(
 ChartEditor.updateActionParams = (params) => _ChartEditor_updateActionParams(JSON.stringify(params));
 
 ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData());
-
-ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
+ChartEditor.getLoadedDataStats = () => JSON.parse(_ChartEditor_getLoadedDataStats());
 ChartEditor.setDataSourceInfo = (dataSourceKey, info) => _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info));
 
+ChartEditor.updateConfig = (config) => _ChartEditor_updateConfig(JSON.stringify(config));
+ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
+ChartEditor.updateLibraryConfig = ChartEditor.updateHighchartsConfig;
+
+ChartEditor.setSideHtml = (html) => _ChartEditor_setSideHtml(html);
+ChartEditor.setSideMarkdown = (markdown) => _ChartEditor_setSideMarkdown(markdown);
+ChartEditor.setExtra = (key, value) => _ChartEditor_setExtra(key, JSON.stringify(value));
+ChartEditor.setExportFilename = (filename) => _ChartEditor_setExportFilename(filename);
 
 const exports = {};
 const module = {exports};`;
