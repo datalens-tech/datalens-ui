@@ -1,6 +1,12 @@
 import type IsolatedVM from 'isolated-vm';
 
-import type {ChartsInsight, DashWidgetConfig} from '../../../../../../shared';
+import {
+    type ChartsInsight,
+    type DashWidgetConfig,
+    type IntervalPart,
+    WRAPPED_FN_KEY,
+    WRAPPED_HTML_KEY,
+} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
@@ -330,14 +336,30 @@ function prepareChartEditorApi({
         jail.setSync('_ChartEditor_getSecrets', () => JSON.stringify(ChartEditor.getSecrets()));
     }
 
-    jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
-        const parsedFormatterConfig = JSON.parse(formatterConfig);
-        // @ts-ignore
-        ChartEditor.attachFormatter(parsedFormatterConfig);
+    jail.setSync(
+        '_ChartEditor_resolveRelative',
+        (...params: [stringrelativeStr: string, intervalPart?: IntervalPart]) => {
+            return ChartEditor.resolveRelative(...params);
+        },
+    );
+
+    jail.setSync('_ChartEditor_resolveInterval', (intervalStr: string) => {
+        return ChartEditor.resolveInterval(intervalStr);
     });
 
-    jail.setSync('_ChartEditor_getParams', () => {
-        return JSON.stringify(params);
+    jail.setSync('_ChartEditor_resolveOperation', (input: string) => {
+        const parsedInput = JSON.parse(input);
+        return JSON.stringify(ChartEditor.resolveOperation(parsedInput));
+    });
+
+    jail.setSync('_ChartEditor_setError', (value: string) => {
+        const parsedValue = JSON.parse(value);
+        ChartEditor.setError(parsedValue);
+    });
+
+    jail.setSync('_ChartEditor_getWidgetConfig', () => {
+        const widgetConfig = ChartEditor.getWidgetConfig ? ChartEditor.getWidgetConfig() : null;
+        return JSON.stringify(widgetConfig);
     });
 
     jail.setSync('_ChartEditor_getActionParams', () => {
@@ -345,9 +367,11 @@ function prepareChartEditorApi({
         return JSON.stringify(actionParams);
     });
 
-    jail.setSync('_ChartEditor_getWidgetConfig', () => {
-        const widgetConfig = ChartEditor.getWidgetConfig ? ChartEditor.getWidgetConfig() : null;
-        return JSON.stringify(widgetConfig);
+    jail.setSync('_ChartEditor_wrapFn_WRAPPED_FN_KEY', WRAPPED_FN_KEY);
+    jail.setSync('_ChartEditor_wrapHtml_WRAPPED_HTML_KEY', WRAPPED_HTML_KEY);
+
+    jail.setSync('_ChartEditor_getParams', () => {
+        return JSON.stringify(params);
     });
 
     if (name === 'Urls') {

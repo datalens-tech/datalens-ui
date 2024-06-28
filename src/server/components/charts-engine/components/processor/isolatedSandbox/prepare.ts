@@ -27,10 +27,35 @@ ChartEditor.getLang = () => _ChartEditor_userLang;
 ChartEditor.attachHandler = (handlerConfig) => JSON.parse(_ChartEditor_attachHandler(JSON.stringify(handlerConfig)));
 ChartEditor.attachFormatter = (formatterConfig) => JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig)));
 ChartEditor.getSecrets = () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets());
+ChartEditor.resolveRelative = (...params) => _ChartEditor_resolveRelative(...params);
+ChartEditor.resolveInterval = (intervalStr) => _ChartEditor_resolveInterval(intervalStr);
+ChartEditor.resolveOperation = (input) => JSON.parse(_ChartEditor_resolveOperation(JSON.stringify(input)));
+ChartEditor.setError = (value) => _ChartEditor_setError(JSON.stringify(value));
+ChartEditor._setError = ChartEditor.setError;
+ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_getWidgetConfig());
+ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_getActionParams());
+ChartEditor.wrapFn = (value) => {
+        const fnArgs = Array.isArray(value.args)
+            ? value.args.map(arg =>
+                  typeof arg === 'function' ? arg.toString() : arg,
+              )
+            : value.args;
+
+        return {
+            [_ChartEditor_wrapFn_WRAPPED_FN_KEY]: {
+                fn: value.fn.toString(),
+                args: fnArgs,
+            },
+        };
+    };
+
+ChartEditor.wrapFn = (value) => ({
+    [_ChartEditor_wrapHtml_WRAPPED_HTML_KEY]: value,
+});
 
 ChartEditor.getParams = () => JSON.parse(_ChartEditor_getParams());
-ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_getActionParams());
-ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_getWidgetConfig());
+
+
 ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData());
 ChartEditor.getSortParams = () => JSON.parse(_ChartEditor_getSortParams());
 ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
