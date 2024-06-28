@@ -68,7 +68,12 @@ ChartEditor.getLoadedDataStats = () => JSON.parse(_ChartEditor_getLoadedDataStat
 ChartEditor.setDataSourceInfo = (dataSourceKey, info) => _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info));
 
 ChartEditor.updateConfig = (config) => _ChartEditor_updateConfig(JSON.stringify(config));
-ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
+ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config, function(key, val) {
+    if (typeof val === 'function') {
+        return val.toString();
+    }
+    return val;
+}));
 ChartEditor.updateLibraryConfig = ChartEditor.updateHighchartsConfig;
 
 ChartEditor.setSideHtml = (html) => _ChartEditor_setSideHtml(html);
