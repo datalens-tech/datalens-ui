@@ -2,7 +2,7 @@ import type IsolatedVM from 'isolated-vm';
 
 import type {ChartsInsight, DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
-import type {Shared} from '../../../../../../shared/types';
+import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
 import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
@@ -10,7 +10,7 @@ import {config} from '../../../constants';
 import {getChartApiContext} from './../chart-api-context';
 import {Console} from './../console';
 import type {LogItem} from './../console';
-import {getSortParams} from './../paramsUtils';
+import {getCurrentPage, getSortParams} from './../paramsUtils';
 import {
     libsControlV1Interop,
     libsDatalensV3Interop,
@@ -298,9 +298,9 @@ function prepareChartEditorApi({
 }: {
     name: string;
     jail: IsolatedVM.Reference;
-    ChartEditor: NodeJS.Dict<any>;
+    ChartEditor: IChartEditor;
 }) {
-    const params = ChartEditor.getParams ? ChartEditor.getParams() : null;
+    const params = ChartEditor.getParams();
 
     jail.setSync('_ChartEditor_getSharedData', () => {
         const shared = ChartEditor.getSharedData ? ChartEditor.getSharedData() : null;
@@ -321,7 +321,7 @@ function prepareChartEditorApi({
         return JSON.stringify(actionParams);
     });
 
-    jail.setSync('_ChartEditor_widgetConfig', () => {
+    jail.setSync('_ChartEditor_getWidgetConfig', () => {
         const widgetConfig = ChartEditor.getWidgetConfig ? ChartEditor.getWidgetConfig() : null;
         return JSON.stringify(widgetConfig);
     });
@@ -331,8 +331,8 @@ function prepareChartEditorApi({
     }
 
     if (name === 'Urls' || name === 'JavaScript') {
-        const page = Number(Array.isArray(params._page) ? params._page[0] : params._page);
-        jail.setSync('getCurrentPage', isNaN(page) ? 1 : page);
+        const page = getCurrentPage(params);
+        jail.setSync('_ChartEditor_currentPage', page);
     }
 
     if (name === 'UI' || name === 'JavaScript') {

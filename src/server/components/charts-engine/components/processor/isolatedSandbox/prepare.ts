@@ -30,6 +30,7 @@ ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData());
 ChartEditor.getSortParams = () => JSON.parse(_ChartEditor_getSortParams());
 ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config));
 ChartEditor.setDataSourceInfo = (dataSourceKey, info) => _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info));
+ChartEditor.getCurrentPage = () => _ChartEditor_currentPage;
 
 const exports = {};
 const module = {exports};`;
