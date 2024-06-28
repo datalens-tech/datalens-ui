@@ -3,15 +3,15 @@ import {i18n} from 'i18n';
 import {get} from 'lodash';
 import type {
     AvailableFieldType,
-    DATASET_FIELD_TYPES,
     DatasetField,
     DatasetFieldAggregation,
     DatasetOptionFieldItem,
     DatasetOptions,
     DatasetRls,
+    DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
-import {Feature} from 'shared';
+import {DATASET_FIELD_TYPES, Feature} from 'shared';
 import type {Permissions} from 'shared/types/dls';
 import Utils from 'ui/utils';
 
@@ -35,6 +35,7 @@ const WIDTH_15 = '15%';
 const WIDTH_20 = '20%';
 
 type GetColumnsArgs = {
+    selectedRows: DatasetSelectionMap;
     fields: DatasetOptionFieldItem[];
     showFieldsId: boolean;
     avatars?: DatasetSourceAvatar[];
@@ -53,6 +54,7 @@ type GetColumnsArgs = {
     ) => void;
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
+    onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
 };
 
 export const getLabelValue = (key: string) => {
@@ -92,9 +94,11 @@ export const getFieldSourceTitle = (field: DatasetField, avatars?: DatasetSource
 
 export const getColumns = (args: GetColumnsArgs) => {
     const {
+        selectedRows,
         avatars,
         fields,
         showFieldsId,
+        onSelectChange,
         setActiveRow,
         openDialogFieldEditor,
         handleTitleUpdate,
@@ -109,7 +113,21 @@ export const getColumns = (args: GetColumnsArgs) => {
         permissions,
     } = args;
     const width = showFieldsId ? WIDTH_15 : WIDTH_20;
-    const index = getIndexColumn();
+    const selectedCount = Object.keys(selectedRows).length;
+    const fieldsCount = fields.length;
+
+    const index = getIndexColumn({
+        selectedRows,
+        isAllSelected: fieldsCount > 0 ? selectedCount === fieldsCount : false,
+        indeterminate: fieldsCount > 0 && selectedCount > 0 ? selectedCount !== fieldsCount : false,
+        onSelectChange,
+        onSelectAllChange: (state: boolean) =>
+            onSelectChange(
+                state,
+                fields.map(({guid}) => guid),
+            ),
+    });
+
     const title = getTitleColumn({
         width,
         setActiveRow,
@@ -239,4 +257,8 @@ export const sortDescriptionColumn = (
     const description2 = get(row2, ['row', 'description']);
 
     return description1.localeCompare(description2, undefined, {numeric: true});
+};
+
+export const isHiddenSupported = (row: DatasetField) => {
+    return row.initial_data_type !== DATASET_FIELD_TYPES.UNSUPPORTED;
 };

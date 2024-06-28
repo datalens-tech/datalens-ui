@@ -547,6 +547,7 @@ class Dataset extends React.Component {
             minSize = isRightView ? RIGHT_PREVIEW_PANEL_MIN_SIZE : BOTTOM_PREVIEW_PANEL_MIN_SIZE;
         } else {
             previewPanelStyles.display = 'none';
+            mods[VIEW_PREVIEW.RIGHT] = false;
         }
 
         return (
