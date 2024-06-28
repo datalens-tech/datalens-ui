@@ -53,6 +53,19 @@ const getUrlWithoutState = (page: Page) => {
     return url.toString();
 };
 
+const getLoaders = (page: Page) => {
+    const groupLoader = page
+        .locator(ControlQA.groupChartkitControl)
+        .first()
+        .locator(slct(ControlQA.groupCommonLoader));
+    const singleLoader = page
+        .locator(ControlQA.groupChartkitControl)
+        .nth(1)
+        .locator(slct(ControlQA.groupCommonLoader));
+
+    return {groupLoader, singleLoader};
+};
+
 datalensTest.describe(
     'Dashboards - The influence of the selector outside the group on the group',
     () => {
@@ -132,14 +145,7 @@ datalensTest.describe(
                         await dashboardPage.applyRelationsChanges();
                     },
                 });
-                const groupLoader = page
-                    .locator(ControlQA.groupChartkitControl)
-                    .first()
-                    .locator(slct(ControlQA.groupCommonLoader));
-                const singleLoader = page
-                    .locator(ControlQA.groupChartkitControl)
-                    .nth(1)
-                    .locator(slct(ControlQA.groupCommonLoader));
+                const {groupLoader, singleLoader} = getLoaders(page);
 
                 await groupLoader.waitFor({state: 'hidden'});
                 await singleLoader.waitFor({state: 'hidden'});
@@ -237,8 +243,10 @@ datalensTest.describe(
                         });
                     },
                 });
-                const loader = page.locator(slct(ControlQA.groupCommonLoader));
-                await loader.waitFor({state: 'hidden'});
+                const {groupLoader, singleLoader} = getLoaders(page);
+
+                await groupLoader.waitFor({state: 'hidden'});
+                await singleLoader.waitFor({state: 'hidden'});
 
                 const firstControlLocator = dashboardPage
                     .getSelectorLocatorByTitle({
@@ -277,7 +285,8 @@ datalensTest.describe(
 
                 // reload page without state
                 await page.goto(getUrlWithoutState(page));
-                await loader.waitFor({state: 'hidden'});
+                await groupLoader.waitFor({state: 'hidden'});
+                await singleLoader.waitFor({state: 'hidden'});
 
                 await secondControlLocator.fill(PARAMS.SIDE_TEXT_VALUE);
 
