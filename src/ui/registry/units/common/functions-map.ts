@@ -4,10 +4,7 @@ import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {GetEntryResponse} from 'shared/schema';
-import type {
-    CreateEntryProps,
-    CreateMenuValue,
-} from 'ui/components/Navigation/Core/CreateEntry/CreateEntry';
+import type {CreateEntryProps} from 'ui/components/Navigation/Core/CreateEntry/CreateEntry';
 
 import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -88,7 +85,7 @@ export const commonFunctionsMap = {
                 withMenu,
             }: {
                 place: string;
-                onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
+                onClick: (value: string, options?: Record<string, unknown>) => void;
                 withMenu: boolean;
             }) => React.ReactNode
         >(),

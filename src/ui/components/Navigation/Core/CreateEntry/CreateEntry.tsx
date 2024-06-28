@@ -35,7 +35,7 @@ export enum CreateMenuValue {
 
 export interface CreateEntryProps {
     place: string;
-    onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
+    onClick: (value: string, options?: Record<string, unknown>) => void;
     isOnlyCollectionsMode?: boolean;
 }
 
