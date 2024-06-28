@@ -4,6 +4,7 @@ import {
     ControlQA,
     DialogControlDateQa,
     DialogControlParamsQa,
+    DialogGroupControlQa,
     DialogQLParameterQA,
     NavigationInputQA,
     TabMenuQA,
@@ -22,12 +23,12 @@ import {BasePageProps} from '../BasePage';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from '../../../src/shared';
 
 import {DashboardAddWidgetQa, DashboardDialogControl} from '../../../src/shared/constants/qa/dash';
-import {ListItemByParams} from '../../page-objects/types';
+import {DatasetParams, ListItemByParams} from '../../page-objects/types';
 
 export type SelectorSettings = {
     sourceType?: DashTabItemControlSourceType;
     fieldName?: string;
-    dataset?: ListItemByParams;
+    dataset?: DatasetParams;
     datasetField?: ListItemByParams;
     elementType?: ListItemByParams;
     appearance?: {
@@ -38,6 +39,11 @@ export type SelectorSettings = {
     };
     items?: string[];
     defaultValue?: string;
+};
+
+type GroupSelectorOptions = {
+    buttonApply?: boolean;
+    updateControlOnChange?: boolean;
 };
 
 export interface DashboardPageProps extends BasePageProps {}
@@ -139,7 +145,7 @@ class ControlActions {
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
-    async addSelectorsGroup(selectorsParams: SelectorSettings[]) {
+    async addSelectorsGroup(selectorsParams: SelectorSettings[], options?: GroupSelectorOptions) {
         // adding a selector
         await this.clickAddSelector();
 
@@ -147,6 +153,16 @@ class ControlActions {
 
         for (let i = 1; i < selectorsParams.length; i++) {
             await this.addSelectorToGroup(selectorsParams[i]);
+        }
+
+        if (options && options.buttonApply) {
+            await this.page
+                .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
+                .setChecked(true);
+
+            await this.page
+                .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
+                .setChecked(Boolean(options?.updateControlOnChange));
         }
 
         // adding a selector to the dashboard
@@ -218,15 +234,17 @@ class ControlActions {
             }
         }
 
-        if (sourceType === DashTabItemControlSourceType.Manual) {
+        if (sourceType === DashTabItemControlSourceType.Manual && !setting.dataset) {
             if (setting.fieldName) {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
 
-            await this.fillSelectSelectorItems({
-                items: setting.items,
-                defaultValue: setting.defaultValue,
-            });
+            if (!setting.elementType) {
+                await this.fillSelectSelectorItems({
+                    items: setting.items,
+                    defaultValue: setting.defaultValue,
+                });
+            }
         } else {
             if (setting.dataset?.link) {
                 await this.addDatasetByLink(setting.dataset?.link);
@@ -243,7 +261,11 @@ class ControlActions {
             }
         }
 
-        if (setting.elementType?.innerText || typeof setting.elementType?.idx === 'number') {
+        if (
+            setting.elementType?.innerText ||
+            typeof setting.elementType?.idx === 'number' ||
+            setting.elementType?.qa
+        ) {
             await this.dialogControl.elementType.click();
             await this.dialogControl.datasetFieldSelector.selectListItem(setting.elementType);
         }
@@ -292,13 +314,49 @@ class ControlActions {
     }
 
     async getDashControlLinksIconElem(controlQa: string, counter?: number) {
+        let controlLocator;
         // open dialog relations by click on dashkit item links icon (via parents nodes)
-        const dashkitItemElem = this.page
-            .locator(slct(ControlQA.groupChartkitControl))
-            .or(this.page.locator(slct(ControlQA.chartkitControl)))
-            .nth(counter === undefined ? 0 : counter)
-            .locator('../../../..');
-        return dashkitItemElem.locator(slct(controlQa));
+        if (counter === undefined) {
+            controlLocator = this.page
+                .locator(slct(ControlQA.groupChartkitControl))
+                .or(this.page.locator(slct(ControlQA.chartkitControl)))
+                .first();
+        } else {
+            const groupLocator = this.page
+                .locator(slct(ControlQA.groupChartkitControl))
+                .nth(counter);
+            const isGroupLocatorExist = await groupLocator.isVisible();
+            if (isGroupLocatorExist) {
+                controlLocator = groupLocator;
+            } else {
+                controlLocator = this.page.locator(slct(ControlQA.chartkitControl)).nth(counter);
+            }
+        }
+
+        return controlLocator.locator('../../../..').locator(slct(controlQa));
+    }
+
+    async openSelectPopupByTitle(controlTitle: string) {
+        const control = await this.getControlByTitle(controlTitle);
+
+        await control.click();
+
+        const selectPopup = this.page.locator(slct(ControlQA.controlSelectItems)).first();
+        await selectPopup.waitFor({state: 'visible'});
+    }
+
+    async getSelectItemsLocatorByTitle(controlTitle: string) {
+        await this.openSelectPopupByTitle(controlTitle);
+
+        return this.page.locator(
+            `${slct(ControlQA.controlSelectItems)} [data-value]:not([data-value=""])`,
+        );
+    }
+
+    async selectControlValueByTitle(controlTitle: string, value: string) {
+        await this.openSelectPopupByTitle(controlTitle);
+
+        await this.page.locator(`[data-value="${value}"]`).click();
     }
 }
 

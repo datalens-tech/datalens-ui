@@ -8,6 +8,7 @@ import {
     DashRelationTypes,
     DialogConfirmQA,
     DialogDashWidgetQA,
+    DialogGroupControlQa,
     DialogTabsQA,
     EntryDialogQA,
     SelectQa,
@@ -820,11 +821,21 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    getSelectorLocatorByTitle(title: string, counter?: number) {
+    getSelectorLocatorByTitle({
+        title,
+        counter,
+        type = 'select',
+    }: {
+        title: string;
+        counter?: number;
+        type?: 'select' | 'input';
+    }) {
+        const controlSelector =
+            type === 'select' ? slct(ControlQA.controlSelect) : slct(ControlQA.controlInput);
         return this.page
             .locator(slct(ControlQA.chartkitControl))
             .filter({hasText: title})
-            .locator(slct(ControlQA.controlSelect))
+            .locator(controlSelector)
             .nth(counter === undefined ? 0 : counter);
     }
 
@@ -836,7 +847,7 @@ class DashboardPage extends BasePage {
         counter?: number;
         value: string;
     }) {
-        const selectLocator = this.getSelectorLocatorByTitle(title);
+        const selectLocator = this.getSelectorLocatorByTitle({title});
         await expect(selectLocator).toContainText(value);
     }
 
@@ -844,7 +855,7 @@ class DashboardPage extends BasePage {
         {title, counter}: {title: string; counter?: number},
         valueTitle: string,
     ) {
-        const selectLocator = this.getSelectorLocatorByTitle(title, counter);
+        const selectLocator = this.getSelectorLocatorByTitle({title, counter});
         await selectLocator.click();
 
         await this.page
@@ -874,6 +885,16 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
+    }
+
+    async disableAutoupdateInFirstControl() {
+        await this.enterEditMode();
+        await this.clickFirstControlSettingsButton();
+        await this.page
+            .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
+            .setChecked(false);
+        await this.controlActions.applyControlSettings();
+        await this.saveChanges();
     }
 
     /**
