@@ -194,13 +194,17 @@ const execute = async ({
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
         timeStart = process.hrtime();
 
-        sandboxResult = context.evalClosureSync(
-            prepare + code + ` return JSON.stringify({module});`,
-            [],
-            {
-                timeout,
-            },
-        );
+        const responseStringify = `
+            return JSON.stringify({module}, function(key, val) {
+                if (typeof val === 'function') {
+                    return val.toString();
+                }
+                return val;
+            });`;
+
+        sandboxResult = context.evalClosureSync(prepare + code + responseStringify, [], {
+            timeout,
+        });
         sandboxResult = JSON.parse(sandboxResult);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
