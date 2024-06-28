@@ -23,7 +23,7 @@ datalensTest.describe('QL', () => {
         });
 
         datalensTest(
-            'Check that fields order does not affect axis settings',
+            'Check that fields order does not affect axis settings @screenshot',
             async ({page, config}) => {
                 const qlPage = new QLPage({page});
 
@@ -75,6 +75,17 @@ datalensTest.describe('QL', () => {
                 );
 
                 await expect(previewLoader).not.toBeVisible();
+
+                await qlPage.placeholderDialog.open(PlaceholderId.X);
+
+                const selectedModeAfterModify =
+                    await qlPage.placeholderDialog.getRadioButtonsSelectedValue(
+                        RadioButtons.AxisMode,
+                    );
+
+                expect(selectedModeAfterModify).toEqual(AxisMode.Discrete);
+
+                await qlPage.placeholderDialog.close();
 
                 // @ts-ignore
                 // X axis should stay discrete after changing the query
