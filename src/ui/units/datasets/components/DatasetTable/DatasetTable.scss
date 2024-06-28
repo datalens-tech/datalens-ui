@@ -13,6 +13,7 @@
     flex: 1;
     position: relative;
     margin-top: -24px;
+    min-width: 1000px;
 
     .data-table {
         &__table {
@@ -37,6 +38,15 @@
         &__sort-icon {
             right: 2px;
         }
+    }
+
+    &__batch-actions {
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 15px;
+        left: 15px;
+        margin: 0 15px 15px;
+        min-width: 250px;
     }
 
     &__sort-icon {
@@ -105,6 +115,32 @@
             #{$class}__more-dropdown {
                 visibility: visible;
             }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
+        }
+
+        &_selected {
+            background-color: var(--g-color-base-selection);
+
+            &:hover,
+            &:active,
+            &#{$class}__row_active {
+                background-color: var(--g-color-base-selection-hover);
+            }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
         }
 
         &:hover {
@@ -115,7 +151,23 @@
             #{$class}__hidden {
                 visibility: visible;
             }
+
+            #{$class}__btn-select {
+                display: block;
+            }
+
+            #{$class}__title-index {
+                display: none;
+            }
         }
+    }
+
+    &__title-index {
+        display: block;
+    }
+
+    &__btn-select {
+        display: none;
     }
 
     &__btn {

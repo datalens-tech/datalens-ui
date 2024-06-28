@@ -7,6 +7,7 @@ import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
+import {URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -25,7 +26,9 @@ import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/da
 
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
+import type {UiSandboxRuntimeOptions} from './ui-sandbox';
 import {
+    UI_SANDBOX_TOTAL_TIME_LIMIT,
     getUISandbox,
     processHtmlFields,
     shouldUseUISandbox,
@@ -299,9 +302,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 shouldUseUISandbox(result.data)
             ) {
                 const uiSandbox = await getUISandbox();
-                unwrapPossibleFunctions(uiSandbox, result.config);
-                unwrapPossibleFunctions(uiSandbox, result.libraryConfig);
-                unwrapPossibleFunctions(uiSandbox, result.data);
+                const uiSandboxOptions: UiSandboxRuntimeOptions = {};
+                if (!get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                    uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
+                }
+
+                unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
+                unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
+                unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
             }
 
             processHtmlFields(result.data, {allowHtml: enableJsAndHtml});

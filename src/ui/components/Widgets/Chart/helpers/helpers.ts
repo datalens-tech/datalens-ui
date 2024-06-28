@@ -68,7 +68,11 @@ export const CHARTKIT_WIDGET_TYPE = {
 /**
  * informing errors that should not interfere with the display of relations
  */
-const ALLOWED_ERRORS = [ERROR_CODE.NO_DATA, ERROR_CODE.TOO_MANY_LINES];
+const ALLOWED_ERRORS = [
+    ERROR_CODE.NO_DATA,
+    ERROR_CODE.TOO_MANY_LINES,
+    ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
+];
 
 /**
  * For current (old relations) for charts only

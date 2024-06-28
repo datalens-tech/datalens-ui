@@ -30,6 +30,8 @@ export const getDescriptionColumn = (args: GetDescriptionColumnArgs) => {
         sortable: true,
         sortAscending: sortDescriptionColumn,
         header: <div className={b('header')}>{i18n('column_filed-description')}</div>,
+        customStyle: () => ({minWidth: '100px'}),
+        width: '10%',
         render: function DescriptionColumnItem({value, index, row}) {
             return (
                 <TableTextInput

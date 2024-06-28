@@ -107,17 +107,29 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             return columnA.name > columnB.name ? 1 : -1;
         });
 
+        const columnNames = new Set();
+
         // Converting dashsql columns to wizard fields
         const fields = columns.map((column) => {
             const guessedType = (column.biType ||
                 DATASET_FIELD_TYPES.STRING) as DATASET_FIELD_TYPES;
 
-            const orderedIndex = orderedColumns.findIndex(
-                (orderedColumn) => orderedColumn.name === column.name,
-            );
+            let fieldGuid;
+
+            if (columnNames.has(column.name)) {
+                const orderedIndex = orderedColumns.findIndex(
+                    (orderedColumn) => orderedColumn.name === column.name,
+                );
+
+                fieldGuid = `${column.name}-${orderedIndex}`;
+            } else {
+                columnNames.add(column.name);
+
+                fieldGuid = column.name;
+            }
 
             return {
-                guid: `${column.name}-${orderedIndex}`,
+                guid: fieldGuid,
                 title: column.name,
                 datasetId,
                 data_type: guessedType,
@@ -283,6 +295,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             ].includes(newVisualization.id)
                 ? PlaceholderId.Y
                 : PlaceholderId.X;
+
             const targetPlaceholder = newVisualization.placeholders.find(
                 ({id}) => id === targetPlaceholderId,
             );

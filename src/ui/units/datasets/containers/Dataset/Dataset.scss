@@ -33,9 +33,12 @@
     &__content-panel {
         justify-content: center;
         overflow: hidden auto;
+        display: flex;
 
         &_right {
+            justify-content: left;
             height: 100%;
+            overflow: auto;
         }
     }
 
