@@ -224,4 +224,25 @@ export default {
     oidc_client_id: process.env.OIDC_CLIENT_ID || '',
     oidc_secret: process.env.OIDC_SECRET || '',
     oidc_name: process.env.OIDC_NAME || '',
+
+    oidc_2: isTrueArg(process.env.OIDC_2),
+    oidc_issuer_2: process.env.OIDC_ISSUER_2 || '',
+    oidc_base_url_2: process.env.OIDC_BASE_URL_2 || '',
+    oidc_client_id_2: process.env.OIDC_CLIENT_ID_2 || '',
+    oidc_secret_2: process.env.OIDC_SECRET_2 || '',
+    oidc_name_2: process.env.OIDC_NAME_2 || '',
+
+    oidc_3: isTrueArg(process.env.OIDC_3),
+    oidc_issuer_3: process.env.OIDC_ISSUER_3 || '',
+    oidc_base_url_3: process.env.OIDC_BASE_URL_3 || '',
+    oidc_client_id_3: process.env.OIDC_CLIENT_ID_3 || '',
+    oidc_secret_3: process.env.OIDC_SECRET_3 || '',
+    oidc_name_3: process.env.OIDC_NAME_3 || '',
+
+    oidc_4: isTrueArg(process.env.OIDC_4),
+    oidc_issuer_4: process.env.OIDC_ISSUER_4 || '',
+    oidc_base_url_4: process.env.OIDC_BASE_URL_4 || '',
+    oidc_client_id_4: process.env.OIDC_CLIENT_ID_4 || '',
+    oidc_secret_4: process.env.OIDC_SECRET_4 || '',
+    oidc_name_4: process.env.OIDC_NAME_4 || '',
 };

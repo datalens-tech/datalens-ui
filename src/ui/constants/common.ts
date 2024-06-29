@@ -239,6 +239,33 @@ export const DL = {
     get OIDC_NAME() {
         return window.DL.oidc_name || 'OIDC';
     },
+    get OIDC_2() {
+        return window.DL.oidc_2 === true;
+    },
+    get OIDC_BASE_URL_2() {
+        return window.DL.oidc_base_url_2 || '';
+    },
+    get OIDC_NAME_2() {
+        return window.DL.oidc_name_2 || 'OIDC';
+    },
+    get OIDC_3() {
+        return window.DL.oidc_3 === true;
+    },
+    get OIDC_BASE_URL_3() {
+        return window.DL.oidc_base_url_3 || '';
+    },
+    get OIDC_NAME_3() {
+        return window.DL.oidc_name_3 || 'OIDC';
+    },
+    get OIDC_4() {
+        return window.DL.oidc_4 === true;
+    },
+    get OIDC_BASE_URL_4() {
+        return window.DL.oidc_base_url_4 || '';
+    },
+    get OIDC_NAME_4() {
+        return window.DL.oidc_name_4 || 'OIDC';
+    }
 };
 
 export const LIGHT_THEME = 'light';

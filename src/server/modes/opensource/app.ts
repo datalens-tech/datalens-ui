@@ -63,39 +63,47 @@ export default function initApp(nodekit: NodeKit) {
         routes[route] = params;
     });
 
-    var oidcRoutes = auth({
-        issuerBaseURL: nodekit.config.oidc_issuer,
-        baseURL: nodekit.config.oidc_base_url,
-        clientID: nodekit.config.oidc_client_id,
-        secret: nodekit.config.oidc_secret,
-        clientSecret: nodekit.config.oidc_secret,
-        idpLogout: true,
-        authorizationParams: {
-            response_type: 'code',
-            scope: 'openid email profile'
-        },
-    });
     var expressKit = new ExpressKit(nodekit, routes);
   
-    if(nodekit.config.oidc) {
-        expressKit.express.get('/auth/v1/oidc/callback', async (req, res, next) => {
-            if(req.query['error'] == 'access_denied') {
-                res.redirect(`/?x-rpc-authorization=`)
-            }
-            next();
-        });
-        expressKit.express.use('/auth/v1/oidc/', oidcRoutes);
-        expressKit.express.get('/auth/v1/oidc/', async (req, res, next) => {
-            var r:any = req;
+    var oidc_suffix = ['', '_2', '_3', '_4']
 
-            if(await r.oidc.isAuthenticated()) {
-                const token: string = r.oidc.accessToken.access_token;
-                const user = await r.oidc.user;
-                var result = await US.oidcAuth({"login": user.sub, "token": token}, req.ctx)
-                res.redirect(`/?x-rpc-authorization=${result.data.token}`)
-            }
-            next();
-        });
+    for(var i = 0; i < oidc_suffix.length; i++) {
+        var config:any = nodekit.config;
+        if(config['oidc' + oidc_suffix[i]]) {
+            var oidcRoutes = auth({
+                issuerBaseURL: config['oidc_issuer' + oidc_suffix[i]],
+                baseURL: config['oidc_base_url' + oidc_suffix[i]],
+                clientID: config['oidc_client_id' + oidc_suffix[i]],
+                secret: config['oidc_secret' + oidc_suffix[i]],
+                clientSecret: config['oidc_secret' + oidc_suffix[i]],
+                idpLogout: true,
+                authorizationParams: {
+                    response_type: 'code',
+                    scope: 'openid email profile'
+                },
+            });
+
+            expressKit.express.get(`/auth/v${i+1}/oidc/callback`, async (req, res, next) => {
+                if(req.query['error'] == 'access_denied') {
+                    res.redirect(`/?x-rpc-authorization=`)
+                }
+                next();
+            });
+            expressKit.express.use(`/auth/v${i+1}/oidc`, oidcRoutes);
+            expressKit.express.get(`/auth/v${i+1}/oidc`, async (req, res, next) => {
+                var r:any = req;
+
+                if(await r.oidc.isAuthenticated()) {
+                    const token: string = r.oidc.accessToken.access_token;
+                    const user = await r.oidc.user;
+                    var result = await US.oidcAuth({"login": user.sub, "token": token, "data": Buffer.from(JSON.stringify(user)).toString('base64') }, req.ctx)
+                    if(result && result.data) {
+                        return res.redirect(`/?x-rpc-authorization=${result.data.token}`)
+                    }
+                }
+                next();
+            });
+        }
     }
 
     return expressKit;

@@ -1,0 +1,8 @@
+{
+    "error_auth_message": "Authorization error",
+    "label_login": "Login",
+    "label_password": "Password",
+    "label_enter": "Enter",
+    "label_oidc": "Authorization via the service {{oidcName}}",
+    "description": "Or you can"
+}

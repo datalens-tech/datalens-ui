@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Created:
 
- - добавлен интерфейс по авторизации через OIDC провайдер
+- добавлен интерфейс по авторизации через OIDC провайдер
 
 ## [0.1765.0z] 27.06.2024
 

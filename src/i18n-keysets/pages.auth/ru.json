@@ -1,0 +1,8 @@
+{
+    "error_auth_message": "Ошибка авторизации",
+    "label_login": "Логин",
+    "label_password": "Пароль",
+    "label_enter": "Войти",
+    "label_oidc": "Авторизация через сервис {{oidcName}}",
+    "description": "Или можно"
+}

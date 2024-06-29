@@ -272,7 +272,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
             }
             
             actions.push({
-                text: <DropdownAction icon={LockOpen} text={"Права доступа"} />,
+                text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                 action: () => {
                     dispatch(
                         openDialog({

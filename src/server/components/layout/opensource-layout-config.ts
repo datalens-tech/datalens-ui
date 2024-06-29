@@ -63,6 +63,15 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         oidc: req.ctx.config.oidc,
         oidc_name: req.ctx.config.oidc_name,
         oidc_base_url: req.ctx.config.oidc_base_url,
+        oidc_2: req.ctx.config.oidc_2,
+        oidc_name_2: req.ctx.config.oidc_name_2,
+        oidc_base_url_2: req.ctx.config.oidc_base_url_2,
+        oidc_3: req.ctx.config.oidc_3,
+        oidc_name_3: req.ctx.config.oidc_name_3,
+        oidc_base_url_3: req.ctx.config.oidc_base_url_3,
+        oidc_4: req.ctx.config.oidc_4,
+        oidc_name_4: req.ctx.config.oidc_name_4,
+        oidc_base_url_4: req.ctx.config.oidc_base_url_4,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

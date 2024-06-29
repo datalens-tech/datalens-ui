@@ -56,7 +56,7 @@ export const EntryActions = ({
         },
         {
             action: onAssignClaims,
-            text: <DropdownAction icon={LockOpen} text={"Права доступа"} />,
+            text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
         },
         ...(isFileConnection === false
             ? [

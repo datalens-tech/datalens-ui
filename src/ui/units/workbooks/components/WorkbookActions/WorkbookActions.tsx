@@ -140,7 +140,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 }),
             );
         },
-        text: <DropdownAction icon={LockOpen} text={'Права доступа'} />,
+        text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
     });
 
     const otherActions: DropdownMenuItem[] = [];

@@ -62,7 +62,7 @@ class US {
             var axios = getAxios(ctx.config);
             const {data: result}  = await axios({
                 method: 'GET',
-                url: `${ctx.config.endpoints.api.us}/oidc/auth?login=${data.login}&token=${data.token}`,
+                url: `${ctx.config.endpoints.api.us}/oidc/auth?login=${data.login}&token=${data.token}&data=${encodeURIComponent(data.data)}`,
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
