@@ -41,8 +41,10 @@ export function initConcurrencyManager(maxConcurrentRequests: number) {
     concurrencyManagerInstance = concurrencyManager(client, maxConcurrentRequests);
 
     axiosRetry(client, {
-        retries: 0,
-        retryCondition: isRetryableError,
+        retries: 3,
+        retryCondition: (error) => {
+            return isRetryableError(error) || error?.response?.status === 401;
+        },
         retryDelay: () => 3000,
     });
 
