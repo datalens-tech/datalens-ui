@@ -16,14 +16,14 @@ import {dragAndDropListItem} from '../../../suites/dash/helpers';
 
 const PARAMS = {
     FIRST_CONTROL: {
-        controlTitle: 'test-control-1',
-        controlItems: ['91000', '98800'],
-        controlFieldName: 'test-control-field',
+        appearance: {title: 'test-control-1'},
+        items: ['91000', '98800'],
+        fieldName: 'test-control-field',
     },
     SECOND_CONTROL: {
-        controlTitle: 'test-control-2',
-        controlItems: ['1', '2'],
-        controlFieldName: 'test-control-field-2',
+        appearance: {title: 'test-control-2'},
+        items: ['1', '2'],
+        fieldName: 'test-control-field-2',
     },
     OLD_CONTROL_TITLE: 'city',
     OLD_SELECTOR_TAB: 'Tab 2',
@@ -40,6 +40,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
         if (!isEnabledGroupControls) {
             skipAfterEach = true;
+            // Test is immediately aborted when you call skip, it goes straight to afterEach
             datalensTest.skip();
         }
     });
@@ -75,7 +76,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
 
-            await dashboardPage.dialogControl.waitForVisible();
+            await dashboardPage.controlActions.waitForDialog();
             await expect(page.locator(slct(TabMenuQA.List))).toBeVisible();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
@@ -94,8 +95,8 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.clickFirstControlSettingsButton();
 
             // add new selector to the previously saved group
-            await dashboardPage.dialogControl.waitForVisible();
-            await dashboardPage.addSelectorToGroup(PARAMS.SECOND_CONTROL);
+            await dashboardPage.controlActions.waitForDialog();
+            await dashboardPage.controlActions.addSelectorToGroup(PARAMS.SECOND_CONTROL);
 
             await page.click(slct(ControlQA.dialogControlApplyBtn));
 
@@ -111,7 +112,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
 
             await dashboardPage.clickFirstControlSettingsButton();
-            await dashboardPage.dialogControl.waitForVisible();
+            await dashboardPage.controlActions.waitForDialog();
 
             // we need to hover item to show control menu
             await page.locator(slct(TabMenuQA.Item)).nth(1).hover();
@@ -136,7 +137,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             // adding selector to existing group
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelectorsGroup([
+                    await dashboardPage.controlActions.addSelectorsGroup([
                         PARAMS.FIRST_CONTROL,
                         PARAMS.SECOND_CONTROL,
                     ]);
@@ -150,7 +151,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
 
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
-            await dashboardPage.dialogControl.waitForVisible();
+            await dashboardPage.controlActions.waitForDialog();
             await page.locator(slct(DialogGroupControlQa.placementButton)).click();
 
             // the controls of placement prevent you from clicking on the middle of item, so

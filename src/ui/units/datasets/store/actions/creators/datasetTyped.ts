@@ -318,6 +318,16 @@ export function deleteField(field: Partial<DatasetField>) {
         });
     };
 }
+export function batchDeleteFields(fields: Partial<DatasetField>[]) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.BATCH_DELETE_FIELDS,
+            payload: {
+                fields,
+            },
+        });
+    };
+}
 export function addField(field: Partial<DatasetField>, ignoreMergeWithSchema?: boolean) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -340,6 +350,21 @@ export function updateField(field: Partial<DatasetField>, ignoreMergeWithSchema?
         });
     };
 }
+export function batchUpdateFields(
+    fields: Partial<DatasetField>[],
+    ignoreMergeWithSchema?: boolean,
+) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.BATCH_UPDATE_FIELDS,
+            payload: {
+                fields,
+                ignoreMergeWithSchema,
+            },
+        });
+    };
+}
+
 export function updateRLS(rls: {[key: string]: string}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({

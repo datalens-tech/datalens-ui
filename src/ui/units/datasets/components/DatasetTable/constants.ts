@@ -15,6 +15,12 @@ export enum FieldAction {
     Rls = 'rls',
 }
 
+export enum BatchFieldAction {
+    Remove = 'remove',
+    Hide = 'hide',
+    Show = 'show',
+}
+
 const DUPLICATE: MenuItem = {action: FieldAction.Duplicate, label: 'button_duplicate'};
 const EDIT: MenuItem = {action: FieldAction.Edit, label: 'button_edit'};
 const RLS: MenuItem = {action: FieldAction.Rls, label: 'button_row-level-security'};

@@ -109,6 +109,11 @@ export enum DialogWarningQA {
     ApplyButton = 'dialog-warning-apply-button',
 }
 
+export enum DialogDraftWarningQA {
+    Dialog = 'dialog-draft-warning',
+    EditButton = 'dialog-draft-warning-edit-btn',
+}
+
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
     Title = 'dialog_widget-title',

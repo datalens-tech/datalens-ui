@@ -47,7 +47,7 @@ import {
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {defaultControlLayout} from '../../constants';
+import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
@@ -231,8 +231,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         });
     };
 
-    showItemsLoader = () => {
-        this.setState({loadingItems: true});
+    setItemsLoader = (loadingItems: boolean) => {
+        if (this._isUnmounted) {
+            return;
+        }
+        this.setState({loadingItems});
     };
 
     filterSignificantParams(params: StringParams) {
@@ -569,7 +572,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 actualParams={this.actualParams}
                 onChange={this.onChange}
                 init={this.init}
-                showItemsLoader={this.showItemsLoader}
+                setItemsLoader={this.setItemsLoader}
                 validationError={validationError}
                 errorData={errorData}
                 validateValue={this.validateValue}
@@ -826,7 +829,7 @@ const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true}
 
 const plugin: PluginControl = {
     type: 'control',
-    defaultLayout: defaultControlLayout,
+    defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 

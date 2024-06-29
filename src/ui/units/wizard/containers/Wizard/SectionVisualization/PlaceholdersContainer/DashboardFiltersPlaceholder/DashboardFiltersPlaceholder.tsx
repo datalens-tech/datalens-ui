@@ -38,7 +38,7 @@ class DashboardFiltersPlaceholder extends React.Component<Props> {
                 key="dashboard-filters"
                 qa="placeholder-dashboard-filters"
                 title="section_filters_from_dashboard"
-                placeholderTooltipText="tooltip_filters_from_dashboard"
+                placeholderTooltipText={i18n('wizard', 'tooltip_filters_from_dashboard')}
                 iconProps={{data: Funnel}}
                 noSwap={true}
                 items={this.filtersFromDashboard}

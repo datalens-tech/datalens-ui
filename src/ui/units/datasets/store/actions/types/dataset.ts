@@ -43,6 +43,9 @@ export const DELETE_FIELD = Symbol('dataset/DELETE_FIELD');
 export const UPDATE_FIELD = Symbol('dataset/UPDATE_FIELD');
 export const UPDATE_RLS = Symbol('dataset/UPDATE_RLS');
 
+export const BATCH_DELETE_FIELDS = Symbol('dataset/BATCH_DELETE_FIELDS');
+export const BATCH_UPDATE_FIELDS = Symbol('dataset/BATCH_UPDATE_FIELDS');
+
 export const SET_IS_DATASET_CHANGED_FLAG = Symbol('dataset/SET_IS_DATASET_CHANGED_FLAG');
 export const SET_INITIAL_SOURCES = Symbol('dataset/SET_INITIAL_SOURCES');
 

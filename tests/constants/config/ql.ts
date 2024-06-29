@@ -9,6 +9,8 @@ export const ql: QlParametrizationConfig = {
     queries: {
         citySales: QlQueries.citySales,
         salesBySalesFloat: QlQueries.salesBySalesFloat,
+        dateAndSales: QlQueries.dateAndSales,
+        dateAndSalesModified: QlQueries.dateAndSalesModified,
     },
     qa: {
         visualizationList: QlQa.visualizationList,
