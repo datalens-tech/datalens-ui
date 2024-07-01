@@ -3,9 +3,10 @@ import React from 'react';
 import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 
+import {registry} from '../../registry';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
 
-import {getPlaceParameters} from './Base/configure';
+import {getPlaceConfig} from './Base/configure';
 import NavigationMinimal from './Core/NavigationMinimal';
 import PlaceSelect from './PlaceSelect/PlaceSelect';
 import {PLACE} from './constants';
@@ -149,6 +150,12 @@ class NavigationMinimalService extends React.PureComponent {
                 onChange={this.onPlaceSelectChange}
             />
         ) : null;
+
+        const {getNavigationPlacesConfig} = registry.common.functions.getAll();
+
+        const getPlaceParameters = (place) => {
+            return getPlaceConfig({place, placesConfig: getNavigationPlacesConfig()});
+        };
 
         return (
             <React.Fragment>
