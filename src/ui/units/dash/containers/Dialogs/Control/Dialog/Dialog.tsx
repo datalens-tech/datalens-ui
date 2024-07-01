@@ -16,6 +16,7 @@ interface DialogProps {
     onClose: () => void;
     onApply: () => void;
     disabled?: boolean;
+    onTransitionEntered?: () => void;
 }
 
 const Dialog: React.FunctionComponent<DialogProps> = ({
@@ -25,9 +26,10 @@ const Dialog: React.FunctionComponent<DialogProps> = ({
     onApply,
     onClose,
     children,
+    onTransitionEntered,
 }) => {
     return (
-        <CommonDialog open={visible} onClose={onClose}>
+        <CommonDialog open={visible} onClose={onClose} onTransitionEntered={onTransitionEntered}>
             <div className={b()}>
                 <CommonDialog.Header
                     caption={caption}
