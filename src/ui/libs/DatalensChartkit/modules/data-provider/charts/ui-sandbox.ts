@@ -1,4 +1,3 @@
-import cloneDeep from 'lodash/cloneDeep';
 import escape from 'lodash/escape';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
@@ -87,25 +86,29 @@ const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label', '
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
 
 const MAX_NESTING_LEVEL = 5;
-function removeSVGElements(val: unknown, nestingLevel = 0) {
+function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
     if (nestingLevel > MAX_NESTING_LEVEL) {
-        return undefined;
-    }
-
-    if (val instanceof window.Highcharts.SVGElement) {
         return undefined;
     }
 
     if (val && typeof val === 'object') {
         if (Array.isArray(val)) {
-            val.forEach((item, index) => {
-                val[index] = removeSVGElements(item, nestingLevel + 1);
-            });
+            if (val.some((item) => item instanceof window.Highcharts.SVGElement)) {
+                return [];
+            }
+
+            return val.map((item) => removeSVGElements(item, nestingLevel + 1));
         } else {
-            const obj = val as Record<string, unknown>;
-            Object.entries(obj).forEach(([key, value]) => {
-                obj[key] = removeSVGElements(value, nestingLevel + 1);
-            });
+            return Object.entries(val as object).reduce(
+                (acc, [key, value]) => {
+                    if (!(value instanceof window.Highcharts.SVGElement)) {
+                        acc[key] = removeSVGElements(value, nestingLevel + 1);
+                    }
+
+                    return acc;
+                },
+                {} as Record<string, unknown>,
+            );
         }
     }
 
@@ -137,8 +140,8 @@ function clearVmProp(prop: unknown) {
         }
 
         if ('point' in item) {
-            const pointClone = cloneDeep(item.point);
-            item.point = removeSVGElements(clearVmProp(pointClone));
+            const pointClone = clearVmProp(item.point);
+            item.point = removeSVGElements(pointClone);
         }
 
         if ('points' in item && Array.isArray(item.points)) {
