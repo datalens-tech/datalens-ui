@@ -4,11 +4,12 @@ import type {PopupPlacement} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Feature} from 'shared';
-import {registry} from 'ui/registry';
 
 import Utils from '../../../../utils';
-import {getCreatableEntries, getCreateEntrySwitcher} from '../../Base/configure';
 import {PLACE} from '../../constants';
+
+import {CreateEntrySwitcher} from './CreateEntrySwitcher';
+import {getCreateEntryItems} from './getCreateEntryItems';
 
 import './CreateEntry.scss';
 
@@ -53,25 +54,17 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
             place === PLACE.WIDGETS &&
             Utils.isEnabledFeature(Feature.Ql));
 
-    const {getNavigationCreatableEntriesConfig, getNavigationPlacesConfig} =
-        registry.common.functions.getAll();
-
-    const creatableEntriesConfig = getNavigationCreatableEntriesConfig();
-    const placesConfig = getNavigationPlacesConfig();
-
     const items = React.useMemo(() => {
         if (!withMenu) {
             return [];
         }
 
-        return getCreatableEntries({
+        return getCreateEntryItems({
             place,
             onClick,
             isOnlyCollectionsMode,
-            b,
-            creatableEntriesConfig,
         });
-    }, [withMenu, place, onClick, isOnlyCollectionsMode, creatableEntriesConfig]);
+    }, [withMenu, place, onClick, isOnlyCollectionsMode]);
 
     return (
         <DropdownMenu
@@ -84,7 +77,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            switcher={getCreateEntrySwitcher({place, onClick, withMenu, placesConfig})}
+            switcher={<CreateEntrySwitcher place={place} onClick={onClick} withMenu={withMenu} />}
         />
     );
 };

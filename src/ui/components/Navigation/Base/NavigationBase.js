@@ -21,6 +21,8 @@ import {PLACE, ROOT_PATH} from '../constants';
 
 import {getPlaceConfig} from './configure';
 
+import './NavigationBase.scss';
+
 const SPA_ENTRIES_SCOPE = new Set([EntryScope.Connection, EntryScope.Dataset, EntryScope.Dash]);
 
 const SPA_ENTRIES_TYPES = new Set([
