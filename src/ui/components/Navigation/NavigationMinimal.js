@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {registry} from '../../registry';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
 
+import {getPlaceConfig} from './Base/configure';
 import NavigationMinimal from './Core/NavigationMinimal';
 import PlaceSelect from './PlaceSelect/PlaceSelect';
 import {PLACE} from './constants';
@@ -150,7 +151,11 @@ class NavigationMinimalService extends React.PureComponent {
             />
         ) : null;
 
-        const {getNavigationPlaceParameters} = registry.common.functions.getAll();
+        const {getNavigationPlacesConfig} = registry.common.functions.getAll();
+
+        const getPlaceParameters = (place) => {
+            return getPlaceConfig({place, placesConfig: getNavigationPlacesConfig()});
+        };
 
         return (
             <React.Fragment>
@@ -168,7 +173,7 @@ class NavigationMinimalService extends React.PureComponent {
                     onEntryParentClick={this.onEntryParentClick}
                     onCrumbClick={this.onCrumbClick}
                     ref={this.refNavigation}
-                    getPlaceParameters={getNavigationPlaceParameters}
+                    getPlaceParameters={getPlaceParameters}
                     placeSelectNode={placeSelectNode}
                     ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
                     onPermissionError={this.onPermissionError}

@@ -27,13 +27,19 @@ import './NavigationBase.scss';
 const i18n = I18n.keyset('component.navigation.view');
 const b = block('dl-navigation-base');
 
-export const getPlaceParameters = memoize((place) => {
-    const placesParameters: PlaceParameterItem[] = [
+export const Title: React.FC<{title: string; className: string}> = ({title, className}) => (
+    <div className={className}>{title}</div>
+);
+
+export const getPlacesConfig = memoize(() => {
+    return [
         {
             place: PLACE.ROOT,
             icon: Folders,
             iconClassName: b('sidebar-icon-root'),
             text: i18n('switch_root'),
+            buttonText: i18n('button_create'),
+            value: CreateMenuValue.Folder,
             displayParentFolder: false,
             filters: {
                 ownership: false,
@@ -45,6 +51,8 @@ export const getPlaceParameters = memoize((place) => {
             icon: Star,
             iconClassName: b('sidebar-icon-favorites'),
             text: i18n('switch_favorites'),
+            buttonText: i18n('button_create'),
+            value: CreateMenuValue.Folder,
             displayParentFolder: true,
             filters: {
                 ownership: false,
@@ -56,6 +64,8 @@ export const getPlaceParameters = memoize((place) => {
             icon: Thunderbolt,
             iconClassName: b('sidebar-icon-connections'),
             text: i18n('switch_connections'),
+            buttonText: i18n('button_create-connection'),
+            value: CreateMenuValue.Connection,
             displayParentFolder: true,
             filters: {
                 ownership: true,
@@ -68,6 +78,8 @@ export const getPlaceParameters = memoize((place) => {
             icon: CirclesIntersection,
             iconClassName: b('sidebar-icon-datasets'),
             text: i18n('switch_datasets'),
+            buttonText: i18n('button_create-dataset'),
+            value: CreateMenuValue.Dataset,
             displayParentFolder: true,
             filters: {
                 ownership: true,
@@ -80,6 +92,8 @@ export const getPlaceParameters = memoize((place) => {
             icon: ChartColumn,
             iconClassName: b('sidebar-icon-widgets'),
             text: i18n('switch_widgets'),
+            buttonText: i18n('button_create-widget'),
+            value: CreateMenuValue.Widget,
             displayParentFolder: true,
             filters: {
                 ownership: true,
@@ -91,6 +105,8 @@ export const getPlaceParameters = memoize((place) => {
             icon: LayoutCellsLarge,
             iconClassName: b('sidebar-icon-dashboards'),
             text: i18n('switch_dashboards'),
+            buttonText: i18n('button_create-dashboard'),
+            value: CreateMenuValue.Dashboard,
             displayParentFolder: true,
             filters: {
                 ownership: true,
@@ -98,8 +114,12 @@ export const getPlaceParameters = memoize((place) => {
             },
         },
     ];
+});
 
-    return place ? placesParameters.find((param) => param.place === place) : placesParameters;
+export const getPlaceConfig = memoize(({place, placesConfig}) => {
+    return place
+        ? placesConfig.find((placeConfig: PlaceParameterItem) => placeConfig.place === place)
+        : placesConfig;
 });
 
 export const getQuickItems = memoize(() => {
@@ -114,91 +134,96 @@ export const getQuickItems = memoize(() => {
     ];
 });
 
-export const Title: React.FC<{title: string; className: string}> = ({title, className}) => (
-    <div className={className}>{title}</div>
-);
-
-interface EntrySettings {
+export interface EntrySettings {
+    value: CreateMenuValue;
     icon: React.ReactNode;
-    text: {title: string};
+    text: string;
     place?: string;
     submenu?: string;
     condition?: () => boolean;
 }
 
-export const entriesSettings: {[key in CreateMenuValue]?: EntrySettings} = {
-    [CreateMenuValue.Script]: {
-        icon: <EntityIcon type="editor" />,
-        text: {title: i18n('value_create-editor')},
-        place: PLACE.WIDGETS,
-        submenu: 'charts',
-        condition: () => Utils.isEnabledFeature(Feature.EntryMenuEditor),
-    },
-    [CreateMenuValue.Widget]: {
-        icon: <EntityIcon type="chart-wizard" />,
-        text: {title: i18n('value_create-wizard')},
-        place: PLACE.WIDGETS,
-        submenu: 'charts',
-    },
-    [CreateMenuValue.QL]: {
-        icon: <EntityIcon type="chart-ql" />,
-        text: {title: i18n('value_create-ql')},
-        place: PLACE.WIDGETS,
-        submenu: 'charts',
-    },
-    [CreateMenuValue.Dashboard]: {
-        icon: <EntityIcon type="dashboard" />,
-        text: {title: i18n('value_create-dashboard')},
-        place: PLACE.DASHBOARDS,
-        submenu: 'other',
-    },
-    [CreateMenuValue.Connection]: {
-        icon: <EntityIcon type="connection" />,
-        text: {title: i18n('value_create-connection')},
-        place: PLACE.CONNECTIONS,
-        submenu: 'other',
-    },
-    [CreateMenuValue.Dataset]: {
-        icon: <EntityIcon type="dataset" />,
-        text: {title: i18n('value_create-dataset')},
-        place: PLACE.DATASETS,
-        submenu: 'other',
-    },
-};
+export const getCreatableEntriesConfig = memoize(() => {
+    return [
+        {
+            value: CreateMenuValue.Script,
+            icon: <EntityIcon type="editor" />,
+            text: i18n('value_create-editor'),
+            place: PLACE.WIDGETS,
+            submenu: 'charts',
+            condition: () => Utils.isEnabledFeature(Feature.EntryMenuEditor),
+        },
+        {
+            value: CreateMenuValue.Widget,
+            icon: <EntityIcon type="chart-wizard" />,
+            text: i18n('value_create-wizard'),
+            place: PLACE.WIDGETS,
+            submenu: 'charts',
+        },
+        {
+            value: CreateMenuValue.QL,
+            icon: <EntityIcon type="chart-ql" />,
+            text: i18n('value_create-ql'),
+            place: PLACE.WIDGETS,
+            submenu: 'charts',
+        },
+        {
+            value: CreateMenuValue.Dashboard,
+            icon: <EntityIcon type="dashboard" />,
+            text: i18n('value_create-dashboard'),
+            place: PLACE.DASHBOARDS,
+            submenu: 'other',
+        },
+        {
+            value: CreateMenuValue.Connection,
+            icon: <EntityIcon type="connection" />,
+            text: i18n('value_create-connection'),
+            place: PLACE.CONNECTIONS,
+            submenu: 'other',
+        },
+        {
+            value: CreateMenuValue.Dataset,
+            icon: <EntityIcon type="dataset" />,
+            text: i18n('value_create-dataset'),
+            place: PLACE.DATASETS,
+            submenu: 'other',
+        },
+    ];
+});
 
 export const getCreatableEntries = memoize(
     ({
         onClick,
         place,
         isOnlyCollectionsMode,
+        creatableEntriesConfig,
         b,
-    }: CreateEntryProps & {b: (title: string) => string}) => {
+    }: CreateEntryProps & {
+        b: (title: string) => string;
+        creatableEntriesConfig: EntrySettings[];
+    }) => {
         const menuItems: DropdownMenuItemMixed<() => void>[] = [];
         const menuChartItems: DropdownMenuItem<() => void>[] = [];
         const menuOtherItems: DropdownMenuItem<() => void>[] = [];
 
-        Object.keys(entriesSettings).forEach((entryMenuValue) => {
-            const entrySettings = entriesSettings[
-                entryMenuValue as CreateMenuValue
-            ] as EntrySettings;
-
-            if (entrySettings.condition && entrySettings.condition() === false) {
+        creatableEntriesConfig.forEach((entryConfig) => {
+            if (entryConfig.condition && entryConfig.condition() === false) {
                 return;
             }
 
             let targetMenu;
-            if (entrySettings.submenu === 'charts') {
+            if (entryConfig.submenu === 'charts') {
                 targetMenu = menuChartItems;
-            } else if (entrySettings.submenu === 'other') {
+            } else if (entryConfig.submenu === 'other') {
                 targetMenu = menuOtherItems;
             } else {
                 targetMenu = menuItems;
             }
 
             targetMenu.push({
-                action: () => onClick(entryMenuValue as CreateMenuValue),
-                icon: entrySettings.icon,
-                text: <Title className={b('item-title')} title={entrySettings.text.title} />,
+                action: () => onClick(entryConfig.value),
+                icon: entryConfig.icon,
+                text: <Title className={b('item-title')} title={entryConfig.text} />,
             });
         });
 
@@ -226,51 +251,35 @@ export const getCreateEntrySwitcher = memoize(
         place,
         onClick,
         withMenu,
+        placesConfig,
     }: {
         place: string;
         onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
         withMenu: boolean;
+        placesConfig: PlaceParameterItem[];
     }) => {
-        const getButtonText = () => {
-            switch (place) {
-                case PLACE.CONNECTIONS:
-                    return i18n('button_create-connection');
-                case PLACE.DASHBOARDS:
-                    return i18n('button_create-dashboard');
-                case PLACE.DATASETS:
-                    return i18n('button_create-dataset');
-                case PLACE.WIDGETS:
-                    return i18n('button_create-widget');
-                default:
-                    return i18n('button_create');
-            }
-        };
+        const targetPlace = placesConfig.find((placeConfig) => {
+            return placeConfig.place === place;
+        });
 
-        const onClickButton = () => {
-            switch (place) {
-                case PLACE.CONNECTIONS:
-                    onClick(CreateMenuValue.Connection);
-                    break;
-                case PLACE.DASHBOARDS:
-                    onClick(CreateMenuValue.Dashboard);
-                    break;
-                case PLACE.DATASETS:
-                    onClick(CreateMenuValue.Dataset);
-                    break;
-                case PLACE.WIDGETS:
-                    onClick(CreateMenuValue.Widget);
-                    break;
-            }
-        };
+        if (!targetPlace) {
+            return null;
+        }
 
         return (
             <Button
                 view="action"
                 qa="create-entry-button"
                 className={b('button-create')}
-                onClick={withMenu ? undefined : onClickButton}
+                onClick={
+                    withMenu
+                        ? undefined
+                        : () => {
+                              onClick(targetPlace.value);
+                          }
+                }
             >
-                {getButtonText()}
+                {targetPlace.buttonText}
             </Button>
         );
     },

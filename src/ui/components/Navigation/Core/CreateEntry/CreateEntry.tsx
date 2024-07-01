@@ -7,6 +7,7 @@ import {Feature} from 'shared';
 import {registry} from 'ui/registry';
 
 import Utils from '../../../../utils';
+import {getCreatableEntries, getCreateEntrySwitcher} from '../../Base/configure';
 import {PLACE} from '../../constants';
 
 import './CreateEntry.scss';
@@ -52,16 +53,25 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
             place === PLACE.WIDGETS &&
             Utils.isEnabledFeature(Feature.Ql));
 
-    const {getNavigationCreatableEntries, getNavigationCreateEntrySwitcher} =
+    const {getNavigationCreatableEntriesConfig, getNavigationPlacesConfig} =
         registry.common.functions.getAll();
+
+    const creatableEntriesConfig = getNavigationCreatableEntriesConfig();
+    const placesConfig = getNavigationPlacesConfig();
 
     const items = React.useMemo(() => {
         if (!withMenu) {
             return [];
         }
 
-        return getNavigationCreatableEntries({place, onClick, isOnlyCollectionsMode, b});
-    }, [withMenu, place, onClick, isOnlyCollectionsMode]);
+        return getCreatableEntries({
+            place,
+            onClick,
+            isOnlyCollectionsMode,
+            b,
+            creatableEntriesConfig,
+        });
+    }, [withMenu, place, onClick, isOnlyCollectionsMode, creatableEntriesConfig]);
 
     return (
         <DropdownMenu
@@ -74,7 +84,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            switcher={getNavigationCreateEntrySwitcher({place, onClick, withMenu})}
+            switcher={getCreateEntrySwitcher({place, onClick, withMenu, placesConfig})}
         />
     );
 };

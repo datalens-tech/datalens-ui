@@ -13,9 +13,8 @@ import {getLoginById} from '../../../components/Login/utils';
 import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {
-    getCreatableEntries,
-    getCreateEntrySwitcher,
-    getPlaceParameters,
+    getCreatableEntriesConfig,
+    getPlacesConfig,
     getQuickItems,
 } from '../../../components/Navigation/Base/configure';
 import {getInitDestination} from '../../../components/Navigation/Base/utils';
@@ -55,9 +54,8 @@ export const registerCommonPlugins = () => {
         getEntryName,
         getInitDestination,
         getNavigationQuickItems: getQuickItems,
-        getNavigationCreatableEntries: getCreatableEntries,
-        getNavigationCreateEntrySwitcher: getCreateEntrySwitcher,
-        getNavigationPlaceParameters: getPlaceParameters,
+        getNavigationCreatableEntriesConfig: getCreatableEntriesConfig,
+        getNavigationPlacesConfig: getPlacesConfig,
         getUpdatedUserSettings,
         getUIEntryRoute,
         getFormatNumber: formatNumber,

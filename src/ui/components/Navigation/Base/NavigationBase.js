@@ -19,6 +19,8 @@ import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
 import NavigationInline from '../Core/NavigationInline';
 import {PLACE, ROOT_PATH} from '../constants';
 
+import {getPlaceConfig} from './configure';
+
 const SPA_ENTRIES_SCOPE = new Set([EntryScope.Connection, EntryScope.Dataset, EntryScope.Dash]);
 
 const SPA_ENTRIES_TYPES = new Set([
@@ -486,7 +488,11 @@ class NavigationBase extends React.Component {
             return menu;
         };
 
-        const {getNavigationPlaceParameters} = registry.common.functions.getAll();
+        const {getNavigationPlacesConfig} = registry.common.functions.getAll();
+
+        const getPlaceParameters = (place) => {
+            return getPlaceConfig({place, placesConfig: getNavigationPlacesConfig()});
+        };
 
         const navigationNode = React.createElement(navConstructor, {
             ref: this.refNavigation,
@@ -497,7 +503,7 @@ class NavigationBase extends React.Component {
             linkWrapper: linkWrapper({navigationUrl, closeNavigation, onClose: this.props.onClose}),
             getContextMenuItems: getMenuItems,
             onContextMenuClick: this.onContextMenuClick,
-            getPlaceParameters: getNavigationPlaceParameters,
+            getPlaceParameters: getPlaceParameters,
             ...props,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,
