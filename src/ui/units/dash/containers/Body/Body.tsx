@@ -6,11 +6,13 @@ import type {
     ConfigLayout,
     DashKit as DashKitComponent,
     DashKitProps,
+    DashkitGroupRenderProps,
     ItemDropProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
-import {MenuItems} from '@gravity-ui/dashkit/helpers';
-import {Gear} from '@gravity-ui/icons';
+import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
+import {Funnel, Gear} from '@gravity-ui/icons';
+import {ArrowToggle, Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -73,6 +75,7 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {getUrlGlobalParams} from '../../utils/url';
 import Error from '../Error/Error';
+import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
@@ -91,6 +94,7 @@ type OwnProps = {
 };
 
 type DashBodyState = {
+    fixedHeaderCollapsed: boolean;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
 };
@@ -100,6 +104,10 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 // TODO: add issue
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
+
+const FIXED_GROUP_ID = '__fixedGroup';
+const FIXED_HEADER_GROUP_LINE_ID = '__fixedLine';
+const OTHERS_GROUP_ID = '__others';
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -137,9 +145,26 @@ class Body extends React.PureComponent<BodyProps> {
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
     state: DashBodyState = {
+        fixedHeaderCollapsed: false,
         isGlobalDragging: false,
         hasCopyInBuffer: null,
     };
+
+    groups = [
+        {
+            id: FIXED_HEADER_GROUP_LINE_ID,
+            render: (id: string, children: React.ReactNode, props: DashkitGroupRenderProps) =>
+                this.renderFixedGroupHeader(id, children, props),
+        },
+        {
+            id: FIXED_GROUP_ID,
+            render: (id: string, children: React.ReactNode, props: DashkitGroupRenderProps) =>
+                this.renderFixedGroupContainer(id, children, props),
+        },
+        {
+            id: DEFAULT_GROUP,
+        },
+    ];
 
     componentDidMount() {
         // if localStorage already have a dash item, we need to set it to state
@@ -216,6 +241,163 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
+    unfixAllElements = () => {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData as DashKitProps['config'] | null;
+
+        if (tabDataConfig) {
+            const fixedContainersBottom: any = {
+                [FIXED_HEADER_GROUP_LINE_ID]: 0,
+                [FIXED_GROUP_ID]: 0,
+            };
+            // const idsOrder = {};
+
+            const groupedLayout: any = tabDataConfig.layout.reduce((memo: any, item: any) => {
+                const parentId = item.parent || DEFAULT_GROUP;
+
+                if (!memo[parentId]) {
+                    memo[parentId] = [];
+                }
+
+                if (parentId in fixedContainersBottom) {
+                    fixedContainersBottom[parentId] = Math.max(
+                        fixedContainersBottom[parentId],
+                        item.y + item.h,
+                    );
+
+                    memo[parentId].push(item);
+                } else if (parentId === DEFAULT_GROUP) {
+                    memo[DEFAULT_GROUP].push(item);
+                } else {
+                    memo[OTHERS_GROUP_ID].push(item);
+                }
+
+                // idsOrder[item.i] = index;
+
+                return memo;
+            }, {});
+
+            // eslint-disable-next-line no-console
+            console.log(groupedLayout);
+            // const newLayout = Object.entries(groupedLayout).reduce((memo, [group, items]) => {
+            //     console.log(group, groupedLayout);
+
+            //     return memo;
+            // });
+
+            // if (groupedLayout[FIXED_HEADER_GROUP_LINE_ID]) {
+            //     groupedLayout[FIXED_HEADER_GROUP_LINE_ID] = groupedLayout[
+            //         FIXED_HEADER_GROUP_LINE_ID
+            //     ].map(({parent, ...item}) => item);
+            // }
+
+            // if (groupedLayout[FIXED_GROUP_ID]) {
+            //     groupedLayout[FIXED_GROUP_ID] = groupedLayout[FIXED_GROUP_ID].map(
+            //         ({parent, ...item}) => ({
+            //             ...item,
+            //             y: item.y + fixedContainersBottom[FIXED_HEADER_GROUP_LINE_ID],
+            //         }),
+            //     );
+            // }
+
+            // if (groupedLayout[DEFAULT_GROUP]) {
+            //     groupedLayout[DEFAULT_GROUP] = groupedLayout[DEFAULT_GROUP].map((item) => ({
+            //         ...item,
+            //         y:
+            //             item.y +
+            //             fixedContainersBottom[FIXED_HEADER_GROUP_LINE_ID] +
+            //             fixedContainersBottom[FIXED_GROUP_ID],
+            //     }));
+            // }
+
+            // const newLayout = [
+            //     ...(groupedLayout[FIXED_HEADER_GROUP_LINE_ID] || []),
+            //     ...(groupedLayout[FIXED_GROUP_ID] || []),
+            //     ...(groupedLayout[DEFAULT_GROUP] || []),
+            //     ...(groupedLayout[OTHERS_GROUP_ID] || []),
+            // ];
+
+            // this.props.setCurrentTabData({...tabDataConfig, layout: newLayout});
+        }
+    };
+
+    toggleFixedHeader = () => {
+        this.setState({fixedHeaderCollapsed: !this.state.fixedHeaderCollapsed});
+    };
+
+    renderFixedGroupHeaderControls = () => {
+        const {mode} = this.props;
+        const isCollapsed = this.state.fixedHeaderCollapsed;
+
+        if (mode === Mode.Edit) {
+            return (
+                <DropdownMenu
+                    renderSwitcher={(props) => (
+                        <Button {...props}>
+                            <Icon size={16} data={Gear} />
+                        </Button>
+                    )}
+                    items={[
+                        {
+                            // eslint-disable-next-line no-console
+                            action: () => console.log('Called'),
+                            text: 'Always collapsed',
+                        },
+                        {
+                            action: this.unfixAllElements,
+                            text: 'Move all to layout',
+                            theme: 'danger',
+                        },
+                    ]}
+                />
+            );
+        } else {
+            return (
+                <Button onClick={this.toggleFixedHeader}>
+                    <ArrowToggle direction={isCollapsed ? 'top' : 'bottom'} size={14} />
+                    <Icon data={Funnel} />
+                </Button>
+            );
+        }
+    };
+
+    renderFixedGroupHeader = (
+        id: string,
+        children: React.ReactNode,
+        params: DashkitGroupRenderProps,
+    ) => {
+        const isCollapsed = this.state.fixedHeaderCollapsed;
+
+        return (
+            <FixedHeaderControls
+                key={`${id}_${this.props.tabId}`}
+                isCollapsed={isCollapsed}
+                editMode={params.editMode}
+                controls={this.renderFixedGroupHeaderControls()}
+            >
+                {children}
+            </FixedHeaderControls>
+        );
+    };
+
+    renderFixedGroupContainer = (
+        id: string,
+        children: React.ReactNode,
+        params: DashkitGroupRenderProps,
+    ) => {
+        const isCollapsed = this.state.fixedHeaderCollapsed;
+
+        return (
+            <FixedHeaderContainer
+                key={`${id}_${this.props.tabId}`}
+                isCollapsed={isCollapsed}
+                editMode={params.editMode}
+            >
+                {children}
+            </FixedHeaderContainer>
+        );
+    };
+
     storageHandler = () => {
         this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
@@ -278,6 +460,7 @@ class Body extends React.PureComponent<BodyProps> {
                 focusable={true}
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
+                groups={this.groups}
                 context={{
                     getPreparedCopyItemOptions: (
                         itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
