@@ -206,6 +206,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
         return getColumns({
             selectedRows,
+            fieldsCount: this.props.fields.length,
             avatars: this.props.sourceAvatars,
             rls: this.props.rls,
             permissions: this.props.permissions,

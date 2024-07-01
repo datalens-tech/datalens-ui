@@ -36,6 +36,7 @@ const WIDTH_20 = '20%';
 
 type GetColumnsArgs = {
     selectedRows: DatasetSelectionMap;
+    fieldsCount: number;
     fields: DatasetOptionFieldItem[];
     showFieldsId: boolean;
     avatars?: DatasetSourceAvatar[];
@@ -95,6 +96,7 @@ export const getFieldSourceTitle = (field: DatasetField, avatars?: DatasetSource
 export const getColumns = (args: GetColumnsArgs) => {
     const {
         selectedRows,
+        fieldsCount,
         avatars,
         fields,
         showFieldsId,
@@ -114,7 +116,6 @@ export const getColumns = (args: GetColumnsArgs) => {
     } = args;
     const width = showFieldsId ? WIDTH_15 : WIDTH_20;
     const selectedCount = Object.keys(selectedRows).length;
-    const fieldsCount = fields.length;
 
     const index = getIndexColumn({
         selectedRows,
