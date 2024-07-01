@@ -125,23 +125,25 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
-    dropdownActions.push({
-        action: () => {
-            dispatch(
-                openDialog({
-                    id: DIALOG_ASSIGN_CLAIMS,
-                    props: {
-                        entryId: "",
-                        workbookId: workbook.workbookId,
-                        onClose: () => {
-                            dispatch(closeDialog());
+    if (workbook.permissions.listAccessBindings) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_ASSIGN_CLAIMS,
+                        props: {
+                            entryId: "",
+                            workbookId: workbook.workbookId,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
                         },
-                    },
-                }),
-            );
-        },
-        text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
-    });
+                    }),
+                );
+            },
+            text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+        });
+    }
 
     const otherActions: DropdownMenuItem[] = [];
 

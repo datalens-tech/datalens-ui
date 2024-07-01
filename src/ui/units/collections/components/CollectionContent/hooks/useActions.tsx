@@ -270,24 +270,26 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                     },
                 });
             }
-            
-            actions.push({
-                text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
-                action: () => {
-                    dispatch(
-                        openDialog({
-                            id: DIALOG_ASSIGN_CLAIMS,
-                            props: {
-                                entryId: "",
-                                workbookId: item.workbookId,
-                                onClose: () => {
-                                    dispatch(closeDialog());
+
+            if (item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_ASSIGN_CLAIMS,
+                                props: {
+                                    entryId: "",
+                                    workbookId: item.workbookId,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
                                 },
-                            },
-                        }),
-                    );
-                },
-            });
+                            }),
+                        );
+                    },
+                });
+            }
 
             const otherActions: DropdownMenuItem[] = [];
 

@@ -262,7 +262,7 @@ export interface Entry {
     entryId: string;
     key: string;
     scope: EntryScope;
-    type: EntryType;
+    type: EntryType | string;
     data: EntryData;
     links: Dictionary<string>;
     meta: object;
@@ -283,6 +283,7 @@ export type EntryType = '' | WidgetType;
 export interface EntryReadParams {
     revId?: string;
     includePermissions: string;
+    includePermissionsInfo?: string;
     includeLinks: string;
     branch?: string;
 }

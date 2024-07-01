@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1765.2a] 01.07.2024
+
+Fixed:
+
+- пункт меню "Права доступа" переименованы в "Доступ"
+- добавлена блокировка выполнения запроса (QL-чарт) для пользователей, у которых нет на это права. Нет возможности изменить или просмотреть иные данные.
+
 ## [0.1765.1a] 28.06.2024
 
 Created:
