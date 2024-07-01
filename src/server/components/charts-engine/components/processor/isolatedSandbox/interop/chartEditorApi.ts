@@ -6,11 +6,7 @@ import {
     WRAPPED_FN_KEY,
     WRAPPED_HTML_KEY,
 } from '../../../../../../../shared';
-import {getTranslationFn} from '../../../../../../../shared/modules/language';
-import {createI18nInstance} from '../../../../../../utils/language';
 import {getCurrentPage, getSortParams} from '../../paramsUtils';
-
-const DEFAULT_USER_LANG = 'ru';
 
 export function prepareChartEditorApi({
     name,
@@ -24,13 +20,10 @@ export function prepareChartEditorApi({
     userLogin: string | null;
 }) {
     const params = chartEditorApi.getParams();
-    const userLang = chartEditorApi.getLang();
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
-    const getTranslation = getTranslationFn(i18n.getI18nServer());
 
     jail.setSync('_ChartEditor_getTranslation', (keyset: string, key: string, params?: string) => {
         const parsedParams = params ? JSON.parse(params) : undefined;
-        return getTranslation(keyset, key, parsedParams);
+        return chartEditorApi.getTranslation(keyset, key, parsedParams);
     });
 
     jail.setSync('_ChartEditor_getSharedData', () => {

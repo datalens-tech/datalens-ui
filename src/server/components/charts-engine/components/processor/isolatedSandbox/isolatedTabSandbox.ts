@@ -1,8 +1,10 @@
 import type IsolatedVM from 'isolated-vm';
 
 import {type DashWidgetConfig} from '../../../../../../shared';
+import {getTranslationFn} from '../../../../../../shared/modules/language';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
+import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import type {RuntimeMetadata} from '../types';
 
@@ -17,6 +19,8 @@ import {
 } from './interop';
 import {prepareChartEditorApi} from './interop/chartEditorApi';
 import {prepare} from './prepare';
+
+const DEFAULT_USER_LANG = 'ru';
 const {
     RUNTIME_ERROR,
     RUNTIME_TIMEOUT_ERROR,
@@ -217,6 +221,11 @@ export const processTab = async ({
         hooks,
         userLang,
     });
+
+    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
+    chartApiContext.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
+    chartApiContext.ChartEditor.getUserLang = () => userLang || DEFAULT_USER_LANG;
+    chartApiContext.ChartEditor.getUserLogin = () => userLogin || '';
 
     const result = await execute({
         code,
