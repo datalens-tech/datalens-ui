@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
 import type {ListItemData} from '@gravity-ui/uikit';
-import {Button, Button as CommonButton, Icon, List, TextInput} from '@gravity-ui/uikit';
+import {Button, Icon, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
@@ -127,14 +127,14 @@ export const Acceptable = () => {
                         onKeyDown={handleKeyPress}
                         controlRef={inputRef}
                     />
-                    <CommonButton
+                    <Button
                         view="normal"
                         size="m"
                         qa={ControlQA.controlSelectAcceptableButton}
                         onClick={addItem}
                     >
                         {i18n('dash.control-dialog.edit', 'button_add')}
-                    </CommonButton>
+                    </Button>
                 </div>
                 <div className={b('items', {empty: isEmpty})}>
                     {isEmpty ? (
@@ -210,7 +210,7 @@ export const Acceptable = () => {
 
     return (
         <React.Fragment>
-            <CommonButton onClick={handleOpenDialog} qa={ControlQA.acceptableDialogButton} size="m">
+            <Button onClick={handleOpenDialog} qa={ControlQA.acceptableDialogButton} size="m">
                 {currentAcceptableValues.length ? (
                     <span
                         data-qa={`${DashboardDialogControl.AcceptableValues}${acceptableValues.length}`}
@@ -222,8 +222,7 @@ export const Acceptable = () => {
                 ) : (
                     <span>{i18n('dash.control-dialog.edit', 'button_add')}</span>
                 )}
-            </CommonButton>
-
+            </Button>
             {renderDialog()}
         </React.Fragment>
     );
