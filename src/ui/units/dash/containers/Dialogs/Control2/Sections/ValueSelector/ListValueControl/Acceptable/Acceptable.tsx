@@ -2,15 +2,13 @@ import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
 import type {ListItemData} from '@gravity-ui/uikit';
-import {Button as CommonButton, Icon, List, TextInput} from '@gravity-ui/uikit';
+import {Button, Icon, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
-import type {ResolveThunks} from 'react-redux';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
-import type {DatalensGlobalState} from 'ui/index';
 import type {AcceptableValue} from 'ui/units/dash/store/actions/dashTyped';
 import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
@@ -21,52 +19,47 @@ import './Acceptable.scss';
 
 const b = block('control-select-acceptable');
 
-type AcceptableProps = ReturnType<typeof mapStateToProps> &
-    ResolveThunks<typeof mapDispatchToProps>;
-
-type AcceptableState = {
-    showDialog: boolean;
-    newValue: string;
-    acceptableValues: string[];
-};
-
 const convertFromDefaultValue = (values: AcceptableValue[]) => {
     return values ? values.map(({value}) => value) : values;
 };
 
-class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
-    state: AcceptableState = {
-        showDialog: false,
-        newValue: '',
-        acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
-    };
+export const Acceptable = () => {
+    const {acceptableValues = []} = useSelector(selectSelectorDialog);
+    const dispatch = useDispatch();
 
-    addItem = () => {
-        const {newValue, acceptableValues} = this.state;
-        if (newValue.trim() !== '' && !acceptableValues.includes(newValue)) {
-            this.setState({newValue: '', acceptableValues: [newValue, ...acceptableValues]});
+    const [showDialog, setShowDialog] = React.useState(false);
+    const [newValue, setNewValue] = React.useState('');
+    const [currentAcceptableValues, setCurrentAcceptableValues] = React.useState(
+        convertFromDefaultValue(acceptableValues),
+    );
+
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const addItem = () => {
+        if (newValue.trim() !== '' && !currentAcceptableValues.includes(newValue)) {
+            setNewValue('');
+            setCurrentAcceptableValues([newValue, ...currentAcceptableValues]);
         }
     };
 
-    onApply() {
-        const {acceptableValues} = this.state;
-        this.props.setSelectorDialogItem({
-            acceptableValues: acceptableValues.map(
-                (value: string): AcceptableValue => ({value, title: value}),
-            ),
-        });
-    }
+    const onApply = () => {
+        dispatch(
+            setSelectorDialogItem({
+                acceptableValues: currentAcceptableValues.map(
+                    (value: string): AcceptableValue => ({value, title: value}),
+                ),
+            }),
+        );
+    };
 
-    handleRemoveItemClick(index: number, acceptableValues: string[]) {
-        this.setState({
-            acceptableValues: [
-                ...acceptableValues.slice(0, index),
-                ...acceptableValues.slice(index + 1),
-            ],
-        });
-    }
+    const handleRemoveItemClick = (index: number, acceptableValues: string[]) => {
+        setCurrentAcceptableValues([
+            ...acceptableValues.slice(0, index),
+            ...acceptableValues.slice(index + 1),
+        ]);
+    };
 
-    handleOnSortEnd({
+    const handleOnSortEnd = ({
         oldIndex,
         newIndex,
         acceptableValues,
@@ -74,7 +67,7 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
         oldIndex: number;
         newIndex: number;
         acceptableValues: string[];
-    }) {
+    }) => {
         if (oldIndex === newIndex) {
             return;
         }
@@ -85,32 +78,43 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
             ],
         });
 
-        this.setState({
-            acceptableValues: newItems,
-        });
-    }
-    renderListItem(args: {
+        setCurrentAcceptableValues(newItems);
+    };
+
+    const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+        if (event.code === 'Enter') {
+            addItem();
+        }
+    };
+
+    const renderListItem = (args: {
         item: ListItemData<string>;
         itemIndex: number;
         acceptableValues: string[];
-    }) {
+    }) => {
         const {item, itemIndex, acceptableValues} = args;
         return (
             <div className={b('item')} key={item} data-qa={ControlQA.controlSelectAcceptableItem}>
                 <span title={item}>{item}</span>
-                <span
-                    onClick={() => this.handleRemoveItemClick(itemIndex, acceptableValues)}
+                <Button
+                    onClick={() => handleRemoveItemClick(itemIndex, acceptableValues)}
                     className={b('remove')}
-                    data-qa={ControlQA.controlSelectAcceptableRemoveButton}
+                    qa={ControlQA.controlSelectAcceptableRemoveButton}
+                    view="flat"
+                    size="s"
                 >
                     <Icon data={Xmark} width="16" />
-                </span>
+                </Button>
             </div>
         );
-    }
-    renderBody() {
-        const {newValue, acceptableValues} = this.state;
-        const isEmpty = !acceptableValues.length;
+    };
+
+    const handleUpdate = (updatedValue: string) => {
+        setNewValue(updatedValue);
+    };
+
+    const renderBody = () => {
+        const isEmpty = !currentAcceptableValues.length;
         return (
             <React.Fragment>
                 <div className={b('header')} data-qa={ControlQA.controlSelectAcceptable}>
@@ -118,22 +122,19 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                         size="m"
                         qa={ControlQA.controlSelectAcceptableInput}
                         placeholder={i18n('dash.control-dialog.edit', 'context_add-value')}
-                        onUpdate={(newValue) => this.setState({newValue})}
+                        onUpdate={handleUpdate}
                         value={newValue}
-                        controlProps={{
-                            onBlur: this.addItem,
-                            onKeyPress: (event: React.KeyboardEvent<HTMLInputElement>) =>
-                                event.charCode === 13 && this.addItem(),
-                        }}
+                        onKeyDown={handleKeyPress}
+                        controlRef={inputRef}
                     />
-                    <CommonButton
+                    <Button
                         view="normal"
                         size="m"
                         qa={ControlQA.controlSelectAcceptableButton}
-                        onClick={this.addItem}
+                        onClick={addItem}
                     >
                         {i18n('dash.control-dialog.edit', 'button_add')}
-                    </CommonButton>
+                    </Button>
                 </div>
                 <div className={b('items', {empty: isEmpty})}>
                     {isEmpty ? (
@@ -143,90 +144,86 @@ class Acceptable extends React.PureComponent<AcceptableProps, AcceptableState> {
                             filterable={false}
                             virtualized={false}
                             sortable={true}
-                            items={acceptableValues}
+                            items={currentAcceptableValues}
                             itemClassName={b('list-item')}
-                            onSortEnd={(args) => this.handleOnSortEnd({...args, acceptableValues})}
+                            onSortEnd={(args) =>
+                                handleOnSortEnd({
+                                    ...args,
+                                    acceptableValues: currentAcceptableValues,
+                                })
+                            }
                             renderItem={(
                                 item: ListItemData<string>,
                                 _isItemActive: boolean,
                                 itemIndex: number,
-                            ) => this.renderListItem({item, itemIndex, acceptableValues})}
+                            ) =>
+                                renderListItem({
+                                    item,
+                                    itemIndex,
+                                    acceptableValues: currentAcceptableValues,
+                                })
+                            }
                         />
                     )}
                 </div>
             </React.Fragment>
         );
-    }
+    };
 
-    renderDialog() {
-        const {showDialog} = this.state;
+    const handleApply = () => {
+        onApply();
+        setShowDialog(false);
+        setNewValue('');
+    };
+
+    const handleClose = () => {
+        setShowDialog(false);
+        setNewValue('');
+        setCurrentAcceptableValues(convertFromDefaultValue(acceptableValues));
+    };
+
+    const handleDialogTransitionEntered = () => {
+        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
+        setTimeout(() => {
+            inputRef.current?.focus();
+        });
+    };
+
+    const renderDialog = () => {
         return (
             <Dialog
                 visible={showDialog}
                 caption={i18n('dash.control-dialog.edit', 'label_acceptable-values')}
-                onApply={() => {
-                    this.onApply();
-                    this.setState({
-                        showDialog: false,
-                        newValue: '',
-                    });
-                }}
-                onClose={() =>
-                    this.setState({
-                        showDialog: false,
-                        newValue: '',
-                        acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
-                    })
-                }
+                onApply={handleApply}
+                onClose={handleClose}
+                onTransitionEntered={handleDialogTransitionEntered}
             >
-                {this.renderBody()}
+                {renderBody()}
             </Dialog>
         );
-    }
-
-    render() {
-        const {acceptableValues} = this.props;
-        return (
-            <React.Fragment>
-                <CommonButton
-                    onClick={this.handleOpenDialog}
-                    qa={ControlQA.acceptableDialogButton}
-                    size="m"
-                >
-                    {acceptableValues.length ? (
-                        <span
-                            data-qa={`${DashboardDialogControl.AcceptableValues}${acceptableValues.length}`}
-                        >
-                            {i18n('dash.control-dialog.edit', 'value_select-values', {
-                                count: acceptableValues.length,
-                            })}
-                        </span>
-                    ) : (
-                        <span>{i18n('dash.control-dialog.edit', 'button_add')}</span>
-                    )}
-                </CommonButton>
-
-                {this.renderDialog()}
-            </React.Fragment>
-        );
-    }
-
-    private handleOpenDialog = () => {
-        this.setState({
-            showDialog: !this.state.showDialog,
-            acceptableValues: convertFromDefaultValue(this.props.acceptableValues),
-        });
     };
-}
 
-const mapDispatchToProps = {setSelectorDialogItem};
-
-const mapStateToProps = (state: DatalensGlobalState) => {
-    const {sourceType, acceptableValues = []} = selectSelectorDialog(state);
-    return {
-        sourceType,
-        acceptableValues,
+    const handleOpenDialog = () => {
+        setShowDialog(!showDialog);
+        setCurrentAcceptableValues(convertFromDefaultValue(acceptableValues));
     };
+
+    return (
+        <React.Fragment>
+            <Button onClick={handleOpenDialog} qa={ControlQA.acceptableDialogButton} size="m">
+                {currentAcceptableValues.length ? (
+                    <span
+                        data-qa={`${DashboardDialogControl.AcceptableValues}${acceptableValues.length}`}
+                    >
+                        {i18n('dash.control-dialog.edit', 'value_select-values', {
+                            count: acceptableValues.length,
+                        })}
+                    </span>
+                ) : (
+                    <span>{i18n('dash.control-dialog.edit', 'button_add')}</span>
+                )}
+            </Button>
+            {renderDialog()}
+        </React.Fragment>
+    );
 };
-
-export default connect(mapStateToProps, mapDispatchToProps)(Acceptable);

@@ -83,7 +83,37 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
 };
 
 const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label', 'axis'] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
+const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
+
+const MAX_NESTING_LEVEL = 5;
+function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
+    if (nestingLevel > MAX_NESTING_LEVEL) {
+        return undefined;
+    }
+
+    if (val && typeof val === 'object') {
+        if (Array.isArray(val)) {
+            if (val.some((item) => item instanceof window.Highcharts.SVGElement)) {
+                return [];
+            }
+
+            return val.map((item) => removeSVGElements(item, nestingLevel + 1));
+        } else {
+            return Object.entries(val as object).reduce(
+                (acc, [key, value]) => {
+                    if (!(value instanceof window.Highcharts.SVGElement)) {
+                        acc[key] = removeSVGElements(value, nestingLevel + 1);
+                    }
+
+                    return acc;
+                },
+                {} as Record<string, unknown>,
+            );
+        }
+    }
+
+    return val;
+}
 
 function clearVmProp(prop: unknown) {
     if (prop && typeof prop === 'object') {
@@ -106,10 +136,12 @@ function clearVmProp(prop: unknown) {
 
         if ('series' in item) {
             item.series = pick(item.series, ...ALLOWED_SERIES_ATTRS);
+            delete item.series.userOptions.data;
         }
 
         if ('point' in item) {
-            item.point = clearVmProp(item.point);
+            const pointClone = clearVmProp(item.point);
+            item.point = removeSVGElements(pointClone);
         }
 
         if ('points' in item && Array.isArray(item.points)) {
