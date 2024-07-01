@@ -122,6 +122,13 @@ export const getPlaceConfig = memoize(({place, placesConfig}) => {
         : placesConfig;
 });
 
+// NOTE: needed for backwards compatibility. Will be removed after update of platform.
+export const getPlaceParameters = memoize((place) => {
+    const placesConfig = getPlacesConfig();
+
+    return getPlaceConfig({place, placesConfig});
+});
+
 export const getQuickItems = memoize(() => {
     return [
         {
