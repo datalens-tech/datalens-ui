@@ -1,28 +1,21 @@
 import type IsolatedVM from 'isolated-vm';
 
-import {
-    type ChartsInsight,
-    type DashWidgetConfig,
-    type IntervalPart,
-    WRAPPED_FN_KEY,
-    WRAPPED_HTML_KEY,
-} from '../../../../../../shared';
-import {getTranslationFn} from '../../../../../../shared/modules/language';
+import {type DashWidgetConfig} from '../../../../../../shared';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
-import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
+import type {RuntimeMetadata} from '../types';
 
 import {getChartApiContext} from './../chart-api-context';
 import {Console} from './../console';
 import type {LogItem} from './../console';
-import {getCurrentPage, getSortParams} from './../paramsUtils';
 import {
     libsControlV1Interop,
     libsDatalensV3Interop,
     libsDatasetV2Interop,
     libsQlChartV1Interop,
 } from './interop';
+import {prepareChartEditorApi} from './interop/chartEditorApi';
 import {prepare} from './prepare';
 const {
     RUNTIME_ERROR,
@@ -34,22 +27,7 @@ const {
     SEGMENTS_OVERSIZE,
     TABLE_OVERSIZE,
 } = config;
-const DEFAULT_USER_LANG = 'ru';
 const DEFAULT_PROCESSING_TIMEOUT = 500;
-
-function getOrphanedObject() {
-    return Object.create(null);
-}
-
-type GenerateInstanceParams = {
-    context?: {
-        ChartEditor?: {};
-    };
-    userLogin: string | null;
-    userLang?: string | null;
-    nativeModules: Record<string, unknown>;
-    isScreenshoter: boolean;
-};
 
 type ProcessTabParams = {
     name: string;
@@ -64,7 +42,6 @@ type ProcessTabParams = {
     hooks: Record<string, any>;
     userLogin: string | null;
     userLang: string | null;
-    nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
 };
@@ -89,46 +66,15 @@ export class SandboxError extends Error {
     stackTrace?: string;
 }
 
-const generateInstance = ({
-    context = {},
-    userLogin,
-    userLang = DEFAULT_USER_LANG,
-    isScreenshoter,
-}: GenerateInstanceParams): NodeJS.Dict<any> => {
-    const moduleObject = getOrphanedObject();
-    moduleObject.exports = getOrphanedObject();
-
-    const ChartEditor = getOrphanedObject();
-    ChartEditor.getUserLogin = () => userLogin;
-    ChartEditor.getUserLang = () => userLang;
-
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
-    ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
-
-    const instance = {
-        console: new Console({isScreenshoter}),
-        ChartEditor,
-    };
-
-    const runtimeHelpers = Object.assign(
-        getOrphanedObject(),
-        instance.ChartEditor,
-        context.ChartEditor || getOrphanedObject(),
-    );
-
-    const resultingContext = Object.assign(getOrphanedObject(), instance, context);
-
-    resultingContext.ChartEditor = resultingContext.chartEditor = runtimeHelpers;
-
-    return resultingContext;
-};
-
 type ExecuteParams = {
     code: string;
-    instance: NodeJS.Dict<any>;
     filename: string;
     timeout: number;
     context: IsolatedVM.Context;
+    chartEditorApi: IChartEditor;
+    runtimeMetadata: RuntimeMetadata;
+    isolatedConsole: Console;
+    userLogin: string | null;
 };
 
 export type SandboxExecuteResult = {
@@ -137,29 +83,20 @@ export type SandboxExecuteResult = {
     filename: string;
     stackTrace?: string;
     exports: unknown;
-    runtimeMetadata: {
-        userConfigOverride: Record<string, string>;
-        userActionParamsOverride: Record<string, string>;
-        libraryConfigOverride: Record<string, string>;
-        extra: Record<string, string>;
-        dataSourcesInfos: Record<string, string>;
-        userParamsOverride?: Record<string, string>;
-        error?: Error;
-        errorTransformer: <T>(error: T) => T;
-        chartsInsights?: ChartsInsight[];
-        sideMarkdown?: string;
-        exportFilename?: string;
-    };
+    runtimeMetadata: RuntimeMetadata;
     shared: Record<string, object> | Shared | ServerChartsConfig;
     params: Record<string, string | string[]>;
 };
 
 const execute = async ({
     code,
-    instance,
     filename,
     timeout,
     context,
+    chartEditorApi,
+    runtimeMetadata,
+    isolatedConsole,
+    userLogin,
 }: ExecuteParams): Promise<SandboxExecuteResult> => {
     if (!code && filename === 'JavaScript') {
         const error = new SandboxError('You should provide code in JavaScript tab');
@@ -178,20 +115,21 @@ const execute = async ({
     jail.setSync('global', jail.derefInto());
 
     jail.setSync('log', function (...args: any[]) {
-        instance.console.log(...args);
+        isolatedConsole.log(...args);
     });
 
     try {
         prepareChartEditorApi({
             name: filename,
             jail,
-            ChartEditor: instance.ChartEditor,
+            chartEditorApi,
+            userLogin,
         });
 
-        libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
-        libsControlV1Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
-        libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
-        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi: instance.ChartEditor});
+        libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi});
+        libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
+        libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
+        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
         timeStart = process.hrtime();
 
         const responseStringify = `
@@ -221,10 +159,10 @@ const execute = async ({
         executionTiming = process.hrtime(timeStart);
     }
 
-    const shared = instance.ChartEditor.getSharedData ? instance.ChartEditor.getSharedData() : null;
-    const params = instance.ChartEditor.getParams ? instance.ChartEditor.getParams() : null;
+    const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
+    const params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
 
-    delete instance.self;
+    //delete instance.self;
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);
@@ -232,7 +170,7 @@ const execute = async ({
         error.code = errorCode;
         error.executionResult = {
             executionTiming,
-            logs: instance.console.getLogs(),
+            logs: isolatedConsole.getLogs(),
             filename,
             stackTrace: errorStackTrace,
         };
@@ -244,10 +182,10 @@ const execute = async ({
         shared,
         params,
         executionTiming,
-        logs: instance.console.getLogs(),
+        logs: isolatedConsole.getLogs(),
         filename,
         exports: sandboxResult.module?.exports,
-        runtimeMetadata: instance.__runtimeMetadata,
+        runtimeMetadata,
     };
 };
 export const processTab = async ({
@@ -263,7 +201,6 @@ export const processTab = async ({
     hooks,
     userLogin,
     userLang,
-    nativeModules,
     isScreenshoter,
     context,
 }: ProcessTabParams) => {
@@ -283,16 +220,13 @@ export const processTab = async ({
 
     const result = await execute({
         code,
-        instance: generateInstance({
-            context: chartApiContext,
-            userLogin,
-            userLang,
-            nativeModules,
-            isScreenshoter,
-        }),
         filename: name,
         timeout,
         context,
+        runtimeMetadata: chartApiContext.__runtimeMetadata,
+        chartEditorApi: chartApiContext.ChartEditor,
+        isolatedConsole: new Console({isScreenshoter}),
+        userLogin,
     });
 
     Object.assign(originalShared, result.shared);
@@ -300,144 +234,3 @@ export const processTab = async ({
 
     return result;
 };
-
-function prepareChartEditorApi({
-    name,
-    jail,
-    ChartEditor,
-}: {
-    name: string;
-    jail: IsolatedVM.Reference;
-    ChartEditor: IChartEditor;
-}) {
-    const params = ChartEditor.getParams();
-
-    jail.setSync('_ChartEditor_getSharedData', () => {
-        const shared = ChartEditor.getSharedData ? ChartEditor.getSharedData() : null;
-        return JSON.stringify(shared);
-    });
-
-    jail.setSync('_ChartEditor_setSharedData', (override: string) => {
-        const parsedOverride = JSON.parse(override);
-        ChartEditor.setSharedData(parsedOverride);
-    });
-
-    jail.setSync('_ChartEditor_userLang', ChartEditor.getLang());
-
-    jail.setSync('_ChartEditor_attachHandler', (handlerConfig: string) => {
-        const parsedHandlerConfig = JSON.parse(handlerConfig);
-        // @ts-ignore
-        return JSON.stringify(ChartEditor.attachHandler(parsedHandlerConfig));
-    });
-
-    jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
-        const parsedFormatterConfig = JSON.parse(formatterConfig);
-        // @ts-ignore
-        return JSON.stringify(ChartEditor.attachFormatter(parsedFormatterConfig));
-    });
-
-    if (ChartEditor.getSecrets) {
-        jail.setSync('_ChartEditor_getSecrets', () => JSON.stringify(ChartEditor.getSecrets()));
-    }
-
-    jail.setSync(
-        '_ChartEditor_resolveRelative',
-        (...params: [stringrelativeStr: string, intervalPart?: IntervalPart]) => {
-            return ChartEditor.resolveRelative(...params);
-        },
-    );
-
-    jail.setSync('_ChartEditor_resolveInterval', (intervalStr: string) => {
-        return ChartEditor.resolveInterval(intervalStr);
-    });
-
-    jail.setSync('_ChartEditor_resolveOperation', (input: string) => {
-        const parsedInput = JSON.parse(input);
-        return JSON.stringify(ChartEditor.resolveOperation(parsedInput));
-    });
-
-    jail.setSync('_ChartEditor_setError', (value: string) => {
-        const parsedValue = JSON.parse(value);
-        ChartEditor.setError(parsedValue);
-    });
-
-    jail.setSync('_ChartEditor_getWidgetConfig', () => {
-        const widgetConfig = ChartEditor.getWidgetConfig ? ChartEditor.getWidgetConfig() : null;
-        return JSON.stringify(widgetConfig);
-    });
-
-    jail.setSync('_ChartEditor_getActionParams', () => {
-        const actionParams = ChartEditor.getActionParams ? ChartEditor.getActionParams() : null;
-        return JSON.stringify(actionParams);
-    });
-
-    jail.setSync('_ChartEditor_wrapFn_WRAPPED_FN_KEY', WRAPPED_FN_KEY);
-    jail.setSync('_ChartEditor_wrapHtml_WRAPPED_HTML_KEY', WRAPPED_HTML_KEY);
-
-    jail.setSync('_ChartEditor_getParams', () => {
-        return JSON.stringify(params);
-    });
-
-    jail.setSync('_ChartEditor_getParam', (paramName: string) => {
-        return JSON.stringify(ChartEditor.getParam(paramName));
-    });
-
-    if (name === 'Urls') {
-        jail.setSync('_ChartEditor_getSortParams', JSON.stringify(getSortParams(params)));
-    }
-
-    if (name === 'Urls' || name === 'JavaScript') {
-        const page = getCurrentPage(params);
-        jail.setSync('_ChartEditor_currentPage', page);
-    }
-
-    if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        jail.setSync('_ChartEditor_updateParams', (params: string) => {
-            const parsedParams = JSON.parse(params);
-            JSON.stringify(ChartEditor.updateParams(parsedParams));
-        });
-        jail.setSync('_ChartEditor_updateActionParams', (params: string) => {
-            const parsedParams = JSON.parse(params);
-            JSON.stringify(ChartEditor.updateActionParams(parsedParams));
-        });
-    }
-
-    if (name === 'UI' || name === 'JavaScript') {
-        jail.setSync('_ChartEditor_getLoadedData', () => {
-            const loadedData = ChartEditor.getLoadedData();
-            return JSON.stringify(loadedData);
-        });
-        jail.setSync('_ChartEditor_getLoadedDataStats', () => {
-            const loadedDataStats = ChartEditor.getLoadedDataStats();
-            return JSON.stringify(loadedDataStats);
-        });
-        jail.setSync('_ChartEditor_setDataSourceInfo', (dataSourceKey: string, info: string) => {
-            const parsedInfo = JSON.parse(info);
-            ChartEditor.setDataSourceInfo(dataSourceKey, parsedInfo);
-        });
-        if (name === 'JavaScript') {
-            jail.setSync('_ChartEditor_updateConfig', (updatedFragment: string) => {
-                const parsedUpdatedFragment = JSON.parse(updatedFragment);
-                ChartEditor.updateConfig(parsedUpdatedFragment);
-            });
-            jail.setSync('_ChartEditor_updateHighchartsConfig', (updatedFragment: string) => {
-                const parsedUpdatedFragment = JSON.parse(updatedFragment);
-                ChartEditor.updateHighchartsConfig(parsedUpdatedFragment);
-            });
-            jail.setSync('_ChartEditor_setSideHtml', (html: string) => {
-                ChartEditor.setSideHtml(html);
-            });
-            jail.setSync('_ChartEditor_setSideMarkdown', (markdown: string) => {
-                ChartEditor.setSideMarkdown(markdown);
-            });
-            jail.setSync('_ChartEditor_setExtra', (key: string, value: string) => {
-                const parsedValue = JSON.parse(value);
-                ChartEditor.setExtra(key, parsedValue);
-            });
-            jail.setSync('_ChartEditor_setExportFilename', (filename: string) => {
-                ChartEditor.setExportFilename(filename);
-            });
-        }
-    }
-    return jail;
-}

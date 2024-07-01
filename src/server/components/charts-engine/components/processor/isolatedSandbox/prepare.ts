@@ -21,9 +21,13 @@ function require(name) {
     }
 }
 const ChartEditor = {};
+
+ChartEditor.getTranslation = (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, JSON.stringify(params));
 ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_getSharedData());
 ChartEditor.setSharedData = (override) => _ChartEditor_setSharedData(JSON.stringify(override));
 ChartEditor.getLang = () => _ChartEditor_userLang;
+ChartEditor.getUserLang = ChartEditor.getLang;
+ChartEditor.getUserLogin = () => _ChartEditor_userLogin;
 ChartEditor.attachHandler = (handlerConfig) => JSON.parse(_ChartEditor_attachHandler(JSON.stringify(handlerConfig)));
 ChartEditor.attachFormatter = (formatterConfig) => JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig)));
 ChartEditor.getSecrets = () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets());
@@ -80,6 +84,8 @@ ChartEditor.setSideHtml = (html) => _ChartEditor_setSideHtml(html);
 ChartEditor.setSideMarkdown = (markdown) => _ChartEditor_setSideMarkdown(markdown);
 ChartEditor.setExtra = (key, value) => _ChartEditor_setExtra(key, JSON.stringify(value));
 ChartEditor.setExportFilename = (filename) => _ChartEditor_setExportFilename(filename);
+
+const chartEditor = ChartEditor;
 
 const exports = {};
 const module = {exports};`;
