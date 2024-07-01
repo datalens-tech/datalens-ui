@@ -43,8 +43,9 @@ const sdkConfig: SdkConfig = {
     axiosConfig: {
         'axios-retry': {
             retries: 3,
+            retryDelay: () => 1000,
             retryCondition: (error: AxiosError<unknown, unknown>) => {
-                return error?.response?.status === 401;
+                return error?.response?.status === 498;
             },
         },
     },

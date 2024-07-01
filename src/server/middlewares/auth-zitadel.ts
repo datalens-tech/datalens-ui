@@ -53,7 +53,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
                     ctx.logError('logout', e);
                 }
             } else {
-                return res.status(401).send('Unauthorized access');
+                return res.status(498).send('Unauthorized access');
             }
         }
     }
@@ -64,7 +64,7 @@ export default async function (req: Request, res: Response, next: NextFunction) 
 
     const apiRoute = Boolean(!req.routeInfo?.ui);
     if (apiRoute) {
-        return res.status(401).send('Unauthorized access');
+        return res.status(498).send('Unauthorized access');
     }
 
     return res.redirect('/auth');
