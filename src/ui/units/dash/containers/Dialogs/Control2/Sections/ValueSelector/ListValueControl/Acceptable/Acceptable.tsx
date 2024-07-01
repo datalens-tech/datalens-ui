@@ -99,7 +99,7 @@ export const Acceptable = () => {
                 <Button
                     onClick={() => handleRemoveItemClick(itemIndex, acceptableValues)}
                     className={b('remove')}
-                    data-qa={ControlQA.controlSelectAcceptableRemoveButton}
+                    qa={ControlQA.controlSelectAcceptableRemoveButton}
                     view="flat"
                     size="s"
                 >
