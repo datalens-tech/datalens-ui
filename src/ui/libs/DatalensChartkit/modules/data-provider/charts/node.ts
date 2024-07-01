@@ -304,6 +304,8 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 const uiSandbox = await getUISandbox();
                 const uiSandboxOptions: UiSandboxRuntimeOptions = {};
                 if (!get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                    // creating an object for mutation
+                    // so that we can calculate the total execution time of the sandbox
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 

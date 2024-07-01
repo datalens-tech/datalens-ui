@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep';
 import escape from 'lodash/escape';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSContext, QuickJSWASMModule} from 'quickjs-emscripten';
@@ -83,7 +84,33 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
 };
 
 const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label', 'axis'] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'xData'];
+const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
+
+const MAX_NESTING_LEVEL = 5;
+function removeSVGElements(val: unknown, nestingLevel = 0) {
+    if (nestingLevel > MAX_NESTING_LEVEL) {
+        return undefined;
+    }
+
+    if (val instanceof window.Highcharts.SVGElement) {
+        return undefined;
+    }
+
+    if (val && typeof val === 'object') {
+        if (Array.isArray(val)) {
+            val.forEach((item, index) => {
+                val[index] = removeSVGElements(item, nestingLevel + 1);
+            });
+        } else {
+            const obj = val as Record<string, unknown>;
+            Object.entries(obj).forEach(([key, value]) => {
+                obj[key] = removeSVGElements(value, nestingLevel + 1);
+            });
+        }
+    }
+
+    return val;
+}
 
 function clearVmProp(prop: unknown) {
     if (prop && typeof prop === 'object') {
@@ -106,10 +133,12 @@ function clearVmProp(prop: unknown) {
 
         if ('series' in item) {
             item.series = pick(item.series, ...ALLOWED_SERIES_ATTRS);
+            delete item.series.userOptions.data;
         }
 
         if ('point' in item) {
-            item.point = clearVmProp(item.point);
+            const pointClone = cloneDeep(item.point);
+            item.point = removeSVGElements(clearVmProp(pointClone));
         }
 
         if ('points' in item && Array.isArray(item.points)) {
