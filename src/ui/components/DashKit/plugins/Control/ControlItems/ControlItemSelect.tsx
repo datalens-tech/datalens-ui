@@ -316,7 +316,7 @@ export const ControlItemSelect = ({
         sourceType === DashTabItemControlSourceType.Dataset
             ? source.datasetFieldId
             : source.fieldName;
-    const selectedValue = defaults![fieldId];
+    const selectedValue = unwrapFromArrayAndSkipOperation(defaults![fieldId]);
     const preselectedContent = [{title: selectedValue, value: selectedValue}];
     // @ts-ignore
     const content = loadedData?.uiScheme?.controls[0].content;
