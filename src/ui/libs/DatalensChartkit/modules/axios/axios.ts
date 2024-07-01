@@ -2,7 +2,7 @@ import type {AxiosError} from 'axios';
 import axios from 'axios';
 import axiosRetry, {isRetryableError} from 'axios-retry';
 import isNumber from 'lodash/isNumber';
-import {sleep} from 'shared';
+import {sleep} from 'shared/modules';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
 import type {ConcurrencyManagerInstance} from './axiosConcurrency';
@@ -43,9 +43,7 @@ export function initConcurrencyManager(maxConcurrentRequests: number) {
 
     axiosRetry(client, {
         retries: 0,
-        retryCondition: (error) => {
-            return isRetryableError(error);
-        },
+        retryCondition: isRetryableError,
         retryDelay: () => 3000,
     });
 
@@ -63,11 +61,15 @@ client.interceptors.response.use(
             showReadOnlyToast();
         }
 
-        if (error && error.response && error.response.status === 498) {
-            error.config.__retryCount = error.config.__retryCount || 0;
-
-            if (error.config.__retryCount <= 3) {
-                error.config.__retryCount += 1;
+        if (
+            isAxiosError(error) &&
+            error.config &&
+            error.response &&
+            error.response.status === 498
+        ) {
+            let retryCount = error.config.headers['retry-count'] || 0;
+            if (retryCount <= 3) {
+                error.config.headers['retry-count'] = ++retryCount;
 
                 await sleep(1000);
                 return client.request(error.config);
