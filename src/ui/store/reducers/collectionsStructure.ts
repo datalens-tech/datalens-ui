@@ -53,6 +53,12 @@ import {
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
+    DELETE_COLLECTIONS_LOADING,
+    DELETE_COLLECTIONS_SUCCESS,
+    DELETE_COLLECTIONS_FAILED,
+    DELETE_WORKBOOKS_SUCCESS,
+    DELETE_WORKBOOKS_LOADING,
+    DELETE_WORKBOOKS_FAILED,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -73,6 +79,7 @@ import type {
     UpdateCollectionResponse,
     CopyTemplateResponse,
     DeleteCollectionResponse,
+    DeleteWorkbooksResponse,
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
 } from '../../../shared/schema';
@@ -154,9 +161,19 @@ export type CollectionsStructureState = {
         data: DeleteCollectionResponse | null;
         error: Error | null;
     };
+    deleteCollections: {
+        isLoading: boolean;
+        data: DeleteCollectionResponse | null;
+        error: Error | null;
+    };
     deleteWorkbook: {
         isLoading: boolean;
         data: DeleteWorkbookResponse | null;
+        error: Error | null;
+    };
+    deleteWorkbooks: {
+        isLoading: boolean;
+        data: DeleteWorkbooksResponse | null;
         error: Error | null;
     };
     addDemoWorkbook: {
@@ -243,7 +260,17 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
+    deleteCollections: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
     deleteWorkbook: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    deleteWorkbooks: {
         isLoading: false,
         data: null,
         error: null,
@@ -776,6 +803,38 @@ export const collectionsStructure = (
             };
         }
 
+        // Delete collections
+        case DELETE_COLLECTIONS_LOADING: {
+            return {
+                ...state,
+                deleteCollections: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTIONS_SUCCESS: {
+            return {
+                ...state,
+                deleteCollections: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_COLLECTIONS_FAILED: {
+            return {
+                ...state,
+                deleteCollections: {
+                    ...state.deleteCollections,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
         // Deleting a workbook
         case DELETE_WORKBOOK_LOADING: {
             return {
@@ -802,6 +861,38 @@ export const collectionsStructure = (
                 ...state,
                 deleteWorkbook: {
                     ...state.deleteWorkbook,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        // Delete workbooks
+        case DELETE_WORKBOOKS_LOADING: {
+            return {
+                ...state,
+                deleteWorkbooks: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_WORKBOOKS_SUCCESS: {
+            return {
+                ...state,
+                deleteWorkbooks: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case DELETE_WORKBOOKS_FAILED: {
+            return {
+                ...state,
+                deleteWorkbooks: {
+                    ...state.deleteWorkbooks,
                     isLoading: false,
                     error: action.error,
                 },

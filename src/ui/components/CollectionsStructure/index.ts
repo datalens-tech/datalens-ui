@@ -4,6 +4,10 @@ export {
     MoveCollectionsWorkbooksDialog,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from './MoveCollectionsWorkbooksDialog';
+export {
+    DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
+    DeleteCollectionsWorkbooksDialog,
+} from './DeleteCollectionsWorkbooksDialog';
 export {CopyWorkbookDialog, DIALOG_COPY_WORKBOOK} from './CopyWorkbookDialog';
 export {EditWorkbookDialog, DIALOG_EDIT_WORKBOOK} from './EditWorkbookDialog';
 export {EditCollectionDialog, DIALOG_EDIT_COLLECTION} from './EditCollectionDialog';

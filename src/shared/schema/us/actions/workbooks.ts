@@ -11,6 +11,8 @@ import type {
     CreateWorkbookResponse,
     DeleteWorkbookArgs,
     DeleteWorkbookResponse,
+    DeleteWorkbooksArgs,
+    DeleteWorkbooksResponse,
     GetWorkbookArgs,
     GetWorkbookEntriesArgs,
     GetWorkbookEntriesResponse,
@@ -29,6 +31,7 @@ import type {
 
 export const PATH_PREFIX = '/v2/workbooks';
 const MOVE_LIST_PATH_PREFIX = '/v2/move-workbooks';
+const WORKBOOKS_DELETE_LIST_PATH_PREFIX = '/v2/delete-workbooks';
 
 export const workbooksActions = {
     createWorkbook: createAction<CreateWorkbookResponse, CreateWorkbookArgs>({
@@ -143,5 +146,13 @@ export const workbooksActions = {
         method: 'POST',
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/migrate-copied-entries`,
         params: ({entryIds}, headers) => ({body: {entryIds}, headers}),
+    }),
+    deleteWorkbooks: createAction<DeleteWorkbooksResponse, DeleteWorkbooksArgs>({
+        method: 'DELETE',
+        path: () => WORKBOOKS_DELETE_LIST_PATH_PREFIX,
+        params: ({workbookIds}, headers) => ({
+            body: {workbookIds},
+            headers,
+        }),
     }),
 };

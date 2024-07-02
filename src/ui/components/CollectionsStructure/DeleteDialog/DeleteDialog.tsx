@@ -7,7 +7,7 @@ const i18n = I18n.keyset('component.collections-structure');
 
 export type Props = {
     title: string;
-    description?: string;
+    description?: React.ReactNode;
     textButtonApply: string;
     open: boolean;
     isLoading: boolean;

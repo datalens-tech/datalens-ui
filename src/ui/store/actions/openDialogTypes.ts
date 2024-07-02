@@ -48,6 +48,7 @@ import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEnt
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
 import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsStructure/DeleteCollectionDialog';
+import type {OpenDialogDeleteCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/DeleteCollectionsWorkbooksDialog';
 import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
 import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
@@ -102,6 +103,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCopyEntriesArgs
     | OpenDialogEditQueryArgs
     | OpenDialogDeleteCollectionArgs
+    | OpenDialogDeleteCollectionsWorkbooksArgs
     | OpenDialogDeleteWorkbookArgs
     | OpenDialogAddDemoWorkbookArgs
     | OpenDialogIamAccessArgs

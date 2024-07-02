@@ -10,6 +10,7 @@ import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
     DIALOG_CREATE_WORKBOOK,
+    DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
 } from '../../../../components/CollectionsStructure';
 import {ViewError} from '../../../../components/ViewError/ViewError';
@@ -20,6 +21,7 @@ import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
     selectCollection,
+    selectCollectionContentItems,
     selectCollectionError,
     selectRootCollectionPermissions,
 } from '../../store/selectors';
@@ -45,9 +47,12 @@ export const CollectionPage = () => {
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
+    const items = useSelector(selectCollectionContentItems);
+
     const {
         selectedMap,
         selectedMapWithMovePermission,
+        selectedMapWithDeletePermission,
         itemsAvailableForSelection,
         isOpenSelectionMode,
         openSelectionMode,
@@ -150,6 +155,53 @@ export const CollectionPage = () => {
         fetchCollectionContent,
     ]);
 
+    const handleDeleteSelectedEntities = React.useCallback(() => {
+        const workbookIds: string[] = [];
+        const workbookTitles: string[] = [];
+        const collectionIds: string[] = [];
+        const collectionTitles: string[] = [];
+
+        items.forEach((item) => {
+            if ('workbookId' in item && selectedMapWithDeletePermission[item.workbookId]) {
+                workbookIds.push(item.workbookId);
+                workbookTitles.push(item.title);
+            } else if (
+                'collectionId' in item &&
+                item.collectionId &&
+                selectedMapWithDeletePermission[item.collectionId]
+            ) {
+                collectionIds.push(item.collectionId);
+                collectionTitles.push(item.title);
+            }
+        });
+
+        dispatch(
+            openDialog({
+                id: DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
+                props: {
+                    open: true,
+                    onApply: () => {
+                        closeSelectionMode();
+                        resetSelected();
+                        fetchCollectionContent();
+                    },
+                    onClose: () => dispatch(closeDialog()),
+                    collectionIds,
+                    collectionTitles,
+                    workbookIds,
+                    workbookTitles,
+                },
+            }),
+        );
+    }, [
+        selectedMapWithDeletePermission,
+        items,
+        dispatch,
+        closeSelectionMode,
+        resetSelected,
+        fetchCollectionContent,
+    ]);
+
     useLayout({
         curCollectionId,
         filters,
@@ -214,6 +266,8 @@ export const CollectionPage = () => {
                     filters={filters}
                     viewMode={viewMode}
                     selectedMap={selectedMap}
+                    selectedMapWithMovePermission={selectedMapWithMovePermission}
+                    selectedMapWithDeletePermission={selectedMapWithDeletePermission}
                     itemsAvailableForSelection={itemsAvailableForSelection}
                     isOpenSelectionMode={isOpenSelectionMode}
                     canCreateWorkbook={canCreateWorkbook}
@@ -229,9 +283,11 @@ export const CollectionPage = () => {
                         });
                     }}
                     onMoveSelectedEntitiesClick={handleMoveSelectedEntities}
+                    onDeleteSelectedEntitiesClick={handleDeleteSelectedEntities}
                     resetSelected={resetSelected}
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
+                    isEmptyItems={items.length === 0}
                 />
             </div>
         </div>
