@@ -508,12 +508,12 @@ class NavigationBase extends React.Component {
             sdk,
             place: root,
             quickItems: this.quickItems,
-            onCreateMenuClick: this.onCreateMenuClick,
             linkWrapper: linkWrapper({navigationUrl, closeNavigation, onClose: this.props.onClose}),
             getContextMenuItems: getMenuItems,
             onContextMenuClick: this.onContextMenuClick,
             getPlaceParameters: getPlaceParameters,
             ...props,
+            onCreateMenuClick: this.onCreateMenuClick,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,
         });
