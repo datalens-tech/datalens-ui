@@ -77,7 +77,6 @@ type GraphConfig = BaseConfig &
 
 type TableConfig = BaseConfig & {
     settings: {
-        highlightRows?: boolean;
         externalSort?: boolean;
     };
     paginator?: {
@@ -258,7 +257,6 @@ export const buildChartsConfigPrivate = (
         (config as MetricConfig).metricVersion = 2;
     } else if (visualizationId === 'pivotTable') {
         (config as TableConfig).settings = {
-            highlightRows: false,
             externalSort: true,
         };
     }

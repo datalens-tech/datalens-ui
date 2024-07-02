@@ -7,7 +7,6 @@ import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
-import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
@@ -59,7 +58,6 @@ export const WidgetHeader = (props: HeaderProps) => {
         showActionParamsFilter,
         onFiltersClear,
         title,
-        warning,
     } = props;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
@@ -104,8 +102,6 @@ export const WidgetHeader = (props: HeaderProps) => {
         </div>
     );
 
-    const showIcons = Boolean(showFiltersClear || warning);
-
     return (
         <React.Fragment>
             {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
@@ -137,20 +133,17 @@ export const WidgetHeader = (props: HeaderProps) => {
                         />
                     </div>
                 )}
-                {showIcons && (
+                {showFiltersClear && (
                     <div className={b('icons')}>
-                        {showFiltersClear && (
-                            <div className={b('filters-controls')}>
-                                <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
-                                    <Icon
-                                        data={iconClearActionParams}
-                                        size={16}
-                                        className={b('icon-filter-clear')}
-                                    />
-                                </Button>
-                            </div>
-                        )}
-                        {warning && <ChartInfoIcon msg={warning} />}
+                        <div className={b('filters-controls')}>
+                            <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
+                                <Icon
+                                    data={iconClearActionParams}
+                                    size={16}
+                                    className={b('icon-filter-clear')}
+                                />
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>

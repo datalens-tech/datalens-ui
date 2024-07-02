@@ -18,6 +18,7 @@ import {
 } from '../../../src/shared';
 import SectionVisualization from '../wizard/SectionVisualization';
 import {ColumnSettings} from '../wizard/ColumnSettings';
+import PlaceholderDialog from '../wizard/PlaceholderDialog';
 
 interface QLPageProps extends BasePageProps {}
 
@@ -26,8 +27,10 @@ class QLPage extends ChartPage {
     chartkit: ChartKit;
     chartSettings: ChartSettings;
     visualizationItemDialog: VisualizationItemDialog;
+    placeholderDialog: PlaceholderDialog;
     sectionVisualization: SectionVisualization;
     columnSettings: ColumnSettings;
+
     private selectConnectionButtonSelector = slct(TabQueryQA.SelectConnection);
     private navigationMinimal: NavigationMinimal;
 
@@ -38,6 +41,7 @@ class QLPage extends ChartPage {
         this.chartSettings = new ChartSettings(page);
         this.previewTable = new PreviewTable(page);
         this.visualizationItemDialog = new VisualizationItemDialog(page);
+        this.placeholderDialog = new PlaceholderDialog(page);
         this.sectionVisualization = new SectionVisualization(page);
         this.columnSettings = new ColumnSettings(page);
     }

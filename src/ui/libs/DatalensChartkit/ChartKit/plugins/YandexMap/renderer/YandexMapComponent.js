@@ -249,8 +249,6 @@ export class YandexMapComponent extends React.Component {
     }
 
     async init(callBackType) {
-        this.destroy();
-
         try {
             const {data, libraryConfig, config} = this.props.data;
 
@@ -323,6 +321,7 @@ export class YandexMapComponent extends React.Component {
                 });
             });
 
+            this.destroy();
             this.map = map;
 
             const allLayers = [];

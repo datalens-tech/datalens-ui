@@ -233,14 +233,7 @@ const checkFileSourceStatus = async (
 
         return {status};
     } catch (error) {
-        // This crutch asked to add a backend:
-        // 404 is obtained at the starting pollingsource, which was replaced
-        if (error.status === 404) {
-            return {status: 'in_progress'};
-        }
-
         logger.logError('Redux actions (conn): checkFileSourceStatus failed', error);
-
         return {status: 'failed', error};
     }
 };

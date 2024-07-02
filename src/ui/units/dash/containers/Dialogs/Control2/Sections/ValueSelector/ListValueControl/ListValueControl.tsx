@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
-import Acceptable from './Acceptable/Acceptable';
+import {Acceptable} from './Acceptable/Acceptable';
 import {MultiselectableCheckbox} from './MultiselectableCheckbox';
 import {DynamicValueSelect} from './ValueSelector/DynamicValueSelect';
 import {StaticValueSelect} from './ValueSelector/StaticValueSelect';

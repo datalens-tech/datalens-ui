@@ -324,5 +324,7 @@ export interface DatasetApiError {
     };
 }
 
+export type DatasetSelectionMap = Record<DatasetField['guid'], true>;
+
 export type ParameterDefaultValue = string | number | boolean | null;
 export type DatasetRls = {[key: string]: string};

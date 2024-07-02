@@ -234,6 +234,14 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
         scopes: OBJECT_SCOPES,
     },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+        icon: CodeTrunk,
+        text: 'value_show-related-entities',
+        enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
+        scopes: OBJECT_SCOPES,
+    },
     ...getAdditionalEntryContextMenuItems(),
     getContextMenuMoveToWorkbooks()
 ];

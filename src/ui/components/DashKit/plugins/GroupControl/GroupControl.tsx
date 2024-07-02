@@ -29,7 +29,7 @@ import {
     selectSkipReload,
     selectTabHashState,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {defaultControlLayout} from '../../constants';
+import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
@@ -296,11 +296,17 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }) => {
         const controlData = this.props.data as unknown as DashTabItemGroupControlData;
 
+        // In cases:
+        // 1. 'Apply button' is clicked
+        // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
             const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
             this.props.onStateAndParamsChange({params}, {groupItemIds});
+            this.localMeta.queue = [];
+            return;
         }
 
+        // Change params by control when 'Apply button' is enabled
         if (controlId) {
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 this.setState({
@@ -320,7 +326,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
             return;
         }
-        // if onChange is triggered by button
+
+        // Reset by 'Reset button' when 'Apply button' is enabled
         this.setState({stateParams: params as Record<string, StringParams>});
         this.localMeta.queue = [];
     };
@@ -735,7 +742,7 @@ const GroupControlWithStore = connect(mapStateToProps, null, null, {
 
 const plugin: PluginGroupControl = {
     type: DashTabItemType.GroupControl,
-    defaultLayout: defaultControlLayout,
+    defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 

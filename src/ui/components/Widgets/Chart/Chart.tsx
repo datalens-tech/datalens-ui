@@ -125,7 +125,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
 
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
-    const renderPluginLoader = disableChartLoader ? () => null : undefined;
+    const renderPluginLoader = React.useMemo(() => {
+        return disableChartLoader ? () => null : undefined;
+    }, [disableChartLoader]);
 
     /**
      * for correct cancellation on rerender & changed request params & data props

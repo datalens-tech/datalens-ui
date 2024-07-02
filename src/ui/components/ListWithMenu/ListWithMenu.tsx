@@ -6,6 +6,7 @@ import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DialogGroupControlQa, TabMenuQA} from 'shared';
+import EditedTabItem from 'ui/units/dash/containers/Dialogs/Tabs/EditedTabItem';
 import {TabActionType} from 'ui/units/dash/containers/Dialogs/Widget/TabMenu/types';
 
 import './ListWithMenu.scss';
@@ -31,23 +32,28 @@ export interface ListWithMenuProps<T> {
     }) => React.MouseEventHandler<HTMLDivElement>;
     /* * Show the icon only when hovering over a list item*/
     iconOnHover?: boolean;
+    /* * Callback on update item data via TabMenu */
+    onUpdateItem: (title: string) => void;
 }
 
-type ItemWithTitle = {
+type ItemWithTitleAndDraftId = {
     title?: string;
+    draftId?: string;
 };
 
-export const ListWithMenu = <T extends ItemWithTitle>({
+export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
     list,
     onRemove,
     iconOnHover,
     onAction,
     onDuplicate,
     onCopy,
+    onUpdateItem,
 }: ListWithMenuProps<T>): React.ReactElement => {
     const {items, className, ...restListProps} = list;
 
     const [expandedItemIndex, setExpandedItemIndex] = React.useState<number | undefined>(undefined);
+    const [itemIndexWithEdit, setItemIndexWithEdit] = React.useState<number | null>(null);
 
     const isMultipleItems = items.length > 1;
 
@@ -74,6 +80,26 @@ export const ListWithMenu = <T extends ItemWithTitle>({
         if (expandedItemIndex !== undefined) {
             onCopy?.(expandedItemIndex);
         }
+    };
+
+    const handleItemClick = (
+        _item: T,
+        index: number,
+        _fromKeyboard?: boolean,
+        event?: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLElement>,
+    ) => {
+        // focus when clicking on object is needed to correctly work out the hiding of TextInput on blur
+        // https://github.com/atlassian/react-beautiful-dnd/issues/410
+        if (
+            !event ||
+            event.defaultPrevented ||
+            itemIndexWithEdit === null ||
+            index === itemIndexWithEdit
+        ) {
+            return;
+        }
+
+        event.currentTarget.focus();
     };
 
     const customMenuOptions: DropdownMenuItem[] = [
@@ -104,22 +130,46 @@ export const ListWithMenu = <T extends ItemWithTitle>({
     }
 
     const wrappedRenderItem = (item: T, active: boolean, itemIndex: number) => {
+        const handleTitleCommit = (text: string) => {
+            if (itemIndexWithEdit !== null) {
+                onUpdateItem(text);
+                setItemIndexWithEdit(null);
+            }
+        };
+
+        const handleDoubleClick = () => {
+            setItemIndexWithEdit(itemIndex);
+        };
+
+        const showEdit = itemIndex === itemIndexWithEdit;
+
         return (
             <div
                 className={b('wrapper', {'icon-on-hover': iconOnHover, active})}
                 data-qa={TabMenuQA.Item}
             >
-                <div
-                    className={b('item')}
-                    onClick={onAction({action: TabActionType.ChangeChosen, index: itemIndex})}
-                    key={itemIndex}
-                >
-                    <div className={b('item-content')}>
-                        <span title={item.title} className={b('item-text')}>
-                            {item.title}
-                        </span>
+                {showEdit ? (
+                    <div className={b('item')}>
+                        <EditedTabItem
+                            onCommit={handleTitleCommit}
+                            id={item.draftId || String(itemIndex)}
+                            title={item.title || ''}
+                        />
                     </div>
-                </div>
+                ) : (
+                    <div
+                        className={b('item')}
+                        onClick={onAction({action: TabActionType.ChangeChosen, index: itemIndex})}
+                        key={item.draftId || String(itemIndex)}
+                        onDoubleClick={handleDoubleClick}
+                    >
+                        <div className={b('item-content')}>
+                            <span title={item.title} className={b('item-text')}>
+                                {item.title}
+                            </span>
+                        </div>
+                    </div>
+                )}
 
                 <div className={b('controls')}>
                     <DropdownMenu
@@ -141,6 +191,7 @@ export const ListWithMenu = <T extends ItemWithTitle>({
                 itemsHeight={items.length * ITEM_HEIGHT}
                 activeItemIndex={expandedItemIndex}
                 renderItem={wrappedRenderItem}
+                onItemClick={handleItemClick}
                 qa={TabMenuQA.List}
             />
         </div>

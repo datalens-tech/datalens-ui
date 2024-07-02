@@ -11,8 +11,10 @@ import type {
 } from '../../../components/EntryContextMenu/helpers';
 import type {ContextMenuItem} from '../../../components/EntryContextMenu/types';
 import type {EntryData} from '../../../components/EntryTitle/types';
+import type {EntrySettings} from '../../../components/Navigation/Base/configure';
 import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
 import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
+import type {PlaceParameterItem} from '../../../components/Navigation/types';
 import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
@@ -62,6 +64,9 @@ export const commonFunctionsMap = {
     getEntryName: makeFunctionTemplate<(entry: EntryData) => string>(),
     getInitDestination: makeFunctionTemplate<(path?: string) => string>(),
     getNavigationQuickItems: makeFunctionTemplate<() => NavigationQuickItem[]>(),
+    getNavigationCreatableEntriesConfig: makeFunctionTemplate<() => EntrySettings[]>(),
+    getNavigationPlacesConfig: makeFunctionTemplate<() => PlaceParameterItem[]>(),
+
     getUpdatedUserSettings:
         makeFunctionTemplate<
             (settings: Partial<DLUserSettings>) => Promise<Partial<DLUserSettings> | undefined>
