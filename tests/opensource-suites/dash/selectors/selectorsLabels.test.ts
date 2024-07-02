@@ -82,7 +82,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual List. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual List. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -100,7 +100,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual Input field. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual Input field. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 

@@ -1,5 +1,7 @@
 export type ListItemByParams = {
     innerText?: string;
     idx?: number;
-    link?: string;
+    qa?: string;
 };
+
+export type DatasetParams = ListItemByParams & {link?: string};

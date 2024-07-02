@@ -22,11 +22,13 @@ export class SelectElementPO extends ElementPO {
         await expect(this.getListLocator()).toBeVisible();
     }
 
-    async selectListItem({idx, innerText}: ListItemByParams) {
+    async selectListItem({idx, innerText, qa}: ListItemByParams) {
         if (innerText !== undefined) {
             await this.selectListItemByName(innerText);
         } else if (typeof idx === 'number') {
             await this.selectListItemByIdx(idx);
+        } else if (qa !== undefined) {
+            await this.selectListItemByQa(qa);
         }
     }
 
@@ -42,6 +44,7 @@ export class SelectElementPO extends ElementPO {
 
     async selectListItemByName(name: string) {
         await this.expectListVisible();
+        // case insensitive
         await this.getListLocator().getByRole('option').filter({hasText: name}).click();
     }
 }

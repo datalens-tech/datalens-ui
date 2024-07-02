@@ -245,7 +245,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     {this.renderControls()}
                     {isLoading && (
                         <div className={b('loader')}>
-                            <Loader size="s" />
+                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
                 </div>

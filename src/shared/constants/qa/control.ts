@@ -28,6 +28,8 @@ export const ControlQA = {
     dialogControl: 'dialog-control',
     dialogControlApplyBtn: 'control-dialog-apply-button',
     dialogControlCancelBtn: 'control-dialog-cancel-button',
+
+    groupCommonLoader: 'group-control-common-loader',
 };
 
 export const DialogControlQa = {
