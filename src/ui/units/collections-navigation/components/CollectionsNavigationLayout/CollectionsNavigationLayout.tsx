@@ -69,7 +69,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                     var decodedString = atob(auth.token);
                     setUserName(decodedString.split(':')[0])
                 } else {
-                    setUserName(value.data[0].userName || value.data[0].c_login);
+                    setUserName(value.data[0].username || value.data[0].c_login);
                 }
             });
         }

@@ -336,12 +336,6 @@ export default class Utils {
         return result.data && result.data.length > 0 ? result.data : [];
     }
 
-    static tables = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "tables", "data": [propsData]});
-
-        return result.data && result.data.length > 0 ? result.data : [];
-    }
-
     /**
      * Создание пользователя
      * @param propsData {"login": "user04", "password": "qwe-123", "email": "", "claims": ["datalens"]}
