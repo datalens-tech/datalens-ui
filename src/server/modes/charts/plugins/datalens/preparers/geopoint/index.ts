@@ -132,11 +132,12 @@ const setPointTooltip = ({
 
     point.feature.properties.data[index] = {
         ...(isFirstTooltip && {color: point.options.iconColor}),
-        text: shouldEscapeUserValue ? escape(text) : text,
-        ...(propType === DATASET_FIELD_TYPES.MARKUP && {
-            value,
-            key: propKey,
-        }),
+        ...(propType === DATASET_FIELD_TYPES.MARKUP
+            ? {
+                  value,
+                  key: propKey,
+              }
+            : {text: shouldEscapeUserValue ? escape(text) : text}),
     };
 };
 

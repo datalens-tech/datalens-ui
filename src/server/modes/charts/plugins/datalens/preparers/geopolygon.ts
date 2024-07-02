@@ -47,8 +47,10 @@ type GeopolygonConfig = {
         rawText?: boolean;
         colorIndex?: number | null;
         data?: {
-            text: string;
+            text?: string;
             color?: string;
+            key?: string;
+            value?: MarkupItem;
         }[];
     };
 };
@@ -231,11 +233,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             if (
-                !polygon.properties.data.some((entry: {text: string}) => entry.text === tooltipText)
+                !polygon.properties.data.some(
+                    (entry: {text?: string}) => entry.text === tooltipText,
+                )
             ) {
                 polygon.properties.data[tooltipIndex] = {
-                    text: tooltipText,
-                    ...markupData,
+                    ...(markupData ? {...markupData} : {text: tooltipText}),
                 };
             }
         } else {
@@ -244,8 +247,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             polygon.properties.data[tooltipIndex] = {
-                text: tooltipText,
-                ...markupData,
+                ...(markupData ? {...markupData} : {text: tooltipText}),
             };
         }
     };
