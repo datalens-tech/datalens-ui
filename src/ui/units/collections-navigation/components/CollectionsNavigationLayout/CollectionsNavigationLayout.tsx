@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Button} from '@gravity-ui/uikit';
 
 import {ActionBar} from '@gravity-ui/navigation';
@@ -54,7 +54,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
         const auth = React.useContext(AuthContext);
-
+        const [userName, setUserName] = useState("");
         const {Footer} = registry.common.components.getAll();
 
         const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
@@ -63,10 +63,15 @@ export const CollectionsNavigationLayout = React.memo<Props>(
 
         const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
 
-        let userName = "";
         if(auth.token) {
-            var decodedString = atob(auth.token);
-            userName = decodedString.split(':')[0];
+            Utils.universalService({"action": "datalens", "method": "currentUser", "data": [{}]}).then((value)=>{
+                if(value.err || value.data.length == 0) {
+                    var decodedString = atob(auth.token);
+                    setUserName(decodedString.split(':')[0])
+                } else {
+                    setUserName(value.data[0].userName || value.data[0].c_login);
+                }
+            });
         }
         
         return (
