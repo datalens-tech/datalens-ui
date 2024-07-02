@@ -22,7 +22,6 @@ import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
-    selectCollectionContentItems,
     selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
 import type {CollectionBatchAction} from '../CollectionBatchPanel/CollectionBatchPanel';
@@ -49,6 +48,7 @@ interface Props {
     itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
+    isEmptyItems: boolean;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -73,6 +73,7 @@ export const CollectionContent: React.FC<Props> = ({
     itemsAvailableForSelection,
     isOpenSelectionMode,
     canCreateWorkbook,
+    isEmptyItems,
     getCollectionContentRecursively,
     fetchCollectionContent,
     onCloseMoveDialog,
@@ -87,7 +88,6 @@ export const CollectionContent: React.FC<Props> = ({
     const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
     const collectionContentError = useSelector(selectCollectionContentError);
     const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);
-    const items = useSelector(selectCollectionContentItems);
 
     const isDefaultFilters =
         filters.filterString === DEFAULT_FILTERS.filterString &&
@@ -159,11 +159,11 @@ export const CollectionContent: React.FC<Props> = ({
         onCloseMoveDialog,
     });
 
-    if (isCollectionContentLoading && items.length === 0) {
+    if (isCollectionContentLoading && isEmptyItems) {
         return <SmartLoader size="l" />;
     }
 
-    if (items.length === 0) {
+    if (isEmptyItems) {
         if (isDefaultFilters || isMobileView) {
             return (
                 <AnimateBlock className={b('empty-state')}>

@@ -186,7 +186,6 @@ export const CollectionPage = () => {
                         fetchCollectionContent();
                     },
                     onClose: () => dispatch(closeDialog()),
-
                     collectionIds,
                     collectionTitles,
                     workbookIds,
@@ -288,7 +287,7 @@ export const CollectionPage = () => {
                     resetSelected={resetSelected}
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
-                    // isEmptyItems={items.length === 0}
+                    isEmptyItems={items.length === 0}
                 />
             </div>
         </div>

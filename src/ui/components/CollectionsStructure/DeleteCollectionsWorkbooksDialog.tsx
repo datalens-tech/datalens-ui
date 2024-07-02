@@ -62,9 +62,11 @@ export const DeleteCollectionsWorkbooksDialog: React.FC<Props> = ({
             );
         }
 
-        await Promise.all([deleteCollectionsPromise, deleteWorkbooksPromise]);
-
-        onApply();
+        await Promise.all([deleteCollectionsPromise, deleteWorkbooksPromise]).then((response) => {
+            if (response.filter((res) => res).length) {
+                onApply();
+            }
+        });
     }, [collectionIds, dispatch, onApply, workbookIds]);
 
     return (
