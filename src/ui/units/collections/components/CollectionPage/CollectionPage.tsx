@@ -288,7 +288,7 @@ export const CollectionPage = () => {
                     resetSelected={resetSelected}
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
-                    items={items}
+                    // isEmptyItems={items.length === 0}
                 />
             </div>
         </div>

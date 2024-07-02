@@ -50,7 +50,7 @@ export type ItemSelectArgs = {
     selectedItemsIds: Set<string>;
 };
 
-export type BatchAction = 'move' | 'delete';
+export type BatchAction = 'move';
 
 export type ChangeLocation = (place: string, path: string) => void;
 

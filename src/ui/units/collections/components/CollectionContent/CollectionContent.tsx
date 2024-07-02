@@ -6,7 +6,6 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
-import type {BatchAction} from 'ui/components/Navigation/types';
 import {isMobileView} from 'ui/utils/mobile';
 
 import type {
@@ -18,14 +17,16 @@ import type {
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import type {CollectionContentFilters} from '../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
-import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
+    selectCollectionContentItems,
     selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
+import type {CollectionBatchAction} from '../CollectionBatchPanel/CollectionBatchPanel';
+import {CollectionBatchPanel} from '../CollectionBatchPanel/CollectionBatchPanel';
 import {CollectionContentGrid} from '../CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
@@ -60,7 +61,6 @@ interface Props {
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
-    items: (CollectionWithPermissions | WorkbookWithPermissions)[];
 }
 
 export const CollectionContent: React.FC<Props> = ({
@@ -83,11 +83,11 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
-    items,
 }) => {
     const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
     const collectionContentError = useSelector(selectCollectionContentError);
     const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);
+    const items = useSelector(selectCollectionContentItems);
 
     const isDefaultFilters =
         filters.filterString === DEFAULT_FILTERS.filterString &&
@@ -103,7 +103,7 @@ export const CollectionContent: React.FC<Props> = ({
     }, [collectionContentError]);
 
     const onAction = React.useCallback(
-        (action: BatchAction) => {
+        (action: CollectionBatchAction) => {
             if (action === 'move') {
                 onMoveSelectedEntitiesClick();
             } else if (action === 'delete') {
@@ -240,8 +240,7 @@ export const CollectionContent: React.FC<Props> = ({
 
             {Object.keys(selectedMap).length > 0 && (
                 <div className={b('batch-panel-placeholder')}>
-                    <BatchPanel
-                        count={Object.keys(selectedMap).length}
+                    <CollectionBatchPanel
                         countForMove={Object.keys(selectedMapWithMovePermission).length}
                         countForDelete={Object.keys(selectedMapWithDeletePermission).length}
                         onAction={onAction}

@@ -31,7 +31,7 @@ import type {
 
 export const PATH_PREFIX = '/v2/workbooks';
 const MOVE_LIST_PATH_PREFIX = '/v2/move-workbooks';
-const WORKBOOKS_DELETE_LIST_PATH_PREFIX = '/v1/delete-workbooks';
+const WORKBOOKS_DELETE_LIST_PATH_PREFIX = '/v2/delete-workbooks';
 
 export const workbooksActions = {
     createWorkbook: createAction<CreateWorkbookResponse, CreateWorkbookArgs>({
