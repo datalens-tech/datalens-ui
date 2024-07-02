@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import isNumber from 'lodash/isNumber';
 import merge from 'lodash/merge';
@@ -17,8 +18,11 @@ import YandexMapModule, {
 import {StyledSplitPane} from '../../../plugins/components';
 
 import Legend from './Legend/Legend';
+import {renderPossibleMarkupItems} from './utils';
 
 import './YandexMapComponent.scss';
+
+let ReactDOMServer;
 
 const PROVIDER_DATA_FIELDS = ['data', 'config', 'libraryConfig'];
 
@@ -250,13 +254,32 @@ export class YandexMapComponent extends React.Component {
 
     async init(callBackType) {
         try {
-            const {data, libraryConfig, config} = this.props.data;
+            ReactDOMServer = await import(
+                /* webpackChunkName: "react-dom/server" */ 'react-dom/server'
+            );
 
+            const {data, libraryConfig, config} = this.props.data;
             const {map, geoObjects, mapPerformanceMetrics} = await YandexMapModule.draw({
                 node: this.node,
                 data: data.map((geoObject) => {
                     const geoObjectState =
                         geoObject.options && this.geoObjectsStates[geoObject.options.geoObjectId];
+                    const children = get(geoObject, 'collection.children', []);
+                    const polygons = get(geoObject, 'polygonmap.polygons.features', []);
+                    const renderToString = ReactDOMServer?.renderToString;
+
+                    if (renderToString && children.length) {
+                        children.forEach((child) => {
+                            const childData = get(child, 'feature.properties.data', []);
+                            renderPossibleMarkupItems(renderToString, childData);
+                        });
+                    } else if (renderToString && polygons.length) {
+                        polygons.forEach((polygon) => {
+                            const polygonData = get(polygon, 'properties.data', []);
+                            renderPossibleMarkupItems(renderToString, polygonData);
+                        });
+                    }
+
                     return geoObjectState ? merge({}, geoObject, geoObjectState) : geoObject;
                 }),
                 lang: this.props.lang,
