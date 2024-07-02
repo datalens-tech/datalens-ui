@@ -5,7 +5,7 @@ import type {
     ServerFieldFormatting,
     VisualizationLayerShared,
 } from '../../../../../../../shared';
-import {Feature, MINIMUM_FRACTION_DIGITS} from '../../../../../../../shared';
+import {DATASET_FIELD_TYPES, Feature, MINIMUM_FRACTION_DIGITS} from '../../../../../../../shared';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -74,10 +74,6 @@ const prepareValue = (
         });
     }
 
-    if (valueType === 'markup') {
-        return `<a href="${value.url}" target="_blank">${value.content.content}</a>`;
-    }
-
     return value;
 };
 
@@ -137,6 +133,10 @@ const setPointTooltip = ({
     point.feature.properties.data[index] = {
         ...(isFirstTooltip && {color: point.options.iconColor}),
         text: shouldEscapeUserValue ? escape(text) : text,
+        ...(propType === DATASET_FIELD_TYPES.MARKUP && {
+            value,
+            key: propKey,
+        }),
     };
 };
 
