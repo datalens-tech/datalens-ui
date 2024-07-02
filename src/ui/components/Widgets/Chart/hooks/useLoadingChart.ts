@@ -666,6 +666,10 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
 
             setYandexMapAPIWaiting(renderedData?.yandexMapAPIWaiting);
 
+            if (typeof loadedData?.uiSandboxOptions?.totalTimeLimit !== 'undefined') {
+                delete loadedData.uiSandboxOptions.totalTimeLimit;
+            }
+
             onChartRender?.(
                 {
                     status: 'success',
