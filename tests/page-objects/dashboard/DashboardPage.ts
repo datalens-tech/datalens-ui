@@ -164,7 +164,60 @@ class DashboardPage extends BasePage {
         await page.click(slct(EntryDialogQA.Apply));
     }
 
-    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
+    async expectControlsRequests({
+        controlTitles,
+        action,
+        waitForLoader,
+    }: {
+        controlTitles: string[];
+        waitForLoader?: boolean;
+        action?: () => Promise<void>;
+    }) {
+        const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+
+        if (waitForLoader) {
+            // check for loader appearence and passing request without changes
+            await this.page.route(CommonUrls.ApiRun, async (route) => {
+                await expect(loader).toBeVisible();
+                route.continue();
+            });
+        }
+
+        // check that requests for passed selectors have completed successfully
+        const controlResponses = controlTitles.map((title) => {
+            const predicate = (response: Response) => {
+                const isCorrespondingRequest =
+                    response.url().includes(CommonUrls.ApiRun) &&
+                    response.request().postDataJSON().config.data.shared.title === title;
+                if (isCorrespondingRequest) {
+                    expect(response.status()).toEqual(200);
+                }
+
+                return isCorrespondingRequest;
+            };
+
+            return this.page.waitForResponse(predicate);
+        });
+
+        await action?.();
+
+        await Promise.all(controlResponses);
+
+        if (waitForLoader) {
+            await expect(loader).toBeHidden();
+        }
+    }
+
+    async createDashboard({
+        editDash,
+        waitingRequestOptions,
+    }: {
+        editDash: () => Promise<void>;
+        waitingRequestOptions?: {
+            controlTitles: string[];
+            waitForLoader?: boolean;
+        };
+    }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
@@ -180,6 +233,13 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
+        const expectRequestPromise = waitingRequestOptions
+            ? this.expectControlsRequests({
+                  controlTitles: waitingRequestOptions.controlTitles,
+                  waitForLoader: waitingRequestOptions.waitForLoader,
+              })
+            : null;
+
         // waiting for the dialog to open, specify the name, save
         if (isEnabledCollections) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
@@ -189,6 +249,8 @@ class DashboardPage extends BasePage {
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
+
+        await expectRequestPromise;
     }
 
     async duplicateDashboard({dashId, useUserFolder}: {dashId?: string; useUserFolder?: boolean}) {

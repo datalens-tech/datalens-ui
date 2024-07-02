@@ -45,25 +45,20 @@ const PARAMS = {
     SIDE_TEXT_VALUE: 'side text value',
 };
 
+const SELECTORS_TITLES = {
+    ALL_SELECTORS: [
+        PARAMS.MANUAL_FIRST_SELECTOR.appearance.title,
+        PARAMS.MANUAL_OUTSIDE_SELECTOR.appearance.title,
+        PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
+    ],
+};
+
 const getUrlWithoutState = (page: Page) => {
     const url = new URL(page.url());
 
     url.search = '';
 
     return url.toString();
-};
-
-const getLoaders = (page: Page) => {
-    const groupLoader = page
-        .locator(ControlQA.groupChartkitControl)
-        .first()
-        .locator(slct(ControlQA.groupCommonLoader));
-    const singleLoader = page
-        .locator(ControlQA.groupChartkitControl)
-        .nth(1)
-        .locator(slct(ControlQA.groupCommonLoader));
-
-    return {groupLoader, singleLoader};
 };
 
 datalensTest.describe(
@@ -144,11 +139,10 @@ datalensTest.describe(
 
                         await dashboardPage.applyRelationsChanges();
                     },
+                    waitingRequestOptions: {
+                        controlTitles: SELECTORS_TITLES.ALL_SELECTORS,
+                    },
                 });
-                const {groupLoader, singleLoader} = getLoaders(page);
-
-                await groupLoader.waitFor({state: 'hidden'});
-                await singleLoader.waitFor({state: 'hidden'});
 
                 const singleControl = dashboardPage
                     .getSelectorLocatorByTitle({
@@ -183,11 +177,14 @@ datalensTest.describe(
 
                 await page.waitForResponse(CommonUrls.CreateDashState);
 
-                // check that state is correctly applied after reload
-                await page.reload();
+                await dashboardPage.expectControlsRequests({
+                    controlTitles: SELECTORS_TITLES.ALL_SELECTORS,
 
-                await groupLoader.waitFor({state: 'hidden'});
-                await singleLoader.waitFor({state: 'hidden'});
+                    action: async () => {
+                        // check that state is correctly applied after reload
+                        await page.reload();
+                    },
+                });
 
                 const firstControlValueAfterReload = await firstControlLocator.inputValue();
                 const secondControlValueAfterReload = await secondControlLocator.inputValue();
@@ -198,10 +195,14 @@ datalensTest.describe(
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();
 
-                // reload page without state
-                await page.goto(getUrlWithoutState(page));
-                await groupLoader.waitFor({state: 'hidden'});
-                await singleLoader.waitFor({state: 'hidden'});
+                await dashboardPage.expectControlsRequests({
+                    controlTitles: SELECTORS_TITLES.ALL_SELECTORS,
+
+                    action: async () => {
+                        // reload page without state
+                        await page.goto(getUrlWithoutState(page));
+                    },
+                });
 
                 await singleControl.fill(PARAMS.INPUT_TEXT_VALUE);
                 await singleControl.blur();
@@ -242,11 +243,10 @@ datalensTest.describe(
                             widgetElem: singleSelectorElem,
                         });
                     },
+                    waitingRequestOptions: {
+                        controlTitles: SELECTORS_TITLES.ALL_SELECTORS,
+                    },
                 });
-                const {groupLoader, singleLoader} = getLoaders(page);
-
-                await groupLoader.waitFor({state: 'hidden'});
-                await singleLoader.waitFor({state: 'hidden'});
 
                 const firstControlLocator = dashboardPage
                     .getSelectorLocatorByTitle({
@@ -283,10 +283,13 @@ datalensTest.describe(
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();
 
-                // reload page without state
-                await page.goto(getUrlWithoutState(page));
-                await groupLoader.waitFor({state: 'hidden'});
-                await singleLoader.waitFor({state: 'hidden'});
+                await dashboardPage.expectControlsRequests({
+                    controlTitles: SELECTORS_TITLES.ALL_SELECTORS,
+                    action: async () => {
+                        // reload page without state
+                        await page.goto(getUrlWithoutState(page));
+                    },
+                });
 
                 await secondControlLocator.fill(PARAMS.SIDE_TEXT_VALUE);
 

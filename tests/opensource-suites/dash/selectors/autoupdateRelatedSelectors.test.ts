@@ -13,6 +13,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getStringFullUrl, isEnabledFeature, openTestPage, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
+import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const PARAMS = {
     DATASET_FIRST_CONTROL: {
@@ -54,6 +55,18 @@ const PARAMS = {
     STATE_VALUE: 'Vermont',
     CITY_VALUE: 'Burlington',
     INPUT_TEXT_VALUE: 'text for autoupdate',
+};
+
+const SELECTORS_TITLES = {
+    DATASET_SELECTORS: [
+        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+        PARAMS.DATASET_SECOND_CONTROL.appearance.title,
+    ],
+    MANUAL_SELECTORS: [
+        PARAMS.MANUAL_FIRST_SELECTOR.appearance.title,
+        PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
+    ],
+    FIRST_DATASET_SELECTOR: [PARAMS.DATASET_FIRST_CONTROL.appearance.title],
 };
 
 const getSecondSelectItemsCount = async (dashboardPage: DashboardPage) => {
@@ -114,21 +127,25 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         {buttonApply: true, updateControlOnChange: true},
                     );
                 },
+                waitingRequestOptions: {
+                    controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                    waitForLoader: true,
+                },
             });
-            const loader = page.locator(slct(ControlQA.groupCommonLoader));
-            await loader.waitFor({state: 'hidden'});
 
             expect(await getSecondSelectItemsCount(dashboardPage)).toBeGreaterThan(1);
 
-            // select influencing value
-            await dashboardPage.controlActions.selectControlValueByTitle(
-                PARAMS.DATASET_FIRST_CONTROL.appearance.title,
-                PARAMS.STATE_VALUE,
-            );
-
-            // wait for requests after update
-            await loader.waitFor({state: 'visible'});
-            await loader.waitFor({state: 'hidden'});
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                action: async () => {
+                    // select influencing value
+                    await dashboardPage.controlActions.selectControlValueByTitle(
+                        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+                        PARAMS.STATE_VALUE,
+                    );
+                },
+                waitForLoader: true,
+            });
 
             const cityItemsLocator =
                 await dashboardPage.controlActions.getSelectItemsLocatorByTitle(
@@ -167,10 +184,11 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         {buttonApply: true},
                     );
                 },
+                waitingRequestOptions: {
+                    controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                    waitForLoader: true,
+                },
             });
-            const loader = page.locator(slct(ControlQA.groupCommonLoader));
-            await loader.waitFor({state: 'hidden'});
-
             // check that initial count of items
             const cityItemsCount = await getSecondSelectItemsCount(dashboardPage);
             expect(cityItemsCount).toBeGreaterThan(1);
@@ -183,12 +201,15 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(cityItemsCount);
 
-            await page.locator(slct(ControlQA.controlButtonApply)).click();
-
-            await loader.waitFor({state: 'hidden'});
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                action: async () => {
+                    await page.locator(slct(ControlQA.controlButtonApply)).click();
+                },
+                waitForLoader: true,
+            });
 
             // after apply the range of values should decrease due to the influence of first selector
-            await page.pause();
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(1);
         },
     );
@@ -217,9 +238,11 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         widgetElem: selectorElem,
                     });
                 },
+                waitingRequestOptions: {
+                    controlTitles: SELECTORS_TITLES.MANUAL_SELECTORS,
+                    waitForLoader: true,
+                },
             });
-            const loader = page.locator(slct(ControlQA.groupCommonLoader));
-            await loader.waitFor({state: 'hidden'});
 
             const firstControl = dashboardPage
                 .getSelectorLocatorByTitle({
@@ -228,10 +251,14 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 })
                 .locator('input');
 
-            await firstControl.fill(PARAMS.INPUT_TEXT_VALUE);
-            await firstControl.blur();
-
-            await loader.waitFor({state: 'hidden'});
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.MANUAL_SELECTORS,
+                action: async () => {
+                    await firstControl.fill(PARAMS.INPUT_TEXT_VALUE);
+                    await firstControl.blur();
+                },
+                waitForLoader: true,
+            });
 
             const secondSelectorValue = await dashboardPage
                 .getSelectorLocatorByTitle({
@@ -269,10 +296,11 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         widgetElem: selectorElem,
                     });
                 },
+                waitingRequestOptions: {
+                    controlTitles: SELECTORS_TITLES.MANUAL_SELECTORS,
+                    waitForLoader: false,
+                },
             });
-            const loader = page.locator(slct(ControlQA.groupCommonLoader));
-            await loader.waitFor({state: 'hidden'});
-
             const firstControl = dashboardPage
                 .getSelectorLocatorByTitle({
                     title: PARAMS.MANUAL_FIRST_SELECTOR.appearance.title,
@@ -295,8 +323,6 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             // TODO: Return check after CHARTS-9889
             // await page.locator(slct(ControlQA.controlButtonApply)).click();
-
-            // await loader.waitFor({state: 'hidden'});
 
             // // last changed param will be applied to both selectors
             // const firstSelectorValueAfterApply = await dashboardPage
@@ -349,24 +375,28 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
                     await dashboardPage.applyRelationsChanges();
                 },
+                waitingRequestOptions: {
+                    controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                    waitForLoader: true,
+                },
             });
-            const loader = page.locator(slct(ControlQA.groupCommonLoader));
-            await loader.waitFor({state: 'hidden'});
 
             // check that initial count of items more than 1
             const initialItemsCount = await getSecondSelectItemsCount(dashboardPage);
 
             expect(initialItemsCount).toBeGreaterThan(1);
 
-            // select influencing value
-            await dashboardPage.controlActions.selectControlValueByTitle(
-                PARAMS.DATASET_FIRST_CONTROL.appearance.title,
-                PARAMS.STATE_VALUE,
-            );
-
-            // wait for requests after update
-            await loader.waitFor({state: 'visible'});
-            await loader.waitFor({state: 'hidden'});
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
+                action: async () => {
+                    // select influencing value
+                    await dashboardPage.controlActions.selectControlValueByTitle(
+                        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+                        PARAMS.STATE_VALUE,
+                    );
+                },
+                waitForLoader: true,
+            });
 
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
 
@@ -379,18 +409,24 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             const pageURL = new URL(page.url());
             expect(pageURL.searchParams.get('state')).toEqual(null);
 
-            // select influencing value
-            await dashboardPage.controlActions.selectControlValueByTitle(
-                PARAMS.DATASET_FIRST_CONTROL.appearance.title,
-                PARAMS.STATE_VALUE,
-            );
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
+                action: async () => {
+                    // select influencing value
+                    await dashboardPage.controlActions.selectControlValueByTitle(
+                        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+                        PARAMS.STATE_VALUE,
+                    );
+                },
+                waitForLoader: true,
+            });
 
             // check that count of items doesn't change
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
 
             await page.locator(slct(ControlQA.controlButtonApply)).click();
 
-            await loader.waitFor({state: 'hidden'});
+            await page.waitForResponse(CommonUrls.CreateDashState);
 
             // check that count of items still doesn't change
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
