@@ -7,12 +7,13 @@ import {
     LayoutCellsLarge,
     Thunderbolt,
 } from '@gravity-ui/icons';
+import type {IconData} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 // TODO: Replace icons after the release in the library CHARTS-7528
 import iconFolder from '../../assets/icons/folder.svg';
-import iconQLchart from '../../assets/icons/ql-chart.svg';
+import iconQLChart from '../../assets/icons/ql-chart.svg';
 
 import './EntityIcon.scss';
 
@@ -22,7 +23,7 @@ const typeIcons = {
     dataset: CirclesIntersection,
     folder: iconFolder,
     'chart-wizard': ChartColumn,
-    'chart-ql': iconQLchart,
+    'chart-ql': iconQLChart,
     editor: CurlyBrackets,
     dashboard: LayoutCellsLarge,
     connection: Thunderbolt,
@@ -32,8 +33,10 @@ export type EntityIconType = keyof typeof typeIcons;
 
 export type EntityIconSize = 's' | 'l' | 'xl';
 
+// TODO: remove usage of this type from closed source, then remove it from here
 export type EntityIconProps = {
-    type: EntityIconType;
+    type?: string;
+    iconData?: IconData;
     size?: EntityIconSize;
     iconSize?: number;
     classMixin?: string;
@@ -48,13 +51,21 @@ export const defaultIconSize = {
 export const EntityIcon: React.FC<EntityIconProps> = ({
     size = 's',
     type,
+    iconData,
     iconSize = defaultIconSize[size],
     classMixin,
 }) => {
+    let targetIconData;
+    if (iconData) {
+        targetIconData = iconData;
+    } else if (type && typeIcons[type as EntityIconType]) {
+        targetIconData = typeIcons[type as EntityIconType];
+    }
+
     return (
         <div className={b('container', {size}, classMixin)}>
             <div className={b('color-box', {type})}>
-                <Icon data={typeIcons[type]} size={iconSize} />
+                <Icon data={targetIconData} size={iconSize} />
             </div>
         </div>
     );

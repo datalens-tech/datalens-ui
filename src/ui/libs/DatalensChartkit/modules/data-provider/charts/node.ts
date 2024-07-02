@@ -7,7 +7,6 @@ import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
 import pick from 'lodash/pick';
-import {URL_OPTIONS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -21,12 +20,18 @@ import {
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import Utils from '../../../../../utils';
-import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
+import type {
+    ControlsOnlyWidget,
+    GraphWidget,
+    UiSandboxRuntimeOptions,
+    Widget,
+    WithControls,
+} from '../../../types';
+import {URL_OPTIONS} from '../../constants/constants';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
-import type {UiSandboxRuntimeOptions} from './ui-sandbox';
 import {
     UI_SANDBOX_TOTAL_TIME_LIMIT,
     getUISandbox,
@@ -304,12 +309,15 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 const uiSandbox = await getUISandbox();
                 const uiSandboxOptions: UiSandboxRuntimeOptions = {};
                 if (!get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                    // creating an object for mutation
+                    // so that we can calculate the total execution time of the sandbox
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
                 unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
                 unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
                 unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
+                result.uiSandboxOptions = uiSandboxOptions;
             }
 
             processHtmlFields(result.data, {allowHtml: enableJsAndHtml});

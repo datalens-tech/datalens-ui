@@ -9,16 +9,24 @@ import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 import './EntitiesList.scss';
 
 type EntitiesListProps = {
-    scope?: string;
     entities: EntryRowProps['entry'][];
-    isCurrent?: boolean;
+} & (CurrentEntity | ScopeEntities);
+
+type CurrentEntity = {
+    isCurrent: true;
+    scope?: string;
+};
+
+type ScopeEntities = {
+    isCurrent?: false;
+    scope: string;
 };
 
 const i18n = I18n.keyset('component.dialog-related-entities.view');
 
 const b = block('related-entities-list');
 
-const getLabelByScope = (scope?: string) => {
+const getLabelByScope = (scope: string) => {
     switch (scope) {
         case EntryScope.Dash:
             return i18n('label_scope-dash');
