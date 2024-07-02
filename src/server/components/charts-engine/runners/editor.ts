@@ -1,16 +1,58 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
+import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
-// import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolatedSandbox/isolated-sandbox-chart-builder';
+import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
 
 import type {RunnerHandlerProps} from '.';
+
+async function getCharBuilder({
+    parentContext,
+    userLang,
+    userLogin,
+    widgetConfig,
+    config,
+    isScreenshoter,
+    chartsEngine,
+}: {
+    parentContext: AppContext;
+    userLang: string;
+    userLogin: string;
+    chartsEngine: RunnerHandlerProps['chartsEngine'];
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
+    config: RunnerHandlerProps['config'];
+    isScreenshoter: boolean;
+}) {
+    const enableIsolatedSandbox = Boolean(
+        isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox),
+    );
+    const chartBuilder = enableIsolatedSandbox
+        ? await getIsolatedSandboxChartBuilder({
+              userLang,
+              userLogin,
+              widgetConfig,
+              config,
+              isScreenshoter,
+              chartsEngine,
+          })
+        : await getSandboxChartBuilder({
+              userLang,
+              userLogin,
+              widgetConfig,
+              config,
+              isScreenshoter,
+              chartsEngine,
+          });
+
+    return chartBuilder;
+}
 
 export const runEditor = async (
     parentContext: AppContext,
@@ -33,16 +75,8 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    // const chartBuilder = await getSandboxChartBuilder({
-    //     userLang: res.locals && res.locals.lang,
-    //     userLogin: res.locals && res.locals.login,
-    //     widgetConfig,
-    //     config,
-    //     isScreenshoter: Boolean(req.headers['x-charts-scr']),
-    //     chartsEngine,
-    // });
-
-    const chartBuilder = await getIsolatedSandboxChartBuilder({
+    const chartBuilder = await getCharBuilder({
+        parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,
