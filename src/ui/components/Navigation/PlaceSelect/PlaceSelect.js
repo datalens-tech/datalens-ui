@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 
 import {registry} from '../../../registry';
-import {getPlaceParameters} from '../Base/configure';
+import {getPlaceConfig} from '../Base/configure';
 import {PLACE} from '../constants';
 
 import './PlaceSelect.scss';
@@ -23,7 +23,12 @@ export default class PlaceSelect extends React.PureComponent {
 
     _getItemsConfig() {
         const {items} = this.props;
-        return items.map((item) => getPlaceParameters(item));
+
+        const {getNavigationPlacesConfig} = registry.common.functions.getAll();
+
+        const placesConfig = getNavigationPlacesConfig();
+
+        return items.map((item) => getPlaceConfig({place: item, placesConfig}));
     }
 
     _getQuickItemsConfig() {

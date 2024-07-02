@@ -7,16 +7,12 @@ import {
     DashEntryQa,
     DashRelationTypes,
     DialogConfirmQA,
-    DialogControlDateQa,
     DialogDashWidgetQA,
-    DialogQLParameterQA,
     DialogTabsQA,
     EntryDialogQA,
     SelectQa,
-    TabMenuQA,
     YfmQa,
 } from '../../../src/shared/constants';
-import DialogControl from '../../page-objects/common/DialogControl';
 import {COMMON_DASH_SELECTORS} from '../../suites/dash/constants';
 import {
     clickDropDownOption,
@@ -24,7 +20,6 @@ import {
     cssSlct,
     deleteEntity,
     entryDialogFillAndSave,
-    fillDatePicker,
     getAddress,
     getUniqueTimestamp,
     isEnabledFeature,
@@ -37,9 +32,7 @@ import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
 import {
-    DashTabItemControlSourceType,
     DashboardDialogSettingsQa,
-    DialogControlQa,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     Feature,
@@ -51,15 +44,12 @@ import {
 import {
     DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
-    DashboardDialogControl,
     DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
-import {CommonSelectors} from '../constants/common-selectors';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
 import TableOfContent from './TableOfContent';
-import {ListItemByParams} from '../../page-objects/types';
 import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
 import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
@@ -69,6 +59,7 @@ import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
 import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
+import ControlActions from './ControlActions';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -82,96 +73,50 @@ export const URLS = {
     savePath: '/api/dash/v1/dashboards',
 };
 
-export type SelectorSettings = {
-    sourceType?: DashTabItemControlSourceType;
-    fieldName?: string;
-    dataset?: ListItemByParams;
-    datasetField?: ListItemByParams;
-    elementType?: ListItemByParams;
-    appearance?: {
-        title?: string;
-        titleEnabled?: boolean;
-        innerTitle?: string;
-        innerTitleEnabled?: boolean;
-    };
-};
-
 export interface DashboardPageProps extends BasePageProps {}
 
 type LocatorOptionsType = Parameters<Page['locator']>[1];
 type LocatorClickOptionsType = Parameters<Locator['click']>[0];
 
-type SelectorParams = {
-    controlTitle: string;
-    controlFieldName: string;
-    controlItems?: string[];
-    defaultValue?: string;
-    dateRange?: string[];
-};
 class DashboardPage extends BasePage {
     static selectors = {
-        title: 'dashkit-plugin-title',
-        text: 'dashkit-plugin-text',
-        dialogWarning: 'dialog-draft-warning',
-        dialogWarningEditBtn: 'dialog-draft-warning-edit-btn',
-        dialogConfirm: DialogConfirmQA.Dialog,
-        dialogConfirmApplyBtn: DialogConfirmQA.ApplyButton,
+        title: '.dashkit-plugin-title',
+        text: '.dashkit-plugin-text',
+
         mobileModal: '.g-mobile-modal',
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
         tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
-        tabContainer: '.gc-adaptive-tabs__tab-container',
-        selectControl: '.yc-select-control',
-        /** @deprecated instead use selectItems */
-        ycSelectItems: '.yc-select-items',
-        /** @deprecated instead use selectItemTitle */
-        ycSelectItemTitle: '.yc-select-item__title',
 
         selectItems: '.g-select-list',
         selectItemsMobile: '.g-select-list_mobile',
         selectItemTitle: '.g-select-list__option',
         selectItemTitleDisabled: '.g-select-list__option_disabled',
-        chartkitControlSelect: slct(ControlQA.controlSelectItems),
 
-        radioManualControl: DialogControlQa.radioSourceType,
-        inputNameControl: 'control-name-input',
-        inputNameField: DialogControlQa.fieldNameInput,
-        acceptableValuesSelect: ControlQA.selectDefaultAcceptable,
-        acceptableValuesBtn: ControlQA.acceptableDialogButton,
-        dialogAcceptable: 'select-acceptable',
-        inputSelectAcceptable: 'select-acceptable-input',
-        acceptableSelectBtn: 'select-acceptable-button',
-        dialogApplyBtn: 'dialog-apply-button',
-        dialogCancelBtn: 'dialog-cancel-button',
         chartGridItemContainer: `${slct(DashkitQa.GRID_ITEM)} .chartkit`,
-        dashPluginWidgetBody: slct('chart-widget'),
-        dashkitGridItem: slct('dashkit-grid-item'),
-
-        chartResetButton: slct(ControlQA.filtersClear),
-        yfmContentWrapper: slct(YfmQa.WrapperHtml),
     };
 
     revisions: Revisions;
     tableOfContent: TableOfContent;
     description: Description;
-    dialogControl: DialogControl;
     dashTabs: DashTabs;
     chartkitControl: ChartkitControl;
     dialogCreateEntry: DialogCreateEntry;
     editEntityButton: EditEntityButton;
+    controlActions: ControlActions;
 
     constructor({page}: DashboardPageProps) {
         super({page});
         this.revisions = new Revisions(page);
         this.description = new Description(page);
         this.tableOfContent = new TableOfContent(page, this);
-        this.dialogControl = new DialogControl(page);
         this.dashTabs = new DashTabs(page);
         this.chartkitControl = new ChartkitControl(page);
         this.dialogCreateEntry = new DialogCreateEntry(page);
         this.editEntityButton = new EditEntityButton(page);
+        this.controlActions = new ControlActions(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -201,9 +146,7 @@ class DashboardPage extends BasePage {
     }
 
     async getMarkdownText(gridItemLocator?: Locator) {
-        const yfmLocator = (gridItemLocator || this.page).locator(
-            DashboardPage.selectors.yfmContentWrapper,
-        );
+        const yfmLocator = (gridItemLocator || this.page).locator(slct(YfmQa.WrapperHtml));
 
         return yfmLocator.innerText();
     }
@@ -296,261 +239,6 @@ class DashboardPage extends BasePage {
             .click();
     }
 
-    async clickAddExternalSelector() {
-        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
-    }
-
-    async clickAddSelector() {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
-        if (isEnabledGroupControls) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
-            return;
-        }
-        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
-    }
-
-    async fillSelectorSettingsDialogFields({
-        controlTitle,
-        controlFieldName,
-    }: {
-        controlTitle: string;
-        controlFieldName: string;
-    }) {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
-        // waiting for the selector settings dialog to appear
-        await this.page.waitForSelector(slct(ControlQA.dialogControl));
-
-        // select "manual input"
-        if (isEnabledGroupControls) {
-            await this.dialogControl.sourceTypeSelect.click();
-            await this.dialogControl.sourceTypeSelect.selectListItemByQa(
-                slct(DashTabItemControlSourceType.Manual),
-            );
-        } else {
-            await this.page.click(
-                `${slct(DashboardPage.selectors.radioManualControl)} ${
-                    CommonSelectors.RadioButtonOptionControl
-                }[value="manual"]`,
-                {
-                    force: true,
-                },
-            );
-        }
-
-        // fill in the fields in the selector settings dialog:
-        // "name"
-        await this.page.fill(
-            `${slct(DashboardPage.selectors.inputNameControl)} input`,
-            controlTitle,
-        );
-
-        // "field name"
-        await this.page.fill(
-            `${slct(DashboardPage.selectors.inputNameField)} input`,
-            controlFieldName,
-        );
-    }
-
-    async addDateRangeSelector({
-        controlTitle,
-        controlFieldName,
-        range,
-    }: {
-        controlTitle: string;
-        controlFieldName: string;
-        range: string[];
-    }) {
-        // adding a selector
-        await this.clickAddSelector();
-
-        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
-
-        await this.dialogControl.elementType.click();
-        await this.dialogControl.datasetFieldSelector.selectListItemByQa(
-            slct(DialogControlQa.typeControlCalendar),
-        );
-
-        await this.page.click(slct(DialogControlQa.dateRangeCheckbox));
-        await this.page.click(slct(DialogControlQa.dateTimeCheckbox));
-
-        // click on the button for setting possible values
-        await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
-
-        await this.page.locator(`${slct(DialogControlDateQa.defaultSelectValue)} label`).click();
-
-        await fillDatePicker({
-            page: this.page,
-            selector: `${slct(DialogQLParameterQA.DatepickerStart)} input`,
-            value: range[0],
-        });
-
-        await fillDatePicker({
-            page: this.page,
-            selector: `${slct(DialogQLParameterQA.DatepickerEnd)} input`,
-            value: range[1],
-        });
-
-        // saving the added possible values
-        await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));
-
-        // adding a selector to the dashboard
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
-    }
-
-    async addSelectorToGroup(params: SelectorParams) {
-        await this.page.locator(slct(TabMenuQA.Add)).click();
-
-        await this.fillSelectorOptions(params);
-    }
-
-    async addSelector(params: SelectorParams) {
-        // adding a selector
-        await this.clickAddSelector();
-
-        await this.fillSelectorOptions(params);
-
-        // adding a selector to the dashboard
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
-    }
-
-    async addSelectorsGroup(selectorsParams: SelectorParams[]) {
-        // adding a selector
-        await this.clickAddSelector();
-
-        await this.fillSelectorOptions(selectorsParams[0]);
-
-        for (let i = 1; i < selectorsParams.length; i++) {
-            await this.addSelectorToGroup(selectorsParams[i]);
-        }
-
-        // adding a selector to the dashboard
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
-    }
-
-    async fillSelectorOptions({
-        controlFieldName,
-        controlTitle,
-        controlItems = ['Richmond', 'Springfield'],
-        defaultValue,
-    }: SelectorParams) {
-        await this.fillSelectorSettingsDialogFields({controlTitle, controlFieldName});
-
-        // click on the button for setting possible values
-        await this.page.click(slct(DashboardPage.selectors.acceptableValuesBtn));
-
-        // waiting for the dialog for setting possible values to appear
-        await this.page.waitForSelector(slct(DashboardPage.selectors.dialogAcceptable));
-
-        for (let i = 0; i < controlItems.length; i++) {
-            // specify the value
-            await this.page.fill(
-                `${slct(DashboardPage.selectors.inputSelectAcceptable)} input`,
-                controlItems[i],
-            );
-            // adding
-            await this.page.click(slct(DashboardPage.selectors.acceptableSelectBtn));
-        }
-
-        // saving the added possible values
-        await this.page.click(slct(DashboardPage.selectors.dialogApplyBtn));
-
-        // specify the default value if there is
-        if (defaultValue !== undefined) {
-            await clickGSelectOption({
-                page: this.page,
-                key: DashboardPage.selectors.acceptableValuesSelect,
-                optionText: defaultValue,
-            });
-
-            // check that the number of available values has not changed
-            await this.page.waitForSelector(slct(DashboardPage.selectors.acceptableValuesBtn));
-            await this.page.waitForSelector(
-                slct(`${DashboardDialogControl.AcceptableValues}${controlItems.length}`),
-            );
-        }
-    }
-
-    async editSelectorBySettings(setting: SelectorSettings = {}) {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
-        await this.dialogControl.waitForVisible();
-
-        if (setting.sourceType) {
-            if (isEnabledGroupControls) {
-                await this.dialogControl.sourceTypeSelect.click();
-                await this.dialogControl.sourceTypeSelect.selectListItemByQa(
-                    slct(setting.sourceType),
-                );
-            } else {
-                // will be removed after enabling of GroupControls
-                await this.dialogControl.sourceType.selectByName(setting.sourceType);
-            }
-        }
-
-        if (setting.sourceType === DashTabItemControlSourceType.Manual) {
-            if (setting.fieldName) {
-                await this.dialogControl.fieldName.fill(setting.fieldName);
-            }
-        } else {
-            if (setting.dataset?.innerText || typeof setting.dataset?.idx === 'number') {
-                await this.dialogControl.selectDatasetButton.click();
-                await this.dialogControl.selectDatasetButton.navigationMinimal.selectListItem(
-                    setting.dataset,
-                );
-            }
-
-            if (setting.datasetField?.innerText || typeof setting.datasetField?.idx === 'number') {
-                await this.dialogControl.datasetFieldSelector.click();
-                await this.dialogControl.datasetFieldSelector.selectListItem(setting.datasetField);
-            }
-        }
-
-        if (setting.elementType?.innerText || typeof setting.elementType?.idx === 'number') {
-            await this.dialogControl.elementType.click();
-            await this.dialogControl.datasetFieldSelector.selectListItem(setting.elementType);
-        }
-
-        if (typeof setting.appearance?.titleEnabled === 'boolean') {
-            await this.dialogControl.appearanceTitle.checkbox.toggle(
-                setting.appearance.titleEnabled,
-            );
-        }
-
-        if (setting.appearance?.title) {
-            await this.dialogControl.appearanceTitle.textInput.fill(setting.appearance.title);
-        }
-
-        // for GroupControls innerTitle is deprecated, only title exists and is displayed as innerTitle
-        if (typeof setting.appearance?.innerTitleEnabled === 'boolean') {
-            await this.dialogControl.appearanceInnerTitle.checkbox.toggle(
-                setting.appearance.innerTitleEnabled,
-            );
-        }
-
-        if (setting.appearance?.innerTitle) {
-            await this.dialogControl.appearanceInnerTitle.textInput.fill(
-                setting.appearance.innerTitle,
-            );
-        }
-
-        await this.page.click(slct(ControlQA.dialogControlApplyBtn));
-    }
-
-    async addSelectorBySettings(setting: SelectorSettings = {}) {
-        const defaultSettings: SelectorSettings = {
-            sourceType: DashTabItemControlSourceType.Dataset,
-            elementType: {innerText: 'List'},
-            appearance: {titleEnabled: true},
-            dataset: {idx: 0},
-            datasetField: {idx: 0},
-        };
-        await this.clickAddSelector();
-
-        await this.editSelectorBySettings({...defaultSettings, ...setting});
-    }
-
     async clickAddChart() {
         await this.page.click(slct(DashboardAddWidgetQa.AddWidget));
     }
@@ -627,9 +315,7 @@ class DashboardPage extends BasePage {
     }
 
     getDashKitTextItem(text: string) {
-        return this.page
-            .locator(DashboardPage.selectors.dashkitGridItem)
-            .getByText(text, {exact: true});
+        return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
     async deleteSelector(controlTitle: string) {
@@ -672,20 +358,18 @@ class DashboardPage extends BasePage {
 
         // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
-            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
-                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
-            )}`,
+            `${slct(DialogConfirmQA.Dialog)}, ${slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN)}`,
         );
 
         const qaAttr = await elem.getAttribute('data-qa');
 
-        if (qaAttr !== DashboardPage.selectors.dialogConfirm) {
+        if (qaAttr !== DialogConfirmQA.Dialog) {
             await createLockPromise;
             return;
         }
 
         // click "Edit anyway"
-        await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+        await this.page.click(slct(DialogConfirmQA.ApplyButton));
         await createLockPromise;
         await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
     }
@@ -698,9 +382,7 @@ class DashboardPage extends BasePage {
             await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN));
 
             // if there are changes, a dialog with a warning about the unsaved changes will appear
-            const warningCancelDialog = this.page.locator(
-                slct(DashboardPage.selectors.dialogConfirm),
-            );
+            const warningCancelDialog = this.page.locator(slct(DialogConfirmQA.Dialog));
             const editButton = this.page.locator(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
 
             await expect(editButton.or(warningCancelDialog)).toBeVisible();
@@ -711,9 +393,7 @@ class DashboardPage extends BasePage {
             }
 
             // if there is a dialog, click the apply button
-            const applyBtn = await this.page.waitForSelector(
-                slct(DashboardPage.selectors.dialogConfirmApplyBtn),
-            );
+            const applyBtn = await this.page.waitForSelector(slct(DialogConfirmQA.ApplyButton));
             await applyBtn.click();
             await deleteLockPromise;
             await this.page.waitForSelector(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
@@ -724,9 +404,9 @@ class DashboardPage extends BasePage {
 
     async editDashWithoutSaving() {
         // adding a plug selector to the dashboard
-        await this.addSelector({
-            controlTitle: 'testSelector',
-            controlFieldName: 'testName',
+        await this.controlActions.addSelector({
+            appearance: {title: 'testSelector'},
+            fieldName: 'testName',
         });
     }
 
@@ -746,29 +426,18 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(COMMON_SELECTORS.ACTION_PANEL_EDIT_BTN));
         // waiting for the opening of the warning dialog or the Cancel edit button
         const elem = await this.page.waitForSelector(
-            `${slct(DashboardPage.selectors.dialogConfirm)}, ${slct(
-                COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN,
-            )}`,
+            `${slct(DialogConfirmQA.Dialog)}, ${slct(COMMON_SELECTORS.ACTION_PANEL_CANCEL_BTN)}`,
         );
 
         const qaAttr = await elem.getAttribute('data-qa');
 
-        if (qaAttr === DashboardPage.selectors.dialogConfirm) {
+        if (qaAttr === DialogConfirmQA.Dialog) {
             // click "Edit anyway"
-            await this.page.click(slct(DashboardPage.selectors.dialogConfirmApplyBtn));
+            await this.page.click(slct(DialogConfirmQA.ApplyButton));
         }
 
         // click on the "connections" button
         await this.clickOnLinksBtn();
-    }
-
-    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
-        // open dialog relations by click on dashkit item links icon (via parents nodes)
-        const dashkitItemElem = await this.page
-            .locator(slct(ControlQA.chartkitControl))
-            .nth(counter === undefined ? 0 : counter)
-            .locator('../../../..');
-        return dashkitItemElem.locator(slct(controlQa));
     }
 
     async applyAliasesChanges() {
@@ -790,7 +459,9 @@ class DashboardPage extends BasePage {
     async openControlRelationsDialog() {
         await this.enterEditMode();
         // open dialog relations by control icon click
-        const selectorElem = await this.getDashControlLinksIconElem(ControlQA.controlLinks);
+        const selectorElem = await this.controlActions.getDashControlLinksIconElem(
+            ControlQA.controlLinks,
+        );
         await selectorElem.click();
     }
 
@@ -1177,7 +848,7 @@ class DashboardPage extends BasePage {
         await selectLocator.click();
 
         await this.page
-            .locator(DashboardPage.selectors.chartkitControlSelect)
+            .locator(slct(ControlQA.controlSelectItems))
             .locator(`[data-value] >> text="${valueTitle}"`)
             .click();
         await expect(selectLocator).toContainText(valueTitle);
@@ -1267,7 +938,7 @@ class DashboardPage extends BasePage {
     }
 
     async resetChartFiltering(gridItemLocator: Locator) {
-        return gridItemLocator.locator(DashboardPage.selectors.chartResetButton).click();
+        return gridItemLocator.locator(slct(ControlQA.filtersClear)).click();
     }
 
     // it cannot be used with single selectors as they have different loading times

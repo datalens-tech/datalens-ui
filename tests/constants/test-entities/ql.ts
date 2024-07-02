@@ -16,6 +16,17 @@ export const QlQueries = {
         from public.sales
         limit 10
     `,
+    dateAndSales: `
+        select date_part('year', order_date) as date_year, sales::float as sales
+        from public.sales
+        limit 10
+    `,
+    // Column that replaces sales should be less than date_year when comparing alphabetically
+    dateAndSalesModified: `
+        select date_part('year', order_date) as date_year, sales::float as average_sales
+        from public.sales
+        limit 10
+    `,
 };
 
 export const QlQa = {
