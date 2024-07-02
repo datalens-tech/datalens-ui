@@ -6,6 +6,7 @@ import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
 import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
+import type {ProcessorHooks} from '../hooks';
 import type {RuntimeMetadata} from '../types';
 
 import {getChartApiContext} from './../chart-api-context';
@@ -39,11 +40,11 @@ type ProcessTabParams = {
     params: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
-    data?: Record<string, any>;
-    dataStats?: any;
+    data?: Record<string, unknown>;
+    dataStats?: unknown;
     timeout: number;
     shared: Record<string, object> | Shared | ServerChartsConfig;
-    hooks: Record<string, any>;
+    hooks: ProcessorHooks;
     userLogin: string | null;
     userLang: string | null;
     isScreenshoter: boolean;
@@ -113,12 +114,12 @@ const execute = async ({
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
-    let sandboxResult: any;
+    let sandboxResult = {module: {exports: undefined}};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
-    jail.setSync('log', function (...args: any[]) {
+    jail.setSync('log', function (...args: unknown[]): void {
         isolatedConsole.log(...args);
     });
 
@@ -144,10 +145,10 @@ const execute = async ({
                 return val;
             });`;
 
-        sandboxResult = context.evalClosureSync(prepare + code + responseStringify, [], {
+        const result = context.evalClosureSync(prepare + code + responseStringify, [], {
             timeout,
         });
-        sandboxResult = JSON.parse(sandboxResult);
+        sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -165,8 +166,6 @@ const execute = async ({
 
     const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
     const params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
-
-    //delete instance.self;
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);

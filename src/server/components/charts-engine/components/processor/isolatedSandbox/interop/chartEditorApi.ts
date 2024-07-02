@@ -21,10 +21,15 @@ export function prepareChartEditorApi({
 }) {
     const params = chartEditorApi.getParams();
 
-    jail.setSync('_ChartEditor_getTranslation', (keyset: string, key: string, params?: string) => {
-        const parsedParams = params ? JSON.parse(params) : undefined;
-        return chartEditorApi.getTranslation(keyset, key, parsedParams);
-    });
+    jail.setSync(
+        '_ChartEditor_getTranslation',
+        (keyset: string, key: string, getTranslationParams?: string) => {
+            const parsedgetTranslationParams = getTranslationParams
+                ? JSON.parse(getTranslationParams)
+                : undefined;
+            return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
+        },
+    );
 
     jail.setSync('_ChartEditor_getSharedData', () => {
         const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
@@ -42,14 +47,12 @@ export function prepareChartEditorApi({
 
     jail.setSync('_ChartEditor_attachHandler', (handlerConfig: string) => {
         const parsedHandlerConfig = JSON.parse(handlerConfig);
-        // @ts-ignore
-        return JSON.stringify(ChartEditor.attachHandler(parsedHandlerConfig));
+        return JSON.stringify(chartEditorApi.attachHandler(parsedHandlerConfig));
     });
 
     jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
         const parsedFormatterConfig = JSON.parse(formatterConfig);
-        // @ts-ignore
-        return JSON.stringify(ChartEditor.attachFormatter(parsedFormatterConfig));
+        return JSON.stringify(chartEditorApi.attachFormatter(parsedFormatterConfig));
     });
 
     if (chartEditorApi.getSecrets) {
@@ -58,8 +61,8 @@ export function prepareChartEditorApi({
 
     jail.setSync(
         '_ChartEditor_resolveRelative',
-        (...params: [stringrelativeStr: string, intervalPart?: IntervalPart]) => {
-            return chartEditorApi.resolveRelative(...params);
+        (...resolveRelativeParams: [stringrelativeStr: string, intervalPart?: IntervalPart]) => {
+            return chartEditorApi.resolveRelative(...resolveRelativeParams);
         },
     );
 
@@ -112,13 +115,13 @@ export function prepareChartEditorApi({
     }
 
     if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        jail.setSync('_ChartEditor_updateParams', (params: string) => {
-            const parsedParams = JSON.parse(params);
-            JSON.stringify(chartEditorApi.updateParams(parsedParams));
+        jail.setSync('_ChartEditor_updateParams', (updatedParams: string) => {
+            const parsedUpdatedParams = JSON.parse(updatedParams);
+            JSON.stringify(chartEditorApi.updateParams(parsedUpdatedParams));
         });
-        jail.setSync('_ChartEditor_updateActionParams', (params: string) => {
-            const parsedParams = JSON.parse(params);
-            JSON.stringify(chartEditorApi.updateActionParams(parsedParams));
+        jail.setSync('_ChartEditor_updateActionParams', (updateActionParams: string) => {
+            const parsedUpdateActionParams = JSON.parse(updateActionParams);
+            JSON.stringify(chartEditorApi.updateActionParams(parsedUpdateActionParams));
         });
     }
 

@@ -141,6 +141,13 @@ export interface IChartEditor {
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
     generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
+
+    attachHandler(
+        handlerConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitHandler: true};
+    attachFormatter(
+        formatterConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitFormatter: true};
 }
 
 export interface Link {
