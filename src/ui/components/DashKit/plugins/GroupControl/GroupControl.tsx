@@ -124,6 +124,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             stateParams,
             needReload: false,
             localUpdateLoader: false,
+            paramsUpdated: false,
         };
     }
 
@@ -153,7 +154,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             });
         }
 
-        if (hasParamsChanged || hasDataChanged) {
+        if (hasParamsChanged || hasDataChanged || this.state.paramsUpdated) {
+            const paramsUpdated = this.state.paramsUpdated;
+            this.setState({
+                paramsUpdated: false,
+            });
             if (!this.props.data.buttonApply) {
                 this.setState({
                     stateParams: this.props.params,
@@ -178,7 +183,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     dependentSelectors: this.dependentSelectors,
                 });
 
-                if (isEqual(initialParams, newPropsParams)) {
+                if (isEqual(initialParams, newPropsParams) && !paramsUpdated) {
                     updatedStateParams[groupItem.id] = {...this.state.stateParams[groupItem.id]};
                 } else {
                     updatedStateParams[groupItem.id] = {...this.props.params[groupItem.id]};
@@ -302,6 +307,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         if (!controlData.buttonApply || callChangeByClick) {
             const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
             this.props.onStateAndParamsChange({params}, {groupItemIds});
+            this.setState({paramsUpdated: true});
             this.localMeta.queue = [];
             return;
         }
