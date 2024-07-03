@@ -995,6 +995,8 @@ export class Processor {
                 logs_v2: result.logs_v2,
                 sources: result.sources,
             };
+        } finally {
+            builder.dispose();
         }
     }
 
