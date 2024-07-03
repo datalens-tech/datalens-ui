@@ -4,7 +4,7 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.EnableIsolatedSandbox,
     state: {
-        development: false,
+        development: true,
         production: false,
     },
 });

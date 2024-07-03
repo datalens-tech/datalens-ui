@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import type IsolatedVM from 'isolated-vm';
 
 import {
@@ -8,73 +11,15 @@ import {
 } from '../../../../../../../shared';
 import {getCurrentPage, getSortParams} from '../../paramsUtils';
 
-export const prepareApiAdapter = `
-const ChartEditor = {};
+export type ChartEditorGetTranslation = (
+    keyset: string,
+    key: string,
+    getTranslationParams?: string,
+) => string;
+export type ChartEditorGetSharedData = () => string;
 
-ChartEditor.getTranslation = (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, JSON.stringify(params));
-ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_getSharedData());
-ChartEditor.getLang = () => _ChartEditor_userLang;
-ChartEditor.getUserLang = ChartEditor.getLang;
-ChartEditor.getUserLogin = () => _ChartEditor_userLogin;
-ChartEditor.attachHandler = (handlerConfig) => JSON.parse(_ChartEditor_attachHandler(JSON.stringify(handlerConfig)));
-ChartEditor.attachFormatter = (formatterConfig) => JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig)));
-ChartEditor.getSecrets = () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets());
-ChartEditor.resolveRelative = (...params) => _ChartEditor_resolveRelative(...params);
-ChartEditor.resolveInterval = (intervalStr) => _ChartEditor_resolveInterval(intervalStr);
-ChartEditor.resolveOperation = (input) => JSON.parse(_ChartEditor_resolveOperation(JSON.stringify(input)));
-ChartEditor.setError = (value) => _ChartEditor_setError(JSON.stringify(value));
-ChartEditor._setError = ChartEditor.setError;
-ChartEditor.getWidgetConfig = () => JSON.parse(_ChartEditor_getWidgetConfig());
-ChartEditor.getActionParams = () => JSON.parse(_ChartEditor_getActionParams());
-ChartEditor.wrapFn = (value) => {
-        const fnArgs = Array.isArray(value.args)
-            ? value.args.map(arg =>
-                  typeof arg === 'function' ? arg.toString() : arg,
-              )
-            : value.args;
-
-        return {
-            [_ChartEditor_wrapFn_WRAPPED_FN_KEY]: {
-                fn: value.fn.toString(),
-                args: fnArgs,
-            },
-        };
-    };
-
-ChartEditor.wrapFn = (value) => ({
-    [_ChartEditor_wrapHtml_WRAPPED_HTML_KEY]: value,
-});
-
-ChartEditor.getParams = () => JSON.parse(_ChartEditor_getParams());
-ChartEditor.getParam = () => JSON.parse(_ChartEditor_getParam(paramName));
-
-ChartEditor.getSortParams = () => JSON.parse(_ChartEditor_getSortParams());
-
-ChartEditor.getCurrentPage = () => _ChartEditor_currentPage;
-
-ChartEditor.updateParams = (params) => _ChartEditor_updateParams(JSON.stringify(params));
-ChartEditor.updateActionParams = (params) => _ChartEditor_updateActionParams(JSON.stringify(params));
-
-ChartEditor.getLoadedData = () => JSON.parse(_ChartEditor_getLoadedData());
-ChartEditor.getLoadedDataStats = () => JSON.parse(_ChartEditor_getLoadedDataStats());
-ChartEditor.setDataSourceInfo = (dataSourceKey, info) => _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info));
-
-ChartEditor.updateConfig = (config) => _ChartEditor_updateConfig(JSON.stringify(config));
-ChartEditor.updateHighchartsConfig = (config) => _ChartEditor_updateHighchartsConfig(JSON.stringify(config, function(key, val) {
-    if (typeof val === 'function') {
-        return val.toString();
-    }
-    return val;
-}));
-ChartEditor.updateLibraryConfig = ChartEditor.updateHighchartsConfig;
-
-ChartEditor.setSideHtml = (html) => _ChartEditor_setSideHtml(html);
-ChartEditor.setSideMarkdown = (markdown) => _ChartEditor_setSideMarkdown(markdown);
-ChartEditor.setExtra = (key, value) => _ChartEditor_setExtra(key, JSON.stringify(value));
-ChartEditor.setExportFilename = (filename) => _ChartEditor_setExportFilename(filename);
-
-const chartEditor = ChartEditor;
-`;
+const prepare = fs.readFileSync(path.join(__dirname, 'chartEditorApiPrepare.js'), 'utf-8');
+export const prepareApiAdapter = prepare;
 
 export function prepareChartEditorApi({
     name,
@@ -89,20 +34,25 @@ export function prepareChartEditorApi({
 }) {
     const params = chartEditorApi.getParams();
 
-    jail.setSync(
-        '_ChartEditor_getTranslation',
-        (keyset: string, key: string, getTranslationParams?: string) => {
-            const parsedgetTranslationParams = getTranslationParams
-                ? JSON.parse(getTranslationParams)
-                : undefined;
-            return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
-        },
-    );
+    const _ChartEditor_getTranslation: ChartEditorGetTranslation = (
+        keyset,
+        key,
+        getTranslationParams,
+    ) => {
+        const parsedgetTranslationParams = getTranslationParams
+            ? JSON.parse(getTranslationParams)
+            : undefined;
+        return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
+    };
 
-    jail.setSync('_ChartEditor_getSharedData', () => {
+    jail.setSync('_ChartEditor_getTranslation', _ChartEditor_getTranslation);
+
+    const _ChartEditor_getSharedData: ChartEditorGetSharedData = () => {
         const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
         return JSON.stringify(shared);
-    });
+    };
+
+    jail.setSync('_ChartEditor_getSharedData', _ChartEditor_getSharedData);
 
     jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang());
 
@@ -141,6 +91,11 @@ export function prepareChartEditorApi({
     jail.setSync('_ChartEditor_setError', (value: string) => {
         const parsedValue = JSON.parse(value);
         chartEditorApi.setError(parsedValue);
+    });
+
+    jail.setSync('_ChartEditor_setChartsInsights', (input: string) => {
+        const parsedInput = JSON.parse(input);
+        chartEditorApi.setChartsInsights(parsedInput);
     });
 
     jail.setSync('_ChartEditor_getWidgetConfig', () => {

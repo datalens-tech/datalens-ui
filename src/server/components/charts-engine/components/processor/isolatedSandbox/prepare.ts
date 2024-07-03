@@ -4,7 +4,11 @@ import {libsDatalensV3Interop} from './interop/libs/datalensV3';
 import {libsDatasetV2Interop} from './interop/libs/datasetV2';
 import {libsQlChartV1Interop} from './interop/libs/qlChartV1';
 
-export const prepare = `const console = {log};
+export const prepare = `
+const exports = {};
+const module = {exports};
+
+const console = {log};
 function require(name) {
     const lowerName = name.toLowerCase();
     if (lowerName === 'libs/datalens/v3') {
@@ -22,7 +26,4 @@ function require(name) {
     }
 }
 
-${prepareApiAdapter}
-
-const exports = {};
-const module = {exports};`;
+${prepareApiAdapter}`;
