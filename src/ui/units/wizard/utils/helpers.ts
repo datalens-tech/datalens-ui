@@ -33,8 +33,10 @@ import {
     ChartsConfigVersion,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
+    PlaceholderId,
     getResultSchemaFromDataset,
     getSortedData,
+    isPseudoField,
     isVisualizationWithLayers,
 } from 'shared';
 
@@ -372,15 +374,13 @@ export function getDefaultChartName({
 }
 
 export function getDialogItem(items: Field[], placeholders: Placeholder[]) {
-    const isPseudo = items[0] && items[0].type === 'PSEUDO';
-
-    if (items[0] && !isPseudo) {
+    if (items[0] && !isPseudoField(items[0])) {
         return items[0];
     }
 
     let placeholdersItems: Field[] = [];
 
-    if (placeholders[0].id == 'heatmap') {
+    if (placeholders[0].id === PlaceholderId.Heatmap) {
         placeholdersItems = [...placeholders[0].items];
     }
 

@@ -75,8 +75,12 @@ const DialogShapes: React.FC<Props> = ({
             }
 
             const mountedShapes = {...shapesState.mountedShapes};
-
-            mountedShapes[selectedValue] = shape;
+            const isDefaultValue = shape === 'auto';
+            if (isDefaultValue) {
+                delete mountedShapes[selectedValue];
+            } else {
+                mountedShapes[selectedValue] = shape;
+            }
 
             setShapesState((prevState) => ({...prevState, mountedShapes}));
         },
