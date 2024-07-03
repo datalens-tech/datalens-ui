@@ -24,10 +24,15 @@ export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
     }
 };
 
-export const addItemToLocalQueue = (queue: QueueItem[], widgetId: string, groupItemId: string) => {
+export const addItemToLocalQueue = (
+    queue: (QueueItem & {param?: string})[],
+    widgetId: string,
+    groupItemId: string,
+    param?: string,
+) => {
     const updatedQueue = queue.filter((queueItem) => queueItem.groupItemId !== groupItemId);
 
-    updatedQueue.push({id: widgetId, groupItemId});
+    updatedQueue.push({id: widgetId, groupItemId, param});
 
     return updatedQueue;
 };
