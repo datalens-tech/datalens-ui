@@ -41,6 +41,10 @@ const ConnectionsPage = React.lazy(
 const CollectionsNavigtaionPage = React.lazy(
     () => import('./pages/CollectionsNavigationPage/CollectionsNavigationPage'),
 );
+
+const RolesPage = React.lazy(
+    () => import('./pages/RolesPage/RolesPage'),
+);
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 
@@ -75,6 +79,7 @@ const DatalensPageView = (props: any) => {
                         path={'/auth'}
                         component={()=><AuthPage setToken={setToken} />}
                     />
+                    <Route path={['/roles']} component={RolesPage} />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
@@ -118,7 +123,7 @@ const DatalensPageView = (props: any) => {
 
                     <Route path="/">
                         <Redirect to={`/collections${location.search}`} />
-                    </Route>
+                    </Route>  
 
                     {/* comment till we have main page */}
                     {/*<Route path="/" component={MainPage} />*/}
