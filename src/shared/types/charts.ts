@@ -50,9 +50,9 @@ export interface IChartEditor {
     getSharedData(): {[key: string]: object};
 
     /**
-     * Update shared data
+     * Private: update shared data
      */
-    setSharedData(override: Record<string, object | string>): void;
+    __setSharedData(override: Record<string, object | string>): void;
 
     /**
      * Return dash widget config
