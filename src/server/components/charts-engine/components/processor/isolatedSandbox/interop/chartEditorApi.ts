@@ -13,7 +13,6 @@ const ChartEditor = {};
 
 ChartEditor.getTranslation = (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, JSON.stringify(params));
 ChartEditor.getSharedData = () => JSON.parse(_ChartEditor_getSharedData());
-ChartEditor.setSharedData = (override) => _ChartEditor_setSharedData(JSON.stringify(override));
 ChartEditor.getLang = () => _ChartEditor_userLang;
 ChartEditor.getUserLang = ChartEditor.getLang;
 ChartEditor.getUserLogin = () => _ChartEditor_userLogin;
@@ -103,11 +102,6 @@ export function prepareChartEditorApi({
     jail.setSync('_ChartEditor_getSharedData', () => {
         const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
         return JSON.stringify(shared);
-    });
-
-    jail.setSync('_ChartEditor_setSharedData', (override: string) => {
-        const parsedOverride = JSON.parse(override);
-        chartEditorApi.setSharedData(parsedOverride);
     });
 
     jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang());
