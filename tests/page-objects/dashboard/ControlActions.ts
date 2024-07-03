@@ -43,6 +43,7 @@ export type SelectorSettings = {
     };
     items?: string[];
     defaultValue?: string;
+    required?: boolean;
 };
 
 type GroupSelectorOptions = {
@@ -220,6 +221,7 @@ class ControlActions {
         await expect(openDatasetButton).toBeVisible();
     }
 
+    // eslint-disable-next-line complexity
     async editSelectorBySettings({
         sourceType = DashTabItemControlSourceType.Manual,
         ...setting
@@ -295,6 +297,16 @@ class ControlActions {
             await this.dialogControl.appearanceInnerTitle.textInput.fill(
                 setting.appearance.innerTitle,
             );
+        }
+
+        if (typeof setting.required === 'boolean') {
+            await this.dialogControl.requiredCheckbox.toggle(setting.required);
+        }
+
+        if (typeof setting.defaultValue === 'string') {
+            await this.page
+                .locator(`${slct(DialogControlQa.valueInput)} input`)
+                .fill(setting.defaultValue);
         }
     }
 

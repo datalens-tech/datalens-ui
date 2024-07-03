@@ -5,6 +5,7 @@ import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
@@ -46,6 +47,7 @@ export const RequiredValueCheckbox = () => {
                 checked={value}
                 onUpdate={handleUpdate}
                 size="l"
+                qa={DialogControlQa.requiredValueCheckbox}
             />
         </FormRow>
     );

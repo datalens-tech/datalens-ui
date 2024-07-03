@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {ControlQA} from '../../../src/shared/constants';
+import {ControlQA, DialogControlQa} from '../../../src/shared/constants';
 import {slct} from '../../utils';
 import {SourceType} from './DialogControlPO/SourceType';
 import {SourceTypeSelect} from './DialogControlPO/SourceTypeSelect';
@@ -9,6 +9,7 @@ import {ElementType} from './DialogControlPO/ElementType';
 import {AppearanceTitle} from './DialogControlPO/AppearanceTitle';
 import {AppearanceInnerTitle} from './DialogControlPO/AppearanceInnerTitle';
 import {FieldName} from './DialogControlPO/FieldName';
+import {RequiredCheckbox} from './DialogControlPO/RequiredCheckbox';
 
 export default class DialogControl {
     static selectors = {
@@ -26,6 +27,7 @@ export default class DialogControl {
     appearanceTitle: AppearanceTitle;
     appearanceInnerTitle: AppearanceInnerTitle;
     fieldName: FieldName;
+    requiredCheckbox: RequiredCheckbox;
 
     protected page: Page;
 
@@ -39,6 +41,7 @@ export default class DialogControl {
         this.appearanceTitle = new AppearanceTitle(page);
         this.appearanceInnerTitle = new AppearanceInnerTitle(page);
         this.fieldName = new FieldName(page);
+        this.requiredCheckbox = new RequiredCheckbox(page);
     }
 
     async waitForVisible() {
@@ -50,5 +53,26 @@ export default class DialogControl {
             slct(ControlQA.dialogControlApplyBtn),
         );
         await dialogControlApplyBtn.click();
+    }
+
+    async setRequiredCheckbox(value: boolean) {
+        await this.page.locator(DialogControlQa.requiredValueCheckbox).setChecked(value);
+    }
+
+    async checkCurrentValues(settings: {
+        fieldName: string;
+        appearance: {title: string};
+        defaultValue: string;
+        required: boolean;
+    }) {
+        expect(this.fieldName.getLocator().locator('input')).toHaveValue(settings.fieldName);
+        expect(this.appearanceTitle.textInput.getLocator().locator('input')).toHaveValue(
+            settings.appearance?.title,
+        );
+        expect(this.page.locator(slct(DialogControlQa.valueInput)).locator('input')).toHaveValue(
+            settings.defaultValue,
+        );
+
+        expect(await this.requiredCheckbox.getLocator().isChecked()).toEqual(settings.required);
     }
 }
