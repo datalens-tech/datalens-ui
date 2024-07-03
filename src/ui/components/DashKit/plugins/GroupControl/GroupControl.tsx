@@ -39,6 +39,7 @@ import {Control} from './Control/Control';
 import type {
     ContextProps,
     ExtendedLoadedData,
+    GroupControlLocalMeta,
     PluginGroupControlState,
     ResolveMetaResult,
 } from './types';
@@ -89,7 +90,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
 
-    localMeta: StateAndParamsMetaData = {version: LOCAL_META_VERSION, queue: []};
+    localMeta: GroupControlLocalMeta = {version: LOCAL_META_VERSION, queue: []};
 
     constructor(props: PluginGroupControlProps) {
         super(props);

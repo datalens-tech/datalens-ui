@@ -1,3 +1,4 @@
+import type {QueueItem, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import type {DashTabItemControlSourceType, StringParams, WorkbookId} from 'shared';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 
@@ -30,4 +31,8 @@ export type ResolveMetaResult = {
     datasetFields?: Record<string, string>;
     type?: string;
     sourceType?: DashTabItemControlSourceType;
+};
+
+export type GroupControlLocalMeta = StateAndParamsMetaData & {
+    queue: (QueueItem & {param?: string})[];
 };

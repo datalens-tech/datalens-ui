@@ -1,11 +1,11 @@
 import type {CSSProperties} from 'react';
 
-import type {QueueItem, StringParams} from '@gravity-ui/dashkit/helpers';
+import type {StringParams} from '@gravity-ui/dashkit/helpers';
 import pick from 'lodash/pick';
 import type {DashTabItemControlData} from 'shared';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 
-import type {ExtendedLoadedData} from './types';
+import type {ExtendedLoadedData, GroupControlLocalMeta} from './types';
 
 export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],
@@ -25,7 +25,7 @@ export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
 };
 
 export const addItemToLocalQueue = (
-    queue: (QueueItem & {param?: string})[],
+    queue: GroupControlLocalMeta['queue'],
     widgetId: string,
     groupItemId: string,
     param?: string,
