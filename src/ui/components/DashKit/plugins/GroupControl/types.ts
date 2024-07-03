@@ -33,6 +33,6 @@ export type ResolveMetaResult = {
     sourceType?: DashTabItemControlSourceType;
 };
 
-export type GroupControlLocalMeta = StateAndParamsMetaData & {
+export type GroupControlLocalMeta = Omit<StateAndParamsMetaData, 'queue'> & {
     queue: (QueueItem & {param?: string})[];
 };
