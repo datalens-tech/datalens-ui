@@ -7,5 +7,7 @@
   "label_main": "Помощь",
   "label_settings": "Настройки",
   "switch_collections": "Коллекции и воркбуки",
-  "switch_service-settings": "Настройки сервиса"
+  "switch_service-settings": "Настройки сервиса",
+  "switch_service-projects": "Проекты",
+  "switch_service-roles": "Роли"
 }

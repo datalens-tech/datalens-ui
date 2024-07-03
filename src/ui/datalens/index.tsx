@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
@@ -43,7 +43,10 @@ const CollectionsNavigtaionPage = React.lazy(
 );
 
 const RolesPage = React.lazy(
-    () => import('./pages/RolesPage/RolesPage'),
+    () => import('./pages/AdminPage/RolesPage'),
+);
+const ProjectsPage = React.lazy(
+    () => import('./pages/AdminPage/ProjectsPage'),
 );
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
@@ -52,12 +55,19 @@ export const AuthContext = React.createContext({
     token: "",
     setToken: function(token:string){
         console.log(token)
+    },
+    superUser: true,
+    setSuperUser: function(value: boolean) {
+        console.log(value);
     }
 });
 
 const DatalensPageView = (props: any) => {
     var token = props.token;
     var setToken = props.setToken;
+
+    var superUser = props.superUser;
+    var setSuperUser = props.setSuperUser;
 
     const isLanding = useSelector(selectIsLanding);
     const location = useLocation()
@@ -70,7 +80,7 @@ const DatalensPageView = (props: any) => {
         );
     }
     return (
-        <AuthContext.Provider value={{token, setToken}}>
+        <AuthContext.Provider value={{token, setToken, superUser, setSuperUser}}>
             <React.Suspense fallback={<FallbackPage />}>
                 <Switch>
                     {!token && location?.pathname !== "/auth" && <Redirect from="*" to="/auth"/>}
@@ -79,7 +89,8 @@ const DatalensPageView = (props: any) => {
                         path={'/auth'}
                         component={()=><AuthPage setToken={setToken} />}
                     />
-                    <Route path={['/roles']} component={RolesPage} />
+                    <Route path={['/admin/roles']} component={superUser ? RolesPage : ()=><Redirect from="*" to="/"/>} />
+                    <Route path={['/admin/projects']} component={superUser ?  ProjectsPage : ()=><Redirect from="*" to="/"/>} />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
@@ -137,6 +148,18 @@ const DatalensPageView = (props: any) => {
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
 
+    const [superUser, setSuperUser] = React.useState(true);
+
+    useEffect(()=>{
+        Utils.universalService({"action": "datalens", "method": "currentUser", "data": [{}]}).then((value)=>{
+            if(value.err || value.data.length == 0) {
+                setSuperUser(false)
+            } else {
+                setSuperUser(value.data[0].isMaster)
+            }
+        });
+    }, [])
+
     const [token, _setToken] = React.useState(Utils.getRpcAuthorization() || "");
     
     function setToken(value: any) {
@@ -150,14 +173,14 @@ const DatalensPage: React.FC = () => {
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
 
     if (token && showMobileHeader) {
-        return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
+        return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
     }
 
     if (token && showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} />} />;
+        return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
     }
 
-    return <DatalensPageView token={token} setToken={setToken} />;
+    return <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />;
 };
 
 export default DatalensPage;

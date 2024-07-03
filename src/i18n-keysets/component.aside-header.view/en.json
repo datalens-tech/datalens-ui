@@ -7,5 +7,7 @@
   "label_main": "Help",
   "label_settings": "Settings",
   "switch_collections": "Collections and workbooks",
-  "switch_service-settings": "Service settings"
+  "switch_service-settings": "Service settings",
+  "switch_service-projects": "Projects",
+  "switch_service-roles": "Roles"
 }

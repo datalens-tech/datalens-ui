@@ -1,0 +1,23 @@
+{
+  "roles": "Roles",
+  "projects": "Projects",
+  "name": "Name",
+  "change_role": "Change the role",
+  "change_project": "Change the project",
+  "change": "Change",
+  "const_require": "The constant is a required field.",
+  "const_valid_name": "The constant must contain only numbers, letters of the Latin alphabet and the underscore character.",
+  "record_updated": "Record updated!!!",
+  "status": "Status",
+  "create_role": "Create a role",
+  "create_project": "Create a project",
+  "create": "Create",
+  "alert_message": "The base records cannot be changed, the business logic is encoded based on constants. Constants must be unique.",
+  "constant": "Constant",
+  "base_role": "Is basic",
+  "action": "Actions",
+  "edit_role": "Editing a role",
+  "edit_project": "Editing the project",
+  "loading": "Loading...",
+  "cancel": "Cancel"
+}

@@ -28,6 +28,8 @@ const i18n = I18n.keyset('component.aside-header.view');
 
 const COLLECTIONS_PATH = '/collections';
 const SERVICE_SETTINGS_PATH = '/settings';
+const PROJECTS_PATH = '/admin/projects';
+const ROLES_PATH = '/admin/roles';
 
 const LOGO_DEFAULT_SIZE = 32;
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
@@ -149,6 +151,22 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 current: pathname.includes(SERVICE_SETTINGS_PATH),
                 itemWrapper: (params, makeItem) => {
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
+                },
+            },
+            {
+                id: 'projects',
+                title: i18n('switch_service-projects'),
+                current: pathname.includes(PROJECTS_PATH),
+                itemWrapper: (params, makeItem) => {
+                    return getLinkWrapper(makeItem(params), PROJECTS_PATH);
+                },
+            },
+            {
+                id: 'roles',
+                title: i18n('switch_service-roles'),
+                current: pathname.includes(ROLES_PATH),
+                itemWrapper: (params, makeItem) => {
+                    return getLinkWrapper(makeItem(params), ROLES_PATH);
                 },
             },
             ...(DL.ZITADEL_ENABLED
