@@ -13,15 +13,14 @@ const SELECTORS = {
     EMPTY_SELECTOR_VAL: '.yc-select-control__tokens-text_empty',
 };
 const PARAMS = {
-    TAB_1_SELECT_VALUE_1: 'Aberdeen',
-    TAB_1_SELECT_VALUE_2: 'Abilene',
+    TAB_1_SELECT_VALUE_1: 'Abilene',
+    TAB_1_SELECT_VALUE_2: 'Aberdeen',
     TAB_2_SELECT_VALUE_1: 'Allen',
     TAB_4_SELECT_VALUE_1: 'Akron',
     EMPTY_SELECTOR_VAL_TEXT: '—',
     TAB_1_NAME: 'Tab 1',
     TAB_2_NAME: 'Tab 2',
     TAB_4_NAME: 'Tab 4',
-    CHART_ONE_MORE_CITY_VALUE: 'La Mesa',
 };
 const TIMEOUT = 4000;
 
@@ -55,7 +54,11 @@ const waitBackGetUrlStateParam = async (page: Page): Promise<string | null> => {
     return getUrlStateParam(page);
 };
 
-const waitForChartAndControlRun = async (page: Page, action?: () => Promise<void>) => {
+const waitForWidgetsRunAndGetChartResponse = async (
+    page: Page,
+    action?: () => Promise<void>,
+): Promise<Response | undefined> => {
+    let chartResponseData;
     const chartResponse = page.waitForResponse(async (response: Response) => {
         if (response.url().includes(CommonUrls.ApiRun)) {
             expect(response.status()).toEqual(200);
@@ -64,6 +67,7 @@ const waitForChartAndControlRun = async (page: Page, action?: () => Promise<void
                 jsonResponse.type === WizardType.GraphWizardNode ||
                 jsonResponse.type === WizardType.D3WizardNode
             ) {
+                chartResponseData = response;
                 return true;
             }
         }
@@ -83,9 +87,11 @@ const waitForChartAndControlRun = async (page: Page, action?: () => Promise<void
     await action?.();
 
     await Promise.all([chartResponse, controlResponse]);
+
+    return chartResponseData;
 };
 
-const checkChartWithValues = async ({
+const checkChartWithValuesAndGetResponse = async ({
     page,
     rightValues,
     wrongValues,
@@ -97,7 +103,7 @@ const checkChartWithValues = async ({
     action?: () => Promise<void>;
 }) => {
     // Wait for load of chart and selector
-    await waitForChartAndControlRun(page, action);
+    const chartResponseData = await waitForWidgetsRunAndGetChartResponse(page, action);
 
     const graph = page
         .locator(`${slct(ChartkitMenuDialogsQA.chartWidget)} svg:first-child`)
@@ -120,13 +126,15 @@ const checkChartWithValues = async ({
             await expect(chartWidgetWithRightValue).toBeHidden();
         }
     }
+
+    return chartResponseData;
 };
 
 datalensTest.describe('Dashboards - States with tabs', () => {
     datalensTest.beforeEach(
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             // waiting for api/run for selector and chart
-            await waitForChartAndControlRun(page, async () => {
+            await waitForWidgetsRunAndGetChartResponse(page, async () => {
                 await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
             });
         },
@@ -202,7 +210,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
             expect(getUrlStateParam(page)).toEqual(null);
 
             // Click on the native browser button "Back" and wait for the transition to the first tab that has a state
-            await waitForChartAndControlRun(page, async () => {
+            await waitForWidgetsRunAndGetChartResponse(page, async () => {
                 await page.goBack();
             });
             expect(getUrlStateParam(page)).toEqual(firstTabState);
@@ -250,7 +258,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
             expect(urlParam).toEqual(null);
 
             // Click on the first tab and wait for the page url to change
-            await checkChartWithValues({
+            await checkChartWithValuesAndGetResponse({
                 page,
                 rightValues: [PARAMS.TAB_1_SELECT_VALUE_2],
                 wrongValues: [PARAMS.TAB_1_SELECT_VALUE_1],
@@ -319,7 +327,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
     );
 
     datalensTest(
-        'Checking backward transitions in the browser and consistency of the state parameter when changing different types of selectors and when switching to another tab os',
+        'Checking backward transitions in the browser and consistency of the state parameter when changing different types of selectors and when switching to another tab',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             // Check that the state parameter has been updated
@@ -339,7 +347,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
 
             expect(firstTabStateUpdated).not.toEqual(firstTabState);
 
-            await checkChartWithValues({
+            await checkChartWithValuesAndGetResponse({
                 page,
                 rightValues: [PARAMS.TAB_1_SELECT_VALUE_1],
                 wrongValues: [PARAMS.TAB_1_SELECT_VALUE_2],
@@ -425,7 +433,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
 
             expect(selectorText).toEqual(defaultValueText);
 
-            await checkChartWithValues({
+            await checkChartWithValuesAndGetResponse({
                 page,
                 rightValues: [PARAMS.TAB_1_SELECT_VALUE_1],
                 wrongValues: [PARAMS.TAB_1_SELECT_VALUE_2],
@@ -437,9 +445,9 @@ datalensTest.describe('Dashboards - States with tabs', () => {
                 },
             });
 
-            await checkChartWithValues({
+            const chartResponse = await checkChartWithValuesAndGetResponse({
                 page,
-                rightValues: [PARAMS.TAB_1_SELECT_VALUE_1, PARAMS.CHART_ONE_MORE_CITY_VALUE],
+                rightValues: [PARAMS.TAB_1_SELECT_VALUE_2],
                 action: async () => {
                     // We return to the browser by clicking the back button
                     const urlAfterBack = await waitBackGetUrlStateParam(page);
@@ -447,6 +455,12 @@ datalensTest.describe('Dashboards - States with tabs', () => {
                     expect(urlAfterBack).toEqual(null);
                 },
             });
+
+            // сhart must have one empty param
+            if (chartResponse) {
+                const requestDataParams = chartResponse.request().postDataJSON().params;
+                expect(Object.values(requestDataParams)[0]).toBeFalsy();
+            }
         },
     );
 });
