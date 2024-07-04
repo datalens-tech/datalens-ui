@@ -242,7 +242,7 @@ class ControlActions {
                 break;
         }
 
-        await this.dialogControl.datasetFieldSelector.selectListItem({qa: elementTypeQa});
+        await this.dialogControl.datasetFieldSelector.selectListItem({qa: slct(elementTypeQa)});
     }
 
     // eslint-disable-next-line complexity
