@@ -12,6 +12,7 @@ import {
     ERROR_CODE,
 } from '../../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import Performance from '../../../ChartKit/modules/perfomance';
+import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
@@ -250,10 +251,6 @@ const getUnwrappedFunction = (
 
         return resultValue;
     };
-};
-
-export type UiSandboxRuntimeOptions = {
-    totalTimeLimit?: number;
 };
 
 export const unwrapPossibleFunctions = (

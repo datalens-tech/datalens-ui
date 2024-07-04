@@ -4,6 +4,7 @@ import {
     ControlQA,
     DialogControlDateQa,
     DialogControlParamsQa,
+    DialogGroupControlQa,
     DialogQLParameterQA,
     NavigationInputQA,
     TabMenuQA,
@@ -21,13 +22,17 @@ import {BasePageProps} from '../BasePage';
 
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from '../../../src/shared';
 
-import {DashboardAddWidgetQa, DashboardDialogControl} from '../../../src/shared/constants/qa/dash';
-import {ListItemByParams} from '../../page-objects/types';
+import {
+    DashboardAddWidgetQa,
+    DashboardDialogControl,
+    DashkitQa,
+} from '../../../src/shared/constants/qa/dash';
+import {DatasetParams, ListItemByParams} from '../../page-objects/types';
 
 export type SelectorSettings = {
     sourceType?: DashTabItemControlSourceType;
     fieldName?: string;
-    dataset?: ListItemByParams;
+    dataset?: DatasetParams;
     datasetField?: ListItemByParams;
     elementType?: ListItemByParams;
     appearance?: {
@@ -38,6 +43,11 @@ export type SelectorSettings = {
     };
     items?: string[];
     defaultValue?: string;
+};
+
+type GroupSelectorOptions = {
+    buttonApply?: boolean;
+    updateControlOnChange?: boolean;
 };
 
 export interface DashboardPageProps extends BasePageProps {}
@@ -139,7 +149,7 @@ class ControlActions {
         await this.page.click(slct(ControlQA.dialogControlApplyBtn));
     }
 
-    async addSelectorsGroup(selectorsParams: SelectorSettings[]) {
+    async addSelectorsGroup(selectorsParams: SelectorSettings[], options?: GroupSelectorOptions) {
         // adding a selector
         await this.clickAddSelector();
 
@@ -147,6 +157,16 @@ class ControlActions {
 
         for (let i = 1; i < selectorsParams.length; i++) {
             await this.addSelectorToGroup(selectorsParams[i]);
+        }
+
+        if (options && options.buttonApply) {
+            await this.page
+                .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
+                .setChecked(true);
+
+            await this.page
+                .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
+                .setChecked(Boolean(options?.updateControlOnChange));
         }
 
         // adding a selector to the dashboard
@@ -223,10 +243,13 @@ class ControlActions {
                 await this.dialogControl.fieldName.fill(setting.fieldName);
             }
 
-            await this.fillSelectSelectorItems({
-                items: setting.items,
-                defaultValue: setting.defaultValue,
-            });
+            // TODO: remove condition with innerText after removing addSelectorWithDefaultSettings
+            if (!setting.elementType || setting.elementType.innerText === 'List') {
+                await this.fillSelectSelectorItems({
+                    items: setting.items,
+                    defaultValue: setting.defaultValue,
+                });
+            }
         } else {
             if (setting.dataset?.link) {
                 await this.addDatasetByLink(setting.dataset?.link);
@@ -243,7 +266,11 @@ class ControlActions {
             }
         }
 
-        if (setting.elementType?.innerText || typeof setting.elementType?.idx === 'number') {
+        if (
+            setting.elementType?.innerText ||
+            typeof setting.elementType?.idx === 'number' ||
+            setting.elementType?.qa
+        ) {
             await this.dialogControl.elementType.click();
             await this.dialogControl.datasetFieldSelector.selectListItem(setting.elementType);
         }
@@ -291,14 +318,39 @@ class ControlActions {
         return getControlByTitle(this.page, controlTitle);
     }
 
-    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
-        // open dialog relations by click on dashkit item links icon (via parents nodes)
-        const dashkitItemElem = this.page
-            .locator(slct(ControlQA.groupChartkitControl))
-            .or(this.page.locator(slct(ControlQA.chartkitControl)))
-            .nth(counter === undefined ? 0 : counter)
-            .locator('../../../..');
-        return dashkitItemElem.locator(slct(controlQa));
+    async getDashControlLinksIconElem(counter?: number) {
+        return this.page
+            .locator(slct(DashkitQa.GRID_ITEM))
+            .filter({
+                has: this.page
+                    .locator(slct(ControlQA.groupChartkitControl))
+                    .or(this.page.locator(slct(ControlQA.chartkitControl))),
+            })
+            .nth(counter || 0)
+            .locator(slct(ControlQA.controlLinks));
+    }
+
+    async openSelectPopupByTitle(controlTitle: string) {
+        const control = await this.getControlByTitle(controlTitle);
+
+        await control.click();
+
+        const selectPopup = this.page.locator(slct(ControlQA.controlSelectItems)).first();
+        await selectPopup.waitFor({state: 'visible'});
+    }
+
+    async getSelectItemsLocatorByTitle(controlTitle: string) {
+        await this.openSelectPopupByTitle(controlTitle);
+
+        return this.page.locator(
+            `${slct(ControlQA.controlSelectItems)} [data-value]:not([data-value=""])`,
+        );
+    }
+
+    async selectControlValueByTitle(controlTitle: string, value: string) {
+        await this.openSelectPopupByTitle(controlTitle);
+
+        await this.page.locator(`[data-value="${value}"]`).click();
     }
 }
 

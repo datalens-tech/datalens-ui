@@ -113,6 +113,7 @@ class NavigationBase extends React.Component {
         onUpdate: PropTypes.func,
         navConstructor: PropTypes.func,
         navigationUrl: PropTypes.string,
+        onCreateMenuClick: PropTypes.func,
         onCrumbClick: PropTypes.func,
         onEntryClick: PropTypes.func,
         currentPageEntry: PropTypes.object,
@@ -273,6 +274,7 @@ class NavigationBase extends React.Component {
 
         return getInitDestination(path);
     }
+
     onCreateMenuClick = (type) => {
         const {path, history} = this.props;
         const searchParams = new URLSearchParams();
@@ -417,7 +419,12 @@ class NavigationBase extends React.Component {
                 break;
             }
         }
+
+        if (this.props.onCreateMenuClick) {
+            this.props.onCreateMenuClick(type);
+        }
     };
+
     closeNavigation = () => {
         this.props.onClose?.();
         this.props.closeNavigation?.();
@@ -501,12 +508,12 @@ class NavigationBase extends React.Component {
             sdk,
             place: root,
             quickItems: this.quickItems,
-            onCreateMenuClick: this.onCreateMenuClick,
             linkWrapper: linkWrapper({navigationUrl, closeNavigation, onClose: this.props.onClose}),
             getContextMenuItems: getMenuItems,
             onContextMenuClick: this.onContextMenuClick,
             getPlaceParameters: getPlaceParameters,
             ...props,
+            onCreateMenuClick: this.onCreateMenuClick,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,
         });
