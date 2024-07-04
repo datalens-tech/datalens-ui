@@ -1,12 +1,6 @@
 import {Page, expect} from '@playwright/test';
 
-import {
-    ControlQA,
-    DashCommonQa,
-    DashRelationTypes,
-    DialogControlQa,
-    Feature,
-} from '../../../../src/shared';
+import {DashCommonQa, DashRelationTypes, DialogControlQa, Feature} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
@@ -102,9 +96,7 @@ datalensTest.describe(
 
                         // set alias between selectors in group
                         const selectorElem =
-                            await dashboardPage.controlActions.getDashControlLinksIconElem(
-                                ControlQA.controlLinks,
-                            );
+                            await dashboardPage.controlActions.getDashControlLinksIconElem();
 
                         await dashboardPage.setupNewLinks({
                             linkType: DashRelationTypes.both,
@@ -119,10 +111,7 @@ datalensTest.describe(
 
                         // set alias between single selector and group
                         const singleSelectorElem =
-                            await dashboardPage.controlActions.getDashControlLinksIconElem(
-                                ControlQA.controlLinks,
-                                1,
-                            );
+                            await dashboardPage.controlActions.getDashControlLinksIconElem(1);
 
                         await dashboardPage.setupNewLinks({
                             linkType: DashRelationTypes.both,
@@ -232,9 +221,7 @@ datalensTest.describe(
 
                         // set alias between single selector and one of group selector
                         const singleSelectorElem =
-                            await dashboardPage.controlActions.getDashControlLinksIconElem(
-                                ControlQA.controlLinks,
-                            );
+                            await dashboardPage.controlActions.getDashControlLinksIconElem();
 
                         await dashboardPage.setupNewLinks({
                             linkType: DashRelationTypes.both,

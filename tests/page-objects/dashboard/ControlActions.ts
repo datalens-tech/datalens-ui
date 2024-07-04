@@ -22,7 +22,11 @@ import {BasePageProps} from '../BasePage';
 
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from '../../../src/shared';
 
-import {DashboardAddWidgetQa, DashboardDialogControl} from '../../../src/shared/constants/qa/dash';
+import {
+    DashboardAddWidgetQa,
+    DashboardDialogControl,
+    DashkitQa,
+} from '../../../src/shared/constants/qa/dash';
 import {DatasetParams, ListItemByParams} from '../../page-objects/types';
 
 export type SelectorSettings = {
@@ -314,27 +318,17 @@ class ControlActions {
         return getControlByTitle(this.page, controlTitle);
     }
 
-    async getDashControlLinksIconElem(controlQa: string, counter?: number) {
-        let controlLocator;
-        // open dialog relations by click on dashkit item links icon (via parents nodes)
-        if (counter === undefined) {
-            controlLocator = this.page
-                .locator(slct(ControlQA.groupChartkitControl))
-                .or(this.page.locator(slct(ControlQA.chartkitControl)))
-                .first();
-        } else {
-            const groupLocator = this.page
-                .locator(slct(ControlQA.groupChartkitControl))
-                .nth(counter);
-            const isGroupLocatorExist = await groupLocator.isVisible();
-            if (isGroupLocatorExist) {
-                controlLocator = groupLocator;
-            } else {
-                controlLocator = this.page.locator(slct(ControlQA.chartkitControl)).nth(counter);
-            }
-        }
-
-        return controlLocator.locator('../../../..').locator(slct(controlQa));
+    async getDashControlLinksIconElem(counter?: number) {
+        return this.page
+            .locator(slct(DashkitQa.GRID_ITEM))
+            .filter({
+                has: this.page
+                    .locator(slct(ControlQA.groupChartkitControl))
+                    .or(this.page.locator(slct(ControlQA.chartkitControl)))
+                    .first(),
+            })
+            .nth(counter || 0)
+            .locator(slct(ControlQA.controlLinks));
     }
 
     async openSelectPopupByTitle(controlTitle: string) {

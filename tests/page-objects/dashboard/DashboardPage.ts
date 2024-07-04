@@ -522,9 +522,7 @@ class DashboardPage extends BasePage {
     async openControlRelationsDialog() {
         await this.enterEditMode();
         // open dialog relations by control icon click
-        const selectorElem = await this.controlActions.getDashControlLinksIconElem(
-            ControlQA.controlLinks,
-        );
+        const selectorElem = await this.controlActions.getDashControlLinksIconElem();
         await selectorElem.click();
     }
 

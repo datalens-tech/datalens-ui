@@ -227,9 +227,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     );
 
                     const selectorElem =
-                        await dashboardPage.controlActions.getDashControlLinksIconElem(
-                            ControlQA.controlLinks,
-                        );
+                        await dashboardPage.controlActions.getDashControlLinksIconElem();
 
                     await dashboardPage.setupNewLinks({
                         linkType: DashRelationTypes.both,
@@ -285,9 +283,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     );
 
                     const selectorElem =
-                        await dashboardPage.controlActions.getDashControlLinksIconElem(
-                            ControlQA.controlLinks,
-                        );
+                        await dashboardPage.controlActions.getDashControlLinksIconElem();
 
                     await dashboardPage.setupNewLinks({
                         linkType: DashRelationTypes.both,
@@ -363,9 +359,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     );
 
                     const selectorElem =
-                        await dashboardPage.controlActions.getDashControlLinksIconElem(
-                            ControlQA.controlLinks,
-                        );
+                        await dashboardPage.controlActions.getDashControlLinksIconElem();
 
                     await selectorElem.click();
 
