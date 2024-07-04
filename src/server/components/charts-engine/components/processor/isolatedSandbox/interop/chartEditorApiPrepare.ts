@@ -8,15 +8,24 @@ import type {
 } from '../../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../../shared/types/ui-sandbox';
 
-import type {ChartEditorGetSharedData, ChartEditorGetTranslation} from './chartEditorApi';
+import type {
+    ChartEditorAttachFormatter,
+    ChartEditorAttachHandler,
+    ChartEditorGetSecrets,
+    ChartEditorGetSharedData,
+    ChartEditorGetTranslation,
+    ChartEditorResolveRelative,
+    ChartEditorUserLang,
+    ChartEditorUserLogin,
+} from './chartEditorApi';
 declare const _ChartEditor_getTranslation: ChartEditorGetTranslation;
 declare const _ChartEditor_getSharedData: ChartEditorGetSharedData;
-declare const _ChartEditor_userLang: string;
-declare const _ChartEditor_userLogin: string;
-declare const _ChartEditor_attachHandler: any;
-declare const _ChartEditor_attachFormatter: any;
-declare const _ChartEditor_getSecrets: any;
-declare const _ChartEditor_resolveRelative: any;
+declare const _ChartEditor_userLang: ChartEditorUserLang;
+declare const _ChartEditor_userLogin: ChartEditorUserLogin;
+declare const _ChartEditor_attachHandler: ChartEditorAttachHandler;
+declare const _ChartEditor_attachFormatter: ChartEditorAttachFormatter;
+declare const _ChartEditor_getSecrets: ChartEditorGetSecrets;
+declare const _ChartEditor_resolveRelative: ChartEditorResolveRelative;
 declare const _ChartEditor_resolveInterval: any;
 declare const _ChartEditor_resolveOperation: any;
 declare const _ChartEditor_setError: any;
@@ -51,9 +60,6 @@ const __updateHighchartsConfig = (config: unknown) =>
         }),
     );
 
-/**
- * @type {import ('../../../../../../../shared').IChartEditor}
- */
 const ChartEditor: IChartEditor = {
     getTranslation: (keyset, key, params) =>
         _ChartEditor_getTranslation(keyset, key, JSON.stringify(params)),

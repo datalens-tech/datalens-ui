@@ -17,6 +17,15 @@ export type ChartEditorGetTranslation = (
     getTranslationParams?: string,
 ) => string;
 export type ChartEditorGetSharedData = () => string;
+export type ChartEditorUserLang = string;
+export type ChartEditorUserLogin = string;
+export type ChartEditorAttachHandler = (handlerConfig: string) => string;
+export type ChartEditorAttachFormatter = (formatterConfig: string) => string;
+export type ChartEditorGetSecrets = () => string;
+export type ChartEditorResolveRelative = (
+    stringrelativeStr: string,
+    intervalPart?: IntervalPart,
+) => string | null;
 
 const prepare = fs.readFileSync(path.join(__dirname, 'chartEditorApiPrepare.js'), 'utf-8');
 export const prepareApiAdapter = prepare;
@@ -34,50 +43,40 @@ export function prepareChartEditorApi({
 }) {
     const params = chartEditorApi.getParams();
 
-    const _ChartEditor_getTranslation: ChartEditorGetTranslation = (
-        keyset,
-        key,
-        getTranslationParams,
-    ) => {
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams) => {
         const parsedgetTranslationParams = getTranslationParams
             ? JSON.parse(getTranslationParams)
             : undefined;
         return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
-    };
+    }) satisfies ChartEditorGetTranslation);
 
-    jail.setSync('_ChartEditor_getTranslation', _ChartEditor_getTranslation);
-
-    const _ChartEditor_getSharedData: ChartEditorGetSharedData = () => {
+    jail.setSync('_ChartEditor_getSharedData', (() => {
         const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
         return JSON.stringify(shared);
-    };
+    }) satisfies ChartEditorGetSharedData);
 
-    jail.setSync('_ChartEditor_getSharedData', _ChartEditor_getSharedData);
+    jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang() satisfies ChartEditorUserLang);
 
-    jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang());
+    jail.setSync('_ChartEditor_userLogin', (userLogin || '') satisfies ChartEditorUserLogin);
 
-    jail.setSync('_ChartEditor_userLogin', userLogin);
-
-    jail.setSync('_ChartEditor_attachHandler', (handlerConfig: string) => {
+    jail.setSync('_ChartEditor_attachHandler', ((handlerConfig) => {
         const parsedHandlerConfig = JSON.parse(handlerConfig);
         return JSON.stringify(chartEditorApi.attachHandler(parsedHandlerConfig));
-    });
+    }) satisfies ChartEditorAttachHandler);
 
-    jail.setSync('_ChartEditor_attachFormatter', (formatterConfig: string) => {
+    jail.setSync('_ChartEditor_attachFormatter', ((formatterConfig) => {
         const parsedFormatterConfig = JSON.parse(formatterConfig);
         return JSON.stringify(chartEditorApi.attachFormatter(parsedFormatterConfig));
-    });
+    }) satisfies ChartEditorAttachFormatter);
 
     if (chartEditorApi.getSecrets) {
-        jail.setSync('_ChartEditor_getSecrets', () => JSON.stringify(chartEditorApi.getSecrets()));
+        jail.setSync('_ChartEditor_getSecrets', (() =>
+            JSON.stringify(chartEditorApi.getSecrets())) satisfies ChartEditorGetSecrets);
     }
 
-    jail.setSync(
-        '_ChartEditor_resolveRelative',
-        (...resolveRelativeParams: [stringrelativeStr: string, intervalPart?: IntervalPart]) => {
-            return chartEditorApi.resolveRelative(...resolveRelativeParams);
-        },
-    );
+    jail.setSync('_ChartEditor_resolveRelative', ((...resolveRelativeParams) => {
+        return chartEditorApi.resolveRelative(...resolveRelativeParams);
+    }) satisfies ChartEditorResolveRelative);
 
     jail.setSync('_ChartEditor_resolveInterval', (intervalStr: string) => {
         return chartEditorApi.resolveInterval(intervalStr);
