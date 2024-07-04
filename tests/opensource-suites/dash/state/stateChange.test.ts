@@ -106,17 +106,17 @@ const checkChartWithValues = async ({
 
     // Check that the chart has been drawn with the applied values of the selector parameters based on the dataset
     for (const rightValue of rightValues) {
-        const chartWidgetWithRightValue = page.locator(
-            `${slct(ChartkitMenuDialogsQA.chartWidget)} >> text=${rightValue}`,
-        );
+        const chartWidgetWithRightValue = page
+            .locator(`${slct(ChartkitMenuDialogsQA.chartWidget)} >> text=${rightValue}`)
+            .first();
         await expect(chartWidgetWithRightValue).toBeVisible();
     }
 
     if (wrongValues) {
         for (const wrongValue of wrongValues) {
-            const chartWidgetWithRightValue = page.locator(
-                `${slct(ChartkitMenuDialogsQA.chartWidget)} >> text=${wrongValue}`,
-            );
+            const chartWidgetWithRightValue = page
+                .locator(`${slct(ChartkitMenuDialogsQA.chartWidget)} >> text=${wrongValue}`)
+                .first();
             await expect(chartWidgetWithRightValue).toBeHidden();
         }
     }
@@ -319,7 +319,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
     );
 
     datalensTest(
-        'Checking backward transitions in the browser and consistency of the state parameter when changing different types of selectors and when switching to another tab',
+        'Checking backward transitions in the browser and consistency of the state parameter when changing different types of selectors and when switching to another tab os',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
             // Check that the state parameter has been updated
