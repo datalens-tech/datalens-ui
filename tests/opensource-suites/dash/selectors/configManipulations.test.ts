@@ -1,18 +1,13 @@
 import {Page, expect, Request} from '@playwright/test';
 
-import {
-    DashEntryQa,
-    DialogControlQa,
-    DialogGroupControlQa,
-    Feature,
-    TabMenuQA,
-} from '../../../../src/shared';
+import {DashEntryQa, DialogGroupControlQa, Feature, TabMenuQA} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {isEnabledFeature, openTestPage, slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {TestParametrizationConfig} from '../../../types/config';
+import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
 
 const PARAMS = {
     MANUAL_CONTROL: {
@@ -20,9 +15,7 @@ const PARAMS = {
             title: 'parent control',
         },
         fieldName: 'element to duplicate',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
         required: true,
         defaultValue: 'default Value',
     },
@@ -31,9 +24,7 @@ const PARAMS = {
             title: 'copied control',
         },
         fieldName: 'duplicated',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
         required: false,
         defaultValue: 'another default value',
     },
