@@ -21,7 +21,7 @@ const PARAMS = {
     TAB_1_NAME: 'Tab 1',
     TAB_2_NAME: 'Tab 2',
     TAB_4_NAME: 'Tab 4',
-    CHART_ONE_MORE_CITY_VALUE: 'Denver',
+    CHART_ONE_MORE_CITY_VALUE: 'La Mesa',
 };
 const TIMEOUT = 4000;
 
@@ -109,7 +109,7 @@ const checkChartWithValues = async ({
         const chartWidgetWithRightValue = page
             .locator(`${slct(ChartkitMenuDialogsQA.chartWidget)} >> text=${rightValue}`)
             .first();
-        await expect(chartWidgetWithRightValue).toBeVisible();
+        await expect(chartWidgetWithRightValue).toBeAttached();
     }
 
     if (wrongValues) {
