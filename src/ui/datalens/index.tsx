@@ -56,7 +56,7 @@ export const AuthContext = React.createContext({
     setToken: function(token:string){
         console.log(token)
     },
-    superUser: true,
+    superUser: {},
     setSuperUser: function(value: boolean) {
         console.log(value);
     }
@@ -89,8 +89,8 @@ const DatalensPageView = (props: any) => {
                         path={'/auth'}
                         component={()=><AuthPage setToken={setToken} />}
                     />
-                    <Route path={['/admin/roles']} component={superUser ? RolesPage : ()=><Redirect from="*" to="/"/>} />
-                    <Route path={['/admin/projects']} component={superUser ?  ProjectsPage : ()=><Redirect from="*" to="/"/>} />
+                    <Route path={['/admin/roles']} component={superUser.isMaster ? RolesPage : ()=><Redirect from="*" to="/"/>} />
+                    <Route path={['/admin/projects']} component={superUser.isMaster ?  ProjectsPage : ()=><Redirect from="*" to="/"/>} />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
@@ -148,14 +148,14 @@ const DatalensPageView = (props: any) => {
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
 
-    const [superUser, setSuperUser] = React.useState(true);
+    const [superUser, setSuperUser] = React.useState({});
 
     useEffect(()=>{
         Utils.universalService({"action": "datalens", "method": "currentUser", "data": [{}]}).then((value)=>{
             if(value.err || value.data.length == 0) {
-                setSuperUser(false)
+                setSuperUser({})
             } else {
-                setSuperUser(value.data[0].isMaster)
+                setSuperUser(value.data[0])
             }
         });
     }, [])
@@ -169,6 +169,8 @@ const DatalensPage: React.FC = () => {
             value: value,
         });
         _setToken(value);
+        // перегружаем страницу, чтобы применить LocalStorage
+        window.location.assign('/');
     }
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
 
@@ -177,7 +179,7 @@ const DatalensPage: React.FC = () => {
     }
 
     if (token && showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
+        return <AsideHeaderAdapter superUser={superUser} renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
     }
 
     return <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />;

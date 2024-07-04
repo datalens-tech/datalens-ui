@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import {Button} from '@gravity-ui/uikit';
+import React from 'react';
 
 import {ActionBar} from '@gravity-ui/navigation';
 import {Skeleton} from '@gravity-ui/uikit';
@@ -13,7 +12,6 @@ import Utils from 'ui/utils/utils';
 import type {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
 import './CollectionsNavigationLayout.scss';
-import {AuthContext} from 'ui/datalens/index';
 
 const b = block('dl-collections-navigation-layout');
 
@@ -53,8 +51,6 @@ type Props = {
 export const CollectionsNavigationLayout = React.memo<Props>(
     // eslint-disable-next-line complexity
     ({layout, skeletonsSettings, children}) => {
-        const auth = React.useContext(AuthContext);
-        const [userName, setUserName] = useState("");
         const {Footer} = registry.common.components.getAll();
 
         const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
@@ -62,17 +58,6 @@ export const CollectionsNavigationLayout = React.memo<Props>(
         const showDescription = !isMobileView && layout.description;
 
         const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
-
-        if(auth.token) {
-            Utils.universalService({"action": "datalens", "method": "currentUser", "data": [{}]}).then((value)=>{
-                if(value.err || value.data.length == 0) {
-                    var decodedString = atob(auth.token);
-                    setUserName(decodedString.split(':')[0])
-                } else {
-                    setUserName(value.data[0].username || value.data[0].c_login);
-                }
-            });
-        }
         
         return (
             <div className={b({mobile: isMobileView})}>
@@ -115,8 +100,6 @@ export const CollectionsNavigationLayout = React.memo<Props>(
                                             </div>
                                         )}
                                     </ActionBar.Item>
-                                    <ActionBar.Item>{userName}</ActionBar.Item>
-                                    <ActionBar.Item>{auth.token && <Button view="outlined" onClick={()=>auth.setToken("")}>Выйти</Button> }</ActionBar.Item>
                                 </ActionBar.Group>
                             </ActionBar.Section>
                         </ActionBar>

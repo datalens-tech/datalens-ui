@@ -8,7 +8,7 @@ import block from 'bem-cn-lite';
 import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
-import {DlNavigationQA, Feature} from 'shared';
+import {DlNavigationQA, Feature, RPC_AUTHORIZATION} from 'shared';
 import {DL, PRODUCT_NAME} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import Utils from 'ui/utils';
@@ -22,6 +22,7 @@ import iconNavigationDefault from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
 
 import './AsideHeaderAdapter.scss';
+import { getSdk } from 'ui/libs/schematic-sdk';
 
 const b = block('dl-aside-header');
 const i18n = I18n.keyset('component.aside-header.view');
@@ -43,6 +44,7 @@ export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
 type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
+    superUser?: any;
 };
 
 enum Panel {
@@ -94,7 +96,7 @@ const renderDocsItem = (item: DocsItem) => {
     }
 };
 
-export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => {
+export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
@@ -153,11 +155,12 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
                 },
             },
+            ...(superUser ? [
             {
                 id: 'projects',
                 title: i18n('switch_service-projects'),
                 current: pathname.includes(PROJECTS_PATH),
-                itemWrapper: (params, makeItem) => {
+                itemWrapper: (params: any, makeItem: any) => {
                     return getLinkWrapper(makeItem(params), PROJECTS_PATH);
                 },
             },
@@ -165,10 +168,10 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 id: 'roles',
                 title: i18n('switch_service-roles'),
                 current: pathname.includes(ROLES_PATH),
-                itemWrapper: (params, makeItem) => {
+                itemWrapper: (params: any, makeItem: any) => {
                     return getLinkWrapper(makeItem(params), ROLES_PATH);
                 },
-            },
+            }] : []),
             ...(DL.ZITADEL_ENABLED
                 ? [
                       {
@@ -193,9 +196,9 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 id: Panel.Settings,
                 content: <SettingsPanel />,
                 visible: visiblePanel === Panel.Settings,
-            },
+            }
         ],
-        [visiblePanel],
+        [visiblePanel]
     );
 
     const renderFooter = () => {
@@ -257,6 +260,25 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                                 renderItem={renderDocsItem}
                             />
                         );
+                    }}
+                />
+                <FooterItem
+                    compact={isCompact}
+                    item={{
+                        id: 'logout',
+                        icon: ArrowRightFromSquare,
+                        iconSize: FOOTER_ITEM_DEFAULT_SIZE,
+                        title: superUser.username || superUser.c_login,
+                        tooltipText: i18n('label_logout'),
+                        current: visiblePanel === Panel.Settings,
+                        onItemClick: () => {
+                            localStorage.removeItem('x-rpc-authorization');
+                            getSdk().setDefaultHeader({
+                                name: RPC_AUTHORIZATION,
+                                value: "",
+                            });
+                            window.location.assign('/auth');
+                        }
                     }}
                 />
             </React.Fragment>
