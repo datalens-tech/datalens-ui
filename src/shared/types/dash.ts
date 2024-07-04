@@ -11,6 +11,10 @@ import type {
     StringParams,
 } from './index';
 
+export enum ControlType {
+    Dash = 'control_dash',
+}
+
 export enum DashTabItemType {
     Title = 'title',
     Text = 'text',

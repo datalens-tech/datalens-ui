@@ -13,6 +13,7 @@ import pick from 'lodash/pick';
 import {stringify} from 'qs';
 import type {StringParams, WizardType} from 'shared';
 import {
+    ControlType,
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     DashLoadPriority,
@@ -107,7 +108,7 @@ type EntitiesType =
     | 'markup_ql_node'
     | 'control_node'
     | 'map_node'
-    | 'control_dash';
+    | ControlType.Dash;
 
 export type EntityConfig = {
     data: Object | undefined;
@@ -687,7 +688,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     async makeRequest(requestOptions: EntityRequestOptions) {
         const stype = (requestOptions.data?.config as EntityConfig)?.meta?.stype;
         const isControlRequest =
-            stype === 'control_dash' ||
+            stype === ControlType.Dash ||
             requestOptions.data?.widgetType === DashTabItemControlSourceType.External;
 
         const isLowPriority =
