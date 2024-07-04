@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import type {
     ChartKitHtmlItem,
     IChartEditor,
@@ -11,12 +9,35 @@ import type {UISandboxWrappedFunction} from '../../../../../../../shared/types/u
 import type {
     ChartEditorAttachFormatter,
     ChartEditorAttachHandler,
+    ChartEditorCurrentPage,
+    ChartEditorGetActionParams,
+    ChartEditorGetLoadedData,
+    ChartEditorGetLoadedDataStats,
+    ChartEditorGetParam,
+    ChartEditorGetParams,
     ChartEditorGetSecrets,
     ChartEditorGetSharedData,
+    ChartEditorGetSortParams,
     ChartEditorGetTranslation,
+    ChartEditorGetWidgetConfig,
+    ChartEditorResolveInterval,
+    ChartEditorResolveOperation,
     ChartEditorResolveRelative,
+    ChartEditorSetChartsInsights,
+    ChartEditorSetDataSourceInfo,
+    ChartEditorSetError,
+    ChartEditorSetExportFilename,
+    ChartEditorSetExtra,
+    ChartEditorSetSideHtml,
+    ChartEditorSetSideMarkdown,
+    ChartEditorUpdateActionParams,
+    ChartEditorUpdateConfig,
+    ChartEditorUpdateHighchartsConfig,
+    ChartEditorUpdateParams,
     ChartEditorUserLang,
     ChartEditorUserLogin,
+    ChartEditorWrapFnWrappedFnKey,
+    ChartEditorWrapHtmlWrappedHtmlKey,
 } from './chartEditorApi';
 declare const _ChartEditor_getTranslation: ChartEditorGetTranslation;
 declare const _ChartEditor_getSharedData: ChartEditorGetSharedData;
@@ -26,29 +47,29 @@ declare const _ChartEditor_attachHandler: ChartEditorAttachHandler;
 declare const _ChartEditor_attachFormatter: ChartEditorAttachFormatter;
 declare const _ChartEditor_getSecrets: ChartEditorGetSecrets;
 declare const _ChartEditor_resolveRelative: ChartEditorResolveRelative;
-declare const _ChartEditor_resolveInterval: any;
-declare const _ChartEditor_resolveOperation: any;
-declare const _ChartEditor_setError: any;
-declare const _ChartEditor_setChartsInsights: any;
-declare const _ChartEditor_getWidgetConfig: any;
-declare const _ChartEditor_getActionParams: any;
-declare const _ChartEditor_wrapFn_WRAPPED_FN_KEY: string;
-declare const _ChartEditor_wrapHtml_WRAPPED_HTML_KEY: string;
-declare const _ChartEditor_getParams: any;
-declare const _ChartEditor_getParam: any;
-declare const _ChartEditor_getSortParams: any;
-declare const _ChartEditor_currentPage: any;
-declare const _ChartEditor_updateParams: any;
-declare const _ChartEditor_updateActionParams: any;
-declare const _ChartEditor_getLoadedData: any;
-declare const _ChartEditor_getLoadedDataStats: any;
-declare const _ChartEditor_setDataSourceInfo: any;
-declare const _ChartEditor_updateConfig: any;
-declare const _ChartEditor_updateHighchartsConfig: any;
-declare const _ChartEditor_setSideHtml: any;
-declare const _ChartEditor_setSideMarkdown: any;
-declare const _ChartEditor_setExtra: any;
-declare const _ChartEditor_setExportFilename: any;
+declare const _ChartEditor_resolveInterval: ChartEditorResolveInterval;
+declare const _ChartEditor_resolveOperation: ChartEditorResolveOperation;
+declare const _ChartEditor_setError: ChartEditorSetError;
+declare const _ChartEditor_setChartsInsights: ChartEditorSetChartsInsights;
+declare const _ChartEditor_getWidgetConfig: ChartEditorGetWidgetConfig;
+declare const _ChartEditor_getActionParams: ChartEditorGetActionParams;
+declare const _ChartEditor_wrapFn_WRAPPED_FN_KEY: ChartEditorWrapFnWrappedFnKey;
+declare const _ChartEditor_wrapHtml_WRAPPED_HTML_KEY: ChartEditorWrapHtmlWrappedHtmlKey;
+declare const _ChartEditor_getParams: ChartEditorGetParams;
+declare const _ChartEditor_getParam: ChartEditorGetParam;
+declare const _ChartEditor_getSortParams: ChartEditorGetSortParams;
+declare const _ChartEditor_currentPage: ChartEditorCurrentPage;
+declare const _ChartEditor_updateParams: ChartEditorUpdateParams;
+declare const _ChartEditor_updateActionParams: ChartEditorUpdateActionParams;
+declare const _ChartEditor_getLoadedData: ChartEditorGetLoadedData;
+declare const _ChartEditor_getLoadedDataStats: ChartEditorGetLoadedDataStats;
+declare const _ChartEditor_setDataSourceInfo: ChartEditorSetDataSourceInfo;
+declare const _ChartEditor_updateConfig: ChartEditorUpdateConfig;
+declare const _ChartEditor_updateHighchartsConfig: ChartEditorUpdateHighchartsConfig;
+declare const _ChartEditor_setSideHtml: ChartEditorSetSideHtml;
+declare const _ChartEditor_setSideMarkdown: ChartEditorSetSideMarkdown;
+declare const _ChartEditor_setExtra: ChartEditorSetExtra;
+declare const _ChartEditor_setExportFilename: ChartEditorSetExportFilename;
 
 const __updateHighchartsConfig = (config: unknown) =>
     _ChartEditor_updateHighchartsConfig(
@@ -73,8 +94,14 @@ const ChartEditor: IChartEditor = {
         JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig))),
     getSecrets: () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets()),
     resolveRelative: (...params) => _ChartEditor_resolveRelative(...params),
-    resolveInterval: (intervalStr) => _ChartEditor_resolveInterval(intervalStr),
-    resolveOperation: (input) => JSON.parse(_ChartEditor_resolveOperation(JSON.stringify(input))),
+    resolveInterval: (intervalStr) => {
+        const interval = _ChartEditor_resolveInterval(intervalStr);
+        return interval ? JSON.parse(interval) : null;
+    },
+    resolveOperation: (input) => {
+        const operation = _ChartEditor_resolveOperation(JSON.stringify(input));
+        return operation ? JSON.parse(operation) : null;
+    },
     setError: (value) => _ChartEditor_setError(JSON.stringify(value)),
     _setError: (input) => _ChartEditor_setChartsInsights(JSON.stringify(input)),
     setChartsInsights: (value) => _ChartEditor_setError(JSON.stringify(value)),
@@ -82,7 +109,9 @@ const ChartEditor: IChartEditor = {
     getActionParams: () => JSON.parse(_ChartEditor_getActionParams()),
     wrapFn: (value) => {
         const fnArgs = Array.isArray(value.args)
-            ? value.args.map((arg) => (typeof arg === 'function' ? arg.toString() : arg))
+            ? (value.args as unknown[]).map((arg) =>
+                  typeof arg === 'function' ? arg.toString() : arg,
+              )
             : value.args;
 
         return {
@@ -101,9 +130,12 @@ const ChartEditor: IChartEditor = {
         },
 
     getParams: () => JSON.parse(_ChartEditor_getParams()),
-    getParam: (paramName) => JSON.parse(_ChartEditor_getParam(paramName)),
+    getParam: (paramName) => {
+        const param = _ChartEditor_getParam(paramName);
+        return param ? JSON.parse(param) : null;
+    },
 
-    getSortParams: () => JSON.parse(_ChartEditor_getSortParams()),
+    getSortParams: () => JSON.parse(_ChartEditor_getSortParams),
 
     getCurrentPage: () => _ChartEditor_currentPage,
 
@@ -122,12 +154,14 @@ const ChartEditor: IChartEditor = {
     setSideMarkdown: (markdown) => _ChartEditor_setSideMarkdown(markdown),
     setExtra: (key, value) => _ChartEditor_setExtra(key, JSON.stringify(value)),
     setExportFilename: (filename) => _ChartEditor_setExportFilename(filename),
-    __setSharedData: function (override: Record<string, string | object>): void {
+    __setSharedData: function (_override: Record<string, string | object>): void {
         throw new Error('Function not implemented.');
     },
-    setErrorTransform: function (errorTransformer: (error: unknown) => unknown): unknown {
+    setErrorTransform: function (_errorTransformer: (error: unknown) => unknown): unknown {
         throw new Error('Function not implemented.');
     },
 };
 
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const chartEditor = ChartEditor;
