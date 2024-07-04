@@ -5,6 +5,6 @@ export default createFeatureConfig({
     name: Feature.EnableIsolatedSandbox,
     state: {
         development: true,
-        production: false,
+        production: true,
     },
 });
