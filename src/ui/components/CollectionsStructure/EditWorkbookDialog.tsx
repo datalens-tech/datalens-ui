@@ -16,6 +16,7 @@ const i18n = I18n.keyset('component.collections-structure');
 type Props = {
     workbookId: string;
     title: string;
+    project?: string;
     description: string;
     open: boolean;
     onClose: () => void;
@@ -35,13 +36,14 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
     const isLoading = useSelector(selectUpdateWorkbookIsLoading);
 
     const handleApply = React.useCallback(
-        async ({title, description}: {title: string; description?: string}) => {
+        async ({title, project, description}: {title: string; project?: string; description?: string}) => {
             const {workbookId, onApply} = props;
 
             const result = await dispatch(
                 updateWorkbook({
                     workbookId,
                     title,
+                    project,
                     description: description ?? '',
                 }),
             );
@@ -55,12 +57,13 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
         [dispatch, props],
     );
 
-    const {title, description, open, onClose} = props;
+    const {title, project, description, open, onClose} = props;
 
     return (
         <WorkbookDialog
             title={i18n('action_edit-workbook')}
             titleValue={title}
+            projectValue={project}
             descriptionValue={description}
             textButtonApply={i18n('action_save')}
             open={open}

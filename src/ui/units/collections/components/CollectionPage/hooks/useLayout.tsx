@@ -416,6 +416,7 @@ export const useLayout = ({
                                                             open: true,
                                                             collectionId: collection.collectionId,
                                                             title: collection.title,
+                                                            project: collection.projectId,
                                                             description:
                                                                 collection?.description ?? '',
                                                             onApply: fetchCollectionInfo,

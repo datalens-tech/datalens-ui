@@ -27,6 +27,7 @@
   "label_move-denied-title": "Insufficient permissions to move object",
   "label_ql": "QL chart",
   "label_title": "Name",
+  "label_project": "Project",
   "label_wizard": "chart",
   "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
   "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?"

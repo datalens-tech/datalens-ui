@@ -31,12 +31,13 @@ export const CreateCollectionDialog: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const {open, onClose} = props;
 
-    const handleApply = async ({title, description}: {title: string; description: string}) => {
+    const handleApply = async ({title, project, description}: {title: string; project?: string; description: string}) => {
         const {parentId, onApply} = props;
 
         const result = await dispatch(
             createCollection({
                 title,
+                project,
                 description,
                 parentId,
             }),

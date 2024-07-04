@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1794.1] 04.07.2024
+
+Created:
+
+- добавлена возможность редактирования проектов и ролей;
+- изменены карточки коллекция и воркбуков, добавлено поле "Проект".
+
+Fixed:
+
+- информация об авторизованном пользователе перенесена в левое меню.
+
 ## [0.1794.0] 02.07.2024
 
 Fixed:

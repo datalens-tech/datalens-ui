@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Dialog, TextArea, TextInput, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import './WorkbookDialog.scss';
+import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -12,14 +13,16 @@ const b = block('dl-workbook-dialog');
 
 export type Props = {
     title: string;
+    project?: string;
     textButtonApply: string;
     open: boolean;
     isLoading: boolean;
     titleValue?: string;
+    projectValue?: string;
     descriptionValue?: string;
     isHiddenDescription?: boolean;
     titleAutoFocus?: boolean;
-    onApply: (args: {title: string; description?: string}) => Promise<unknown>;
+    onApply: (args: {title: string; project?: string; description?: string}) => Promise<unknown>;
     onClose: () => void;
 };
 
@@ -31,29 +34,50 @@ export const WorkbookDialog = React.memo<Props>(
         isLoading,
         titleValue = '',
         descriptionValue = '',
+        projectValue = '',
         isHiddenDescription = false,
         titleAutoFocus = false,
         onApply,
         onClose,
     }) => {
+        const [innerProjectValue, setInnerProjectValue] = React.useState([projectValue]);
         const [innerTitleValue, setInnerTitleValue] = React.useState(titleValue);
         const [innerDescriptionValue, setInnerDescriptionValue] = React.useState(descriptionValue);
 
+        var [projects, setProjects] = React.useState([]);
+        var [projectDefault, setProjectDefault] = React.useState("");
+
         React.useEffect(() => {
+            Utils.projects({}).then((values)=>{
+                var results: any = [];
+                for(var idx in values) {
+                    var value = values[idx];
+                    var item = {"content": value.name, "value": value.name };
+                    results.push(item);
+
+                    if(value.isbase) {
+                        setProjectDefault(value.name);
+                    }
+                }
+                setProjects(results);
+            })
+
             if (open) {
                 setInnerTitleValue(titleValue);
+                setInnerProjectValue([projectValue]);
                 setInnerDescriptionValue(descriptionValue);
             }
-        }, [open, titleValue, descriptionValue]);
+        }, [open, titleValue, projectValue, descriptionValue]);
 
         const handleApply = React.useCallback(() => {
             onApply({
                 title: innerTitleValue,
+                project: innerProjectValue[0],
                 description: isHiddenDescription ? undefined : innerDescriptionValue,
             }).then(() => {
                 onClose();
             });
-        }, [innerTitleValue, innerDescriptionValue, isHiddenDescription, onApply, onClose]);
+        }, [innerTitleValue, innerProjectValue, innerDescriptionValue, isHiddenDescription, onApply, onClose]);
 
         return (
             <Dialog
@@ -72,6 +96,11 @@ export const WorkbookDialog = React.memo<Props>(
                             onUpdate={setInnerTitleValue}
                             autoFocus={titleAutoFocus}
                         />
+                    </div>
+                    <div className={b('field')}>
+                        <div className={b('title')}>{i18n('label_project')}</div>
+
+                        <Select defaultValue={[innerProjectValue[0] || projectDefault]} options={projects} onUpdate={setInnerProjectValue}/>
                     </div>
                     {!isHiddenDescription && (
                         <div className={b('field')}>

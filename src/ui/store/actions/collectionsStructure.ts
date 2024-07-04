@@ -372,10 +372,12 @@ type CreateCollectionAction =
 
 export const createCollection = ({
     title,
+    project,
     description,
     parentId,
 }: {
     title: string;
+    project?: string;
     description?: string;
     parentId: string | null;
 }) => {
@@ -386,6 +388,7 @@ export const createCollection = ({
         return getSdk()
             .us.createCollection({
                 title,
+                project,
                 description,
                 parentId,
             })
@@ -516,10 +519,12 @@ type CreateWorkbookAction =
 
 export const createWorkbook = ({
     title,
+    project,
     description,
     collectionId,
 }: {
     title: string;
+    project?: string;
     description?: string;
     collectionId: string | null;
 }) => {
@@ -530,6 +535,7 @@ export const createWorkbook = ({
         return getSdk()
             .us.createWorkbook({
                 title,
+                project,
                 description,
                 collectionId,
             })
@@ -925,10 +931,12 @@ type UpdateWorkbookAction =
 export const updateWorkbook = ({
     workbookId,
     title,
+    project,
     description,
 }: {
     workbookId: string;
     title: string;
+    project?: string;
     description: string;
 }) => {
     return (dispatch: CollectionsStructureDispatch) => {
@@ -939,6 +947,7 @@ export const updateWorkbook = ({
             .us.updateWorkbook({
                 workbookId,
                 title,
+                project,
                 description,
             })
             .then((data) => {
@@ -992,10 +1001,12 @@ type UpdateCollectionAction =
 export const updateCollection = ({
     collectionId,
     title,
+    project,
     description,
 }: {
     collectionId: string;
     title: string;
+    project?: string;
     description: string;
 }) => {
     return (dispatch: CollectionsStructureDispatch) => {
@@ -1006,6 +1017,7 @@ export const updateCollection = ({
             .us.updateCollection({
                 collectionId,
                 title,
+                project,
                 description,
             })
             .then((data) => {

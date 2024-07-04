@@ -34,8 +34,8 @@ export const workbooksActions = {
     createWorkbook: createAction<CreateWorkbookResponse, CreateWorkbookArgs>({
         method: 'POST',
         path: () => PATH_PREFIX,
-        params: ({collectionId, title, description}, headers) => ({
-            body: {collectionId, title, description},
+        params: ({collectionId, title, project, description}, headers) => ({
+            body: {collectionId, title, project, description},
             headers,
         }),
     }),
@@ -91,7 +91,7 @@ export const workbooksActions = {
     updateWorkbook: createAction<UpdateWorkbookResponse, UpdateWorkbookArgs>({
         method: 'POST',
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/update`,
-        params: ({title, description}, headers) => ({body: {title, description}, headers}),
+        params: ({title, project, description}, headers) => ({body: {title, project, description}, headers}),
     }),
 
     moveWorkbook: createAction<MoveWorkbookResponse, MoveWorkbookArgs>({

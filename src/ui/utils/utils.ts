@@ -402,4 +402,15 @@ export default class Utils {
 
         return result;
     }
+
+    /**
+     * Получение списка проектов
+     * @param propsData {}
+     * @returns 
+     */
+    static projects = async (propsData: any) => {
+        var result = await this.universalService({"action": "datalens", "method": "projects", "data": [propsData]});
+
+        return result.data && result.data.length > 0 ? result.data : [];
+    }
 }

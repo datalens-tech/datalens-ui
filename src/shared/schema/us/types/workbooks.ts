@@ -21,7 +21,7 @@ export type Workbook = {
     title: string;
     description: string | null;
     tenantId: string;
-    projectId: string | null;
+    projectId?: string;
     meta: Record<string, unknown>;
     createdBy: string;
     createdAt: string;
@@ -36,6 +36,7 @@ export type WorkbookWithPermissions = Workbook & {
 export type CreateWorkbookArgs = {
     collectionId?: string | null;
     title: string;
+    project?: string;
     description?: string;
 };
 
@@ -90,6 +91,7 @@ export type GetWorkbooksListResponse = {
 export type UpdateWorkbookArgs = {
     workbookId: string;
     title?: string;
+    project?: string;
     description?: string;
 };
 

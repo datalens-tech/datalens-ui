@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Dialog, Select, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
 import './CollectionDialog.scss';
+import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -17,8 +18,9 @@ export type Props = {
     isLoading: boolean;
     titleValue?: string;
     descriptionValue?: string;
+    projectValue?: string;
     titleAutoFocus?: boolean;
-    onApply: (args: {title: string; description: string}) => Promise<unknown>;
+    onApply: (args: {title: string; project?: string; description: string}) => Promise<unknown>;
     onClose: () => void;
 };
 
@@ -30,25 +32,46 @@ export const CollectionDialog = React.memo<Props>(
         isLoading,
         titleValue = '',
         descriptionValue = '',
+        projectValue = '',
         titleAutoFocus = false,
         onApply,
         onClose,
     }) => {
         const [innerTitleValue, setInnerTitleValue] = React.useState(titleValue);
+        const [innerProjectValue, setInnerProjectValue] = React.useState([projectValue]);
         const [innerDescriptionValue, setInnerDescriptionValue] = React.useState(descriptionValue);
 
+        var [projects, setProjects] = React.useState([]);
+        var [projectDefault, setProjectDefault] = React.useState("");
+
         React.useEffect(() => {
+
+            Utils.projects({}).then((values)=>{
+                var results: any = [];
+                for(var idx in values) {
+                    var value = values[idx];
+                    var item = {"content": value.name, "value": value.name };
+                    results.push(item);
+
+                    if(value.isbase) {
+                        setProjectDefault(value.name);
+                    }
+                }
+                setProjects(results);
+            })
+
             if (open) {
                 setInnerTitleValue(titleValue);
+                setInnerProjectValue([projectValue]);
                 setInnerDescriptionValue(descriptionValue);
             }
-        }, [open, titleValue, descriptionValue]);
+        }, [open, titleValue, projectValue, descriptionValue]);
 
         const handleApply = React.useCallback(() => {
-            onApply({title: innerTitleValue, description: innerDescriptionValue}).then(() => {
+            onApply({title: innerTitleValue, project: innerProjectValue[0], description: innerDescriptionValue}).then(() => {
                 onClose();
             });
-        }, [innerTitleValue, innerDescriptionValue, onApply, onClose]);
+        }, [innerTitleValue, innerProjectValue, innerDescriptionValue, onApply, onClose]);
 
         return (
             <Dialog
@@ -67,6 +90,11 @@ export const CollectionDialog = React.memo<Props>(
                             onUpdate={setInnerTitleValue}
                             autoFocus={titleAutoFocus}
                         />
+                    </div>
+                    <div className={b('field')}>
+                        <div className={b('title')}>{i18n('label_project')}</div>
+                        
+                        <Select defaultValue={[innerProjectValue[0] || projectDefault]} options={projects} onUpdate={setInnerProjectValue}/>
                     </div>
                     <div className={b('field')}>
                         <div className={b('title')}>{i18n('label_description')}</div>

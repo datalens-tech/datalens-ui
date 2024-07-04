@@ -16,6 +16,7 @@ const i18n = I18n.keyset('component.collections-structure');
 type Props = {
     collectionId: string;
     title: string;
+    project?: string;
     description: string;
     open: boolean;
     onClose: () => void;
@@ -33,13 +34,14 @@ export const EditCollectionDialog: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
 
     const handleApply = React.useCallback(
-        async ({title, description}: {title: string; description: string}) => {
+        async ({title, project, description}: {title: string; project?: string; description: string}) => {
             const {collectionId, onApply} = props;
 
             const result = await dispatch(
                 updateCollection({
                     collectionId,
                     title,
+                    project,
                     description,
                 }),
             );
@@ -53,7 +55,7 @@ export const EditCollectionDialog: React.FC<Props> = (props) => {
         [dispatch, props],
     );
 
-    const {title, description, open, onClose} = props;
+    const {title, project, description, open, onClose} = props;
 
     const isLoading = useSelector(selectUpdateCollectionIsLoading);
 
@@ -61,6 +63,7 @@ export const EditCollectionDialog: React.FC<Props> = (props) => {
         <CollectionDialog
             title={i18n('action_edit-collection')}
             titleValue={title}
+            projectValue={project}
             descriptionValue={description}
             textButtonApply={i18n('action_save')}
             open={open}

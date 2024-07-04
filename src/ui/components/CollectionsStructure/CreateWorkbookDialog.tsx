@@ -31,12 +31,13 @@ export const CreateWorkbookDialog: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
     const {open, onClose} = props;
 
-    const handleApply = async ({title, description}: {title: string; description?: string}) => {
+    const handleApply = async ({title, project, description}: {title: string; project?: string; description?: string}) => {
         const {collectionId, onApply} = props;
 
         const result = await dispatch(
             createWorkbook({
                 title,
+                project,
                 description: description ?? '',
                 collectionId,
             }),

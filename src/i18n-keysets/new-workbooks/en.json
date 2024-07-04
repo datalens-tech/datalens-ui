@@ -25,6 +25,7 @@
   "label_entry-name-already-exists": "That name is already in use, try another one",
   "label_error-load-entities": "Unable to load entities",
   "label_last-modified": "Last modified",
+  "label_project": "Project",
   "label_no-data": "Empty",
   "label_placeholder": "Name",
   "label_rename-entry": "Rename",

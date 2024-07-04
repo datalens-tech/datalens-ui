@@ -27,6 +27,7 @@
   "label_move-denied-title": "Недостаточно прав для перемещения",
   "label_ql": "QL-чарта",
   "label_title": "Название",
+  "label_project": "Проект",
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?"
