@@ -1,5 +1,4 @@
 import _isEqual from 'lodash/isEqual';
-import {isColorModeChangeAvailable} from 'ui/units/wizard/selectors/dialogColor';
 
 import type {
     ColorsConfig,
@@ -34,6 +33,7 @@ import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
 import type {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
 import {selectParameters} from '../selectors/dataset';
+import {isColorModeChangeAvailable} from '../selectors/dialogColor';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {
     selectDashboardParameters,
@@ -46,6 +46,7 @@ import {
 } from '../selectors/visualization';
 import {selectExtraSettings, selectWidget} from '../selectors/widget';
 import {getVisualization} from '../utils/helpers';
+import {getItemForShapeSection} from '../utils/shapes';
 
 import {openDialogColor} from './dialogColor';
 import {updatePreviewAndClientChartsConfig} from './preview';
@@ -304,7 +305,6 @@ export function openDialogShapes({
         const distincts = selectDistincts(globalState);
 
         if (dataset && visualization) {
-            const placeholders = visualization.placeholders;
             const isArray = Array.isArray(item);
             dispatch(
                 openDialog({
@@ -312,7 +312,9 @@ export function openDialogShapes({
                     props: {
                         parameters,
                         dashboardParameters,
-                        item: isArray ? shapes[0] || placeholders[1].items[0] : (item as Field),
+                        item: isArray
+                            ? shapes[0] || getItemForShapeSection(visualization)
+                            : (item as Field),
                         items: isArray ? (item as Field[]) : undefined,
                         distincts,
                         datasetId: dataset.id,

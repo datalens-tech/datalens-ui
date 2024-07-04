@@ -141,6 +141,10 @@ function getFullUrl(url: string) {
     return new URL(`${process.env.E2E_DOMAIN}${formattedUrl}`);
 }
 
+export const getStringFullUrl = (url: string) => {
+    return getFullUrl(url).toString();
+};
+
 // Go to url by passing only pathname
 export async function goto(
     page: Page,
