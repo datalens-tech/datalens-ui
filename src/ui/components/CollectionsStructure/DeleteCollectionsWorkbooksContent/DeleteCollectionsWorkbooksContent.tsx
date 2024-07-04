@@ -24,7 +24,9 @@ export const DeleteCollectionsWorkbooksContent = ({collectionTitles, workbookTit
         <div className={b()}>
             {Boolean(collectionTitles.length) && (
                 <React.Fragment>
-                    <div className={b('header')}>{i18n('label_delete-collections-for-delete')}</div>
+                    <div className={b('header')}>
+                        {i18n('label_delete-collections-for-delete')}:
+                    </div>
                     <div className={b('list')}>
                         {collectionTitles.map((title) => (
                             <div className={b('item')} key={title}>
@@ -47,7 +49,7 @@ export const DeleteCollectionsWorkbooksContent = ({collectionTitles, workbookTit
 
             {Boolean(workbookTitles.length) && (
                 <React.Fragment>
-                    <div className={b('header')}>{i18n('label_delete-workbooks-for-delete')}</div>
+                    <div className={b('header')}>{i18n('label_delete-workbooks-for-delete')}:</div>
                     <div className={b('list')}>
                         {workbookTitles.map((title) => (
                             <div className={b('item')} key={title}>

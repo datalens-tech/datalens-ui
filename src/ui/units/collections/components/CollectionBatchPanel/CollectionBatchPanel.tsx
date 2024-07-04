@@ -25,49 +25,53 @@ export const CollectionBatchPanel = ({
     onAction,
     onClose,
 }: BatchPanelProps) => {
-    const actions: ActionsPanelProps['actions'] = React.useMemo(
-        () => [
-            {
-                id: 'move',
-                button: {
-                    props: {
-                        children: [
-                            <Icon key="icon" data={ArrowRight} size="16" />,
-                            countForMove
-                                ? `${i18n('action_move')} - ${countForMove}`
-                                : i18n('action_move'),
-                        ],
-                        onClick: () => onAction('move'),
-                    },
-                },
-                dropdown: {
-                    item: {
-                        action: () => onAction('move'),
-                        text: i18n('action_move'),
-                    },
+    const actions: ActionsPanelProps['actions'] = [];
+
+    if (countForMove) {
+        actions.push({
+            id: 'move',
+            button: {
+                props: {
+                    children: [
+                        <Icon key="icon" data={ArrowRight} size="16" />,
+                        countForMove
+                            ? `${i18n('action_move')} — ${countForMove}`
+                            : i18n('action_move'),
+                    ],
+                    onClick: () => onAction('move'),
                 },
             },
-            {
-                id: 'delete',
-                button: {
-                    props: {
-                        children: [
-                            <Icon key="icon" data={TrashBin} size="16" />,
-                            `${i18n('action_delete')} - ${countForDelete}`,
-                        ],
-                        onClick: () => onAction('delete'),
-                    },
-                },
-                dropdown: {
-                    item: {
-                        action: () => onAction('delete'),
-                        text: i18n('action_delete'),
-                    },
+            dropdown: {
+                item: {
+                    action: () => onAction('move'),
+                    text: i18n('action_move'),
                 },
             },
-        ],
-        [countForDelete, countForMove, onAction],
-    );
+        });
+    }
+
+    if (countForDelete) {
+        actions.push({
+            id: 'delete',
+            button: {
+                props: {
+                    children: [
+                        <Icon key="icon" data={TrashBin} size="16" />,
+                        `${i18n('action_delete')} — ${countForDelete}`,
+                    ],
+                    onClick: () => onAction('delete'),
+                },
+            },
+            dropdown: {
+                item: {
+                    action: () => onAction('delete'),
+                    text: i18n('action_delete'),
+                },
+            },
+        });
+    }
+
+    if (!actions.length) return null;
 
     return <ActionsPanel actions={actions} className={className} onClose={onClose} />;
 };
