@@ -6,12 +6,7 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
-import {
-    PlaceholderId,
-    SectionVisualizationAddItemQa,
-    WizardVisualizationId,
-    isFieldHierarchy,
-} from 'shared';
+import {SectionVisualizationAddItemQa, WizardVisualizationId, isFieldHierarchy} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PaletteTypes} from 'ui/units/wizard/constants';
 import {selectDataset} from 'units/wizard/selectors/dataset';
@@ -25,6 +20,7 @@ import {openDialogShapes} from '../../../../../actions/dialog';
 import {updateShapes} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
 import {getDialogItem} from '../../../../../utils/helpers';
+import {getItemForShapeSection} from '../../../../../utils/shapes';
 import type {AddableField} from '../../AddField/AddField';
 import PlaceholderComponent from '../Placeholder/Placeholder';
 import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
@@ -39,14 +35,7 @@ class ShapesPlaceholder extends React.Component<Props> {
         const {addFieldItems, visualization, shapes, wrapTo, datasetError, onBeforeRemoveItem} =
             this.props;
         const placeholders = visualization.placeholders;
-
-        const hasSettings = Boolean(
-            shapes.length ||
-                (placeholders[1] &&
-                    (placeholders[1].id === PlaceholderId.Y ||
-                        placeholders[1].id === PlaceholderId.X) &&
-                    placeholders[1].items.length),
-        );
+        const hasSettings = Boolean(shapes.length || getItemForShapeSection(visualization));
 
         const shapesContainsHierarchies = shapes.some(isFieldHierarchy);
 
