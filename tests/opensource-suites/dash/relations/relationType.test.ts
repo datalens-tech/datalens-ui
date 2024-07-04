@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
+import {DashCommonQa, DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
@@ -52,9 +52,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
 
             // adding links to controls
 
-            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-            );
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
 
             await dashboardPage.setupNewLinks({
                 linkType: DashRelationTypes.output,
@@ -98,9 +96,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-            );
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
 
             await selectorElem.click();
 
@@ -133,9 +129,7 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             });
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-            );
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
 
             await selectorElem.click();
 
