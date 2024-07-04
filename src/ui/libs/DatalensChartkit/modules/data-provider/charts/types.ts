@@ -172,6 +172,7 @@ export interface ChartsProps {
     };
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
+    forceShowSafeChart?: boolean;
 }
 
 export interface ChartsData {

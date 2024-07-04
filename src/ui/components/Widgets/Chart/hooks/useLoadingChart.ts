@@ -12,7 +12,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import type {StringParams} from 'shared';
-import {DashTabItemControlSourceType} from 'shared';
+import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -89,6 +89,7 @@ export type LoadingChartHookProps = {
     widgetType?: ChartSelectorWithRefProps['widgetType'];
     isPageHidden?: boolean;
     autoupdateInterval?: number;
+    forceShowSafeChart?: boolean;
 };
 
 type AutoupdateDataType = {
@@ -144,6 +145,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         widgetType,
         autoupdateInterval,
         isPageHidden,
+        forceShowSafeChart,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -265,6 +267,15 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 },
             };
         }
+        if (forceShowSafeChart) {
+            res = {
+                ...res,
+                params: {
+                    ...res.params,
+                    [SHARED_URL_OPTIONS.SAFE_CHART]: '1',
+                },
+            };
+        }
         return res;
     }, [
         ignoreUsedParams,
@@ -277,6 +288,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         hasChartTabChanged,
         clearedOuterParams,
         currentChangeParamsRef,
+        forceShowSafeChart,
     ]);
 
     const handleError = React.useCallback(
