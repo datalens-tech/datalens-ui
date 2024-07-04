@@ -342,9 +342,7 @@ export default class Utils {
      * @returns 
      */
     static createUser = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "create_user", "data": [propsData]});
-
-        return result.data && result.data.length > 0 ? result.data : [];
+        return await this.universalService({"action": "datalens", "method": "create_user", "data": [propsData]});
     }
 
     /**
@@ -353,9 +351,7 @@ export default class Utils {
      * @returns 
      */
     static updateUser = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "update_user", "data": [propsData]});
-
-        return result.data && result.data.length > 0 ? result.data : [];
+        return await this.universalService({"action": "datalens", "method": "update_user", "data": [propsData]});
     }
 
     /**
@@ -364,9 +360,7 @@ export default class Utils {
      * @returns 
      */
     static passwordReset = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "password_reset", "data": [propsData]});
-
-        return result.data && result.data.length > 0 ? result.data : [];
+        return await this.universalService({"action": "datalens", "method": "password_reset", "data": [propsData]});
     }
 
     /**
@@ -375,9 +369,7 @@ export default class Utils {
      * @returns 
      */
     static updateRoles = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "update_roles", "data": [propsData]});
-
-        return result.data && result.data.length > 0 ? result.data : [];
+        return await this.universalService({"action": "datalens", "method": "update_roles", "data": [propsData]});
     }
 
     /**

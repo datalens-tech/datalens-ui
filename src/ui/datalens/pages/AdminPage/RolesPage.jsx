@@ -44,7 +44,7 @@ async function updateTable() {
   roles = await Utils.getRoles({});
 
   $.each(roles, function(index, value) { 
-    var btn = `<td><button type="button" class="btn btn-sm" data-item-id="${value.role_id}" data-item-base="${value.isbase}">Изменить</button></td>`;
+    var btn = `<td><button type="button" class="btn btn-sm" data-item-id="${value.role_id}" data-item-base="${value.isbase}">${i18n('change')}</button></td>`;
     table.append(`<tr class="role-item">
                     <td>${value.role_id}</td>
                     <td>${value.description}</td>
@@ -82,6 +82,7 @@ class RoleTables extends React.Component {
               $('#role_item_id').val(item.role_id);
               $('#role_item_name').val(item.name);
               $('#role_item_description').val(item.description);
+              break;
             }
           }
         })
@@ -106,7 +107,7 @@ class RoleTables extends React.Component {
             return setMessage(i18n('const_require'));
           }
 
-          if(!/[a-zA-Z0-1_]+/.test(values.c_name)) {
+          if(!/[a-zA-Z0-9_]+/.test(values.c_name)) {
             $('#dl-admin-form-loading').hide();
             return setMessage(i18n('const_valid_name'));
           }
@@ -140,6 +141,14 @@ class RoleTables extends React.Component {
           $('#dl-admin-form').css({"width": "50%"});
           $('#dl-admin-list').css({"width": "50%"});
         });
+
+        // обновление списка
+        $('#dl-admin-form-refresh').on('click', () => { 
+          $('#dl-admin-loading').show();
+          updateTable().finally(() => {
+            $('#dl-admin-loading').hide();
+          });
+        });
     }
     
     render() {
@@ -152,7 +161,9 @@ class RoleTables extends React.Component {
           </div>
 
           <div style={{"textAlign": "right"}}>
-            <button type="button" className="btn btn-light" id="dl-admin-form-add">{i18n('create')}</button>
+            <button type="button" className="btn btn-outline-secondary" id="dl-admin-form-add">{i18n('create')}</button>
+            &nbsp;
+            <button type="button" className="btn btn-outline-secondary" id="dl-admin-form-refresh">{i18n('refresh')}</button>
           </div>
 
           <table style={{"width": "100%"}}>

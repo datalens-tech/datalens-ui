@@ -48,6 +48,11 @@ const RolesPage = React.lazy(
 const ProjectsPage = React.lazy(
     () => import('./pages/AdminPage/ProjectsPage'),
 );
+
+const UsersPage = React.lazy(
+    () => import('./pages/AdminPage/UsersPage'),
+);
+
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 
@@ -89,6 +94,7 @@ const DatalensPageView = (props: any) => {
                         path={'/auth'}
                         component={()=><AuthPage setToken={setToken} />}
                     />
+                    <Route path={['/admin/users']} component={superUser.isMaster ? UsersPage : ()=><Redirect from="*" to="/"/>} />
                     <Route path={['/admin/roles']} component={superUser.isMaster ? RolesPage : ()=><Redirect from="*" to="/"/>} />
                     <Route path={['/admin/projects']} component={superUser.isMaster ?  ProjectsPage : ()=><Redirect from="*" to="/"/>} />
                     <Route

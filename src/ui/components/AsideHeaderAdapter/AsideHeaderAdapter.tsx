@@ -31,6 +31,7 @@ const COLLECTIONS_PATH = '/collections';
 const SERVICE_SETTINGS_PATH = '/settings';
 const PROJECTS_PATH = '/admin/projects';
 const ROLES_PATH = '/admin/roles';
+const USERS_PATH = '/admin/users';
 
 const LOGO_DEFAULT_SIZE = 32;
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
@@ -156,6 +157,14 @@ export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapte
                 },
             },
             ...(superUser ? [
+            {
+                id: 'users',
+                title: i18n('switch_service-users'),
+                current: pathname.includes(USERS_PATH),
+                itemWrapper: (params: any, makeItem: any) => {
+                    return getLinkWrapper(makeItem(params), USERS_PATH);
+                },
+            },
             {
                 id: 'projects',
                 title: i18n('switch_service-projects'),
