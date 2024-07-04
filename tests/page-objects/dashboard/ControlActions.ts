@@ -324,8 +324,7 @@ class ControlActions {
             .filter({
                 has: this.page
                     .locator(slct(ControlQA.groupChartkitControl))
-                    .or(this.page.locator(slct(ControlQA.chartkitControl)))
-                    .first(),
+                    .or(this.page.locator(slct(ControlQA.chartkitControl))),
             })
             .nth(counter || 0)
             .locator(slct(ControlQA.controlLinks));

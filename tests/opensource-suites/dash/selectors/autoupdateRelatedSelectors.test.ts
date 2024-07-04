@@ -317,7 +317,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             await expect(secondSelectorValue).toEqual('');
 
-            // TODO: Return check after CHARTS-9889
+            // Return check after bug fix of alias case
             // await page.locator(slct(ControlQA.controlButtonApply)).click();
 
             // // last changed param will be applied to both selectors
