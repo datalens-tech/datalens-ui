@@ -127,6 +127,27 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                 });
             }
 
+            if (item.permissions.listAccessBindings) {
+                actions.push({
+                    text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_ASSIGN_CLAIMS,
+                                props: {
+                                    entryId: "",
+                                    workbookId: "",
+                                    collectionId: item.collectionId,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                });
+            }
+
             const otherActions: DropdownMenuItem[] = [];
 
             if (item.permissions.delete) {

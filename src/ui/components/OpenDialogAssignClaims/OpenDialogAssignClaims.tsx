@@ -10,6 +10,7 @@ import Utils from '../../utils/utils';
 export interface DialogAssignClaimsProps {
     entryId: string | null;
     workbookId: WorkbookId;
+    collectionId?: string;
     onClose: () => void;
 }
 
@@ -28,9 +29,10 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
     const {
         onClose,
         entryId,
-        workbookId
+        workbookId,
+        collectionId
     } = props;
-    const itemId = entryId || workbookId;
+    const itemId = collectionId || entryId || workbookId;
 
     useEffect(()=>{
         Utils.getRoles({}).then(_roles=>{

@@ -38,5 +38,6 @@
   "password_empty": "New password not specified.",
   "id_empty": "User ID unknown.",
   "search_part": "Login",
-  "search": "Search"
+  "search": "Search",
+  "username": "User name"
 }

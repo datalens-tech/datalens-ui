@@ -331,7 +331,7 @@ export default class Utils {
     }
 
     static setAccesses = async (propsData: any) => {
-        var result = await this.universalService({"action": "datalens", "method": "updateAccesses", "data": [propsData]});
+        var result = await this.universalService({"action": "datalens", "method": "updateAccesses", "data": Array.isArray(propsData) ? propsData : [propsData]});
 
         return result.data && result.data.length > 0 ? result.data : [];
     }
