@@ -13,7 +13,7 @@ import {runServerlessEditor} from './serverlessEditor';
 
 import type {RunnerHandlerProps} from '.';
 
-async function getCharBuilder({
+async function getChartBuilder({
     parentContext,
     userLang,
     userLogin,
@@ -30,9 +30,8 @@ async function getCharBuilder({
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
 }) {
-    const enableIsolatedSandbox = Boolean(
-        isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox),
-    );
+    isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox);
+    const enableIsolatedSandbox = true;
     const chartBuilder = enableIsolatedSandbox
         ? await getIsolatedSandboxChartBuilder({
               userLang,
@@ -75,7 +74,7 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getCharBuilder({
+    const chartBuilder = await getChartBuilder({
         parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
