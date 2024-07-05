@@ -13,7 +13,7 @@ import {runServerlessEditor} from './serverlessEditor';
 
 import type {RunnerHandlerProps} from '.';
 
-async function getCharBuilder({
+async function getChartBuilder({
     parentContext,
     userLang,
     userLogin,
@@ -75,7 +75,7 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getCharBuilder({
+    const chartBuilder = await getChartBuilder({
         parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
