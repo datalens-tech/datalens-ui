@@ -4,6 +4,7 @@ import {ShieldExclamation} from '@gravity-ui/icons';
 import {Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
+import {DL} from '../../../../..//ui/constants/common';
 import {useMarkdown} from '../../../../hooks/useMarkdown';
 
 import './ChartInfoIcon.scss';
@@ -31,9 +32,13 @@ export const ChartInfoIcon = (props: Props) => {
     const {msg} = props;
     const [isLoaded, setLoaded] = React.useState(false);
 
+    const content = DL.ENDPOINTS.safeChartInfoLink
+        ? `${msg}\n[see](${DL.ENDPOINTS.safeChartInfoLink})`
+        : msg;
+
     return (
         <Popover
-            content={<MarkdownContent value={msg} onRender={() => setLoaded(true)} />}
+            content={<MarkdownContent value={content} onRender={() => setLoaded(true)} />}
             key={String(isLoaded)}
             initialOpen={isLoaded}
             tooltipClassName={b('tooltip', {hidden: !isLoaded})}

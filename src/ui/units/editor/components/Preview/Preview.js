@@ -37,6 +37,7 @@ const Preview = ({
                 actionParamsEnabled={actionParamsEnabled}
                 forwardedRef={widgetRef}
                 workbookId={workbookId}
+                forceShowSafeChart={true}
             />
         </div>
     );

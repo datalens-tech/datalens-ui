@@ -75,6 +75,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         isPageHidden,
         autoupdateInterval,
         workbookId,
+        forceShowSafeChart,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -186,6 +187,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         enableActionParams: actionParamsEnabled,
         isPageHidden,
         autoupdateInterval,
+        forceShowSafeChart,
     });
 
     /**

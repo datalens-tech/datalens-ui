@@ -4,6 +4,7 @@ import pick from 'lodash/pick';
 
 import {i18n} from '../../../../../i18n';
 import type {StringParams} from '../../../../../shared';
+import {SHARED_URL_OPTIONS} from '../../../../../shared';
 import type {CombinedError} from '../../types';
 import {isAxiosError} from '../axios/axios';
 import {
@@ -186,7 +187,7 @@ function formatError({
                 message = i18n('chartkit.custom-error', 'error-ui-sandbox-timeout');
                 Object.assign(extra, {
                     actionText: i18n('chartkit.custom-error', 'draw-anyway'),
-                    actionData: {params: {[URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT]: 1}},
+                    actionData: {params: {[SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT]: 1}},
                     hideDebugInfo: true,
                 });
                 break;
