@@ -192,16 +192,15 @@ datalensTest.describe('Dashboards - Manipulations with configs', () => {
             const dashboardPage = new DashboardPage({page});
 
             // open the dashboard with a selector on one of the tabs
-            await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
+            await openTestPage(page, config.dash.urls.DashboardLoadPrioritySelectors);
             await dashboardPage.duplicateDashboard({
-                dashId: config.dash.urls.DashboardWithTabsAndSelectors,
+                dashId: config.dash.urls.DashboardLoadPrioritySelectors,
                 useUserFolder: true,
             });
 
-            await dashboardPage.changeTab({tabName: PARAMS.OLD_SELECTOR_TAB});
             await dashboardPage.enterEditMode();
 
-            await dashboardPage.copyFirstWidget();
+            await dashboardPage.copyWidget(1);
 
             await dashboardPage.controlActions.clickAddSelector();
             await dashboardPage.controlActions.editSelectorBySettings(PARAMS.MANUAL_CONTROL);
@@ -243,7 +242,7 @@ datalensTest.describe('Dashboards - Manipulations with configs', () => {
             });
 
             await dashboardPage.enterEditMode();
-            await dashboardPage.copyFirstWidget();
+            await dashboardPage.copyWidget();
 
             await dashboardPage.addTab(PARAMS.ADDITIONAL_TAB);
             await dashboardPage.changeTab({tabName: PARAMS.ADDITIONAL_TAB});
