@@ -346,8 +346,11 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
 
-    async copyFirstWidget() {
-        await this.page.locator(slct(ControlQA.controlMenu)).first().click();
+    async copyWidget(counter?: number) {
+        await this.page
+            .locator(slct(ControlQA.controlMenu))
+            .nth(counter || 0)
+            .click();
         await this.page.locator(slct(DashKitOverlayMenuQa.CopyButton)).click();
     }
 
