@@ -38,7 +38,7 @@ import type {
     ChartEditorUserLogin,
     ChartEditorWrapFnWrappedFnKey,
     ChartEditorWrapHtmlWrappedHtmlKey,
-} from './chartEditorApi';
+} from './charteditor-api';
 declare const _ChartEditor_getTranslation: ChartEditorGetTranslation;
 declare const _ChartEditor_getSharedData: ChartEditorGetSharedData;
 declare const _ChartEditor_userLang: ChartEditorUserLang;

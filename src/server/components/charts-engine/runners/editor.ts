@@ -5,7 +5,7 @@ import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
-import {getIsolatedSandboxChartBuilder} from '../components/processor/isolatedSandbox/isolated-sandbox-chart-builder';
+import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 

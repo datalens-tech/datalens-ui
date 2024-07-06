@@ -51,7 +51,7 @@ export type ChartEditorResolveRelative = (
     intervalPart?: IntervalPart,
 ) => string | null;
 
-const prepare = fs.readFileSync(path.join(__dirname, 'chartEditorApiPrepare.js'), 'utf-8');
+const prepare = fs.readFileSync(path.join(__dirname, 'charteditor-api-prepare.js'), 'utf-8');
 export const prepareApiAdapter = prepare;
 
 export function prepareChartEditorApi({

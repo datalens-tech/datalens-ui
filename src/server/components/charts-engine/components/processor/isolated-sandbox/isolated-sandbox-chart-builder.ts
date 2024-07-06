@@ -7,8 +7,8 @@ import type {ResolvedConfig} from '../../storage/types';
 import {Processor} from '../index';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
 
-import type {ModulesSandboxExecuteResult} from './isolatedModulesSandbox';
-import {IsolatedSandbox} from './isolatedSandbox';
+import type {ModulesSandboxExecuteResult} from './isolated-modules-sandbox';
+import {Sandbox} from './sandbox';
 
 const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
@@ -55,7 +55,7 @@ export const getIsolatedSandboxChartBuilder = async (
             const processedModules: Record<string, ModulesSandboxExecuteResult> = {};
             for await (const resolvedModule of resolvedModules) {
                 const name = resolvedModule.key;
-                const result = await IsolatedSandbox.processModule({
+                const result = await Sandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
                     userLogin,
@@ -72,7 +72,7 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildParams: async (options) => {
-            const tabResult = await IsolatedSandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
                 timeout: ONE_SECOND,
@@ -93,7 +93,7 @@ export const getIsolatedSandboxChartBuilder = async (
             };
         },
         buildUrls: async (options) => {
-            const tabResult = await IsolatedSandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Urls',
                 code: config.data.url,
                 timeout: ONE_SECOND,
@@ -119,7 +119,7 @@ export const getIsolatedSandboxChartBuilder = async (
             if (config.data.graph) {
                 const tabName = type.startsWith('timeseries') ? 'Yagr' : 'Highcharts';
                 // Highcharts tab
-                tabResult = await IsolatedSandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: tabName,
                     code: config.data.graph,
                     timeout: ONE_SECOND,
@@ -136,7 +136,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 });
             } else if (config.data.map) {
                 // Highcharts tab
-                tabResult = await IsolatedSandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: 'Highmaps',
                     code: config.data.map,
                     timeout: ONE_SECOND,
@@ -153,7 +153,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
-                tabResult = await IsolatedSandbox.processTab({
+                tabResult = await Sandbox.processTab({
                     name: 'Yandex.Maps',
                     code: config.data.ymap,
                     timeout: ONE_SECOND,
@@ -182,7 +182,7 @@ export const getIsolatedSandboxChartBuilder = async (
         buildChartConfig: async (options) => {
             const data = options.data as Record<string, unknown> | undefined;
             const configTab = EDITOR_TYPE_CONFIG_TABS[type as keyof typeof EDITOR_TYPE_CONFIG_TABS];
-            const tabResult = await IsolatedSandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'Config',
                 code: config.data[configTab as keyof typeof config.data] || '',
                 timeout: ONE_SECOND,
@@ -205,7 +205,7 @@ export const getIsolatedSandboxChartBuilder = async (
         },
         buildChart: async (options) => {
             const data = options.data as Record<string, unknown> | undefined;
-            const tabResult = await IsolatedSandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'JavaScript',
                 code: config.data.js || 'module.exports = {};',
                 timeout: JS_EXECUTION_TIMEOUT,
@@ -229,7 +229,7 @@ export const getIsolatedSandboxChartBuilder = async (
         },
         buildUI: async (options) => {
             const data = options.data as Record<string, unknown> | undefined;
-            const tabResult = await IsolatedSandbox.processTab({
+            const tabResult = await Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
                 timeout: ONE_SECOND,

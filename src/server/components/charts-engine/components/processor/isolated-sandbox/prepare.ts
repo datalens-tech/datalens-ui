@@ -1,4 +1,4 @@
-import {prepareApiAdapter} from './interop/chartEditorApi';
+import {prepareApiAdapter} from './interop/charteditor-api';
 import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
 import {libsDatasetV2Interop} from './interop/libs/dataset-v2';

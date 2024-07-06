@@ -6,19 +6,19 @@ import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
 import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
+import {getChartApiContext} from '../chart-api-context';
+import {Console} from '../console';
+import type {LogItem} from '../console';
 import type {ProcessorHooks} from '../hooks';
 import type {RuntimeMetadata} from '../types';
 
-import {getChartApiContext} from './../chart-api-context';
-import {Console} from './../console';
-import type {LogItem} from './../console';
 import {
     libsControlV1Interop,
     libsDatalensV3Interop,
     libsDatasetV2Interop,
     libsQlChartV1Interop,
 } from './interop';
-import {prepareChartEditorApi} from './interop/chartEditorApi';
+import {prepareChartEditorApi} from './interop/charteditor-api';
 import {prepare} from './prepare';
 
 const DEFAULT_USER_LANG = 'ru';

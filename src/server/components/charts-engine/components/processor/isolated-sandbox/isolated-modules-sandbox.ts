@@ -1,8 +1,7 @@
 import type IsolatedVM from 'isolated-vm';
 
 import {config} from '../../../constants';
-
-import {Console} from './../console';
+import {Console} from '../console';
 
 const {
     RUNTIME_ERROR,
