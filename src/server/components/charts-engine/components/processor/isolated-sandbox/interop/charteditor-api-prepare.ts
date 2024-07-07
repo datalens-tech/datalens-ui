@@ -147,7 +147,15 @@ const ChartEditor: IChartEditor = {
     setDataSourceInfo: (dataSourceKey, info) =>
         _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info)),
 
-    updateConfig: (config) => _ChartEditor_updateConfig(JSON.stringify(config)),
+    updateConfig: (config) =>
+        _ChartEditor_updateConfig(
+            JSON.stringify(config, function (_key, val) {
+                if (typeof val === 'function') {
+                    return val.toString();
+                }
+                return val;
+            }),
+        ),
     updateHighchartsConfig: __updateHighchartsConfig,
     updateLibraryConfig: __updateHighchartsConfig,
     setSideHtml: (html) => _ChartEditor_setSideHtml(html),
