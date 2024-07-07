@@ -19,7 +19,8 @@ export const libsControlV1Interop: LibsInterop = {
         jail.setSync(`${NAMESPACE}_buildSources`, ((arg) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildSources>[0];
             const result = controlModule.buildSources(parsedArg);
-            chartEditorApi.__setSharedData(parsedArg.shared);
+            const shared = chartEditorApi.getSharedData();
+            Object.assign(shared, parsedArg.shared);
             return JSON.stringify(result);
         }) satisfies LibsControlV1BuildSources);
 
@@ -27,13 +28,15 @@ export const libsControlV1Interop: LibsInterop = {
             const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildGraph>[0];
             parsedArg.ChartEditor = chartEditorApi;
             controlModule.buildGraph(parsedArg);
-            chartEditorApi.__setSharedData(parsedArg.shared);
+            const shared = chartEditorApi.getSharedData();
+            Object.assign(shared, parsedArg.shared);
         }) satisfies LibsControlV1BuildGraph);
 
         jail.setSync(`${NAMESPACE}_buildUI`, ((arg) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof controlModule.buildUI>[0];
             const result = controlModule.buildUI(parsedArg);
-            chartEditorApi.__setSharedData(parsedArg.shared);
+            const shared = chartEditorApi.getSharedData();
+            Object.assign(shared, parsedArg.shared);
             return JSON.stringify(result);
         }) satisfies LibsControlV1BuildUI);
 

@@ -154,9 +154,6 @@ const ChartEditor: IChartEditor = {
     setSideMarkdown: (markdown) => _ChartEditor_setSideMarkdown(markdown),
     setExtra: (key, value) => _ChartEditor_setExtra(key, JSON.stringify(value)),
     setExportFilename: (filename) => _ChartEditor_setExportFilename(filename),
-    __setSharedData: function (_override: Record<string, string | object>): void {
-        throw new Error('Function not implemented.');
-    },
     setErrorTransform: function (_errorTransformer: (error: unknown) => unknown): unknown {
         throw new Error('Function not implemented.');
     },
