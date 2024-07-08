@@ -8,8 +8,8 @@ import {i18n} from 'i18n';
 import {DashTabItemType, DashboardAddWidgetQa, Feature} from 'shared';
 import Utils from 'ui/utils';
 
-import {DIALOG_TYPE} from '../containers/Dialogs/constants';
-import type {CopiedConfigData} from '../modules/helpers';
+import {DIALOG_TYPE} from '../units/dash/containers/Dialogs/constants';
+import type {CopiedConfigData} from '../units/dash/modules/helpers';
 
 const b = block('dash-body');
 
@@ -35,7 +35,7 @@ export const getActionPanelItems = ({
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
 }) => {
-    let items: DashkitActionPanelItem[] = [
+    const items: DashkitActionPanelItem[] = [
         {
             id: 'chart',
             icon: <Icon data={ChartColumn} />,
@@ -110,18 +110,21 @@ export const getActionPanelItems = ({
         });
     }
 
-    if (filterItem) {
-        items = items.filter(filterItem);
-    }
+    return items
+        .map((item) => {
+            if (item.dragProps?.type && !item.onClick) {
+                item.onClick = () =>
+                    openDialog(
+                        TYPES_TO_DIALOGS_MAP[
+                            item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
+                        ],
+                    );
+            }
 
-    return items.map((item) => {
-        if (item.dragProps?.type && !item.onClick) {
-            item.onClick = () =>
-                openDialog(
-                    TYPES_TO_DIALOGS_MAP[item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP],
-                );
-        }
-
-        return item;
-    });
+            return item;
+        })
+        .reduce(
+            (result, item) => (filterItem && filterItem(item) ? result : [...result, item]),
+            [] as DashkitActionPanelItem[],
+        );
 };

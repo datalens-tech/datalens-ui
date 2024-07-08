@@ -34,6 +34,7 @@ import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
 import type SDK from '../../../../libs/sdk';
 import Utils from '../../../../utils';
+import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
@@ -70,7 +71,6 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../utils/getActionPanelItems';
 import {getUrlGlobalParams} from '../../utils/url';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
