@@ -37,7 +37,15 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
         [items],
     );
 
-    const itemsAvailableForSelection = [...itemsWithMovePermission];
+    const itemsWithDeletePermission = React.useMemo(
+        () => items.filter((item) => item.permissions.delete),
+        [items],
+    );
+
+    const itemsAvailableForSelection = React.useMemo(
+        () => items.filter((item) => item.permissions.delete || item.permissions.move),
+        [items],
+    );
 
     const selectedMapWithMovePermission = React.useMemo(() => {
         const result: SelectedMap = {};
@@ -54,6 +62,21 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
         return result;
     }, [itemsWithMovePermission, selectedMap]);
 
+    const selectedMapWithDeletePermission = React.useMemo(() => {
+        const result: SelectedMap = {};
+
+        Object.keys(selectedMap).forEach((entityId) => {
+            const itemWithDeletePermission = itemsWithDeletePermission.find(
+                (item) => ('workbookId' in item ? item.workbookId : item.collectionId) === entityId,
+            );
+            if (itemWithDeletePermission) {
+                result[entityId] = selectedMap[entityId];
+            }
+        });
+
+        return result;
+    }, [itemsWithDeletePermission, selectedMap]);
+
     const resetSelected = React.useCallback(() => {
         setSelectedMap({});
     }, []);
@@ -68,14 +91,14 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
             type: SelectionEntityType;
             checked: boolean;
         }) => {
-            const itemHasMovePermission = Boolean(
-                itemsWithMovePermission.find(
+            const itemHasPermission = Boolean(
+                itemsAvailableForSelection.find(
                     (item) =>
                         entityId === ('workbookId' in item ? item.workbookId : item.collectionId),
                 ),
             );
 
-            if (itemHasMovePermission) {
+            if (itemHasPermission) {
                 if (checked) {
                     openSelectionMode();
                     setSelectedMap({
@@ -92,7 +115,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
                 }
             }
         },
-        [itemsWithMovePermission, openSelectionMode, selectedMap],
+        [itemsAvailableForSelection, openSelectionMode, selectedMap],
     );
 
     const updateAllCheckboxes = React.useCallback(
@@ -100,7 +123,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
             if (checked) {
                 const newSelectedMap: SelectedMap = {};
 
-                itemsWithMovePermission.forEach((item) => {
+                itemsAvailableForSelection.forEach((item) => {
                     const isWorkbook = 'workbookId' in item;
                     const id = isWorkbook ? item.workbookId : item.collectionId;
                     const type = isWorkbook ? 'workbook' : 'collection';
@@ -117,7 +140,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
                 resetSelected();
             }
         },
-        [itemsWithMovePermission, openSelectionMode, resetSelected],
+        [itemsAvailableForSelection, openSelectionMode, resetSelected],
     );
 
     React.useEffect(() => {
@@ -153,6 +176,7 @@ export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
     return {
         selectedMap,
         selectedMapWithMovePermission,
+        selectedMapWithDeletePermission,
         itemsAvailableForSelection,
         isOpenSelectionMode,
         openSelectionMode,
