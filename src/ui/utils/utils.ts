@@ -9,7 +9,7 @@ import _mapKeys from 'lodash/mapKeys';
 import _snakeCase from 'lodash/snakeCase';
 import moment from 'moment';
 import type {StringParams} from 'shared';
-import {ENABLE, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
+import {ENABLE, SHARED_URL_OPTIONS, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
 
 import {DL, SYSTEM_THEME, URL_OPTIONS} from '../constants';
 import {getSdk} from '../libs/schematic-sdk';
@@ -232,7 +232,7 @@ export default class Utils {
                 searchParams.get(URL_OPTIONS.NO_CONTROLS) === 'true', // deprecated
             actionParamsEnabled: searchParams.get(URL_OPTIONS.ACTION_PARAMS_ENABLED) === '1',
             autoupdateInterval: Number(searchParams.get(URL_OPTIONS.AUTOUPDATE)),
-            showSafeChartInfo: searchParams.get(URL_OPTIONS.SAFE_CHART) === '1',
+            showSafeChartInfo: searchParams.get(SHARED_URL_OPTIONS.SAFE_CHART) === '1',
         };
     }
 

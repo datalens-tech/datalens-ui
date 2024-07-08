@@ -3,6 +3,7 @@ import React from 'react';
 import {usePrevious} from 'hooks/usePrevious';
 import isEqual from 'lodash/isEqual';
 
+import {getRowTitle} from '../components/Content/helpers';
 import type {FiltersTypes} from '../components/Filters/Filters';
 import type {DashMetaData, RelationType} from '../types';
 
@@ -62,7 +63,9 @@ export const useFilteredRelations = ({
         if (trimmedSearchValue) {
             filteredItems =
                 filteredItems.filter((item) =>
-                    item.title.toLowerCase().includes(searchValue.toLowerCase()),
+                    getRowTitle(item.title, item.label)
+                        .toLowerCase()
+                        .includes(searchValue.toLowerCase()),
                 ) || [];
         }
 

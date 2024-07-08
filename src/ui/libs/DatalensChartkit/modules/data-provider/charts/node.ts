@@ -15,6 +15,7 @@ import {
     ChartkitHandlersDict,
     EDITOR_CHART_NODE,
     QL_CHART_NODE,
+    SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
@@ -27,7 +28,6 @@ import type {
     Widget,
     WithControls,
 } from '../../../types';
-import {URL_OPTIONS} from '../../constants/constants';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {getChartsInsightsData} from './helpers';
@@ -251,7 +251,12 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
-        const {showSafeChartInfo} = Utils.getOptionsFromSearch(window.location.search);
+        const showSafeChartInfo =
+            Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+            (params &&
+                SHARED_URL_OPTIONS.SAFE_CHART in params &&
+                String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1');
+
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -308,7 +313,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             ) {
                 const uiSandbox = await getUISandbox();
                 const uiSandboxOptions: UiSandboxRuntimeOptions = {};
-                if (!get(loaded.params, URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                if (!get(loaded.params, SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
                     // creating an object for mutation
                     // so that we can calculate the total execution time of the sandbox
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
