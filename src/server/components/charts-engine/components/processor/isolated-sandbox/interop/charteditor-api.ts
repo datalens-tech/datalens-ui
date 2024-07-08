@@ -52,7 +52,10 @@ export type ChartEditorResolveRelative = (
 ) => string | null;
 
 const prepare = fs.readFileSync(path.join(__dirname, 'charteditor-api-prepare.js'), 'utf-8');
-export const prepareApiAdapter = prepare;
+
+export const getPrepareApiAdapter = ({noJsonFn = false}: {noJsonFn: boolean}) => {
+    return `const noJsonFn = ${noJsonFn.toString()}; ${prepare}`;
+};
 
 export function prepareChartEditorApi({
     name,

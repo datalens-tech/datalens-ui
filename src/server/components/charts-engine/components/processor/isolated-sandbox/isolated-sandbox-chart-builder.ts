@@ -21,13 +21,24 @@ type IsolatedSandboxChartBuilderArgs = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
+    features: {
+        noJsonFn: boolean;
+    };
 };
 
 export const getIsolatedSandboxChartBuilder = async (
     args: IsolatedSandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {userLogin, userLang, isScreenshoter, chartsEngine, config, widgetConfig, workbookId} =
-        args;
+    const {
+        userLogin,
+        userLang,
+        isScreenshoter,
+        chartsEngine,
+        config,
+        widgetConfig,
+        workbookId,
+        features,
+    } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
     const isolate = new ivm.Isolate({memoryLimit: 1024});
@@ -85,6 +96,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 userLang,
                 isScreenshoter,
                 context,
+                features,
             });
 
             return {
@@ -106,6 +118,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 userLang,
                 isScreenshoter,
                 context,
+                features,
             });
 
             return {
@@ -133,6 +146,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     userLang,
                     isScreenshoter,
                     context,
+                    features,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
@@ -150,6 +164,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     userLang,
                     isScreenshoter,
                     context,
+                    features,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
@@ -167,6 +182,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     userLang,
                     isScreenshoter,
                     context,
+                    features,
                 });
             }
 
@@ -196,6 +212,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 userLang,
                 isScreenshoter,
                 context,
+                features,
             });
 
             return {
@@ -220,6 +237,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 hooks: options.hooks,
                 isScreenshoter,
                 context,
+                features,
             });
 
             return {
@@ -243,6 +261,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 userLang,
                 isScreenshoter,
                 context,
+                features,
             });
 
             return {

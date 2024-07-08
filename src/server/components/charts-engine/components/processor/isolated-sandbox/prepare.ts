@@ -1,10 +1,10 @@
-import {prepareApiAdapter} from './interop/charteditor-api';
+import {getPrepareApiAdapter} from './interop/charteditor-api';
 import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
 import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
-export const prepare = `
+export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
 "use strict";
 const exports = {};
 const module = {exports};
@@ -32,4 +32,4 @@ function require(name) {
     }
 }
 
-${prepareApiAdapter}`;
+${getPrepareApiAdapter({noJsonFn})}`;

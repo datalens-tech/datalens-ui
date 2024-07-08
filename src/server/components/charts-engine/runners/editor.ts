@@ -33,6 +33,7 @@ async function getChartBuilder({
     const enableIsolatedSandbox = Boolean(
         isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox),
     );
+    const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
     const chartBuilder = enableIsolatedSandbox
         ? await getIsolatedSandboxChartBuilder({
               userLang,
@@ -41,6 +42,9 @@ async function getChartBuilder({
               config,
               isScreenshoter,
               chartsEngine,
+              features: {
+                  noJsonFn,
+              },
           })
         : await getSandboxChartBuilder({
               userLang,

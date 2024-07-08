@@ -39,6 +39,8 @@ import type {
     ChartEditorWrapFnWrappedFnKey,
     ChartEditorWrapHtmlWrappedHtmlKey,
 } from './charteditor-api';
+
+declare const noJsonFn: boolean;
 declare const _ChartEditor_getTranslation: ChartEditorGetTranslation;
 declare const _ChartEditor_getSharedData: ChartEditorGetSharedData;
 declare const _ChartEditor_userLang: ChartEditorUserLang;
@@ -74,7 +76,7 @@ declare const _ChartEditor_setExportFilename: ChartEditorSetExportFilename;
 const __updateHighchartsConfig = (config: unknown) =>
     _ChartEditor_updateHighchartsConfig(
         JSON.stringify(config, function (_key, val) {
-            if (typeof val === 'function') {
+            if (typeof val === 'function' && !noJsonFn) {
                 return val.toString();
             }
             return val;
@@ -150,7 +152,7 @@ const ChartEditor: IChartEditor = {
     updateConfig: (config) =>
         _ChartEditor_updateConfig(
             JSON.stringify(config, function (_key, val) {
-                if (typeof val === 'function') {
+                if (typeof val === 'function' && !noJsonFn) {
                     return val.toString();
                 }
                 return val;

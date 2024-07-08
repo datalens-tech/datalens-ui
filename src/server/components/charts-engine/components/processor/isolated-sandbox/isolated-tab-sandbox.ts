@@ -1,6 +1,6 @@
 import type IsolatedVM from 'isolated-vm';
 
-import {type DashWidgetConfig} from '../../../../../../shared';
+import type {DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
@@ -19,7 +19,7 @@ import {
     libsQlChartV1Interop,
 } from './interop';
 import {prepareChartEditorApi} from './interop/charteditor-api';
-import {prepare} from './prepare';
+import {getPrepare} from './prepare';
 
 const DEFAULT_USER_LANG = 'ru';
 const {
@@ -49,6 +49,9 @@ type ProcessTabParams = {
     userLang: string | null;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
+    features: {
+        noJsonFn: boolean;
+    };
 };
 
 export class SandboxError extends Error {
@@ -80,6 +83,9 @@ type ExecuteParams = {
     runtimeMetadata: RuntimeMetadata;
     isolatedConsole: Console;
     userLogin: string | null;
+    features: {
+        noJsonFn: boolean;
+    };
 };
 
 export type SandboxExecuteResult = {
@@ -102,6 +108,7 @@ const execute = async ({
     runtimeMetadata,
     isolatedConsole,
     userLogin,
+    features,
 }: ExecuteParams): Promise<SandboxExecuteResult> => {
     if (!code && filename === 'JavaScript') {
         const error = new SandboxError('You should provide code in JavaScript tab');
@@ -145,6 +152,7 @@ const execute = async ({
                 return val;
             });`;
 
+        const prepare = getPrepare({noJsonFn: features.noJsonFn});
         const result = context.evalClosureSync(prepare + code + responseStringify, [], {
             timeout,
         });
@@ -206,6 +214,7 @@ export const processTab = async ({
     userLang,
     isScreenshoter,
     context,
+    features,
 }: ProcessTabParams) => {
     const originalShared = shared;
     const originalParams = params;
@@ -235,6 +244,7 @@ export const processTab = async ({
         chartEditorApi: chartApiContext.ChartEditor,
         isolatedConsole: new Console({isScreenshoter}),
         userLogin,
+        features,
     });
 
     Object.assign(originalShared, result.shared);
