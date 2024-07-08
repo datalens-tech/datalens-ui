@@ -5,8 +5,9 @@ import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
-import {DL, Utils} from 'ui';
+import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
+import Utils from 'ui/utils/utils';
 
 import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';

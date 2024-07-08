@@ -6,10 +6,12 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
-import {DL, ErrorContent, Utils} from 'ui';
+import {DL} from 'ui/constants/common';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 
 import type {DataLensApiError} from '../../typings';
+import ErrorContent from '../ErrorContent/ErrorContent';
 
 import './ViewError.scss';
 

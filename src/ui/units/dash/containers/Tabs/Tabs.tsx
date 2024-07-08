@@ -7,7 +7,8 @@ import {connect} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {DashTabsQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {DL, Tabs as DataLensTabs} from 'ui';
+import DataLensTabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';

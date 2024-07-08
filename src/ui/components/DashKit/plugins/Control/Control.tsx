@@ -20,8 +20,8 @@ import type {
     WorkbookId,
 } from 'shared';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
-import {DL} from 'ui';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
+import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';

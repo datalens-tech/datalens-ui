@@ -25,7 +25,7 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from 'shared';
-import {DL} from 'ui/constants';
+import {DL} from 'ui/constants/common';
 import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';

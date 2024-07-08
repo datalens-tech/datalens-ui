@@ -11,7 +11,8 @@ import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
 import {ControlQA, DashTabItemType} from 'shared';
-import {DL, type DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState} from 'ui';
+import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {
