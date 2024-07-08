@@ -78,4 +78,14 @@
             margin-right: 0;
         }
     }
+
+    &__mobile-filters {
+        padding: 21px 23px;
+        display: flex;
+
+        &_mobile {
+            padding: 8px 16px 19px;
+            display: block;
+        }
+    }
 }
