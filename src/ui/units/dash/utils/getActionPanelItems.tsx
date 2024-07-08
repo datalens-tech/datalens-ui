@@ -25,6 +25,7 @@ export const getActionPanelItems = ({
     copiedData,
     onPasteItem,
     openDialog,
+    filterItem,
 }: {
     copiedData: CopiedConfigData | null;
     onPasteItem: (item: CopiedConfigData) => void;
@@ -32,8 +33,9 @@ export const getActionPanelItems = ({
         dialogType: 'tabs' | 'connections' | 'settings' | 'selectState' | 'edit' | DashTabItemType,
         dragOperationProps?: ItemDropProps | undefined,
     ) => void;
+    filterItem?: (item: DashkitActionPanelItem) => boolean;
 }) => {
-    const items: DashkitActionPanelItem[] = [
+    let items: DashkitActionPanelItem[] = [
         {
             id: 'chart',
             icon: <Icon data={ChartColumn} />,
@@ -106,6 +108,10 @@ export const getActionPanelItems = ({
                 type: DashTabItemType.GroupControl,
             },
         });
+    }
+
+    if (filterItem) {
+        items = items.filter(filterItem);
     }
 
     return items.map((item) => {
