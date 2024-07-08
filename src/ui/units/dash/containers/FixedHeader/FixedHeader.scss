@@ -61,6 +61,7 @@
         overflow: auto;
         flex-direction: row;
         min-height: 44px;
+        border-bottom: 1px solid var(--g-color-line-generic);
 
         &_fixed {
             position: fixed;

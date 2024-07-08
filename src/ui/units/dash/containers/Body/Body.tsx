@@ -279,6 +279,7 @@ class Body extends React.PureComponent<BodyProps> {
 
             // eslint-disable-next-line no-console
             console.log(groupedLayout);
+
             // const newLayout = Object.entries(groupedLayout).reduce((memo, [group, items]) => {
             //     console.log(group, groupedLayout);
 
@@ -333,7 +334,7 @@ class Body extends React.PureComponent<BodyProps> {
             return (
                 <DropdownMenu
                     renderSwitcher={(props) => (
-                        <Button {...props}>
+                        <Button {...props} view={'flat'}>
                             <Icon size={16} data={Gear} />
                         </Button>
                     )}
