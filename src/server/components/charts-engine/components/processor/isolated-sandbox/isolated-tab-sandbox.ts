@@ -153,7 +153,7 @@ const execute = async ({
             });`;
 
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        const result = context.evalClosureSync(prepare + code + responseStringify, [], {
+        const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
             timeout,
         });
         sandboxResult = JSON.parse(result);

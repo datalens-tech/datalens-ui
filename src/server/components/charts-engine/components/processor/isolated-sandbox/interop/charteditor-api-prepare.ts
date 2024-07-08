@@ -75,12 +75,14 @@ declare const _ChartEditor_setExportFilename: ChartEditorSetExportFilename;
 
 const __updateHighchartsConfig = (config: unknown) =>
     _ChartEditor_updateHighchartsConfig(
-        JSON.stringify(config, function (_key, val) {
-            if (typeof val === 'function' && !noJsonFn) {
-                return val.toString();
-            }
-            return val;
-        }),
+        noJsonFn
+            ? JSON.stringify(config)
+            : JSON.stringify(config, function (_key, val) {
+                  if (typeof val === 'function') {
+                      return val.toString();
+                  }
+                  return val;
+              }),
     );
 
 const ChartEditor: IChartEditor = {
@@ -151,12 +153,14 @@ const ChartEditor: IChartEditor = {
 
     updateConfig: (config) =>
         _ChartEditor_updateConfig(
-            JSON.stringify(config, function (_key, val) {
-                if (typeof val === 'function' && !noJsonFn) {
-                    return val.toString();
-                }
-                return val;
-            }),
+            noJsonFn
+                ? JSON.stringify(config)
+                : JSON.stringify(config, function (_key, val) {
+                      if (typeof val === 'function') {
+                          return val.toString();
+                      }
+                      return val;
+                  }),
         ),
     updateHighchartsConfig: __updateHighchartsConfig,
     updateLibraryConfig: __updateHighchartsConfig,
