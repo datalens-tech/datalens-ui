@@ -124,7 +124,7 @@ export type DeleteWorkbookArgs = {
     workbookId: string;
 };
 
-export type DeleteWorkbookResponse = {status: 'ok'};
+export type DeleteWorkbookResponse = Workbook;
 
 export type CopyWorkbookArgs = {
     workbookId: string;
