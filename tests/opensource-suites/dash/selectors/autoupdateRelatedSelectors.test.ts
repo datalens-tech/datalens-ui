@@ -67,6 +67,7 @@ const SELECTORS_TITLES = {
         PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
     ],
     FIRST_DATASET_SELECTOR: [PARAMS.DATASET_FIRST_CONTROL.appearance.title],
+    SECOND_MANUAL_SELECTOR: [PARAMS.MANUAL_SECOND_SELECTOR.appearance.title],
 };
 
 const getSecondSelectItemsCount = async (dashboardPage: DashboardPage) => {
@@ -317,19 +318,24 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             await expect(secondSelectorValue).toEqual('');
 
-            // Return check after bug fix of alias case
-            // await page.locator(slct(ControlQA.controlButtonApply)).click();
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.SECOND_MANUAL_SELECTOR,
+                waitForLoader: true,
+                action: async () => {
+                    await page.locator(slct(ControlQA.controlButtonApply)).click();
+                },
+            });
 
-            // // last changed param will be applied to both selectors
-            // const firstSelectorValueAfterApply = await dashboardPage
-            //     .getSelectorLocatorByTitle({
-            //         title: PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
-            //         type: 'input',
-            //     })
-            //     .locator('input')
-            //     .inputValue();
+            // last changed param will be applied to both selectors
+            const firstSelectorValueAfterApply = await dashboardPage
+                .getSelectorLocatorByTitle({
+                    title: PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
+                    type: 'input',
+                })
+                .locator('input')
+                .inputValue();
 
-            // expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
+            expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
         },
     );
 
