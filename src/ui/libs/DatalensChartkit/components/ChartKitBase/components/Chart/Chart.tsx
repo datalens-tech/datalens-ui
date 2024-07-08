@@ -14,7 +14,12 @@ import type {State} from '../Content/store/types';
 
 type ChartProps = Pick<
     ChartKitBaseWrapperWithRefProps,
-    'noControls' | 'transformLoadedData' | 'splitTooltip' | 'nonBodyScroll' | 'forwardedRef'
+    | 'noControls'
+    | 'transformLoadedData'
+    | 'splitTooltip'
+    | 'nonBodyScroll'
+    | 'forwardedRef'
+    | 'paneSplitOrientation'
 > &
     Pick<ChartKitWrapperParams, 'onLoad' | 'onChange' | 'onError' | 'onRetry'> &
     Pick<ChartKitWrapperState, 'requestId'> &
@@ -56,6 +61,7 @@ export const Chart = (props: ChartProps) => {
                 requestId={props.requestId}
                 noControls={props.noControls}
                 onRetry={props.onRetry}
+                paneSplitOrientation={props.paneSplitOrientation}
             />
         );
     }

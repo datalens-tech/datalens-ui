@@ -1,6 +1,7 @@
 import type React from 'react';
 
 import type {CancelTokenSource} from 'axios';
+import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, StringParams} from 'shared';
 
 import type {ChartWidgetDataRef} from '../../../../components/Widgets/Chart/types';
@@ -78,6 +79,8 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
     widgetBodyClassName?: string;
 
     splitTooltip?: boolean;
+
+    paneSplitOrientation?: Split;
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
