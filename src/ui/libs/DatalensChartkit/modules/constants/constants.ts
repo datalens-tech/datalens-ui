@@ -1,10 +1,13 @@
+import {SHARED_URL_OPTIONS} from 'shared';
+
 export const URL_OPTIONS = {
     HIDE_COMMENTS: '_graph_hide_comments',
     HIDE_HOLIDAYS: '_graph_hide_holidays',
     NORMALIZE_SUB: '_normalize_sub',
     NORMALIZE_DIV: '_normalize_div',
     WITHOUT_LINE_LIMIT: '_graph_without_line_limit',
-    WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',
+    WITHOUT_UI_SANDBOX_LIMIT: SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT,
+    SAFE_CHART: SHARED_URL_OPTIONS.SAFE_CHART,
 };
 
 export const CONTROL_TYPE = {

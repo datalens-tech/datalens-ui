@@ -774,14 +774,14 @@ export class DataFetcher {
         const publicSourceData = hideSensitiveData(sourceData);
 
         if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = req.ip;
+            requestOptions.headers['x-real-ip'] = req.headers['x-real-ip'];
         }
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');
 
         return new Promise((fetchResolve) => {
-            ctx.log('Fetching', {publicTargetUri});
+            ctx.log('Fetching', {publicTargetUri, xRealIp: requestOptions.headers['x-real-ip']});
 
             if (useCaching) {
                 ctx.log('Using caching', {publicTargetUri});
