@@ -3,7 +3,7 @@ import React from 'react';
 import type {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
 import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import './Tabs.scss';
 
@@ -36,12 +36,12 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
     function WithDatalensSpecific(props: TabsWithDatalensSpecificProps<T>) {
         const {size = 'm', disableOpacity, ...restProps} = props;
 
-        const breakpointsConfig = isMobileView
+        const breakpointsConfig = DL.IS_MOBILE
             ? breakpointsWithoutCollapse
             : defaultBreakPointsConfig;
 
         return (
-            <div className={b({size, opacity: !disableOpacity, mobile: isMobileView})}>
+            <div className={b({size, opacity: !disableOpacity, mobile: DL.IS_MOBILE})}>
                 <Component
                     {...restProps}
                     breakpointsConfig={breakpointsConfig}

@@ -10,8 +10,9 @@ import {Feature} from 'shared';
 import type {GetCollectionContentMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Tabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
 import Utils from 'ui/utils';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
 
@@ -178,7 +179,7 @@ export const CollectionFilters = React.memo<Props>(
             });
         }, [orderField, orderDirection]);
 
-        if (isMobileView) {
+        if (DL.IS_MOBILE) {
             const tabItems = onlyMyOptions.map(({value, content}) => ({
                 id: value,
                 title: content,

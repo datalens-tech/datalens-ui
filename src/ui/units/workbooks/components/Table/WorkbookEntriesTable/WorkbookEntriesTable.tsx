@@ -8,9 +8,9 @@ import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {DL} from 'ui/constants/common';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {CreateEntryActionType} from 'ui/units/workbooks/constants';
-import {isMobileView} from 'ui/utils/mobile';
 
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import type {WorkbookWithPermissions} from '../../../../../../shared/schema/us/types';
@@ -159,17 +159,17 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         const isWidgetEmpty = widgetChunk.length === 0;
         const isDashEmpty = dashChunk.length === 0;
 
-        const clearViewDash = isMobileView && isWidgetEmpty;
-        const clearViewWidget = isMobileView && isDashEmpty;
+        const clearViewDash = DL.IS_MOBILE && isWidgetEmpty;
+        const clearViewWidget = DL.IS_MOBILE && isDashEmpty;
 
-        const showDataEntities = workbook.permissions.view && !isMobileView;
+        const showDataEntities = workbook.permissions.view && !DL.IS_MOBILE;
 
         const renderTabs = () => {
             if (scope) {
                 return null;
             }
 
-            if (isMobileView && isWidgetEmpty && isDashEmpty) {
+            if (DL.IS_MOBILE && isWidgetEmpty && isDashEmpty) {
                 return (
                     <PlaceholderIllustration
                         name="template"
@@ -272,7 +272,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             <React.Fragment>
                 <div className={b()}>
                     <div className={b('table')}>
-                        {!isMobileView && (
+                        {!DL.IS_MOBILE && (
                             <div className={b('header')} style={defaultRowStyle}>
                                 <div className={b('header-cell')}>{i18n('label_title')}</div>
                                 <div className={b('header-cell', {author: true})}>

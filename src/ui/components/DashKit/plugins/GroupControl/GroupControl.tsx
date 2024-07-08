@@ -6,12 +6,12 @@ import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/help
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
 import {ControlQA, DashTabItemType} from 'shared';
+import {DL, type DatalensGlobalState} from 'ui';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {
@@ -20,7 +20,6 @@ import {
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {
     selectCurrentTab,
@@ -231,7 +230,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return (
             <div
                 ref={this.rootNode}
-                className={b({mobile: isMobileView, static: !this.props.data.autoHeight})}
+                className={b({mobile: DL.IS_MOBILE, static: !this.props.data.autoHeight})}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}

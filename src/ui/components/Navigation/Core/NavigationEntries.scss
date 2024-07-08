@@ -78,46 +78,4 @@
             margin-right: 0;
         }
     }
-
-    &__mobile-filters {
-        padding: 21px 23px;
-        display: flex;
-
-        &_mobile {
-            padding: 8px 16px 19px;
-            display: block;
-        }
-    }
-
-    &__folders-select {
-        margin: 5px 22px 18px;
-    }
-
-    &__mobile-filter-item {
-        font-size: 15px;
-        padding-right: 26px;
-        color: var(--g-color-text-secondary);
-
-        @media screen and (max-width: 336px) {
-            & {
-                padding-right: 15px;
-            }
-
-            &:last-child {
-                padding-right: 0;
-            }
-        }
-
-        &:last-child {
-            padding-right: 0;
-        }
-
-        &_active {
-            color: var(--g-color-text-info);
-        }
-    }
-
-    &__mobile-filter-item-icon {
-        padding-right: 8px;
-    }
 }

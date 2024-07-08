@@ -5,9 +5,8 @@ import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
-import {Utils} from 'ui';
+import {DL, Utils} from 'ui';
 import type {AppDispatch} from 'ui/store';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
@@ -104,7 +103,7 @@ export const WorkbookPage = () => {
                 <div className={b('layout')}>
                     <div className={b('container')}>
                         <div className={b('controls')}>
-                            {!isMobileView && (
+                            {!DL.IS_MOBILE && (
                                 <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
                             )}
                             {workbook && <WorkbookTabs workbook={workbook} />}

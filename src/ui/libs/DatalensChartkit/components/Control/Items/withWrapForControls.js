@@ -4,7 +4,6 @@ import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ControlQA} from 'shared';
 import {DL} from 'ui/constants';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {MarkdownHelpPopover} from '../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {CONTROL_TYPE} from '../../../modules/constants/constants';
@@ -44,7 +43,7 @@ function withWrapForControls(WrappedComponent) {
             <div
                 className={b(
                     'control',
-                    {mobile: isMobileView, 'without-label': !showLabel},
+                    {mobile: DL.IS_MOBILE, 'without-label': !showLabel},
                     className,
                 )}
                 style={controlStyle}

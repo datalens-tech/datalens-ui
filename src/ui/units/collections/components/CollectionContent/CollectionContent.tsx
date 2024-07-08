@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import type {
     CollectionWithPermissions,
@@ -164,7 +164,7 @@ export const CollectionContent: React.FC<Props> = ({
     }
 
     if (isEmptyItems) {
-        if (isDefaultFilters || isMobileView) {
+        if (isDefaultFilters || DL.IS_MOBILE) {
             return (
                 <AnimateBlock className={b('empty-state')}>
                     <PlaceholderIllustration
@@ -188,7 +188,7 @@ export const CollectionContent: React.FC<Props> = ({
                 </AnimateBlock>
             );
         }
-        const description = isMobileView ? undefined : i18n('section_incorrect-filters');
+        const description = DL.IS_MOBILE ? undefined : i18n('section_incorrect-filters');
 
         return (
             <AnimateBlock className={b('empty-state')}>
@@ -197,7 +197,7 @@ export const CollectionContent: React.FC<Props> = ({
                     title={i18n('label_not-found')}
                     description={description}
                     renderAction={() => {
-                        if (isMobileView) {
+                        if (DL.IS_MOBILE) {
                             return null;
                         }
 
@@ -215,7 +215,7 @@ export const CollectionContent: React.FC<Props> = ({
         );
     }
 
-    const showGridMode = viewMode === CollectionPageViewMode.Grid && !isMobileView;
+    const showGridMode = viewMode === CollectionPageViewMode.Grid && !DL.IS_MOBILE;
 
     return (
         <div className={b()}>
