@@ -6,21 +6,11 @@ import type {
     ConfigLayout,
     DashKit as DashKitComponent,
     DashKitProps,
-    ActionPanelItem as DashkitActionPanelItem,
     ItemDropProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
-import {
-    ChartColumn,
-    Code,
-    CopyPlus,
-    Gear,
-    Heading,
-    Sliders,
-    TextAlignLeft,
-} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import {Gear} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -34,14 +24,7 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DashTab, DashTabItem} from 'shared';
-import {
-    ControlQA,
-    DashEntryQa,
-    DashTabItemType,
-    DashboardAddWidgetQa,
-    Feature,
-    UPDATE_STATE_DEBOUNCE_TIME,
-} from 'shared';
+import {ControlQA, DashEntryQa, Feature, UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
@@ -87,8 +70,8 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../utils/getActionPanelItems';
 import {getUrlGlobalParams} from '../../utils/url';
-import {DIALOG_TYPE} from '../Dialogs/constants';
 import Error from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -117,14 +100,6 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 // TODO: add issue
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
-
-const TYPES_TO_DIALOGS_MAP = {
-    [DashTabItemType.Widget]: DIALOG_TYPE.WIDGET,
-    [DashTabItemType.GroupControl]: DIALOG_TYPE.GROUP_CONTROL,
-    [DashTabItemType.Control]: DIALOG_TYPE.CONTROL,
-    [DashTabItemType.Text]: DIALOG_TYPE.TEXT,
-    [DashTabItemType.Title]: DIALOG_TYPE.TITLE,
-};
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -188,6 +163,16 @@ class Body extends React.PureComponent<BodyProps> {
         window.removeEventListener('storage', this.storageHandler);
     }
 
+    render() {
+        return (
+            <div className={b()}>
+                {this.renderBody()}
+                <PaletteEditor />
+                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
+            </div>
+        );
+    }
+
     onChange = ({
         config,
         itemsStateAndParams,
@@ -205,99 +190,6 @@ class Body extends React.PureComponent<BodyProps> {
             this.props.setCurrentTabData(config);
         }
     };
-
-    getActionPanelItems() {
-        const items: DashkitActionPanelItem[] = [
-            {
-                id: 'chart',
-                icon: <Icon data={ChartColumn} />,
-                title: i18n('dash.main.view', 'button_edit-panel-chart'),
-                className: b('edit-panel-item'),
-                qa: DashboardAddWidgetQa.AddWidget,
-                dragProps: {
-                    type: DashTabItemType.Widget,
-                },
-            },
-            {
-                id: 'selector',
-                icon: (
-                    <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />
-                ),
-                title: Utils.isEnabledFeature(Feature.GroupControls)
-                    ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
-                    : i18n('dash.main.view', 'button_edit-panel-selector'),
-                className: b('edit-panel-item'),
-                qa: DashboardAddWidgetQa.AddControl,
-                dragProps: {
-                    type: DashTabItemType.Control,
-                },
-            },
-            {
-                id: 'text',
-                icon: <Icon data={TextAlignLeft} />,
-                title: i18n('dash.main.view', 'button_edit-panel-text'),
-                className: b('edit-panel-item'),
-                qa: DashboardAddWidgetQa.AddText,
-                dragProps: {
-                    type: DashTabItemType.Text,
-                },
-            },
-            {
-                id: 'header',
-                icon: <Icon data={Heading} />,
-                title: i18n('dash.main.view', 'button_edit-panel-title'),
-                className: b('edit-panel-item'),
-                qa: DashboardAddWidgetQa.AddTitle,
-                dragProps: {
-                    type: DashTabItemType.Title,
-                },
-            },
-        ];
-
-        const copiedData = this.state.hasCopyInBuffer;
-        if (copiedData) {
-            items.push({
-                id: 'paste',
-                icon: <Icon data={CopyPlus} />,
-                title: i18n('dash.main.view', 'button_edit-panel-paste'),
-                className: b('edit-panel-item'),
-                onClick: () => {
-                    this.props.onPasteItem(copiedData);
-                },
-                dragProps: {
-                    type: copiedData.type,
-                    layout: copiedData.layout,
-                    extra: copiedData,
-                },
-            });
-        }
-
-        if (Utils.isEnabledFeature(Feature.GroupControls)) {
-            items.splice(1, 0, {
-                id: 'group-selector',
-                icon: <Icon data={Sliders} />,
-                title: i18n('dash.main.view', 'button_edit-panel-selector'),
-                className: b('edit-panel-item'),
-                qa: DashboardAddWidgetQa.AddGroupControl,
-                dragProps: {
-                    type: DashTabItemType.GroupControl,
-                },
-            });
-        }
-
-        return items.map((item) => {
-            if (item.dragProps?.type && !item.onClick) {
-                item.onClick = () =>
-                    this.props.openDialog(
-                        TYPES_TO_DIALOGS_MAP[
-                            item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
-                        ],
-                    );
-            }
-
-            return item;
-        });
-    }
 
     onDropElement = (dropProps: ItemDropProps) => {
         if (dropProps.dragProps.extra) {
@@ -323,16 +215,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.props.setHashState(hashStates, config);
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
-
-    render() {
-        return (
-            <div className={b()}>
-                {this.renderBody()}
-                <PaletteEditor />
-                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
-            </div>
-        );
-    }
 
     storageHandler = () => {
         this.setState({hasCopyInBuffer: getPastedWidgetData()});
@@ -466,7 +348,11 @@ class Body extends React.PureComponent<BodyProps> {
                         <DashkitActionPanel
                             toggleAnimation={true}
                             disable={!showEditActionPanel}
-                            items={this.getActionPanelItems()}
+                            items={getActionPanelItems({
+                                copiedData: this.state.hasCopyInBuffer,
+                                onPasteItem: this.props.onPasteItem,
+                                openDialog: this.props.openDialog,
+                            })}
                             className={b('edit-panel', {
                                 'aside-opened': isSidebarOpened,
                             })}
