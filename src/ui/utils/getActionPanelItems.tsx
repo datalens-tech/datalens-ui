@@ -11,7 +11,7 @@ import Utils from 'ui/utils';
 import {DIALOG_TYPE} from '../units/dash/containers/Dialogs/constants';
 import type {CopiedConfigData} from '../units/dash/modules/helpers';
 
-const b = block('dash-body');
+const b = block('edit-panel-item');
 
 export const TYPES_TO_DIALOGS_MAP = {
     [DashTabItemType.Widget]: DIALOG_TYPE.WIDGET,
@@ -40,7 +40,7 @@ export const getActionPanelItems = ({
             id: 'chart',
             icon: <Icon data={ChartColumn} />,
             title: i18n('dash.main.view', 'button_edit-panel-chart'),
-            className: b('edit-panel-item'),
+            className: b(),
             qa: DashboardAddWidgetQa.AddWidget,
             dragProps: {
                 type: DashTabItemType.Widget,
@@ -52,7 +52,7 @@ export const getActionPanelItems = ({
             title: Utils.isEnabledFeature(Feature.GroupControls)
                 ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                 : i18n('dash.main.view', 'button_edit-panel-selector'),
-            className: b('edit-panel-item'),
+            className: b(),
             qa: DashboardAddWidgetQa.AddControl,
             dragProps: {
                 type: DashTabItemType.Control,
@@ -62,7 +62,7 @@ export const getActionPanelItems = ({
             id: 'text',
             icon: <Icon data={TextAlignLeft} />,
             title: i18n('dash.main.view', 'button_edit-panel-text'),
-            className: b('edit-panel-item'),
+            className: b(),
             qa: DashboardAddWidgetQa.AddText,
             dragProps: {
                 type: DashTabItemType.Text,
@@ -72,7 +72,7 @@ export const getActionPanelItems = ({
             id: 'header',
             icon: <Icon data={Heading} />,
             title: i18n('dash.main.view', 'button_edit-panel-title'),
-            className: b('edit-panel-item'),
+            className: b(),
             qa: DashboardAddWidgetQa.AddTitle,
             dragProps: {
                 type: DashTabItemType.Title,
@@ -85,7 +85,7 @@ export const getActionPanelItems = ({
             id: 'paste',
             icon: <Icon data={CopyPlus} />,
             title: i18n('dash.main.view', 'button_edit-panel-paste'),
-            className: b('edit-panel-item'),
+            className: b(),
             onClick: () => {
                 onPasteItem(copiedData);
             },
@@ -102,7 +102,7 @@ export const getActionPanelItems = ({
             id: 'group-selector',
             icon: <Icon data={Sliders} />,
             title: i18n('dash.main.view', 'button_edit-panel-selector'),
-            className: b('edit-panel-item'),
+            className: b(),
             qa: DashboardAddWidgetQa.AddGroupControl,
             dragProps: {
                 type: DashTabItemType.GroupControl,
@@ -110,8 +110,10 @@ export const getActionPanelItems = ({
         });
     }
 
-    return items
-        .map((item) => {
+    return items.reduce((result, item) => {
+        if (filterItem && filterItem(item)) {
+            return result;
+        } else {
             if (item.dragProps?.type && !item.onClick) {
                 item.onClick = () =>
                     openDialog(
@@ -121,10 +123,7 @@ export const getActionPanelItems = ({
                     );
             }
 
-            return item;
-        })
-        .reduce(
-            (result, item) => (filterItem && filterItem(item) ? result : [...result, item]),
-            [] as DashkitActionPanelItem[],
-        );
+            return [...result, item];
+        }
+    }, [] as DashkitActionPanelItem[]);
 };
