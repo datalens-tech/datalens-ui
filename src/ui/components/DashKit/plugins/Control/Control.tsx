@@ -19,7 +19,7 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -440,7 +440,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                             shared: data,
                         },
                         meta: {
-                            stype: 'control_dash',
+                            stype: ControlType.Dash,
                         },
                     },
                     params: this.actualParams,
@@ -727,7 +727,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                                     shared: data,
                                 },
                                 meta: {
-                                    stype: 'control_dash',
+                                    stype: ControlType.Dash,
                                 },
                             } as any
                             // can't retype because of dashkit
