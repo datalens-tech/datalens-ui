@@ -120,10 +120,11 @@ function mapAndColorizeTableCells(rows: TableCellsRow[], colorsConfig: ChartColo
             if (typeof cell === 'object') {
                 const colorValue =
                     typeof cell.color !== 'number' || Number.isNaN(cell.color) ? null : cell.color;
+                const backgroundColor = colorValue ? gradientColors[colorValue] : undefined;
 
-                if (colorValue && !cell.css) {
+                if (backgroundColor && !cell.css) {
                     cell.css = {
-                        backgroundColor: gradientColors[colorValue],
+                        backgroundColor,
                         color: '#FFF',
                     };
                 }
@@ -133,7 +134,7 @@ function mapAndColorizeTableCells(rows: TableCellsRow[], colorsConfig: ChartColo
 }
 
 function colorizePivotTableCell(
-    colorValue: number,
+    colorValue: number | null,
     colorsConfig: ChartColorsConfig,
     colorValuesForMaxMin: number[],
 ) {
@@ -142,12 +143,16 @@ function colorizePivotTableCell(
         colorsConfig,
         gradientThresholdValues: getThresholdValues(colorsConfig, colorValuesForMaxMin),
     });
+    const backgroundColor = colorValue ? gradientColors[colorValue] : null;
+    if (backgroundColor) {
+        return {
+            backgroundColor,
+            color: '#FFF',
+            value: colorValue,
+        };
+    }
 
-    return {
-        backgroundColor: gradientColors[colorValue],
-        color: '#FFF',
-        value: colorValue,
-    };
+    return undefined;
 }
 
 function mapAndColorizeHashTableByGradient(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
@@ -172,9 +177,11 @@ function mapAndColorizeHashTableByGradient(hashTable: HashTable, colorsConfig: C
     const acc: Record<string, {backgroundColor: string; color: string; value: ColorValue}> = {};
     const colorData = Object.entries(hashTable).reduce((acc, [key, value]) => {
         const colorValue = Number(value);
-        if (gradientColors[colorValue]) {
+        const backgroundColor = gradientColors[colorValue];
+
+        if (backgroundColor) {
             acc[key] = {
-                backgroundColor: gradientColors[colorValue],
+                backgroundColor,
                 color: '#FFF',
                 value: Number(colorValue),
             };
