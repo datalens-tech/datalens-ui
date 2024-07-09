@@ -1,3 +1,4 @@
+import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {GetEntryResponse} from 'shared/schema';
@@ -95,4 +96,5 @@ export const commonFunctionsMap = {
         >(),
     isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
     extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
+    getAdditionalMarkdownPlugins: makeFunctionTemplate<() => MarkdownItPluginCb[]>(),
 } as const;

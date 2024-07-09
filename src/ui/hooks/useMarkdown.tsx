@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {registry} from 'ui/registry';
+
 import {YfmWrapper} from '../components/YfmWrapper/YfmWrapper';
 import {DL} from '../constants';
 
@@ -18,10 +20,11 @@ async function renderMarkdown(value: string) {
             }
 
             const {renderHTML} = await import('../../shared/modules/markdown/markdown');
+            const {getAdditionalMarkdownPlugins} = registry.common.functions.getAll();
             const renderedMarkdown = renderHTML({
                 text: value,
                 lang: DL.USER_LANG,
-                plugins: DL.MARKDOWN_PLUGINS,
+                plugins: getAdditionalMarkdownPlugins(),
             });
             const yfmString = renderedMarkdown.result;
             MarkdownCollection.set(value, yfmString);

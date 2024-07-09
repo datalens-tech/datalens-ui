@@ -1,4 +1,3 @@
-import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
@@ -205,7 +204,6 @@ export type DLGlobalData = {
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
-    markdownPlugins?: MarkdownItPluginCb[];
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

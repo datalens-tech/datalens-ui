@@ -230,9 +230,6 @@ export const DL = {
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
-    get MARKDOWN_PLUGINS() {
-        return window.DL.markdownPlugins || [];
-    },
 };
 
 export const LIGHT_THEME = 'light';
