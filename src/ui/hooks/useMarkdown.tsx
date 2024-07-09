@@ -1,7 +1,5 @@
 import React from 'react';
 
-import {renderHTML} from 'shared/modules/markdown/markdown';
-
 import {YfmWrapper} from '../components/YfmWrapper/YfmWrapper';
 import {DL} from '../constants';
 
@@ -19,6 +17,7 @@ async function renderMarkdown(value: string) {
                 MarkdownCollection.delete(firstKey);
             }
 
+            const {renderHTML} = await import('../../shared/modules/markdown/markdown');
             const renderedMarkdown = renderHTML({
                 text: value,
                 lang: DL.USER_LANG,
