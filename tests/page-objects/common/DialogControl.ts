@@ -1,4 +1,4 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 import {ControlQA, DialogControlQa} from '../../../src/shared/constants';
 import {slct} from '../../utils';
 import {SourceType} from './DialogControlPO/SourceType';
@@ -73,6 +73,6 @@ export default class DialogControl {
             settings.defaultValue,
         );
 
-        expect(await this.requiredCheckbox.getLocator().isChecked()).toEqual(settings.required);
+        expect(this.requiredCheckbox.getLocator()).toBeChecked({checked: settings.required});
     }
 }
