@@ -29,12 +29,19 @@ import {
 } from '../../../src/shared/constants/qa/dash';
 import {DatasetParams, ListItemByParams} from '../../page-objects/types';
 
+export enum SelectorElementType {
+    List = 'list',
+    Input = 'input',
+    Checkbox = 'checkbox',
+    Date = 'date',
+}
+
 export type SelectorSettings = {
     sourceType?: DashTabItemControlSourceType;
     fieldName?: string;
     dataset?: DatasetParams;
     datasetField?: ListItemByParams;
-    elementType?: ListItemByParams;
+    elementType?: SelectorElementType;
     appearance?: {
         title?: string;
         titleEnabled?: boolean;
@@ -43,6 +50,7 @@ export type SelectorSettings = {
     };
     items?: string[];
     defaultValue?: string;
+    required?: boolean;
 };
 
 type GroupSelectorOptions = {
@@ -220,6 +228,24 @@ class ControlActions {
         await expect(openDatasetButton).toBeVisible();
     }
 
+    async selectElementType(elementType: SelectorElementType) {
+        let elementTypeQa = DialogControlQa.typeControlSelect;
+        switch (elementType) {
+            case 'input':
+                elementTypeQa = DialogControlQa.typeControlInput;
+                break;
+            case 'checkbox':
+                elementTypeQa = DialogControlQa.typeControlCheckbox;
+                break;
+            case 'date':
+                elementTypeQa = DialogControlQa.typeControlCalendar;
+                break;
+        }
+
+        await this.dialogControl.datasetFieldSelector.selectListItem({qa: slct(elementTypeQa)});
+    }
+
+    // eslint-disable-next-line complexity
     async editSelectorBySettings({
         sourceType = DashTabItemControlSourceType.Manual,
         ...setting
@@ -244,7 +270,7 @@ class ControlActions {
             }
 
             // TODO: remove condition with innerText after removing addSelectorWithDefaultSettings
-            if (!setting.elementType || setting.elementType.innerText === 'List') {
+            if (!setting.elementType || setting.elementType === 'list') {
                 await this.fillSelectSelectorItems({
                     items: setting.items,
                     defaultValue: setting.defaultValue,
@@ -266,13 +292,9 @@ class ControlActions {
             }
         }
 
-        if (
-            setting.elementType?.innerText ||
-            typeof setting.elementType?.idx === 'number' ||
-            setting.elementType?.qa
-        ) {
+        if (setting.elementType) {
             await this.dialogControl.elementType.click();
-            await this.dialogControl.datasetFieldSelector.selectListItem(setting.elementType);
+            await this.selectElementType(setting.elementType);
         }
 
         if (typeof setting.appearance?.titleEnabled === 'boolean') {
@@ -296,13 +318,22 @@ class ControlActions {
                 setting.appearance.innerTitle,
             );
         }
+
+        if (typeof setting.required === 'boolean') {
+            await this.dialogControl.requiredCheckbox.toggle(setting.required);
+        }
+
+        if (typeof setting.defaultValue === 'string' && setting.elementType === 'input') {
+            await this.page
+                .locator(`${slct(DialogControlQa.valueInput)} input`)
+                .fill(setting.defaultValue);
+        }
     }
 
     /** @deprecated instead use addSelector */
     async addSelectorWithDefaultSettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
             sourceType: DashTabItemControlSourceType.Dataset,
-            elementType: {innerText: 'List'},
             appearance: {titleEnabled: true},
             dataset: {idx: 0},
             datasetField: {idx: 0},
