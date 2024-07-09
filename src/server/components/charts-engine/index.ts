@@ -10,6 +10,7 @@ import {Request} from './components/request';
 import {initPreloading, initStorage} from './components/storage';
 import {chartsController} from './controllers/charts';
 import {configController} from './controllers/config';
+import {embeddedEntryController} from './controllers/embedded-entry';
 import {embedsController} from './controllers/embeds';
 import {exportController} from './controllers/export';
 import {markdownController} from './controllers/markdown';
@@ -21,6 +22,7 @@ const defaultControllers = {
     config: configController,
     charts: chartsController,
     embeds: embedsController,
+    embeddedEntry: embeddedEntryController,
 };
 import type {Runner} from './runners';
 import type {Plugin, SourceConfig, TelemetryCallbacks} from './types';
@@ -33,6 +35,7 @@ type Controllers = {
     config: ReturnType<typeof configController>;
     charts: ReturnType<typeof chartsController>;
     embeds: ReturnType<typeof embedsController>;
+    embeddedEntry: typeof embeddedEntryController;
 };
 
 class ChartsEngine {
@@ -101,6 +104,7 @@ class ChartsEngine {
             config: defaultControllers.config(this),
             charts: defaultControllers.charts(this),
             embeds: defaultControllers.embeds(this),
+            embeddedEntry: defaultControllers.embeddedEntry,
         };
 
         if (plugins) {

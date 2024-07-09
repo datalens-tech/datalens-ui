@@ -104,7 +104,7 @@ export type EmbeddingInfo = {
         createdBy: string;
         createdAt: string;
     };
-    chart: ResolvedConfig;
+    entry: ResolvedConfig;
 };
 
 export type EmbeddingToken = {
@@ -422,12 +422,14 @@ export class USProvider {
         ctx: AppContext,
         {
             token,
+            entryId,
             headers,
         }: {
             token: string;
+            entryId?: string;
             headers: Request['headers'];
         },
-    ): Promise<EmbeddingInfo> {
+    ): Promise<EmbeddingInfo | EmbeddingInfo['entry']> {
         const hrStart = process.hrtime();
         const headersWithToken = {
             ...headers,
@@ -435,7 +437,7 @@ export class USProvider {
         };
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${storageEndpoint}/v1/embedded-chart/`,
+            url: `${storageEndpoint}${entryId ? `/embeds/entries/${entryId}` : '/v1/embedded-entry'}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
@@ -446,10 +448,14 @@ export class USProvider {
             .then((response) => {
                 ctx.log('UNITED_STORAGE_CONFIG_LOADED', {duration: getDuration(hrStart)});
 
+                if (entryId) {
+                    return formatPassedProperties(response.data);
+                }
+
                 return {
                     token: response.data.token,
                     embed: response.data.embed,
-                    chart: formatPassedProperties(response.data.chart),
+                    entry: formatPassedProperties(response.data.entry),
                 };
             })
             .catch((error) => {
