@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ErrorContentTypes, Feature} from 'shared';
 import {DL, Utils} from 'ui';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
@@ -70,8 +70,8 @@ class ErrorContent extends React.PureComponent {
     }
 
     entryDialoguesRef = React.createRef();
-    buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
-    buttonWidth = isMobileView ? 'max' : 'auto';
+    buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
+    buttonWidth = DL.IS_MOBILE ? 'max' : 'auto';
 
     async getAccessDescriptionMD() {
         const customText = this.getAccessDescription();
@@ -207,7 +207,7 @@ class ErrorContent extends React.PureComponent {
                     <Button
                         className={b('action-btn')}
                         view="action"
-                        size={isMobileView ? MOBILE_SIZE.BUTTON : 'l'}
+                        size={DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'l'}
                         width={this.buttonWidth}
                         onClick={() => {
                             if (this.entryDialoguesRef.current) {
@@ -232,7 +232,7 @@ class ErrorContent extends React.PureComponent {
         const {noControls, showDebugInfo, noActions} = this.props;
         const hasAccessDescription = this.hasAccessDescription();
         const showActions = !hasAccessDescription;
-        const showDebugActions = showDebugInfo && !isMobileView;
+        const showDebugActions = showDebugInfo && !DL.IS_MOBILE;
 
         return (
             <div className={b('content')}>
@@ -249,7 +249,7 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderAction = () => {
-        if (isMobileView) {
+        if (DL.IS_MOBILE) {
             return null;
         }
         return this.renderActions();
@@ -258,7 +258,7 @@ class ErrorContent extends React.PureComponent {
     render() {
         const {noControls, className, size, direction, showDebugInfo} = this.props;
 
-        const showDebugActions = showDebugInfo && isMobileView;
+        const showDebugActions = showDebugInfo && DL.IS_MOBILE;
 
         const {type} = this.props;
         let imageName = '';
@@ -301,7 +301,7 @@ class ErrorContent extends React.PureComponent {
                         size={size}
                         direction={direction}
                     />
-                    {isMobileView && this.renderActions()}
+                    {DL.IS_MOBILE && this.renderActions()}
                 </div>
                 {showDebugActions && this.renderDebugInfo()}
             </div>

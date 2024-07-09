@@ -6,10 +6,11 @@ import block from 'bem-cn-lite';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import {DL} from 'ui/constants/common';
 import type {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
 import type {ChunkItem} from 'ui/units/workbooks/types';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
 import {EmptyRow} from '../Row/Row';
@@ -90,7 +91,7 @@ const MainTabContent = ({
     };
 
     const getActionBtn = () => {
-        const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : undefined;
+        const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : undefined;
 
         if (isErrorMessage) {
             return (
@@ -121,14 +122,14 @@ const MainTabContent = ({
         return null;
     };
 
-    const showCreateButton = workbook.permissions.update && !isMobileView;
+    const showCreateButton = workbook.permissions.update && !DL.IS_MOBILE;
 
-    if (!isLoading && isMobileView && chunk.length === 0) {
+    if (!isLoading && DL.IS_MOBILE && chunk.length === 0) {
         return null;
     }
 
     return (
-        <div className={b({mobile: isMobileView})}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             {!clearView && (
                 <div className={b('header', {closed: !isOpen})}>
                     <div className={b('content')}>
@@ -156,9 +157,9 @@ const MainTabContent = ({
             <div className={b('table')}>
                 <div className={b('table-header')}>
                     <div className={b('table-header-cell', {title: true})} />
-                    {!isMobileView && <div className={b('table-header-cell', {author: true})} />}
+                    {!DL.IS_MOBILE && <div className={b('table-header-cell', {author: true})} />}
                     <div className={b('table-header-cell', {date: true})} />
-                    {!isMobileView && <div className={b('table-header-cell', {controls: true})} />}
+                    {!DL.IS_MOBILE && <div className={b('table-header-cell', {controls: true})} />}
                 </div>
                 {!isLoading && getContentTab()}
             </div>

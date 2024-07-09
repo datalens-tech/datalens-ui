@@ -1,10 +1,7 @@
 import type {TabsSize} from '@gravity-ui/components';
 import type {ButtonSize, CheckboxSize, SelectSize} from '@gravity-ui/uikit';
-import {Feature} from 'shared';
 import type {EntityIconSize} from 'ui/components/EntityIcon/EntityIcon';
-import {DL} from 'ui/constants';
-
-import Utils from './utils';
+import {DL} from 'ui/constants/common';
 
 type MobileSizeType = {
     TABS: TabsSize;
@@ -28,4 +25,4 @@ export const MOBILE_SIZE: MobileSizeType = {
     SELECT: 'xl',
 };
 
-export const isMobileView = Utils.isEnabledFeature(Feature.NewMobileDesign) && DL.IS_MOBILE;
+export const isMobileView = DL.IS_MOBILE;

@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import '../CollectionContentTable.scss';
 
@@ -21,8 +21,8 @@ export const CollectionTitleCell = ({
     title,
 }: CollectionTitleCellProps) => {
     // if it's not mobile set default size
-    const workbookSize = isMobileView ? 'mobile' : undefined;
-    const collectionSize = isMobileView ? 28 : undefined;
+    const workbookSize = DL.IS_MOBILE ? 'mobile' : undefined;
+    const collectionSize = DL.IS_MOBILE ? 28 : undefined;
 
     return (
         <div className={b('content-cell', {title: true})} key={collectionId}>

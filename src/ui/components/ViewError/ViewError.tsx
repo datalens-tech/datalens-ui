@@ -6,10 +6,12 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
-import {ErrorContent, Utils} from 'ui';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 
 import type {DataLensApiError} from '../../typings';
+import ErrorContent from '../ErrorContent/ErrorContent';
 
 import './ViewError.scss';
 
@@ -80,8 +82,8 @@ export const ViewError = ({
     const errorClassname = className || 'actions';
     const buttonDetailsText = buttonText || i18n('button_details');
 
-    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
-    const buttonWidth = isMobileView ? 'max' : 'auto';
+    const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
+    const buttonWidth = DL.IS_MOBILE ? 'max' : 'auto';
 
     const handleClickDetails = () => {
         dispatch(
@@ -94,7 +96,7 @@ export const ViewError = ({
     };
 
     const content = (
-        <div className={b(errorClassname, {mobile: isMobileView})}>
+        <div className={b(errorClassname, {mobile: DL.IS_MOBILE})}>
             {typeof retry === 'function' && (
                 <Button
                     className={b('btn-retry')}
