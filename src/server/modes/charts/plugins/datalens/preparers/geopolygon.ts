@@ -1,4 +1,5 @@
 import type {
+    MarkupItem,
     ServerFieldFormatting,
     ServerTooltip,
     VisualizationLayerShared,
@@ -46,8 +47,10 @@ type GeopolygonConfig = {
         rawText?: boolean;
         colorIndex?: number | null;
         data?: {
-            text: string;
+            text?: string;
             color?: string;
+            key?: string;
+            value?: MarkupItem;
         }[];
     };
 };
@@ -106,10 +109,6 @@ function prepareFormattedValue(args: {
                 precision: dataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
             }),
         });
-    }
-
-    if (dataType === DATASET_FIELD_TYPES.MARKUP) {
-        return `<a href="${value.url}" target="_blank">${value.content.content}</a>`;
     }
 
     return value;
@@ -221,9 +220,11 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             value: text,
         });
         const tooltipText = `${tooltip.fakeTitle || tooltip.title}: ${formattedText}`;
+        let markupData: {key: string; value: MarkupItem} | undefined;
 
         if (tooltip?.data_type === DATASET_FIELD_TYPES.MARKUP) {
             polygon.properties.rawText = true;
+            markupData = {key: tooltip.fakeTitle || tooltip.title, value: formattedText};
         }
 
         if (gradientMode) {
@@ -232,10 +233,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             if (
-                !polygon.properties.data.some((entry: {text: string}) => entry.text === tooltipText)
+                !polygon.properties.data.some(
+                    (entry: {text?: string}) => entry.text === tooltipText,
+                )
             ) {
                 polygon.properties.data[tooltipIndex] = {
-                    text: tooltipText,
+                    ...(markupData ? {...markupData} : {text: tooltipText}),
                 };
             }
         } else {
@@ -244,7 +247,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             polygon.properties.data[tooltipIndex] = {
-                text: tooltipText,
+                ...(markupData ? {...markupData} : {text: tooltipText}),
             };
         }
     };

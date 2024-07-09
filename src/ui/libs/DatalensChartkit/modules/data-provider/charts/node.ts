@@ -6,27 +6,40 @@ import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit, partial, partialRight} from 'lodash';
 import get from 'lodash/get';
+import pick from 'lodash/pick';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
-import {EDITOR_CHART_NODE, QL_CHART_NODE, WIZARD_CHART_NODE} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     ChartkitHandlersDict,
-} from '../../../../../../shared/constants/chartkit-handlers';
+    EDITOR_CHART_NODE,
+    QL_CHART_NODE,
+    SHARED_URL_OPTIONS,
+    WIZARD_CHART_NODE,
+} from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import type {ControlsOnlyWidget, GraphWidget, Widget, WithControls} from '../../../types';
+import Utils from '../../../../../utils';
+import type {
+    ControlsOnlyWidget,
+    GraphWidget,
+    UiSandboxRuntimeOptions,
+    Widget,
+    WithControls,
+} from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {
+    UI_SANDBOX_TOTAL_TIME_LIMIT,
     getUISandbox,
     processHtmlFields,
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
+import {getSafeChartWarnings} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -238,6 +251,12 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
+        const showSafeChartInfo =
+            Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+            (params &&
+                SHARED_URL_OPTIONS.SAFE_CHART in params &&
+                String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1');
+
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -280,15 +299,30 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 noJsonFn ? replacer : undefined,
             );
 
+            if (showSafeChartInfo) {
+                result.safeChartInfo = getSafeChartWarnings(
+                    loadedType,
+                    pick(result, 'config', 'libraryConfig', 'data'),
+                );
+            }
+
             if (
                 shouldUseUISandbox(result.config) ||
                 shouldUseUISandbox(result.libraryConfig) ||
                 shouldUseUISandbox(result.data)
             ) {
                 const uiSandbox = await getUISandbox();
-                unwrapPossibleFunctions(uiSandbox, result.config);
-                unwrapPossibleFunctions(uiSandbox, result.libraryConfig);
-                unwrapPossibleFunctions(uiSandbox, result.data);
+                const uiSandboxOptions: UiSandboxRuntimeOptions = {};
+                if (!get(loaded.params, SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                    // creating an object for mutation
+                    // so that we can calculate the total execution time of the sandbox
+                    uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
+                }
+
+                unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
+                unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
+                unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
+                result.uiSandboxOptions = uiSandboxOptions;
             }
 
             processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
@@ -393,6 +427,16 @@ function applyChartkitHandlers(
         ) {
             libraryConfigRef.exporting.csv.columnHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardExportColumnNamesFormatter];
+        }
+
+        if (
+            libraryConfigRef.plotOptions?.scatter?.tooltip?.formatter ===
+            ChartkitHandlers.WizardScatterTooltipFormatter
+        ) {
+            delete libraryConfigRef.plotOptions.scatter.tooltip.formatter;
+            libraryConfigRef.plotOptions.scatter.tooltip.headerFormat = '';
+            libraryConfigRef.plotOptions.scatter.tooltip.pointFormatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
         }
     }
 

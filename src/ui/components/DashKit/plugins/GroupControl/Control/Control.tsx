@@ -29,10 +29,15 @@ import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants
 import {type EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
-import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
+import {
+    addOperationForValue,
+    unwrapFromArray,
+    unwrapFromArrayAndSkipOperation,
+} from 'ui/units/dash/modules/helpers';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
+import {getControlHint} from '../../../utils';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
@@ -46,7 +51,7 @@ import {
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {ExtendedLoadedData} from '../types';
-import {clearLoaderTimer, getControlWidthStyle} from '../utils';
+import {clearLoaderTimer, filterSignificantParams, getControlWidthStyle} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -90,6 +95,7 @@ type ControlProps = {
     }) => void;
     needReload: boolean;
     workbookId?: WorkbookId;
+    dependentSelectors?: boolean;
 };
 
 export const Control = ({
@@ -102,9 +108,13 @@ export const Control = ({
     onChange,
     needReload,
     workbookId,
+    dependentSelectors,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
+    const [prevParams, setPrevParams] = React.useState<StringParams | null>(null);
+    // it is filled in for the first time when the data is loaded, then it is updated when the params change
+    const currentSignificantParams = React.useRef<StringParams | null>();
     const requestCancellationRef = React.useRef<CancelTokenSource>();
 
     const [
@@ -120,8 +130,6 @@ export const Control = ({
         },
         dispatch,
     ] = React.useReducer(reducer, getInitialState());
-
-    const [prevParams, setPrevParams] = React.useState<StringParams | null>(params);
 
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
@@ -144,6 +152,15 @@ export const Control = ({
     ) => {
         const statusResponse = getStatus(loadedStatus);
         if (statusResponse) {
+            // first fill of current params
+            if (!currentSignificantParams.current) {
+                currentSignificantParams.current = filterSignificantParams({
+                    params,
+                    loadedData: newLoadedData,
+                    defaults: data.defaults,
+                    dependentSelectors,
+                });
+            }
             dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
             onStatusChanged({
                 controlId: id,
@@ -178,16 +195,20 @@ export const Control = ({
                             stype: 'control_dash',
                         },
                     },
-                    params,
+                    // currentParams are filled in after the first receiving of loadedData
+                    params: currentSignificantParams.current || params,
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
             };
 
-            dispatch(setStatus({status: LOAD_STATUS.PENDING}));
-            onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
-
             cancelCurrentRunRequest();
+
+            // if the previous request is canceled, but we make a new one, we do not need to send status again
+            if (status !== LOAD_STATUS.PENDING) {
+                dispatch(setStatus({status: LOAD_STATUS.PENDING}));
+                onStatusChanged({controlId: id, status: LOAD_STATUS.PENDING});
+            }
 
             requestCancellationRef.current = payloadCancellation;
 
@@ -246,6 +267,19 @@ export const Control = ({
         init();
     };
 
+    const reloadAfterParamsChanges = () => {
+        const significantParams = filterSignificantParams({
+            params,
+            loadedData,
+            defaults: data.defaults,
+            dependentSelectors,
+        });
+        if (!needReload && !isEqual(currentSignificantParams.current, significantParams)) {
+            currentSignificantParams.current = significantParams;
+            reload();
+        }
+    };
+
     // cancel requests, transfer status and remove timer if component is unmounted or selector is
     // removed from group
     React.useEffect(() => {
@@ -264,6 +298,14 @@ export const Control = ({
         clearLoaderTimer(silentLoaderTimer);
     }
 
+    if (loadedData && !isEqual(params, prevParams)) {
+        if (currentSignificantParams.current) {
+            reloadAfterParamsChanges();
+        }
+        setPrevParams(params);
+    }
+
+    // control needs to be reloaded after autoupdate or update in data (changes in group configuration)
     if (prevNeedReload !== needReload) {
         setPrevNeedReload(needReload);
         if (needReload) {
@@ -271,17 +313,15 @@ export const Control = ({
         }
     }
 
-    if (control?.param && !isEqual(prevParams, params)) {
-        setPrevParams(params);
-        reload();
-    }
-
     if (!isInit && status === LOAD_STATUS.INITIAL) {
         init();
     }
 
-    const showItemsLoader = () => {
-        dispatch(setLoadingItems({loadingItems: true}));
+    const setItemsLoader = (isLoadingItems: boolean) => {
+        if (!isMounted) {
+            return;
+        }
+        dispatch(setLoadingItems({loadingItems: isLoadingItems}));
     };
 
     const validateValue = (args: ValidationErrorData) => {
@@ -426,7 +466,7 @@ export const Control = ({
 
             style,
             renderOverlay,
-            hint: controlData.source.showHint ? controlData.source.hint : undefined,
+            hint: getControlHint(controlData.source),
         };
 
         if (elementType === DashTabItemControlElementType.Select) {
@@ -438,10 +478,10 @@ export const Control = ({
                     status={status}
                     loadedData={loadedData}
                     loadingItems={loadingItems}
-                    actualParams={params}
+                    actualParams={currentSignificantParams.current || params}
                     onChange={onChangeParams}
                     init={init}
-                    showItemsLoader={showItemsLoader}
+                    setItemsLoader={setItemsLoader}
                     validationError={validationError}
                     errorData={errorData}
                     validateValue={validateValue}
@@ -491,7 +531,7 @@ export const Control = ({
                 operation,
             });
 
-            if (valueWithOperation !== preparedValue) {
+            if (!isEqual(valueWithOperation, unwrapFromArray(params[param]))) {
                 onChangeParams({value: valueWithOperation, param});
             }
         };

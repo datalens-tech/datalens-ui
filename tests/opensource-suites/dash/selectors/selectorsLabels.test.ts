@@ -1,9 +1,10 @@
 import {Page} from '@playwright/test';
 
-import DashboardPage, {SelectorSettings} from '../../../page-objects/dashboard/DashboardPage';
+import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashTabItemControlSourceType} from '../../../../src/shared';
+import type {SelectorSettings} from '../../../page-objects/dashboard/ControlActions';
 
 const TITLE = 'City';
 const INNER_TITLE = 'innerCity';
@@ -19,7 +20,7 @@ const createDashWithSelector = async ({
 
     await dashboardPage.createDashboard({
         editDash: async () => {
-            await dashboardPage.addSelectorBySettings({
+            await dashboardPage.controlActions.addSelectorWithDefaultSettings({
                 ...{
                     appearance: {
                         titleEnabled: true,
@@ -81,7 +82,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual List. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual List. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -99,7 +100,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual Input field. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual Input field. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 

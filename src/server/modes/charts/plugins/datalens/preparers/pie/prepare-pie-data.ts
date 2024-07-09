@@ -26,6 +26,7 @@ export type PieConfig = {
     tooltip: any;
     data?: (PiePoint & ExtendedSeriesLineOptions)[];
     showInLegend?: boolean;
+    pointConflict?: boolean;
 };
 
 function mapAndColorizePieByGradient(
@@ -249,10 +250,15 @@ export function preparePieData(args: PrepareFunctionArgs) {
             };
         }
 
+        if (acc.get(point.name)) {
+            pie.pointConflict = true;
+        }
+
         acc.set(point.name, point);
 
         return acc;
     }, new Map<string, PiePoint>());
+
     pie.data = Array.from(pieData.values())
         // We remove negative values, since pie does not know how to display them
         .filter((point) => point.y > 0) as (PiePoint & ExtendedSeriesLineOptions)[];

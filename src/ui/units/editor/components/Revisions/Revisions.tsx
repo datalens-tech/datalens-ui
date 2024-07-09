@@ -298,6 +298,7 @@ class Revisions extends React.Component<Props, RevisionsState> {
                 <div className={b('publish-status')}>
                     {published && i18n('label_status-published')}
                 </div>
+
                 <div className={b('actions')}>
                     {progress !== null && progress.revId === item.revId ? (
                         <div className={b('progress-status')}>

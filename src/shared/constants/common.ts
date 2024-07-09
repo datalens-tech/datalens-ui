@@ -46,6 +46,11 @@ export const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
 
 export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 
+export const SHARED_URL_OPTIONS = {
+    SAFE_CHART: '_safe_chart',
+    WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',
+};
+
 export const WIZARD_CHART_NODE = {
     graph_wizard_node: 'statface_graph',
     table_wizard_node: 'table',

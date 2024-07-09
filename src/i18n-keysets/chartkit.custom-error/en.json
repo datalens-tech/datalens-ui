@@ -7,6 +7,7 @@
   "error-no-data": "No data",
   "error-timeout": "The server response waiting time has been exceeded",
   "error-too-many-lines": "Too many series on the chart",
+  "error-ui-sandbox-timeout": "The allowed chart execution time has been exceeded",
   "error-unknown-extension": "Unknown chart type",
   "more": "More",
   "retry": "Retry"

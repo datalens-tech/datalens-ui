@@ -172,6 +172,7 @@ export interface ChartsProps {
     };
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
+    forceShowSafeChart?: boolean;
 }
 
 export interface ChartsData {
@@ -204,6 +205,7 @@ export interface ChartsData {
         datasetFields?: Record<string, string>;
     };
     publicAuthor?: EntryPublicAuthor;
+    safeChartInfo?: string;
 }
 
 export type DatasetFieldsListItem = {

@@ -2,11 +2,11 @@ import React from 'react';
 
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import groupBy from 'lodash/groupBy';
 import {useDispatch} from 'react-redux';
 import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
+import {groupEntitiesByScope} from 'ui/utils/helpers';
 import Utils from 'utils';
 
 import {useRefMounted} from '../../../../hooks/useRefMounted';
@@ -44,7 +44,7 @@ function formGroups(
 ): Record<string, EntryRelationExtended[]> {
     const relationsArray = Object.values(normalizedRelations);
 
-    return groupBy(relationsArray, (el) => el.scope);
+    return groupEntitiesByScope(relationsArray);
 }
 
 function isPermanentDisabledEntry(entry: EntryRelation) {

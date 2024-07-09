@@ -1,6 +1,8 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import has from 'lodash/has';
+import set from 'lodash/set';
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
 
@@ -175,9 +177,20 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
             }
 
             const chartType = extractHcTypeFromData(data);
+            switch (chartType) {
+                case 'pie': {
+                    fixPieTotals({data});
+                    break;
+                }
+                case 'treemap': {
+                    const tooltipPointFormat =
+                        'libraryConfig.plotOptions.treemap.tooltip.pointFormat';
 
-            if (chartType === 'pie') {
-                fixPieTotals({data});
+                    if (!has(data, tooltipPointFormat)) {
+                        set(data, tooltipPointFormat, '{point.name}<br/><b>{point.label}</b>');
+                    }
+                    break;
+                }
             }
 
             return data;

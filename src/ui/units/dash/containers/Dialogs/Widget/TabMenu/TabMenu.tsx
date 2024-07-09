@@ -9,12 +9,13 @@ import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {useSelector} from 'react-redux';
 import {TabMenuQA} from 'shared';
+import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {getPastedWidgetData} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {TabActionType} from './types';
-import type {TabMenuItemData, TabMenuProps, UpdateState} from './types';
+import type {TabMenuItemData, TabMenuProps, TabsWithMenu, UpdateState} from './types';
 
 import './TabMenu.scss';
 
@@ -34,6 +35,8 @@ export const TabMenu = <T extends unknown>({
     tabIconMixin,
     addButtonText,
     pasteButtonText,
+    onCopyItem,
+    onUpdateItem,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -77,19 +80,26 @@ export const TabMenu = <T extends unknown>({
         };
     };
 
-    const pasteItem = (): UpdateState<T> => {
-        const pasteItems = onPasteItems?.(pasteConfig);
+    const pasteItem = (item?: TabMenuItemData<T>, index?: number): UpdateState<T> => {
+        const pasteItems = item ? [item] : onPasteItems?.(pasteConfig);
         if (!pasteItems) {
             return {
                 action: TabActionType.Skipped,
             };
         }
 
-        const updatedItems = [...items, ...pasteItems];
+        const pastItemsWithId = pasteItems.map((controlItem) => ({
+            ...controlItem,
+            id: undefined,
+            draftId: getRandomKey(),
+        }));
+
+        const updatedItems = [...items];
+        updatedItems.splice(index || updatedItems.length, 0, ...pastItemsWithId);
 
         return {
             items: updatedItems,
-            selectedItemIndex: items.length || 0,
+            selectedItemIndex: index || items.length || 0,
             action: TabActionType.Paste,
         };
     };
@@ -150,7 +160,6 @@ export const TabMenu = <T extends unknown>({
     const onAction =
         ({action, index}: {action: Exclude<TabActionType, 'skipped'>; index?: number}) =>
         (event: React.MouseEvent) => {
-            event.stopPropagation();
             let data;
 
             if (index === undefined) {
@@ -162,6 +171,7 @@ export const TabMenu = <T extends unknown>({
                         break;
                     case TabActionType.ChangeDefault:
                         data = changeDefault(index);
+                        event.stopPropagation();
                         break;
                     case TabActionType.Delete:
                         data = removeItem(index);
@@ -176,6 +186,11 @@ export const TabMenu = <T extends unknown>({
 
     const onRemove = (removeItemdItemIndex: number) => {
         onUpdate(removeItem(removeItemdItemIndex));
+    };
+
+    const onDuplicate = (itemIndex: number) => {
+        const item = items[itemIndex];
+        onUpdate(pasteItem({...item}, itemIndex + 1));
     };
 
     const moveItem = (dragIndex: number, hoverIndex: number) => {
@@ -270,7 +285,11 @@ export const TabMenu = <T extends unknown>({
         );
     };
 
-    const renderListWithMenu = (items: TabMenuItemData<T>[], selectedItemIndex: number) => {
+    const renderListWithMenu = (
+        items: TabMenuItemData<T>[],
+        selectedItemIndex: number,
+        onUpdateItem: TabsWithMenu['onUpdateItem'],
+    ) => {
         return (
             <ListWithMenu
                 list={{
@@ -286,7 +305,10 @@ export const TabMenu = <T extends unknown>({
                 }}
                 onRemove={onRemove}
                 onAction={onAction}
+                onDuplicate={onDuplicate}
                 iconOnHover={true}
+                onCopy={onCopyItem}
+                onUpdateItem={onUpdateItem}
             />
         );
     };
@@ -354,7 +376,7 @@ export const TabMenu = <T extends unknown>({
     return (
         <div className={b({view: addButtonView})}>
             {enableActionMenu
-                ? renderListWithMenu(items, selectedItemIndex)
+                ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}
             {renderButtons()}
         </div>

@@ -14,12 +14,13 @@ export const ControlQA = {
     controlLinks: 'dashkit-overlay-control-links',
     controlMenu: 'dashkit-overlay-control-menu',
     controlSettings: 'dashkit-overlay-control-settings',
-    selectAcceptable: 'select-acceptable',
-    selectAcceptableInput: 'select-acceptable-input',
-    selectAcceptableButton: 'select-acceptable-button',
-    selectAcceptableItem: 'select-acceptable-item',
-    selectAcceptableRemoveButton: 'select-acceptable-remove',
+    controlSelectAcceptable: 'control-select-acceptable',
+    controlSelectAcceptableInput: 'control-select-acceptable-input',
+    controlSelectAcceptableButton: 'control-select-acceptable-button',
+    controlSelectAcceptableItem: 'control-select-acceptable-item',
+    controlSelectAcceptableRemoveButton: 'control-select-acceptable-remove',
     chartkitControl: 'chartkit-control',
+    groupChartkitControl: 'group-chartkit-control',
     selectDefaultAcceptable: 'select-default-acceptable',
     acceptableDialogButton: 'acceptable-dialog-button',
     filtersClear: 'filters-clear',
@@ -27,6 +28,8 @@ export const ControlQA = {
     dialogControl: 'dialog-control',
     dialogControlApplyBtn: 'control-dialog-apply-button',
     dialogControlCancelBtn: 'control-dialog-cancel-button',
+
+    groupCommonLoader: 'group-control-common-loader',
 };
 
 export const DialogControlQa = {
@@ -48,6 +51,11 @@ export const DialogControlQa = {
     typeControlCheckbox: 'type-control-checkbox',
 };
 
+export const DialogControlParamsQa = {
+    buttonApply: 'dialog-control-params-apply-button',
+    buttonCancel: 'dialog-control-params-cancel-button',
+};
+
 export const DialogGroupControlQa = {
     autoHeightCheckbox: 'autoheight-checkbox',
     applyButtonCheckbox: 'apply-button-checkbox',
@@ -58,6 +66,8 @@ export const DialogGroupControlQa = {
     placementApplyButton: 'selectors-placement-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
+    copyControlButton: 'copy-control-button',
+    duplicateControlButton: 'duplicate-control-button',
 };
 
 export const DialogControlDateQa = {

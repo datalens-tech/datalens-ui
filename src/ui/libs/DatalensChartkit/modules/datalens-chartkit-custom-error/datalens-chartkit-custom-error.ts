@@ -4,6 +4,7 @@ import pick from 'lodash/pick';
 
 import {i18n} from '../../../../../i18n';
 import type {StringParams} from '../../../../../shared';
+import {SHARED_URL_OPTIONS} from '../../../../../shared';
 import type {CombinedError} from '../../types';
 import {isAxiosError} from '../axios/axios';
 import {
@@ -28,6 +29,7 @@ const ERROR_CODE = {
 
     NO_DATA: 'ERR.CK.NO_DATA',
     TOO_MANY_LINES: 'ERR.CK.TOO_MANY_LINES',
+    UI_SANDBOX_EXECUTION_TIMEOUT: 'ERR.CK.UI_SANDBOX_EXECUTION_TIMEOUT',
 };
 
 export interface ExtraParams {
@@ -179,6 +181,14 @@ function formatError({
                     actionData: {params: {[URL_OPTIONS.WITHOUT_LINE_LIMIT]: 1}},
                     hideDebugInfo: true,
                     rowsExceededLimit: true,
+                });
+                break;
+            case ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT:
+                message = i18n('chartkit.custom-error', 'error-ui-sandbox-timeout');
+                Object.assign(extra, {
+                    actionText: i18n('chartkit.custom-error', 'draw-anyway'),
+                    actionData: {params: {[SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT]: 1}},
+                    hideDebugInfo: true,
                 });
                 break;
             case ERROR_CODE.UNKNOWN_ERROR:

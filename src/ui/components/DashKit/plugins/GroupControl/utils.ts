@@ -1,7 +1,11 @@
 import type {CSSProperties} from 'react';
 
-import type {QueueItem} from '@gravity-ui/dashkit/helpers';
+import type {StringParams} from '@gravity-ui/dashkit/helpers';
+import pick from 'lodash/pick';
 import type {DashTabItemControlData} from 'shared';
+import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+
+import type {ExtendedLoadedData, GroupControlLocalMeta} from './types';
 
 export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],
@@ -20,10 +24,37 @@ export const clearLoaderTimer = (timer?: NodeJS.Timeout) => {
     }
 };
 
-export const addItemToLocalQueue = (queue: QueueItem[], widgetId: string, groupItemId: string) => {
+export const addItemToLocalQueue = (
+    queue: GroupControlLocalMeta['queue'],
+    widgetId: string,
+    groupItemId: string,
+    param?: string,
+) => {
     const updatedQueue = queue.filter((queueItem) => queueItem.groupItemId !== groupItemId);
 
-    updatedQueue.push({id: widgetId, groupItemId});
+    updatedQueue.push({id: widgetId, groupItemId, param});
 
     return updatedQueue;
+};
+
+export const filterSignificantParams = ({
+    params,
+    loadedData,
+    defaults,
+    dependentSelectors,
+}: {
+    params: StringParams;
+    loadedData?: ExtendedLoadedData | ResponseSuccessControls | null;
+    defaults?: StringParams;
+    dependentSelectors?: boolean;
+}) => {
+    if (!params) {
+        return {};
+    }
+
+    if (loadedData && loadedData.usedParams && dependentSelectors) {
+        return pick(params, Object.keys(loadedData.usedParams));
+    }
+
+    return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
 };

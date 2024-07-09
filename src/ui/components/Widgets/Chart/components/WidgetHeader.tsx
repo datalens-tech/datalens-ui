@@ -133,14 +133,16 @@ export const WidgetHeader = (props: HeaderProps) => {
                     </div>
                 )}
                 {showFiltersClear && (
-                    <div className={b('filters-controls')}>
-                        <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
-                            <Icon
-                                data={iconClearActionParams}
-                                size={16}
-                                className={b('icon-filter-clear')}
-                            />
-                        </Button>
+                    <div className={b('icons')}>
+                        <div className={b('filters-controls')}>
+                            <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
+                                <Icon
+                                    data={iconClearActionParams}
+                                    size={16}
+                                    className={b('icon-filter-clear')}
+                                />
+                            </Button>
+                        </div>
                     </div>
                 )}
             </div>

@@ -28,7 +28,6 @@ export type TabMenuProps<T> = {
     items: TabMenuItemData<T>[];
     selectedItemIndex: number;
     onUpdate: ({items, selectedItemIndex, action}: UpdateState<T>) => void;
-    enableActionMenu?: boolean;
     addButtonText?: string;
     pasteButtonText?: string;
     defaultTabText?: () => string;
@@ -36,4 +35,15 @@ export type TabMenuProps<T> = {
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
     addButtonView?: 'flat' | 'outlined';
+    onCopyItem?: (itemIndex: number) => void;
+} & (TabsWithMenu | TabsWithRemove);
+
+export type TabsWithMenu = {
+    enableActionMenu: true;
+    onUpdateItem: (title: string) => void;
+};
+
+type TabsWithRemove = {
+    enableActionMenu?: false;
+    onUpdateItem?: (title: string) => void;
 };

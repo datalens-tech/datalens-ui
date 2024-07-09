@@ -21,15 +21,15 @@ datalensTest.describe('Dashboards - Selectors by date/time', () => {
 
         await dashboardPage.createDashboard({
             editDash: async () => {
-                await dashboardPage.addDateRangeSelector({
-                    controlTitle: 'test-control-1',
-                    controlFieldName: 'test-control-field-1',
+                await dashboardPage.controlActions.addDateRangeSelector({
+                    title: 'test-control-1',
+                    fieldName: 'test-control-field-1',
                     range: expectedValues[0].split(' - '),
                 });
 
-                await dashboardPage.addDateRangeSelector({
-                    controlTitle: 'test-control',
-                    controlFieldName: 'test-control-field',
+                await dashboardPage.controlActions.addDateRangeSelector({
+                    title: 'test-control',
+                    fieldName: 'test-control-field',
                     range: expectedValues[1].split(' - '),
                 });
             },

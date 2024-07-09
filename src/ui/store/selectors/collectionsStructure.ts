@@ -46,6 +46,12 @@ const selectDeleteCollection = (state: DatalensGlobalState) =>
 const selectDeleteWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.deleteWorkbook;
 
+const selectDeleteCollections = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteCollections;
+
+const selectDeleteWorkbooks = (state: DatalensGlobalState) =>
+    state.collectionsStructure.deleteWorkbooks;
+
 const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.addDemoWorkbook;
 
@@ -135,6 +141,13 @@ export const selectUpdateCollectionIsLoading = createSelector(
 export const selectUpdateWorkbookIsLoading = createSelector(
     selectUpdateWorkbook,
     (result) => result.isLoading,
+);
+
+// Indication of the collections and workbooks deletion process
+export const selectDeleteIsLoading = createSelector(
+    [selectDeleteCollections, selectDeleteWorkbooks],
+    (deleteCollections, deleteWorkbooks) =>
+        deleteCollections.isLoading || deleteWorkbooks.isLoading,
 );
 
 // Indication of the collection deletion process

@@ -23,6 +23,7 @@ export function ChunkGroup({
     onDeleteEntry,
     onDuplicateEntry,
     onCopyEntry,
+    onShowRelatedClick,
 }: ChunkGroupProps) {
     const {ref, inView} = useInView(options);
 
@@ -41,6 +42,7 @@ export function ChunkGroup({
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
+                            onShowRelatedClick={onShowRelatedClick}
                         />
                     );
                 case 'empty':

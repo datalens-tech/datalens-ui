@@ -18,6 +18,8 @@ import type {
     ADD_OBLIGATORY_FILTER,
     AVATAR_ADD,
     AVATAR_DELETE,
+    BATCH_DELETE_FIELDS,
+    BATCH_UPDATE_FIELDS,
     CHANGE_AMOUNT_PREVIEW_ROWS,
     CLEAR_PREVIEW,
     CLICK_CONNECTION,
@@ -164,6 +166,14 @@ type AddFieldUpdate = {
     action: 'add_field';
     field: Partial<DatasetField>;
 };
+type DeleteFieldUpdate = {
+    action: 'delete_field';
+    field: Partial<DatasetField>;
+};
+type ChangeFieldUpdate = {
+    action: 'update_field';
+    field: Partial<DatasetField>;
+};
 type AddSourceUpdate = {
     action: 'add_source';
     source: StandaloneSource | DatasetSource;
@@ -237,6 +247,8 @@ type UpdateConnection = {
 // TODO: the same type is in the scheme, it is necessary to sleep properly
 export type Update =
     | AddFieldUpdate
+    | DeleteFieldUpdate
+    | ChangeFieldUpdate
     | AddSourceUpdate
     | UpdSourceUpdate
     | AddSourceAvatarUpdate
@@ -422,10 +434,25 @@ type UpdateField = {
     };
 };
 
+type BatchUpdateFields = {
+    type: typeof BATCH_UPDATE_FIELDS;
+    payload: {
+        fields: Partial<DatasetField>[];
+        ignoreMergeWithSchema?: boolean;
+    };
+};
+
 type DeleteField = {
     type: typeof DELETE_FIELD;
     payload: {
         field: Partial<DatasetField>;
+    };
+};
+
+type BatchDeleteFields = {
+    type: typeof BATCH_DELETE_FIELDS;
+    payload: {
+        fields: Partial<DatasetField>[];
     };
 };
 
@@ -733,7 +760,9 @@ export type DatasetReduxAction =
     | SetIsDatasetChangedFlag
     | UpdateRls
     | UpdateField
+    | BatchUpdateFields
     | DeleteField
+    | BatchDeleteFields
     | DuplicateField
     | AddField
     | ToggleViewPreview

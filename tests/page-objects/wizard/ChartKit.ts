@@ -23,8 +23,6 @@ export default class ChartKit {
     geopointSelector = '.chartkit-yandex-map-chips';
     tooltipSelector = '.chartkit-tooltip';
     yMapSelector = '.chartkit-ymap';
-    legendMapSelector = '.chartkit-ymap-legend';
-    legendSelector = '.highcharts-legend-box';
     legendItemSelector = '.highcharts-legend-item';
     chartMenuSwitcher = slct('chart-dropdown-switcher');
     chartMenuList = slct('chart-dropdown-menu');

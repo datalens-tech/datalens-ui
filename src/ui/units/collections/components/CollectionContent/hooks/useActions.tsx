@@ -152,7 +152,9 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                 });
             }
 
-            actions.push([...otherActions]);
+            if (otherActions.length > 0) {
+                actions.push([...otherActions]);
+            }
 
             return customizeCollectionsActions(item, actions);
         },
@@ -295,7 +297,9 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                 });
             }
 
-            actions.push([...otherActions]);
+            if (otherActions.length > 0) {
+                actions.push([...otherActions]);
+            }
 
             return customizeWorkbooksActions(item, actions);
         },

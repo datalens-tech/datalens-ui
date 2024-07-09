@@ -5,7 +5,10 @@ import {PluginText, pluginText} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemText} from 'shared';
-import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {
+    adjustWidgetLayout as dashkitAdjustWidgetLayout,
+    getPreparedWrapSettings,
+} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
@@ -112,19 +115,20 @@ const textPlugin = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const showBgColor =
+        const showBgColor = Boolean(
             data.background?.enabled &&
-            data.background?.color &&
-            data.background?.color !== 'transparent';
+                data.background?.color &&
+                data.background?.color !== 'transparent',
+        );
 
-        const style = showBgColor ? {backgroundColor: data.background?.color} : {};
+        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
         return (
             <RendererWrapper
                 type="text"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={showBgColor ? 'with-color' : undefined}
+                classMod={classMod}
             >
                 <YfmWrapper
                     // needed for force update when text is changed

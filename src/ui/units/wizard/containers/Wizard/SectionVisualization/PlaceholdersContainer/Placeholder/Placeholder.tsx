@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Gear} from '@gravity-ui/icons';
-import type {IconProps} from '@gravity-ui/uikit';
+import type {IconData, IconProps} from '@gravity-ui/uikit';
 import {Icon, Popover} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {ConnectableElement} from 'react-dnd';
@@ -20,7 +20,7 @@ import {ITEM_TYPES} from '../../../../../constants';
 import type {AddableField} from '../../AddField/AddField';
 import AddFieldContainer from '../../AddField/AddField';
 
-import placeholderTooltipIcon from 'ui/assets/icons/placeholder-tooltip.svg';
+import defaultPlaceholderTooltipIcon from 'ui/assets/icons/placeholder-tooltip.svg';
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -51,6 +51,7 @@ type Props = StateProps &
         noRemove?: boolean;
         onItemClick?: (_e: any, item: Field) => void;
         placeholderTooltipText?: string;
+        placeholderTooltipIcon?: IconData;
         transform?: (item: Field, action?: 'replace') => Promise<Field>;
         showHideLabel?: boolean;
         isDashboardPlaceholder?: boolean;
@@ -136,6 +137,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
             capacity,
             capacityError,
             placeholderTooltipText,
+            placeholderTooltipIcon,
             transform,
             customPlaceholderActions,
             disableAddField,
@@ -192,12 +194,12 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                 </div>
                 {placeholderTooltipText && (
                     <Popover
-                        content={i18n('wizard', placeholderTooltipText)}
+                        content={placeholderTooltipText}
                         placement="right"
                         className={'placeholder-tooltip-icon'}
                     >
                         <Icon
-                            data={placeholderTooltipIcon}
+                            data={placeholderTooltipIcon || defaultPlaceholderTooltipIcon}
                             fill="currentColor"
                             stroke="currentColor"
                         />

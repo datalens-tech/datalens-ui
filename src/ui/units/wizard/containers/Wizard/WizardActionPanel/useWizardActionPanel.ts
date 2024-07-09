@@ -12,6 +12,8 @@ import {useDispatch} from 'react-redux';
 
 import {Feature, WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import {REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
+import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import Utils from '../../../../../utils';
@@ -39,13 +41,36 @@ export const useWizardActionPanel = (
         editButtonLoading,
         handleEditButtonClick,
         isViewOnlyMode,
-        chartKitRef,
         isFullscreen,
         canGoBack,
         canGoForward,
     } = args;
 
     const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
+
+    const onClickGoBack = React.useCallback(() => {
+        if (canGoBack && enableEditHistory) {
+            dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+        }
+    }, [canGoBack, dispatch, enableEditHistory]);
+
+    const onClickGoForward = React.useCallback(() => {
+        if (canGoForward && enableEditHistory) {
+            dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
+        }
+    }, [canGoForward, dispatch, enableEditHistory]);
+
+    useBindHotkey({
+        key: UNDO_HOTKEY,
+        handler: onClickGoBack,
+        options: {scopes: 'wizard'},
+    });
+
+    useBindHotkey({
+        key: REDO_HOTKEY,
+        handler: onClickGoForward,
+        options: {scopes: 'wizard'},
+    });
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<
         AdditionalButtonTemplate[]
@@ -61,27 +86,25 @@ export const useWizardActionPanel = (
             items = [
                 {
                     key: 'undo',
-                    action: () => {
-                        dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-                    },
+                    action: onClickGoBack,
                     className: b('undo-btn'),
                     icon: {data: ArrowUturnCcwLeft, size: 16},
                     view: 'flat',
                     disabled: !canGoBack,
                     qa: WizardPageQa.UndoButton,
                     title: i18n('component.action-panel.view', 'button_undo'),
+                    hotkey: UNDO_HOTKEY.join('+'),
                 },
                 {
                     key: 'redo',
-                    action: () => {
-                        dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-                    },
+                    action: onClickGoForward,
                     className: b('redo-btn'),
                     icon: {data: ArrowUturnCwRight, size: 16},
                     view: 'flat',
                     disabled: !canGoForward,
                     qa: WizardPageQa.RedoButton,
                     title: i18n('component.action-panel.view', 'button_redo'),
+                    hotkey: REDO_HOTKEY.join('+'),
                 },
             ];
         }
@@ -100,7 +123,15 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
-    }, [dispatch, chartKitRef.current, isFullscreen, canGoBack, canGoForward]);
+    }, [
+        isFullscreen,
+        enableEditHistory,
+        onClickGoBack,
+        canGoBack,
+        onClickGoForward,
+        canGoForward,
+        dispatch,
+    ]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
         return [

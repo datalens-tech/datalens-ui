@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
+import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
 import {Loader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import axios from 'axios';
@@ -47,7 +47,8 @@ import {
     selectIsNewRelations,
     selectSkipReload,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {adjustWidgetLayout} from '../../utils';
+import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {ControlItemSelect} from './ControlItems/ControlItemSelect';
@@ -83,7 +84,11 @@ export interface PluginControlProps
     extends PluginWidgetProps,
         ContextProps,
         ControlSettings,
-        StateProps {}
+        StateProps {
+    settings: SettingsProps & {
+        dependentSelectors?: boolean;
+    };
+}
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -226,8 +231,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         });
     };
 
-    showItemsLoader = () => {
-        this.setState({loadingItems: true});
+    setItemsLoader = (loadingItems: boolean) => {
+        if (this._isUnmounted) {
+            return;
+        }
+        this.setState({loadingItems});
     };
 
     filterSignificantParams(params: StringParams) {
@@ -236,8 +244,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         }
 
         const loadedData = this.state.loadedData;
-        // @ts-ignore
-        const dependentSelectors = this.props.settings.dependentSelectors;
+        const dependentSelectors = this.props.settings.dependentSelectors ?? false;
 
         if (loadedData && loadedData.usedParams && dependentSelectors) {
             return pick(params, Object.keys(loadedData.usedParams));
@@ -565,7 +572,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 actualParams={this.actualParams}
                 onChange={this.onChange}
                 init={this.init}
-                showItemsLoader={this.showItemsLoader}
+                setItemsLoader={this.setItemsLoader}
                 validationError={validationError}
                 errorData={errorData}
                 validateValue={this.validateValue}
@@ -653,7 +660,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 label,
                 required,
                 hasValidationError: Boolean(validationError),
-                hint: source.showHint ? source.hint : undefined,
+                hint: getControlHint(source),
             };
 
             if (type === TYPE.RANGE_DATEPICKER || type === TYPE.DATEPICKER) {
@@ -822,7 +829,7 @@ const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true}
 
 const plugin: PluginControl = {
     type: 'control',
-    defaultLayout: {w: 8, h: 2},
+    defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
 

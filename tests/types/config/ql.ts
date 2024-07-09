@@ -6,6 +6,8 @@ export type QlParametrizationConfig = {
     queries: {
         citySales: string;
         salesBySalesFloat: string;
+        dateAndSales: string;
+        dateAndSalesModified: string;
     };
     qa: {
         visualizationList: string[];

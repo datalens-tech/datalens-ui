@@ -12,6 +12,7 @@ import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
+    copyControlToStorage,
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
@@ -25,7 +26,7 @@ import {
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
-import type {SelectorDialogState} from '../../../../store/actions/dashTyped';
+import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {TabMenu} from '../../Widget/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from '../../Widget/TabMenu/types';
 import {TabActionType} from '../../Widget/TabMenu/types';
@@ -71,6 +72,7 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
 export const GroupControlSidebar = () => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
+
     const dispatch = useDispatch();
 
     const initialTabIndex =
@@ -170,6 +172,18 @@ export const GroupControlSidebar = () => {
         );
     };
 
+    const handleCopyItem = (itemIndex: number) => {
+        dispatch(copyControlToStorage(itemIndex));
+    };
+
+    const handleUpdateItem = (title: string) => {
+        dispatch(
+            setSelectorDialogItem({
+                title,
+            }),
+        );
+    };
+
     const showAutoHeight =
         isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
@@ -188,6 +202,8 @@ export const GroupControlSidebar = () => {
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
+                    onCopyItem={handleCopyItem}
+                    onUpdateItem={handleUpdateItem}
                 />
             </div>
             <div className={b('settings')}>

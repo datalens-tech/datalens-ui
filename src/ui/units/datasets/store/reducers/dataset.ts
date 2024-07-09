@@ -14,6 +14,8 @@ import {
     ADD_OBLIGATORY_FILTER,
     AVATAR_ADD,
     AVATAR_DELETE,
+    BATCH_DELETE_FIELDS,
+    BATCH_UPDATE_FIELDS,
     CHANGE_AMOUNT_PREVIEW_ROWS,
     CLEAR_PREVIEW,
     CLICK_CONNECTION,
@@ -76,6 +78,97 @@ import {
     getFilteredSources,
     isSourceTypeConteinesInFreeformSources,
 } from './utils';
+
+const getGuidsMap = (fields: Partial<DatasetField>[]) =>
+    fields.reduce<Record<string, Partial<DatasetField>>>((memo, field) => {
+        const {guid} = field;
+
+        if (guid) {
+            memo[guid] = field;
+        }
+
+        return memo;
+    }, {});
+
+const updateFields = (
+    state: DatasetReduxState,
+    fields: Partial<DatasetField>[],
+    ignoreMergeWithSchema?: boolean,
+) => {
+    const {
+        updates,
+        content: {result_schema: resultSchema},
+    } = state;
+
+    const updatesList: Update[] = fields.map((field) => ({
+        action: DATASET_UPDATE_ACTIONS.FIELD_UPDATE as 'update_field',
+        field,
+    }));
+
+    let resultSchemaNext: DatasetField[] = [];
+
+    if (!ignoreMergeWithSchema) {
+        const guidsMap = getGuidsMap(fields);
+
+        resultSchemaNext = (resultSchema || []).map((currentField) => {
+            const {guid: currentGuid} = currentField;
+            const field = guidsMap[currentGuid];
+
+            if (field) {
+                return {
+                    ...currentField,
+                    ...field,
+                };
+            }
+
+            return currentField;
+        });
+    }
+
+    return {
+        ...state,
+        content: {
+            ...state.content,
+            result_schema: resultSchemaNext,
+        },
+        updates: [...updates, ...updatesList],
+        ui: {
+            ...state.ui,
+            isDatasetChanged: true,
+        },
+    };
+};
+
+const deleteFields = (state: DatasetReduxState, fields: Partial<DatasetField>[]) => {
+    const {
+        updates,
+        content: {result_schema: resultSchema},
+    } = state;
+    const guids = getGuidsMap(fields);
+
+    const deleteUpdates: Update[] = [];
+    const resultSchemaNext = (resultSchema || []).filter(({guid: currentGuid}) => {
+        if (guids[currentGuid]) {
+            deleteUpdates.push({
+                action: DATASET_UPDATE_ACTIONS.FIELD_DELETE as 'delete_field',
+                field: {
+                    guid: currentGuid,
+                },
+            });
+        }
+
+        return !guids[currentGuid];
+    });
+
+    return {
+        ...state,
+        content: {
+            ...state.content,
+            result_schema: resultSchemaNext,
+        },
+        updates: [...updates, ...deleteUpdates],
+    };
+};
 
 // eslint-disable-next-line complexity
 export default (state: DatasetReduxState = initialState, action: DatasetReduxAction) => {
@@ -1026,72 +1119,25 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 updates: [...updates, update],
             };
         }
+        case BATCH_DELETE_FIELDS: {
+            const {fields} = action.payload;
+
+            return deleteFields(state, fields);
+        }
         case DELETE_FIELD: {
-            const {field: {guid} = {}} = action.payload;
-            const {
-                updates,
-                content: {result_schema: resultSchema},
-            } = state;
+            const {field} = action.payload;
 
-            const resultSchemaNext = (resultSchema || []).filter(
-                ({guid: currentGuid}) => currentGuid !== guid,
-            );
-            const update = {
-                action: DATASET_UPDATE_ACTIONS.FIELD_DELETE,
-                field: {
-                    guid,
-                },
-            };
-
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    result_schema: resultSchemaNext,
-                },
-                updates: [...updates, update],
-            };
+            return deleteFields(state, [field]);
         }
         case UPDATE_FIELD: {
             const {field, ignoreMergeWithSchema} = action.payload;
-            const {
-                updates,
-                content: {result_schema: resultSchema},
-            } = state;
-            const {guid} = field;
 
-            const update = {
-                action: DATASET_UPDATE_ACTIONS.FIELD_UPDATE,
-                field: field,
-            };
+            return updateFields(state, [field], ignoreMergeWithSchema);
+        }
+        case BATCH_UPDATE_FIELDS: {
+            const {fields, ignoreMergeWithSchema} = action.payload;
 
-            const resultSchemaNext = ignoreMergeWithSchema
-                ? resultSchema || []
-                : (resultSchema || []).map((currentField) => {
-                      const {guid: currentGuid} = currentField;
-
-                      if (currentGuid === guid) {
-                          return {
-                              ...currentField,
-                              ...field,
-                          };
-                      }
-
-                      return currentField;
-                  });
-
-            return {
-                ...state,
-                content: {
-                    ...state.content,
-                    result_schema: resultSchemaNext,
-                },
-                updates: [...updates, update],
-                ui: {
-                    ...state.ui,
-                    isDatasetChanged: true,
-                },
-            };
+            return updateFields(state, fields, ignoreMergeWithSchema);
         }
         case UPDATE_RLS: {
             const {rls} = action.payload;

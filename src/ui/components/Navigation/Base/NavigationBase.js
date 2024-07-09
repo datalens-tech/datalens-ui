@@ -19,7 +19,9 @@ import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
 import NavigationInline from '../Core/NavigationInline';
 import {PLACE, ROOT_PATH} from '../constants';
 
-import {getPlaceParameters} from './configure';
+import {getPlaceConfig} from './configure';
+
+import './NavigationBase.scss';
 
 const SPA_ENTRIES_SCOPE = new Set([EntryScope.Connection, EntryScope.Dataset, EntryScope.Dash]);
 
@@ -111,6 +113,7 @@ class NavigationBase extends React.Component {
         onUpdate: PropTypes.func,
         navConstructor: PropTypes.func,
         navigationUrl: PropTypes.string,
+        onCreateMenuClick: PropTypes.func,
         onCrumbClick: PropTypes.func,
         onEntryClick: PropTypes.func,
         currentPageEntry: PropTypes.object,
@@ -252,6 +255,14 @@ class NavigationBase extends React.Component {
             this.closeNavigation();
         }
     }
+    async showRelatedEntities(entry) {
+        await this.refDialogues.current.open({
+            dialog: EntryDialogName.ShowRelatedEntities,
+            dialogProps: {
+                entry,
+            },
+        });
+    }
     getOnActionDestination(entry) {
         const {path} = this.props;
         return !path || path === ROOT_PATH ? Utils.getPathBefore({path: entry.key}) : path;
@@ -263,6 +274,7 @@ class NavigationBase extends React.Component {
 
         return getInitDestination(path);
     }
+
     onCreateMenuClick = (type) => {
         const {path, history} = this.props;
         const searchParams = new URLSearchParams();
@@ -407,7 +419,12 @@ class NavigationBase extends React.Component {
                 break;
             }
         }
+
+        if (this.props.onCreateMenuClick) {
+            this.props.onCreateMenuClick(type);
+        }
     };
+
     closeNavigation = () => {
         this.props.onClose?.();
         this.props.closeNavigation?.();
@@ -440,6 +457,9 @@ class NavigationBase extends React.Component {
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {
                 return this.migrateToWorkbookEntry(entry);
             }
+            case ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES: {
+                return this.showRelatedEntities(entry);
+            }
             default:
                 return false;
         }
@@ -467,6 +487,7 @@ class NavigationBase extends React.Component {
     }
     render() {
         const {root, navConstructor, sdk, navigationUrl, closeNavigation, ...props} = this.props;
+
         const getMenuItems = (params) => {
             const items = getEntryContextMenuItems(params);
             const menu = getGroupedMenu(items, {
@@ -475,17 +496,24 @@ class NavigationBase extends React.Component {
             });
             return menu;
         };
+
+        const {getNavigationPlacesConfig} = registry.common.functions.getAll();
+
+        const getPlaceParameters = (place) => {
+            return getPlaceConfig({place, placesConfig: getNavigationPlacesConfig()});
+        };
+
         const navigationNode = React.createElement(navConstructor, {
             ref: this.refNavigation,
             sdk,
             place: root,
             quickItems: this.quickItems,
-            onCreateMenuClick: this.onCreateMenuClick,
             linkWrapper: linkWrapper({navigationUrl, closeNavigation, onClose: this.props.onClose}),
             getContextMenuItems: getMenuItems,
             onContextMenuClick: this.onContextMenuClick,
-            getPlaceParameters,
+            getPlaceParameters: getPlaceParameters,
             ...props,
+            onCreateMenuClick: this.onCreateMenuClick,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,
         });

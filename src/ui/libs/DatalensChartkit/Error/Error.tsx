@@ -159,6 +159,9 @@ const ChartKitError: React.FC<any> = (props) => {
         case ERROR_CODE.TOO_MANY_LINES:
             iconData = errorCharts;
             break;
+        case ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT:
+            iconData = errorCharts;
+            break;
         case ERROR_CODE.DATA_PROVIDER_ERROR:
             iconData = errorDatabase;
             break;

@@ -33,7 +33,7 @@ import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {DashTab, DashTabItem, StringParams} from 'shared';
+import type {DashTab, DashTabItem} from 'shared';
 import {
     ControlQA,
     DashEntryQa,
@@ -58,6 +58,7 @@ import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers'
 import {
     getLayoutMap,
     getPastedWidgetData,
+    getPreparedCopyItemOptions,
     memoizedGetLocalTabs,
     sortByOrderIdOrLayoutComparator,
 } from '../../modules/helpers';
@@ -323,43 +324,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    getPreparedCopyItemOptions = (
-        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-        tabData: DashTab | null,
-        copyContext?: CopiedConfigContext,
-    ) => {
-        if (copyContext) {
-            itemToCopy.copyContext = copyContext;
-        }
-
-        if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {
-            return itemToCopy;
-        }
-
-        const copyItemTabsWidgetParams: Record<string, StringParams> = {};
-        itemToCopy.data.tabs.forEach((copiedTabItem) => {
-            const {id, params} = copiedTabItem;
-            copyItemTabsWidgetParams[id] = params || {};
-        });
-
-        tabData.items.forEach((dashTabItem) => {
-            if ('tabs' in dashTabItem.data) {
-                dashTabItem.data.tabs.forEach((item) => {
-                    if (item.id in copyItemTabsWidgetParams) {
-                        copyItemTabsWidgetParams[item.id] = item.params;
-                    }
-                });
-            }
-        });
-        itemToCopy.data.tabs.forEach((copiedTabItem) => {
-            if (copiedTabItem.id in copyItemTabsWidgetParams) {
-                const {id} = copiedTabItem;
-                copiedTabItem.params = copyItemTabsWidgetParams[id];
-            }
-        });
-        return itemToCopy;
-    };
-
     render() {
         return (
             <div className={b()}>
@@ -436,7 +400,7 @@ class Body extends React.PureComponent<BodyProps> {
                     getPreparedCopyItemOptions: (
                         itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
                     ) => {
-                        return this.getPreparedCopyItemOptions(itemToCopy, tabData, {
+                        return getPreparedCopyItemOptions(itemToCopy, tabData, {
                             workbookId: this.props.workbookId ?? null,
                         });
                     },

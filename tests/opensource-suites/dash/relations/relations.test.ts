@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ControlQA, DashCommonQa, DashRelationTypes} from '../../../../src/shared';
+import {DashCommonQa, DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
@@ -25,10 +25,10 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.addSelector({
-                        controlTitle: PARAMS.CONTROL_TITLE,
-                        controlFieldName: PARAMS.CONTROL_FIELD_NAME,
-                        controlItems: PARAMS.CONTROL_ITEMS,
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {title: PARAMS.CONTROL_TITLE},
+                        fieldName: PARAMS.CONTROL_FIELD_NAME,
+                        items: PARAMS.CONTROL_ITEMS,
                     });
 
                     await dashboardPage.addChart({
@@ -50,9 +50,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.enterEditMode();
 
-            const selectorElem = await dashboardPage.getDashControlLinksIconElem(
-                ControlQA.controlLinks,
-            );
+            const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
 
             await dashboardPage.setupNewLinks({
                 linkType: DashRelationTypes.output,
@@ -87,9 +85,7 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
         const dashboardPage = new DashboardPage({page});
         await dashboardPage.enterEditMode();
 
-        const selectorElem = await dashboardPage.getDashControlLinksIconElem(
-            ControlQA.controlLinks,
-        );
+        const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
 
         await dashboardPage.setupNewLinks({
             linkType: DashRelationTypes.output,

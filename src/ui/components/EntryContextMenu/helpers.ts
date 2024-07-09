@@ -142,6 +142,20 @@ export async function migrateToWorkbookEntry(
     }
 }
 
+export async function showRelatedEntities(
+    entryDialoguesRef: EntryDialoguesRef,
+    entry: GetEntryResponse,
+) {
+    if (entryDialoguesRef.current) {
+        await entryDialoguesRef.current.open({
+            dialog: EntryDialogName.ShowRelatedEntities,
+            dialogProps: {
+                entry,
+            },
+        });
+    }
+}
+
 type EntryContextMenuIDTypeBase =
     | 'public'
     | 'rename'
@@ -160,7 +174,8 @@ type EntryContextMenuIDTypeBase =
     | 'embedded'
     | 'materialization'
     | 'revisions'
-    | 'migrate-to-workbook';
+    | 'migrate-to-workbook'
+    | 'show-related-entities';
 
 export type EntryContextMenuIDType<T = unknown> = unknown extends T
     ? EntryContextMenuIDTypeBase
@@ -213,7 +228,7 @@ const ENTRY_MENU_GROUP_CONFIG: Array<Array<EntryContextMenuIDType>> = [
     ['rename', 'move', 'duplicate', 'copy'],
     ['tableOfContent', 'fullscreen'],
     ['sql', 'materialization'],
-    ['access', 'copy-link', 'public', 'sql-to-monitoring'],
+    ['access', 'show-related-entities', 'copy-link', 'public', 'sql-to-monitoring'],
     ['edit', 'settings'],
     ['migrate-to-workbook'],
     ['delete'],

@@ -2,6 +2,7 @@ import type {SchemasByScope} from '@gravity-ui/gateway';
 import type {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
 import sdkFactory from '@gravity-ui/sdk';
 import type {Lang} from '@gravity-ui/sdk/build/constants';
+import type {AxiosError} from 'axios';
 import uuid from 'uuid/v4';
 
 import {
@@ -39,6 +40,15 @@ export type DatalensSdk<TSchema extends SchemasByScope> = (<T>(
 
 const sdkConfig: SdkConfig = {
     csrfToken: Utils.getCSRFToken() || '',
+    axiosConfig: {
+        'axios-retry': {
+            retries: 3,
+            retryDelay: () => 1000,
+            retryCondition: (error: AxiosError<unknown, unknown>) => {
+                return error?.response?.status === 498;
+            },
+        },
+    },
     endpoint: '/gateway',
     handleRequestError,
     prepareRequestOptions(_scope, _service, _action, options) {

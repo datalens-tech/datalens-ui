@@ -5,6 +5,7 @@ import type {DLUserSettings} from 'shared';
 
 import type {EntryFields, NavigationEntry} from '../../../shared/schema';
 
+import type {CreateMenuValue} from './Core/CreateEntry/CreateEntry';
 import type {MODE_FULL, MODE_MINIMAL, MODE_MODAL} from './constants';
 
 export type Mode = typeof MODE_MINIMAL | typeof MODE_FULL | typeof MODE_MODAL;
@@ -20,6 +21,8 @@ export type PlaceParameterItem = {
     place: string;
     icon: IconData;
     text: string;
+    buttonText: string;
+    value: CreateMenuValue;
     displayParentFolder: boolean;
     filters: {
         ownership: boolean;
