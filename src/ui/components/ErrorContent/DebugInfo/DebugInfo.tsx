@@ -4,6 +4,7 @@ import {Button, CopyToClipboard, Toaster} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DL} from 'ui/constants/common';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import './DebugInfo.scss';
 
@@ -39,7 +40,7 @@ export const DebugInfo = ({id, noControls, name}: DebugInfoProps) => {
                         <Button
                             className={b('copy-btn')}
                             view="flat-secondary"
-                            size={DL.IS_MOBILE ? 'xl' : 'm'}
+                            size={DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm'}
                         >
                             {DL.IS_MOBILE
                                 ? i18n('button_copy', {subject: name})
