@@ -16,5 +16,3 @@ export {
     Console,
     DataFetcher,
 } from '../../src/server/components/charts-engine';
-
-export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
