@@ -115,7 +115,7 @@ $actionPanelDefaultBottom: 20px;
         z-index: 10;
     }
 
-    & #{$bodyClass}__edit-panel-item {
+    .edit-panel-item {
         width: 108px;
     }
 }
