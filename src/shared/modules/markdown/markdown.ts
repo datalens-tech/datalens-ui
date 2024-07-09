@@ -6,6 +6,7 @@ import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import notes from '@diplodoc/transform/lib/plugins/notes';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
+import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
@@ -13,12 +14,19 @@ import MarkdownItColor from 'markdown-it-color';
 import Mila from 'markdown-it-link-attributes';
 import uuid from 'uuid';
 
-import {YFM_COLORIFY_MARKDOWN_CLASSNAME} from '../../../../shared';
-import {registry} from '../../../registry';
+import {YFM_COLORIFY_MARKDOWN_CLASSNAME} from '../../constants';
 
 import {unifyTermIds} from './markdown-plugins/unify-terms';
 
-export function renderHTML({text = '', lang}: {text: string; lang: string}): {result: string} {
+type RenderHtmlArgs = {
+    text?: string;
+    lang: string;
+    plugins?: MarkdownItPluginCb[];
+};
+
+export function renderHTML(args: RenderHtmlArgs): {result: string} {
+    const {text = '', lang, plugins: additionalPlugins = []} = args;
+
     const uniqPrefix = uuid.v4();
 
     const plugins = [
@@ -51,9 +59,8 @@ export function renderHTML({text = '', lang}: {text: string; lang: string}): {re
         }),
     ];
 
-    const yfmPlugins = registry.getYfmPlugins();
-    if (yfmPlugins) {
-        plugins.push(...yfmPlugins);
+    if (additionalPlugins) {
+        plugins.push(...additionalPlugins);
     }
 
     const {
