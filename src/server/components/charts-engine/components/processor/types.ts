@@ -181,4 +181,5 @@ export type ChartBuilder = {
         actionParams: StringParams;
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
+    dispose: () => void;
 };
