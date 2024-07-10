@@ -84,6 +84,8 @@ const DatalensPageView = (props: any) => {
             </React.Suspense>
         );
     }
+
+    console.log("superUser.isMaster", superUser.isMaster)
     return (
         <AuthContext.Provider value={{token, setToken, superUser, setSuperUser}}>
             <React.Suspense fallback={<FallbackPage />}>
@@ -94,9 +96,9 @@ const DatalensPageView = (props: any) => {
                         path={'/auth'}
                         component={()=><AuthPage setToken={setToken} />}
                     />
-                    <Route path={['/admin/users']} component={superUser.isMaster ? UsersPage : ()=><Redirect from="*" to="/"/>} />
-                    <Route path={['/admin/roles']} component={superUser.isMaster ? RolesPage : ()=><Redirect from="*" to="/"/>} />
-                    <Route path={['/admin/projects']} component={superUser.isMaster ?  ProjectsPage : ()=><Redirect from="*" to="/"/>} />
+                    <Route path={['/admin/users']} component={superUser.isMaster ? UsersPage : ()=><Redirect from="/admin/users" to="/"/>} />
+                    <Route path={['/admin/roles']} component={superUser.isMaster ? RolesPage : ()=><Redirect from="/admin/roles" to="/"/>} />
+                    <Route path={['/admin/projects']} component={superUser.isMaster ?  ProjectsPage : ()=><Redirect from="/admin/projects" to="/"/>} />
                     <Route
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
@@ -154,7 +156,7 @@ const DatalensPageView = (props: any) => {
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
 
-    const [superUser, setSuperUser] = React.useState({});
+    const [superUser, setSuperUser] = React.useState<Object | null>(null);
 
     useEffect(()=>{
         Utils.universalService({"action": "datalens", "method": "currentUser", "data": [{}]}).then((value)=>{
@@ -163,6 +165,8 @@ const DatalensPage: React.FC = () => {
             } else {
                 setSuperUser(value.data[0])
             }
+        }).catch(()=>{
+            setSuperUser({});
         });
     }, [])
 
@@ -180,15 +184,19 @@ const DatalensPage: React.FC = () => {
     }
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
 
-    if (token && showMobileHeader) {
+    if (token && showMobileHeader && superUser) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
     }
 
-    if (token && showAsideHeaderAdapter) {
+    if (token && showAsideHeaderAdapter && superUser) {
         return <AsideHeaderAdapter superUser={superUser} renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
     }
 
-    return <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />;
+    if (superUser) {
+        return <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />;
+    }
+    
+    return <div>currentUser loading error</div>;
 };
 
 export default DatalensPage;

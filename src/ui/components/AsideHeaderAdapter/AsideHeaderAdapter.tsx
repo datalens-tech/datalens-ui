@@ -156,7 +156,7 @@ export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapte
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
                 },
             },
-            ...(superUser ? [
+            ...(superUser?.isMaster ? [
             {
                 id: 'users',
                 title: i18n('switch_service-users'),
