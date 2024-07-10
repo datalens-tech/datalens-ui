@@ -2,7 +2,7 @@ import {exampleFunction} from 'ui/registry/functions/example-function';
 import {EXAMPLE_FUNCTION} from 'ui/registry/units/common/constants/functions';
 import {getMinAutoupdateInterval} from 'ui/units/dash/containers/Dialogs/Settings/utils';
 
-import DialogCreateTextWidget from '../../../components/DialogCreateTextWidget/DialogCreateTextWidget';
+import DialogTextWidget from '../../../components/DialogTextWidget/DialogTextWidget';
 import {DialogDashMeta} from '../../../components/EntryDialogues/DialogDashMeta/DialogDashMeta';
 import {getCaptionText} from '../../../units/dash/containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import DialogText from '../../../units/dash/containers/Dialogs/Text/Text';
@@ -17,8 +17,8 @@ export const registerDashPlugins = () => {
         // Old one
         DialogText,
 
-        // // New one
-        DialogCreateTextWidget,
+        // New one
+        DialogTextWidget,
     });
 
     registry.dash.functions.register({

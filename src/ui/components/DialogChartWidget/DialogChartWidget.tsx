@@ -6,8 +6,6 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
 import update, {Context} from 'immutability-helper';
-import type {ResolveThunks} from 'react-redux';
-import {connect} from 'react-redux';
 import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
@@ -19,12 +17,10 @@ import type {
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
 import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import type {DatalensGlobalState} from 'ui';
 import {DL, Interpolate} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
-import {DIALOG_TYPE} from '../../constants/dialogs';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
 import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
 import {
@@ -37,22 +33,14 @@ import {
 import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
-import {setItemData} from '../../units/dash/store/actions/dashTyped';
-import {closeDialog} from '../../units/dash/store/actions/dialogs/actions';
-import {
-    selectCurrentTabId,
-    selectDashWorkbookId,
-    selectIsDialogVisible,
-    selectOpenedItemData,
-    selectWidgetsCurrentTab,
-} from '../../units/dash/store/selectors/dashTypedSelectors';
+import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 
 import {TabMenu} from './TabMenu/TabMenu';
 import type {UpdateState} from './TabMenu/types';
 import {TabActionType} from './TabMenu/types';
 
-import './Widget.scss';
+import './DialogChartWidget.scss';
 
 const imm = new Context();
 
@@ -90,10 +78,23 @@ function Line(props: LineProps) {
 
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
+export interface DialogChartWidgetProps {
+    openedItemId: string | null;
+    openedItemData: DashTabItemWidget['data'];
+    dialogIsVisible: boolean;
 
-type State = {
+    widgetType?: WidgetType;
+    currentTabId: string | null;
+    workbookId: string | null;
+    widgetsCurrentTab: {
+        [key: string]: string;
+    };
+
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+}
+
+type DialogChartWidgetState = {
     hideTitle: boolean;
     prevVisible: boolean;
     error: boolean;
@@ -102,19 +103,22 @@ type State = {
     isManualTitle: boolean;
     selectedWidgetType?: WidgetKind;
     selectedEntryType?: WidgetType;
+
     // new params logic, local state for current tab params
     tabParams: StringParams;
+
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
     hierarchies?: HierarchyField[];
 };
 
-type Props = StateProps & DispatchProps;
-
 // TODO: put in defaultPath navigation key from entry
-class Widget extends React.PureComponent<Props, State> {
+class DialogChartWidget extends React.PureComponent<
+    DialogChartWidgetProps,
+    DialogChartWidgetState
+> {
     static defaultProps = {
-        data: {
+        openedItemData: {
             hideTitle: false,
             tabs: [
                 {
@@ -128,40 +132,44 @@ class Widget extends React.PureComponent<Props, State> {
         } as DashTabItemWidget['data'],
     };
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        if (nextProps.visible === prevState.prevVisible) {
+    static getDerivedStateFromProps(
+        nextProps: DialogChartWidgetProps,
+        prevState: DialogChartWidgetState,
+    ) {
+        if (nextProps.dialogIsVisible === prevState.prevVisible) {
             return null;
         }
 
         let currentTab: string;
         let tabIndex = 0;
-        if (nextProps.id) {
-            currentTab = nextProps.widgetsCurrentTab[nextProps.id];
-            tabIndex = nextProps.data.tabs.findIndex(({id}) => id === currentTab);
+        if (nextProps.openedItemId) {
+            currentTab = nextProps.widgetsCurrentTab[nextProps.openedItemId];
+            tabIndex = nextProps.openedItemData.tabs.findIndex(({id}) => id === currentTab);
         }
         tabIndex = tabIndex === -1 ? 0 : tabIndex;
 
         return {
-            hideTitle: nextProps.data.tabs.length === 1 && nextProps.data.hideTitle,
-            prevVisible: nextProps.visible,
+            hideTitle:
+                nextProps.openedItemData.tabs.length === 1 && nextProps.openedItemData.hideTitle,
+            prevVisible: nextProps.dialogIsVisible,
             error: false,
-            data: nextProps.data,
+            openedItemData: nextProps.openedItemData,
             tabIndex,
-            isManualTitle: Boolean(nextProps.id),
+            isManualTitle: Boolean(nextProps.openedItemId),
             selectedWidgetType: null,
             selectedEntryType: null,
             // new params logic, local state for current tab params
-            tabParams: nextProps.data.tabs[tabIndex]?.params || {},
+            tabParams: nextProps.openedItemData.tabs[tabIndex]?.params || {},
             legacyChanged: 0,
         };
     }
 
-    state: State = {
+    state: DialogChartWidgetState = {
         hideTitle: true,
         prevVisible: false,
         error: false,
         tabIndex: 0,
-        data: Widget.defaultProps.data,
+        data: DialogChartWidget.defaultProps.openedItemData,
         isManualTitle: false,
         tabParams: {},
         legacyChanged: 0,
@@ -171,7 +179,7 @@ class Widget extends React.PureComponent<Props, State> {
     private afterSettingSelectedWidgetTypeCallback: AfterSettingsWidgetCallback = null;
 
     render() {
-        const {visible, closeDialog} = this.props;
+        const {dialogIsVisible, closeDialog} = this.props;
 
         const sidebar = this.renderDialogSidebar();
         const footer = this.renderDialogFooter();
@@ -180,7 +188,7 @@ class Widget extends React.PureComponent<Props, State> {
         return (
             <TwoColumnDialog
                 className={b({long: true})}
-                open={visible}
+                open={dialogIsVisible}
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
                 sidebar={sidebar}
@@ -196,7 +204,7 @@ class Widget extends React.PureComponent<Props, State> {
     }
 
     get isEdit() {
-        return Boolean(this.props.id);
+        return Boolean(this.props.openedItemId);
     }
 
     onApply = () => {
@@ -269,7 +277,10 @@ class Widget extends React.PureComponent<Props, State> {
 
         if (isManualTitle) {
             this.setState({
-                data: imm.update<State['data'], AutoExtendCommand<State['data']['tabs']>>(data, {
+                data: imm.update<
+                    DialogChartWidgetState['data'],
+                    AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
+                >(data, {
                     tabs: {
                         [tabIndex]: {
                             chartId: {$set: entryId},
@@ -283,7 +294,10 @@ class Widget extends React.PureComponent<Props, State> {
             });
         } else {
             this.setState({
-                data: imm.update<State['data'], AutoExtendCommand<State['data']['tabs']>>(data, {
+                data: imm.update<
+                    DialogChartWidgetState['data'],
+                    AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
+                >(data, {
                     tabs: {
                         [tabIndex]: {
                             title: {$set: name},
@@ -695,19 +709,4 @@ class Widget extends React.PureComponent<Props, State> {
     }
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    id: state.dash.openedItemId,
-    data: selectOpenedItemData(state) as DashTabItemWidget['data'],
-    widgetType: state.dash.openedItemWidgetType,
-    visible: selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
-    currentTabId: selectCurrentTabId(state),
-    workbookId: selectDashWorkbookId(state),
-    widgetsCurrentTab: selectWidgetsCurrentTab(state),
-});
-
-const mapDispatchToProps = {
-    closeDialog,
-    setItemData,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Widget);
+export default DialogChartWidget;

@@ -26,12 +26,12 @@ import {
     selectSelectorsGroup,
 } from 'units/dash/store/selectors/controls/selectors';
 
-import {TabMenu} from '../../../../../../components/DialogCreateChartWidget/TabMenu/TabMenu';
+import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
 import type {
     TabMenuItemData,
     UpdateState,
-} from '../../../../../../components/DialogCreateChartWidget/TabMenu/types';
-import {TabActionType} from '../../../../../../components/DialogCreateChartWidget/TabMenu/types';
+} from '../../../../../../components/DialogChartWidget/TabMenu/types';
+import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 

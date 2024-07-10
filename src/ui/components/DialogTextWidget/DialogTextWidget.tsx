@@ -10,11 +10,11 @@ import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/Pal
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {TextEditor} from '../TextEditor/TextEditor';
 
-import './DialogCreateTextWidget.scss';
+import './DialogTextWidget.scss';
 
 const b = block('dialog-text');
 
-export interface DialogCreateTextWidgetProps {
+export interface DialogTextWidgetProps {
     openedItemId: string | null;
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
@@ -23,7 +23,7 @@ export interface DialogCreateTextWidgetProps {
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
 
-interface DialogCreateTextWidgetState {
+interface DialogTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
@@ -31,10 +31,7 @@ interface DialogCreateTextWidgetState {
     backgroundColor?: string;
 }
 
-class DialogCreateTextWidget extends React.PureComponent<
-    DialogCreateTextWidgetProps,
-    DialogCreateTextWidgetState
-> {
+class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, DialogTextWidgetState> {
     static defaultProps = {
         openedItemData: {
             text: '',
@@ -45,8 +42,8 @@ class DialogCreateTextWidget extends React.PureComponent<
     };
 
     static getDerivedStateFromProps(
-        nextProps: DialogCreateTextWidgetProps,
-        prevState: DialogCreateTextWidgetState,
+        nextProps: DialogTextWidgetProps,
+        prevState: DialogTextWidgetState,
     ) {
         if (nextProps.dialogIsVisible === prevState.prevVisible) {
             return null;
@@ -61,7 +58,7 @@ class DialogCreateTextWidget extends React.PureComponent<
         };
     }
 
-    state: DialogCreateTextWidgetState = {};
+    state: DialogTextWidgetState = {};
 
     render() {
         const {openedItemId, dialogIsVisible} = this.props;
@@ -148,4 +145,4 @@ class DialogCreateTextWidget extends React.PureComponent<
     };
 }
 
-export default DialogCreateTextWidget;
+export default DialogTextWidget;

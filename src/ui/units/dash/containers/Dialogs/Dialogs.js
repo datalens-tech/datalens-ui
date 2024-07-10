@@ -4,14 +4,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffectOnce} from 'ui';
 import {registry} from 'ui/registry';
 
-import Widget from '../../../../components/DialogCreateChartWidget/Widget';
-import {DialogCreateTextWidgetWrapper} from '../../../../components/DialogCreateTextWidget';
+import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
+import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
+    selectCurrentTabId,
+    selectDashWorkbookId,
     selectIsDialogVisible,
     selectOpenedItemData,
+    selectWidgetsCurrentTab,
 } from '../../store/selectors/dashTypedSelectors';
 
 import Connections from './Connections/Connections';
@@ -28,9 +31,19 @@ export function Dialogs() {
     const dispatch = useDispatch();
 
     const openedDialog = useSelector((state) => state.dash.openedDialog);
+    const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
     const openedItemId = useSelector((state) => state.dash.openedItemId);
     const openedItemData = useSelector((state) => selectOpenedItemData(state));
-    const dialogIsVisible = useSelector((state) => selectIsDialogVisible(state, DIALOG_TYPE.TEXT));
+    const currentTabId = useSelector((state) => selectCurrentTabId(state));
+    const workbookId = useSelector((state) => selectDashWorkbookId(state));
+    const widgetsCurrentTab = useSelector((state) => selectWidgetsCurrentTab(state));
+
+    const dialogTextIsVisible = useSelector((state) =>
+        selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
+    );
+    const dialogChartIsVisible = useSelector((state) =>
+        selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
+    );
 
     useEffectOnce(() => {
         return () => {
@@ -47,10 +60,10 @@ export function Dialogs() {
             return <Title />;
         case DIALOG_TYPE.TEXT: {
             return (
-                <DialogCreateTextWidgetWrapper
+                <DialogTextWidgetWrapper
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
-                    dialogIsVisible={dialogIsVisible}
+                    dialogIsVisible={dialogTextIsVisible}
                     closeDialog={() => dispatch(closeDialog())}
                     setItemData={(newItemData) => {
                         dispatch(setItemData(newItemData));
@@ -59,7 +72,21 @@ export function Dialogs() {
             );
         }
         case DIALOG_TYPE.WIDGET:
-            return <Widget />;
+            return (
+                <DialogChartWidget
+                    openedItemId={openedItemId}
+                    openedItemData={openedItemData}
+                    widgetType={widgetType}
+                    currentTabId={currentTabId}
+                    dialogIsVisible={dialogChartIsVisible}
+                    workbookId={workbookId}
+                    widgetsCurrentTab={widgetsCurrentTab}
+                    closeDialog={() => dispatch(closeDialog())}
+                    setItemData={(newItemData) => {
+                        dispatch(setItemData(newItemData));
+                    }}
+                />
+            );
         case DIALOG_TYPE.CONTROL:
             return <Control2 />;
         case DIALOG_TYPE.GROUP_CONTROL:

@@ -1,4 +1,4 @@
-import type {DialogCreateTextWidgetProps} from '../../../components/DialogCreateTextWidget/DialogCreateTextWidget';
+import type {DialogTextWidgetProps} from '../../../components/DialogTextWidget/DialogTextWidget';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import type {DialogDashMetaProps} from './types/DialogDashMeta';
@@ -12,5 +12,5 @@ export const dashComponentsMap = {
     DialogText: makeDefaultEmpty(),
 
     // New one
-    DialogCreateTextWidget: makeDefaultEmpty<DialogCreateTextWidgetProps>(),
+    DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
 } as const;
