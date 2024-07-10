@@ -2,8 +2,15 @@ import escape from 'lodash/escape';
 
 import type {ChartKitHtmlItem} from '../../../../../shared';
 import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import {getRandomCKId} from '../../helpers/helpers';
 
-import {ALLOWED_ATTRIBUTES, ALLOWED_REFERENCES, ALLOWED_TAGS} from './constants';
+import {
+    ALLOWED_ATTRIBUTES,
+    ALLOWED_REFERENCES,
+    ALLOWED_TAGS,
+    ATTR_DATA_TOOLTIP_CONTENT,
+    TAG_DL_TOOLTIP,
+} from './constants';
 
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
 
@@ -25,7 +32,7 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
             });
         }
 
-        const elem = document.createElement(tag);
+        const elem = document.createElement(tag === TAG_DL_TOOLTIP ? 'div' : tag);
         Object.assign(elem.style, style);
 
         Object.entries(attributes).forEach(([key, value]) => {
@@ -43,8 +50,15 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
                 }
             }
 
-            elem.setAttribute(key, String(value));
+            const preparedValue =
+                key === ATTR_DATA_TOOLTIP_CONTENT ? JSON.stringify(value) : String(value);
+
+            elem.setAttribute(key, preparedValue);
         });
+
+        if (tag === TAG_DL_TOOLTIP) {
+            elem.setAttribute('id', getRandomCKId());
+        }
 
         elem.innerHTML = generateHtml(content);
         return elem.outerHTML;
