@@ -2,7 +2,7 @@ import React from 'react';
 
 import {registry} from '../../registry';
 
-export const DialogTextWidgettWrapper = () => {
+export const DialogTextWidgetWrapper = () => {
     const {DialogText} = registry.dash.components.getAll();
 
     return <DialogText />;
