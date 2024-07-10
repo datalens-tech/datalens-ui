@@ -365,6 +365,7 @@ export type SetItemDataArgs = {
     data: SetItemDataText | SetItemDataTitle;
     defaults?: SetItemDataDefaults;
     type?: string;
+    namespace?: string;
 };
 
 export type SetItemDataAction = {
