@@ -3,7 +3,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {ControlType, Feature, isEnabledServerFeature} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
 import type {ResolvedConfig} from '../components/storage/types';
 
@@ -71,7 +71,7 @@ export function getDefaultRunners(ctx: AppContext) {
         },
         {
             name: 'dashControls',
-            trigger: new Set(['control_dash']),
+            trigger: new Set([ControlType.Dash]),
             safeConfig: true,
             handler: runChart,
         },

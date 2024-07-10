@@ -5,9 +5,10 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';
 import {wrapToArray} from '../../../helpers/helpers';
@@ -47,8 +48,8 @@ const tryResolveIntervalDate = (value) => {
     }
 };
 
-const controlSize = isMobileView ? MOBILE_SIZE.CONTROL : 'm';
-const controlWidth = isMobileView ? '100%' : undefined;
+const controlSize = DL.IS_MOBILE ? MOBILE_SIZE.CONTROL : 'm';
+const controlWidth = DL.IS_MOBILE ? '100%' : undefined;
 
 function BaseControlSelect({
     searchable = true,
@@ -101,7 +102,7 @@ function BaseControlSelect({
 
     const showSelectAll = currentValue?.length === items?.length && required ? false : undefined;
 
-    const size = isMobileView ? MOBILE_SIZE.YC_SELECT : 's';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.YC_SELECT : 's';
 
     return (
         <YCSelect
@@ -235,7 +236,7 @@ function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
     };
 
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
-    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 's';
+    const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
 
     return (
         <React.Fragment>
@@ -465,7 +466,7 @@ BaseControlRangeDatepicker.propTypes = {
 function BaseControlButton({label, theme, onChange, qa}) {
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
 
-    const size = isMobileView ? MOBILE_SIZE.BUTTON : 's';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
 
     const handleClick = () => {
         setTimeout(onChange);
@@ -495,7 +496,7 @@ BaseControlButton.propTypes = {
 function BaseControlCheckbox({label, value, onChange}) {
     const checked = value === CheckboxControlValue.TRUE;
 
-    const size = isMobileView ? MOBILE_SIZE.CHECKBOX : 'm';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.CHECKBOX : 'm';
 
     return (
         <Checkbox
