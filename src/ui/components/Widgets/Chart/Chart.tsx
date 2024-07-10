@@ -76,6 +76,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         autoupdateInterval,
         workbookId,
         forceShowSafeChart,
+        paneSplitOrientation,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -279,6 +280,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 renderPluginLoader={renderPluginLoader}
+                paneSplitOrientation={paneSplitOrientation}
             />
         </div>
     );
