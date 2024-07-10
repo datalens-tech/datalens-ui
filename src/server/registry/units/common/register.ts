@@ -8,6 +8,5 @@ export const registerCommonPlugins = () => {
         getSourceAuthorizationHeaders,
         isEntryId,
         extractEntryId,
-        getAdditionalMarkdownPlugins: () => [],
     });
 };
