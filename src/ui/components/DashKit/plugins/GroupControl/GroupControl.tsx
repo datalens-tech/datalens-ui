@@ -3,7 +3,6 @@ import React from 'react';
 import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -36,6 +35,7 @@ import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
+import {LocalUpdateLoader} from './LocalUpdateLoader/LocalUpdateLoader';
 import type {
     ContextProps,
     ExtendedLoadedData,
@@ -48,6 +48,8 @@ import {addItemToLocalQueue, filterSignificantParams} from './utils';
 import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
+const LOADER_SHOW_DELAY = 150;
+const LOADER_HIDE_DELAY = 100;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
@@ -83,9 +85,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsProgressCount = 0;
     controlsStatus: Record<string, LoadStatus> = {};
     controlsData: Record<string, ExtendedLoadedData | null> = {};
-
-    // a quick loader for imitating action by clicking on apply button
-    quickActionLoader = false;
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
@@ -226,7 +225,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     render() {
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.quickActionLoader ||
             this.state.localUpdateLoader;
 
         return (
@@ -244,11 +242,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
-                    {isLoading && (
-                        <div className={b('loader')}>
-                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
-                        </div>
-                    )}
+                    <LocalUpdateLoader
+                        showDelay={LOADER_SHOW_DELAY}
+                        hideDelay={LOADER_HIDE_DELAY}
+                        size="s"
+                        className={b('loader')}
+                        show={isLoading}
+                        qa={ControlQA.groupCommonLoader}
+                    />
                 </div>
             </div>
         );
@@ -395,6 +396,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // 1. 'Apply button' is clicked
         // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
+            this.setState({localUpdateLoader: false});
             this.props.onStateAndParamsChange(
                 {params},
                 {groupItemIds: this.getControlsIds({data: controlData, controlId})},
@@ -651,6 +653,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        if (this.controlsProgressCount && this.state.status !== LOAD_STATUS.PENDING) {
+            this.setState({status: LOAD_STATUS.PENDING});
+        }
+
         if (!this.controlsProgressCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
@@ -732,10 +738,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.quickActionLoader = true;
-                setTimeout(() => {
-                    this.quickActionLoader = false;
-                });
+                this.setState({localUpdateLoader: true});
             }
             this.onChange({params: newParams, callChangeByClick});
         }
