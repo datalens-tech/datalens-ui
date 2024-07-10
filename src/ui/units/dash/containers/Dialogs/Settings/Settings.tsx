@@ -13,9 +13,9 @@ import {i18n} from '../../../../../../i18n';
 import type {DashSettingsGlobalParams} from '../../../../../../shared';
 import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
+import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
-import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
 import {
     setDashAccessDescription,
     setDashSupportDescription,

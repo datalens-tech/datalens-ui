@@ -35,6 +35,7 @@ import type {AppDispatch} from 'ui/store';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
+import {ITEM_TYPE} from '../../../../constants/dialogs';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
@@ -43,7 +44,6 @@ import type {EntryGlobalState} from '../../../../store/typings/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
 import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';

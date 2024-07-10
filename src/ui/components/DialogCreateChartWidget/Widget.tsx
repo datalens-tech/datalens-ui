@@ -24,29 +24,29 @@ import {DL, Interpolate} from 'ui';
 import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 
-import Utils from '../../../../../utils';
-import NavigationInput from '../../../components/NavigationInput/NavigationInput';
-import {ParamsSettings} from '../../../components/ParamsSettings/ParamsSettings';
+import {DIALOG_TYPE} from '../../constants/dialogs';
+import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
+import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
 import {
     clearEmptyParams,
     removeParam,
     updateParamTitle,
     updateParamValue,
     validateParamTitle,
-} from '../../../components/ParamsSettings/helpers';
-import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
-import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
-import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../../modules/constants';
-import {setItemData} from '../../../store/actions/dashTyped';
-import {closeDialog} from '../../../store/actions/dialogs/actions';
+} from '../../units/dash/components/ParamsSettings/helpers';
+import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
+import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
+import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
+import {setItemData} from '../../units/dash/store/actions/dashTyped';
+import {closeDialog} from '../../units/dash/store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
     selectIsDialogVisible,
     selectOpenedItemData,
     selectWidgetsCurrentTab,
-} from '../../../store/selectors/dashTypedSelectors';
-import {isEntryTypeWithFiltering} from '../utils';
+} from '../../units/dash/store/selectors/dashTypedSelectors';
+import Utils from '../../utils';
 
 import {TabMenu} from './TabMenu/TabMenu';
 import type {UpdateState} from './TabMenu/types';
@@ -169,6 +169,31 @@ class Widget extends React.PureComponent<Props, State> {
 
     private navigationInputRef = React.createRef<HTMLDivElement>();
     private afterSettingSelectedWidgetTypeCallback: AfterSettingsWidgetCallback = null;
+
+    render() {
+        const {visible, closeDialog} = this.props;
+
+        const sidebar = this.renderDialogSidebar();
+        const footer = this.renderDialogFooter();
+        const content = this.renderDialogBody();
+
+        return (
+            <TwoColumnDialog
+                className={b({long: true})}
+                open={visible}
+                onClose={closeDialog}
+                sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
+                sidebar={sidebar}
+                body={content}
+                footer={footer}
+                sidebarClassMixin={b('dialog-sidebar')}
+                contentClassMixin={b('content')}
+                bodyClassMixin={b('content-body')}
+                disableFocusTrap={true}
+                disableEscapeKeyDown={true}
+            />
+        );
+    }
 
     get isEdit() {
         return Boolean(this.props.id);
@@ -666,31 +691,6 @@ class Widget extends React.PureComponent<Props, State> {
                     validator={{title: paramValidator}}
                 />
             </Collapse>
-        );
-    }
-
-    render() {
-        const {visible, closeDialog} = this.props;
-
-        const sidebar = this.renderDialogSidebar();
-        const footer = this.renderDialogFooter();
-        const content = this.renderDialogBody();
-
-        return (
-            <TwoColumnDialog
-                className={b({long: true})}
-                open={visible}
-                onClose={closeDialog}
-                sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
-                sidebar={sidebar}
-                body={content}
-                footer={footer}
-                sidebarClassMixin={b('dialog-sidebar')}
-                contentClassMixin={b('content')}
-                bodyClassMixin={b('content-body')}
-                disableFocusTrap={true}
-                disableEscapeKeyDown={true}
-            />
         );
     }
 }

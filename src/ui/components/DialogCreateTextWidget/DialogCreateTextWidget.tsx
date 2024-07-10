@@ -3,32 +3,27 @@ import React from 'react';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {ResolveThunks} from 'react-redux';
-import {connect} from 'react-redux';
 import type {DashTabItemText} from 'shared';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import type {DatalensGlobalState} from 'ui';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
-import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
-import {DIALOG_TYPE} from '../../../../../constants/dialogs';
-import {setItemData} from '../../../store/actions/dashTyped';
-import {closeDialog} from '../../../store/actions/dialogs/actions';
-import {
-    selectIsDialogVisible,
-    selectOpenedItemData,
-} from '../../../store/selectors/dashTypedSelectors';
+import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {TextEditor} from '../TextEditor/TextEditor';
 
-import './Text.scss';
+import './DialogCreateTextWidget.scss';
 
 const b = block('dialog-text');
 
-export interface OwnProps {}
+export interface DialogCreateTextWidgetProps {
+    openedItemId: string | null;
+    openedItemData: DashTabItemText['data'];
+    dialogIsVisible: boolean;
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
+    closeDialog: () => () => void;
+    setItemData: (openedItemData: SetItemDataArgs) => void;
+}
 
-interface State {
+interface DialogCreateTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
@@ -36,11 +31,12 @@ interface State {
     backgroundColor?: string;
 }
 
-export type TextProps = OwnProps & StateProps & DispatchProps;
-
-class Text extends React.PureComponent<TextProps, State> {
+class DialogCreateTextWidget extends React.PureComponent<
+    DialogCreateTextWidgetProps,
+    DialogCreateTextWidgetState
+> {
     static defaultProps = {
-        data: {
+        openedItemData: {
             text: '',
             autoHeight: false,
             hasBackground: false,
@@ -48,29 +44,32 @@ class Text extends React.PureComponent<TextProps, State> {
         },
     };
 
-    static getDerivedStateFromProps(nextProps: TextProps, prevState: State) {
-        if (nextProps.visible === prevState.prevVisible) {
+    static getDerivedStateFromProps(
+        nextProps: DialogCreateTextWidgetProps,
+        prevState: DialogCreateTextWidgetState,
+    ) {
+        if (nextProps.dialogIsVisible === prevState.prevVisible) {
             return null;
         }
 
         return {
-            prevVisible: nextProps.visible,
-            text: nextProps.data.text,
-            autoHeight: Boolean(nextProps.data.autoHeight),
-            hasBackground: Boolean(nextProps.data.background?.enabled),
-            backgroundColor: nextProps.data.background?.color || '',
+            prevVisible: nextProps.dialogIsVisible,
+            text: nextProps.openedItemData.text,
+            autoHeight: Boolean(nextProps.openedItemData.autoHeight),
+            hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
+            backgroundColor: nextProps.openedItemData.background?.color || '',
         };
     }
 
-    state: State = {};
+    state: DialogCreateTextWidgetState = {};
 
     render() {
-        const {id, visible} = this.props;
+        const {openedItemId, dialogIsVisible} = this.props;
         const {text, autoHeight, hasBackground, backgroundColor} = this.state;
 
         return (
             <Dialog
-                open={visible}
+                open={dialogIsVisible}
                 onClose={this.props.closeDialog}
                 disableOutsideClick={true}
                 disableFocusTrap={true}
@@ -105,7 +104,7 @@ class Text extends React.PureComponent<TextProps, State> {
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
                     textButtonApply={
-                        id
+                        openedItemId
                             ? i18n('dash.text-dialog.edit', 'button_save')
                             : i18n('dash.text-dialog.edit', 'button_add')
                     }
@@ -149,15 +148,4 @@ class Text extends React.PureComponent<TextProps, State> {
     };
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    id: state.dash.openedItemId,
-    data: selectOpenedItemData(state) as DashTabItemText['data'],
-    visible: selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
-});
-
-const mapDispatchToProps = {
-    closeDialog,
-    setItemData,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Text);
+export default DialogCreateTextWidget;

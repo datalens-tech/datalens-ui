@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import {DashTabItemType, DashboardAddWidgetQa, Feature} from 'shared';
 import Utils from 'ui/utils';
 
-import {DIALOG_TYPE} from '../units/dash/containers/Dialogs/constants';
+import {DIALOG_TYPE} from '../constants/dialogs';
 import type {CopiedConfigData} from '../units/dash/modules/helpers';
 
 const b = block('edit-panel-item');

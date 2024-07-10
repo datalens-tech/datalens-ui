@@ -23,7 +23,7 @@ import type {
 import {DashTabItemType, Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 
-import {ITEM_TYPE} from '../containers/Dialogs/constants';
+import {ITEM_TYPE} from '../../../constants/dialogs';
 import type {TabsHashStates} from '../store/actions/dashTyped';
 
 import {CROSS_PASTE_ITEMS_ALLOWED} from './constants';

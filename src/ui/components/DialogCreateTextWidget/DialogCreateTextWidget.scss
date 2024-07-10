@@ -1,0 +1,17 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dialog-text {
+    position: relative;
+
+    &__hint {
+        @include text-body-1();
+        color: var(--g-color-text-secondary);
+        margin-top: 10px;
+    }
+
+    &__setting-row {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+    }
+}
