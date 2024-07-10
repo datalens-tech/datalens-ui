@@ -96,5 +96,5 @@ export const commonFunctionsMap = {
         >(),
     isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
     extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
-    getAdditionalMarkdownPlugins: makeFunctionTemplate<() => MarkdownItPluginCb[]>(),
+    getAdditionalMarkdownPlugins: makeFunctionTemplate<() => Promise<MarkdownItPluginCb[]>>(),
 } as const;

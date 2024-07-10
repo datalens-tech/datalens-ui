@@ -19,12 +19,14 @@ async function renderMarkdown(value: string) {
                 MarkdownCollection.delete(firstKey);
             }
 
-            const {renderHTML} = await import('../../shared/modules/markdown/markdown');
             const {getAdditionalMarkdownPlugins} = registry.common.functions.getAll();
+            const {renderHTML} = await import('../../shared/modules/markdown/markdown');
+            const plugins = await getAdditionalMarkdownPlugins();
+
             const renderedMarkdown = renderHTML({
                 text: value,
                 lang: DL.USER_LANG,
-                plugins: getAdditionalMarkdownPlugins(),
+                plugins,
             });
             const yfmString = renderedMarkdown.result;
             MarkdownCollection.set(value, yfmString);
