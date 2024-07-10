@@ -19,8 +19,8 @@ export interface DialogCreateTextWidgetProps {
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
 
-    closeDialog: () => () => void;
-    setItemData: (openedItemData: SetItemDataArgs) => void;
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
 }
 
 interface DialogCreateTextWidgetState {
