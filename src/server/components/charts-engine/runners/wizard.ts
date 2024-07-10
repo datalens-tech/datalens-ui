@@ -9,6 +9,8 @@ import {getWizardChartBuilder} from '../components/processor/worker-chart-builde
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
+import {prepareErrorForLogger} from './utils';
+
 import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runWizardChart: RunnerHandler = async (
@@ -192,7 +194,9 @@ export const runWizardChart: RunnerHandler = async (
                                 delete resultCopy._confStorageConfig;
                             }
 
-                            cx.log('PROCESSED_WITH_ERRORS', {error: result.error});
+                            const logError = prepareErrorForLogger(result.error);
+
+                            cx.log('PROCESSED_WITH_ERRORS', {error: logError});
 
                             let statusCode = 500;
 

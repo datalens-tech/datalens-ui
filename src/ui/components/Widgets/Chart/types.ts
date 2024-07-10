@@ -2,6 +2,7 @@ import type React from 'react';
 
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
+import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
 import type {
     Widget as ChartWidget,
@@ -107,6 +108,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     renderPluginLoader?: () => React.ReactNode;
     actionParamsEnabled?: boolean;
+    paneSplitOrientation?: Split;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -199,6 +201,7 @@ export type ChartKitWrapperParams = {
     ) => void;
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
+    paneSplitOrientation?: 'vertical' | 'horizontal';
 };
 
 export type ChartWidgetData =

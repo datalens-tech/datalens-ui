@@ -172,6 +172,7 @@ export const getWizardChartBuilder = async (
         },
 
         buildUI: emptyStep('UI'),
+        dispose: () => {},
     };
 
     return chartBuilder;

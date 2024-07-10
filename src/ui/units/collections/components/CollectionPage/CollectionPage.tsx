@@ -4,7 +4,7 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
@@ -244,12 +244,12 @@ export const CollectionPage = () => {
             ? Boolean(collection.permissions?.createWorkbook)
             : Boolean(rootCollectionPermissions?.createWorkbookInRoot);
 
-    const canCreateWorkbook = isMobileView ? false : hasPermissionToCreate;
+    const canCreateWorkbook = DL.IS_MOBILE ? false : hasPermissionToCreate;
 
-    const isFiltersHidden = isMobileView && Utils.isEnabledFeature(Feature.HideMultitenant);
+    const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
 
     return (
-        <div className={b({mobile: isMobileView})}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             <div className={b('filters', {hidden: isFiltersHidden})}>
                 <CollectionFilters
                     filters={filters}

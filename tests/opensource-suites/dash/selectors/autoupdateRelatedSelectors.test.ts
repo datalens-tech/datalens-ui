@@ -5,7 +5,6 @@ import {
     DashCommonQa,
     DashRelationTypes,
     DashTabItemControlSourceType,
-    DialogControlQa,
     Feature,
 } from '../../../../src/shared';
 
@@ -14,6 +13,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getStringFullUrl, isEnabledFeature, openTestPage, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
+import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
 
 const PARAMS = {
     DATASET_FIRST_CONTROL: {
@@ -39,18 +39,14 @@ const PARAMS = {
             title: 'test-control-1',
         },
         fieldName: 'test-control-field-1',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
     },
     MANUAL_SECOND_SELECTOR: {
         appearance: {
             title: 'test-control-2',
         },
         fieldName: 'test-control-field-2',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
     },
     STATE_VALUE: 'Vermont',
     CITY_VALUE: 'Burlington',
@@ -67,6 +63,7 @@ const SELECTORS_TITLES = {
         PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
     ],
     FIRST_DATASET_SELECTOR: [PARAMS.DATASET_FIRST_CONTROL.appearance.title],
+    SECOND_MANUAL_SELECTOR: [PARAMS.MANUAL_SECOND_SELECTOR.appearance.title],
 };
 
 const getSecondSelectItemsCount = async (dashboardPage: DashboardPage) => {
@@ -317,19 +314,24 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             await expect(secondSelectorValue).toEqual('');
 
-            // Return check after bug fix of alias case
-            // await page.locator(slct(ControlQA.controlButtonApply)).click();
+            await dashboardPage.expectControlsRequests({
+                controlTitles: SELECTORS_TITLES.SECOND_MANUAL_SELECTOR,
+                waitForLoader: true,
+                action: async () => {
+                    await page.locator(slct(ControlQA.controlButtonApply)).click();
+                },
+            });
 
-            // // last changed param will be applied to both selectors
-            // const firstSelectorValueAfterApply = await dashboardPage
-            //     .getSelectorLocatorByTitle({
-            //         title: PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
-            //         type: 'input',
-            //     })
-            //     .locator('input')
-            //     .inputValue();
+            // last changed param will be applied to both selectors
+            const firstSelectorValueAfterApply = await dashboardPage
+                .getSelectorLocatorByTitle({
+                    title: PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
+                    type: 'input',
+                })
+                .locator('input')
+                .inputValue();
 
-            // expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
+            expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
         },
     );
 

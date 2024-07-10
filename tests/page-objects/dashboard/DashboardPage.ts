@@ -61,6 +61,7 @@ import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import ControlActions from './ControlActions';
+import {getUrlStateParam} from '../../suites/dash/helpers';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -344,6 +345,14 @@ class DashboardPage extends BasePage {
 
         // adding to the dashboard
         await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async copyWidget(counter?: number) {
+        await this.page
+            .locator(slct(ControlQA.controlMenu))
+            .nth(counter || 0)
+            .click();
+        await this.page.locator(slct(DashKitOverlayMenuQa.CopyButton)).click();
     }
 
     async clickAddText() {
@@ -783,6 +792,14 @@ class DashboardPage extends BasePage {
         }
 
         throw new Error('Tabs selector not found');
+    }
+
+    async changeTabAndGetState({tabName, timeout}: {tabName: string; timeout: number}) {
+        await Promise.all([this.page.waitForNavigation(), this.changeTab({tabName})]);
+        await this.page.waitForTimeout(timeout);
+
+        const stateParam = getUrlStateParam(this.page);
+        return stateParam;
     }
 
     async changeWidgetTab(tabName: string) {

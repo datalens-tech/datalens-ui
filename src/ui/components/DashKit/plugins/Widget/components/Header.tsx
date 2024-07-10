@@ -6,9 +6,10 @@ import {ArrowLeft} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from 'ui/components/Widgets/Chart/helpers/helpers';
+import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from '../types';
@@ -46,7 +47,7 @@ export const Header = (props: HeaderProps) => {
         hideDebugTool,
     } = props;
 
-    const size = isMobileView ? MOBILE_SIZE.TABS : 'm';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
     const renderTabs = () => (
         <div className={b('tabs', {'edit-mode': editMode}, DRAGGABLE_HANDLE_CLASS_NAME)}>
@@ -83,7 +84,7 @@ export const Header = (props: HeaderProps) => {
     return (
         <React.Fragment>
             {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
-            <div className={b('header', {mobile: isMobileView})}>
+            <div className={b('header', {mobile: DL.IS_MOBILE})}>
                 {isFullscreen && (
                     <span
                         className={b('back-icon')}

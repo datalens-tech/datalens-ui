@@ -7,7 +7,7 @@ import {
     type DialogProps,
     Sheet,
 } from '@gravity-ui/uikit';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 type AdaptiveDialogProps = {
     visible: boolean;
@@ -41,7 +41,7 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
 }) => {
     const showDialogFooter = renderDialogFooter || dialogFooterProps;
 
-    return isMobileView ? (
+    return DL.IS_MOBILE ? (
         <Sheet
             visible={visible}
             onClose={onClose}

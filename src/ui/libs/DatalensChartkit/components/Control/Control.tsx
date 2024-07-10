@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {StringParams} from 'shared';
 import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
@@ -289,7 +289,7 @@ class Control<TProviderData> extends React.PureComponent<
             return (
                 <div
                     className={b(
-                        {'line-breaks': lineBreaks, standalone, mobile: isMobileView},
+                        {'line-breaks': lineBreaks, standalone, mobile: DL.IS_MOBILE},
                         classNameMix,
                     )}
                 >

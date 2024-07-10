@@ -1,6 +1,7 @@
 import type {
     ConnectionQueryContent,
     ConnectionQueryTypeValues,
+    ControlType,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
     DatasetFieldType,
@@ -34,7 +35,7 @@ export type ControlShared = {
         connectionQueryContent?: ConnectionQueryContent;
     };
     sourceType: DashTabItemControlSourceType;
-    type: 'control_dash';
+    type: ControlType.Dash;
     param: string;
     uiControl?: UIControl;
     content: {

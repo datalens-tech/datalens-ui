@@ -42,7 +42,6 @@ export enum Feature {
     GroupControls = 'GroupControls',
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
-    NewMobileDesign = 'NewMobileDesign',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
@@ -75,6 +74,8 @@ export enum Feature {
     WorkerChartBuilder = 'WorkerChartBuilder',
     /** Option in entity menu that allows to see all related entities for the current entity */
     RelatedEntitiesList = 'RelatedEntitiesList',
+    /** Enable Isolated VM Sandbox */
+    EnableIsolatedSandbox = 'EnableIsolatedSandbox',
 }
 
 export type FeatureConfig = Record<string, boolean>;

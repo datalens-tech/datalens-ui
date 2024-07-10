@@ -1,4 +1,5 @@
 import type {Request} from '@gravity-ui/expresskit';
+import {isObject} from 'lodash';
 import isNumber from 'lodash/isNumber';
 
 import type {WorkbookId} from '../../../../../shared';
@@ -56,7 +57,11 @@ export const getDatasetFieldsById = async (
         return response.responseData;
     } catch (err: unknown) {
         if (typeof err === 'object' && err !== null && 'error' in err) {
-            const {error} = err;
+            let {error} = err;
+            if (isObject(error) && 'message' in error) {
+                const message = error.message as string;
+                error = new Error(message);
+            }
             req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', error);
             const status = getStatusFromError(error);
             if (isNumber(status) && status < 500) {

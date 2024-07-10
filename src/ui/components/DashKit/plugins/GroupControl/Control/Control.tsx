@@ -14,6 +14,7 @@ import type {
     WorkbookId,
 } from 'shared';
 import {
+    ControlType,
     DATASET_FIELD_TYPES,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
@@ -192,7 +193,7 @@ export const Control = ({
                             shared: data,
                         },
                         meta: {
-                            stype: 'control_dash',
+                            stype: ControlType.Dash,
                         },
                     },
                     // currentParams are filled in after the first receiving of loadedData

@@ -12,7 +12,7 @@ import {SHEET_IDS} from 'ui';
 import {registry} from 'ui/registry';
 import type {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import Utils from 'ui/utils';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
 import {parseError} from '../../utils/errors/parse';
@@ -262,7 +262,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                     className={b('tab-navigation')}
                     onSelectTab={this.onTabClick}
                     activeTab={this.state.activeTabId}
-                    size={isMobileView ? MOBILE_SIZE.TABS : 'm'}
+                    size={DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm'}
                 />
                 {this.renderTabContent(this.state.activeTabId)}
             </React.Fragment>
@@ -279,7 +279,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
 
         const {ReportButton} = registry.common.components.getAll();
 
-        const buttonsSize = isMobileView ? MOBILE_SIZE.BUTTON : 'l';
+        const buttonsSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'l';
 
         return (
             <div className={b('footer-buttons')}>
@@ -291,13 +291,13 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                         errorWithoutDocumentation={errorWithoutDocumentation}
                         className={b('button')}
                         size={buttonsSize}
-                        view={isMobileView ? 'outlined' : 'flat'}
+                        view={DL.IS_MOBILE ? 'outlined' : 'flat'}
                     />
                 )}
                 {typeof onRetry === 'function' && (
                     <Button
                         size={buttonsSize}
-                        view={isMobileView ? 'action' : 'outlined'}
+                        view={DL.IS_MOBILE ? 'action' : 'outlined'}
                         onClick={onRetry}
                         className={b('button')}
                     >

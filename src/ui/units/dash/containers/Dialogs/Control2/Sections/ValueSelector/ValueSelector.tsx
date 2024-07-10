@@ -63,6 +63,7 @@ const InputValueControl = () => {
                     disabled={isFieldDisabled}
                     value={(defaultValue ?? '') as string}
                     onUpdate={handleUpdate}
+                    qa={DialogControlQa.valueInput}
                 />
             </FieldWrapper>
         </FormRow>

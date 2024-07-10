@@ -1,5 +1,6 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {Split} from 'react-split-pane';
 
 import type {
     CombinedError,
@@ -22,6 +23,7 @@ export type ChartKitAdapterProps = {
     lang?: string;
     isMobile?: boolean;
     splitTooltip?: boolean;
+    paneSplitOrientation?: Split;
     nonBodyScroll?: boolean;
     onLoad?: (args: OnLoadData) => void;
     onError?: ({error}: {error: CombinedError}) => void;
