@@ -60,21 +60,25 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             const dashboardPage = new DashboardPage({page});
 
             // open the dashboard with a selector on one of the tabs
-            await openTestPage(page, config.dash.urls.DashboardWithTabsAndSelectors);
+            await openTestPage(page, config.dash.urls.DashboardLoadPrioritySelectors);
             await dashboardPage.duplicateDashboard({
-                dashId: config.dash.urls.DashboardWithTabsAndSelectors,
+                dashId: config.dash.urls.DashboardLoadPrioritySelectors,
                 useUserFolder: true,
             });
 
-            await dashboardPage.changeTab({tabName: PARAMS.OLD_SELECTOR_TAB});
-
-            const selectorContainerLocator = page.locator(slct(DashkitQa.GRID_ITEM));
+            const selectorContainerLocator = page
+                .locator(slct(DashkitQa.GRID_ITEM))
+                .filter({has: page.locator(slct(ControlQA.chartkitControl))});
 
             const oldSelector = await selectorContainerLocator.elementHandle();
             const oldBoundingBox = await oldSelector?.boundingBox();
 
+            const controlSettingsButtonLocator = selectorContainerLocator.locator(
+                slct(ControlQA.controlSettings),
+            );
+
             await dashboardPage.enterEditMode();
-            await dashboardPage.clickFirstControlSettingsButton();
+            await controlSettingsButtonLocator.click();
 
             await dashboardPage.controlActions.waitForDialog();
             await expect(page.locator(slct(TabMenuQA.List))).toBeVisible();
@@ -92,7 +96,8 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await page.reload();
 
             await dashboardPage.enterEditMode();
-            await dashboardPage.clickFirstControlSettingsButton();
+
+            await controlSettingsButtonLocator.click();
 
             // add new selector to the previously saved group
             await dashboardPage.controlActions.waitForDialog();
@@ -111,7 +116,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             // remove selector from existing group
             await dashboardPage.enterEditMode();
 
-            await dashboardPage.clickFirstControlSettingsButton();
+            await controlSettingsButtonLocator.click();
             await dashboardPage.controlActions.waitForDialog();
 
             // we need to hover item to show control menu
