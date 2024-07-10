@@ -10,6 +10,7 @@ import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-buil
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
+import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandlerProps} from '.';
 
@@ -165,7 +166,9 @@ export const runEditor = async (
                             delete resultCopy._confStorageConfig;
                         }
 
-                        cx.log('PROCESSED_WITH_ERRORS', {error: result.error});
+                        const logError = prepareErrorForLogger(result.error);
+
+                        cx.log('PROCESSED_WITH_ERRORS', {error: logError});
 
                         let statusCode = 500;
 
