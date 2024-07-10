@@ -17,7 +17,7 @@ export const registerDashPlugins = () => {
         // Old one
         DialogText,
 
-        // New one
+        // // New one
         DialogCreateTextWidget,
     });
 
