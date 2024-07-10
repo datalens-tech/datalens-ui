@@ -3,6 +3,7 @@
         display: flex;
         flex: 1;
         padding: 8px 0;
+        min-height: 60px;
 
         &_fixed {
             position: fixed;
@@ -17,7 +18,7 @@
     }
 
     &__controls-placeholder {
-        height: 44px + 8px * 2;
+        height: 60px;
         display: flex;
         flex-direction: row;
     }
@@ -80,78 +81,5 @@
             max-height: 0;
             padding-bottom: 0;
         }
-
-        // padding-bottom: 8px;
-        // border-bottom: 1px solid var(--g-color-line-generic);
-
-        // &_edit-mode {
-        //     min-height: 44px;
-        //     max-height: unset;
-        // }
-
-        // &_fixed {
-        //     background-color: var(--g-color-base-background);
-        //     padding-left: 24px;
-        //     padding-right: 24px;
-        //     max-height: calc(100vh - 80px);
-        // }
-
-        // &_collapsed {
-        //     max-height: 0;
-        //     border-bottom: none;
-        // }
-
-        // > .react-grid-layout {
-        //     flex: 1;
-        //     transition: none;
-        //     margin-top: 20px;
-        //     margin-bottom: 20px;
-        // }
     }
 }
-
-
-
-// &__fixed-header {
-//     display: flex;
-//     margin: 0 -24px 20px;
-//     padding: 0 24px;
-//     position: sticky;
-//     flex-direction: column;
-//     top: 40px;
-//     flex-shrink: 1;
-//     background-color: var(--g-color-base-background);
-//     z-index: 4;
-
-//     &_edit-mode {
-//         position: static;
-//     }
-// }
-
-// &__fixed-header-container {
-//     display: flex;
-//     flex-grow: 1;
-//     overflow: auto;
-//     max-height: 300px;
-
-//     &_collapsed {
-//         max-height: 0px;
-//     }
-
-//     &_edit-mode {
-//         min-height: 48px;
-//         max-height: unset;
-//     }
-
-//     .react-grid-layout {
-//         flex: 1;
-//         transition: none;
-//     }
-// }
-
-// &__fixed-header-controls {
-//     border-bottom: 1px solid var(--g-color-line-generic);
-//     background: var(--g-color-base-background);
-//     padding: 6px 10px;
-//     margin: 0 -24px;
-// }

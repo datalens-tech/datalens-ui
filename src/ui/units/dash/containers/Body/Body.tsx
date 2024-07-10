@@ -5,13 +5,14 @@ import type {
     ConfigItem,
     ConfigLayout,
     DashKit as DashKitComponent,
+    DashKitGroup,
     DashKitProps,
     DashkitGroupRenderProps,
     ItemDropProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
-import {Funnel, Gear} from '@gravity-ui/icons';
+import {Funnel, Gear, Pin, PinSlash} from '@gravity-ui/icons';
 import {ArrowToggle, Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -107,7 +108,9 @@ type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
 const FIXED_GROUP_ID = '__fixedGroup';
 const FIXED_HEADER_GROUP_LINE_ID = '__fixedLine';
-const OTHERS_GROUP_ID = '__others';
+
+const FIXED_HEADER_GROUP_LINE_OFFSET = 2;
+const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -150,16 +153,23 @@ class Body extends React.PureComponent<BodyProps> {
         hasCopyInBuffer: null,
     };
 
-    groups = [
+    groups: DashKitGroup[] = [
         {
             id: FIXED_HEADER_GROUP_LINE_ID,
-            render: (id: string, children: React.ReactNode, props: DashkitGroupRenderProps) =>
-                this.renderFixedGroupHeader(id, children, props),
+            render: (id, children, props) => this.renderFixedGroupHeader(id, children, props),
+            gridProperties: (props) => {
+                return {
+                    ...props,
+                    cols: props.cols - FIXED_HEADER_GROUP_LINE_OFFSET,
+                    maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+                    autoSize: false,
+                    compactType: 'horizontal-nowrap',
+                };
+            },
         },
         {
             id: FIXED_GROUP_ID,
-            render: (id: string, children: React.ReactNode, props: DashkitGroupRenderProps) =>
-                this.renderFixedGroupContainer(id, children, props),
+            render: (id, children, props) => this.renderFixedGroupContainer(id, children, props),
         },
         {
             id: DEFAULT_GROUP,
@@ -241,84 +251,97 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    unfixAllElements = () => {
+    getGroupsBottom = () => {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData as DashKitProps['config'] | null;
+
+        return (tabDataConfig?.layout || []).reduce(
+            (memo, item) => {
+                const parentId = item.parent || DEFAULT_GROUP;
+                const bottom = item.y + item.h;
+
+                switch (parentId) {
+                    case FIXED_HEADER_GROUP_LINE_ID:
+                        memo[FIXED_HEADER_GROUP_LINE_ID] = Math.max(
+                            memo[FIXED_HEADER_GROUP_LINE_ID],
+                            bottom,
+                        );
+                        break;
+
+                    case FIXED_GROUP_ID:
+                        memo[FIXED_GROUP_ID] = Math.max(memo[FIXED_GROUP_ID], bottom);
+                        break;
+
+                    default:
+                        memo[DEFAULT_GROUP] = Math.max(memo[DEFAULT_GROUP], bottom);
+                }
+
+                return memo;
+            },
+            {
+                [DEFAULT_GROUP]: 0,
+                [FIXED_HEADER_GROUP_LINE_ID]: 0,
+                [FIXED_GROUP_ID]: 0,
+            },
+        );
+    };
+
+    togglePinElement = (widget: DashTabItem) => {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData as DashKitProps['config'];
+        const groupsBottom = this.getGroupsBottom();
+
+        const newLayout = tabDataConfig.layout.map((item) => {
+            if (item.i === widget.id) {
+                const {parent, ...itemCopy} = item;
+                const isFixed = parent === FIXED_GROUP_ID || parent === FIXED_HEADER_GROUP_LINE_ID;
+
+                return {
+                    ...itemCopy,
+                    ...(isFixed
+                        ? {
+                              y: groupsBottom[DEFAULT_GROUP],
+                          }
+                        : {parent: FIXED_GROUP_ID, y: groupsBottom[FIXED_GROUP_ID]}),
+                };
+            }
+
+            return item;
+        });
+
+        this.props.setCurrentTabData({...tabDataConfig, layout: newLayout});
+    };
+
+    unpinAllElements = () => {
         const {tabData} = this.props;
         const tabDataConfig = tabData as DashKitProps['config'] | null;
 
         if (tabDataConfig) {
-            const fixedContainersBottom: any = {
-                [FIXED_HEADER_GROUP_LINE_ID]: 0,
-                [FIXED_GROUP_ID]: 0,
-            };
-            // const idsOrder = {};
+            const groupsBottom = this.getGroupsBottom();
 
-            const groupedLayout: any = tabDataConfig.layout.reduce((memo: any, item: any) => {
-                const parentId = item.parent || DEFAULT_GROUP;
-
-                if (!memo[parentId]) {
-                    memo[parentId] = [];
+            const newLayout = tabDataConfig.layout.map(({parent, ...item}) => {
+                switch (parent) {
+                    case FIXED_HEADER_GROUP_LINE_ID:
+                        return item;
+                    case FIXED_GROUP_ID: {
+                        return {
+                            ...item,
+                            y: item.y + groupsBottom[FIXED_HEADER_GROUP_LINE_ID],
+                        };
+                    }
+                    default: {
+                        return {
+                            ...item,
+                            y:
+                                item.y +
+                                groupsBottom[FIXED_HEADER_GROUP_LINE_ID] +
+                                groupsBottom[FIXED_GROUP_ID],
+                        };
+                    }
                 }
+            });
 
-                if (parentId in fixedContainersBottom) {
-                    fixedContainersBottom[parentId] = Math.max(
-                        fixedContainersBottom[parentId],
-                        item.y + item.h,
-                    );
-
-                    memo[parentId].push(item);
-                } else if (parentId === DEFAULT_GROUP) {
-                    memo[DEFAULT_GROUP].push(item);
-                } else {
-                    memo[OTHERS_GROUP_ID].push(item);
-                }
-
-                // idsOrder[item.i] = index;
-
-                return memo;
-            }, {});
-
-            // eslint-disable-next-line no-console
-            console.log(groupedLayout);
-
-            // const newLayout = Object.entries(groupedLayout).reduce((memo, [group, items]) => {
-            //     console.log(group, groupedLayout);
-
-            //     return memo;
-            // });
-
-            // if (groupedLayout[FIXED_HEADER_GROUP_LINE_ID]) {
-            //     groupedLayout[FIXED_HEADER_GROUP_LINE_ID] = groupedLayout[
-            //         FIXED_HEADER_GROUP_LINE_ID
-            //     ].map(({parent, ...item}) => item);
-            // }
-
-            // if (groupedLayout[FIXED_GROUP_ID]) {
-            //     groupedLayout[FIXED_GROUP_ID] = groupedLayout[FIXED_GROUP_ID].map(
-            //         ({parent, ...item}) => ({
-            //             ...item,
-            //             y: item.y + fixedContainersBottom[FIXED_HEADER_GROUP_LINE_ID],
-            //         }),
-            //     );
-            // }
-
-            // if (groupedLayout[DEFAULT_GROUP]) {
-            //     groupedLayout[DEFAULT_GROUP] = groupedLayout[DEFAULT_GROUP].map((item) => ({
-            //         ...item,
-            //         y:
-            //             item.y +
-            //             fixedContainersBottom[FIXED_HEADER_GROUP_LINE_ID] +
-            //             fixedContainersBottom[FIXED_GROUP_ID],
-            //     }));
-            // }
-
-            // const newLayout = [
-            //     ...(groupedLayout[FIXED_HEADER_GROUP_LINE_ID] || []),
-            //     ...(groupedLayout[FIXED_GROUP_ID] || []),
-            //     ...(groupedLayout[DEFAULT_GROUP] || []),
-            //     ...(groupedLayout[OTHERS_GROUP_ID] || []),
-            // ];
-
-            // this.props.setCurrentTabData({...tabDataConfig, layout: newLayout});
+            this.props.setCurrentTabData({...tabDataConfig, layout: newLayout});
         }
     };
 
@@ -340,13 +363,9 @@ class Body extends React.PureComponent<BodyProps> {
                     )}
                     items={[
                         {
-                            // eslint-disable-next-line no-console
-                            action: () => console.log('Called'),
-                            text: 'Always collapsed',
-                        },
-                        {
-                            action: this.unfixAllElements,
-                            text: 'Move all to layout',
+                            action: this.unpinAllElements,
+                            text: 'Unpin all', // TODO i18n
+                            iconStart: <Icon data={PinSlash} />,
                             theme: 'danger',
                         },
                     ]}
@@ -354,7 +373,7 @@ class Body extends React.PureComponent<BodyProps> {
             );
         } else {
             return (
-                <Button onClick={this.toggleFixedHeader}>
+                <Button onClick={this.toggleFixedHeader} view={'flat'}>
                     <ArrowToggle direction={isCollapsed ? 'top' : 'bottom'} size={14} />
                     <Icon data={Funnel} />
                 </Button>
@@ -367,12 +386,14 @@ class Body extends React.PureComponent<BodyProps> {
         children: React.ReactNode,
         params: DashkitGroupRenderProps,
     ) => {
-        const isCollapsed = this.state.fixedHeaderCollapsed;
+        if (!params.editMode && params.items.length === 0) {
+            return null;
+        }
 
         return (
             <FixedHeaderControls
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={isCollapsed}
+                isCollapsed={this.state.fixedHeaderCollapsed}
                 editMode={params.editMode}
                 controls={this.renderFixedGroupHeaderControls()}
             >
@@ -386,12 +407,14 @@ class Body extends React.PureComponent<BodyProps> {
         children: React.ReactNode,
         params: DashkitGroupRenderProps,
     ) => {
-        const isCollapsed = this.state.fixedHeaderCollapsed;
+        if (!params.editMode && params.items.length === 0) {
+            return null;
+        }
 
         return (
             <FixedHeaderContainer
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={isCollapsed}
+                isCollapsed={this.state.fixedHeaderCollapsed}
                 editMode={params.editMode}
             >
                 {children}
@@ -592,6 +615,13 @@ class Body extends React.PureComponent<BodyProps> {
                             },
                         });
                     },
+                } as OverlayControlItem,
+                {
+                    allWidgetsControls: true,
+                    title: 'Pin',
+                    qa: ControlQA.controlSettings,
+                    icon: Pin,
+                    handler: this.togglePinElement,
                 } as OverlayControlItem,
             ],
         };
