@@ -47,7 +47,7 @@
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@diplodoc/latex-extension": "^1.1.0",
-    "@diplodoc/transform": "4.19.1",
+    "@diplodoc/transform": "^4.20.0",
     "@gravity-ui/app-layout": "^1.7.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^5.10.0",
