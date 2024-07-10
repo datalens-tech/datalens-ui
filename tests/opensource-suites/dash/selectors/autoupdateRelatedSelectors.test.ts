@@ -5,7 +5,6 @@ import {
     DashCommonQa,
     DashRelationTypes,
     DashTabItemControlSourceType,
-    DialogControlQa,
     Feature,
 } from '../../../../src/shared';
 
@@ -14,6 +13,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getStringFullUrl, isEnabledFeature, openTestPage, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
+import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
 
 const PARAMS = {
     DATASET_FIRST_CONTROL: {
@@ -39,18 +39,14 @@ const PARAMS = {
             title: 'test-control-1',
         },
         fieldName: 'test-control-field-1',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
     },
     MANUAL_SECOND_SELECTOR: {
         appearance: {
             title: 'test-control-2',
         },
         fieldName: 'test-control-field-2',
-        elementType: {
-            qa: slct(DialogControlQa.typeControlInput),
-        },
+        elementType: SelectorElementType.Input,
     },
     STATE_VALUE: 'Vermont',
     CITY_VALUE: 'Burlington',

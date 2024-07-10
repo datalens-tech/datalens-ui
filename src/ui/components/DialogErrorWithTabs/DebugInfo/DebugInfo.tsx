@@ -3,7 +3,8 @@ import React from 'react';
 import {Button, CopyToClipboard} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import './DebugInfo.scss';
 
@@ -17,7 +18,7 @@ const i18n = I18n.keyset('component.error-dialog.view');
 
 const DebugInfo: React.FC<Props> = ({requestId, traceId}: Props) => {
     return (
-        <div className={b({mobile: isMobileView})}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             <div className={b('info-values')}>
                 <div className={b('info-line')}>
                     <span className={b('caption')}>{i18n('label_request-id')}</span>
@@ -43,8 +44,8 @@ const DebugInfo: React.FC<Props> = ({requestId, traceId}: Props) => {
                 >
                     {() => (
                         <Button
-                            view={isMobileView ? 'flat' : 'flat-secondary'}
-                            size={isMobileView ? MOBILE_SIZE.BUTTON : 'm'}
+                            view={DL.IS_MOBILE ? 'flat' : 'flat-secondary'}
+                            size={DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm'}
                         >
                             {i18n('button_copy')}
                         </Button>

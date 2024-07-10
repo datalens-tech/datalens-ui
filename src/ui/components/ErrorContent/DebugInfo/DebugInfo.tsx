@@ -3,7 +3,8 @@ import React from 'react';
 import {Button, CopyToClipboard, Toaster} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import './DebugInfo.scss';
 
@@ -20,7 +21,7 @@ type DebugInfoProps = {
 
 export const DebugInfo = ({id, noControls, name}: DebugInfoProps) => {
     const handleCopy = () => {
-        if (isMobileView) {
+        if (DL.IS_MOBILE) {
             toaster.add({
                 name: 'successCopyDebugInfo',
                 theme: 'success',
@@ -30,8 +31,8 @@ export const DebugInfo = ({id, noControls, name}: DebugInfoProps) => {
     };
 
     return (
-        <div className={b({mobile: isMobileView})}>
-            {!isMobileView && <span>{name}: </span>}
+        <div className={b({mobile: DL.IS_MOBILE})}>
+            {!DL.IS_MOBILE && <span>{name}: </span>}
             <span className={b('copy-id')}>{id}</span>
             {!noControls && (
                 <CopyToClipboard text={id} timeout={1000} onCopy={handleCopy}>
@@ -39,9 +40,9 @@ export const DebugInfo = ({id, noControls, name}: DebugInfoProps) => {
                         <Button
                             className={b('copy-btn')}
                             view="flat-secondary"
-                            size={isMobileView ? 'xl' : 'm'}
+                            size={DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm'}
                         >
-                            {isMobileView
+                            {DL.IS_MOBILE
                                 ? i18n('button_copy', {subject: name})
                                 : i18n('button_copy', {subject: ''}).trim()}
                         </Button>

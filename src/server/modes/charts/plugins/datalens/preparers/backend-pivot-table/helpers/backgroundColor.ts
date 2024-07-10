@@ -255,7 +255,7 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
             }
 
             const color = colorizePivotTableCell(colorValue, chartColorsConfig, [min, max]);
-            continuousColorsByField[guid][String(value)] = color.backgroundColor;
+            continuousColorsByField[guid][String(value)] = color?.backgroundColor || null;
         });
     });
 

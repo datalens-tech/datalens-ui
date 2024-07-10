@@ -7,9 +7,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
-import {URL_OPTIONS as COMMON_URL_OPTIONS} from 'ui/constants';
+import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import Utils from 'ui/utils';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {socialNets} from '../../modules/constants';
 
@@ -44,10 +43,10 @@ export const ShareButton = ({
     };
 
     const getContent = () => {
-        if (enablePopover && (!isMobileView || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
+        if (enablePopover && (!DL.IS_MOBILE || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
             return (
                 <SharePopover
-                    useWebShareApi={!isMobileView}
+                    useWebShareApi={!DL.IS_MOBILE}
                     url={window.location.href}
                     title={popoverTitle}
                     text={popoverText}
@@ -72,7 +71,7 @@ export const ShareButton = ({
             );
         }
 
-        if (!isMobileView) {
+        if (!DL.IS_MOBILE) {
             return null;
         }
 

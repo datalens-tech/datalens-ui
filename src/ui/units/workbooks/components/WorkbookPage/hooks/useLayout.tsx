@@ -7,7 +7,6 @@ import {I18N} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router';
 import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {DIALOG_EDIT_WORKBOOK} from '../../../../../components/CollectionsStructure';
 import {DL} from '../../../../../constants/common';
@@ -167,7 +166,7 @@ export const useLayout = ({workbookId, refreshWorkbookInfo}: UseLayoutArgs) => {
                     ) : null,
                 },
                 titleBeforeActionsBlock: {
-                    content: isMobileView ? (
+                    content: DL.IS_MOBILE ? (
                         <Button
                             view="flat"
                             size="l"

@@ -7,8 +7,9 @@ import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import moment from 'moment';
 import {useHistory} from 'react-router-dom';
 import {DlNavigationQA, Feature, PLACE} from 'shared';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'utils';
 
 import type {NavigationEntry} from '../../../../../../shared/schema';
@@ -86,8 +87,8 @@ export class Row extends React.Component<RowProps> {
         const highlight = currentPageEntry?.entryId === entry.entryId;
         const checked = this.isCheckedEntry();
 
-        const iconSize = isMobileView ? MOBILE_SIZE.NAVIGATION_ICON : 24;
-        const entityIconSize = isMobileView ? MOBILE_SIZE.ENTITY_ICON : 's';
+        const iconSize = DL.IS_MOBILE ? MOBILE_SIZE.NAVIGATION_ICON : 24;
+        const entityIconSize = DL.IS_MOBILE ? MOBILE_SIZE.ENTITY_ICON : 's';
 
         const isFavoritesNameAliasesEnabled =
             Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases) && place === PLACE.FAVORITES;
