@@ -60,6 +60,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
             <div
                 className={b('controls', {
                     fixed: isFixed && !props.editMode,
+                    'edit-mode': props.editMode,
                 })}
             >
                 <div className={b('controls-grid')}>{props.children}</div>
@@ -113,6 +114,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
                 className={b('container', {
                     fixed: isFixed && !props.editMode,
                     collapsed: !props.editMode && props.isCollapsed,
+                    'edit-mode': props.editMode,
                 })}
             >
                 <div className={b('container-wrapper')}>{props.children}</div>
