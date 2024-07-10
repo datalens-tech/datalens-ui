@@ -15,6 +15,11 @@
         // there could be tooltip with hide animation
         transition: z-index 0.5s;
 
+        &.cssTransforms {
+            // overload default transform transition
+            transition: z-index 0.5s;
+        }
+
         &.dashkit-grid-item_is-focused {
             z-index: 2;
             transition: none;
