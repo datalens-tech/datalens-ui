@@ -76,6 +76,7 @@ export enum Feature {
     RelatedEntitiesList = 'RelatedEntitiesList',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
+    MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
 }
 
 export type FeatureConfig = Record<string, boolean>;
