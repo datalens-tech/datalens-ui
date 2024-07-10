@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {renderHTML} from '../components/markdown';
+import {renderHTML} from '../../../../shared/modules/markdown/markdown';
+import {registry} from '../../../registry';
 
 export const markdownController = {
     render: (req: Request, res: Response) => {
@@ -10,6 +11,7 @@ export const markdownController = {
             const result = renderHTML({
                 text: body.text,
                 lang: res.locals.lang,
+                plugins: registry.getYfmPlugins(),
             });
 
             res.status(200).send(result);
@@ -30,6 +32,7 @@ export const markdownController = {
                 results[key] = renderHTML({
                     text,
                     lang: res.locals.lang,
+                    plugins: registry.getYfmPlugins(),
                 });
             }
 

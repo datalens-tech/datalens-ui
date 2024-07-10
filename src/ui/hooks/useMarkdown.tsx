@@ -1,8 +1,9 @@
 import React from 'react';
 
+import {registry} from 'ui/registry';
+
 import {YfmWrapper} from '../components/YfmWrapper/YfmWrapper';
 import {DL} from '../constants';
-import {getSdk} from '../libs/schematic-sdk';
 
 type Props = {
     value: string;
@@ -18,8 +19,16 @@ async function renderMarkdown(value: string) {
                 MarkdownCollection.delete(firstKey);
             }
 
-            const response = await getSdk().mix.renderMarkdown({text: value, lang: DL.USER_LANG});
-            const yfmString = response.result;
+            const {getAdditionalMarkdownPlugins} = registry.common.functions.getAll();
+            const {renderHTML} = await import('../../shared/modules/markdown/markdown');
+            const plugins = await getAdditionalMarkdownPlugins();
+
+            const renderedMarkdown = renderHTML({
+                text: value,
+                lang: DL.USER_LANG,
+                plugins,
+            });
+            const yfmString = renderedMarkdown.result;
             MarkdownCollection.set(value, yfmString);
         } catch (e) {
             console.error('useMarkdown failed ', e);
