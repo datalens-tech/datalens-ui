@@ -1,0 +1,15 @@
+.base-admin-form {
+    &__buttons-wrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    &__eye-icon {
+        margin-right: 8px;
+        color: var(--g-color-text-secondary);
+    }
+    &__eye-icon-wrapper {
+        cursor: pointer;
+    }
+}

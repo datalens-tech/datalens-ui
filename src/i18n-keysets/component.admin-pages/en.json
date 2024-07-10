@@ -39,5 +39,10 @@
   "id_empty": "User ID unknown.",
   "search_part": "Login",
   "search": "Search",
-  "username": "User name"
+  "username": "User name",
+  "yes": "Yes",
+  "no": "No",
+  "claims": "Claims",
+  "active": "Active",
+  "inactive": "Inactive"
 }

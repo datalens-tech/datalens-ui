@@ -1,0 +1,35 @@
+.base-admin {
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 20px;
+        height: 100vh;
+    }
+    &__container {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        gap: 20px;
+    }
+    &__table {
+        flex: 1;
+        overflow: auto;
+    }
+    &__form {
+        flex: 1;
+        display: flex;
+        gap: 10px;
+        flex-direction: column;
+    }
+    &__title {
+        margin-bottom: 10px;
+    }
+    &__toolbar {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+}
