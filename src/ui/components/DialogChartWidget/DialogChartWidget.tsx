@@ -153,7 +153,7 @@ class DialogChartWidget extends React.PureComponent<
                 nextProps.openedItemData.tabs.length === 1 && nextProps.openedItemData.hideTitle,
             prevVisible: nextProps.dialogIsVisible,
             error: false,
-            openedItemData: nextProps.openedItemData,
+            data: nextProps.openedItemData,
             tabIndex,
             isManualTitle: Boolean(nextProps.openedItemId),
             selectedWidgetType: null,
