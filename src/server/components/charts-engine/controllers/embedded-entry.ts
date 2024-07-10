@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigProps} from '../components/storage/base';
-import type {ResolvedConfig} from '../components/storage/types';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
@@ -43,7 +42,6 @@ export const embeddedEntryController = (req: Request, res: Response) => {
 
     const configResolveArgs: ResolveConfigProps = {
         embedToken,
-        id: req.params.entryId,
         // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
         key: embedId,
         headers: {
@@ -88,23 +86,14 @@ export const embeddedEntryController = (req: Request, res: Response) => {
             ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
         })
         .then(async (response) => {
-            let entry: ResolvedConfig | null = null;
+            if (response && 'entry' in response) {
+                const {entry} = response;
 
-            if (response && 'token' in response) {
-                entry = response.entry;
-            } else if (response && 'entryId' in response) {
-                entry = response;
-            }
-
-            if (entry) {
                 // Add only necessary fields without personal info like createdBy
                 return res.status(200).send({
                     entryId: entry.entryId,
                     scope: entry.scope,
-                    type: entry.type,
                     data: entry.data,
-                    meta: entry.meta,
-                    links: entry.links,
                 });
             }
 

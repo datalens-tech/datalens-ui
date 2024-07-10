@@ -422,14 +422,12 @@ export class USProvider {
         ctx: AppContext,
         {
             token,
-            entryId,
             headers,
         }: {
             token: string;
-            entryId?: string;
             headers: Request['headers'];
         },
-    ): Promise<EmbeddingInfo | EmbeddingInfo['entry']> {
+    ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
         const headersWithToken = {
             ...headers,
@@ -437,7 +435,7 @@ export class USProvider {
         };
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${storageEndpoint}${entryId ? `/embeds/entries/${entryId}` : '/v1/embedded-entry'}`,
+            url: `${storageEndpoint}/v1/embedded-entry`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
@@ -447,10 +445,6 @@ export class USProvider {
             .request(axiosArgs)
             .then((response) => {
                 ctx.log('UNITED_STORAGE_CONFIG_LOADED', {duration: getDuration(hrStart)});
-
-                if (entryId) {
-                    return formatPassedProperties(response.data);
-                }
 
                 return {
                     token: response.data.token,
