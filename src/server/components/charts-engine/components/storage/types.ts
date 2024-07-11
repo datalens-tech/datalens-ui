@@ -29,6 +29,7 @@ export type ResolvedConfig = {
         is_release: boolean;
         stype: keyof typeof EDITOR_TYPE_CONFIG_TABS;
         owner: string;
+        sandbox_version?: string;
     };
     permissions: {execute: boolean; read: boolean; edit: boolean; admin: boolean};
     scope: EntryScope;

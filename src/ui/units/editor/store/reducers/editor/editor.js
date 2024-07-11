@@ -140,11 +140,12 @@ export const fetchEditorChartUpdate = ({mode, release, history, location}) => {
             dispatch(
                 componentStateChange({name: ComponentName.ButtonSave, data: {progress: true}}),
             );
+            const meta = release ? {...entry.meta, is_release: true} : {...entry.meta};
             const updatedEntry = await getSdk().mix.updateEditorChart({
                 mode,
                 data: Helper.formEntryData({scriptsValues, entry}),
                 entryId: entry.entryId,
-                meta: release ? {is_release: true} : {},
+                meta,
             });
             dispatch({
                 type: EDITOR_CHART_UPDATE_SUCCESS,
@@ -384,6 +385,10 @@ export const getScriptsValues = (state) => state.editor.scriptsValues;
 export const getIsScriptsChanged = createSelector(
     [getEntry, getScriptsValues],
     (entry, scriptsValues) => {
+        if (entry.meta.is_sandbox_version_changed) {
+            delete entry.meta.is_sandbox_version_changed;
+            return true;
+        }
         return Object.keys(scriptsValues).some(
             (key) => (entry.data[key] || '') !== scriptsValues[key],
         );
