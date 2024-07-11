@@ -9,8 +9,8 @@ import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
+import {CONTROLS_PLACEMENT_MODE} from '../../../../constants/dialogs';
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
-import {CONTROLS_PLACEMENT_MODE} from '../../containers/Dialogs/constants';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';

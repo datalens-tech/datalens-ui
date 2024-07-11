@@ -28,6 +28,7 @@ import Utils, {formDocsEndpointDL} from 'ui/utils';
 
 const i18n = I18n.keyset('dash.main.view');
 
+import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {
     cleanRevisions,
     setRevisionsListMode,
@@ -35,7 +36,6 @@ import {
 } from '../../../../store/actions/entryContent';
 import {selectEntryContentRevId, selectLockToken} from '../../../../store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
 import {getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';

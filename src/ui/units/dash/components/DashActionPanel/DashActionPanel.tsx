@@ -23,10 +23,10 @@ import type {
 } from '../../../../components/EntryContextMenu/helpers';
 import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
+import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
 import navigateHelper from '../../../../libs/navigateHelper';
 import {isEmbeddedMode} from '../../../../utils/embedded';
-import {DIALOG_TYPE} from '../../containers/Dialogs/constants';
 import {
     saveDashAsDraft,
     saveDashAsNewDash,

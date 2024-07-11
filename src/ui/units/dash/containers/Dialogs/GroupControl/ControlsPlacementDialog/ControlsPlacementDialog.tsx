@@ -11,7 +11,7 @@ import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions
 import type {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/controls/selectors';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../constants';
+import {CONTROLS_PLACEMENT_MODE} from '../../../../../../constants/dialogs';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
 
