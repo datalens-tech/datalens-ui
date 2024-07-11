@@ -14,8 +14,8 @@ import type {
 } from 'shared';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 
+import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {Mode} from '../../modules/constants';
 import {
     ALL_OPERATIONS,

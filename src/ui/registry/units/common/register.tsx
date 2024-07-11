@@ -63,5 +63,6 @@ export const registerCommonPlugins = () => {
         getAdditionalEntryContextMenuItems,
         isEntryId,
         extractEntryId,
+        getAdditionalMarkdownPlugins: async () => [],
     });
 };
