@@ -153,7 +153,11 @@ export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>(
                 />
             )}
         >
-            <ChartkitWidget ref={ref} {...restProps} onRender={handleRender} />
+            <ChartkitWidget
+                ref={ref}
+                {...restProps}
+                onRender={onRender ? handleRender : undefined}
+            />
             <ChartKitTooltip ref={tooltipRef} />
         </ErrorBoundary>
     );
