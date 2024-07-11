@@ -7,7 +7,7 @@ import {registry} from 'ui/registry';
 import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
 import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
-import {setItemData} from '../../store/actions/dashTyped';
+import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
@@ -37,6 +37,7 @@ export function Dialogs() {
     const currentTabId = useSelector((state) => selectCurrentTabId(state));
     const workbookId = useSelector((state) => selectDashWorkbookId(state));
     const widgetsCurrentTab = useSelector((state) => selectWidgetsCurrentTab(state));
+    const navigationPath = useSelector((state) => state.dash.navigationPath);
 
     const dialogTextIsVisible = useSelector((state) =>
         selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
@@ -84,6 +85,10 @@ export function Dialogs() {
                     closeDialog={() => dispatch(closeDialog())}
                     setItemData={(newItemData) => {
                         dispatch(setItemData(newItemData));
+                    }}
+                    navigationPath={navigationPath}
+                    changeNavigationPath={(newNavigationPath) => {
+                        dispatch(changeNavigationPath(newNavigationPath));
                     }}
                 />
             );

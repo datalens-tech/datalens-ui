@@ -86,10 +86,12 @@ export interface DialogChartWidgetProps {
     widgetType?: WidgetType;
     currentTabId: string | null;
     workbookId: string | null;
+    navigationPath: string | null;
     widgetsCurrentTab: {
         [key: string]: string;
     };
 
+    changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
@@ -521,7 +523,7 @@ class DialogChartWidget extends React.PureComponent<
 
     renderDialogBody = () => {
         const {data, tabIndex, selectedWidgetType} = this.state;
-        const {workbookId} = this.props;
+        const {workbookId, navigationPath, changeNavigationPath} = this.props;
 
         const autoHeightCheckboxCaption = (
             <div className={b('caption')}>
@@ -584,8 +586,10 @@ class DialogChartWidget extends React.PureComponent<
                             onChange={this.onAddWidget}
                             excludeClickableType={EntryTypeNode.CONTROL_NODE}
                             onUpdate={this.setSelectedWidgetType}
-                            workbookId={workbookId}
                             scope={EntryScope.Widget}
+                            workbookId={workbookId}
+                            navigationPath={navigationPath}
+                            changeNavigationPath={changeNavigationPath}
                         />
                     </div>
                     <Popup
