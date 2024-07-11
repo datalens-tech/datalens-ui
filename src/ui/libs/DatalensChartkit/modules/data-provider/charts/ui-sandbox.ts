@@ -321,22 +321,28 @@ export function processHtmlFields(target: unknown, options?: {allowHtml: boolean
 
     if (target && typeof target === 'object') {
         if (Array.isArray(target)) {
-            target.forEach((item) => processHtmlFields(item, options));
+            target.forEach((item, index) => {
+                if (item && typeof item === 'object') {
+                    if (WRAPPED_HTML_KEY in item) {
+                        target[index] = generateHtml(item[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+                    } else {
+                        processHtmlFields(item, options);
+                    }
+                } else if (typeof item === 'string' && !allowHtml) {
+                    target[index] = escape(item);
+                }
+            });
         } else {
             const config = target as Record<string, unknown>;
             Object.entries(config).forEach(([key, value]) => {
-                if (value) {
-                    if (typeof value === 'object') {
-                        if (WRAPPED_HTML_KEY in value) {
-                            // eslint-disable-next-line no-param-reassign
-                            config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
-                        } else {
-                            processHtmlFields(value, options);
-                        }
-                    } else if (typeof value === 'string' && !allowHtml) {
-                        // eslint-disable-next-line no-param-reassign
-                        config[key] = escape(value);
+                if (value && typeof value === 'object') {
+                    if (WRAPPED_HTML_KEY in value) {
+                        config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+                    } else {
+                        processHtmlFields(value, options);
                     }
+                } else if (typeof value === 'string' && !allowHtml) {
+                    config[key] = escape(value);
                 }
             });
         }

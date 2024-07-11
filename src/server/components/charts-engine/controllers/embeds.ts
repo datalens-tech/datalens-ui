@@ -118,7 +118,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     ...filteredParams,
                 };
 
-                const config = embeddingInfo.chart;
+                const config = embeddingInfo.entry;
 
                 const configResolving = getDuration(hrStart);
                 const configType = config && config.meta && config.meta.stype;
