@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import DialogConfirm, {DialogConfirmApplyStatus} from 'ui/components/DialogConfirm/DialogConfirm';
 
 import DialogManager from '../../../../components/DialogManager/DialogManager';
 import type {AppDispatch} from '../../../../store';
@@ -42,17 +42,21 @@ const DeleteEntryDialog = React.memo<Props>(({open, data, onClose}) => {
     }, [data.entryId, data.scope, dispatch, onClose]);
 
     return (
-        <Dialog size="s" open={open} onClose={onClose} onEnterKeyDown={handleApply}>
-            <Dialog.Header caption={i18n('label_delete-entry')} />
-            <Dialog.Body>{i18n('section_delete-entry', {entryName: data.name})}</Dialog.Body>
-            <Dialog.Footer
-                onClickButtonCancel={onClose}
-                onClickButtonApply={handleApply}
-                textButtonApply={i18n('action_delete')}
-                textButtonCancel={i18n('action_cancel')}
-                loading={isLoading}
-            />
-        </Dialog>
+        <DialogConfirm
+            visible={open}
+            widthType="medium"
+            confirmHeaderText={i18n('label_delete-entry')}
+            message={i18n('section_delete-entry', {entryName: data.name})}
+            onApply={handleApply}
+            confirmButtonText={i18n('action_delete')}
+            cancelButtonText={i18n('action_cancel')}
+            applyBtnLoadingStatus={isLoading ? DialogConfirmApplyStatus.Loading : undefined}
+            onCancel={onClose}
+            confirmOnEnterPress={true}
+            isWarningConfirm={true}
+            cancelButtonView="flat"
+            showIcon={false}
+        />
     );
 });
 
