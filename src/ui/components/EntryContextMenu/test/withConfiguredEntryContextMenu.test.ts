@@ -93,7 +93,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['rename', 'delete', 'move', 'copy-link'],
+        result: ['rename', 'delete', 'move', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 2,
@@ -116,7 +116,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['copy-link'],
+        result: ['copy-link', 'show-related-entities'],
     },
     {
         testId: 3,
@@ -139,7 +139,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: 'rev',
             },
         },
-        result: ['revisions', 'copy-link'],
+        result: ['revisions', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 4,
@@ -162,7 +162,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'copy-link'],
+        result: ['revisions', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 5,
@@ -186,7 +186,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['copy-link'],
+        result: ['copy-link', 'show-related-entities'],
     },
     {
         testId: 6,
@@ -210,7 +210,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['rename', 'delete', 'move', 'copy-link'],
+        result: ['rename', 'delete', 'move', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 7,
@@ -238,7 +238,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['rename', 'delete', 'move', 'copy', 'copy-link'],
+        result: ['rename', 'delete', 'move', 'copy', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 8,
@@ -310,7 +310,15 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'rename', 'delete', 'move', 'copy', 'copy-link'],
+        result: [
+            'revisions',
+            'rename',
+            'delete',
+            'move',
+            'copy',
+            'copy-link',
+            'show-related-entities',
+        ],
     },
     {
         testId: 11,
@@ -333,7 +341,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: 'rev',
             },
         },
-        result: ['revisions', 'rename', 'delete', 'move', 'copy-link'],
+        result: ['revisions', 'rename', 'delete', 'move', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 12,
@@ -356,7 +364,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'rename', 'delete', 'copy-link'],
+        result: ['revisions', 'rename', 'delete', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 13,
@@ -379,7 +387,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['copy', 'copy-link'],
+        result: ['copy', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 14,
@@ -402,7 +410,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'copy', 'copy-link'],
+        result: ['revisions', 'copy', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 15,
@@ -426,7 +434,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['copy', 'copy-link'],
+        result: ['copy', 'copy-link', 'show-related-entities'],
     },
 ];
 
