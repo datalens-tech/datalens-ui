@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {useBodyScrollLock} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './FixedHeader.scss';
@@ -74,12 +73,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
     const rootRef = React.useRef<HTMLDivElement>(null);
     const containerRef = React.useRef<HTMLDivElement>(null);
 
-    const [windowHeight, setWindowHeight] = React.useState(0);
     const [containerHeight, setContainerHeight] = React.useState(0);
-
-    const windowRectHandler = React.useCallback(() => {
-        setWindowHeight(document.body.clientHeight);
-    }, []);
 
     React.useEffect(() => {
         const observer = new ResizeObserver(([el]) => {
@@ -98,14 +92,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
         };
     }, [containerRef]);
 
-    const {isFixed} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET, windowRectHandler);
-    useBodyScrollLock({
-        enabled:
-            isFixed &&
-            !props.editMode &&
-            !props.isCollapsed &&
-            containerHeight + CONTAINER_TOP_OFFSET >= windowHeight,
-    });
+    const {isFixed} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET);
 
     return (
         <div ref={rootRef} className={b('container-placeholder')} style={{height: containerHeight}}>

@@ -147,6 +147,15 @@ class Body extends React.PureComponent<BodyProps> {
         });
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
+    _memoizedContext: {
+        workbookId?: string | null;
+        getPreparedCopyItemOptions?: (
+            itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+        ) => ReturnType<typeof getPreparedCopyItemOptions>;
+    } = {};
+
+    _memoizedControls: DashKitProps['overlayControls'];
+
     state: DashBodyState = {
         fixedHeaderCollapsed: false,
         isGlobalDragging: false,
@@ -251,7 +260,7 @@ class Body extends React.PureComponent<BodyProps> {
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 
-    getGroupsBottom = () => {
+    getGroupsInsertCoords = (forSingleInsert = false) => {
         const {tabData} = this.props;
         const tabDataConfig = tabData as DashKitProps['config'] | null;
 
@@ -259,29 +268,36 @@ class Body extends React.PureComponent<BodyProps> {
             (memo, item) => {
                 const parentId = item.parent || DEFAULT_GROUP;
                 const bottom = item.y + item.h;
+                const left = item.x + item.w;
 
                 switch (parentId) {
                     case FIXED_HEADER_GROUP_LINE_ID:
-                        memo[FIXED_HEADER_GROUP_LINE_ID] = Math.max(
-                            memo[FIXED_HEADER_GROUP_LINE_ID],
-                            bottom,
-                        );
+                        memo[FIXED_HEADER_GROUP_LINE_ID] = {
+                            y: forSingleInsert ? 0 : Math.max(memo[FIXED_GROUP_ID].y, bottom),
+                            x: Math.max(memo[FIXED_HEADER_GROUP_LINE_ID].x, left),
+                        };
                         break;
 
                     case FIXED_GROUP_ID:
-                        memo[FIXED_GROUP_ID] = Math.max(memo[FIXED_GROUP_ID], bottom);
+                        memo[FIXED_GROUP_ID] = {
+                            y: Math.max(memo[FIXED_GROUP_ID].y, bottom),
+                            x: 0,
+                        };
                         break;
 
                     default:
-                        memo[DEFAULT_GROUP] = Math.max(memo[DEFAULT_GROUP], bottom);
+                        memo[DEFAULT_GROUP] = {
+                            y: Math.max(memo[DEFAULT_GROUP].y, bottom),
+                            x: 0,
+                        };
                 }
 
                 return memo;
             },
             {
-                [DEFAULT_GROUP]: 0,
-                [FIXED_HEADER_GROUP_LINE_ID]: 0,
-                [FIXED_GROUP_ID]: 0,
+                [DEFAULT_GROUP]: {x: 0, y: 0},
+                [FIXED_HEADER_GROUP_LINE_ID]: {x: 0, y: 0},
+                [FIXED_GROUP_ID]: {x: 0, y: 0},
             },
         );
     };
@@ -289,21 +305,30 @@ class Body extends React.PureComponent<BodyProps> {
     togglePinElement = (widget: DashTabItem) => {
         const {tabData} = this.props;
         const tabDataConfig = tabData as DashKitProps['config'];
-        const groupsBottom = this.getGroupsBottom();
+        const groupCoords = this.getGroupsInsertCoords(true);
 
         const newLayout = tabDataConfig.layout.map((item) => {
             if (item.i === widget.id) {
                 const {parent, ...itemCopy} = item;
                 const isFixed = parent === FIXED_GROUP_ID || parent === FIXED_HEADER_GROUP_LINE_ID;
 
-                return {
-                    ...itemCopy,
-                    ...(isFixed
-                        ? {
-                              y: groupsBottom[DEFAULT_GROUP],
-                          }
-                        : {parent: FIXED_GROUP_ID, y: groupsBottom[FIXED_GROUP_ID]}),
-                };
+                if (isFixed) {
+                    return {
+                        ...itemCopy,
+                        ...groupCoords[DEFAULT_GROUP],
+                    };
+                } else {
+                    const parentId =
+                        itemCopy.h <= FIXED_HEADER_GROUP_LINE_MAX_ROWS
+                            ? FIXED_HEADER_GROUP_LINE_ID
+                            : FIXED_GROUP_ID;
+
+                    return {
+                        ...itemCopy,
+                        parent: parentId,
+                        ...groupCoords[parentId],
+                    };
+                }
             }
 
             return item;
@@ -317,27 +342,29 @@ class Body extends React.PureComponent<BodyProps> {
         const tabDataConfig = tabData as DashKitProps['config'] | null;
 
         if (tabDataConfig) {
-            const groupsBottom = this.getGroupsBottom();
+            const groupCoords = this.getGroupsInsertCoords();
 
             const newLayout = tabDataConfig.layout.map(({parent, ...item}) => {
-                switch (parent) {
+                switch (parent || DEFAULT_GROUP) {
                     case FIXED_HEADER_GROUP_LINE_ID:
-                        return item;
+                        return {...item, y: 0};
                     case FIXED_GROUP_ID: {
                         return {
                             ...item,
-                            y: item.y + groupsBottom[FIXED_HEADER_GROUP_LINE_ID],
+                            y: item.y + groupCoords[FIXED_HEADER_GROUP_LINE_ID].y,
                         };
                     }
-                    default: {
+                    case DEFAULT_GROUP: {
                         return {
                             ...item,
                             y:
                                 item.y +
-                                groupsBottom[FIXED_HEADER_GROUP_LINE_ID] +
-                                groupsBottom[FIXED_GROUP_ID],
+                                groupCoords[FIXED_HEADER_GROUP_LINE_ID].y +
+                                groupCoords[FIXED_GROUP_ID].y,
                         };
                     }
+                    default:
+                        return item;
                 }
             });
 
@@ -426,6 +453,88 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
 
+    getDashkitSettings = () => {
+        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+        const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
+        if (autoupdateInterval) {
+            const dashkitSettings = {
+                ...this.props.settings,
+            } as NonNullable<DashKitProps['settings']>;
+
+            const minAutoupdateInterval = getMinAutoupdateInterval();
+
+            dashkitSettings.autoupdateInterval =
+                autoupdateInterval >= getMinAutoupdateInterval()
+                    ? autoupdateInterval
+                    : minAutoupdateInterval;
+
+            return dashkitSettings;
+        }
+
+        return this.props.settings as NonNullable<DashKitProps['settings']>;
+    };
+
+    getContext = () => {
+        if (this._memoizedContext.workbookId !== this.props.workbookId) {
+            this._memoizedContext = {
+                getPreparedCopyItemOptions: (
+                    itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+                ) => {
+                    return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
+                        workbookId: this.props.workbookId ?? null,
+                    });
+                },
+                workbookId: this.props.workbookId,
+            };
+        }
+
+        return this._memoizedContext;
+    };
+
+    getOverlayControls = (): DashKitProps['overlayControls'] => {
+        if (!this._memoizedControls) {
+            this._memoizedControls = {
+                overlayControls: [
+                    {
+                        allWidgetsControls: true,
+                        id: MenuItems.Settings,
+                        title: i18n('dash.settings-dialog.edit', 'label_settings'),
+                        icon: Gear,
+                        qa: ControlQA.controlSettings,
+                    },
+                    {
+                        allWidgetsControls: true,
+                        title: i18n('dash.main.view', 'button_links'),
+                        excludeWidgetsTypes: ['title', 'text'],
+                        icon: iconRelations,
+                        qa: ControlQA.controlLinks,
+                        handler: (widget: DashTabItem) => {
+                            this.props.setNewRelations(true);
+                            this.props.openDialogRelations({
+                                widget,
+                                dashKitRef: this.dashKitRef,
+                                onApply: () => {},
+                                onClose: () => {
+                                    this.props.setNewRelations(false);
+                                    this.props.closeDialogRelations();
+                                },
+                            });
+                        },
+                    } as OverlayControlItem,
+                    {
+                        allWidgetsControls: true,
+                        title: 'Pin',
+                        qa: ControlQA.controlSettings,
+                        icon: Pin,
+                        handler: this.togglePinElement,
+                    } as OverlayControlItem,
+                ],
+            };
+        }
+
+        return this._memoizedControls;
+    };
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading} = this.props;
@@ -445,21 +554,6 @@ class Body extends React.PureComponent<BodyProps> {
                         orderId: item.orderId || index,
                     })) as ConfigItem[],
             };
-        }
-
-        const dashkitSettings = {
-            ...settings,
-        } as NonNullable<DashKitProps['settings']>;
-
-        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
-        const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-        if (autoupdateInterval) {
-            const minAutoupdateInterval = getMinAutoupdateInterval();
-
-            dashkitSettings.autoupdateInterval =
-                autoupdateInterval >= getMinAutoupdateInterval()
-                    ? autoupdateInterval
-                    : minAutoupdateInterval;
         }
 
         const overlayControls = this.getOverlayControls();
@@ -485,19 +579,10 @@ class Body extends React.PureComponent<BodyProps> {
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
                 groups={this.groups}
-                context={{
-                    getPreparedCopyItemOptions: (
-                        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-                    ) => {
-                        return getPreparedCopyItemOptions(itemToCopy, tabData, {
-                            workbookId: this.props.workbookId ?? null,
-                        });
-                    },
-                    workbookId: this.props.workbookId,
-                }}
+                context={this.getContext()}
                 onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
-                settings={dashkitSettings}
+                settings={this.getDashkitSettings()}
                 defaultGlobalParams={settings.globalParams}
                 globalParams={getUrlGlobalParams(
                     this.props.location.search,
@@ -586,46 +671,6 @@ class Body extends React.PureComponent<BodyProps> {
 
         return content;
     }
-
-    private getOverlayControls = (): DashKitProps['overlayControls'] => {
-        return {
-            overlayControls: [
-                {
-                    allWidgetsControls: true,
-                    id: MenuItems.Settings,
-                    title: i18n('dash.settings-dialog.edit', 'label_settings'),
-                    icon: Gear,
-                    qa: ControlQA.controlSettings,
-                },
-                {
-                    allWidgetsControls: true,
-                    title: i18n('dash.main.view', 'button_links'),
-                    excludeWidgetsTypes: ['title', 'text'],
-                    icon: iconRelations,
-                    qa: ControlQA.controlLinks,
-                    handler: (widget: DashTabItem) => {
-                        this.props.setNewRelations(true);
-                        this.props.openDialogRelations({
-                            widget,
-                            dashKitRef: this.dashKitRef,
-                            onApply: () => {},
-                            onClose: () => {
-                                this.props.setNewRelations(false);
-                                this.props.closeDialogRelations();
-                            },
-                        });
-                    },
-                } as OverlayControlItem,
-                {
-                    allWidgetsControls: true,
-                    title: 'Pin',
-                    qa: ControlQA.controlSettings,
-                    icon: Pin,
-                    handler: this.togglePinElement,
-                } as OverlayControlItem,
-            ],
-        };
-    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
