@@ -1,12 +1,8 @@
 import React from 'react';
 
-import type {
-    ChartKitLang,
-    ChartKitOnRenderData,
-    ChartKitProps,
-    ChartKitRef,
-} from '@gravity-ui/chartkit';
+import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartkit';
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
+import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 
 import {registry} from '../../../registry';
@@ -127,16 +123,27 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
 ChartkitWidget.displayName = 'ChartkitWidget';
 
 export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
-    const {rootNodeRef, onRender, ...restProps} = props;
+    const {rootNodeRef, ...restProps} = props;
     const tooltipRef = React.useRef<ChartKitTooltipRef>(null);
 
-    const handleRender = React.useCallback(
-        (data: ChartKitOnRenderData) => {
-            tooltipRef.current?.checkForTooltipNodes(rootNodeRef.current);
-            onRender?.(data);
-        },
-        [rootNodeRef, onRender],
-    );
+    const handleContainerMousemove = React.useCallback((e: MouseEvent) => {
+        tooltipRef.current?.checkForTooltipNode(e);
+    }, []);
+
+    React.useEffect(() => {
+        const throttledHandler = throttle(handleContainerMousemove, 200);
+        const container = rootNodeRef.current;
+
+        if (container) {
+            rootNodeRef.current.addEventListener('mousemove', throttledHandler);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener('mousemove', throttledHandler);
+            }
+        };
+    }, [rootNodeRef, handleContainerMousemove]);
 
     return (
         <ErrorBoundary
@@ -153,11 +160,7 @@ export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>(
                 />
             )}
         >
-            <ChartkitWidget
-                ref={ref}
-                {...restProps}
-                onRender={onRender ? handleRender : undefined}
-            />
+            <ChartkitWidget ref={ref} {...restProps} />
             <ChartKitTooltip ref={tooltipRef} />
         </ErrorBoundary>
     );

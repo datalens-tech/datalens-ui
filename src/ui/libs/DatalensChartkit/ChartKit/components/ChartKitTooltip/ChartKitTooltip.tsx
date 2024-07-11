@@ -1,135 +1,103 @@
 import React from 'react';
 
 import {Popup} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 
 import {generateHtml} from '../../../modules/html-generator';
-import {ATTR_DATA_TOOLTIP_CONTENT} from '../../../modules/html-generator/constants';
+
+import './ChartKitTooltip.scss';
+
+const b = block('chartkit-dl-tooltip');
 
 export type ChartKitTooltipRef = {
-    checkForTooltipNodes: (container: HTMLDivElement | null) => void;
+    checkForTooltipNode: (e: MouseEvent) => void;
 };
-type ChartKitTooltipProps = {};
 
-type ChartKitTooltipState = {
+type ChartKitTooltipAnchor = {
     ref: {current: HTMLElement};
     content: string;
-    open: boolean;
-};
-type TooltipAnchors = Record<string, ChartKitTooltipState>;
-
-const getNodeIdFromMouseEvent = (e: MouseEvent) => {
-    const id = (e.target && 'id' in e.target && e.target.id) as string | undefined;
-    return id || '';
+    placement?: PopupPlacement;
 };
 
 const getTooltipContent = (value = '') => {
     let result = value;
+    let json: Parameters<typeof generateHtml>[0];
 
     try {
-        const json = JSON.parse(value);
-        result = generateHtml(json);
+        json = JSON.parse(value);
     } catch {}
+
+    if (json) {
+        result = generateHtml(json);
+    }
 
     return result;
 };
 
-const ChartKitTooltipComponent = React.forwardRef<
-    ChartKitTooltipRef | undefined,
-    ChartKitTooltipProps
->(function ChartKitTooltip(_props, ref) {
-    const [anchors, setAnchors] = React.useState<TooltipAnchors>({});
-    const anchorsRef = React.useRef(anchors);
+const getTooltipPlacement = (value = '') => {
+    let result = value;
 
-    const updateAnchors = React.useCallback((nextAnchors: TooltipAnchors) => {
-        anchorsRef.current = nextAnchors;
-        setAnchors(nextAnchors);
-    }, []);
+    try {
+        result = JSON.parse(value);
+    } catch {}
 
-    const handleAnchorMouseEnter = React.useCallback(
-        (e: MouseEvent) => {
-            const nodeId = getNodeIdFromMouseEvent(e);
+    return result ? (result as PopupPlacement) : undefined;
+};
 
-            if (!anchorsRef.current[nodeId]) {
-                return;
-            }
+const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined, {}>(
+    function ChartKitTooltip(_props, ref) {
+        const [anchor, setAnchor] = React.useState<ChartKitTooltipAnchor | null>(null);
 
-            const updatedAnchors = {...anchorsRef.current};
-            Object.entries(updatedAnchors).forEach(([id, anchor]) => {
-                anchor.open = id === nodeId;
-            });
+        React.useImperativeHandle(
+            ref,
+            () => ({
+                checkForTooltipNode(e) {
+                    const node = e.target as HTMLElement | null;
 
-            updateAnchors(updatedAnchors);
-        },
-        [updateAnchors],
-    );
-
-    const handleAnchorMouseLeave = React.useCallback(
-        (e: MouseEvent) => {
-            const nodeId = getNodeIdFromMouseEvent(e);
-
-            if (!anchorsRef.current[nodeId]) {
-                return;
-            }
-
-            const updatedAnchors = {...anchorsRef.current};
-            updatedAnchors[nodeId].open = false;
-            updateAnchors(updatedAnchors);
-        },
-        [updateAnchors],
-    );
-
-    React.useImperativeHandle(
-        ref,
-        () => ({
-            checkForTooltipNodes(container) {
-                if (!container) {
-                    return;
-                }
-
-                const nodes = Array.from(
-                    container.querySelectorAll(`[${ATTR_DATA_TOOLTIP_CONTENT}]`),
-                ) as HTMLElement[];
-                const nextAnchors = nodes.reduce<TooltipAnchors>((acc, node) => {
-                    const id = node.id;
-                    const content = getTooltipContent(node.dataset['tooltipContent']);
-                    if (id && content) {
-                        acc[id] = {
-                            ref: {current: node},
-                            open: false,
-                            content,
-                        };
-                        node.addEventListener('mouseenter', handleAnchorMouseEnter);
-                        node.addEventListener('mouseleave', handleAnchorMouseLeave);
+                    if (!node) {
+                        return;
                     }
-                    return acc;
-                }, {});
-                anchorsRef.current = nextAnchors;
-                setAnchors(nextAnchors);
-            },
-        }),
-        [handleAnchorMouseEnter, handleAnchorMouseLeave],
-    );
 
-    React.useEffect(() => {
-        // force Popover to recalculate its position after changing the content
-        window.dispatchEvent(new CustomEvent('scroll'));
-    });
+                    const id = node.id;
+                    const rawContent = node.dataset['tooltipContent'];
+                    const currentId = anchor?.ref.current.id;
 
-    if (!Object.keys(anchors).length) {
-        return null;
-    }
+                    if (id && rawContent && currentId !== id) {
+                        setAnchor({
+                            ref: {current: node},
+                            content: getTooltipContent(rawContent),
+                            placement: getTooltipPlacement(node.dataset['tooltipPlacement']),
+                        });
+                    } else if (anchor !== null && currentId !== id) {
+                        setAnchor(null);
+                    }
+                },
+            }),
+            [anchor],
+        );
 
-    return (
-        <React.Fragment>
-            {Object.entries(anchors).map(([id, anchor]) => {
-                return (
-                    <Popup key={id} anchorRef={anchor.ref} open={anchor.open}>
-                        <div dangerouslySetInnerHTML={{__html: anchor.content}} />
-                    </Popup>
-                );
-            })}
-        </React.Fragment>
-    );
-});
+        React.useEffect(() => {
+            // force Popover to recalculate its position after changing the content
+            window.dispatchEvent(new CustomEvent('scroll'));
+        });
+
+        if (!anchor) {
+            return null;
+        }
+
+        return (
+            <Popup
+                key={anchor.ref.current.id}
+                anchorRef={anchor.ref}
+                placement={anchor.placement}
+                open={true}
+                hasArrow={true}
+            >
+                <div className={b()} dangerouslySetInnerHTML={{__html: anchor.content}} />
+            </Popup>
+        );
+    },
+);
 
 export const ChartKitTooltip = React.memo(ChartKitTooltipComponent);

@@ -9,10 +9,12 @@ import {
     ALLOWED_REFERENCES,
     ALLOWED_TAGS,
     ATTR_DATA_TOOLTIP_CONTENT,
+    ATTR_DATA_TOOLTIP_PLACEMENT,
     TAG_DL_TOOLTIP,
 } from './constants';
 
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
+const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
 export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string): string {
     if (item) {
@@ -32,8 +34,9 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
             });
         }
 
-        const elem = document.createElement(tag === TAG_DL_TOOLTIP ? 'div' : tag);
-        Object.assign(elem.style, style);
+        const isDLTooltip = tag === TAG_DL_TOOLTIP;
+        const elem = document.createElement(isDLTooltip ? 'div' : tag);
+        Object.assign(elem.style, isDLTooltip ? {display: 'inline-block'} : {}, style);
 
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key)) {
@@ -50,13 +53,14 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
                 }
             }
 
-            const preparedValue =
-                key === ATTR_DATA_TOOLTIP_CONTENT ? JSON.stringify(value) : String(value);
+            const preparedValue = TOOLTIP_ATTRS.includes(key)
+                ? JSON.stringify(value)
+                : String(value);
 
             elem.setAttribute(key, preparedValue);
         });
 
-        if (tag === TAG_DL_TOOLTIP) {
+        if (isDLTooltip) {
             elem.setAttribute('id', getRandomCKId());
         }
 
