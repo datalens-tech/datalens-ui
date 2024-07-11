@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import {EntryScope, NavigationInputQA} from 'shared';
 import {Utils} from 'ui';
 
-import DropdownNavigation from '../../containers/DropdownNavigation/DropdownNavigation';
+import DropdownNavigation from '../../../../components/DropdownNavigation/DropdownNavigation';
 import {EntryTypeNode} from '../../modules/constants';
 import {getChartEditLink} from '../../modules/helpers';
 
@@ -30,6 +30,8 @@ class NavigationInput extends React.PureComponent {
         scope: PropTypes.oneOf(Object.values(EntryScope)),
         isInvalid: PropTypes.bool,
         getEntryLink: PropTypes.func,
+        navigationPath: PropTypes.string,
+        changeNavigationPath: PropTypes.func,
     };
 
     static getDerivedStateFromProps({entryId}, {prevEntryId}) {
@@ -61,7 +63,9 @@ class NavigationInput extends React.PureComponent {
             includeClickableType,
             excludeClickableType,
             workbookId,
+            navigationPath,
             navigationMixin,
+            changeNavigationPath,
             linkMixin,
             scope = EntryScope.Widget,
             isInvalid,
@@ -84,6 +88,9 @@ class NavigationInput extends React.PureComponent {
                         includeClickableType={includeClickableType}
                         excludeClickableType={excludeClickableType}
                         error={isInvalid}
+                        workbookId={workbookId}
+                        navigationPath={navigationPath}
+                        changeNavigationPath={changeNavigationPath}
                     />
                     {showOpenButton && (
                         <Button
