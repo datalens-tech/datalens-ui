@@ -38,6 +38,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onChange,
             onLoad,
             data: {data: originalData, config, params: currentParams, unresolvedParams},
+            rowsRenderLimit,
         } = props;
         const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
@@ -82,9 +83,14 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                 return {};
             }
 
+            const rows =
+                rowsRenderLimit && data.rows?.length && data.rows.length > rowsRenderLimit
+                    ? (data.rows as TableCellsRow[]).slice(0, rowsRenderLimit)
+                    : (data.rows as TableCellsRow[]);
+
             return {
                 head: data.head?.map((th) => mapHeadCell(th, dimensions?.width, data.head)),
-                rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
+                rows: rows?.map<TData>((r) => {
                     return r.cells.map((c, cellIndex) => {
                         const cell = c as TableCommonCell;
                         const isCellClickable =
@@ -121,7 +127,15 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
                 }),
             };
-        }, [actionParams, canDrillDown, data.footer, data.head, data.rows, dimensions]);
+        }, [
+            actionParams,
+            canDrillDown,
+            data.footer,
+            data.head,
+            data.rows,
+            dimensions,
+            rowsRenderLimit,
+        ]);
 
         const {onCellClick, onSortingChange, onPaginationChange} = useTableEvents({
             onChange,

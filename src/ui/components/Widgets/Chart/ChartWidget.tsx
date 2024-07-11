@@ -55,11 +55,14 @@ const influencingProps: Array<keyof ChartWidgetPropsWithContext> = [
     'config',
 ];
 
+const TABLE_EDIT_RENDER_LIMIT = 101;
+
 /**
  * Component used only on dashboard for charts rendering with extra dash widget logic
  * @param props
  * @constructor
  */
+// eslint-disable-next-line complexity
 export const ChartWidget = (props: ChartWidgetProps) => {
     const {
         data,
@@ -485,6 +488,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [context.canEdit, editMode, context.entryDialoguesRef, initName],
     );
 
+    const rowsRenderLimit = editMode ? TABLE_EDIT_RENDER_LIMIT : undefined;
+
     return (
         <div
             ref={rootNodeRef}
@@ -553,6 +558,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
+                rowsRenderLimit={rowsRenderLimit}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

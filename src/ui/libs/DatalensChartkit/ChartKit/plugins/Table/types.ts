@@ -12,4 +12,5 @@ export type TableWidgetProps = {
         callChangeByClick?: boolean,
     ) => void;
     onLoad?: (data?: ChartKitOnLoadData<'table'>) => void;
+    rowsRenderLimit?: number;
 };

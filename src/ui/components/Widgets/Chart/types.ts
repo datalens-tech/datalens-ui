@@ -109,6 +109,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     renderPluginLoader?: () => React.ReactNode;
     actionParamsEnabled?: boolean;
     paneSplitOrientation?: Split;
+    rowsRenderLimit?: number;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -202,6 +203,7 @@ export type ChartKitWrapperParams = {
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
+    rowsRenderLimit?: number;
 };
 
 export type ChartWidgetData =

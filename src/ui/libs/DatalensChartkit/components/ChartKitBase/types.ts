@@ -81,6 +81,8 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
     splitTooltip?: boolean;
 
     paneSplitOrientation?: Split;
+
+    rowsRenderLimit?: number;
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
