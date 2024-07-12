@@ -120,19 +120,34 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     };
     
     const handleApply = () => {
-        const arr = [];
-        for (const entityKey in updatedEntities) {
-            for (const accessKey in accesses) {
-                const accessItem = accesses[accessKey];
-                if (updatedEntities[entityKey]) {
-                    arr.push({ id: entityKey, ...accessItem });
+        const fullAccesses = [...accesses];
+        Utils.getRoles({}).then((roles)=>{
+            for (const role in roles) {
+                const roleItem = roles[role];
+                if (fullAccesses.findIndex(item=>roleItem.role_id == item.role_id) < 0) {
+                    fullAccesses.push({
+                        role_id: roleItem.role_id, 
+                        add: false,
+                        delete: false,
+                        select: false,
+                        update: false,
+                    });
                 }
             }
-        }
-        Utils.setAccesses(arr).then(()=>{
-            onClose({status: EntryDialogResolveStatus.Close});
-        }).catch(()=>{
-            console.error('Error updating accesses of entities', updatedEntities, accesses);
+            const arr = [];
+            for (const entityKey in updatedEntities) {
+                for (const accessKey in fullAccesses) {
+                    const accessItem = fullAccesses[accessKey];
+                    if (updatedEntities[entityKey]) {
+                        arr.push({ id: entityKey, ...accessItem });
+                    }
+                }
+            }
+            Utils.setAccesses([arr.map(item=>({...item, destroy: true}))]).then(()=>{
+                onClose({status: EntryDialogResolveStatus.Close});
+            }).catch(()=>{
+                console.error('Error updating accesses of entities', updatedEntities, fullAccesses);
+            });
         });
     };
 

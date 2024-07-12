@@ -59,7 +59,7 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
     }, [itemId]);
 
     function onApply () {
-        const requests: Array<Promise<any>> = [];
+        const arr: Array<any> = [];
 
         accesses.forEach((item: any) => {
             // const recordRequests = [];
@@ -74,7 +74,7 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
             //     "destroy": true,
             // }));
             // if (!isDestroy) {
-            requests.push(Utils.setAccesses({
+            arr.push({
                 "id": itemId,
                 "role_id": item.role_id,
                 "select": item.select,
@@ -82,12 +82,11 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
                 "update": item.update,
                 "delete": item.delete,
                 "destroy": true//isDestroy
-            }));
+            });
             // }
             // requests.push(Promise.all(recordRequests));
         });
-
-        Promise.all(requests).then(() => onClose());
+        Utils.setAccesses([arr]).then(() => onClose());
     }
 
     function onChange(index: number, name: string) {
