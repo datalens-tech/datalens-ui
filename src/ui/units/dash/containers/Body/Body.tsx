@@ -109,7 +109,7 @@ type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 const FIXED_GROUP_ID = '__fixedGroup';
 const FIXED_HEADER_GROUP_LINE_ID = '__fixedLine';
 
-const FIXED_HEADER_GROUP_LINE_OFFSET = 2;
+const FIXED_HEADER_GROUP_COLS = 34;
 const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
 
 class Body extends React.PureComponent<BodyProps> {
@@ -169,7 +169,7 @@ class Body extends React.PureComponent<BodyProps> {
             gridProperties: (props) => {
                 return {
                     ...props,
-                    cols: props.cols - FIXED_HEADER_GROUP_LINE_OFFSET,
+                    cols: FIXED_HEADER_GROUP_COLS,
                     maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
                     autoSize: false,
                     compactType: 'horizontal-nowrap',
@@ -318,8 +318,15 @@ class Body extends React.PureComponent<BodyProps> {
                         ...groupCoords[DEFAULT_GROUP],
                     };
                 } else {
+                    const leftSpace = tabDataConfig.layout.reduce((memo, item) => {
+                        if (item.parent === FIXED_HEADER_GROUP_LINE_ID) {
+                            memo -= item.w;
+                        }
+                        return memo;
+                    }, FIXED_HEADER_GROUP_COLS);
+
                     const parentId =
-                        itemCopy.h <= FIXED_HEADER_GROUP_LINE_MAX_ROWS
+                        itemCopy.h <= FIXED_HEADER_GROUP_LINE_MAX_ROWS && itemCopy.w <= leftSpace
                             ? FIXED_HEADER_GROUP_LINE_ID
                             : FIXED_GROUP_ID;
 
