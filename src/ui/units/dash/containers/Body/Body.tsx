@@ -600,6 +600,14 @@ class Body extends React.PureComponent<BodyProps> {
         );
     };
 
+    private onDragStartHandler = () => {
+        this.setState({isGlobalDragging: true});
+    };
+
+    private onDragEndHandler = () => {
+        this.setState({isGlobalDragging: false});
+    };
+
     private renderBody() {
         const {mode, settings, tabs, showTableOfContent, isSidebarOpened} = this.props;
 
@@ -664,12 +672,8 @@ class Body extends React.PureComponent<BodyProps> {
         if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
             return (
                 <DashKitDnDWrapper
-                    onDragStart={() => {
-                        this.setState({isGlobalDragging: true});
-                    }}
-                    onDragEnd={() => {
-                        this.setState({isGlobalDragging: false});
-                    }}
+                    onDragStart={this.onDragStartHandler}
+                    onDragEnd={this.onDragEndHandler}
                 >
                     {content}
                 </DashKitDnDWrapper>
