@@ -31,9 +31,10 @@ async function getChartBuilder({
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
 }) {
-    const enableIsolatedSandbox = Boolean(
-        isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox),
-    );
+    const sandboxVersion = config.meta.sandbox_version || '0';
+    const enableIsolatedSandbox =
+        Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
+        sandboxVersion === '2';
     const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
     const chartBuilder = enableIsolatedSandbox
         ? await getIsolatedSandboxChartBuilder({
