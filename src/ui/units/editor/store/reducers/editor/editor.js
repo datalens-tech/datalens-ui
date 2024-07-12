@@ -385,7 +385,7 @@ export const getScriptsValues = (state) => state.editor.scriptsValues;
 export const getIsScriptsChanged = createSelector(
     [getEntry, getScriptsValues],
     (entry, scriptsValues) => {
-        if (entry.meta.is_sandbox_version_changed) {
+        if (entry.meta?.is_sandbox_version_changed) {
             delete entry.meta.is_sandbox_version_changed;
             return true;
         }
