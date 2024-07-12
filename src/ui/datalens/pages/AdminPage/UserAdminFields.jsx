@@ -29,6 +29,7 @@ export const UserAdminFields = ({ values, stores, onChange }) => {
             onChange={onChange}
             label={i18n('login')}
             name={'c_login'}
+            disabled={Boolean(values?.id)}
             hasClear
         />
         <TextInput
@@ -51,7 +52,7 @@ export const UserAdminFields = ({ values, stores, onChange }) => {
                 return <Select.Option key={item.name} value={item.name}>{item.description || item.name}</Select.Option>
             })}
         </Select>
-        <TextInput
+        {values.c_claims?.indexOf('oidc') >= 0 ? null : <TextInput
             value={values.c_password || ''}
             size={controlSize}
             onChange={onChange}
@@ -60,7 +61,7 @@ export const UserAdminFields = ({ values, stores, onChange }) => {
             label={i18n('password')}
             name={'c_password'}
             hasClear
-        />
+        />}
         <Select
             value={values.c_claims || []}
             size={controlSize}

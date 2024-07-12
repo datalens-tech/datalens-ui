@@ -54,7 +54,7 @@ const UsersTables = () => {
 
   function onRefresh() {
     setLoading(true);
-    loadUsers().then((users)=>{
+    loadUsers().then((users) => {
       setData(users.data);
     }).finally(() => {
       setLoading(false);
@@ -91,7 +91,7 @@ const UsersTables = () => {
         {
           "action": "datalens",
           "method": "update_user",
-          "data": [{ 
+          "data": [{
             "id": values.id,
             "c_login": values.c_login,
             "c_email": values.c_email,
@@ -108,7 +108,7 @@ const UsersTables = () => {
         {
           "action": "datalens",
           "method": "update_roles",
-          "data": [{ 
+          "data": [{
             "id": values.id,
             "c_claims": values.c_claims
           }]
@@ -122,7 +122,7 @@ const UsersTables = () => {
         {
           "action": "datalens",
           "method": "password_reset",
-          "data": [{ 
+          "data": [{
             "c_login": values.c_login,
             "c_password": values.c_password,
           }]
@@ -181,7 +181,25 @@ const UsersTables = () => {
       onRefresh={onRefresh}
     />
     <div className={b("container")}>
-      {loading ? <Loader className={b("table")} /> : <Table data={data} columns={columns} className={b("table")} />}
+      {loading ? <Loader className={b("table")} /> :
+        <Table
+          getRowDescriptor={(item: any) => {
+            if (item.b_disabled) {
+              return {
+                id: item.id,
+                classNames: [b("disabled")]
+              }
+            }
+            return {
+              id: item.id,
+              classNames: []
+            }
+          }}
+          data={data}
+          columns={columns}
+          className={b("table")}
+        />
+      }
       {record && <BaseAdminForm
         error={error}
         className={b("form")}

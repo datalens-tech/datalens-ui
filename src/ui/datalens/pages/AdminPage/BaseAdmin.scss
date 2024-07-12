@@ -32,4 +32,7 @@
         gap: 10px;
         margin-bottom: 10px;
     }
+    &__disabled {
+        background-color: var(--g-color-base-generic);
+    }
 }
