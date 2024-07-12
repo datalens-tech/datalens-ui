@@ -38,12 +38,18 @@ interface IChartEditor {
      */
     resolveInterval(intervalStr: string): {from: string, to: string};
     /**
-     * \tMethod uses to preparing function for invocation in browser.\n
+     * \tMethod used to preparing function for invocation in browser.\n
      * \t@param {string} value.fn function that will be invoked in a browser.\n
      * \t@param {string} value.args optional arguments that will be added to the list of default arguments.\n
      * \t@return prepared object that will be converted into function in browser.
      */
     wrapFn: (value: {fn: (...args: unknown[]) => unknown; args?: unknown | unknown[]}) => unknown;
+    /**
+     * \tMethod used to describe the markup using an object.\n
+     * \t@param {object} value markup configuration.\n
+     * \t@return stringified markup.
+     */
+    generateHtml: (value: object) => string;
 
     ${next.join('\n')}
 }
