@@ -6,6 +6,10 @@
     flex-direction: column;
     gap: 6px;
 
+    &__title-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
     &__title {
         @include text-subheader-1;
     }
@@ -13,5 +17,8 @@
     &__row {
         height: 28px;
         padding-left: 0;
+    }
+    &__switch {
+        margin: 0 0 0 auto;
     }
 }
