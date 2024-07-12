@@ -121,6 +121,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     
     const handleApply = () => {
         const fullAccesses = [...accesses];
+        setIsLoading(true);
         Utils.getRoles({}).then((roles)=>{
             for (const role in roles) {
                 const roleItem = roles[role];
@@ -144,8 +145,10 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 }
             }
             Utils.setAccesses([arr.map(item=>({...item, destroy: true}))]).then(()=>{
+                setIsLoading(false);
                 onClose({status: EntryDialogResolveStatus.Close});
             }).catch(()=>{
+                setIsLoading(false);
                 console.error('Error updating accesses of entities', updatedEntities, fullAccesses);
             });
         });
