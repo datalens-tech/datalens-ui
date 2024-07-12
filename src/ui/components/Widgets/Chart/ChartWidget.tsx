@@ -553,6 +553,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
+                rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

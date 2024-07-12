@@ -246,6 +246,7 @@ class ChartKitBase<TProviderProps, TProviderData, TProviderCancellation> extends
     };
 
     private mounted = false;
+    private rootNodeRef = React.createRef<HTMLDivElement>();
 
     // TODO: move to props.noLoader and use it
     private isSilentReload = false;
@@ -373,6 +374,7 @@ class ChartKitBase<TProviderProps, TProviderData, TProviderCancellation> extends
                     />
                 )}
                 <div
+                    ref={this.rootNodeRef}
                     className={b('body', {hidden}, this.props.widgetBodyClassName)}
                     data-qa={`chartkit-body-entry-${entryId}`}
                 >
@@ -717,6 +719,7 @@ class ChartKitBase<TProviderProps, TProviderData, TProviderCancellation> extends
             return (
                 <ChartKitAdapter
                     ref={this.chartKitRef}
+                    rootNodeRef={this.rootNodeRef}
                     loadedData={loadedData}
                     splitTooltip={this.props.splitTooltip}
                     nonBodyScroll={this.props.nonBodyScroll}

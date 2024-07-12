@@ -24,7 +24,9 @@ type ChartProps = Pick<
     Pick<ChartKitWrapperParams, 'onLoad' | 'onChange' | 'onError' | 'onRetry'> &
     Pick<ChartKitWrapperState, 'requestId'> &
     Pick<State, 'loadedData' | 'error'> &
-    Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
+    Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> & {
+        rootNodeRef: React.RefObject<HTMLDivElement | null>;
+    };
 
 export const Chart = (props: ChartProps) => {
     if (props.error) {
@@ -62,6 +64,7 @@ export const Chart = (props: ChartProps) => {
                 noControls={props.noControls}
                 onRetry={props.onRetry}
                 paneSplitOrientation={props.paneSplitOrientation}
+                rootNodeRef={props.rootNodeRef}
             />
         );
     }
