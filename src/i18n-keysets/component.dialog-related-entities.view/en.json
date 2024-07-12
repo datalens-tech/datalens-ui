@@ -17,5 +17,6 @@
   "cancel": "Cancel",
   "apply": "Apply",
   "select_all": "Select all",
-  "label_selected-entities-count": "Selected number of related objects:"
+  "label_selected-entities-count": "Selected number of related objects:",
+  "selected-entities-assign-description": "Attention! The claims of the current object will be copied to all selected elements."
 }

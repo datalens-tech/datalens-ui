@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Alert, Button, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, Loader, RadioButton, Card} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -235,6 +235,8 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                         >{`${i18n('label_selected-entities-count')} ${selectedRelationCount}`}</div>
                     </div>
                 )}
+
+                <Card className={b('warning-card')} theme="warning" size="l">{i18n('selected-entities-assign-description')}</Card>
             </Dialog.Body>
             <Dialog.Footer>
                 <Button
