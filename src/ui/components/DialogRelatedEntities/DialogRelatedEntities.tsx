@@ -151,6 +151,9 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 setIsLoading(false);
                 console.error('Error updating accesses of entities', updatedEntities, fullAccesses);
             });
+        }).catch(()=>{
+            setIsLoading(false);
+            console.error('Error loading roles');
         });
     };
 
@@ -246,6 +249,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     size="l"
                     view="outlined"
                     className={b('refresh-button')}
+                    disabled={isLoading}
                     onClick={handleRefresh}
                 >
                     {i18n('refresh')}
@@ -254,6 +258,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     size="l"
                     view="outlined"
                     className={b('apply-button')}
+                    disabled={isLoading}
                     onClick={handleClose}
                 >
                     {i18n('cancel')}
@@ -261,6 +266,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 <Button
                     size="l"
                     view="action"
+                    disabled={isLoading}
                     onClick={handleApply}
                 >
                     {i18n('apply')}
