@@ -31,13 +31,13 @@ function getOptions(): SelectOption[] {
 type Props = {
     value: string;
     entry: Record<string, unknown> & {
-        meta: {sandbox_version: string; is_sandbox_version_changed: boolean};
+        meta?: {sandbox_version: string; is_sandbox_version_changed: boolean};
     };
 };
 
 const SandboxEngineSelect = ({entry}: Props) => {
     const dispatch = useDispatch();
-    const currentValue = entry.meta.sandbox_version || '0';
+    const currentValue = entry.meta?.sandbox_version || '0';
     const handleUpdate = ([newValue]: string[]) => {
         if (currentValue !== newValue) {
             dispatch({
