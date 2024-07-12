@@ -173,6 +173,7 @@ export const ChartAlert = (props: ChartAlertProps) => {
                 onRetry={handleRetry}
                 loadedData={loadedData}
                 forwardedRef={forwardedRef}
+                rootNodeRef={rootNodeRef}
             />
         </div>
     );

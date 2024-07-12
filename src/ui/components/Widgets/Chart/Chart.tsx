@@ -281,6 +281,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 renderPluginLoader={renderPluginLoader}
                 paneSplitOrientation={paneSplitOrientation}
+                rootNodeRef={rootNodeRef}
             />
         </div>
     );

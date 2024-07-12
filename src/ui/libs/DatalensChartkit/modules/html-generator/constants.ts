@@ -1,3 +1,8 @@
+export const TAG_DL_TOOLTIP = 'dl-tooltip';
+
+export const ATTR_DATA_TOOLTIP_CONTENT = 'data-tooltip-content';
+export const ATTR_DATA_TOOLTIP_PLACEMENT = 'data-tooltip-placement';
+
 export const ALLOWED_TAGS = [
     'a',
     'abbr',
@@ -62,6 +67,7 @@ export const ALLOWED_TAGS = [
     'tr',
     'u',
     'ul',
+    TAG_DL_TOOLTIP,
 ];
 
 export const ALLOWED_ATTRIBUTES = [
@@ -129,6 +135,8 @@ export const ALLOWED_ATTRIBUTES = [
     'y1',
     'y2',
     'zIndex',
+    ATTR_DATA_TOOLTIP_CONTENT,
+    ATTR_DATA_TOOLTIP_PLACEMENT,
 ];
 
 export const ALLOWED_REFERENCES = ['https://', 'http://', 'mailto:', '#'];

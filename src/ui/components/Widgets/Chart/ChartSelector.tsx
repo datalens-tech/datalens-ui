@@ -357,6 +357,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                         onRetry={handleRetry}
                         loadedData={loadedData}
                         forwardedRef={forwardedRef}
+                        rootNodeRef={rootNodeRef}
                     />
                 </div>
             </div>
