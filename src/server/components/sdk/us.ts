@@ -108,6 +108,10 @@ class US {
         ctx: AppContext,
     ): Promise<Entry> {
         try {
+            if(entryId == undefined) {
+                throw Error('SDK_US_READ_EMPTY_ENTRY_FAILED')
+            }
+
             const {data} = await getAxios(ctx.config)({
                 method: 'GET',
                 url: `${ctx.config.endpoints.api.us}/v1/entries/${filterUrlFragment(entryId)}`,

@@ -114,7 +114,7 @@ export const runController = (
             }
         }).catch((reason)=>{ 
             ctx.logError(`CHARTS_ENGINE_READ_ENTRY_ERROR "${key || id}"`, reason);
-            res.status(500).send(reason);
+            //res.status(500).send(reason);
         }).finally(()=>{
             US.universalService({
                 "action": "datalens", 
@@ -136,7 +136,7 @@ export const runController = (
             })
             .catch((reason)=>{
                 ctx.logError(`CHARTS_ENGINE_UNIVERSAL_SERVICE_ERROR "${key || id}"`, reason);
-                res.status(500).send(reason);
+                //res.status(500).send(reason);
             }).finally(()=>{
                 Promise.resolve(configPromise)
                 .catch((error) => {
