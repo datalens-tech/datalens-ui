@@ -2,8 +2,10 @@ import React from 'react';
 
 import {registry} from '../../registry';
 
-export const DialogTextWidgetWrapper = () => {
-    const {DialogText} = registry.dash.components.getAll();
+import type {DialogTextWidgetProps} from './DialogTextWidget';
 
-    return <DialogText />;
+export const DialogTextWidgetWrapper = (props: DialogTextWidgetProps) => {
+    const {DialogTextWidget} = registry.dash.components.getAll();
+
+    return <DialogTextWidget {...props} />;
 };
