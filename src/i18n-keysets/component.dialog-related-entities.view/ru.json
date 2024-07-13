@@ -17,5 +17,6 @@
   "cancel": "Отменить",
   "apply": "Применить",
   "select_all": "Выбрать всё",
-  "label_selected-entities-count": "Количество выбранных связанных объектов:"
+  "label_selected-entities-count": "Количество выбранных связанных объектов:",
+  "selected-entities-assign-description": "Внимание! Права текущего объекта будут скопированы во все выбранные элементы."
 }

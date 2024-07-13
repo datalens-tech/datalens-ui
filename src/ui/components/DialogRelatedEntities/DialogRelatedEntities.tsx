@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
-import {Alert, Button, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, Loader, RadioButton, Card} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -121,6 +121,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     
     const handleApply = () => {
         const fullAccesses = [...accesses];
+        setIsLoading(true);
         Utils.getRoles({}).then((roles)=>{
             for (const role in roles) {
                 const roleItem = roles[role];
@@ -144,10 +145,15 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 }
             }
             Utils.setAccesses([arr.map(item=>({...item, destroy: true}))]).then(()=>{
+                setIsLoading(false);
                 onClose({status: EntryDialogResolveStatus.Close});
             }).catch(()=>{
+                setIsLoading(false);
                 console.error('Error updating accesses of entities', updatedEntities, fullAccesses);
             });
+        }).catch(()=>{
+            setIsLoading(false);
+            console.error('Error loading roles');
         });
     };
 
@@ -235,12 +241,15 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                         >{`${i18n('label_selected-entities-count')} ${selectedRelationCount}`}</div>
                     </div>
                 )}
+
+                <Card className={b('warning-card')} theme="warning" size="l">{i18n('selected-entities-assign-description')}</Card>
             </Dialog.Body>
             <Dialog.Footer>
                 <Button
                     size="l"
                     view="outlined"
                     className={b('refresh-button')}
+                    disabled={isLoading}
                     onClick={handleRefresh}
                 >
                     {i18n('refresh')}
@@ -249,6 +258,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     size="l"
                     view="outlined"
                     className={b('apply-button')}
+                    disabled={isLoading}
                     onClick={handleClose}
                 >
                     {i18n('cancel')}
@@ -256,6 +266,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 <Button
                     size="l"
                     view="action"
+                    disabled={isLoading}
                     onClick={handleApply}
                 >
                     {i18n('apply')}
