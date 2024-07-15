@@ -35,10 +35,6 @@ export const getActionPanelItems = ({
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
 }) => {
-    const showEditorSelector =
-        Utils.isEnabledFeature(Feature.GroupControls) &&
-        Utils.isEnabledFeature(Feature.EnableChartEditor);
-
     const items: DashkitActionPanelItem[] = [
         {
             id: 'chart',
@@ -52,8 +48,8 @@ export const getActionPanelItems = ({
         },
         {
             id: 'selector',
-            icon: <Icon data={showEditorSelector ? Code : Sliders} />,
-            title: showEditorSelector
+            icon: <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />,
+            title: Utils.isEnabledFeature(Feature.GroupControls)
                 ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                 : i18n('dash.main.view', 'button_edit-panel-selector'),
             className: b(),
@@ -101,8 +97,10 @@ export const getActionPanelItems = ({
         });
     }
 
-    if (showEditorSelector) {
-        items.splice(1, 0, {
+    if (Utils.isEnabledFeature(Feature.GroupControls)) {
+        // if EnableChartEditor is false we need to remove button_edit-panel-editor-selector
+        const deleteCount = Utils.isEnabledFeature(Feature.EnableChartEditor) ? 0 : 1;
+        items.splice(1, deleteCount, {
             id: 'group-selector',
             icon: <Icon data={Sliders} />,
             title: i18n('dash.main.view', 'button_edit-panel-selector'),
