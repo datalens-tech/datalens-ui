@@ -53,10 +53,16 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
             ref,
             () => ({
                 checkForTooltipNode(e) {
-                    const node = e.target as HTMLElement | null;
+                    let node = e.target as HTMLElement | null;
 
                     if (!node) {
                         return;
+                    }
+
+                    const anchorId = node.dataset['tooltipAnchorId'];
+
+                    if (anchorId) {
+                        node = document.getElementById(anchorId) || node;
                     }
 
                     const id = node.id;
