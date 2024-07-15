@@ -35,6 +35,8 @@ export const DeleteDialog = React.memo<Props>(
                 cancelButtonView="flat"
                 cancelButtonText={i18n('action_cancel')}
                 message={description}
+                showIcon={false}
+                isWarningConfirm={true}
             />
         );
     },
