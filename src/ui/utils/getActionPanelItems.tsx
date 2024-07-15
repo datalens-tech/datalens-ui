@@ -35,6 +35,10 @@ export const getActionPanelItems = ({
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
 }) => {
+    const showEditorSelector =
+        Utils.isEnabledFeature(Feature.GroupControls) &&
+        Utils.isEnabledFeature(Feature.EnableChartEditor);
+
     const items: DashkitActionPanelItem[] = [
         {
             id: 'chart',
@@ -48,8 +52,8 @@ export const getActionPanelItems = ({
         },
         {
             id: 'selector',
-            icon: <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />,
-            title: Utils.isEnabledFeature(Feature.GroupControls)
+            icon: <Icon data={showEditorSelector ? Code : Sliders} />,
+            title: showEditorSelector
                 ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
                 : i18n('dash.main.view', 'button_edit-panel-selector'),
             className: b(),
@@ -97,7 +101,7 @@ export const getActionPanelItems = ({
         });
     }
 
-    if (Utils.isEnabledFeature(Feature.GroupControls)) {
+    if (showEditorSelector) {
         items.splice(1, 0, {
             id: 'group-selector',
             icon: <Icon data={Sliders} />,
