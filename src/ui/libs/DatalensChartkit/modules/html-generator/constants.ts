@@ -2,6 +2,7 @@ export const TAG_DL_TOOLTIP = 'dl-tooltip';
 
 export const ATTR_DATA_TOOLTIP_CONTENT = 'data-tooltip-content';
 export const ATTR_DATA_TOOLTIP_PLACEMENT = 'data-tooltip-placement';
+export const ATTR_DATA_TOOLTIP_ANCHOR_ID = 'data-tooltip-anchor-id';
 
 export const ALLOWED_TAGS = [
     'a',

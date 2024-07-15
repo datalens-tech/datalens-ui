@@ -8,6 +8,7 @@ import {
     ALLOWED_ATTRIBUTES,
     ALLOWED_REFERENCES,
     ALLOWED_TAGS,
+    ATTR_DATA_TOOLTIP_ANCHOR_ID,
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_PLACEMENT,
     TAG_DL_TOOLTIP,
@@ -16,10 +17,17 @@ import {
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
 const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
-export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string): string {
+type GenerateHtmlOptions = {
+    tooltipId?: string;
+};
+
+export function generateHtml(
+    item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string,
+    options: GenerateHtmlOptions = {},
+): string {
     if (item) {
         if (Array.isArray(item)) {
-            return item.map(generateHtml).join('');
+            return item.map((it) => generateHtml(it, options)).join('');
         }
 
         if (typeof item === 'string') {
@@ -60,11 +68,19 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
             elem.setAttribute(key, preparedValue);
         });
 
-        if (isDLTooltip) {
-            elem.setAttribute('id', getRandomCKId());
+        if (!isDLTooltip && options?.tooltipId) {
+            elem.setAttribute(ATTR_DATA_TOOLTIP_ANCHOR_ID, options.tooltipId);
         }
 
-        elem.innerHTML = generateHtml(content);
+        const nextOptions = {...options};
+
+        if (isDLTooltip) {
+            const tooltipId = getRandomCKId();
+            elem.setAttribute('id', tooltipId);
+            nextOptions.tooltipId = tooltipId;
+        }
+
+        elem.innerHTML = generateHtml(content, nextOptions);
         return elem.outerHTML;
     }
 

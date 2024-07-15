@@ -98,7 +98,9 @@ export const getActionPanelItems = ({
     }
 
     if (Utils.isEnabledFeature(Feature.GroupControls)) {
-        items.splice(1, 0, {
+        // if EnableChartEditor is false we need to remove button_edit-panel-editor-selector
+        const deleteCount = Utils.isEnabledFeature(Feature.EnableChartEditor) ? 0 : 1;
+        items.splice(1, deleteCount, {
             id: 'group-selector',
             icon: <Icon data={Sliders} />,
             title: i18n('dash.main.view', 'button_edit-panel-selector'),
