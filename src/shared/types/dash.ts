@@ -153,12 +153,14 @@ export interface DashTabItemTitle extends DashTabItemBase {
     };
 }
 
+export type DashTabItemWidgetData = {
+    hideTitle: boolean;
+    tabs: DashTabItemWidgetTab[];
+};
+
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {
-        hideTitle: boolean;
-        tabs: DashTabItemWidgetTab[];
-    };
+    data: DashTabItemWidgetData;
 }
 
 export interface DashTabItemWidgetTab {

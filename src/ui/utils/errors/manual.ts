@@ -5,6 +5,7 @@ type ManualErrorArgs = {
     status?: number;
     details?: Record<string, unknown>;
     debug?: Record<string, unknown>;
+    extra?: {hideRetry?: boolean};
 };
 
 type ManualErrorFields = Omit<ManualErrorArgs, 'message' | 'originalError'>;
@@ -14,15 +15,17 @@ export class ManualError extends Error implements ManualErrorFields {
     status?: number;
     details?: Record<string, unknown>;
     debug?: Record<string, unknown>;
+    extra?: ManualErrorArgs['extra'];
     _manualError = true;
 
-    constructor({message, originalError, code, status, details, debug}: ManualErrorArgs) {
+    constructor({message, originalError, code, status, details, debug, extra}: ManualErrorArgs) {
         super(message);
 
         this.code = code;
         this.status = status;
         this.details = details;
         this.debug = debug;
+        this.extra = extra;
 
         if (originalError) {
             this.name = originalError.name;

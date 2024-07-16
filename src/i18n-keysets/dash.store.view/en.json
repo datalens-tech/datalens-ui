@@ -5,6 +5,7 @@
   "label_copied-widget-postfix": "copy",
   "label_dash-is-editing": "Dashboard is being edited",
   "label_error-404-title": "Object not found",
+  "label_error-access": "No view rights",
   "label_obsolete-dash": "Dashboard is obsolete",
   "label_obsolete-version": "Dashboard's current version is obsolete. Reload the page to get a new version.",
   "label_selector-dialog": "Selector 1",

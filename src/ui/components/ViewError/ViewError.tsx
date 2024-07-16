@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 import {ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
 import {DL} from 'ui/constants/common';
+import {isManualError} from 'ui/utils/errors/manual';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
@@ -28,6 +29,7 @@ export interface ViewErrorProps {
     buttonText?: string;
     withReport?: boolean;
     actionContent?: React.ReactNode;
+    hideDetails?: boolean;
 }
 
 export const ViewError = ({
@@ -40,6 +42,7 @@ export const ViewError = ({
     buttonText,
     withReport,
     actionContent,
+    hideDetails,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -95,9 +98,12 @@ export const ViewError = ({
         );
     };
 
+    const showRetry =
+        typeof retry === 'function' && (!isManualError(error) || !error.extra?.hideRetry);
+
     const content = (
         <div className={b(errorClassname, {mobile: DL.IS_MOBILE})}>
-            {typeof retry === 'function' && (
+            {showRetry && (
                 <Button
                     className={b('btn-retry')}
                     size={buttonSize}
@@ -107,15 +113,17 @@ export const ViewError = ({
                     {i18n('button_retry')}
                 </Button>
             )}
-            <Button
-                className={b('btn-details')}
-                size={buttonSize}
-                width={buttonWidth}
-                view="outlined"
-                onClick={handleClickDetails}
-            >
-                {buttonDetailsText}
-            </Button>
+            {!hideDetails && (
+                <Button
+                    className={b('btn-details')}
+                    size={buttonSize}
+                    width={buttonWidth}
+                    view="outlined"
+                    onClick={handleClickDetails}
+                >
+                    {buttonDetailsText}
+                </Button>
+            )}
             {actionContent}
         </div>
     );
@@ -127,6 +135,7 @@ export const ViewError = ({
             description={description || message}
             action={{content}}
             error={error}
+            showDebugInfo={!hideDetails}
         />
     );
 };

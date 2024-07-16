@@ -38,7 +38,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
             res.status(400).send({
                 code: 'ERR.CHARTS.WRONG_EMBED_TOKEN',
-                extra: {message: 'Wrong token format', hideRetry: true},
+                extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
             });
 
             return;
@@ -79,7 +79,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         debug?: {
                             message: string;
                         };
-                        extra?: {hideRetry: boolean};
+                        extra?: {hideRetry: boolean; hideDebugInfo: boolean};
                     };
                 } = {
                     error: {
@@ -90,7 +90,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         debug: {
                             message: error.message,
                         },
-                        extra: {hideRetry: false},
+                        extra: {hideRetry: false, hideDebugInfo: true},
                     },
                 };
 
