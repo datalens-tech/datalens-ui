@@ -55,7 +55,7 @@
     "@gravity-ui/date-utils": "^2.3.0",
     "@gravity-ui/expresskit": "^1.3.0",
     "@gravity-ui/gateway": "^2.1.0",
-    "@gravity-ui/i18n": "^1.0.0",
+    "@gravity-ui/i18n": "^1.6.0",
     "@gravity-ui/nodekit": "^1.2.1",
     "@node-rs/crc32": "^1.7.2",
     "acorn": "^8.0.4",

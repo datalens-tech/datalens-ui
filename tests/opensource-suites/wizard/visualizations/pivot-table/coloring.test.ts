@@ -23,22 +23,22 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
 
-            // Create measure field
-            const measureField = 'OrdersCount';
-            await wizardPage.createNewFieldWithFormula(measureField, 'count([order_id])');
-
             await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.Measures,
-                'OrdersCount',
-            );
         });
 
         datalensTest('Two colors bar @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            // Create measure field
+            const measureField = 'OrdersCount';
+            await wizardPage.createNewFieldWithFormula(measureField, 'count([order_id])');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'OrdersCount',
+            );
 
             // Switch on totals
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Rows, 'Category');
@@ -73,6 +73,14 @@ datalensTest.describe('Wizard', () => {
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
+            // Create measure field
+            const measureField = 'OrdersCount';
+            await wizardPage.createNewFieldWithFormula(measureField, 'count([order_id])');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'OrdersCount',
+            );
+
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Measures, 'OrdersCount');
             await wizardPage.page.locator(slct(DialogFieldBarsSettingsQa.EnableButton)).click();
             await wizardPage.page
@@ -81,6 +89,33 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.visualizationItemDialog.barsSettings.changePalette(customPaletteName);
 
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            await expect(previewLoader).toBeVisible();
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Coloring zero values with a gradient @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            const measureField = 'Measure';
+            const measureFieldFormula = `max(if ([Category] = 'Furniture') then -1
+                elseif ([Category] = 'Office Supplies') then 0 else 1 end)`;
+            await wizardPage.createNewFieldWithFormula(measureField, measureFieldFormula);
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                measureField,
+            );
+
+            await expect(previewLoader).toBeVisible();
+            await expect(previewLoader).not.toBeVisible();
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                measureField,
+            );
 
             await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
