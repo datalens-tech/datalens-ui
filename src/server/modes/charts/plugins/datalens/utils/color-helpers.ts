@@ -143,7 +143,7 @@ function colorizePivotTableCell(
         colorsConfig,
         gradientThresholdValues: getThresholdValues(colorsConfig, colorValuesForMaxMin),
     });
-    const backgroundColor = colorValue ? gradientColors[colorValue] : null;
+    const backgroundColor = gradientColors[String(colorValue)];
     if (backgroundColor) {
         return {
             backgroundColor,
