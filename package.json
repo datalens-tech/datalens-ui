@@ -1,6 +1,6 @@
 {
   "name": "@datalens-platform/datalens-ui",
-  "version": "0.1858.0",
+  "version": "0.1858.1",
   "files": [
     "build",
     "scripts"
