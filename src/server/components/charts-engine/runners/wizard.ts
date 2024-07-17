@@ -9,19 +9,21 @@ import {getWizardChartBuilder} from '../components/processor/worker-chart-builde
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
+import {runChart} from './chart';
 import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandler, RunnerHandlerProps} from '.';
 
-export const runWizardChart: RunnerHandler = async (
-    cx: AppContext,
-    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
-) => {
+// eslint-disable-next-line complexity
+export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
+    if (!isEnabledServerFeature(cx, Feature.WorkerChartBuilder)) {
+        return runChart(cx, props);
+    }
+
+    const {chartsEngine, req, res, config, configResolving, workbookId} = props;
     let generatedConfig;
-
-    const {template} = config;
-
     let chartType;
+    const {template} = config;
 
     const ctx = cx.create('templateChartRunner');
 
@@ -177,6 +179,8 @@ export const runWizardChart: RunnerHandler = async (
             return Processor.process({...processorParams, ctx: cx})
                 .then((result) => {
                     cx.log('EditorRunner::FullRun', {duration: getDuration(hrStart)});
+
+                    res.setHeader('chart-runner-type', 'wizard');
 
                     if (result) {
                         // TODO use ShowChartsEngineDebugInfo flag
