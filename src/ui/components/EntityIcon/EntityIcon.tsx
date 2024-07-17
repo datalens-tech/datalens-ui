@@ -4,6 +4,7 @@ import {
     ChartColumn,
     CirclesIntersection,
     CurlyBrackets,
+    DisplayPulse,
     LayoutCellsLarge,
     Thunderbolt,
 } from '@gravity-ui/icons';
@@ -27,6 +28,7 @@ const typeIcons = {
     editor: CurlyBrackets,
     dashboard: LayoutCellsLarge,
     connection: Thunderbolt,
+    presentation: DisplayPulse,
 };
 
 export type EntityIconType = keyof typeof typeIcons;

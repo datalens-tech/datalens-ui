@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {IconData, IconProps} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
-import {ConnectorType, ENTRY_TYPES, Feature} from 'shared';
+import {ConnectorType, ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import Utils from 'ui/utils';
 
 import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
@@ -120,18 +120,20 @@ const entityTypeIcons: Record<string, string> = {
 
 const getScopeTypeIcon = (scope: string) => {
     switch (scope) {
-        case 'folder':
+        case EntryScope.Folder:
             return 'folder';
-        case 'widget':
+        case EntryScope.Widget:
         case 'chart':
             return 'chart-wizard';
-        case 'dataset':
+        case EntryScope.Dataset:
             return 'dataset';
+        case EntryScope.Dash:
         case 'dashboard':
-        case 'dash':
             return 'dashboard';
         case 'monitoring':
             return 'editor';
+        case EntryScope.Presentation:
+            return 'presentation';
         default:
             return null;
     }
