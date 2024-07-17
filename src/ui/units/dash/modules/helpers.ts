@@ -5,6 +5,7 @@ import type {
     ConfigItem,
     ConfigItemData,
     ConfigLayout,
+    DashKitProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
@@ -13,6 +14,7 @@ import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
 import type {
     DashData,
+    DashSettings,
     DashTab,
     DashTabItem,
     DashTabItemBase,
@@ -22,6 +24,7 @@ import type {
 } from 'shared';
 import {DashTabItemType, Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
+import {registry} from 'ui/registry';
 
 import {ITEM_TYPE} from '../../../constants/dialogs';
 import type {TabsHashStates} from '../store/actions/dashTyped';
@@ -394,4 +397,23 @@ export const getPreparedCopyItemOptions = (
         }
     });
     return itemToCopy;
+};
+
+export const getDashkitSettings = (settings: DashSettings, useFromUrl = true) => {
+    const dashkitSettings = {
+        ...settings,
+    } as NonNullable<DashKitProps['settings']>;
+
+    const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+    const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
+    if (autoupdateInterval && useFromUrl) {
+        const minAutoupdateInterval = getMinAutoupdateInterval();
+
+        dashkitSettings.autoupdateInterval =
+            autoupdateInterval >= getMinAutoupdateInterval()
+                ? autoupdateInterval
+                : minAutoupdateInterval;
+    }
+
+    return dashkitSettings;
 };

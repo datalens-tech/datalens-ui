@@ -38,7 +38,7 @@ import {selectEntryContentRevId, selectLockToken} from '../../../../store/select
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
-import {getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
+import {getDashkitSettings, getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
 import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
@@ -55,6 +55,7 @@ import {
     isEditMode,
     selectDashEntry,
     selectDashGlobalDefaultParams,
+    selectSettings,
     selectTabId,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
@@ -254,8 +255,11 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     render() {
-        const {entry, tabs, tabId, history, location, dashGlobalDefaultParams} = this.props;
+        const {entry, tabs, tabId, history, location, dashGlobalDefaultParams, settings} =
+            this.props;
         const subtitle = getTabTitleById({tabs, tabId});
+        const dashkitSettings = getDashkitSettings(settings);
+
         return (
             <React.Fragment>
                 <PageTitle entry={entry} extraSettings={{subtitle}} />
@@ -278,6 +282,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     isEditModeLoading={this.state.isEditModeLoading}
                     onPasteItem={this.onPasteItem}
                     globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
+                    dashkitSettings={dashkitSettings}
                 />
                 <Dialogs />
             </React.Fragment>
@@ -446,6 +451,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     tabs: selectTabs(state),
     tabId: selectTabId(state),
     dashGlobalDefaultParams: selectDashGlobalDefaultParams(state),
+    settings: selectSettings(state),
 });
 
 const mapDispatchToProps = {

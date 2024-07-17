@@ -63,9 +63,6 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                     details: {
                         code: string;
                     };
-                    debug?: {
-                        message: string;
-                    };
                     extra?: {hideRetry: boolean};
                 };
             } = {
@@ -74,14 +71,9 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                     details: {
                         code: (error.response && error.response.status) || error.status || null,
                     },
-                    debug: {
-                        message: error.message,
-                    },
                     extra: {hideRetry: false},
                 },
             };
-
-            delete result.error.debug;
 
             ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
             res.status(error.status || 500).send(result);
@@ -90,12 +82,21 @@ export const embeddedEntryController = (req: Request, res: Response) => {
             if (response && 'entry' in response) {
                 const {entry, embed} = response;
 
+                const params: URLSearchParams = new URLSearchParams(req.body.params) || {};
+                const filteredParams: Record<string, unknown> = {};
+
+                for (const [key] of params) {
+                    if (embed.unsignedParams.includes(key)) {
+                        filteredParams[key] = params.get(key);
+                    }
+                }
+
                 // Add only necessary fields without personal info like createdBy
                 res.status(200).send({
                     entryId: entry.entryId,
                     scope: entry.scope,
                     data: entry.data,
-                    unsignedParams: embed.unsignedParams,
+                    params: filteredParams,
                 });
             }
         })

@@ -26,7 +26,6 @@ import {compose} from 'recompose';
 import type {DashTab, DashTabItem} from 'shared';
 import {ControlQA, DashEntryQa, Feature, UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -89,6 +88,7 @@ type OwnProps = {
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
+    dashkitSettings: DashKitProps['settings'];
 } & (
     | ({
           noEdit?: boolean;
@@ -245,8 +245,16 @@ class Body extends React.PureComponent<BodyProps> {
 
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
-        const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading, globalParams} =
-            this.props;
+        const {
+            mode,
+            settings,
+            tabs,
+            tabData,
+            handlerEditClick,
+            isEditModeLoading,
+            globalParams,
+            dashkitSettings,
+        } = this.props;
 
         let tabDataConfig = tabData as DashKitProps['config'] | null;
 
@@ -263,21 +271,6 @@ class Body extends React.PureComponent<BodyProps> {
                         orderId: item.orderId || index,
                     })) as ConfigItem[],
             };
-        }
-
-        const dashkitSettings = {
-            ...settings,
-        } as NonNullable<DashKitProps['settings']>;
-
-        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
-        const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-        if (autoupdateInterval) {
-            const minAutoupdateInterval = getMinAutoupdateInterval();
-
-            dashkitSettings.autoupdateInterval =
-                autoupdateInterval >= getMinAutoupdateInterval()
-                    ? autoupdateInterval
-                    : minAutoupdateInterval;
         }
 
         const overlayControls = this.getOverlayControls();

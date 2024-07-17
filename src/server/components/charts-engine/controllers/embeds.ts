@@ -76,9 +76,6 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         details: {
                             code: string;
                         };
-                        debug?: {
-                            message: string;
-                        };
                         extra?: {hideRetry: boolean; hideDebugInfo: boolean};
                     };
                 } = {
@@ -87,14 +84,9 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         details: {
                             code: (error.response && error.response.status) || error.status || null,
                         },
-                        debug: {
-                            message: error.message,
-                        },
                         extra: {hideRetry: false, hideDebugInfo: true},
                     },
                 };
-
-                delete result.error.debug;
 
                 ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
                 res.status(error.status || 500).send(result);
