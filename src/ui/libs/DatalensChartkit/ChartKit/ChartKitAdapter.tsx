@@ -32,7 +32,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
         onChartLoad,
         renderPluginLoader,
         paneSplitOrientation,
-        rowsRenderLimit,
+        tableRowsRenderLimit,
     } = props;
 
     const chartkitType = React.useMemo(() => {
@@ -71,7 +71,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
             onError,
             renderPluginLoader,
             paneSplitOrientation,
-            rowsRenderLimit,
+            tableRowsRenderLimit,
             ...additionalProps,
         } as ChartKitProps<typeof chartkitType>;
     }, [
@@ -87,7 +87,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
         isMobile,
         chartkitType,
         paneSplitOrientation,
-        rowsRenderLimit,
+        tableRowsRenderLimit,
     ]);
 
     React.useEffect(() => {
@@ -120,7 +120,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
             onError={onError}
             onChange={onChange}
             paneSplitOrientation={paneSplitOrientation}
-            rowsRenderLimit={rowsRenderLimit}
+            tableRowsRenderLimit={tableRowsRenderLimit}
         />
     );
 });

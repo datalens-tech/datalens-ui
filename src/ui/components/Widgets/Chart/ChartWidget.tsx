@@ -488,7 +488,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [context.canEdit, editMode, context.entryDialoguesRef, initName],
     );
 
-    const rowsRenderLimit = editMode ? TABLE_EDIT_RENDER_LIMIT : undefined;
+    const tableRowsRenderLimit = editMode ? TABLE_EDIT_RENDER_LIMIT : undefined;
 
     return (
         <div
@@ -558,7 +558,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
-                rowsRenderLimit={rowsRenderLimit}
+                tableRowsRenderLimit={tableRowsRenderLimit}
                 rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

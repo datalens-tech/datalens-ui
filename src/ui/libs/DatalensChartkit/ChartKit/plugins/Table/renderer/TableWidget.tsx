@@ -38,7 +38,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onChange,
             onLoad,
             data: {data: originalData, config, params: currentParams, unresolvedParams},
-            rowsRenderLimit,
+            tableRowsRenderLimit,
         } = props;
         const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
@@ -84,8 +84,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             }
 
             const rows =
-                rowsRenderLimit && data.rows?.length && data.rows.length > rowsRenderLimit
-                    ? (data.rows as TableCellsRow[]).slice(0, rowsRenderLimit)
+                tableRowsRenderLimit && data.rows?.length && data.rows.length > tableRowsRenderLimit
+                    ? (data.rows as TableCellsRow[]).slice(0, tableRowsRenderLimit)
                     : (data.rows as TableCellsRow[]);
 
             return {
@@ -134,7 +134,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             data.head,
             data.rows,
             dimensions,
-            rowsRenderLimit,
+            tableRowsRenderLimit,
         ]);
 
         const {onCellClick, onSortingChange, onPaginationChange} = useTableEvents({

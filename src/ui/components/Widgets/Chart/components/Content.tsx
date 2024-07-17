@@ -64,7 +64,7 @@ export const Content = (props: ChartContentProps) => {
         renderPluginLoader,
         enableActionParams,
         paneSplitOrientation,
-        rowsRenderLimit,
+        tableRowsRenderLimit,
         rootNodeRef,
     } = props;
 
@@ -173,7 +173,7 @@ export const Content = (props: ChartContentProps) => {
                     forwardedRef={forwardedRef}
                     renderPluginLoader={renderPluginLoader}
                     paneSplitOrientation={paneSplitOrientation}
-                    rowsRenderLimit={rowsRenderLimit}
+                    tableRowsRenderLimit={tableRowsRenderLimit}
                     rootNodeRef={rootNodeRef}
                 />
                 {showChartOverlay && (

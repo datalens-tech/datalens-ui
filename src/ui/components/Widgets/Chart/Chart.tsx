@@ -77,7 +77,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         workbookId,
         forceShowSafeChart,
         paneSplitOrientation,
-        rowsRenderLimit,
+        tableRowsRenderLimit,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -282,7 +282,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 renderPluginLoader={renderPluginLoader}
                 paneSplitOrientation={paneSplitOrientation}
-                rowsRenderLimit={rowsRenderLimit}
+                tableRowsRenderLimit={tableRowsRenderLimit}
                 rootNodeRef={rootNodeRef}
             />
         </div>

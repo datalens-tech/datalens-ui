@@ -24,7 +24,7 @@ export type ChartKitAdapterProps = {
     isMobile?: boolean;
     splitTooltip?: boolean;
     paneSplitOrientation?: Split;
-    rowsRenderLimit?: number;
+    tableRowsRenderLimit?: number;
     nonBodyScroll?: boolean;
     onLoad?: (args: OnLoadData) => void;
     onError?: ({error}: {error: CombinedError}) => void;

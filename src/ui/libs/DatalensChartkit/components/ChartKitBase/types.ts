@@ -82,7 +82,7 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
 
     paneSplitOrientation?: Split;
 
-    rowsRenderLimit?: number;
+    tableRowsRenderLimit?: number;
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
