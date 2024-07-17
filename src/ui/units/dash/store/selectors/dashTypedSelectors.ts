@@ -37,7 +37,7 @@ const selectInitialTabsSettings = (state: DatalensGlobalState) => state.dash.ini
 
 export const selectDashEntry = (state: DatalensGlobalState) => state.dash.entry || null;
 
-export const selectDashData = (state: DatalensGlobalState) => state.dash.data || null;
+export const selectDashData = (state: DatalensGlobalState) => state.dash?.data || null;
 
 export const selectEntryId = (state: DatalensGlobalState) =>
     state.dash.entry ? state.dash.entry.entryId : null;
@@ -48,7 +48,7 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) => state.dash.data?.settings || {};
+export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
 
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
@@ -207,7 +207,7 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
     return inputOperations.filter((operation) => availableOperations[operation.value]);
 };
 
-export const selectTabId = (state: DatalensGlobalState) => state.dash.tabId;
+export const selectTabId = (state: DatalensGlobalState) => state.dash?.tabId;
 
 export const selectTabs = (state: DatalensGlobalState) => state.dash.data?.tabs || null;
 export const selectTab = (state: DatalensGlobalState) =>
@@ -215,7 +215,7 @@ export const selectTab = (state: DatalensGlobalState) =>
 export const selectShowTableOfContent = (state: DatalensGlobalState) =>
     state.dash.showTableOfContent;
 
-export const selectHashStates = (state: DatalensGlobalState) => state.dash.hashStates;
+export const selectHashStates = (state: DatalensGlobalState) => state.dash?.hashStates;
 
 export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stateHashId;
 
