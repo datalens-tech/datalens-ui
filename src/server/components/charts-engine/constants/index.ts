@@ -36,11 +36,11 @@ export const config = {
     // 50 seconds
     DEFAULT_SINGLE_FETCHING_TIMEOUT: 50 * 1000,
 
-    // 100 MB
-    ALL_REQUESTS_SIZE_LIMIT: 100 * 1e6,
+    // 1000 MB
+    ALL_REQUESTS_SIZE_LIMIT: 1000 * 1e6,
 
-    // 50 MB
-    REQUEST_SIZE_LIMIT: 50 * 1e6,
+    // 500 MB
+    REQUEST_SIZE_LIMIT: 500 * 1e6,
 
     CONCURRENT_REQUESTS_LIMIT: 10,
 
