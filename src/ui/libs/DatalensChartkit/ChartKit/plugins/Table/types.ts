@@ -1,6 +1,6 @@
 import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
 
-import type {OnChangeData, TableWidget} from '../../../types';
+import type {OnChangeData, TableWidget, WidgetDashkitConfig} from '../../../types';
 
 export type TableWidgetProps = {
     id: string;
@@ -12,5 +12,5 @@ export type TableWidgetProps = {
         callChangeByClick?: boolean,
     ) => void;
     onLoad?: (data?: ChartKitOnLoadData<'table'>) => void;
-    tableRowsRenderLimit?: number;
+    dashkitConfig?: WidgetDashkitConfig;
 };

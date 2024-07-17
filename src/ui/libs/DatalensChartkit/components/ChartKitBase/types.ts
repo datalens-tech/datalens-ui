@@ -15,6 +15,7 @@ import type {
     LoadedWidgetData,
     OnChangeData,
     Widget as TWidget,
+    WidgetDashkitConfig,
 } from '../../types';
 import type {MenuItems} from '../../types/menu';
 
@@ -82,7 +83,7 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
 
     paneSplitOrientation?: Split;
 
-    tableRowsRenderLimit?: number;
+    dashkitConfig?: WidgetDashkitConfig;
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {

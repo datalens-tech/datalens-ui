@@ -55,8 +55,6 @@ const influencingProps: Array<keyof ChartWidgetPropsWithContext> = [
     'config',
 ];
 
-const TABLE_EDIT_RENDER_LIMIT = 101;
-
 /**
  * Component used only on dashboard for charts rendering with extra dash widget logic
  * @param props
@@ -488,7 +486,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [context.canEdit, editMode, context.entryDialoguesRef, initName],
     );
 
-    const tableRowsRenderLimit = editMode ? TABLE_EDIT_RENDER_LIMIT : undefined;
+    const dashkitConfig = React.useMemo(
+        () => ({
+            isPreviewMode: editMode,
+        }),
+        [editMode],
+    );
 
     return (
         <div
@@ -558,7 +561,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
-                tableRowsRenderLimit={tableRowsRenderLimit}
+                dashkitConfig={dashkitConfig}
                 rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
