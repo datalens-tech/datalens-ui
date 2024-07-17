@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type {MarkdownIt, StateCore} from '@diplodoc/transform/lib/typings';
 
-import {YfmAttributes, YfmTokenTypes} from '../../../../../shared';
+import {YfmAttributes, YfmTokenTypes} from '../../../constants';
 
 type Tokens = StateCore['tokens'];
 type Token = StateCore['tokens'][number];

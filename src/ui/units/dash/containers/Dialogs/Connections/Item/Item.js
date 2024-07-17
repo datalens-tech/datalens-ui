@@ -4,7 +4,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 
-import {ITEM_TYPE} from '../../../../containers/Dialogs/constants';
+import {ITEM_TYPE} from '../../../../../../constants/dialogs';
 import Context from '../Context/Context';
 
 import iconAlert from 'ui/assets/icons/alert.svg';

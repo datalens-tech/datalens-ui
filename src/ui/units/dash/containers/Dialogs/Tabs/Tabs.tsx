@@ -12,7 +12,7 @@ import type {DashTabItem} from 'shared';
 import {DialogTabsQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
-import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
+import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {setTabs} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {

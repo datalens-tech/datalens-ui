@@ -104,7 +104,7 @@ export type EmbeddingInfo = {
         createdBy: string;
         createdAt: string;
     };
-    chart: ResolvedConfig;
+    entry: ResolvedConfig;
 };
 
 export type EmbeddingToken = {
@@ -435,7 +435,7 @@ export class USProvider {
         };
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${storageEndpoint}/v1/embedded-chart/`,
+            url: `${storageEndpoint}/v1/embedded-entry`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
@@ -449,7 +449,7 @@ export class USProvider {
                 return {
                     token: response.data.token,
                     embed: response.data.embed,
-                    chart: formatPassedProperties(response.data.chart),
+                    entry: formatPassedProperties(response.data.entry),
                 };
             })
             .catch((error) => {

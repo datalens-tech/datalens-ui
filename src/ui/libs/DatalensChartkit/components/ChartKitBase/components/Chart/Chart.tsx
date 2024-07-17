@@ -14,12 +14,19 @@ import type {State} from '../Content/store/types';
 
 type ChartProps = Pick<
     ChartKitBaseWrapperWithRefProps,
-    'noControls' | 'transformLoadedData' | 'splitTooltip' | 'nonBodyScroll' | 'forwardedRef'
+    | 'noControls'
+    | 'transformLoadedData'
+    | 'splitTooltip'
+    | 'nonBodyScroll'
+    | 'forwardedRef'
+    | 'paneSplitOrientation'
 > &
     Pick<ChartKitWrapperParams, 'onLoad' | 'onChange' | 'onError' | 'onRetry'> &
     Pick<ChartKitWrapperState, 'requestId'> &
     Pick<State, 'loadedData' | 'error'> &
-    Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
+    Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> & {
+        rootNodeRef: React.RefObject<HTMLDivElement | null>;
+    };
 
 export const Chart = (props: ChartProps) => {
     if (props.error) {
@@ -56,6 +63,8 @@ export const Chart = (props: ChartProps) => {
                 requestId={props.requestId}
                 noControls={props.noControls}
                 onRetry={props.onRetry}
+                paneSplitOrientation={props.paneSplitOrientation}
+                rootNodeRef={props.rootNodeRef}
             />
         );
     }

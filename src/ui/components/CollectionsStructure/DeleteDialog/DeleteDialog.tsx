@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import DialogConfirm, {DialogConfirmApplyStatus} from 'ui/components/DialogConfirm/DialogConfirm';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -24,17 +24,20 @@ export const DeleteDialog = React.memo<Props>(
         }, [onApply, onClose]);
 
         return (
-            <Dialog size="s" open={open} onClose={onClose} onEnterKeyDown={handleApply}>
-                <Dialog.Header caption={title} />
-                {description && <Dialog.Body>{description}</Dialog.Body>}
-                <Dialog.Footer
-                    onClickButtonCancel={onClose}
-                    onClickButtonApply={handleApply}
-                    textButtonApply={textButtonApply}
-                    textButtonCancel={i18n('action_cancel')}
-                    loading={isLoading}
-                />
-            </Dialog>
+            <DialogConfirm
+                visible={open}
+                onCancel={onClose}
+                confirmOnEnterPress={true}
+                onApply={handleApply}
+                confirmHeaderText={title}
+                applyBtnLoadingStatus={isLoading ? DialogConfirmApplyStatus.Loading : undefined}
+                confirmButtonText={textButtonApply}
+                cancelButtonView="flat"
+                cancelButtonText={i18n('action_cancel')}
+                message={description}
+                showIcon={false}
+                isWarningConfirm={true}
+            />
         );
     },
 );

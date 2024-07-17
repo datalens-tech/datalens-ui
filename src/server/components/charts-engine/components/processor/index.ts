@@ -19,9 +19,10 @@ import {
     Feature,
     isEnabledServerFeature,
 } from '../../../../../shared';
+import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
+import {registry} from '../../../../registry';
 import {config as configConstants} from '../../constants';
 import type {Source} from '../../types';
-import {renderHTML} from '../markdown';
 import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
@@ -881,6 +882,7 @@ export class Processor {
                         const html = renderHTML({
                             text: markdown || '',
                             lang: userLang || '',
+                            plugins: registry.getYfmPlugins(),
                         });
                         delete result.data.markdown;
                         result.data.html = html.result;

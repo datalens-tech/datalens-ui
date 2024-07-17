@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import {DashTabItemType, DashboardAddWidgetQa, Feature} from 'shared';
 import Utils from 'ui/utils';
 
-import {DIALOG_TYPE} from '../units/dash/containers/Dialogs/constants';
+import {DIALOG_TYPE} from '../constants/dialogs';
 import type {CopiedConfigData} from '../units/dash/modules/helpers';
 
 const b = block('edit-panel-item');
@@ -98,7 +98,9 @@ export const getActionPanelItems = ({
     }
 
     if (Utils.isEnabledFeature(Feature.GroupControls)) {
-        items.splice(1, 0, {
+        // if EnableChartEditor is false we need to remove button_edit-panel-editor-selector
+        const deleteCount = Utils.isEnabledFeature(Feature.EnableChartEditor) ? 0 : 1;
+        items.splice(1, deleteCount, {
             id: 'group-selector',
             icon: <Icon data={Sliders} />,
             title: i18n('dash.main.view', 'button_edit-panel-selector'),

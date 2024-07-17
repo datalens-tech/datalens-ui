@@ -63,6 +63,8 @@ export const Content = (props: ChartContentProps) => {
         isWidgetMenuDataChanged,
         renderPluginLoader,
         enableActionParams,
+        paneSplitOrientation,
+        rootNodeRef,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -169,6 +171,8 @@ export const Content = (props: ChartContentProps) => {
                     loadedData={loadedData}
                     forwardedRef={forwardedRef}
                     renderPluginLoader={renderPluginLoader}
+                    paneSplitOrientation={paneSplitOrientation}
+                    rootNodeRef={rootNodeRef}
                 />
                 {showChartOverlay && (
                     <div

@@ -1,6 +1,6 @@
 import {ShareOptions} from '@gravity-ui/components';
 
-import {ITEM_TYPE} from '../containers/Dialogs/constants';
+import {ITEM_TYPE} from '../../../constants/dialogs';
 
 export const LOCK_DURATION = 5 * 60 * 1000;
 export const LOCK_EXTEND_TIMEOUT = 4 * 60 * 1000;
