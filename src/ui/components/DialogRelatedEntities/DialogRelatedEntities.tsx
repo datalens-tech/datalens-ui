@@ -7,14 +7,13 @@ import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import {EDITOR_TYPE, EntryScope, Feature} from 'shared';
 import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
+import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import Utils from 'ui/utils';
 import {groupEntitiesByScope} from 'ui/utils/helpers';
 
 import {type EntryDialogProps, EntryDialogResolveStatus} from '../EntryDialogues';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
-
-import {EntitiesList} from './EntitiesList/EntitiesList';
 
 import './DialogRelatedEntities.scss';
 

@@ -559,6 +559,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
                 rowsRenderLimit={rowsRenderLimit}
+                rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

@@ -283,6 +283,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 renderPluginLoader={renderPluginLoader}
                 paneSplitOrientation={paneSplitOrientation}
                 rowsRenderLimit={rowsRenderLimit}
+                rootNodeRef={rootNodeRef}
             />
         </div>
     );

@@ -159,7 +159,7 @@ const execute = async ({
         sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace = 'message' in e && (e.message as string);
 
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;

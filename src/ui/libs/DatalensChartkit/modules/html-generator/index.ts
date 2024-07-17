@@ -2,15 +2,32 @@ import escape from 'lodash/escape';
 
 import type {ChartKitHtmlItem} from '../../../../../shared';
 import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
+import {getRandomCKId} from '../../helpers/helpers';
 
-import {ALLOWED_ATTRIBUTES, ALLOWED_REFERENCES, ALLOWED_TAGS} from './constants';
+import {
+    ALLOWED_ATTRIBUTES,
+    ALLOWED_REFERENCES,
+    ALLOWED_TAGS,
+    ATTR_DATA_TOOLTIP_ANCHOR_ID,
+    ATTR_DATA_TOOLTIP_CONTENT,
+    ATTR_DATA_TOOLTIP_PLACEMENT,
+    TAG_DL_TOOLTIP,
+} from './constants';
 
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
+const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
-export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string): string {
+type GenerateHtmlOptions = {
+    tooltipId?: string;
+};
+
+export function generateHtml(
+    item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string,
+    options: GenerateHtmlOptions = {},
+): string {
     if (item) {
         if (Array.isArray(item)) {
-            return item.map(generateHtml).join('');
+            return item.map((it) => generateHtml(it, options)).join('');
         }
 
         if (typeof item === 'string') {
@@ -25,8 +42,9 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
             });
         }
 
-        const elem = document.createElement(tag);
-        Object.assign(elem.style, style);
+        const isDLTooltip = tag === TAG_DL_TOOLTIP;
+        const elem = document.createElement(isDLTooltip ? 'div' : tag);
+        Object.assign(elem.style, isDLTooltip ? {display: 'inline-block'} : {}, style);
 
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key)) {
@@ -43,10 +61,26 @@ export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | stri
                 }
             }
 
-            elem.setAttribute(key, String(value));
+            const preparedValue = TOOLTIP_ATTRS.includes(key)
+                ? JSON.stringify(value)
+                : String(value);
+
+            elem.setAttribute(key, preparedValue);
         });
 
-        elem.innerHTML = generateHtml(content);
+        if (!isDLTooltip && options?.tooltipId) {
+            elem.setAttribute(ATTR_DATA_TOOLTIP_ANCHOR_ID, options.tooltipId);
+        }
+
+        const nextOptions = {...options};
+
+        if (isDLTooltip) {
+            const tooltipId = getRandomCKId();
+            elem.setAttribute('id', tooltipId);
+            nextOptions.tooltipId = tooltipId;
+        }
+
+        elem.innerHTML = generateHtml(content, nextOptions);
         return elem.outerHTML;
     }
 

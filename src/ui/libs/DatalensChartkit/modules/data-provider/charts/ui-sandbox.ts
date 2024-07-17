@@ -65,10 +65,18 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
         const formattedDate = Highcharts.dateFormat(...nativeArgs);
         return vm.newString(formattedDate);
     });
+    const numberFormatHandle = vm.newFunction('numberFormat', (...args) => {
+        const nativeArgs = args.map(vm.dump);
+        // @ts-ignore
+        const formattedDate = Highcharts.numberFormat(...nativeArgs);
+        return vm.newString(formattedDate);
+    });
     vm.setProp(vm.global, 'Highcharts', highchartsHandle);
     vm.setProp(highchartsHandle, 'dateFormat', dateFormatHandle);
+    vm.setProp(highchartsHandle, 'numberFormat', numberFormatHandle);
     highchartsHandle.dispose();
     dateFormatHandle.dispose();
+    numberFormatHandle.dispose();
 
     const chartEditorHandle = vm.newObject();
     const generateHtmlHandle = vm.newFunction('generateHtml', (...args) => {

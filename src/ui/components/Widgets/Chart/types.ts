@@ -278,6 +278,7 @@ export type ChartContentProps = Pick<
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
         enableActionParams?: boolean;
+        rootNodeRef: React.RefObject<HTMLDivElement | null>;
     };
 
 export type WidgetDataRef = React.MutableRefObject<
