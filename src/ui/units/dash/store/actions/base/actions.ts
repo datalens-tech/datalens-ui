@@ -19,7 +19,7 @@ import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
-import {Mode} from '../../../modules/constants';
+import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
 import * as actionTypes from '../../constants/dashActionTypes';
 import type {DashState} from '../../reducers/dashTypedReducer';
@@ -389,8 +389,7 @@ export const load = ({
                 errorMessage === DOES_NOT_EXIST_ERROR_TEXT
             ) {
                 errorParams = {
-                    code: errorMessage,
-                    message: i18n('label_error-404-title'),
+                    code: DashErrorCode.NOT_FOUND,
                     status: 404,
                     _manualError: true,
                 } as ManualError;

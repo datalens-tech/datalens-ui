@@ -26,7 +26,6 @@ import {compose} from 'recompose';
 import type {DashTab, DashTabItem} from 'shared';
 import {ControlQA, DashEntryQa, Feature, UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import ViewError from 'ui/components/ViewError/ViewError';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -73,6 +72,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {Error} from '../Error/Error';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
@@ -339,7 +339,7 @@ class Body extends React.PureComponent<BodyProps> {
             case Mode.Updating:
                 return <Loader size="l" />;
             case Mode.Error:
-                return <ViewError error={error} hideDetails={hideErrorDetails} retry={onRetry} />;
+                return <Error error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
         }
 
         const localTabs = memoizedGetLocalTabs(tabs);
