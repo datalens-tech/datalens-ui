@@ -244,6 +244,7 @@ export enum EntryScope {
     Dataset = 'dataset',
     Folder = 'folder',
     Connection = 'connection',
+    Presentation = 'presentation',
 }
 
 export interface Entry {
