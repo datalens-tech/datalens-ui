@@ -62,6 +62,8 @@ export default async (req: Request, res: Response): Promise<void> => {
                 return res.redirect(`/${entry.entryId}`);
             case 'connection':
                 return res.redirect(`/connections/${entry.entryId}`);
+            case 'presentation':
+                return res.redirect(`/presentations/${entry.entryId}`);
             default:
                 return res.redirect('/navigation');
         }

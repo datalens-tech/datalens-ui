@@ -133,7 +133,7 @@ const getScopeTypeIcon = (scope: string) => {
         case 'monitoring':
             return 'editor';
         default:
-            return null;
+            return scope;
     }
 };
 
