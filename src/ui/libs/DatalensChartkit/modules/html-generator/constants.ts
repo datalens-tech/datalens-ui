@@ -31,6 +31,7 @@ export const ALLOWED_TAGS = [
     'feMerge',
     'feMergeNode',
     'filter',
+    'g',
     'h1',
     'h2',
     'h3',
