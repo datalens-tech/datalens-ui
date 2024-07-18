@@ -107,6 +107,10 @@ export interface WidgetBase {
 
 type WidgetBaseWithData = Required<WidgetBase, 'data'>;
 
+export type WidgetDashState = Partial<{
+    isPreviewMode: boolean;
+}>;
+
 export type ControlsOnlyWidget = Optional<WidgetBase, 'data'> & WithControls;
 
 // Additional properties on the js tab for series that are not in highcharts
