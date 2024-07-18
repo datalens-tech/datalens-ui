@@ -230,6 +230,9 @@ export const DL = {
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
+    get RUN_ENDPOINT() {
+        return window.DL.runEndpoint || '/api/run';
+    },
 };
 
 export const LIGHT_THEME = 'light';

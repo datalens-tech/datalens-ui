@@ -10,6 +10,7 @@ import {getSdk} from 'libs/schematic-sdk';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
+import type {DashSettings} from 'shared';
 import {Feature} from 'shared';
 import type {EntryDialogues} from 'ui/components/EntryDialogues';
 import {EntryDialogName} from 'ui/components/EntryDialogues';
@@ -38,7 +39,7 @@ import {selectEntryContentRevId, selectLockToken} from '../../../../store/select
 import {RevisionsListMode, RevisionsMode} from '../../../../store/typings/entryContent';
 import {LOCK_DURATION, LOCK_EXTEND_TIMEOUT} from '../../modules/constants';
 import type {CopiedConfigData} from '../../modules/helpers';
-import {getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
+import {getDashkitSettings, getTabTitleById, isItemPasteAllowed} from '../../modules/helpers';
 import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
@@ -54,9 +55,12 @@ import {
     isDraft,
     isEditMode,
     selectDashEntry,
+    selectDashGlobalDefaultParams,
+    selectSettings,
     selectTabId,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getUrlGlobalParams} from '../../utils/url';
 import Body from '../Body/Body';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -252,8 +256,10 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     render() {
-        const {entry, tabs, tabId, history, location} = this.props;
+        const {entry, tabs, tabId, history, location, dashGlobalDefaultParams, settings} =
+            this.props;
         const subtitle = getTabTitleById({tabs, tabId});
+
         return (
             <React.Fragment>
                 <PageTitle entry={entry} extraSettings={{subtitle}} />
@@ -271,14 +277,22 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     isEditModeLoading={this.state.isEditModeLoading}
                 />
                 <Body
+                    onRetry={this.handleRetry}
                     handlerEditClick={this.handlerEditClick}
                     isEditModeLoading={this.state.isEditModeLoading}
                     onPasteItem={this.onPasteItem}
+                    globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
+                    dashkitSettings={this.getDashkitSettings(settings)}
+                    enableState={true}
                 />
                 <Dialogs />
             </React.Fragment>
         );
     }
+
+    private getDashkitSettings = (settings: DashSettings) => {
+        return getDashkitSettings(settings);
+    };
 
     private setExpandedRevisions = () => {
         this.props.setRevisionsMode?.(RevisionsMode.Opened);
@@ -316,6 +330,15 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         }
 
         this.setEditDash();
+    };
+
+    private handleRetry = () => {
+        const {history, location, match} = this.props;
+        this.props.loadDash({
+            history,
+            location,
+            params: match.params,
+        });
     };
 
     private showErrorPasteItemFromWorkbook() {
@@ -432,6 +455,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     revId: selectEntryContentRevId(state),
     tabs: selectTabs(state),
     tabId: selectTabId(state),
+    dashGlobalDefaultParams: selectDashGlobalDefaultParams(state),
+    settings: selectSettings(state),
 });
 
 const mapDispatchToProps = {

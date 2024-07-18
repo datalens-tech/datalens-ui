@@ -39,6 +39,8 @@ export const selectDashEntry = (state: DatalensGlobalState) => state.dash.entry 
 
 export const selectDashData = (state: DatalensGlobalState) => state.dash?.data || null;
 
+export const selectDashError = (state: DatalensGlobalState) => state.dash.error;
+
 export const selectEntryId = (state: DatalensGlobalState) =>
     state.dash.entry ? state.dash.entry.entryId : null;
 

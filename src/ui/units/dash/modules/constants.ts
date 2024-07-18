@@ -2,6 +2,11 @@ import {ShareOptions} from '@gravity-ui/components';
 
 import {ITEM_TYPE} from '../../../constants/dialogs';
 
+export enum DashErrorCode {
+    NOT_FOUND = 'ERR.DASH.NOT_FOUND_ERROR',
+    SECRET_ACCESS_DENIED = 'ERR.DASH.SECRET_ACCESS_DENIED',
+}
+
 export const LOCK_DURATION = 5 * 60 * 1000;
 export const LOCK_EXTEND_TIMEOUT = 4 * 60 * 1000;
 export const EMPTY_VALUE = '—';
