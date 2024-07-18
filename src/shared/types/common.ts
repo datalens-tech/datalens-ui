@@ -195,9 +195,12 @@ export type DLGlobalData = {
             };
         };
     };
-    embed?: {
-        mode: 'chart';
-    };
+    embed?:
+        | {
+              mode: 'chart';
+          }
+        | boolean;
+    runEndpoint?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;

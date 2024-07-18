@@ -9,6 +9,7 @@ import {DashTabsQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import DataLensTabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';
@@ -55,6 +56,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                     }
 
                     props.setPageTab(tabId);
+
                     const searchParams = {
                         tab: tabId,
                         state: getHashStateParam(props.hashStates, tabId),
@@ -62,7 +64,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                     history.push({
                         ...location,
                         search: appendSearchQuery(location.search, searchParams),
-                        hash: '',
+                        hash: isEmbeddedEntry() ? location.hash : '',
                     });
                 }}
                 moreControlProps={{virtualizationThreshold: TABS_VIRTUALIZATION_SELECT_LIMIT}}

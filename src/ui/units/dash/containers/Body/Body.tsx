@@ -37,7 +37,6 @@ import {
 import type {DatalensGlobalState} from 'ui';
 import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
-import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -75,6 +74,7 @@ import {
     canEdit,
     selectCurrentTab,
     selectCurrentTabId,
+    selectDashError,
     selectDashWorkbookId,
     selectEntryId,
     selectSettings,
@@ -82,8 +82,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {getUrlGlobalParams} from '../../utils/url';
-import Error from '../Error/Error';
+import {Error} from '../Error/Error';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -97,10 +96,27 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
+    enableState?: boolean;
+    hideErrorDetails?: boolean;
+    onRetry: () => void;
+    globalParams: DashKitProps['globalParams'];
+    dashkitSettings: DashKitProps['settings'];
+} & (
+    | ({
+          onlyView?: boolean;
+      } & EditProps)
+    | NoEditProps
+);
+
+type EditProps = {
     handlerEditClick: () => void;
     onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
     isEditModeLoading: boolean;
 };
+
+type NoEditProps = {
+    onlyView: true;
+} & Partial<EditProps>;
 
 type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
@@ -243,6 +259,10 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onDropElement = (dropProps: ItemDropProps) => {
+        if (this.props.onlyView) {
+            return;
+        }
+
         if (dropProps.dragProps.extra) {
             this.props.onPasteItem(
                 {
@@ -263,6 +283,9 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
+        if (!this.props.enableState) {
+            return;
+        }
         this.props.setHashState(hashStates, config);
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
@@ -541,27 +564,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
 
-    getDashkitSettings = () => {
-        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
-        const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-        if (autoupdateInterval) {
-            const dashkitSettings = {
-                ...this.props.settings,
-            } as NonNullable<DashKitProps['settings']>;
-
-            const minAutoupdateInterval = getMinAutoupdateInterval();
-
-            dashkitSettings.autoupdateInterval =
-                autoupdateInterval >= getMinAutoupdateInterval()
-                    ? autoupdateInterval
-                    : minAutoupdateInterval;
-
-            return dashkitSettings;
-        }
-
-        return this.props.settings as NonNullable<DashKitProps['settings']>;
-    };
-
     getContext = () => {
         if (this._memoizedContext.workbookId !== this.props.workbookId) {
             this._memoizedContext = {
@@ -659,7 +661,16 @@ class Body extends React.PureComponent<BodyProps> {
 
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
-        const {mode, settings, tabs, tabData, handlerEditClick, isEditModeLoading} = this.props;
+        const {
+            mode,
+            settings,
+            tabs,
+            tabData,
+            handlerEditClick,
+            isEditModeLoading,
+            globalParams,
+            dashkitSettings,
+        } = this.props;
 
         let tabDataConfig = tabData as DashKitProps['config'] | null;
 
@@ -703,12 +714,9 @@ class Body extends React.PureComponent<BodyProps> {
                 context={this.getContext()}
                 onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
-                settings={this.getDashkitSettings()}
+                settings={dashkitSettings}
                 defaultGlobalParams={settings.globalParams}
-                globalParams={getUrlGlobalParams(
-                    this.props.location.search,
-                    this.props.settings.globalParams,
-                )}
+                globalParams={globalParams}
                 overlayControls={this.getOverlayControls()}
                 overlayMenuItems={this.getOverlayMenu()}
             />
@@ -724,14 +732,23 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     private renderBody() {
-        const {mode, settings, tabs, showTableOfContent, isSidebarOpened} = this.props;
+        const {
+            mode,
+            settings,
+            tabs,
+            showTableOfContent,
+            isSidebarOpened,
+            hideErrorDetails,
+            onRetry,
+            error,
+        } = this.props;
 
         switch (mode) {
             case Mode.Loading:
             case Mode.Updating:
                 return <Loader size="l" />;
             case Mode.Error:
-                return <Error />;
+                return <Error error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
         }
 
         const localTabs = memoizedGetLocalTabs(tabs);
@@ -767,18 +784,20 @@ class Body extends React.PureComponent<BodyProps> {
                         )}
                         {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
-                        <DashkitActionPanel
-                            toggleAnimation={true}
-                            disable={!showEditActionPanel}
-                            items={getActionPanelItems({
-                                copiedData: this.state.hasCopyInBuffer,
-                                onPasteItem: this.props.onPasteItem,
-                                openDialog: this.props.openDialog,
-                            })}
-                            className={b('edit-panel', {
-                                'aside-opened': isSidebarOpened,
-                            })}
-                        />
+                        {!this.props.onlyView && (
+                            <DashkitActionPanel
+                                toggleAnimation={true}
+                                disable={!showEditActionPanel}
+                                items={getActionPanelItems({
+                                    copiedData: this.state.hasCopyInBuffer,
+                                    onPasteItem: this.props.onPasteItem,
+                                    openDialog: this.props.openDialog,
+                                })}
+                                className={b('edit-panel', {
+                                    'aside-opened': isSidebarOpened,
+                                })}
+                            />
+                        )}
                     </div>
                 </div>
             </div>
@@ -813,6 +832,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     tabId: selectCurrentTabId(state),
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
+    error: selectDashError(state),
 });
 
 const mapDispatchToProps = {
