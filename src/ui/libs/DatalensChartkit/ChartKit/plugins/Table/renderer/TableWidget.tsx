@@ -82,19 +82,18 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             }
         }, [generatedId, onLoad, dimensions]);
 
+        // while grouped tables does work with virtualization and while editing dashboards are
+        // struggling to resize\drag dashes with big tables, we're slicing element before render
+        // TODO: remove when Table will support virtualization
+        const isPreviewModeEnabled = isHasGroups && Boolean(dashkitConfig?.isPreviewMode);
+
         const tableData: TableProps['data'] = React.useMemo(() => {
             if (!dimensions) {
                 return {};
             }
 
-            // while grouped tables does work with virtualization and while editing dashboards are
-            // struggling to resize\drag dashes with big tables, we're slicing element before render
-            // TODO: remove when Table will support virtualization for
             const rows =
-                isHasGroups &&
-                dashkitConfig?.isPreviewMode &&
-                data.rows &&
-                data.rows.length > TABLE_DYNAMIC_MIN_SIZE
+                isPreviewModeEnabled && data.rows && data.rows.length > TABLE_DYNAMIC_MIN_SIZE
                     ? (data.rows as TableCellsRow[]).slice(0, TABLE_DYNAMIC_MIN_SIZE)
                     : (data.rows as TableCellsRow[]);
 
@@ -144,8 +143,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             data.head,
             data.rows,
             dimensions,
-            isHasGroups,
-            dashkitConfig?.isPreviewMode,
+            isPreviewModeEnabled,
         ]);
 
         const {onCellClick, onSortingChange, onPaginationChange} = useTableEvents({
