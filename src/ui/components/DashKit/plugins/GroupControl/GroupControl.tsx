@@ -85,6 +85,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsStatus: Record<string, LoadStatus> = {};
     controlsData: Record<string, ExtendedLoadedData | null> = {};
 
+    // a quick loader for imitating action by clicking on apply button
+    quickActionLoader = false;
+
     autoUpdating = false;
 
     // params of current dash state
@@ -124,7 +127,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams,
             needReload: false,
-            localUpdateLoader: false,
         };
     }
 
@@ -225,8 +227,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     render() {
         const isLoading =
-            this.state.status === LOAD_STATUS.PENDING &&
-            !this.state.silentLoading &&
+            ((this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
+                this.quickActionLoader) &&
             !this.autoUpdating;
 
         return (
@@ -250,11 +252,16 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         className={b('loader')}
                         show={isLoading}
                         qa={ControlQA.groupCommonLoader}
+                        onLoaderShow={this.handleLoaderShow}
                     />
                 </div>
             </div>
         );
     }
+
+    private handleLoaderShow = () => {
+        this.quickActionLoader = false;
+    };
 
     private get dependentSelectors() {
         return this.props.settings.dependentSelectors ?? false;
@@ -397,7 +404,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // 1. 'Apply button' is clicked
         // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
-            this.setState({localUpdateLoader: false});
             this.props.onStateAndParamsChange(
                 {params},
                 {groupItemIds: this.getControlsIds({data: controlData, controlId})},
@@ -654,6 +660,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        // to make loader be visible
         if (
             this.controlsProgressCount &&
             this.state.status !== LOAD_STATUS.PENDING &&
@@ -674,7 +681,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
-                localUpdateLoader: false,
             });
         }
 
@@ -745,7 +751,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
                 this.autoUpdating = false;
-                this.setState({localUpdateLoader: true});
+                this.quickActionLoader = true;
             }
             this.onChange({params: newParams, callChangeByClick});
         }

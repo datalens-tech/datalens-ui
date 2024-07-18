@@ -9,12 +9,14 @@ export const LocalUpdateLoader = ({
     className,
     size,
     qa,
+    onLoaderShow,
 }: {
     show: boolean;
     hideDelay: number;
     className?: string;
     size: LoaderSize;
     qa?: string;
+    onLoaderShow?: () => void;
 }) => {
     const [prevShow, setPrevShow] = React.useState(show);
     const [showByTimer, setShowByDelay] = React.useState(false);
@@ -24,6 +26,7 @@ export const LocalUpdateLoader = ({
         setPrevShow(show);
 
         if (show) {
+            onLoaderShow?.();
             setShowByCondition(true);
             setShowByDelay(true);
 
