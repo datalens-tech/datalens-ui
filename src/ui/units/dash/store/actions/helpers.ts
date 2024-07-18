@@ -1,5 +1,5 @@
 import type {History} from 'history';
-import type {DashData, DashEntry, DashTabItem, DashTabItemWidgetData} from 'shared';
+import type {DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
 import {DashTabItemType} from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
 
@@ -15,7 +15,7 @@ export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
 /**
  * Type guards
  */
-const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidgetData => {
+const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] => {
     return 'tabs' in data && data.tabs.length > 1;
 };
 
@@ -121,7 +121,7 @@ export const getCurrentTab = ({
     return {tabId, widgetsCurrentTab};
 };
 
-export const applyChartkitSettings = ({data}: {data: DashData}) => {
+export const applyDataProviderChartSettings = ({data}: {data: DashData}) => {
     if (data.settings.maxConcurrentRequests) {
         isCallable(ChartKit.setDataProviderSettings)({
             maxConcurrentRequests: data.settings.maxConcurrentRequests,

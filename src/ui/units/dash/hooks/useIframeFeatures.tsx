@@ -16,28 +16,28 @@ export type PageTitleExtraSettings = {
 
 export const useIframeFeatures = ({
     wrapRef,
-    checkNoScroll = true,
+    skipNoScroll,
 }: {
     wrapRef: React.RefObject<HTMLDivElement>;
-    checkNoScroll?: boolean;
+    skipNoScroll?: boolean;
 }) => {
     const [isObserverEnabled, setIsObserverEnabled] = React.useState<boolean>();
 
     const isIframeView = isIframe();
 
     React.useEffect(() => {
-        if (checkNoScroll) {
-            const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
-
-            Utils.addBodyClass(...dashClasses);
-
-            return () => {
-                Utils.removeBodyClass(...dashClasses);
-            };
+        if (skipNoScroll || !isIframeView) {
+            return;
         }
 
-        return undefined;
-    }, [checkNoScroll]);
+        const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
+
+        Utils.addBodyClass(...dashClasses);
+
+        return () => {
+            Utils.removeBodyClass(...dashClasses);
+        };
+    }, [skipNoScroll, isIframeView]);
 
     React.useEffect(() => {
         if (!isIframeView || !wrapRef.current || !window.name) {

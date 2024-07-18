@@ -254,7 +254,7 @@ export type SetTabHashStateAction = {
     type: typeof SET_TAB_HASH_STATE;
     payload: {
         tabId: string;
-        entryId?: string | null;
+        entryId: string | null;
         stateHashId?: string;
         hashStates?: TabsHashStates;
     };

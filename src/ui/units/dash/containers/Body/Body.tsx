@@ -84,14 +84,14 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
-    noState?: boolean;
+    enableState?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
     dashkitSettings: DashKitProps['settings'];
 } & (
     | ({
-          noEdit?: boolean;
+          onlyView?: boolean;
       } & EditProps)
     | NoEditProps
 );
@@ -103,7 +103,7 @@ type EditProps = {
 };
 
 type NoEditProps = {
-    noEdit: true;
+    onlyView: true;
 } & Partial<EditProps>;
 
 type DashBodyState = {
@@ -208,7 +208,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onDropElement = (dropProps: ItemDropProps) => {
-        if (this.props.noEdit) {
+        if (this.props.onlyView) {
             return;
         }
 
@@ -232,7 +232,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
-        if (this.props.noState) {
+        if (this.props.enableState) {
             return;
         }
         this.props.setHashState(hashStates, config);
@@ -368,7 +368,7 @@ class Body extends React.PureComponent<BodyProps> {
                         )}
                         {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
-                        {!this.props.noEdit && (
+                        {!this.props.onlyView && (
                             <DashkitActionPanel
                                 toggleAnimation={true}
                                 disable={!showEditActionPanel}

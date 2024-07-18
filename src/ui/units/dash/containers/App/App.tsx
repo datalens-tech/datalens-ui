@@ -7,13 +7,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
-import {URL_QUERY, Utils, useMountedState} from 'ui';
+import {useMountedState} from 'ui/hooks/useMountedState';
 import {registry} from 'ui/registry';
+import Utils from 'ui/utils/utils';
 
 import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import type {CurrentPageEntry} from '../../../../components/Navigation/types';
-import {DL} from '../../../../constants/common';
+import {DL, URL_QUERY} from '../../../../constants/common';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';

@@ -710,11 +710,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
-        const path = isEmbeddedEntry() ? '/embeds/api/run' : '/api/run';
-
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${path}`,
+                url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
             }),

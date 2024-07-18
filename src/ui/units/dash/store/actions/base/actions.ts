@@ -35,7 +35,7 @@ import {
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
-    applyChartkitSettings,
+    applyDataProviderChartSettings,
     getCurrentTab,
     isCallable,
     prepareLoadedData,
@@ -350,7 +350,7 @@ export const load = ({
                     dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
                 }
 
-                applyChartkitSettings({data});
+                applyDataProviderChartSettings({data});
             }
 
             dispatch({

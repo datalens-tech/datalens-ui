@@ -399,14 +399,18 @@ export const getPreparedCopyItemOptions = (
     return itemToCopy;
 };
 
-export const getDashkitSettings = (settings: DashSettings, useFromUrl = true) => {
+export const getDashkitSettings = (settings: DashSettings, skipUrlParam?: boolean) => {
     const dashkitSettings = {
         ...settings,
     } as NonNullable<DashKitProps['settings']>;
 
-    const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
+    if (skipUrlParam) {
+        return dashkitSettings;
+    }
+
     const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
-    if (autoupdateInterval && useFromUrl) {
+    if (autoupdateInterval) {
+        const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
         const minAutoupdateInterval = getMinAutoupdateInterval();
 
         dashkitSettings.autoupdateInterval =
