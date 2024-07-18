@@ -11,7 +11,7 @@ import type {ModulesSandboxExecuteResult} from './isolated-modules-sandbox';
 import {Sandbox} from './sandbox';
 
 const ONE_SECOND = 1000;
-const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
+export const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;

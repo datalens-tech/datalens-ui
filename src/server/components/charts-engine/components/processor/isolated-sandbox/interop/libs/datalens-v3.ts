@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {datalensModule} from '../../../../../../../modes/charts/plugins/datalens/module';
+import functionTimeout from '../../function-timeout';
+import {JS_EXECUTION_TIMEOUT} from '../../isolated-sandbox-chart-builder';
 
 import type {LibsInterop} from './types';
 
@@ -39,7 +41,10 @@ export const libsDatalensV3Interop: LibsInterop = {
                 parsedArg[2] = chartEditorApi;
             }
 
-            const result = datalensModule.buildGraph(...parsedArg);
+            // const result = datalensModule.buildGraph(...parsedArg);
+            const result = functionTimeout(datalensModule.buildGraph, {
+                timeout: JS_EXECUTION_TIMEOUT,
+            })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsDatalensV3BuildGraph);
 
@@ -47,13 +52,17 @@ export const libsDatalensV3Interop: LibsInterop = {
             const parsedArg = JSON.parse(arg) as Parameters<
                 typeof datalensModule.buildHighchartsConfig
             >[0];
-            const result = datalensModule.buildHighchartsConfig(parsedArg);
+            const result = functionTimeout(datalensModule.buildHighchartsConfig, {
+                timeout: JS_EXECUTION_TIMEOUT,
+            })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsDatalensV3BuildHighchartsConfig);
 
         jail.setSync(`${NAMESPACE}_buildD3Config`, ((arg) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof datalensModule.buildD3Config>[0];
-            const result = datalensModule.buildD3Config(parsedArg);
+            const result = functionTimeout(datalensModule.buildD3Config, {
+                timeout: JS_EXECUTION_TIMEOUT,
+            })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsDatalensV3BuildD3Config);
 
