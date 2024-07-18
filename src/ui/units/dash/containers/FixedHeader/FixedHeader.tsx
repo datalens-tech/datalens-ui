@@ -60,18 +60,19 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
 
 export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) => {
     const rootRef = React.useRef<HTMLDivElement>(null);
+    const {editMode, isEmpty} = props;
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTROLS_TOP_OFFSET);
 
-    const children = !props.editMode && props.isEmpty ? null : props.children;
-    const style = isFixed ? {left: leftOffset, width} : {};
+    const children = !editMode && isEmpty ? null : props.children;
+    const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
     return (
         <div ref={rootRef} className={b('controls-placeholder')}>
             <div
                 style={style}
                 className={b('controls', {
-                    fixed: isFixed && !props.editMode,
-                    'edit-mode': props.editMode,
+                    fixed: isFixed && !editMode,
+                    'edit-mode': editMode,
                 })}
             >
                 <div className={b('controls-grid')}>{children}</div>
@@ -113,7 +114,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
     }, [containerRef, isRenderEmpty]);
 
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET);
-    const style = isFixed ? {left: leftOffset, width} : {};
+    const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
     return (
         <div ref={rootRef} className={b('container-placeholder')} style={{height: containerHeight}}>
