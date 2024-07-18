@@ -155,6 +155,8 @@ const execute = async ({
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
         const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
             timeout,
+            filename,
+            lineOffset: -prepare.split('\n').length,
         });
         sandboxResult = JSON.parse(result);
     } catch (e) {
