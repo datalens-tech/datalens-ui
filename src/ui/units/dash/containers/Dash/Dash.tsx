@@ -10,6 +10,7 @@ import {getSdk} from 'libs/schematic-sdk';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
+import type {DashSettings} from 'shared';
 import {Feature} from 'shared';
 import type {EntryDialogues} from 'ui/components/EntryDialogues';
 import {EntryDialogName} from 'ui/components/EntryDialogues';
@@ -258,7 +259,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const {entry, tabs, tabId, history, location, dashGlobalDefaultParams, settings} =
             this.props;
         const subtitle = getTabTitleById({tabs, tabId});
-        const dashkitSettings = getDashkitSettings(settings);
 
         return (
             <React.Fragment>
@@ -282,13 +282,17 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     isEditModeLoading={this.state.isEditModeLoading}
                     onPasteItem={this.onPasteItem}
                     globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
-                    dashkitSettings={dashkitSettings}
+                    dashkitSettings={this.getDashkitSettings(settings)}
                     enableState={true}
                 />
                 <Dialogs />
             </React.Fragment>
         );
     }
+
+    private getDashkitSettings = (settings: DashSettings) => {
+        return getDashkitSettings(settings);
+    };
 
     private setExpandedRevisions = () => {
         this.props.setRevisionsMode?.(RevisionsMode.Opened);

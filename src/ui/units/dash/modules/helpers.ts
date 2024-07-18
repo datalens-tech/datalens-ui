@@ -399,10 +399,11 @@ export const getPreparedCopyItemOptions = (
     return itemToCopy;
 };
 
-export const getDashkitSettings = (settings: DashSettings, skipUrlParam?: boolean) => {
-    const dashkitSettings = {
-        ...settings,
-    } as NonNullable<DashKitProps['settings']>;
+export const getDashkitSettings = (
+    settings: DashSettings,
+    skipUrlParam?: boolean,
+): NonNullable<DashKitProps['settings']> => {
+    const dashkitSettings = settings as NonNullable<DashKitProps['settings']>;
 
     if (skipUrlParam) {
         return dashkitSettings;
@@ -412,11 +413,11 @@ export const getDashkitSettings = (settings: DashSettings, skipUrlParam?: boolea
     if (autoupdateInterval) {
         const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
         const minAutoupdateInterval = getMinAutoupdateInterval();
+        const maxInterval = Math.max(autoupdateInterval, minAutoupdateInterval);
 
-        dashkitSettings.autoupdateInterval =
-            autoupdateInterval >= getMinAutoupdateInterval()
-                ? autoupdateInterval
-                : minAutoupdateInterval;
+        return maxInterval === dashkitSettings.autoupdateInterval
+            ? dashkitSettings
+            : {...dashkitSettings, autoupdateInterval: maxInterval};
     }
 
     return dashkitSettings;

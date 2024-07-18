@@ -71,9 +71,7 @@ export const useIframeFeatures = ({
         resizeObserver.observe(wrapRef.current);
 
         return () => {
-            if (wrapRef.current) {
-                resizeObserver.unobserve(wrapRef.current);
-            }
+            resizeObserver.disconnect();
         };
     }, [isIframeView, isObserverEnabled, wrapRef]);
 };
