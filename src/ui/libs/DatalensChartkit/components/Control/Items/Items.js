@@ -176,6 +176,10 @@ function BaseControlInput({
 
     const isInvalid = hasValidationError && !text?.length;
 
+    const handleBlur = () => {
+        onChange(text);
+    };
+
     return (
         <TextInput
             placeholder={placeholder}
@@ -183,15 +187,7 @@ function BaseControlInput({
             value={text}
             onUpdate={(value) => setText(value)}
             onKeyPress={(event) => event.charCode === 13 && onChange(text)}
-            onBlur={() => {
-                // For case: input has `updateOnChange: true`, there is button control with `setInitialParams`.
-                // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
-                // Before fix: in some cases onClick form Button didn't fire at all (or just didn't work, next work)
-                // (Possible reasons: because of rerendering after onChange form Input).
-                setTimeout(() => {
-                    onChange(text);
-                });
-            }}
+            onBlur={handleBlur}
             label={labelInside ? label : innerLabel}
             qa={ControlQA.controlInput}
             // triggered twice, so controlAttrs.onKeyPress is used
@@ -468,19 +464,8 @@ function BaseControlButton({label, theme, onChange, qa}) {
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
 
-    const handleClick = () => {
-        setTimeout(onChange);
-    };
-
     return (
-        <Button
-            view={buttonTheme || 'normal'}
-            size={size}
-            width="max"
-            // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
-            onClick={handleClick}
-            qa={qa}
-        >
+        <Button view={buttonTheme || 'normal'} size={size} width="max" onClick={onChange} qa={qa}>
             {label || i18n('chartkit.control.items', 'apply')}
         </Button>
     );

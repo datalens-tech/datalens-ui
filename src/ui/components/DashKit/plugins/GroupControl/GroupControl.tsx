@@ -48,8 +48,7 @@ import {addItemToLocalQueue, filterSignificantParams} from './utils';
 import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
-const LOADER_SHOW_DELAY = 150;
-const LOADER_HIDE_DELAY = 100;
+const LOADER_HIDE_DELAY = 500;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
@@ -85,6 +84,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsProgressCount = 0;
     controlsStatus: Record<string, LoadStatus> = {};
     controlsData: Record<string, ExtendedLoadedData | null> = {};
+
+    autoUpdating = false;
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
@@ -224,8 +225,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     render() {
         const isLoading =
-            (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.state.localUpdateLoader;
+            this.state.status === LOAD_STATUS.PENDING &&
+            !this.state.silentLoading &&
+            !this.autoUpdating;
 
         return (
             <div
@@ -243,7 +245,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     />
                     {this.renderControls()}
                     <LocalUpdateLoader
-                        showDelay={LOADER_SHOW_DELAY}
                         hideDelay={LOADER_HIDE_DELAY}
                         size="s"
                         className={b('loader')}
@@ -419,8 +420,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 this.setState({
                     stateParams: this.getLocalUpdatedParams(controlId, params),
-                    localUpdateLoader: true,
                 });
+                this.autoUpdating = true;
             } else {
                 this.setState({
                     stateParams: {
@@ -653,7 +654,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
-        if (this.controlsProgressCount && this.state.status !== LOAD_STATUS.PENDING) {
+        if (
+            this.controlsProgressCount &&
+            this.state.status !== LOAD_STATUS.PENDING &&
+            (this.props.data as unknown as DashTabItemGroupControlData).updateControlsOnChange
+        ) {
             this.setState({status: LOAD_STATUS.PENDING});
         }
 
@@ -693,6 +698,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
+                autoUpdating={this.autoUpdating}
             />
         );
     }
@@ -738,6 +744,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
+                this.autoUpdating = false;
                 this.setState({localUpdateLoader: true});
             }
             this.onChange({params: newParams, callChangeByClick});
