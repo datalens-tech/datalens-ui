@@ -24,7 +24,7 @@ export default function functionTimeout<T extends Function>(
         configurable: true,
     });
 
-    return wrappedFunction;
+    return wrappedFunction as unknown as T;
 }
 
 export function isTimeoutError(error: unknown) {
