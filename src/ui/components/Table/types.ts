@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type {RowData, SortingFnOption} from '@tanstack/react-table';
-import type {WidgetDashkitConfig} from 'ui/libs/DatalensChartkit/types';
+import type {WidgetDashState} from 'ui/libs/DatalensChartkit/types';
 
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,7 +61,7 @@ export type TableProps = {
     qa?: string;
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
-    dashkitConfig?: WidgetDashkitConfig;
+    widgetDashState?: WidgetDashState;
 };
 
 export type TableDimensions = {

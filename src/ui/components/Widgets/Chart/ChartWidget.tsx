@@ -486,12 +486,17 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [context.canEdit, editMode, context.entryDialoguesRef, initName],
     );
 
-    const dashkitConfig = React.useMemo(
-        () => ({
+    const widgetDashState = React.useMemo(() => {
+        if (widgetType !== 'table') {
+            return undefined;
+        }
+
+        // Tables could need some optimization while in edit mode
+        // TODO remove this when grouped tables could use virtualization
+        return {
             isPreviewMode: editMode,
-        }),
-        [editMode],
-    );
+        };
+    }, [editMode, widgetType]);
 
     return (
         <div
@@ -561,7 +566,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
-                dashkitConfig={dashkitConfig}
+                widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

@@ -107,7 +107,7 @@ export interface WidgetBase {
 
 type WidgetBaseWithData = Required<WidgetBase, 'data'>;
 
-export type WidgetDashkitConfig = Partial<{
+export type WidgetDashState = Partial<{
     isPreviewMode: boolean;
 }>;
 

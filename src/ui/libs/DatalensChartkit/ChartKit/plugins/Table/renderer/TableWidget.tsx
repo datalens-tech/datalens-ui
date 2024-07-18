@@ -41,7 +41,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onChange,
             onLoad,
             data: {data: originalData, config, params: currentParams, unresolvedParams},
-            dashkitConfig,
+            widgetDashState,
         } = props;
         const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
@@ -85,7 +85,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         // while grouped tables does work with virtualization and while editing dashboards are
         // struggling to resize\drag dashes with big tables, we're slicing element before render
         // TODO: remove when Table will support virtualization
-        const isPreviewModeEnabled = isHasGroups && Boolean(dashkitConfig?.isPreviewMode);
+        const isPreviewModeEnabled = isHasGroups && Boolean(widgetDashState?.isPreviewMode);
 
         const tableData: TableProps['data'] = React.useMemo(() => {
             if (!dimensions) {

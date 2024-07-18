@@ -64,7 +64,7 @@ export const Content = (props: ChartContentProps) => {
         renderPluginLoader,
         enableActionParams,
         paneSplitOrientation,
-        dashkitConfig,
+        widgetDashState,
         rootNodeRef,
     } = props;
 
@@ -173,7 +173,7 @@ export const Content = (props: ChartContentProps) => {
                     forwardedRef={forwardedRef}
                     renderPluginLoader={renderPluginLoader}
                     paneSplitOrientation={paneSplitOrientation}
-                    dashkitConfig={dashkitConfig}
+                    widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
                 />
                 {showChartOverlay && (
