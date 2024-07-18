@@ -232,7 +232,7 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
-        if (this.props.enableState) {
+        if (!this.props.enableState) {
             return;
         }
         this.props.setHashState(hashStates, config);
