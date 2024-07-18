@@ -8,7 +8,10 @@ type Options = {
     timeout?: number;
 };
 
-export default function functionTimeout<T extends Function>(function_: T, {timeout}: Options = {}) {
+export default function functionTimeout<T extends Function>(
+    function_: T,
+    {timeout}: Options = {},
+): T {
     const wrappedFunction = (...args: [unknown]) => {
         const context = vm.createContext();
         context.functionToRun = () => function_(...args);

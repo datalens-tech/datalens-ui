@@ -40,11 +40,9 @@ export const libsDatalensV3Interop: LibsInterop = {
             } else {
                 parsedArg[2] = chartEditorApi;
             }
-
-            // const result = datalensModule.buildGraph(...parsedArg);
             const result = functionTimeout(datalensModule.buildGraph, {
                 timeout: JS_EXECUTION_TIMEOUT,
-            })(parsedArg);
+            })(...parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsDatalensV3BuildGraph);
 
