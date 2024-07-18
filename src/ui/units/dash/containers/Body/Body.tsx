@@ -12,8 +12,8 @@ import type {
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
-import {Funnel, Gear, Pin, PinSlash} from '@gravity-ui/icons';
-import {ArrowToggle, Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import {ChevronsDown, ChevronsUp, Gear, Pin, PinSlash} from '@gravity-ui/icons';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -27,8 +27,16 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DashTab, DashTabItem} from 'shared';
-import {ControlQA, DashEntryQa, Feature, UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
+import {
+    ControlQA,
+    DashEntryQa,
+    DashKitOverlayMenuQa,
+    Feature,
+    UPDATE_STATE_DEBOUNCE_TIME,
+} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
+import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {registry} from 'ui/registry';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -95,7 +103,7 @@ type OwnProps = {
 };
 
 type DashBodyState = {
-    fixedHeaderCollapsed: boolean;
+    fixedHeaderCollapsed: Record<string, boolean>;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
 };
@@ -106,10 +114,7 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
-const FIXED_GROUP_ID = '__fixedGroup';
-const FIXED_HEADER_GROUP_LINE_ID = '__fixedLine';
-
-const FIXED_HEADER_GROUP_COLS = 34;
+const FIXED_HEADER_GROUP_COLS = 35;
 const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
 
 class Body extends React.PureComponent<BodyProps> {
@@ -155,16 +160,18 @@ class Body extends React.PureComponent<BodyProps> {
     } = {};
 
     _memoizedControls: DashKitProps['overlayControls'];
+    _memoizedMenu: DashKitProps['overlayMenuItems'];
+    _memoizedWidgetsMap: any = {layout: null, byGroup: {}, byId: {}}; // TODO type
 
     state: DashBodyState = {
-        fixedHeaderCollapsed: false,
+        fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
     };
 
     groups: DashKitGroup[] = [
         {
-            id: FIXED_HEADER_GROUP_LINE_ID,
+            id: FIXED_GROUP_HEADER_ID,
             render: (id, children, props) => this.renderFixedGroupHeader(id, children, props),
             gridProperties: (props) => {
                 return {
@@ -177,7 +184,7 @@ class Body extends React.PureComponent<BodyProps> {
             },
         },
         {
-            id: FIXED_GROUP_ID,
+            id: FIXED_GROUP_CONTAINER_ID,
             render: (id, children, props) => this.renderFixedGroupContainer(id, children, props),
         },
         {
@@ -271,16 +278,18 @@ class Body extends React.PureComponent<BodyProps> {
                 const left = item.x + item.w;
 
                 switch (parentId) {
-                    case FIXED_HEADER_GROUP_LINE_ID:
-                        memo[FIXED_HEADER_GROUP_LINE_ID] = {
-                            y: forSingleInsert ? 0 : Math.max(memo[FIXED_GROUP_ID].y, bottom),
-                            x: Math.max(memo[FIXED_HEADER_GROUP_LINE_ID].x, left),
+                    case FIXED_GROUP_HEADER_ID:
+                        memo[FIXED_GROUP_HEADER_ID] = {
+                            y: forSingleInsert
+                                ? 0
+                                : Math.max(memo[FIXED_GROUP_CONTAINER_ID].y, bottom),
+                            x: Math.max(memo[FIXED_GROUP_HEADER_ID].x, left),
                         };
                         break;
 
-                    case FIXED_GROUP_ID:
-                        memo[FIXED_GROUP_ID] = {
-                            y: Math.max(memo[FIXED_GROUP_ID].y, bottom),
+                    case FIXED_GROUP_CONTAINER_ID:
+                        memo[FIXED_GROUP_CONTAINER_ID] = {
+                            y: Math.max(memo[FIXED_GROUP_CONTAINER_ID].y, bottom),
                             x: 0,
                         };
                         break;
@@ -296,21 +305,63 @@ class Body extends React.PureComponent<BodyProps> {
             },
             {
                 [DEFAULT_GROUP]: {x: 0, y: 0},
-                [FIXED_HEADER_GROUP_LINE_ID]: {x: 0, y: 0},
-                [FIXED_GROUP_ID]: {x: 0, y: 0},
+                [FIXED_GROUP_HEADER_ID]: {x: 0, y: 0},
+                [FIXED_GROUP_CONTAINER_ID]: {x: 0, y: 0},
             },
         );
     };
 
-    togglePinElement = (widget: DashTabItem) => {
+    getTabConfig() {
         const {tabData} = this.props;
-        const tabDataConfig = tabData as DashKitProps['config'];
+        return tabData as DashKitProps['config'];
+    }
+
+    buildLayoutMap() {
+        const widgetsMap = this._memoizedWidgetsMap;
+        const layout = this.getTabConfig().layout;
+
+        if (widgetsMap.layout !== layout) {
+            widgetsMap.layout = layout;
+            const byId: Record<string, ConfigLayout> = {};
+
+            widgetsMap.byId = byId;
+            widgetsMap.byGroup = layout.reduce<Record<string, Array<ConfigLayout>>>(
+                (memo, item) => {
+                    byId[item.i] = item;
+                    const parent = item.parent || DEFAULT_GROUP;
+
+                    if (!(parent in memo)) {
+                        memo[parent] = [];
+                    }
+
+                    memo[parent].push(item);
+
+                    return memo;
+                },
+                {},
+            );
+        }
+
+        return widgetsMap;
+    }
+
+    getWidgetLayoutBiId(widgetId: string) {
+        return this.buildLayoutMap().byId[widgetId];
+    }
+
+    getWidgetLayoutBiGroup(groupId: string) {
+        return this.buildLayoutMap().byGroup[groupId];
+    }
+
+    togglePinElement = (widget: ConfigItem) => {
+        const tabDataConfig = this.getTabConfig();
         const groupCoords = this.getGroupsInsertCoords(true);
 
         const newLayout = tabDataConfig.layout.map((item) => {
             if (item.i === widget.id) {
                 const {parent, ...itemCopy} = item;
-                const isFixed = parent === FIXED_GROUP_ID || parent === FIXED_HEADER_GROUP_LINE_ID;
+                const isFixed =
+                    parent === FIXED_GROUP_CONTAINER_ID || parent === FIXED_GROUP_HEADER_ID;
 
                 if (isFixed) {
                     return {
@@ -319,7 +370,7 @@ class Body extends React.PureComponent<BodyProps> {
                     };
                 } else {
                     const leftSpace = tabDataConfig.layout.reduce((memo, item) => {
-                        if (item.parent === FIXED_HEADER_GROUP_LINE_ID) {
+                        if (item.parent === FIXED_GROUP_HEADER_ID) {
                             memo -= item.w;
                         }
                         return memo;
@@ -327,8 +378,8 @@ class Body extends React.PureComponent<BodyProps> {
 
                     const parentId =
                         itemCopy.h <= FIXED_HEADER_GROUP_LINE_MAX_ROWS && itemCopy.w <= leftSpace
-                            ? FIXED_HEADER_GROUP_LINE_ID
-                            : FIXED_GROUP_ID;
+                            ? FIXED_GROUP_HEADER_ID
+                            : FIXED_GROUP_CONTAINER_ID;
 
                     return {
                         ...itemCopy,
@@ -345,20 +396,19 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     unpinAllElements = () => {
-        const {tabData} = this.props;
-        const tabDataConfig = tabData as DashKitProps['config'] | null;
+        const tabDataConfig = this.getTabConfig();
 
         if (tabDataConfig) {
             const groupCoords = this.getGroupsInsertCoords();
 
             const newLayout = tabDataConfig.layout.map(({parent, ...item}) => {
                 switch (parent || DEFAULT_GROUP) {
-                    case FIXED_HEADER_GROUP_LINE_ID:
+                    case FIXED_GROUP_HEADER_ID:
                         return {...item, y: 0};
-                    case FIXED_GROUP_ID: {
+                    case FIXED_GROUP_CONTAINER_ID: {
                         return {
                             ...item,
-                            y: item.y + groupCoords[FIXED_HEADER_GROUP_LINE_ID].y,
+                            y: item.y + groupCoords[FIXED_GROUP_HEADER_ID].y,
                         };
                     }
                     case DEFAULT_GROUP: {
@@ -366,8 +416,8 @@ class Body extends React.PureComponent<BodyProps> {
                             ...item,
                             y:
                                 item.y +
-                                groupCoords[FIXED_HEADER_GROUP_LINE_ID].y +
-                                groupCoords[FIXED_GROUP_ID].y,
+                                groupCoords[FIXED_GROUP_HEADER_ID].y +
+                                groupCoords[FIXED_GROUP_CONTAINER_ID].y,
                         };
                     }
                     default:
@@ -380,18 +430,34 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     toggleFixedHeader = () => {
-        this.setState({fixedHeaderCollapsed: !this.state.fixedHeaderCollapsed});
+        this.groups = [...this.groups]; // For dashkit groups redraw
+        const {tabId} = this.props;
+
+        if (tabId) {
+            this.setState({
+                fixedHeaderCollapsed: {
+                    ...this.state.fixedHeaderCollapsed,
+                    [tabId]: !this.state.fixedHeaderCollapsed[tabId],
+                },
+            });
+        }
     };
 
-    renderFixedGroupHeaderControls = () => {
+    getFixedHeaderCollapsedState() {
+        const {tabId} = this.props;
+
+        return this.state.fixedHeaderCollapsed[tabId as string] || false;
+    }
+
+    renderFixedControls = (hasFixedContainerElements: boolean) => {
         const {mode} = this.props;
-        const isCollapsed = this.state.fixedHeaderCollapsed;
+        const isCollapsed = this.getFixedHeaderCollapsedState();
 
         if (mode === Mode.Edit) {
             return (
                 <DropdownMenu
                     renderSwitcher={(props) => (
-                        <Button {...props} view={'flat'}>
+                        <Button {...props} view={'raised'}>
                             <Icon size={16} data={Gear} />
                         </Button>
                     )}
@@ -405,11 +471,16 @@ class Body extends React.PureComponent<BodyProps> {
                     ]}
                 />
             );
-        } else {
+        } else if (hasFixedContainerElements) {
             return (
                 <Button onClick={this.toggleFixedHeader} view={'flat'}>
-                    <ArrowToggle direction={isCollapsed ? 'top' : 'bottom'} size={14} />
-                    <Icon data={Funnel} />
+                    <Icon data={isCollapsed ? ChevronsDown : ChevronsUp} />
+                </Button>
+            );
+        } else {
+            return (
+                <Button onClick={this.toggleFixedHeader} view={'flat'} disabled={true}>
+                    <Icon data={Pin} />
                 </Button>
             );
         }
@@ -420,16 +491,22 @@ class Body extends React.PureComponent<BodyProps> {
         children: React.ReactNode,
         params: DashkitGroupRenderProps,
     ) => {
-        if (!params.editMode && params.items.length === 0) {
+        const isEmpty = params.items.length === 0;
+        const hasFixedContainerElements = Boolean(
+            this.getWidgetLayoutBiGroup(FIXED_GROUP_CONTAINER_ID),
+        );
+
+        if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
 
         return (
             <FixedHeaderControls
+                isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={this.state.fixedHeaderCollapsed}
+                isCollapsed={this.getFixedHeaderCollapsedState()}
                 editMode={params.editMode}
-                controls={this.renderFixedGroupHeaderControls()}
+                controls={this.renderFixedControls(hasFixedContainerElements)}
             >
                 {children}
             </FixedHeaderControls>
@@ -441,14 +518,18 @@ class Body extends React.PureComponent<BodyProps> {
         children: React.ReactNode,
         params: DashkitGroupRenderProps,
     ) => {
-        if (!params.editMode && params.items.length === 0) {
+        const isEmpty = params.items.length === 0;
+        const hasFixedHeaderElements = Boolean(this.getWidgetLayoutBiGroup(FIXED_GROUP_HEADER_ID));
+
+        if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
 
         return (
             <FixedHeaderContainer
+                isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={this.state.fixedHeaderCollapsed}
+                isCollapsed={this.getFixedHeaderCollapsedState()}
                 editMode={params.editMode}
             >
                 {children}
@@ -528,18 +609,52 @@ class Body extends React.PureComponent<BodyProps> {
                             });
                         },
                     } as OverlayControlItem,
-                    {
-                        allWidgetsControls: true,
-                        title: 'Pin',
-                        qa: ControlQA.controlSettings,
-                        icon: Pin,
-                        handler: this.togglePinElement,
-                    } as OverlayControlItem,
                 ],
             };
         }
 
         return this._memoizedControls;
+    };
+
+    getOverlayMenu = () => {
+        if (!this._memoizedMenu) {
+            const dashkitMenu = getDashKitMenu();
+
+            this._memoizedMenu = [
+                ...dashkitMenu.slice(0, -1),
+                {
+                    id: 'pin',
+                    title: 'Pin',
+                    icon: <Icon data={Pin} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutBiId(configItem.id)?.parent;
+
+                        return (
+                            parent !== FIXED_GROUP_HEADER_ID && parent !== FIXED_GROUP_CONTAINER_ID
+                        );
+                    },
+                    qa: DashKitOverlayMenuQa.PinButton,
+                },
+                {
+                    id: 'unpin',
+                    title: 'Unpin',
+                    icon: <Icon data={PinSlash} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutBiId(configItem.id)?.parent;
+
+                        return (
+                            parent === FIXED_GROUP_HEADER_ID || parent === FIXED_GROUP_CONTAINER_ID
+                        );
+                    },
+                    qa: DashKitOverlayMenuQa.UnpinButton,
+                },
+                ...dashkitMenu.slice(-1),
+            ];
+        }
+
+        return this._memoizedMenu;
     };
 
     private renderDashkit = () => {
@@ -549,6 +664,7 @@ class Body extends React.PureComponent<BodyProps> {
         let tabDataConfig = tabData as DashKitProps['config'] | null;
 
         if (DL.IS_MOBILE && tabDataConfig) {
+            // TODO change to helper
             const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
             tabDataConfig = {
                 ...tabDataConfig,
@@ -562,8 +678,6 @@ class Body extends React.PureComponent<BodyProps> {
                     })) as ConfigItem[],
             };
         }
-
-        const overlayControls = this.getOverlayControls();
 
         const DashKit = getConfiguredDashKit();
 
@@ -595,7 +709,8 @@ class Body extends React.PureComponent<BodyProps> {
                     this.props.location.search,
                     this.props.settings.globalParams,
                 )}
-                overlayControls={overlayControls}
+                overlayControls={this.getOverlayControls()}
+                overlayMenuItems={this.getOverlayMenu()}
             />
         );
     };
