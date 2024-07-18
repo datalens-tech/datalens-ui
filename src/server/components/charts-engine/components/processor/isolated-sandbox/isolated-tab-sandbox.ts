@@ -130,6 +130,8 @@ const execute = async ({
         isolatedConsole.log(...args);
     });
 
+    jail.setSync('__timeout', timeout);
+
     try {
         prepareChartEditorApi({
             name: filename,

@@ -10,10 +10,10 @@ import type {LibsInterop} from './types';
 const NAMESPACE = `__libsQlChartV1`;
 
 export type LibsQlChartV1BuildSources = (arg: string) => string;
-export type LibsQlChartV1BuildGraph = (arg: string) => string;
-export type LibsQlChartV1BuildLibraryConfig = (arg: string) => string;
-export type LibsQlChartV1BuildChartsConfig = (arg: string) => string;
-export type LibsQlChartV1BuildD3Config = (arg: string) => string;
+export type LibsQlChartV1BuildGraph = (arg: string, number: number) => string;
+export type LibsQlChartV1BuildLibraryConfig = (arg: string, number: number) => string;
+export type LibsQlChartV1BuildChartsConfig = (arg: string, number: number) => string;
+export type LibsQlChartV1BuildD3Config = (arg: string, number: number) => string;
 
 const prepare = fs.readFileSync(path.join(__dirname, 'ql-chart-v1-prepare.js'), 'utf-8');
 
