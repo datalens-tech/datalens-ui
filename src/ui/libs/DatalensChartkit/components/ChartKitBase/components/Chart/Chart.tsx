@@ -20,6 +20,7 @@ type ChartProps = Pick<
     | 'nonBodyScroll'
     | 'forwardedRef'
     | 'paneSplitOrientation'
+    | 'widgetDashState'
 > &
     Pick<ChartKitWrapperParams, 'onLoad' | 'onChange' | 'onError' | 'onRetry'> &
     Pick<ChartKitWrapperState, 'requestId'> &
@@ -64,6 +65,7 @@ export const Chart = (props: ChartProps) => {
                 noControls={props.noControls}
                 onRetry={props.onRetry}
                 paneSplitOrientation={props.paneSplitOrientation}
+                widgetDashState={props.widgetDashState}
                 rootNodeRef={props.rootNodeRef}
             />
         );

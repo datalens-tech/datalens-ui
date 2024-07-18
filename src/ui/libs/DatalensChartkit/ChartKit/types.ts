@@ -8,6 +8,7 @@ import type {
     OnChangeData,
     OnLoadData,
     TableWidget,
+    WidgetDashState,
 } from '../types';
 
 import type YandexMap from './modules/yandex-map/yandex-map';
@@ -24,6 +25,7 @@ export type ChartKitAdapterProps = {
     isMobile?: boolean;
     splitTooltip?: boolean;
     paneSplitOrientation?: Split;
+    widgetDashState?: WidgetDashState;
     nonBodyScroll?: boolean;
     onLoad?: (args: OnLoadData) => void;
     onError?: ({error}: {error: CombinedError}) => void;
