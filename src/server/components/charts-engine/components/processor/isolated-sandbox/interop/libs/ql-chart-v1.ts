@@ -3,7 +3,6 @@ import path from 'path';
 
 import qlModule from '../../../../../../../modes/charts/plugins/ql/module';
 import functionTimeout from '../../function-timeout';
-import {JS_EXECUTION_TIMEOUT} from '../../isolated-sandbox-chart-builder';
 
 import type {LibsInterop} from './types';
 
@@ -27,38 +26,38 @@ export const libsQlChartV1Interop: LibsInterop = {
             return JSON.stringify(result);
         }) satisfies LibsQlChartV1BuildSources);
 
-        jail.setSync(`${NAMESPACE}_buildGraph`, ((arg: string) => {
+        jail.setSync(`${NAMESPACE}_buildGraph`, ((arg, timeout) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildGraph>[0];
             parsedArg.ChartEditor = chartEditorApi;
             const result = functionTimeout(qlModule.buildGraph, {
-                timeout: JS_EXECUTION_TIMEOUT,
+                timeout,
             })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsQlChartV1BuildGraph);
 
-        jail.setSync(`${NAMESPACE}_buildLibraryConfig`, ((arg: string) => {
+        jail.setSync(`${NAMESPACE}_buildLibraryConfig`, ((arg, timeout) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildLibraryConfig>[0];
             parsedArg.ChartEditor = chartEditorApi;
             const result = functionTimeout(qlModule.buildLibraryConfig, {
-                timeout: JS_EXECUTION_TIMEOUT,
+                timeout,
             })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsQlChartV1BuildLibraryConfig);
 
-        jail.setSync(`${NAMESPACE}_buildChartsConfig`, ((arg: string) => {
+        jail.setSync(`${NAMESPACE}_buildChartsConfig`, ((arg, timeout) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildChartsConfig>[0];
             parsedArg.ChartEditor = chartEditorApi;
             const result = functionTimeout(qlModule.buildChartsConfig, {
-                timeout: JS_EXECUTION_TIMEOUT,
+                timeout,
             })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsQlChartV1BuildChartsConfig);
 
-        jail.setSync(`${NAMESPACE}_buildD3Config`, ((arg: string) => {
+        jail.setSync(`${NAMESPACE}_buildD3Config`, ((arg, timeout) => {
             const parsedArg = JSON.parse(arg) as Parameters<typeof qlModule.buildD3Config>[0];
             parsedArg.ChartEditor = chartEditorApi;
             const result = functionTimeout(qlModule.buildD3Config, {
-                timeout: JS_EXECUTION_TIMEOUT,
+                timeout,
             })(parsedArg);
             return JSON.stringify(result);
         }) satisfies LibsQlChartV1BuildD3Config);
