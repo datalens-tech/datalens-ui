@@ -51,6 +51,7 @@ import {Mode} from '../../modules/constants';
 import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
 import {
     getLayoutMap,
+    getLayoutParentId,
     getPastedWidgetData,
     getPreparedCopyItemOptions,
     memoizedGetLocalTabs,
@@ -130,8 +131,25 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
+type MemoContext = {
+    fixedHeaderCollapsed?: boolean;
+    workbookId?: string | null;
+    getPreparedCopyItemOptions?: (
+        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
+    ) => ReturnType<typeof getPreparedCopyItemOptions>;
+};
+type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
+
 const FIXED_HEADER_GROUP_COLS = 35;
 const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
+
+const GROUPS_WEIGHT = {
+    [FIXED_GROUP_HEADER_ID]: 2,
+    [FIXED_GROUP_CONTAINER_ID]: 1,
+    [DEFAULT_GROUP]: 0,
+} as const;
+
+const DashKit = getConfiguredDashKit();
 
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -168,13 +186,7 @@ class Body extends React.PureComponent<BodyProps> {
         });
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
-    _memoizedContext: {
-        workbookId?: string | null;
-        getPreparedCopyItemOptions?: (
-            itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-        ) => ReturnType<typeof getPreparedCopyItemOptions>;
-    } = {};
-
+    _memoizedContext: MemoContext = {};
     _memoizedControls: DashKitProps['overlayControls'];
     _memoizedMenu: DashKitProps['overlayMenuItems'];
     _memoizedWidgetsMap: any = {layout: null, byGroup: {}, byId: {}}; // TODO type
@@ -188,7 +200,12 @@ class Body extends React.PureComponent<BodyProps> {
     groups: DashKitGroup[] = [
         {
             id: FIXED_GROUP_HEADER_ID,
-            render: (id, children, props) => this.renderFixedGroupHeader(id, children, props),
+            render: (id, children, props) =>
+                this.renderFixedGroupHeader(
+                    id,
+                    children,
+                    props as DashkitGroupRenderWithContextProps,
+                ),
             gridProperties: (props) => {
                 return {
                     ...props,
@@ -201,7 +218,12 @@ class Body extends React.PureComponent<BodyProps> {
         },
         {
             id: FIXED_GROUP_CONTAINER_ID,
-            render: (id, children, props) => this.renderFixedGroupContainer(id, children, props),
+            render: (id, children, props) =>
+                this.renderFixedGroupContainer(
+                    id,
+                    children,
+                    props as DashkitGroupRenderWithContextProps,
+                ),
         },
         {
             id: DEFAULT_GROUP,
@@ -296,7 +318,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         return (tabDataConfig?.layout || []).reduce(
             (memo, item) => {
-                const parentId = item.parent || DEFAULT_GROUP;
+                const parentId = getLayoutParentId(item);
                 const bottom = item.y + item.h;
                 const left = item.x + item.w;
 
@@ -339,41 +361,28 @@ class Body extends React.PureComponent<BodyProps> {
         return tabData as DashKitProps['config'];
     }
 
-    buildLayoutMap() {
+    getMemoLayoutMap() {
         const widgetsMap = this._memoizedWidgetsMap;
         const layout = this.getTabConfig().layout;
 
         if (widgetsMap.layout !== layout) {
             widgetsMap.layout = layout;
-            const byId: Record<string, ConfigLayout> = {};
+            const [byId, columns, byGroup] = getLayoutMap(layout);
 
             widgetsMap.byId = byId;
-            widgetsMap.byGroup = layout.reduce<Record<string, Array<ConfigLayout>>>(
-                (memo, item) => {
-                    byId[item.i] = item;
-                    const parent = item.parent || DEFAULT_GROUP;
-
-                    if (!(parent in memo)) {
-                        memo[parent] = [];
-                    }
-
-                    memo[parent].push(item);
-
-                    return memo;
-                },
-                {},
-            );
+            widgetsMap.byGroup = byGroup;
+            widgetsMap.columns = columns;
         }
 
         return widgetsMap;
     }
 
     getWidgetLayoutBiId(widgetId: string) {
-        return this.buildLayoutMap().byId[widgetId];
+        return this.getMemoLayoutMap().byId[widgetId];
     }
 
     getWidgetLayoutBiGroup(groupId: string) {
-        return this.buildLayoutMap().byGroup[groupId];
+        return this.getMemoLayoutMap().byGroup[groupId];
     }
 
     togglePinElement = (widget: ConfigItem) => {
@@ -453,7 +462,6 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     toggleFixedHeader = () => {
-        this.groups = [...this.groups]; // For dashkit groups redraw
         const {tabId} = this.props;
 
         if (tabId) {
@@ -472,9 +480,8 @@ class Body extends React.PureComponent<BodyProps> {
         return this.state.fixedHeaderCollapsed[tabId as string] || false;
     }
 
-    renderFixedControls = (hasFixedContainerElements: boolean) => {
+    renderFixedControls = (isCollapsed: boolean, hasFixedContainerElements: boolean) => {
         const {mode} = this.props;
-        const isCollapsed = this.getFixedHeaderCollapsedState();
 
         if (mode === Mode.Edit) {
             return (
@@ -512,7 +519,7 @@ class Body extends React.PureComponent<BodyProps> {
     renderFixedGroupHeader = (
         id: string,
         children: React.ReactNode,
-        params: DashkitGroupRenderProps,
+        params: DashkitGroupRenderWithContextProps,
     ) => {
         const isEmpty = params.items.length === 0;
         const hasFixedContainerElements = Boolean(
@@ -522,14 +529,15 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+        const {fixedHeaderCollapsed = false} = params.context;
 
         return (
             <FixedHeaderControls
                 isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={this.getFixedHeaderCollapsedState()}
+                isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
-                controls={this.renderFixedControls(hasFixedContainerElements)}
+                controls={this.renderFixedControls(fixedHeaderCollapsed, hasFixedContainerElements)}
             >
                 {children}
             </FixedHeaderControls>
@@ -539,7 +547,7 @@ class Body extends React.PureComponent<BodyProps> {
     renderFixedGroupContainer = (
         id: string,
         children: React.ReactNode,
-        params: DashkitGroupRenderProps,
+        params: DashkitGroupRenderWithContextProps,
     ) => {
         const isEmpty = params.items.length === 0;
         const hasFixedHeaderElements = Boolean(this.getWidgetLayoutBiGroup(FIXED_GROUP_HEADER_ID));
@@ -547,12 +555,13 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+        const {fixedHeaderCollapsed = false} = params.context;
 
         return (
             <FixedHeaderContainer
                 isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
-                isCollapsed={this.getFixedHeaderCollapsedState()}
+                isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
             >
                 {children}
@@ -565,16 +574,23 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     getContext = () => {
-        if (this._memoizedContext.workbookId !== this.props.workbookId) {
+        const memoContext = this._memoizedContext;
+
+        if (
+            memoContext.workbookId !== this.props.workbookId ||
+            memoContext.fixedHeaderCollapsed !== this.getFixedHeaderCollapsedState()
+        ) {
+            const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
+                return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
+                    workbookId: this.props.workbookId ?? null,
+                });
+            };
+
             this._memoizedContext = {
-                getPreparedCopyItemOptions: (
-                    itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-                ) => {
-                    return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
-                        workbookId: this.props.workbookId ?? null,
-                    });
-                },
+                ...(memoContext || {}),
+                getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
+                fixedHeaderCollapsed: this.getFixedHeaderCollapsedState(),
             };
         }
 
@@ -659,6 +675,41 @@ class Body extends React.PureComponent<BodyProps> {
         return this._memoizedMenu;
     };
 
+    getMobileLayout(): DashKitProps['config'] | null {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData as DashKitProps['config'] | null;
+
+        if (!tabDataConfig) {
+            return tabDataConfig;
+        }
+
+        const {byId, columns} = this.getMemoLayoutMap();
+        const getWeight = (item: DashTabItem): number => {
+            const parentId = getLayoutParentId(byId[item.id]);
+
+            return (GROUPS_WEIGHT as any)[parentId] || 0;
+        };
+
+        return {
+            ...tabDataConfig,
+            items: (tabDataConfig.items as DashTab['items'])
+                .sort((prev, next) => {
+                    const prevWeight = getWeight(prev);
+                    const nextWeight = getWeight(next);
+
+                    if (prevWeight === nextWeight) {
+                        return sortByOrderIdOrLayoutComparator(prev, next, byId, columns);
+                    }
+
+                    return nextWeight - prevWeight;
+                })
+                .map((item, index) => ({
+                    ...item,
+                    orderId: item.orderId || index,
+                })) as ConfigItem[],
+        };
+    }
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
@@ -672,25 +723,9 @@ class Body extends React.PureComponent<BodyProps> {
             dashkitSettings,
         } = this.props;
 
-        let tabDataConfig = tabData as DashKitProps['config'] | null;
-
-        if (DL.IS_MOBILE && tabDataConfig) {
-            // TODO change to helper
-            const [layoutMap, layoutColumns] = getLayoutMap(tabDataConfig.layout);
-            tabDataConfig = {
-                ...tabDataConfig,
-                items: (tabDataConfig.items as DashTab['items'])
-                    .sort((prev, next) =>
-                        sortByOrderIdOrLayoutComparator(prev, next, layoutMap, layoutColumns),
-                    )
-                    .map((item, index) => ({
-                        ...item,
-                        orderId: item.orderId || index,
-                    })) as ConfigItem[],
-            };
-        }
-
-        const DashKit = getConfiguredDashKit();
+        const tabDataConfig = DL.IS_MOBILE
+            ? this.getMobileLayout()
+            : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
 

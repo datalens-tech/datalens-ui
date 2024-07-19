@@ -287,6 +287,7 @@ export interface DashTabLayout {
     w: number;
     x: number;
     y: number;
+    parent?: string;
 }
 
 export interface DashTabAliases extends Dictionary<Array<string[]>> {}
