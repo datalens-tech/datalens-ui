@@ -1,6 +1,6 @@
 import {GeoDots, LayoutColumns3, SquareHashtag} from '@gravity-ui/icons';
 import type {Field, VisualizationLayerShared} from 'shared';
-import {DatasetFieldType, isMeasureValue} from 'shared';
+import {DatasetFieldType, isMarkupField, isMeasureValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';
@@ -23,7 +23,8 @@ export const POLYLINE_VISUALIZATION = {
     checkAllowedDesignItems: ({item}: {item: Field}) =>
         item.type === DatasetFieldType.Dimension || item.type === DatasetFieldType.Measure,
     checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+        (ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item)) &&
+        !isMarkupField(item),
     availableLabelModes: ['absolute'],
     placeholders: [
         {
