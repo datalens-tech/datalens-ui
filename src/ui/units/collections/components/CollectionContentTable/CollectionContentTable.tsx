@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DEFAULT_DATE_FORMAT} from 'shared/constants';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import type {
     CollectionWithPermissions,
@@ -51,7 +51,7 @@ export const CollectionContentTable = React.memo<Props>(
     }) => {
         const items = useSelector(selectCollectionContentItems);
 
-        const selectedCount = Object.keys(selectedMap).length;
+        const selectedCount = React.useMemo(() => Object.keys(selectedMap).length, [selectedMap]);
 
         const checkboxPropsSelected = React.useMemo(() => {
             if (itemsAvailableForSelectionCount > 0) {
@@ -69,7 +69,7 @@ export const CollectionContentTable = React.memo<Props>(
             }
         }, [selectedCount, itemsAvailableForSelectionCount]);
 
-        if (isMobileView) {
+        if (DL.IS_MOBILE) {
             return (
                 <div className={b({mobile: true})}>
                     <AnimateBlock>
@@ -117,6 +117,9 @@ export const CollectionContentTable = React.memo<Props>(
                                                 selectedCount !== itemsAvailableForSelectionCount,
                                             );
                                         }}
+                                        checked={false}
+                                        indeterminate={false}
+                                        disabled={false}
                                         {...checkboxPropsSelected}
                                     />
                                 </div>

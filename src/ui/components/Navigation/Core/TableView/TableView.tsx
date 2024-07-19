@@ -1,7 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import {BatchPanel} from '../../components/BatchPanel/BatchPanel';
 import type {BatchAction} from '../../types';
@@ -38,7 +38,7 @@ export const TableView = (props: TableViewProps) => {
     const showBatchPanel = isBatchEnabled && countSelectedIds > 0;
 
     return (
-        <div className={b({mobile: isMobileView})}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             <List
                 {...listProps}
                 selectedIds={selectedIds}

@@ -14,8 +14,8 @@ import type {
 } from 'shared';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 
+import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
-import {ITEM_TYPE} from '../../containers/Dialogs/constants';
 import {Mode} from '../../modules/constants';
 import {
     ALL_OPERATIONS,
@@ -37,7 +37,9 @@ const selectInitialTabsSettings = (state: DatalensGlobalState) => state.dash.ini
 
 export const selectDashEntry = (state: DatalensGlobalState) => state.dash.entry || null;
 
-export const selectDashData = (state: DatalensGlobalState) => state.dash.data || null;
+export const selectDashData = (state: DatalensGlobalState) => state.dash?.data || null;
+
+export const selectDashError = (state: DatalensGlobalState) => state.dash.error;
 
 export const selectEntryId = (state: DatalensGlobalState) =>
     state.dash.entry ? state.dash.entry.entryId : null;
@@ -48,7 +50,7 @@ export const selectEntryTitle = (state: DatalensGlobalState) =>
 export const selectEntryData = (state: DatalensGlobalState) =>
     state.dash.convertedEntryData || state.dash.entry?.data || null;
 
-export const selectSettings = (state: DatalensGlobalState) => state.dash.data?.settings || {};
+export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
 
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
@@ -207,7 +209,7 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
     return inputOperations.filter((operation) => availableOperations[operation.value]);
 };
 
-export const selectTabId = (state: DatalensGlobalState) => state.dash.tabId;
+export const selectTabId = (state: DatalensGlobalState) => state.dash?.tabId;
 
 export const selectTabs = (state: DatalensGlobalState) => state.dash.data?.tabs || null;
 export const selectTab = (state: DatalensGlobalState) =>
@@ -215,7 +217,7 @@ export const selectTab = (state: DatalensGlobalState) =>
 export const selectShowTableOfContent = (state: DatalensGlobalState) =>
     state.dash.showTableOfContent;
 
-export const selectHashStates = (state: DatalensGlobalState) => state.dash.hashStates;
+export const selectHashStates = (state: DatalensGlobalState) => state.dash?.hashStates;
 
 export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stateHashId;
 

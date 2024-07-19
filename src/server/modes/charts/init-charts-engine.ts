@@ -178,7 +178,7 @@ export function initChartsEngine({
         nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
-        runners: getDefaultRunners(ctx),
+        runners: getDefaultRunners(),
     });
 }
 

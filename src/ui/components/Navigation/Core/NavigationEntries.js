@@ -2,20 +2,18 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {Icon, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Loader, RadioButton} from '@gravity-ui/uikit';
 import cn from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Feature, filterUsersIds, makeUserId, normalizeDestination} from 'shared';
+import {filterUsersIds, makeUserId, normalizeDestination} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import Tabs from 'ui/components/Tabs/Tabs';
-import {registry} from 'ui/registry';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
-import {isCurrentTenantWithOrg} from 'utils/tenant';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import logger from '../../../libs/logger';
 import {getSdk} from '../../../libs/schematic-sdk';
@@ -29,10 +27,6 @@ import ErrorView from './ErrorView/ErrorView';
 import OrderSelect from './OrderSelect/OrderSelect';
 import SearchInput from './SearchInput/SearchInput';
 import {TableView} from './TableView/TableView';
-
-import hddIcon from '@gravity-ui/icons/svgs/hard-drive.svg';
-import tasksIcon from '@gravity-ui/icons/svgs/list-check.svg';
-import serverIcon from '@gravity-ui/icons/svgs/server.svg';
 
 import './NavigationEntries.scss';
 
@@ -532,66 +526,18 @@ class NavigationEntries extends React.Component {
         );
     }
     renderFiltersForMobileNavigationPage() {
-        const {ownership, place} = this.state;
-        const isFavorites = place === PLACE.FAVORITES;
-        const showFoldersSelect =
-            Utils.isEnabledFeature(Feature.ShowActionPanelTreeSelect) &&
-            !isCurrentTenantWithOrg() &&
-            !Utils.isEnabledFeature(Feature.NewMobileDesign);
-
-        const {CloudTreeSelectBase} = registry.common.components.getAll();
+        const {ownership} = this.state;
 
         return (
             <div>
-                <div className={b('mobile-filters', {mobile: isMobileView})}>
-                    {Utils.isEnabledFeature(Feature.NewMobileDesign) ? (
-                        <Tabs
-                            items={mobileTabsItems}
-                            activeTab={ownership}
-                            size={MOBILE_SIZE.TABS}
-                            onSelectTab={this.onSelectTab}
-                        />
-                    ) : (
-                        <React.Fragment>
-                            <div
-                                className={b('mobile-filter-item', {
-                                    active: !isFavorites && ownership === OWNERSHIP.ALL,
-                                })}
-                                onClick={this.onAllDashboardsFilterClick}
-                            >
-                                <span className={b('mobile-filter-item-icon')}>
-                                    <Icon data={serverIcon} size={16} />
-                                </span>
-                                {i18n('label_mobile-navigation-filters-all')}
-                            </div>
-                            <div
-                                className={b('mobile-filter-item', {
-                                    active: !isFavorites && ownership === OWNERSHIP.ONLY_MINE,
-                                })}
-                                onClick={this.onOnlyMineDashboardsFilterClick}
-                            >
-                                <span className={b('mobile-filter-item-icon')}>
-                                    <Icon data={hddIcon} size={16} />
-                                </span>
-                                {i18n('label_mobile-navigation-filters-mine')}
-                            </div>
-                            <div
-                                className={b('mobile-filter-item', {active: isFavorites})}
-                                onClick={this.onFavoritesDashboardsFilterClick}
-                            >
-                                <span className={b('mobile-filter-item-icon')}>
-                                    <Icon data={tasksIcon} size={16} />
-                                </span>
-                                {i18n('label_mobile-navigation-filters-favorites')}
-                            </div>
-                        </React.Fragment>
-                    )}
+                <div className={b('mobile-filters', {mobile: DL.IS_MOBILE})}>
+                    <Tabs
+                        items={mobileTabsItems}
+                        activeTab={ownership}
+                        size={MOBILE_SIZE.TABS}
+                        onSelectTab={this.onSelectTab}
+                    />
                 </div>
-                {showFoldersSelect && (
-                    <div className={b('folders-select')}>
-                        <CloudTreeSelectBase folderId={DL.CURRENT_TENANT_ID} />
-                    </div>
-                )}
             </div>
         );
     }

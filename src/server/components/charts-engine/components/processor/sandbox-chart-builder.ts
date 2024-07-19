@@ -268,5 +268,6 @@ export const getSandboxChartBuilder = async (
                 name: tabResult.filename,
             };
         },
+        dispose: () => {},
     };
 };

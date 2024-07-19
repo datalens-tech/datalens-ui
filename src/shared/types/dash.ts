@@ -11,6 +11,10 @@ import type {
     StringParams,
 } from './index';
 
+export enum ControlType {
+    Dash = 'control_dash',
+}
+
 export enum DashTabItemType {
     Title = 'title',
     Text = 'text',
@@ -151,10 +155,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {
-        hideTitle: boolean;
-        tabs: DashTabItemWidgetTab[];
-    };
+    data: {hideTitle: boolean; tabs: DashTabItemWidgetTab[]};
 }
 
 export interface DashTabItemWidgetTab {

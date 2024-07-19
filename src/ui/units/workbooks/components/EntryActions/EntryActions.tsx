@@ -76,10 +76,7 @@ export const EntryActions = ({
               ]
             : []),
         ...useAdditionalWorkbookEntryActions(entry, workbook),
-    ];
-
-    if (Utils.isEnabledFeature(Feature.RelatedEntitiesList)) {
-        items.push([
+        [
             {
                 action: onShowRelatedClick,
                 text: (
@@ -89,8 +86,8 @@ export const EntryActions = ({
                     />
                 ),
             },
-        ]);
-    }
+        ],
+    ];
 
     const otherActions: DropdownMenuItemMixed<unknown>[] = [];
 

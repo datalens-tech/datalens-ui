@@ -1,5 +1,6 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import type {Split} from 'react-split-pane';
 
 import type {
     CombinedError,
@@ -7,6 +8,7 @@ import type {
     OnChangeData,
     OnLoadData,
     TableWidget,
+    WidgetDashState,
 } from '../types';
 
 import type YandexMap from './modules/yandex-map/yandex-map';
@@ -22,6 +24,8 @@ export type ChartKitAdapterProps = {
     lang?: string;
     isMobile?: boolean;
     splitTooltip?: boolean;
+    paneSplitOrientation?: Split;
+    widgetDashState?: WidgetDashState;
     nonBodyScroll?: boolean;
     onLoad?: (args: OnLoadData) => void;
     onError?: ({error}: {error: CombinedError}) => void;
@@ -34,6 +38,7 @@ export type ChartKitAdapterProps = {
     requestId?: string;
     noControls?: boolean;
     onRetry?: () => void;
+    rootNodeRef: React.RefObject<HTMLDivElement | null>;
 } & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
 
 declare module '@gravity-ui/chartkit' {

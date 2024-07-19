@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartkit';
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
+import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
 
 import {registry} from '../../../registry';
@@ -9,11 +10,15 @@ import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError
 import DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
 import {ChartKit} from './ChartKit';
+import {ChartKitTooltip} from './components';
+import type {ChartKitTooltipRef} from './components';
 import {getAdditionalProps, getOpensourceChartKitData} from './helpers/chartkit-adapter';
 import {I18N as modulesI18n} from './modules/i18n/i18n';
 import type {ChartKitAdapterProps} from './types';
 
-const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
+type ChartkitWidgetProps = Omit<ChartKitAdapterProps, 'rootNodeRef'>;
+
+const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, ref) => {
     const {
         loadedData,
         lang,
@@ -26,6 +31,8 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
         onRender,
         onChartLoad,
         renderPluginLoader,
+        paneSplitOrientation,
+        widgetDashState,
     } = props;
 
     const chartkitType = React.useMemo(() => {
@@ -63,6 +70,8 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
             onRender,
             onError,
             renderPluginLoader,
+            paneSplitOrientation,
+            widgetDashState,
             ...additionalProps,
         } as ChartKitProps<typeof chartkitType>;
     }, [
@@ -77,6 +86,8 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
         splitTooltip,
         isMobile,
         chartkitType,
+        paneSplitOrientation,
+        widgetDashState,
     ]);
 
     React.useEffect(() => {
@@ -108,12 +119,36 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, 
             onRender={onRender}
             onError={onError}
             onChange={onChange}
+            paneSplitOrientation={paneSplitOrientation}
+            widgetDashState={widgetDashState}
         />
     );
 });
 ChartkitWidget.displayName = 'ChartkitWidget';
 
 export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>((props, ref) => {
+    const {rootNodeRef, ...restProps} = props;
+    const tooltipRef = React.useRef<ChartKitTooltipRef>(null);
+
+    const handleContainerMousemove = React.useCallback((e: MouseEvent) => {
+        tooltipRef.current?.checkForTooltipNode(e);
+    }, []);
+
+    React.useEffect(() => {
+        const throttledHandler = throttle(handleContainerMousemove, 200);
+        const container = rootNodeRef.current;
+
+        if (container) {
+            rootNodeRef.current.addEventListener('mousemove', throttledHandler);
+        }
+
+        return () => {
+            if (container) {
+                container.removeEventListener('mousemove', throttledHandler);
+            }
+        };
+    }, [rootNodeRef, handleContainerMousemove]);
+
     return (
         <ErrorBoundary
             onError={(error) => {
@@ -129,7 +164,8 @@ export const ChartKitAdapter = React.forwardRef<ChartKit, ChartKitAdapterProps>(
                 />
             )}
         >
-            <ChartkitWidget ref={ref} {...props} />
+            <ChartkitWidget ref={ref} {...restProps} />
+            <ChartKitTooltip ref={tooltipRef} />
         </ErrorBoundary>
     );
 });

@@ -4,17 +4,20 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashTabItemControlSourceType} from '../../../../src/shared';
-import type {SelectorSettings} from '../../../page-objects/dashboard/ControlActions';
+import {
+    SelectorElementType,
+    type SelectorSettings,
+} from '../../../page-objects/dashboard/ControlActions';
 
 const TITLE = 'City';
 const INNER_TITLE = 'innerCity';
 
 const createDashWithSelector = async ({
     page,
-    settings,
+    settings = {},
 }: {
     page: Page;
-    settings: SelectorSettings;
+    settings?: SelectorSettings;
 }) => {
     const dashboardPage = new DashboardPage({page});
 
@@ -28,7 +31,6 @@ const createDashWithSelector = async ({
                         innerTitleEnabled: true,
                         innerTitle: INNER_TITLE,
                     },
-                    elementType: {innerText: 'List'},
                 },
                 ...settings,
             });
@@ -60,7 +62,6 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
 
             await createDashWithSelector({
                 page,
-                settings: {elementType: {innerText: 'List'}},
             });
 
             await checkLabels(dashboardPage, 'select');
@@ -74,7 +75,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
 
             await createDashWithSelector({
                 page,
-                settings: {elementType: {innerText: 'Input field'}},
+                settings: {elementType: SelectorElementType.Input},
             });
 
             await checkLabels(dashboardPage, 'input');
@@ -82,7 +83,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual List. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual List. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -91,7 +92,6 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
                 settings: {
                     sourceType: DashTabItemControlSourceType.Manual,
                     fieldName: 'Some name',
-                    elementType: {innerText: 'List'},
                 },
             });
 
@@ -100,7 +100,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
     );
 
     datalensTest(
-        'ElementType: Manual Input field. The configured headers of the selectors based on the dataset are displayed on the dashboard',
+        'ElementType: Manual Input field. The configured headers of the manual selectors are displayed on the dashboard',
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
@@ -109,7 +109,7 @@ datalensTest.describe('Dashboards - The internal header of selectors', () => {
                 settings: {
                     sourceType: DashTabItemControlSourceType.Manual,
                     fieldName: 'Some name',
-                    elementType: {innerText: 'Input field'},
+                    elementType: SelectorElementType.Input,
                 },
             });
 

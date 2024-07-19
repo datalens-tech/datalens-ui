@@ -5,8 +5,8 @@ import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {Feature} from 'shared';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
-import {isMobileView} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
 import type {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
@@ -53,16 +53,16 @@ export const CollectionsNavigationLayout = React.memo<Props>(
     ({layout, skeletonsSettings, children}) => {
         const {Footer} = registry.common.components.getAll();
 
-        const showTitleActionsBlock = !isMobileView && layout.titleActionsBlock;
-        const showTitleRightBlock = !isMobileView && layout.titleRightBlock;
-        const showDescription = !isMobileView && layout.description;
+        const showTitleActionsBlock = !DL.IS_MOBILE && layout.titleActionsBlock;
+        const showTitleRightBlock = !DL.IS_MOBILE && layout.titleRightBlock;
+        const showDescription = !DL.IS_MOBILE && layout.description;
 
         const title = typeof layout.title?.content === 'string' ? layout.title.content : '';
         
         return (
-            <div className={b({mobile: isMobileView})}>
+            <div className={b({mobile: DL.IS_MOBILE})}>
                 {(layout.actionsPanelLeftBlock || layout.actionsPanelRightBlock) &&
-                    !isMobileView && (
+                    !DL.IS_MOBILE && (
                         <ActionBar>
                             <ActionBar.Section type="primary">
                                 <ActionBar.Group pull="left">

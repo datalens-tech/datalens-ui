@@ -6,12 +6,13 @@ import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/help
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
 import {ControlQA, DashTabItemType} from 'shared';
+import {type DatalensGlobalState} from 'ui';
+import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {
@@ -20,7 +21,6 @@ import {
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {
     selectCurrentTab,
@@ -39,6 +39,7 @@ import {Control} from './Control/Control';
 import type {
     ContextProps,
     ExtendedLoadedData,
+    GroupControlLocalMeta,
     PluginGroupControlState,
     ResolveMetaResult,
 } from './types';
@@ -89,7 +90,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
 
-    localMeta: StateAndParamsMetaData = {version: LOCAL_META_VERSION, queue: []};
+    localMeta: GroupControlLocalMeta = {version: LOCAL_META_VERSION, queue: []};
 
     constructor(props: PluginGroupControlProps) {
         super(props);
@@ -231,7 +232,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return (
             <div
                 ref={this.rootNode}
-                className={b({mobile: isMobileView, static: !this.props.data.autoHeight})}
+                className={b({mobile: DL.IS_MOBILE, static: !this.props.data.autoHeight})}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -245,7 +246,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     {this.renderControls()}
                     {isLoading && (
                         <div className={b('loader')}>
-                            <Loader size="s" />
+                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
                 </div>
@@ -285,6 +286,100 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         });
     };
 
+    private getControlsIds = ({
+        data,
+        controlId,
+    }: {
+        data: DashTabItemGroupControlData;
+        controlId?: string;
+    }) => {
+        let controlIdOrder = data.group.map(({id}) => id);
+
+        if (!data.buttonApply || controlId) {
+            return controlId ? [controlId] : controlIdOrder;
+        }
+
+        // processing alias params so that the param from the alias that was entered last is applied
+        // to all params from that alias
+
+        const paramsInGroup = data.group.map(
+            (groupItem) => Object.keys(groupItem.defaults || {})[0],
+        );
+
+        const currentNamespaceAliases = this.props.currentTabConfig?.aliases[this.props.namespace];
+        // we leave only aliases that involve two or more selectors from the group
+        const groupAliasesList = currentNamespaceAliases
+            ? currentNamespaceAliases.reduce((aliasArr: string[][], currentAlias) => {
+                  let participationInGroupCount = 0;
+                  for (const alias of currentAlias) {
+                      if (paramsInGroup.includes(alias)) {
+                          participationInGroupCount++;
+                      }
+
+                      if (participationInGroupCount >= 2) {
+                          aliasArr.push(currentAlias);
+                          break;
+                      }
+                  }
+
+                  return aliasArr;
+              }, [])
+            : [];
+
+        // for each alias, we swap the positions in the queue
+        // only the selectors included in the current alias are swapped
+        // the last applied selector from the alias becomes the closest to the end of the queue
+        groupAliasesList.forEach((alias) => {
+            const placementOrderIds: string[] = [];
+
+            // save the current order of selectors
+            controlIdOrder.forEach((id) => {
+                const usedParams = this.controlsData[id]?.uiScheme;
+                const control = Array.isArray(usedParams) ? usedParams[0] : usedParams?.controls[0];
+                if (control && 'param' in control && alias.includes(control.param)) {
+                    placementOrderIds.push(id);
+                }
+            });
+
+            // ids from the selector change queue
+            const queueOrderIds: string[] = [];
+            // selectors from alias that havn't been changed yet. they should be added to the top of queue
+            const outQueueIds: string[] = [];
+
+            this.localMeta.queue.forEach(({groupItemId, param}) => {
+                if (groupItemId && param && alias.includes(param)) {
+                    queueOrderIds.push(groupItemId);
+                }
+            });
+
+            placementOrderIds.forEach((id) => {
+                if (!queueOrderIds.includes(id)) {
+                    outQueueIds.push(id);
+                }
+            });
+
+            // final order in which alias selectors should be applied
+            const changedOrderIds: string[] = outQueueIds.concat(queueOrderIds);
+
+            let currentPlacementIndex = 0;
+
+            // we replace each selector from placementOrderIds with a selector fromchangedOrderIds
+            controlIdOrder = controlIdOrder.map((id) => {
+                if (
+                    placementOrderIds[currentPlacementIndex] === id &&
+                    changedOrderIds[currentPlacementIndex]
+                ) {
+                    const newControlId = changedOrderIds[currentPlacementIndex];
+                    currentPlacementIndex++;
+                    return newControlId;
+                }
+                return id;
+            });
+        });
+
+        return controlIdOrder;
+    };
+
     private onChange = ({
         params,
         callChangeByClick,
@@ -300,14 +395,25 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // 1. 'Apply button' is clicked
         // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
-            const groupItemIds = controlId ? [controlId] : controlData.group.map(({id}) => id);
-            this.props.onStateAndParamsChange({params}, {groupItemIds});
+            this.props.onStateAndParamsChange(
+                {params},
+                {groupItemIds: this.getControlsIds({data: controlData, controlId})},
+            );
             this.localMeta.queue = [];
             return;
         }
 
         // Change params by control when 'Apply button' is enabled
         if (controlId) {
+            if (controlData.buttonApply) {
+                this.localMeta.queue = addItemToLocalQueue(
+                    this.localMeta.queue,
+                    this.props.id,
+                    controlId,
+                    // need name of control main param for alias case
+                    Object.keys(params)[0],
+                );
+            }
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 this.setState({
                     stateParams: this.getLocalUpdatedParams(controlId, params),
@@ -376,8 +482,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             ...this.state.stateParams,
             [controlId]: {...this.state.stateParams[controlId], ...params} as StringParams,
         };
-
-        this.localMeta.queue = addItemToLocalQueue(this.localMeta.queue, this.props.id, controlId);
 
         return this.getUpdatedGroupParams({params: newParams});
     };

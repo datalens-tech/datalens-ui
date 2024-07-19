@@ -5,9 +5,9 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import {DL} from 'ui/constants/common';
 import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {closeDialog, openDialogErrorWithTabs} from 'ui/store/actions/dialog';
-import {isMobileView} from 'ui/utils/mobile';
 
 import type {ErrorData} from '../types';
 import {prepareSelectorError} from '../utils';
@@ -45,7 +45,7 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     };
 
     return (
-        <div className={b({mobile: isMobileView})} onClick={handleClick}>
+        <div className={b({mobile: DL.IS_MOBILE})} onClick={handleClick}>
             <span className={b('label')}>{i18n('label_error')}</span>
             <Icon data={TriangleExclamationFill} className={b('icon')} />
         </div>

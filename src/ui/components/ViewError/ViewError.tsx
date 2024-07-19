@@ -6,10 +6,13 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
-import {ErrorContent, Utils} from 'ui';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
+import {isManualError} from 'ui/utils/errors/manual';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 
 import type {DataLensApiError} from '../../typings';
+import ErrorContent from '../ErrorContent/ErrorContent';
 
 import './ViewError.scss';
 
@@ -26,6 +29,7 @@ export interface ViewErrorProps {
     buttonText?: string;
     withReport?: boolean;
     actionContent?: React.ReactNode;
+    hideDetails?: boolean;
 }
 
 export const ViewError = ({
@@ -38,6 +42,7 @@ export const ViewError = ({
     buttonText,
     withReport,
     actionContent,
+    hideDetails,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -80,8 +85,8 @@ export const ViewError = ({
     const errorClassname = className || 'actions';
     const buttonDetailsText = buttonText || i18n('button_details');
 
-    const buttonSize = isMobileView ? MOBILE_SIZE.BUTTON : 'm';
-    const buttonWidth = isMobileView ? 'max' : 'auto';
+    const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
+    const buttonWidth = DL.IS_MOBILE ? 'max' : 'auto';
 
     const handleClickDetails = () => {
         dispatch(
@@ -93,9 +98,12 @@ export const ViewError = ({
         );
     };
 
+    const showRetry =
+        typeof retry === 'function' && (!isManualError(error) || !error.extra?.hideRetry);
+
     const content = (
-        <div className={b(errorClassname, {mobile: isMobileView})}>
-            {typeof retry === 'function' && (
+        <div className={b(errorClassname, {mobile: DL.IS_MOBILE})}>
+            {showRetry && (
                 <Button
                     className={b('btn-retry')}
                     size={buttonSize}
@@ -105,15 +113,17 @@ export const ViewError = ({
                     {i18n('button_retry')}
                 </Button>
             )}
-            <Button
-                className={b('btn-details')}
-                size={buttonSize}
-                width={buttonWidth}
-                view="outlined"
-                onClick={handleClickDetails}
-            >
-                {buttonDetailsText}
-            </Button>
+            {!hideDetails && (
+                <Button
+                    className={b('btn-details')}
+                    size={buttonSize}
+                    width={buttonWidth}
+                    view="outlined"
+                    onClick={handleClickDetails}
+                >
+                    {buttonDetailsText}
+                </Button>
+            )}
             {actionContent}
         </div>
     );
@@ -125,6 +135,7 @@ export const ViewError = ({
             description={description || message}
             action={{content}}
             error={error}
+            showDebugInfo={!hideDetails}
         />
     );
 };

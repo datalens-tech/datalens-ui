@@ -15,7 +15,6 @@ import {registry} from 'ui/registry/index';
 import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
 import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {EntryActions} from '../../../EntryActions/EntryActions';
 import {defaultRowStyle, mobileRowStyle} from '../constants';
@@ -94,7 +93,7 @@ const Row: React.FC<RowProps> = ({
 
     const {ButtonFavorite} = registry.common.components.getAll();
 
-    if (isMobileView) {
+    if (DL.IS_MOBILE) {
         return (
             <Link
                 to={url}

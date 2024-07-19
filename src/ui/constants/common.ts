@@ -265,7 +265,10 @@ export const DL = {
     },
     get OIDC_NAME_4() {
         return window.DL.oidc_name_4 || 'OIDC';
-    }
+    },
+    get RUN_ENDPOINT() {
+        return window.DL.runEndpoint || '/api/run';
+    },
 };
 
 export const LIGHT_THEME = 'light';
@@ -301,7 +304,6 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
-    SAFE_CHART: '_safe_chart',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;

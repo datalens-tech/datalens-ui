@@ -245,4 +245,5 @@ export default {
     oidc_client_id_4: process.env.OIDC_CLIENT_ID_4 || '',
     oidc_secret_4: process.env.OIDC_SECRET_4 || '',
     oidc_name_4: process.env.OIDC_NAME_4 || '',
+    runEndpoint: '/api/run',
 };

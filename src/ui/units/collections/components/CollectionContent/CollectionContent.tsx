@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import type {
     CollectionWithPermissions,
@@ -17,15 +17,15 @@ import type {
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import type {CollectionContentFilters} from '../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
-import {BatchPanel} from '../../../../components/Navigation/components/BatchPanel/BatchPanel';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
-    selectCollectionContentItems,
     selectCollectionContentNextPageTokens,
 } from '../../store/selectors';
+import type {CollectionBatchAction} from '../CollectionBatchPanel/CollectionBatchPanel';
+import {CollectionBatchPanel} from '../CollectionBatchPanel/CollectionBatchPanel';
 import {CollectionContentGrid} from '../CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
@@ -43,9 +43,12 @@ interface Props {
     filters: CollectionContentFilters;
     viewMode: CollectionPageViewMode;
     selectedMap: SelectedMap;
+    selectedMapWithMovePermission: SelectedMap;
+    selectedMapWithDeletePermission: SelectedMap;
     itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
+    isEmptyItems: boolean;
     getCollectionContentRecursively: (
         args: GetCollectionContentArgs,
     ) => CancellablePromise<GetCollectionContentResponse | null>;
@@ -54,6 +57,7 @@ interface Props {
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
     onMoveSelectedEntitiesClick: () => void;
+    onDeleteSelectedEntitiesClick: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
@@ -64,20 +68,23 @@ export const CollectionContent: React.FC<Props> = ({
     filters,
     viewMode,
     selectedMap,
+    selectedMapWithMovePermission,
+    selectedMapWithDeletePermission,
     itemsAvailableForSelection,
     isOpenSelectionMode,
     canCreateWorkbook,
+    isEmptyItems,
     getCollectionContentRecursively,
     fetchCollectionContent,
     onCloseMoveDialog,
     onCreateWorkbookClick,
     onClearFiltersClick,
     onMoveSelectedEntitiesClick,
+    onDeleteSelectedEntitiesClick,
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
 }) => {
-    const items = useSelector(selectCollectionContentItems);
     const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
     const collectionContentError = useSelector(selectCollectionContentError);
     const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);
@@ -94,6 +101,17 @@ export const CollectionContent: React.FC<Props> = ({
             setWaypointDisabled(true);
         }
     }, [collectionContentError]);
+
+    const onAction = React.useCallback(
+        (action: CollectionBatchAction) => {
+            if (action === 'move') {
+                onMoveSelectedEntitiesClick();
+            } else if (action === 'delete') {
+                onDeleteSelectedEntitiesClick();
+            }
+        },
+        [onDeleteSelectedEntitiesClick, onMoveSelectedEntitiesClick],
+    );
 
     const onWaypointEnter = React.useCallback(() => {
         if (
@@ -141,12 +159,12 @@ export const CollectionContent: React.FC<Props> = ({
         onCloseMoveDialog,
     });
 
-    if (isCollectionContentLoading && items.length === 0) {
+    if (isCollectionContentLoading && isEmptyItems) {
         return <SmartLoader size="l" />;
     }
 
-    if (items.length === 0) {
-        if (isDefaultFilters || isMobileView) {
+    if (isEmptyItems) {
+        if (isDefaultFilters || DL.IS_MOBILE) {
             return (
                 <AnimateBlock className={b('empty-state')}>
                     <PlaceholderIllustration
@@ -170,7 +188,7 @@ export const CollectionContent: React.FC<Props> = ({
                 </AnimateBlock>
             );
         }
-        const description = isMobileView ? undefined : i18n('section_incorrect-filters');
+        const description = DL.IS_MOBILE ? undefined : i18n('section_incorrect-filters');
 
         return (
             <AnimateBlock className={b('empty-state')}>
@@ -179,7 +197,7 @@ export const CollectionContent: React.FC<Props> = ({
                     title={i18n('label_not-found')}
                     description={description}
                     renderAction={() => {
-                        if (isMobileView) {
+                        if (DL.IS_MOBILE) {
                             return null;
                         }
 
@@ -197,7 +215,7 @@ export const CollectionContent: React.FC<Props> = ({
         );
     }
 
-    const showGridMode = viewMode === CollectionPageViewMode.Grid && !isMobileView;
+    const showGridMode = viewMode === CollectionPageViewMode.Grid && !DL.IS_MOBILE;
 
     return (
         <div className={b()}>
@@ -222,9 +240,10 @@ export const CollectionContent: React.FC<Props> = ({
 
             {Object.keys(selectedMap).length > 0 && (
                 <div className={b('batch-panel-placeholder')}>
-                    <BatchPanel
-                        count={Object.keys(selectedMap).length}
-                        onAction={onMoveSelectedEntitiesClick}
+                    <CollectionBatchPanel
+                        countForMove={Object.keys(selectedMapWithMovePermission).length}
+                        countForDelete={Object.keys(selectedMapWithDeletePermission).length}
+                        onAction={onAction}
                         className={b('batch-panel')}
                         onClose={resetSelected}
                     />

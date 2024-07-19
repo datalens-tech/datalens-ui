@@ -75,6 +75,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
         isPageHidden,
         autoupdateInterval,
         workbookId,
+        forceShowSafeChart,
+        paneSplitOrientation,
+        widgetDashState,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -186,6 +189,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         enableActionParams: actionParamsEnabled,
         isPageHidden,
         autoupdateInterval,
+        forceShowSafeChart,
     });
 
     /**
@@ -277,6 +281,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 renderPluginLoader={renderPluginLoader}
+                paneSplitOrientation={paneSplitOrientation}
+                widgetDashState={widgetDashState}
+                rootNodeRef={rootNodeRef}
             />
         </div>
     );

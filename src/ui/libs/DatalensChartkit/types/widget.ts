@@ -72,6 +72,10 @@ export type ChartsInsightsData = {
     locators: ChartsInsightsLocators;
 };
 
+export type UiSandboxRuntimeOptions = {
+    totalTimeLimit?: number;
+};
+
 export interface WidgetBase {
     type: string;
     entryId?: string;
@@ -98,9 +102,14 @@ export interface WidgetBase {
     traceId?: string;
     chartsInsightsData?: ChartsInsightsData;
     sideMarkdown?: string;
+    uiSandboxOptions?: UiSandboxRuntimeOptions;
 }
 
 type WidgetBaseWithData = Required<WidgetBase, 'data'>;
+
+export type WidgetDashState = Partial<{
+    isPreviewMode: boolean;
+}>;
 
 export type ControlsOnlyWidget = Optional<WidgetBase, 'data'> & WithControls;
 

@@ -6,7 +6,7 @@ import type {AxiosResponse} from 'axios';
 import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatalensGlobalState} from 'index';
+import {type DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
@@ -19,12 +19,12 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
+import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -440,7 +440,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                             shared: data,
                         },
                         meta: {
-                            stype: 'control_dash',
+                            stype: ControlType.Dash,
                         },
                     },
                     params: this.actualParams,
@@ -727,7 +727,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                                     shared: data,
                                 },
                                 meta: {
-                                    stype: 'control_dash',
+                                    stype: ControlType.Dash,
                                 },
                             } as any
                             // can't retype because of dashkit
@@ -751,7 +751,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             '') as string;
 
         return (
-            <div ref={this.rootNode} className={b({mobile: isMobileView})}>
+            <div ref={this.rootNode} className={b({mobile: DL.IS_MOBILE})}>
                 {this.renderSilentLoader()}
                 <DebugInfoTool
                     modType={'corner'}

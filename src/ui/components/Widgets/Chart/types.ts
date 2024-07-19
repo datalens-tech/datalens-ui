@@ -2,8 +2,17 @@ import type React from 'react';
 
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
+import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
-import type {ControlWidget} from 'ui/libs/DatalensChartkit/types';
+import type {
+    Widget as ChartWidget,
+    CombinedError,
+    ControlWidget,
+    LoadedWidget,
+    LoadedWidgetData,
+    OnChangeData,
+    WidgetDashState,
+} from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -22,13 +31,6 @@ import type {
     ChartsData,
     ChartsProps,
 } from '../../../libs/DatalensChartkit/modules/data-provider/charts';
-import type {
-    Widget as ChartWidget,
-    CombinedError,
-    LoadedWidget,
-    LoadedWidgetData,
-    OnChangeData,
-} from '../../../libs/DatalensChartkit/types';
 import type {WidgetType} from '../../../units/dash/modules/constants';
 import type {WidgetPluginProps} from '../../DashKit/plugins/Widget/types';
 
@@ -107,6 +109,8 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     renderPluginLoader?: () => React.ReactNode;
     actionParamsEnabled?: boolean;
+    paneSplitOrientation?: Split;
+    widgetDashState?: WidgetDashState;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -199,6 +203,8 @@ export type ChartKitWrapperParams = {
     ) => void;
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
+    paneSplitOrientation?: 'vertical' | 'horizontal';
+    widgetDashState?: WidgetDashState;
 };
 
 export type ChartWidgetData =
@@ -249,6 +255,7 @@ export type ChartContentProps = Pick<
     | 'dataProvider'
     | 'hideMenu'
     | 'renderPluginLoader'
+    | 'forceShowSafeChart'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;
@@ -272,6 +279,7 @@ export type ChartContentProps = Pick<
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
         enableActionParams?: boolean;
+        rootNodeRef: React.RefObject<HTMLDivElement | null>;
     };
 
 export type WidgetDataRef = React.MutableRefObject<

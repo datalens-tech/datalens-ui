@@ -4,8 +4,8 @@ import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
+import {DL} from 'ui/constants/common';
 import {selectCollectionBreadcrumbs} from 'ui/units/collections-navigation/store/selectors';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
@@ -40,7 +40,7 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({children, i
                         batch(() => {
                             dispatch(setCollection(item));
                             if (
-                                !isMobileView &&
+                                !DL.IS_MOBILE &&
                                 !breadcrumbs.find(
                                     (breadcrumb) => breadcrumb.collectionId === item.collectionId,
                                 )

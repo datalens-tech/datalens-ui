@@ -1,3 +1,9 @@
+export const TAG_DL_TOOLTIP = 'dl-tooltip';
+
+export const ATTR_DATA_TOOLTIP_CONTENT = 'data-tooltip-content';
+export const ATTR_DATA_TOOLTIP_PLACEMENT = 'data-tooltip-placement';
+export const ATTR_DATA_TOOLTIP_ANCHOR_ID = 'data-tooltip-anchor-id';
+
 export const ALLOWED_TAGS = [
     'a',
     'abbr',
@@ -13,6 +19,7 @@ export const ALLOWED_TAGS = [
     'div',
     'dl',
     'dt',
+    'ellipse',
     'em',
     'feComponentTransfer',
     'feDropShadow',
@@ -25,6 +32,7 @@ export const ALLOWED_TAGS = [
     'feMerge',
     'feMergeNode',
     'filter',
+    'g',
     'h1',
     'h2',
     'h3',
@@ -35,12 +43,15 @@ export const ALLOWED_TAGS = [
     'i',
     'img',
     'li',
+    'line',
     'linearGradient',
     'marker',
     'ol',
     'p',
     'path',
     'pattern',
+    'polyline',
+    'polygon',
     'pre',
     'rect',
     'small',
@@ -62,6 +73,7 @@ export const ALLOWED_TAGS = [
     'tr',
     'u',
     'ul',
+    TAG_DL_TOOLTIP,
 ];
 
 export const ALLOWED_ATTRIBUTES = [
@@ -98,10 +110,13 @@ export const ALLOWED_ATTRIBUTES = [
     'opacity',
     'orient',
     'padding',
+    'points',
     'r',
     'refX',
     'refY',
     'role',
+    'rx',
+    'ry',
     'scope',
     'slope',
     'src',
@@ -116,17 +131,22 @@ export const ALLOWED_ATTRIBUTES = [
     'text-align',
     'text-anchor',
     'title',
+    'transform',
     'type',
     'valign',
+    'viewBox',
     'width',
     'x',
     'x1',
     'x2',
     'xlink:href',
+    'xmlns',
     'y',
     'y1',
     'y2',
     'zIndex',
+    ATTR_DATA_TOOLTIP_CONTENT,
+    ATTR_DATA_TOOLTIP_PLACEMENT,
 ];
 
 export const ALLOWED_REFERENCES = ['https://', 'http://', 'mailto:', '#'];

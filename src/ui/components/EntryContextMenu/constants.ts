@@ -239,7 +239,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
         icon: CodeTrunk,
         text: 'value_show-related-entities',
-        enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
+        enable: () => true,
         scopes: OBJECT_SCOPES,
     },
     ...getAdditionalEntryContextMenuItems(),

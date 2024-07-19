@@ -76,11 +76,16 @@ const getContinuousBackgroundColorStyle = (args: GetContinuousBackgroundColorSty
     const {currentRowIndex, backgroundColorsByMeasure, backgroundSettings} = args;
 
     const colors = backgroundColorsByMeasure[backgroundSettings.settingsId];
+    const backgroundColor = colors[currentRowIndex];
 
-    return {
-        backgroundColor: colors[currentRowIndex],
-        color: '#FFF',
-    };
+    if (backgroundColor) {
+        return {
+            backgroundColor,
+            color: '#FFF',
+        };
+    }
+
+    return {};
 };
 
 export const getFlatTableBackgroundStyles = (

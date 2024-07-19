@@ -7,6 +7,9 @@ import {showToast} from 'store/actions/toaster';
 
 import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../constants/collectionsStructure';
 import {
+    DELETE_COLLECTIONS_FAILED,
+    DELETE_COLLECTIONS_LOADING,
+    DELETE_COLLECTIONS_SUCCESS,
     RESET_STATE,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
@@ -57,6 +60,9 @@ import {
     DELETE_WORKBOOK_LOADING,
     DELETE_WORKBOOK_SUCCESS,
     DELETE_WORKBOOK_FAILED,
+    DELETE_WORKBOOKS_FAILED,
+    DELETE_WORKBOOKS_LOADING,
+    DELETE_WORKBOOKS_SUCCESS,
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
@@ -81,6 +87,8 @@ import type {
     DeleteCollectionResponse,
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
+    DeleteCollectionsResponse,
+    DeleteWorkbooksResponse,
 } from '../../../shared/schema';
 
 type ResetStateAction = {
@@ -572,6 +580,118 @@ export const createWorkbook = ({
 
                 dispatch({
                     type: CREATE_WORKBOOK_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type DeleteWorkbooksLoadingAction = {
+    type: typeof DELETE_WORKBOOKS_LOADING;
+};
+type DeleteWorkbooksSuccessAction = {
+    type: typeof DELETE_WORKBOOKS_SUCCESS;
+    data: DeleteWorkbooksResponse;
+};
+type DeleteWorkbooksFailedAction = {
+    type: typeof DELETE_WORKBOOKS_FAILED;
+    error: Error | null;
+};
+type DeleteWorkbooksAction =
+    | DeleteWorkbooksLoadingAction
+    | DeleteWorkbooksSuccessAction
+    | DeleteWorkbooksFailedAction;
+
+export const deleteWorkbooks = ({workbookIds}: {workbookIds: string[]}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_WORKBOOKS_LOADING,
+        });
+
+        return getSdk()
+            .us.deleteWorkbooks({
+                workbookIds,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_WORKBOOKS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteWorkbooks failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_WORKBOOKS_FAILED,
+                    error: isCanceled ? null : error,
+                });
+
+                return null;
+            });
+    };
+};
+
+type DeleteCollectionsLoadingAction = {
+    type: typeof DELETE_COLLECTIONS_LOADING;
+};
+type DeleteCollectionsSuccessAction = {
+    type: typeof DELETE_COLLECTIONS_SUCCESS;
+    data: DeleteCollectionsResponse;
+};
+type DeleteCollectionsFailedAction = {
+    type: typeof DELETE_COLLECTIONS_FAILED;
+    error: Error | null;
+};
+type DeleteCollectionsAction =
+    | DeleteCollectionsLoadingAction
+    | DeleteCollectionsSuccessAction
+    | DeleteCollectionsFailedAction;
+
+export const deleteCollections = ({collectionIds}: {collectionIds: string[]}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: DELETE_COLLECTIONS_LOADING,
+        });
+
+        return getSdk()
+            .us.deleteCollections({
+                collectionIds,
+            })
+            .then((data) => {
+                dispatch({
+                    type: DELETE_COLLECTIONS_SUCCESS,
+                    data,
+                });
+                return data;
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/deleteCollections failed', error);
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
+                }
+
+                dispatch({
+                    type: DELETE_COLLECTIONS_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -1252,6 +1372,8 @@ export type CollectionsStructureAction =
     | MoveWorkbookAction
     | MoveCollectionsAction
     | MoveWorkbooksAction
+    | DeleteCollectionsAction
+    | DeleteWorkbooksAction
     | CopyWorkbookAction
     | UpdateWorkbookAction
     | UpdateCollectionAction

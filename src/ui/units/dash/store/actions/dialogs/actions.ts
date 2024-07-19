@@ -1,10 +1,10 @@
 import type {ConfigItem} from '@gravity-ui/dashkit';
 import type {DashDragOptions} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
-import type {DIALOG_TYPE} from 'ui/units/dash/containers/Dialogs/constants';
 import type {ValuesType} from 'utility-types';
 
 import type {DashDispatch} from '..';
+import type {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import * as actionTypes from '../../constants/dashActionTypes';
 import {getBeforeOpenDialogItemAction} from '../helpers';
 

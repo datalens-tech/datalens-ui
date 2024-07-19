@@ -5,17 +5,15 @@ import block from 'bem-cn-lite';
 import {EntryTitle} from 'components/EntryTitle';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 import {DialogControlQa, EntryScope} from 'shared';
 import {NavigationMinimal, PLACE, QUICK_ITEMS, Utils, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 
-import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
-import Loader from '../../components/Loader/Loader';
-import {EntryTypeNode} from '../../modules/constants';
-import {getPersonalFolderPath} from '../../modules/helpers';
-import {changeNavigationPath} from '../../store/actions/dashTyped';
+import logger from '../../libs/logger';
+import {getSdk} from '../../libs/schematic-sdk';
+import Loader from '../../units/dash/components/Loader/Loader';
+import {EntryTypeNode} from '../../units/dash/modules/constants';
+import {getPersonalFolderPath} from '../../units/dash/modules/helpers';
 
 import './DropdownNavigation.scss';
 
@@ -205,13 +203,4 @@ class DropdownNavigation extends React.PureComponent {
     }
 }
 
-const mapStateToProps = (state) => ({
-    navigationPath: state.dash.navigationPath,
-    workbookId: state.dash.entry?.workbookId,
-});
-
-const mapDispatchToProps = {
-    changeNavigationPath,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(DropdownNavigation);
+export default DropdownNavigation;

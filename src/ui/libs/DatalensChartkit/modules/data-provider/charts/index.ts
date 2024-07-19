@@ -13,6 +13,7 @@ import pick from 'lodash/pick';
 import {stringify} from 'qs';
 import type {StringParams, WizardType} from 'shared';
 import {
+    ControlType,
     DL_COMPONENT_HEADER,
     DL_EMBED_TOKEN_HEADER,
     DashLoadPriority,
@@ -22,6 +23,7 @@ import {
     Feature,
     MAX_SEGMENTS_NUMBER,
 } from 'shared';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
@@ -65,7 +67,6 @@ import type {
     Settings,
     SourcesConfig,
 } from './types';
-import {isEmbeddedChart} from './utils';
 import processWizard from './wizard';
 
 // from export-data module
@@ -107,7 +108,7 @@ type EntitiesType =
     | 'markup_ql_node'
     | 'control_node'
     | 'map_node'
-    | 'control_dash';
+    | ControlType.Dash;
 
 export type EntityConfig = {
     data: Object | undefined;
@@ -687,7 +688,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     async makeRequest(requestOptions: EntityRequestOptions) {
         const stype = (requestOptions.data?.config as EntityConfig)?.meta?.stype;
         const isControlRequest =
-            stype === 'control_dash' ||
+            stype === ControlType.Dash ||
             requestOptions.data?.widgetType === DashTabItemControlSourceType.External;
 
         const isLowPriority =
@@ -713,11 +714,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
-        const path = isEmbeddedChart() ? '/embeds/api/run' : '/api/run';
-
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${path}`,
+                url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
             }),
@@ -752,7 +751,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const headers: Record<string, string | null> = {
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (isEmbeddedChart()) {
+        if (isEmbeddedEntry()) {
             const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
             headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
@@ -784,7 +783,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             params,
             widgetType,
             widgetConfig,
-            config: {type, data: configData, key, createdAt} = {},
+            config: {type, data: configData, key, createdAt, sandbox_version} = {},
             workbookId,
         } = data;
 
@@ -803,7 +802,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     ? {
                           data: configData,
                           createdAt: createdAt,
-                          meta: {stype: type},
+                          meta: {stype: type, sandbox_version},
                       }
                     : undefined,
                 responseOptions: {

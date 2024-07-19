@@ -7,7 +7,7 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import {DL} from 'ui/constants';
 import type {ValuesType} from 'utility-types';
 
-import type {DIALOG_TYPE} from '../../containers/Dialogs/constants';
+import type {DIALOG_TYPE} from '../../../../constants/dialogs';
 
 import './EmptyState.scss';
 

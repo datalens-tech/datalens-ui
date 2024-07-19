@@ -7,8 +7,10 @@ import {connect} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {DashTabsQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {Tabs as DataLensTabs} from 'ui';
-import {MOBILE_SIZE, isMobileView} from 'ui/utils/mobile';
+import DataLensTabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {appendSearchQuery, getHashStateParam} from '../../modules/helpers';
 import {setPageTab} from '../../store/actions/dashTyped';
@@ -39,7 +41,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
     const location = useLocation();
     const history = useHistory();
 
-    const size = isMobileView ? MOBILE_SIZE.TABS : 'l';
+    const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'l';
 
     return props.tabs.length > 1 ? (
         <div className={b()} data-qa={DashTabsQA.Root}>
@@ -54,6 +56,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                     }
 
                     props.setPageTab(tabId);
+
                     const searchParams = {
                         tab: tabId,
                         state: getHashStateParam(props.hashStates, tabId),
@@ -61,7 +64,7 @@ function TabsComponent<T>(props: TabsProps<T>) {
                     history.push({
                         ...location,
                         search: appendSearchQuery(location.search, searchParams),
-                        hash: '',
+                        hash: isEmbeddedEntry() ? location.hash : '',
                     });
                 }}
                 moreControlProps={{virtualizationThreshold: TABS_VIRTUALIZATION_SELECT_LIMIT}}

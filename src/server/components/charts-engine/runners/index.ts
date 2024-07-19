@@ -3,7 +3,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {ControlType} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
 import type {ResolvedConfig} from '../components/storage/types';
 
@@ -33,10 +33,7 @@ export type RunnerHandlerProps = {
     isWizard?: boolean;
 };
 
-export function getDefaultRunners(ctx: AppContext) {
-    const wizardHandler = isEnabledServerFeature(ctx, Feature.WorkerChartBuilder)
-        ? runWizardChart
-        : runChart;
+export function getDefaultRunners() {
     const runners: Runner[] = [
         {
             name: 'editor',
@@ -67,11 +64,11 @@ export function getDefaultRunners(ctx: AppContext) {
                 'd3_wizard_node',
             ]),
             safeConfig: true,
-            handler: wizardHandler,
+            handler: runWizardChart,
         },
         {
             name: 'dashControls',
-            trigger: new Set(['control_dash']),
+            trigger: new Set([ControlType.Dash]),
             safeConfig: true,
             handler: runChart,
         },

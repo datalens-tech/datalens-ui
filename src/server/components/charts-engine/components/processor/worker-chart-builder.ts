@@ -1,6 +1,7 @@
 import path from 'path';
 
 import workerpool from 'workerpool';
+import type {Pool, Proxy} from 'workerpool';
 
 import type {
     DashWidgetConfig,
@@ -15,8 +16,14 @@ import type {WizardWorker} from '../worker/types';
 import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder} from './types';
 
-async function getWizardWorker() {
-    return workerpool.pool(path.resolve(__dirname, '../worker')).proxy<WizardWorker>();
+let wizardWorkersPool: Pool | null = null;
+async function getWizardWorker(): Promise<Proxy<WizardWorker>> {
+    if (wizardWorkersPool === null) {
+        const scriptPath = path.resolve(__dirname, '../worker');
+        wizardWorkersPool = workerpool.pool(scriptPath);
+    }
+
+    return wizardWorkersPool.proxy<WizardWorker>();
 }
 
 const ONE_SECOND = 1000;
@@ -172,6 +179,7 @@ export const getWizardChartBuilder = async (
         },
 
         buildUI: emptyStep('UI'),
+        dispose: () => {},
     };
 
     return chartBuilder;

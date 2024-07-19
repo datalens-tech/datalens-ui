@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
-import {isMobileView} from 'ui/utils/mobile';
+import {DL} from 'ui/constants/common';
 
 import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import type {WorkbookEntriesFilters} from '../../types';
@@ -39,12 +39,12 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
     };
 
     const renderCreateEntryAction = () => {
-        if (workbook.permissions.update && !isMobileView) {
+        if (workbook.permissions.update && !DL.IS_MOBILE) {
             return <CreateEntry className={b('controls')} scope={scope || EntryScope.Connection} />;
         }
         return null;
     };
-    if (isFiltersChanged && !isMobileView) {
+    if (isFiltersChanged && !DL.IS_MOBILE) {
         return (
             <div className={b()}>
                 <PlaceholderIllustration

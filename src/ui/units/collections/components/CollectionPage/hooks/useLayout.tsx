@@ -7,7 +7,6 @@ import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
-import {isMobileView} from 'ui/utils/mobile';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -360,7 +359,7 @@ export const useLayout = ({
                       }
                     : null,
                 titleBeforeActionsBlock: {
-                    content: isMobileView ? (
+                    content: DL.IS_MOBILE ? (
                         <Button
                             view="flat"
                             size="l"

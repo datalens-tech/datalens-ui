@@ -11,7 +11,7 @@ import type {DatalensGlobalState} from 'ui';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {TextEditor} from '../../../../../components/TextEditor/TextEditor';
-import {DIALOG_TYPE} from '../../../containers/Dialogs/constants';
+import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {setItemData} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {

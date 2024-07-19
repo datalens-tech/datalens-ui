@@ -155,6 +155,7 @@ export type ConfigNode = (
     // to get it back in the response
     key: string;
     createdAt?: string;
+    sandbox_version?: string;
 };
 
 export interface ChartsProps {
@@ -172,6 +173,7 @@ export interface ChartsProps {
     };
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
+    forceShowSafeChart?: boolean;
 }
 
 export interface ChartsData {

@@ -60,6 +60,7 @@ const influencingProps: Array<keyof ChartWidgetPropsWithContext> = [
  * @param props
  * @constructor
  */
+// eslint-disable-next-line complexity
 export const ChartWidget = (props: ChartWidgetProps) => {
     const {
         data,
@@ -485,6 +486,18 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [context.canEdit, editMode, context.entryDialoguesRef, initName],
     );
 
+    const widgetDashState = React.useMemo(() => {
+        if (widgetType !== 'table') {
+            return undefined;
+        }
+
+        // Tables could need some optimization while in edit mode
+        // TODO remove this when grouped tables could use virtualization
+        return {
+            isPreviewMode: editMode,
+        };
+    }, [editMode, widgetType]);
+
     return (
         <div
             ref={rootNodeRef}
@@ -554,6 +567,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 yandexMapAPIWaiting={yandexMapAPIWaiting}
                 isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                 enableActionParams={enableActionParams}
+                widgetDashState={widgetDashState}
+                rootNodeRef={rootNodeRef}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

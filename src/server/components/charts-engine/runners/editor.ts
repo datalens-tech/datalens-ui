@@ -1,15 +1,64 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
+import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
+import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 import {getDuration} from '../components/utils';
 
 import {runServerlessEditor} from './serverlessEditor';
+import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandlerProps} from '.';
+
+async function getChartBuilder({
+    parentContext,
+    userLang,
+    userLogin,
+    widgetConfig,
+    config,
+    isScreenshoter,
+    chartsEngine,
+}: {
+    parentContext: AppContext;
+    userLang: string;
+    userLogin: string;
+    chartsEngine: RunnerHandlerProps['chartsEngine'];
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
+    config: RunnerHandlerProps['config'];
+    isScreenshoter: boolean;
+}) {
+    const sandboxVersion = config.meta.sandbox_version || '0';
+    const enableIsolatedSandbox =
+        Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
+        sandboxVersion === '2';
+    const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
+    const chartBuilder = enableIsolatedSandbox
+        ? await getIsolatedSandboxChartBuilder({
+              userLang,
+              userLogin,
+              widgetConfig,
+              config,
+              isScreenshoter,
+              chartsEngine,
+              features: {
+                  noJsonFn,
+              },
+          })
+        : await getSandboxChartBuilder({
+              userLang,
+              userLogin,
+              widgetConfig,
+              config,
+              isScreenshoter,
+              chartsEngine,
+          });
+
+    return chartBuilder;
+}
 
 export const runEditor = async (
     parentContext: AppContext,
@@ -32,7 +81,8 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getSandboxChartBuilder({
+    const chartBuilder = await getChartBuilder({
+        parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,
@@ -40,6 +90,7 @@ export const runEditor = async (
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
     });
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -116,7 +167,9 @@ export const runEditor = async (
                             delete resultCopy._confStorageConfig;
                         }
 
-                        cx.log('PROCESSED_WITH_ERRORS', {error: result.error});
+                        const logError = prepareErrorForLogger(result.error);
+
+                        cx.log('PROCESSED_WITH_ERRORS', {error: logError});
 
                         let statusCode = 500;
 

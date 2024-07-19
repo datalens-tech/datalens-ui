@@ -23,7 +23,7 @@ export default {
         limit: '50mb',
         extended: false,
     },
-    expressTrustProxyNumber: 3,
+    expressTrustProxyNumber: 2,
     errorBooster,
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
     python: process.env.PYTHON || 'python3',

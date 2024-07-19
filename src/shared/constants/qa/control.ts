@@ -28,6 +28,8 @@ export const ControlQA = {
     dialogControl: 'dialog-control',
     dialogControlApplyBtn: 'control-dialog-apply-button',
     dialogControlCancelBtn: 'control-dialog-cancel-button',
+
+    groupCommonLoader: 'group-control-common-loader',
 };
 
 export const DialogControlQa = {
@@ -35,6 +37,7 @@ export const DialogControlQa = {
     elementTypeSelect: 'dialog-control-element-type-select',
     fieldSelect: 'dialog-control-field-select',
     valueSelect: 'dialog-control-value-select',
+    valueInput: 'dialog-control-value-input',
     radioSourceType: 'radio-source-type',
     seletSourceType: 'select-source-type',
     appearanceTitle: 'dialog-control-appearance-title',
@@ -42,6 +45,7 @@ export const DialogControlQa = {
     fieldNameInput: 'field-name-input',
     dateRangeCheckbox: 'date-range-checkbox',
     dateTimeCheckbox: 'date-time-checkbox',
+    requiredValueCheckbox: 'dialog-control-required-checkbox',
 
     typeControlCalendar: 'type-control-calendar',
     typeControlSelect: 'type-control-select',

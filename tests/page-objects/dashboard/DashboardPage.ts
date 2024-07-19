@@ -8,6 +8,7 @@ import {
     DashRelationTypes,
     DialogConfirmQA,
     DialogDashWidgetQA,
+    DialogGroupControlQa,
     DialogTabsQA,
     EntryDialogQA,
     SelectQa,
@@ -60,6 +61,7 @@ import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import ControlActions from './ControlActions';
+import {getUrlStateParam} from '../../suites/dash/helpers';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -163,7 +165,60 @@ class DashboardPage extends BasePage {
         await page.click(slct(EntryDialogQA.Apply));
     }
 
-    async createDashboard({editDash}: {editDash: () => Promise<void>}) {
+    async expectControlsRequests({
+        controlTitles,
+        action,
+        waitForLoader,
+    }: {
+        controlTitles: string[];
+        waitForLoader?: boolean;
+        action?: () => Promise<void>;
+    }) {
+        const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+
+        if (waitForLoader) {
+            // check for loader appearence and passing request without changes
+            await this.page.route(CommonUrls.ApiRun, async (route) => {
+                await expect(loader).toBeVisible();
+                route.continue();
+            });
+        }
+
+        // check that requests for passed selectors have completed successfully
+        const controlResponses = controlTitles.map((title) => {
+            const predicate = (response: Response) => {
+                const isCorrespondingRequest =
+                    response.url().includes(CommonUrls.ApiRun) &&
+                    response.request().postDataJSON().config.data.shared.title === title;
+                if (isCorrespondingRequest) {
+                    expect(response.status()).toEqual(200);
+                }
+
+                return isCorrespondingRequest;
+            };
+
+            return this.page.waitForResponse(predicate);
+        });
+
+        await action?.();
+
+        await Promise.all(controlResponses);
+
+        if (waitForLoader) {
+            await expect(loader).toBeHidden();
+        }
+    }
+
+    async createDashboard({
+        editDash,
+        waitingRequestOptions,
+    }: {
+        editDash: () => Promise<void>;
+        waitingRequestOptions?: {
+            controlTitles: string[];
+            waitForLoader?: boolean;
+        };
+    }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
@@ -179,6 +234,13 @@ class DashboardPage extends BasePage {
 
         const dashName = `e2e-entry-${getUniqueTimestamp()}`;
 
+        const expectRequestPromise = waitingRequestOptions
+            ? this.expectControlsRequests({
+                  controlTitles: waitingRequestOptions.controlTitles,
+                  waitForLoader: waitingRequestOptions.waitForLoader,
+              })
+            : null;
+
         // waiting for the dialog to open, specify the name, save
         if (isEnabledCollections) {
             await this.dialogCreateEntry.createEntryWithName(dashName);
@@ -188,6 +250,8 @@ class DashboardPage extends BasePage {
 
         // check that the dashboard has loaded by its name
         await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
+
+        await expectRequestPromise;
     }
 
     async duplicateDashboard({dashId, useUserFolder}: {dashId?: string; useUserFolder?: boolean}) {
@@ -281,6 +345,14 @@ class DashboardPage extends BasePage {
 
         // adding to the dashboard
         await this.page.click(slct(DialogDashWidgetQA.Apply));
+    }
+
+    async copyWidget(counter?: number) {
+        await this.page
+            .locator(slct(ControlQA.controlMenu))
+            .nth(counter || 0)
+            .click();
+        await this.page.locator(slct(DashKitOverlayMenuQa.CopyButton)).click();
     }
 
     async clickAddText() {
@@ -459,9 +531,7 @@ class DashboardPage extends BasePage {
     async openControlRelationsDialog() {
         await this.enterEditMode();
         // open dialog relations by control icon click
-        const selectorElem = await this.controlActions.getDashControlLinksIconElem(
-            ControlQA.controlLinks,
-        );
+        const selectorElem = await this.controlActions.getDashControlLinksIconElem();
         await selectorElem.click();
     }
 
@@ -724,6 +794,14 @@ class DashboardPage extends BasePage {
         throw new Error('Tabs selector not found');
     }
 
+    async changeTabAndGetState({tabName, timeout}: {tabName: string; timeout: number}) {
+        await Promise.all([this.page.waitForNavigation(), this.changeTab({tabName})]);
+        await this.page.waitForTimeout(timeout);
+
+        const stateParam = getUrlStateParam(this.page);
+        return stateParam;
+    }
+
     async changeWidgetTab(tabName: string) {
         const tabsContainer = await this.page.waitForSelector(
             `${slct(DashkitQa.GRID_ITEM)} ${DashboardPage.selectors.tabsContainer}`,
@@ -820,11 +898,21 @@ class DashboardPage extends BasePage {
         await this.description.isEditMode();
     }
 
-    getSelectorLocatorByTitle(title: string, counter?: number) {
+    getSelectorLocatorByTitle({
+        title,
+        counter,
+        type = 'select',
+    }: {
+        title: string;
+        counter?: number;
+        type?: 'select' | 'input';
+    }) {
+        const controlSelector =
+            type === 'select' ? slct(ControlQA.controlSelect) : slct(ControlQA.controlInput);
         return this.page
             .locator(slct(ControlQA.chartkitControl))
             .filter({hasText: title})
-            .locator(slct(ControlQA.controlSelect))
+            .locator(controlSelector)
             .nth(counter === undefined ? 0 : counter);
     }
 
@@ -836,7 +924,7 @@ class DashboardPage extends BasePage {
         counter?: number;
         value: string;
     }) {
-        const selectLocator = this.getSelectorLocatorByTitle(title);
+        const selectLocator = this.getSelectorLocatorByTitle({title});
         await expect(selectLocator).toContainText(value);
     }
 
@@ -844,7 +932,7 @@ class DashboardPage extends BasePage {
         {title, counter}: {title: string; counter?: number},
         valueTitle: string,
     ) {
-        const selectLocator = this.getSelectorLocatorByTitle(title, counter);
+        const selectLocator = this.getSelectorLocatorByTitle({title, counter});
         await selectLocator.click();
 
         await this.page
@@ -874,6 +962,16 @@ class DashboardPage extends BasePage {
             slct(ControlQA.controlSettings),
         );
         await controlSettingsButton.click();
+    }
+
+    async disableAutoupdateInFirstControl() {
+        await this.enterEditMode();
+        await this.clickFirstControlSettingsButton();
+        await this.page
+            .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
+            .setChecked(false);
+        await this.controlActions.applyControlSettings();
+        await this.saveChanges();
     }
 
     /**

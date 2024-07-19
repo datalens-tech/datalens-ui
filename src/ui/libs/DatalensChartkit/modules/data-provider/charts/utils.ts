@@ -1,36 +1,8 @@
 import isFunction from 'lodash/isFunction';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
 
-import {DL} from '../../../../../constants';
-
-export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
-
-function isJson(value: string) {
-    try {
-        JSON.parse(value);
-        return true;
-    } catch (_e) {
-        return false;
-    }
-}
-
-function isHighchartsTemplateString(value: string) {
-    if (isJson(value)) {
-        return false;
-    }
-
-    const hc = window.Highcharts;
-    return typeof hc !== 'undefined' && hc.format(value, {}) !== value;
-}
-
 function isHtmlString(value: unknown) {
-    if (typeof value === 'string') {
-        if (/<\/?[a-z][\s\S]*>/i.test(value) || isHighchartsTemplateString(value)) {
-            return true;
-        }
-    }
-
-    return false;
+    return typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
 export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
