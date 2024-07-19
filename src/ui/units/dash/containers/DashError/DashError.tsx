@@ -1,13 +1,13 @@
 import React from 'react';
 
-import {ViewError} from 'components/ViewError/ViewError';
 import {I18n} from 'i18n';
 
+import ViewError from '../../../../components/ViewError/ViewError';
 import {DashErrorCode} from '../../modules/constants';
 
 const i18n = I18n.keyset('dash.error.view');
 
-export const Error = ({
+export const DashError = ({
     error,
     onRetry,
     hideDetails,

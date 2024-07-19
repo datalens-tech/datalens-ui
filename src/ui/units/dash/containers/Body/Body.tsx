@@ -71,7 +71,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {Error} from '../Error/Error';
+import {DashError} from '../DashError/DashError';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
@@ -335,7 +335,7 @@ class Body extends React.PureComponent<BodyProps> {
             case Mode.Updating:
                 return <Loader size="l" />;
             case Mode.Error:
-                return <Error error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
+                return <DashError error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
         }
 
         const localTabs = memoizedGetLocalTabs(tabs);
