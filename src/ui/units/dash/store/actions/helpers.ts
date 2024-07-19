@@ -2,6 +2,7 @@ import type {History} from 'history';
 import type {DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
 import {DashTabItemType} from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
@@ -68,7 +69,7 @@ export const removeParamAndUpdate = (
     history.replace({
         ...location,
         search: `?${searchParams.toString()}`,
-        hash: '',
+        hash: isEmbeddedEntry() ? location.hash : '',
     });
 };
 
