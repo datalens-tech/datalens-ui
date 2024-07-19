@@ -1,7 +1,6 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {selectSandboxDebugMode} from 'platform/src/ui/store/selectors/user';
 import PropTypes from 'prop-types';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
@@ -9,6 +8,7 @@ import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {registry} from '../../../../registry';
+import {selectSandboxDebugMode} from '../../../../store/selectors/user';
 import SandboxEngineSelect from '../../components/SandboxEngineSelect/SandboxEngineSelect';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
