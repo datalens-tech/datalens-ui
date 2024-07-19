@@ -41,10 +41,16 @@
     &__controls-settings {
         width: (100% / 36) * 1;
         flex-shrink: 0;
+        position: relative;
+    }
+
+    &__controls-settings-wrapper {
+        position: absolute;
+        inset: 0px 0px 0px 8px;
         display: flex;
+        min-width: 28px;
         align-items: center;
         justify-content: end;
-        padding-left: 8px;
     }
 
     &__container-placeholder {

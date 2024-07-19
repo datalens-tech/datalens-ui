@@ -76,7 +76,9 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
                 })}
             >
                 <div className={b('controls-grid')}>{children}</div>
-                <div className={b('controls-settings')}>{props.controls}</div>
+                <div className={b('controls-settings')}>
+                    <div className={b('controls-settings-wrapper')}>{props.controls}</div>
+                </div>
             </div>
         </div>
     );
