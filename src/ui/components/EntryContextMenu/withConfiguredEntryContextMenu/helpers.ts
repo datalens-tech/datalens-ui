@@ -41,7 +41,7 @@ export const getFilteredEntryContextMenu = ({
         return (
             entry &&
             // check availability
-            menuItem.enable() &&
+            menuItem.enable(entry) &&
             // check the scope/object from which we call the menu
             entry.scope &&
             menuItem.scopes.includes(entry.scope) &&

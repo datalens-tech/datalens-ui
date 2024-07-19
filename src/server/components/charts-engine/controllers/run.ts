@@ -11,7 +11,6 @@ import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
-import { US } from '../../sdk';
 
 type RunControllerExtraSettings = {
     storageApiPath?: string;
@@ -100,175 +99,130 @@ export const runController = (
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {key, id});
 
-        var defaultConfigShared:any = null;
-
-        US.readEntry(id, {"includePermissionsInfo": "true", "includePermissions": "true", "includeLinks": "true"}, {
-            'x-rpc-authorization': req.headers['x-rpc-authorization']
-        }, ctx).then((value)=>{ 
-            if(value.type == 'table_ql_node') {
-                var v: any = value;
-                var permissions = v.permissions;
-                if(permissions.edit == false) {
-                    defaultConfigShared = JSON.parse(v.data.shared);
-                }
-            }
-        }).catch((reason)=>{ 
-            ctx.logError(`CHARTS_ENGINE_READ_ENTRY_ERROR "${key || id}"`, reason);
-            //res.status(500).send(reason);
-        }).finally(()=>{
-            US.universalService({
-                "action": "datalens", 
-                "method": "currentUser", 
-                "data": [{}]
-            }, req.headers, req.ctx)
-            .then((value)=>{
-                if(!value.err) {
-                    var params = req.body.params;
-                    for(var i in params) {
-                        if(i.startsWith('__')) {
-                            delete req.body.params[i];
-                        }
-                    }
-
-                    req.body.params['__user_id'] = value.data[0].id;
-                    req.body.params['__embed'] = value.data[0].isEmbed == true ? 1 : -1;
-                }
-            })
-            .catch((reason)=>{
-                ctx.logError(`CHARTS_ENGINE_UNIVERSAL_SERVICE_ERROR "${key || id}"`, reason);
-                //res.status(500).send(reason);
-            }).finally(()=>{
-                Promise.resolve(configPromise)
-                .catch((error) => {
-                    const result: {
-                        error: {
+        Promise.resolve(configPromise)
+            .catch((error) => {
+                const result: {
+                    error: {
+                        code: string;
+                        details: {
                             code: string;
-                            details: {
-                                code: string;
-                                entryId: string;
-                            };
-                            debug?: {
-                                message: string;
-                            };
+                            entryId: string;
                         };
-                    } = {
-                        error: {
-                            code: 'ERR.CHARTS.CONFIG_LOADING_ERROR',
-                            details: {
-                                code: (error.response && error.response.status) || error.status || null,
-                                entryId: id,
-                            },
-                            debug: {
-                                message: error.message,
-                            },
-                        },
+                        debug?: {
+                            message: string;
+                        };
                     };
+                } = {
+                    error: {
+                        code: 'ERR.CHARTS.CONFIG_LOADING_ERROR',
+                        details: {
+                            code: (error.response && error.response.status) || error.status || null,
+                            entryId: id,
+                        },
+                        debug: {
+                            message: error.message,
+                        },
+                    },
+                };
 
-                    // TODO use ShowChartsEngineDebugInfo flag
-                    if (ctx.config.appInstallation !== 'internal') {
-                        delete result.error.debug;
-                    }
+                // TODO use ShowChartsEngineDebugInfo flag
+                if (ctx.config.appInstallation !== 'internal') {
+                    delete result.error.debug;
+                }
 
-                    ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "${key || id}"`, error);
-                    res.status(error.status || 500).send(result);
-                })
-                .then(async (config) => {
-                    if (!config) {
-                        return null;
-                    }
+                ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "${key || id}"`, error);
+                res.status(error.status || 500).send(result);
+            })
+            .then(async (config) => {
+                if (!config) {
+                    return null;
+                }
 
-                    const configResolving = getDuration(hrStart);
-                    const configType = config && config.meta && config.meta.stype;
+                const configResolving = getDuration(hrStart);
+                const configType = config && config.meta && config.meta.stype;
 
-                    ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
+                ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
 
-                    if (expectedType && expectedType !== configType) {
-                        ctx.log('CHARTS_ENGINE_CONFIG_TYPE_MISMATCH');
-                        return res.status(400).send({
-                            error: `Config type "${configType}" does not match expected type "${expectedType}"`,
-                        });
-                    }
-
-                    const runnerFound = chartsEngine.runners.find((runner) => {
-                        return runner.trigger.has(configType);
+                if (expectedType && expectedType !== configType) {
+                    ctx.log('CHARTS_ENGINE_CONFIG_TYPE_MISMATCH');
+                    return res.status(400).send({
+                        error: `Config type "${configType}" does not match expected type "${expectedType}"`,
                     });
+                }
 
-                    if (!runnerFound) {
-                        ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
+                const runnerFound = chartsEngine.runners.find((runner) => {
+                    return runner.trigger.has(configType);
+                });
+
+                if (!runnerFound) {
+                    ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
+                    return res.status(400).send({
+                        error: `Unknown config type ${configType}`,
+                    });
+                }
+
+                if (
+                    !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                    runnerFound.name === 'editor'
+                ) {
+                    ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
+                    return res.status(400).send({
+                        error: 'ChartEditor is disabled',
+                    });
+                }
+
+                if (req.body.config) {
+                    if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
+                        ctx.log('UNSAFE_CONFIG_OVERRIDE');
                         return res.status(400).send({
-                            error: `Unknown config type ${configType}`,
+                            error: `It is forbidden to pass config in body for "${configType}"`,
                         });
                     }
 
                     if (
-                        !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                        isEnabledServerFeature(app.nodekit.ctx, Feature.ShouldCheckEditorAccess) &&
                         runnerFound.name === 'editor'
                     ) {
-                        ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
-                        return res.status(400).send({
-                            error: 'ChartEditor is disabled',
+                        const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+                        const checkResult = await checkRequestForDeveloperModeAccess({
+                            ctx: req.ctx,
                         });
-                    }
 
-                    if (req.body.config) {
-                        if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
-                            ctx.log('UNSAFE_CONFIG_OVERRIDE');
-                            return res.status(400).send({
-                                error: `It is forbidden to pass config in body for "${configType}"`,
-                            });
-                        }
-
-                        if (
-                            isEnabledServerFeature(app.nodekit.ctx, Feature.ShouldCheckEditorAccess) &&
-                            runnerFound.name === 'editor'
-                        ) {
-                            const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
-                            const checkResult = await checkRequestForDeveloperModeAccess({
-                                ctx: req.ctx,
-                            });
-
-                            if (checkResult === DeveloperModeCheckStatus.Forbidden) {
-                                return res.status(403).send({
-                                    error: {
-                                        code: 403,
-                                        details: {
-                                            message: 'Access to ChartEditor developer mode was denied',
-                                        },
+                        if (checkResult === DeveloperModeCheckStatus.Forbidden) {
+                            return res.status(403).send({
+                                error: {
+                                    code: 403,
+                                    details: {
+                                        message: 'Access to ChartEditor developer mode was denied',
                                     },
-                                });
-                            }
+                                },
+                            });
                         }
                     }
+                }
 
-                    if (req.body.config) {
-                        res.locals.editMode = true;
-                    }
+                if (req.body.config) {
+                    res.locals.editMode = true;
+                }
 
-                    req.body.config = config;
+                req.body.config = config;
 
-                    if(defaultConfigShared) {
-                        ctx.log('CHARTS_ENGINE_RUNNER_TO_DEFAULT');
-                        req.body.config.data.shared = defaultConfigShared;
-                    }
+                req.body.key = req.body.key || config.key;
 
-                    req.body.key = req.body.key || config.key;
-
-                    return runnerFound.handler(ctx, {
-                        chartsEngine,
-                        req,
-                        res,
-                        config,
-                        configResolving,
-                        workbookId,
-                    });
-                })
-                .catch((error) => {
-                    ctx.logError('CHARTS_ENGINE_RUNNER_ERROR', error);
-                    res.status(500).send({
-                        error: 'Internal error',
-                    });
+                return runnerFound.handler(ctx, {
+                    chartsEngine,
+                    req,
+                    res,
+                    config,
+                    configResolving,
+                    workbookId,
+                });
+            })
+            .catch((error) => {
+                ctx.logError('CHARTS_ENGINE_RUNNER_ERROR', error);
+                res.status(500).send({
+                    error: 'Internal error',
                 });
             });
-        });
     };
 };

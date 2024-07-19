@@ -94,6 +94,8 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
 
         valid = (entry?.permissions || { execute: true }).execute
 
+        const edit = (entry?.permissions || { edit: false }).edit
+
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
         const {getConnectionsByChartType} = registry.ql.functions.getAll();
 
@@ -101,14 +103,15 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
             chartType && (
                 <div className={b()}>
                     <div className={b('action-bar-top')} ref={this.navigationButtonRef}>
-                        <AdaptiveTabs
+                        {edit == true && <AdaptiveTabs
                             className={b('action-bar-top_tabs')}
                             breakpointsConfig={this.breakpointsConfig}
                             items={this.tabs}
                             onSelectTab={this.setActiveTab}
                             activeTab={this.state.activeTab}
                         />
-                        {this.renderConnectionBlock()}
+                        }
+                        {edit == true && this.renderConnectionBlock()}
                         {workbookId ? (
                             <WorkbookNavigationMinimal
                                 anchor={this.navigationButtonRef}
@@ -138,14 +141,15 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                             />
                         )}
                     </div>
-                    {this.state.activeTab === 'queryTab' && (
+                    {edit == true && this.state.activeTab === 'queryTab' && (
                         <TabQuery
                             paneSize={paneSize}
                             entryDialoguesRef={entryDialoguesRef}
                         ></TabQuery>
                     )}
-                    {this.state.activeTab === 'paramsTab' && <TabParams></TabParams>}
+                    {edit == true && this.state.activeTab === 'paramsTab' && <TabParams></TabParams>}
                     <div className={b('action-bar-bottom')}>
+                    { edit == true && 
                         <Button
                             disabled={!valid}
                             view="action"
@@ -156,7 +160,8 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                             qa="run-ql-script"
                         >
                             {i18n('sql', 'label_run')}
-                        </Button>
+                        </Button> 
+                    }
                     </div>
                 </div>
             )

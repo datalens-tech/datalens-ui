@@ -101,7 +101,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: LockOpen,
         text: 'value_access',
         qa: 'value_access',
-        enable: () => true,
+        enable: (entry: any) => { return !entry || entry.permissions.edit },
         scopes: ALL_SCOPES,
         // isSpecific: true,
         // isOnEditMode: false,
@@ -226,14 +226,14 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         enable: () => true,
         scopes: ALL_SCOPES
     },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-        action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-        icon: CodeTrunk,
-        text: 'value_show-related-entities',
-        enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
-        scopes: OBJECT_SCOPES,
-    },
+    // {
+    //     id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+    //     action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+    //     icon: CodeTrunk,
+    //     text: 'value_show-related-entities',
+    //     enable: () => Utils.isEnabledFeature(Feature.RelatedEntitiesList),
+    //     scopes: OBJECT_SCOPES,
+    // },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
         action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

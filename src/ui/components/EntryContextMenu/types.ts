@@ -18,7 +18,7 @@ export type ContextMenuItem = {
     /**
      * enable need to be function for correct getting value in tests
      */
-    enable: () => boolean;
+    enable: (entry:GetEntryResponse | undefined) => boolean;
     permissions?: Permissions | ((entry?: ContextMenuParams['entry']) => Permissions | undefined);
     scopes: Array<string>;
     isSpecific?: boolean;

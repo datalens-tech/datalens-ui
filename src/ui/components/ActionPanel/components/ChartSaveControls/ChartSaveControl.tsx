@@ -90,7 +90,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             {
                 action: () => onSaveAsNewClick(),
                 text: i18n('component.chart-save-controls', 'button_save-as-new'),
-                hidden: isNewChart,
+                hidden: isNewChart || isLocked,
                 qa: 'save-as-new-chart',
             },
             ...items,
