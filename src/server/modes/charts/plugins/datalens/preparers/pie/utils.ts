@@ -14,6 +14,10 @@ import {
 import type {PrepareFunctionArgs} from '../types';
 
 export function getFormattedValue(value: string | null, field: ServerField) {
+    if (value === null) {
+        return null;
+    }
+
     if (isDateField(field)) {
         return formatDate({
             valueType: field.data_type,
