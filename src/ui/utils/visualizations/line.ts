@@ -1,11 +1,14 @@
 import type {Field, Placeholder, Shared} from 'shared';
 import {
     DATASET_FIELD_TYPES,
+    isMarkupField,
     isMeasureField,
     isMeasureName,
     isMeasureNameOrValue,
     isMeasureValue,
 } from 'shared';
+
+import {ITEM_TYPES} from '../../constants/misc';
 
 import {updateColors} from './placeholders/colors';
 
@@ -124,4 +127,11 @@ export function onLineChartDesignItemsChange({
             isMultipleColorsSupported,
         }),
     };
+}
+
+export function linearCheckLabels(item: Field) {
+    return (
+        (ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item)) &&
+        !isMarkupField(item)
+    );
 }
