@@ -1,3 +1,3 @@
-import type {TableWidget, WidgetProps} from '../../../../../types';
+import type {TableWidgetData, WidgetProps} from '../../../../../types';
 
-export type TableProps = WidgetProps & {data: TableWidget};
+export type TableProps = WidgetProps & {data: TableWidgetData};

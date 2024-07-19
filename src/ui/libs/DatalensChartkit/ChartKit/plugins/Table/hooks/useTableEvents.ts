@@ -3,14 +3,14 @@ import React from 'react';
 import type {StringParams, TableCommonCell} from 'shared';
 
 import type {OnCellClickFn, TableProps} from '../../../../../../components/Table/types';
-import type {TableWidget} from '../../../../types';
+import type {TableWidgetData} from '../../../../types';
 import {getCellActionParams, getCurrentActionParams, getUpdatesTreeState} from '../renderer/utils';
 import {getDrillDownOptions} from '../renderer/utils/drill-down';
 import type {HeadCell} from '../renderer/utils/renderer';
 import type {TableWidgetProps} from '../types';
 
 type UseTableEventsArgs = {
-    data: TableWidget;
+    data: TableWidgetData;
     onChange: TableWidgetProps['onChange'];
 };
 

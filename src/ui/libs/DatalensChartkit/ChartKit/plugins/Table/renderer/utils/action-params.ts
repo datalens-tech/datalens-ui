@@ -9,7 +9,7 @@ import type {
 } from 'shared';
 
 import type {TData} from '../../../../../../../components/Table/types';
-import type {TableWidget} from '../../../../../types';
+import type {TableWidgetData} from '../../../../../types';
 import type {ActionParamsData} from '../../../../components/Widget/components/Table/utils';
 import {
     getActionParams,
@@ -19,7 +19,7 @@ import {
 import {getRowAsMap} from './migrate-to-old-format';
 
 function getActionParamsEventScope(
-    events?: NonNullable<TableWidget['config']>['events'],
+    events?: NonNullable<TableWidgetData['config']>['events'],
 ): TableWidgetEventScope | undefined {
     if (!events?.click) {
         return undefined;
@@ -33,8 +33,8 @@ function getActionParamsEventScope(
 }
 
 export function getCurrentActionParams(args: {
-    config: TableWidget['config'];
-    unresolvedParams: TableWidget['unresolvedParams'];
+    config: TableWidgetData['config'];
+    unresolvedParams: TableWidgetData['unresolvedParams'];
 }) {
     const {config, unresolvedParams} = args;
     const scope = getActionParamsEventScope(config?.events);

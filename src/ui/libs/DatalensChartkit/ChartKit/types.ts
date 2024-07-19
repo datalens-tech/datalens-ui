@@ -7,7 +7,7 @@ import type {
     LoadedWidgetData,
     OnChangeData,
     OnLoadData,
-    TableWidget,
+    TableWidgetData,
 } from '../types';
 
 import type YandexMap from './modules/yandex-map/yandex-map';
@@ -59,7 +59,7 @@ declare module '@gravity-ui/chartkit' {
         };
         table: {
             data: any;
-            widget: TableWidget;
+            widget: TableWidgetData;
         };
     }
 }

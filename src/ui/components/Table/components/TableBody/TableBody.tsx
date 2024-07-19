@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {ColumnDef, Row} from '@tanstack/react-table';
+import type {Virtualizer} from '@tanstack/react-virtual';
 import block from 'bem-cn-lite';
 
 import type {OnCellClickFn, TData, TableDimensions, TableProps} from '../../types';
@@ -14,10 +15,11 @@ type Props = {
     noData?: TableProps['noData'];
     onCellClick?: OnCellClickFn;
     tableDimensions?: TableDimensions;
+    rowVirtualizer: Virtualizer<Element, Element>;
 };
 
 export const TableBody = (props: Props) => {
-    const {rows, columns, tableDimensions, noData, onCellClick} = props;
+    const {rows, columns, tableDimensions, noData, onCellClick, rowVirtualizer} = props;
 
     if (!rows.length) {
         return (
@@ -45,13 +47,24 @@ export const TableBody = (props: Props) => {
         columnOptions[index] = {width};
     });
 
+    const virtualItems = rowVirtualizer.getVirtualItems();
+
     return (
-        <tbody className={b('body')}>
-            {rows.map((row) => {
+        <tbody className={b('body')} style={{height: `${rowVirtualizer.getTotalSize()}px`}}>
+            {virtualItems.map((virtualRow) => {
+                const row = rows[virtualRow.index] as Row<TData>;
                 const visibleCells = row.getVisibleCells();
 
                 return (
-                    <tr key={row.id} className={b('tr')}>
+                    <tr
+                        key={row.id}
+                        className={b('tr')}
+                        data-index={virtualRow.index}
+                        ref={(node) => rowVirtualizer.measureElement(node)}
+                        style={{
+                            transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                    >
                         {visibleCells.map((cell, index) => {
                             const originalHeadData = cell.column.columnDef.meta?.head;
                             const width = columnOptions[index]?.width;
@@ -74,6 +87,7 @@ export const TableBody = (props: Props) => {
                                 ? tableDimensions?.head[0]?.[index]?.left
                                 : undefined;
                             const cellStyle = {
+                                width: cell.column.getSize(),
                                 left,
                                 ...originalCellData?.css,
                             };

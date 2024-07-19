@@ -38,7 +38,7 @@ import type {
     ControlsOnlyWidget,
     DataProvider,
     GraphWidget,
-    TableWidget,
+    TableWidgetData,
     Widget,
 } from '../../../types';
 import axiosInstance, {initConcurrencyManager} from '../../axios/axios';
@@ -306,7 +306,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return new DatalensChartkitCustomError(message, {code, details, debug, extra});
     }
 
-    static graphToTable(graph: GraphWidget & ChartsData): TableWidget & ChartsData {
+    static graphToTable(graph: GraphWidget & ChartsData): TableWidgetData & ChartsData {
         // it looks expensive, but less labor-intensive than trying to parse all possible data options at the lines
         // @ts-ignore
         // TODO@types
@@ -318,8 +318,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         const dataRows = chart.getDataRows();
 
-        const head: TableWidget['data']['head'] = [];
-        const rows: TableWidget['data']['rows'] = [];
+        const head: TableWidgetData['data']['head'] = [];
+        const rows: TableWidgetData['data']['rows'] = [];
 
         if (chart.xAxis[0].options.type === 'datetime') {
             head.push({

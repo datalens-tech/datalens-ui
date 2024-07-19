@@ -13,7 +13,7 @@ declare module '@tanstack/react-table' {
     }
 }
 
-interface CellData {
+export interface CellData {
     value: unknown;
     formattedValue?: string;
     css?: React.CSSProperties;
@@ -35,6 +35,7 @@ export type THead = {
     width?: string | number;
     cell?: RenderCellFn<CellData>;
     columns?: THead[];
+    left?: number;
 };
 
 export type TData = CellData[];
@@ -60,6 +61,7 @@ export type TableProps = {
     qa?: string;
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
+    parentContainer?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export type TableDimensions = {

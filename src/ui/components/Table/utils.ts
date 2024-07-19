@@ -1,10 +1,12 @@
 import type {Column, ColumnDef} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 
+import type {CellContentWidth} from 'ui/components/Table/hooks/types';
+
 import type {TData, TFoot, THead} from './types';
 
-function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}) {
-    const {headCell, footerCell, index} = args;
+function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number; size?: number}) {
+    const {headCell, footerCell, index, size} = args;
     const {id, width, cell, ...columnOptions} = headCell;
     const options: ColumnDef<TData> = {
         ...columnOptions,
@@ -14,6 +16,7 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
             footer: footerCell,
             head: headCell,
         },
+        size,
     };
 
     if (cell) {
@@ -34,7 +37,7 @@ function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number}
     return options;
 }
 
-export function getTableColumns(args: {head?: THead[]; rows?: TData[]; footer?: TFoot[]}) {
+export function getTableColumns(args: {head?: THead[]; rows?: unknown[]; footer?: TFoot[]}) {
     const {head = [], rows = [], footer = []} = args;
     const columnHelper = createColumnHelper<TData>();
 
@@ -126,5 +129,5 @@ export function getColumnWidth(col: Column<TData> | undefined): number | string 
         return Number(parentCellWidth) / siblings.length;
     }
 
-    return undefined;
+    return col.getSize();
 }

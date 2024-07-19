@@ -12,18 +12,4 @@
     &__number-column {
         text-align: right;
     }
-
-    &__title {
-        font-weight: 700;
-        padding: 5px 40px 5px 0;
-        text-align: right;
-    }
-
-    &__table-wrapper {
-        width: 100%;
-
-        &_highlight-rows {
-            --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
-        }
-    }
 }

@@ -7,18 +7,24 @@ import {
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import {useVirtualizer} from '@tanstack/react-virtual';
 import block from 'bem-cn-lite';
 
 import {TableBody} from './components/TableBody/TableBody';
 import {TableFooter} from './components/TableFooter/TableFooter';
 import {TableHead} from './components/TableHead/TableHead';
-import {useDevicePixelRatio, useTableDimensions} from './hooks';
+import {useCellContentWidth, useDevicePixelRatio, useTableDimensions} from './hooks';
 import type {TableProps} from './types';
 import {getTableColumns, getTableData} from './utils';
 
 import './Table.scss';
 
 const b = block('dl-table');
+
+enum RenderStep {
+    CalculateWidth = 'CalculateWidth',
+    Final = 'Final',
+}
 
 export const Table = (props: TableProps) => {
     const {
@@ -29,9 +35,22 @@ export const Table = (props: TableProps) => {
         qa,
         manualSorting,
         onSortingChange,
+        parentContainer,
     } = props;
+    // Todo: 1) отрисовываем всю таблицу(первые N строк) как есть только со стилями но без дополнительных вычислений -
+    //  только колонки без ширины(?), ширина всей таблицы - остаток от колонок с известной шириной
+    //  таблица должна быть невидима - показываем лоадер
+    //  считаем ширину колонок с шириной = auto
+    //  отрисовываем финальный вариант таблицы
+    //  ??? - посмотреть что, чо сводными, если ширина задана только у внутренней колонки, а у внешней стоит auto
+    const currentStep = React.useRef(RenderStep.CalculateWidth);
+
     const {head, footer, rows} = props.data;
     const tableRef = React.useRef<HTMLTableElement>(null);
+    // const cellContentWidths = useCellContentWidth({
+    //     rootElement: parentContainer?.current ?? null,
+    //     rows,
+    // });
 
     const columns = React.useMemo(() => {
         return getTableColumns({head, rows, footer});
@@ -65,6 +84,14 @@ export const Table = (props: TableProps) => {
         },
     });
 
+    const rowVirtualizer = useVirtualizer({
+        count: rows.length,
+        estimateSize: () => 30,
+        getScrollElement: () => parentContainer.current,
+        measureElement: (el) => el?.getBoundingClientRect()?.height ?? 0,
+        overscan: 5,
+    });
+
     const {tableDimensions} = useTableDimensions({table: tableRef, data: props.data});
 
     const shouldShowFooter = columns.some((column) => column.footer);
@@ -92,6 +119,7 @@ export const Table = (props: TableProps) => {
                 rows={tableRows}
                 noData={noData}
                 onCellClick={onCellClick}
+                rowVirtualizer={rowVirtualizer}
             />
             {shouldShowFooter && <TableFooter footerGroups={table.getFooterGroups()} />}
         </table>

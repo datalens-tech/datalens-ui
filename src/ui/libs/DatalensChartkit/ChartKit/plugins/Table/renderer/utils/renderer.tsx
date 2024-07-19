@@ -73,7 +73,8 @@ export function mapHeadCell(
                 columns: head || [],
             });
             return (
-                <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                <React.Fragment>
+                {/*<span data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>*/}
                     {renderCellContent({cell, column: th})}
                     {cell.sortDirection && (
                         <Icon
@@ -81,7 +82,8 @@ export function mapHeadCell(
                             data={cell.sortDirection === 'asc' ? CaretLeft : CaretRight}
                         />
                     )}
-                </div>
+                </React.Fragment>
+                // </span>
             );
         },
         columns: get(th, 'sub', []).map(mapHeadCell),
