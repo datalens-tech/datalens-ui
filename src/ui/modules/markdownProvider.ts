@@ -8,6 +8,7 @@ import {getSdk} from '../libs/schematic-sdk';
 class MarkdownProvider {
     // {<source text>: <markdown>, ...}
     private static cache: Dictionary<string> = {};
+    private static cacheMeta: Dictionary<object | undefined> = {};
 
     static async init(data: DashData) {
         const texts = data.tabs.reduce((result: Dictionary<string>, {items}) => {
@@ -35,13 +36,10 @@ class MarkdownProvider {
                     lang: DL.USER_LANG,
                 });
 
-                MarkdownProvider.cache = Object.entries(markdowns).reduce(
-                    (result: Dictionary<string>, [key, value]) => {
-                        result[texts[key]] = value.result;
-                        return result;
-                    },
-                    {},
-                );
+                Object.entries(markdowns).forEach(([key, value]) => {
+                    MarkdownProvider.cache[texts[key]] = value.result;
+                    MarkdownProvider.cacheMeta[texts[key]] = value.meta;
+                });
             } catch (error) {
                 logger.logError('MarkdownProvider: batchRenderMarkdown failed', error);
                 console.error('MARKDOWN_PROVIDER_INIT_FAILED', error);
@@ -54,15 +52,18 @@ class MarkdownProvider {
         const cached = MarkdownProvider.cache[text];
 
         if (cached) {
-            return {result: cached};
+            return {
+                result: cached,
+                meta: MarkdownProvider.cacheMeta[text],
+            };
         }
 
         try {
-            const {result} = await getSdk().mix.renderMarkdown({text, lang: DL.USER_LANG});
-
+            const {result, meta} = await getSdk().mix.renderMarkdown({text, lang: DL.USER_LANG});
             MarkdownProvider.cache[text] = result;
+            MarkdownProvider.cacheMeta[text] = meta;
 
-            return {result};
+            return {result, meta};
         } catch (error) {
             logger.logError('MarkdownProvider: renderMarkdown failed', error);
             console.error('MARKDOWN_PROVIDER_GET_MARKDOWN_FAILED', error);

@@ -64,6 +64,8 @@ const config: ServiceConfig = {
             'react/jsx-runtime': require.resolve('react/jsx-runtime'),
             path: false,
             fs: false,
+            'cose-base': false,
+            'layout-base': false,
         },
     },
     server: {

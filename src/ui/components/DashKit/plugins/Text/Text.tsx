@@ -4,6 +4,7 @@ import type {PluginTextObjectSettings, PluginTextProps} from '@gravity-ui/dashki
 import {PluginText, pluginText} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
@@ -36,6 +37,7 @@ const textPlugin = {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const cutNodesRef = React.useRef<NodeList | null>(null);
         const mutationObserver = React.useRef<MutationObserver | null>(null);
+        const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
 
         /**
          * call common for charts & selectors adjust function for widget
@@ -70,6 +72,8 @@ const textPlugin = {
         const textHandler = React.useCallback(
             async (arg: {text: string}) => {
                 const text = await pluginText._apiHandler!(arg);
+                const nextMetaScripts = get(text, 'meta.script');
+                setMetaScripts(nextMetaScripts);
                 handleTextRender();
                 return text;
             },
@@ -135,6 +139,7 @@ const textPlugin = {
                     key={data.text}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
                     className={b({'with-color': Boolean(showBgColor)})}
+                    metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />
             </RendererWrapper>

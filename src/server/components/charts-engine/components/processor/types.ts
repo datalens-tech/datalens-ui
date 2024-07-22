@@ -69,6 +69,7 @@ export type ProcessorSuccessResponse = {
     data?: {
         markdown?: string;
         html?: string;
+        meta?: object;
     };
     logs_v2?: string;
     config?: string;
