@@ -52,6 +52,7 @@ export interface DLUserSettings {
     cloudId?: string;
     folderId?: string;
     language?: Language;
+    isDefaultLanguage?: boolean;
     theme?: Theme;
     themeSettings?: ThemeSettings;
     isCompact?: boolean;
