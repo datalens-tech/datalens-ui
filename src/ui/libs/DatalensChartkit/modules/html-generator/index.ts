@@ -46,6 +46,22 @@ export function generateHtml(
         const elem = document.createElement(isDLTooltip ? 'div' : tag);
         Object.assign(elem.style, isDLTooltip ? {display: 'inline-block'} : {}, style);
 
+        if (style) {
+            const additionalCssProperties: string[] = [];
+
+            Object.entries(style).forEach(([key, value]) => {
+                if (!elem.style[key as keyof CSSStyleDeclaration]) {
+                    additionalCssProperties.push(`${key}: ${escape(String(value))};`);
+                }
+            });
+
+            if (additionalCssProperties.length) {
+                const additionalCssText = additionalCssProperties.join(' ');
+                const elemCssText = elem.style.cssText ? `${elem.style.cssText} ` : '';
+                elem.setAttribute('style', `${elemCssText}${additionalCssText}`);
+            }
+        }
+
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key)) {
                 throw new ChartKitCustomError(null, {
