@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import get from 'lodash/get';
 import PropTypes from 'prop-types';
 
 import {YfmWrapper} from '../../../../../../../components/YfmWrapper/YfmWrapper';
@@ -50,9 +51,9 @@ async function preloadContent(div) {
 export function Markdown({data, onLoad, id}) {
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, id]);
     Performance.mark(generatedId);
-
     const refLink = React.useRef(null);
-    const {html = '', markdown = ''} = data.data;
+    const {html = '', markdown = '', meta} = data.data;
+    const metaScripts = get(meta, 'script');
 
     React.useLayoutEffect(() => {
         if (onLoad) {
@@ -71,6 +72,7 @@ export function Markdown({data, onLoad, id}) {
             className={b(false, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
             setByInnerHtml={true}
             content={html}
+            metaScripts={metaScripts}
             ref={refLink}
         />
     ) : (

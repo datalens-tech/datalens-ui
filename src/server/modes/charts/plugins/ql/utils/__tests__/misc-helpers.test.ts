@@ -142,4 +142,12 @@ describe('doesQueryContainOrderBy', () => {
 
         expect(queryContainsOrderBy).toEqual(true);
     });
+
+    it('should return false when order by is used as a string', () => {
+        const queryContainsOrderBy = doesQueryContainOrderBy(
+            `select a from b where a = 'order by'`,
+        );
+
+        expect(queryContainsOrderBy).toEqual(false);
+    });
 });

@@ -91,7 +91,19 @@ const defineVmGlobalAPI = (vm: QuickJSContext) => {
     generateHtmlHandle.dispose();
 };
 
-const HC_FORBIDDEN_ATTRS = ['chart', 'this', 'renderer', 'container', 'label', 'axis'] as const;
+const HC_FORBIDDEN_ATTRS = [
+    'chart',
+    'this',
+    'renderer',
+    'container',
+    'label',
+    'axis',
+    'legendItem',
+    'legendGroup',
+    'legendLine',
+    'xAxis',
+    'yAxis',
+] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
 
 const MAX_NESTING_LEVEL = 5;
