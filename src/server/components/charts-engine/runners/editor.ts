@@ -1,4 +1,3 @@
-import type {Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
@@ -23,7 +22,6 @@ async function getChartBuilder({
     config,
     isScreenshoter,
     chartsEngine,
-    res,
 }: {
     parentContext: AppContext;
     userLang: string;
@@ -32,14 +30,12 @@ async function getChartBuilder({
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
-    res: Response;
 }) {
     const sandboxVersion = config.meta.sandbox_version || '0';
     const enableIsolatedSandbox =
         Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
         sandboxVersion === '2';
     const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
-    res.setHeader('CE-Sandbox-Version', enableIsolatedSandbox ? '2' : '1');
     const chartBuilder = enableIsolatedSandbox
         ? await getIsolatedSandboxChartBuilder({
               userLang,
@@ -61,7 +57,7 @@ async function getChartBuilder({
               chartsEngine,
           });
 
-    return chartBuilder;
+    return {chartBuilder, sandboxVersion: enableIsolatedSandbox ? 2 : 1};
 }
 
 export const runEditor = async (
@@ -85,7 +81,7 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getChartBuilder({
+    const {chartBuilder, sandboxVersion} = await getChartBuilder({
         parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -93,8 +89,10 @@ export const runEditor = async (
         config,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
-        res,
     });
+
+    res.setHeader('CE-Sandbox-Version', sandboxVersion);
+    ctx.log(`EditorRunner::Sandbox version: ${sandboxVersion}`);
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
