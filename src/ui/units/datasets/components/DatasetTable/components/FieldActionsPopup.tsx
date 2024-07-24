@@ -45,20 +45,23 @@ const getMenuItems = (
     return GROUPED_ITEMS.reduce<DropdownMenuItemMixed<MenuItem>[]>((items, group) => {
         const groupWithoutHidden = group.reduce<DropdownMenuItem<MenuItem>[]>(
             (group, {action, label, theme, hidden = false}) => {
-                if (!hidden)
+                if (!hidden) {
                     group.push({
                         theme,
                         hidden,
                         text: <MenuItemText action={action} label={label} field={field} />,
                         action: () => onClick({action, field}),
                     });
+                }
 
                 return group;
             },
             [],
         );
 
-        if (groupWithoutHidden.length) items.push(groupWithoutHidden);
+        if (groupWithoutHidden.length) {
+            items.push(groupWithoutHidden);
+        }
         return items;
     }, []);
 };
