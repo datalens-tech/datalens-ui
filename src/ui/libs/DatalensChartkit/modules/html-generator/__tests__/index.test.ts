@@ -61,4 +61,29 @@ describe('generateHtml', () => {
             }),
         ).toThrowError(ChartKitCustomError);
     });
+
+    test('should preserve incorrect values of style properties', () => {
+        expect(
+            generateHtml({
+                tag: 'div',
+                content: '123',
+                style: {
+                    'font-weight': 'bold',
+                    color: '{series.color}',
+                },
+            }),
+        ).toEqual('<div style="font-weight: bold; color: {series.color};">123</div>');
+    });
+
+    test('should escape incorrect values of style properties', () => {
+        expect(
+            generateHtml({
+                tag: 'div',
+                content: '123',
+                style: {
+                    color: '<a>123</a>',
+                },
+            }),
+        ).toEqual('<div style="color: &amp;lt;a&amp;gt;123&amp;lt;/a&amp;gt;;">123</div>');
+    });
 });
