@@ -5,7 +5,6 @@ import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
-"use strict";
 const exports = {};
 const module = {exports};
 const console = {log};
