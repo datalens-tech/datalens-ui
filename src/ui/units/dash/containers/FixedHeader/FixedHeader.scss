@@ -71,7 +71,6 @@
 
     &__container {
         display: flex;
-        overflow: auto;
         flex-direction: row;
         min-height: 52px;
 
@@ -94,6 +93,7 @@
         }
 
         &_collapsed {
+            overflow: clip;
             min-height: 0;
             max-height: 0;
         }
