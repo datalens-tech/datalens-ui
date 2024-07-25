@@ -365,6 +365,7 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                     error,
                 },
             });
+            throw error;
         }
     };
 }
