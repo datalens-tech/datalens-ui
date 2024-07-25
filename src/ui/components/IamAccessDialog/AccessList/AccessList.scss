@@ -1,0 +1,18 @@
+.dl-iam-access-dialog-access-list {
+    &__blocks {
+        margin-top: 24px;
+    }
+
+    &__block {
+        margin-top: 12px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+
+    &__btn-retry {
+        display: flex;
+        justify-content: center;
+    }
+}

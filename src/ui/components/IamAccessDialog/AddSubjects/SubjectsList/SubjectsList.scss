@@ -1,0 +1,28 @@
+.dl-iam-access-dialog-add-subjects-subjects-list {
+    &__subjects {
+        margin-top: 30px;
+    }
+
+    &__subject {
+        display: flex;
+        padding: 10px 4px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__subject-info {
+        flex: 1;
+    }
+
+    &__delete-subject {
+        margin-left: 10px;
+    }
+
+    &__delete-subject-icon {
+        opacity: 0.5;
+    }
+
+    &__acl-popup-content {
+        width: 540px;
+        padding: var(--g-spacing-2);
+    }
+}
