@@ -34,8 +34,7 @@ export enum ErrorCode {
     EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',
     ReadOnlyMode = 'READ_ONLY_MODE_ENABLED',
-    test = 'ERR.DS_API.US.BAD_REQUEST.ALREADY_EXISTS',
-    testYC = 'ERR.DS_API.US.BAD_REQUEST'
+    DatasetAlreadyExists = 'ERR.DS_API.US.BAD_REQUEST.ALREADY_EXISTS',
 }
 
 export const ErrorContentTypes = {

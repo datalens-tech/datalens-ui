@@ -26,8 +26,11 @@ export function getLoginOrIdFromLockedError(error: EntryIsLockedError) {
 
 export function isEntryAlreadyExists(error: DataLensApiError) {
     const {code} = parseError(error);
-    console.log(code)
-    if (code === ErrorCode.UsUniqViolation || code === ErrorCode.EntryAlreadyExists || code === ErrorCode.test || code === ErrorCode.testYC) {
+    if (
+        code === ErrorCode.UsUniqViolation ||
+        code === ErrorCode.EntryAlreadyExists ||
+        code === ErrorCode.DatasetAlreadyExists
+    ) {
         return true;
     }
     return false;

@@ -294,7 +294,7 @@ export function fetchDataset({datasetId}) {
 }
 
 // There is no key field in the workbooks when creating
-export function saveDataset({key, workbookId, name, history, isCreationProcess, isAuto = false}) {
+export function saveDataset({key, workbookId, name, history, isCreationProcess, isAuto = false, disableGlobalErrorHandling = false}) {
     return async (dispatch, getState) => {
         try {
             dispatch({
@@ -358,14 +358,23 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                 history.push(`/datasets/${datasetId}`);
             }
         } catch (error) {
-            logger.logError('dataset: saveDataset failed', error);
-            // dispatch({
-            //     type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
-            //     payload: {
-            //         error,
-            //     },
-            // });
-            throw error
+            if (disableGlobalErrorHandling) {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
+                    payload: {
+                        error: null,
+                    },
+                });
+            } else {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
+                    payload: {
+                        error,
+                    },
+                });
+            }
+
+            throw error;
         }
     };
 }
