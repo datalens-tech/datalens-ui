@@ -91,7 +91,6 @@ export const runEditor = async (
         chartsEngine,
     });
 
-    res.setHeader('CE-Sandbox-Version', sandboxVersion);
     ctx.log(`EditorRunner::Sandbox version: ${sandboxVersion}`);
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
