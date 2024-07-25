@@ -3,6 +3,7 @@
 const IGNORE_NODE_MODULES_LIST = [
     '@gravity-ui',
     '@diplodoc/latex-extension/react',
+    '@diplodoc/mermaid-extension/react',
     'react-dnd',
     'dnd-core',
     'monaco-editor',

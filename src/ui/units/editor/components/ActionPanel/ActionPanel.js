@@ -2,11 +2,13 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
-import {Feature, SHARED_URL_OPTIONS} from 'shared';
+import {useSelector} from 'react-redux';
+import {Feature} from 'shared';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {registry} from '../../../../registry';
+import {selectSandboxDebugMode} from '../../../../store/selectors/user';
 import SandboxEngineSelect from '../../components/SandboxEngineSelect/SandboxEngineSelect';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
@@ -29,6 +31,7 @@ function ActionPanelService({
     history,
 }) {
     usePageTitle({entry});
+    const sandboxDebugMode = useSelector(selectSandboxDebugMode);
 
     if (!entry) {
         return null;
@@ -54,13 +57,11 @@ function ActionPanelService({
 
     const ActionPanelButton = registry.editor.components.get('editor/ACTION_PANEL_BUTTON');
 
-    const searchParams = new URLSearchParams(window.location.search);
-    const sandboxDebug = searchParams.get(SHARED_URL_OPTIONS.SANDBOX_DEBUG);
     const centerItems = [
         <React.Fragment key="additionalEntryItems">
             <ActionPanelButton entry={entry} className={b('custom-button')} />
             <EntryLabel entry={entry} />
-            {Utils.isEnabledFeature(Feature.EnableIsolatedSandbox) && sandboxDebug && (
+            {Utils.isEnabledFeature(Feature.EnableIsolatedSandbox) && sandboxDebugMode && (
                 <SandboxEngineSelect entry={entry} />
             )}
         </React.Fragment>,

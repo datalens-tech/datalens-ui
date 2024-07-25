@@ -52,6 +52,7 @@ export interface DLUserSettings {
     cloudId?: string;
     folderId?: string;
     language?: Language;
+    isDefaultLanguage?: boolean;
     theme?: Theme;
     themeSettings?: ThemeSettings;
     isCompact?: boolean;
@@ -67,6 +68,7 @@ export interface DLUserSettings {
     dlStartInDataLensExt?: boolean; // CHARTS-6146
     dlFieldEditorDocShown?: boolean; // CHARTS-6168
     dlGsheetAuthHintShown?: boolean; // CHARTS-6811
+    dlSanboxDebugMode?: boolean;
 
     // DC specific user settings
     crmContactCreated?: boolean;
