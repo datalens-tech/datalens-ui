@@ -9,6 +9,10 @@ import type {
 import {DialogCreateWorkbookEntry, EntryDialogBase} from '../../../../components/EntryDialogues';
 import {URL_QUERY} from '../../../../constants';
 import DatasetUtils from '../../helpers/utils';
+import {DataLensApiError} from 'ui/typings';
+import {useDispatch} from 'react-redux';
+import {isEntryAlreadyExists} from 'ui/utils/errors/errorByCode';
+import {showToast} from 'ui/store/actions/toaster';
 
 const i18n = I18n.keyset('dataset.dataset-creation.create');
 
@@ -31,9 +35,28 @@ type DialogCreateDatasetProps = DialogCreateDatasetBaseProps &
     (DialogCreateDatasetInNavigationProps | DialogCreateDatasetInWorkbookProps);
 
 const DialogCreateDataset = (props: DialogCreateDatasetProps) => {
+    const dispatch = useDispatch();
     const {visible, onClose} = props;
     const path =
         DatasetUtils.getQueryParam(URL_QUERY.CURRENT_PATH) || DatasetUtils.getPersonalFolderPath();
+
+    const onError = React.useCallback((error: DataLensApiError) => {
+        if (isEntryAlreadyExists(error)) {
+            return {
+                inputError: i18n('label_entry-name-already-exists'),
+            };
+        }
+
+        dispatch(
+            showToast({
+                title: i18n('toast_create-dataset-error'),
+                name: 'DialogCreateDatasetFailed',
+                error: error,
+                withReport: true,
+            }),
+        );
+        return null;
+    }, []);
 
     if (props.creationScope === 'workbook') {
         return (
@@ -46,6 +69,7 @@ const DialogCreateDataset = (props: DialogCreateDatasetProps) => {
                 textButtonCancel={i18n('button_cancel')}
                 visible={visible}
                 onApply={props.onApply}
+                onError={onError}
                 onClose={onClose}
                 onSuccess={onClose}
             />
@@ -63,8 +87,8 @@ const DialogCreateDataset = (props: DialogCreateDatasetProps) => {
             textButtonCancel={i18n('button_cancel')}
             visible={visible}
             withInput={true}
-            onError={() => null}
             onApply={props.onApply}
+            onError={onError}
             onClose={onClose}
             onSuccess={onClose}
         />

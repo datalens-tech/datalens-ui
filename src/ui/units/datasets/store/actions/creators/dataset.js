@@ -321,7 +321,7 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                     creationData.dir_path = `${dividedKey.join('/')}/`;
                     creationData.name = nameFromKey;
                 }
-
+                
                 const {id: createdDatasetId} = await getSdk().bi.createDataset(creationData);
 
                 datasetId = createdDatasetId;
@@ -359,12 +359,13 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
             }
         } catch (error) {
             logger.logError('dataset: saveDataset failed', error);
-            dispatch({
-                type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
-                payload: {
-                    error,
-                },
-            });
+            // dispatch({
+            //     type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
+            //     payload: {
+            //         error,
+            //     },
+            // });
+            throw error
         }
     };
 }
