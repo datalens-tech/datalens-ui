@@ -1,3 +1,5 @@
 stream-write-ods==0.0.24
 pandas==2.0.0
 numpy==1.26.4
+xlsxwriter==3.2.0
+openpyxl==3.1.2

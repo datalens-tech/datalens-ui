@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unrelesed] 26.07.2024
+
+Created:
+
+- добавлен запрос `POST /export-entries` позволяющий объединять табличные графики в один Excel-файл, описание запроса см. в файле `/src/server/controllers/export-entries.ts`
+
 ## [0.1863.0] 22.07.2024
 
 Обновление версии 0.1794.0 -> 0.1863.0
