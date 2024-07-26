@@ -43,7 +43,7 @@ export const getIsolatedSandboxChartBuilder = async (
     let shared: Record<string, any>;
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    context.evalSync('const modules = {}');
+    context.evalSync('const __modules = {}');
 
     return {
         dispose: () => {
