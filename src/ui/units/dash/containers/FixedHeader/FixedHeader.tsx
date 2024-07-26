@@ -89,7 +89,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
     const {editMode, isEmpty} = props;
     const rootRef = React.useRef<HTMLDivElement>(null);
     const containerRef = React.useRef<HTMLDivElement>(null);
-    const [isScrollCaptured, setScrollCapture] = React.useState(false);
+    const [isScrollLocked, setScrollLock] = React.useState(false);
 
     const [containerHeight, setContainerHeight] = React.useState(0);
 
@@ -105,9 +105,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
             if (el) {
                 const {height} = el.contentRect;
                 setContainerHeight(height);
-                setScrollCapture(
-                    el.target.scrollHeight + CONTAINER_TOP_OFFSET >= window.innerHeight,
-                );
+                setScrollLock(el.target.scrollHeight + CONTAINER_TOP_OFFSET >= window.innerHeight);
             }
         });
 
@@ -115,13 +113,14 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
             observer.observe(containerRef.current);
         }
 
+        // eslint-disable-next-line consistent-return
         return () => {
             observer.disconnect();
         };
     }, [containerRef, isRenderEmpty]);
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET);
 
-    useBodyScrollLock({enabled: isFixed && !editMode && !props.isCollapsed && isScrollCaptured});
+    useBodyScrollLock({enabled: isFixed && !editMode && !props.isCollapsed && isScrollLocked});
 
     const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 

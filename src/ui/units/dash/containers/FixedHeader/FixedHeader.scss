@@ -8,7 +8,10 @@
         &_fixed {
             position: fixed;
             top: 40px;
-            background-color: var(--g-color-base-background);
+            background-color: var(
+                --dl-color-fixed-header-background,
+                var(--g-color-base-background)
+            );
             padding-left: 24px;
             padding-right: 24px;
             margin-left: -24px;
@@ -78,7 +81,10 @@
             position: fixed;
             overflow: auto;
             top: 100px;
-            background-color: var(--g-color-base-background);
+            background-color: var(
+                --dl-color-fixed-header-background,
+                var(--g-color-base-background)
+            );
             border-bottom: 1px solid var(--g-color-line-generic);
             padding-left: 24px;
             padding-right: 24px;
