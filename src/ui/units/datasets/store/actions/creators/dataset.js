@@ -294,7 +294,15 @@ export function fetchDataset({datasetId}) {
 }
 
 // There is no key field in the workbooks when creating
-export function saveDataset({key, workbookId, name, history, isCreationProcess, isAuto = false}) {
+export function saveDataset({
+    key,
+    workbookId,
+    name,
+    history,
+    isCreationProcess,
+    isAuto = false,
+    isErrorThrows = false,
+}) {
     return async (dispatch, getState) => {
         try {
             dispatch({
@@ -365,7 +373,10 @@ export function saveDataset({key, workbookId, name, history, isCreationProcess, 
                     error,
                 },
             });
-            throw error;
+
+            if (isErrorThrows) {
+                throw error;
+            }
         }
     };
 }

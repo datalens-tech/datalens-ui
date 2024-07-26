@@ -217,14 +217,12 @@ class Dataset extends React.Component {
         if (this.props.validationError) {
             this.setState({isAuto: false});
         } else {
-            try {
-                await this.props.saveDataset({
-                    isAuto,
-                    isCreationProcess,
-                    key: getAutoCreatedYTDatasetKey(ytPath),
-                    history,
-                });
-            } catch (err) {} // The error did not go further
+            this.props.saveDataset({
+                isAuto,
+                isCreationProcess,
+                key: getAutoCreatedYTDatasetKey(ytPath),
+                history,
+            });
         }
     }
 
@@ -381,7 +379,7 @@ class Dataset extends React.Component {
      */
     createDatasetInNavigation = (key) => {
         const {isCreationProcess, history} = this.props;
-        return this.props.saveDataset({key, history, isCreationProcess});
+        return this.props.saveDataset({key, history, isCreationProcess, isErrorThrows: true});
     };
 
     /**
@@ -396,6 +394,7 @@ class Dataset extends React.Component {
             history,
             isCreationProcess,
             workbookId: this.getWorkbookId(),
+            isErrorThrows: true,
         });
     };
 
@@ -421,18 +420,13 @@ class Dataset extends React.Component {
         this.props.toggleLoadPreviewByDefault(value.includes(ITEM_SHOW_PREVIEW_BY_DEFAULT));
     };
 
-    handleSaveDataset = async ({isCreationProcess, history}) => {
-        try {
-            await this.props.saveDataset({isCreationProcess, history});
-        } catch (err) {} //The error did not go further
-    };
-
     getRightItems = () => {
         const {
             isLoading,
             isDatasetRevisionMismatch,
             savingDatasetDisabled,
             isProcessingSavingDataset,
+            saveDataset,
             isCreationProcess,
         } = this.props;
         const saveButtonDisabled = savingDatasetDisabled || isDatasetRevisionMismatch;
@@ -448,7 +442,7 @@ class Dataset extends React.Component {
                 onClick={() =>
                     isCreationProcess
                         ? this.openDialogCreateDataset()
-                        : this.handleSaveDataset({isCreationProcess, history})
+                        : saveDataset({isCreationProcess, history})
                 }
             >
                 {i18n('button_save')}
