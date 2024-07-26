@@ -76,6 +76,7 @@
 
         &_fixed {
             position: fixed;
+            overflow: auto;
             top: 100px;
             background-color: var(--g-color-base-background);
             border-bottom: 1px solid var(--g-color-line-generic);
