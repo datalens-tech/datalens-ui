@@ -217,12 +217,14 @@ class Dataset extends React.Component {
         if (this.props.validationError) {
             this.setState({isAuto: false});
         } else {
-            this.props.saveDataset({
-                isAuto,
-                isCreationProcess,
-                key: getAutoCreatedYTDatasetKey(ytPath),
-                history,
-            });
+            try {
+                await this.props.saveDataset({
+                    isAuto,
+                    isCreationProcess,
+                    key: getAutoCreatedYTDatasetKey(ytPath),
+                    history,
+                });
+            } catch (err) {} // The error did not go further
         }
     }
 
@@ -419,13 +421,18 @@ class Dataset extends React.Component {
         this.props.toggleLoadPreviewByDefault(value.includes(ITEM_SHOW_PREVIEW_BY_DEFAULT));
     };
 
+    handleSaveDataset = async ({isCreationProcess, history}) => {
+        try {
+            await this.props.saveDataset({isCreationProcess, history});
+        } catch (err) {} //The error did not go further
+    };
+
     getRightItems = () => {
         const {
             isLoading,
             isDatasetRevisionMismatch,
             savingDatasetDisabled,
             isProcessingSavingDataset,
-            saveDataset,
             isCreationProcess,
         } = this.props;
         const saveButtonDisabled = savingDatasetDisabled || isDatasetRevisionMismatch;
@@ -441,7 +448,7 @@ class Dataset extends React.Component {
                 onClick={() =>
                     isCreationProcess
                         ? this.openDialogCreateDataset()
-                        : saveDataset({isCreationProcess, history})
+                        : this.handleSaveDataset({isCreationProcess, history})
                 }
             >
                 {i18n('button_save')}
