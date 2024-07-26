@@ -98,15 +98,17 @@ const execute = async ({
            
            function require(name) {
                const lowerName = name.toLowerCase();
-               if (modules[lowerName]) {
-                   return modules[lowerName];
+               if (__modules[lowerName]) {
+                   return __modules[lowerName];
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
            };
            `;
 
-        const after = ` modules["${name}"] = module.exports`;
+        const after = `
+            __modules["${name}"] = module.exports
+        `;
         context.evalClosureSync(prepare + code + after, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
