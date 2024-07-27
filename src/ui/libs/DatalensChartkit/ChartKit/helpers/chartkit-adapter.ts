@@ -10,7 +10,7 @@ import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
-import {applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
+import {applyGoToEvents, applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
 import {getD3ChartKitData} from './d3-chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
@@ -170,6 +170,10 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                                     data,
                                     onChange,
                                 });
+                                break;
+                            }
+                            case 'goTo': {
+                                applyGoToEvents({url: handler.url, data});
                             }
                         }
                     });
