@@ -218,12 +218,14 @@
     "robust-point-in-polygon": "^1.0.3",
     "stylelint": "^15.11.0",
     "ts-jest": "^29.0.5",
+    "ts-loader": "^9.5.1",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^3.14.0",
     "typescript": "^5.4.5",
     "url": "^0.11.1",
     "utility-types": "^3.10.0",
     "uuid": "^3.3.3",
+    "webpack-cli": "^5.1.4",
     "yup": "^0.32.9"
   },
   "overrides": {

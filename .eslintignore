@@ -1,4 +1,5 @@
 dist
+ce-dist
 node_modules
 src/i18n/keysets
 tests/dist

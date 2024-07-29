@@ -1,7 +1,8 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/platform/src/server/components/charts-engine/components/processor/isolated-sandbox/interop/bundled-libs.ts',
+    entry: './src/server/components/charts-engine/components/processor/isolated-sandbox/interop/bundled-libs.ts',
+    mode: 'production',
     module: {
         rules: [
             {
@@ -14,8 +15,17 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.js'],
     },
+    experiments: {
+        outputModule: true,
+    },
     output: {
-        filename: 'bundle.js',
+        filename: 'bundled-libs.js',
         path: path.resolve(__dirname, 'ce-dist'),
+        chunkFormat: 'commonjs',
+        module: true,
+        library: {
+            name: 'bundledLibraries',
+            type: 'commonjs',
+        },
     },
 };

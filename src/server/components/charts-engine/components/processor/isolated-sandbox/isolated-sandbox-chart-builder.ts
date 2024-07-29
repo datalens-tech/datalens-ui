@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import ivm from 'isolated-vm';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
@@ -12,6 +15,11 @@ import {Sandbox} from './sandbox';
 
 const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
+
+const bundledCode = fs.readFileSync(
+    path.join(__dirname, '../../../../../../../ce-dist/bundled-libs.js'),
+    'utf-8',
+);
 
 type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;
@@ -78,6 +86,19 @@ export const getIsolatedSandboxChartBuilder = async (
                 onModuleBuild(result);
                 processedModules[name] = result;
             }
+
+            const name = 'libs/dataset/v2';
+            const result = await Sandbox.processModule({
+                name,
+                code: bundledCode,
+                userLogin,
+                userLang,
+                nativeModules: chartsEngine.nativeModules,
+                isScreenshoter,
+                context,
+            });
+            onModuleBuild(result);
+            processedModules[name] = result;
 
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },
