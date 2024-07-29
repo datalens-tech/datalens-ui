@@ -752,11 +752,17 @@ class SectionDataset extends React.Component<Props, State> {
 
         if (appliedSearchPhrase) {
             dimensions = dimensions.filter((item) => {
-                return item.title.toLowerCase().includes(appliedSearchPhrase);
+                return (
+                    item.title.toLowerCase().includes(appliedSearchPhrase) ||
+                    item.description.toLowerCase().includes(appliedSearchPhrase)
+                );
             });
 
             measures = measures.filter((item) => {
-                return item.title.toLowerCase().includes(appliedSearchPhrase);
+                return (
+                    item.title.toLowerCase().includes(appliedSearchPhrase) ||
+                    item.description.toLowerCase().includes(appliedSearchPhrase)
+                );
             });
         }
 

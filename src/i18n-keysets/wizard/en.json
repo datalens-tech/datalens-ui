@@ -36,7 +36,7 @@
   "confirm_chart-save_message": "To export this image, save the changes to the chart.",
   "confirm_chart-save_message_alerts": "To set up alerts, first save the changes to the chart.",
   "dataset-selector_label": "Dataset:",
-  "field_search": "Search",
+  "field_search": "Search by name and description",
   "label_2-point": "2 point",
   "label_3-point": "3 point",
   "label_absolute": "Absolute",
