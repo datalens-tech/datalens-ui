@@ -1,0 +1,12 @@
+.dl-iam-access-dialog-access-list-filters {
+    display: flex;
+
+    &__search {
+        flex: 1;
+        margin-right: 8px;
+    }
+
+    &__subject-type {
+        width: 170px;
+    }
+}
