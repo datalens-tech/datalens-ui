@@ -379,7 +379,7 @@ class Dataset extends React.Component {
      */
     createDatasetInNavigation = (key) => {
         const {isCreationProcess, history} = this.props;
-        return this.props.saveDataset({key, history, isCreationProcess});
+        return this.props.saveDataset({key, history, isCreationProcess, isErrorThrows: true});
     };
 
     /**
@@ -394,6 +394,7 @@ class Dataset extends React.Component {
             history,
             isCreationProcess,
             workbookId: this.getWorkbookId(),
+            isErrorThrows: true,
         });
     };
 
