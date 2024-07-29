@@ -1,6 +1,7 @@
 import type {CollectionsStructureState} from 'store/reducers/collectionsStructure';
 import type {ColorPaletteEditorState} from 'store/reducers/colorPaletteEditor';
 import type {DialogState} from 'store/reducers/dialog';
+import type {IamAccessDialogState} from 'store/reducers/iamAccessDialog';
 import type {LandingState} from 'store/reducers/landing';
 import type {AsideHeaderState} from 'store/typings/asideHeader';
 import type {EntryGlobalState} from 'store/typings/entryContent';
@@ -71,4 +72,5 @@ export type DatalensGlobalState = {
     migrationToWorkbook: MigrationToWorkbookState;
     copyEntriesToWorkbook: CopyEntriesToWorkbookState;
     editHistory: EditHistoryState;
+    iamAccessDialog: IamAccessDialogState;
 };
