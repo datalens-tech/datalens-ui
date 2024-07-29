@@ -137,3 +137,37 @@ export const applySetActionParamsEvents = (args: {
         });
     }
 };
+
+function handleSeriesClickForGoTo(args: {point?: Highcharts.Point; url?: string}) {
+    const {point, url} = args;
+    const pointUrl = get(point, 'options.custom.url');
+    const resultUrl = pointUrl || url;
+
+    if (!resultUrl) {
+        return;
+    }
+
+    window.open(resultUrl);
+}
+
+export const applyGoToEvents = (args: {data: GraphWidget; url?: string}) => {
+    const {data, url} = args;
+    const pathToSeriesEvents = 'libraryConfig.plotOptions.series.events';
+
+    if (!has(data, pathToSeriesEvents)) {
+        set(data, pathToSeriesEvents, {});
+    }
+
+    wrap(
+        get(data, pathToSeriesEvents),
+        'click',
+        function (
+            this: Highcharts.Series,
+            proceed: Highcharts.SeriesClickCallbackFunction,
+            event: Highcharts.SeriesClickEventObject,
+        ) {
+            handleSeriesClickForGoTo({point: event.point, url});
+            proceed?.apply(this, [event]);
+        },
+    );
+};
