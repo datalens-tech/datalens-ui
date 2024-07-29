@@ -107,7 +107,6 @@ const execute = async ({
            `;
 
         const after = `
-        ; \n
             __modules["${name}"] = module.exports
         `;
         context.evalClosureSync(prepare + code + after, [], {timeout});
