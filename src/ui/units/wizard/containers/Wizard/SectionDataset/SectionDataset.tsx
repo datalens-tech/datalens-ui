@@ -740,7 +740,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     renderSections = () => {
-        const {visualization} = this.props;
+        const {visualization, dlDebugMode} = this.props;
         let {dimensions, measures} = this.props;
 
         const {searchPhrase, appliedSearchPhrase, datasetItemsLoading} = this.state;
@@ -752,19 +752,19 @@ class SectionDataset extends React.Component<Props, State> {
         ));
 
         if (appliedSearchPhrase) {
-            console.log(this.props.dlDebugMode);
-
             dimensions = dimensions.filter((item) => {
                 return (
                     item.title.toLowerCase().includes(appliedSearchPhrase) ||
-                    item.description.toLowerCase().includes(appliedSearchPhrase)
+                    item.description.toLowerCase().includes(appliedSearchPhrase) ||
+                    (dlDebugMode && item.guid.includes(appliedSearchPhrase))
                 );
             });
 
             measures = measures.filter((item) => {
                 return (
                     item.title.toLowerCase().includes(appliedSearchPhrase) ||
-                    item.description.toLowerCase().includes(appliedSearchPhrase)
+                    item.description.toLowerCase().includes(appliedSearchPhrase) ||
+                    (dlDebugMode && item.guid.includes(appliedSearchPhrase))
                 );
             });
         }
