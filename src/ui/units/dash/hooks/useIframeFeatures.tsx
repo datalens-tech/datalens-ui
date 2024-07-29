@@ -14,30 +14,24 @@ export type PageTitleExtraSettings = {
     subtitle?: string | null;
 };
 
-export const useIframeFeatures = ({
-    wrapRef,
-    skipNoScroll,
-}: {
-    wrapRef: React.RefObject<HTMLDivElement>;
-    skipNoScroll?: boolean;
-}) => {
+export const useIframeFeatures = ({wrapRef}: {wrapRef: React.RefObject<HTMLDivElement>}) => {
     const [isObserverEnabled, setIsObserverEnabled] = React.useState<boolean>();
 
     const isIframeView = isIframe();
 
     React.useEffect(() => {
-        if (skipNoScroll || !isIframeView) {
+        if (!isIframeView) {
             return;
         }
 
-        const dashHeightClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
+        const dashNoScrollClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
 
-        Utils.addBodyClass(...dashHeightClasses);
+        Utils.addBodyClass(...dashNoScrollClasses);
 
         return () => {
-            Utils.removeBodyClass(...dashHeightClasses);
+            Utils.removeBodyClass(...dashNoScrollClasses);
         };
-    }, [skipNoScroll, isIframeView]);
+    }, [isIframeView]);
 
     React.useEffect(() => {
         if (!isIframeView || !wrapRef.current || !window.name) {
