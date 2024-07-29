@@ -368,25 +368,44 @@ export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab
         return undefined;
     }
     return currentTab.items
-        .filter(({type}) => type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.WIDGET)
-        .reduce(
-            (result, {id, data, type, namespace}: DashTabItem) =>
-                type === ITEM_TYPE.WIDGET
-                    ? result.concat(
-                          (data as DashTabItemWidget['data']).tabs.map(
-                              (tabItem: DashTabItemWidgetTab) => ({
-                                  id: tabItem.id,
-                                  namespace,
-                                  type,
-                                  title: tabItem.title,
-                              }),
-                          ) as DashTabItem[],
-                      )
-                    : result.concat([
-                          {id, namespace, type, title: 'title' in data ? data.title : ''},
-                      ] as DashTabItem[]),
-            [] as DashTabItem[],
-        );
+        .filter(
+            ({type}) =>
+                type === ITEM_TYPE.CONTROL ||
+                type === ITEM_TYPE.WIDGET ||
+                type === ITEM_TYPE.GROUP_CONTROL,
+        )
+        .reduce((result, {id, data, type, namespace}: DashTabItem) => {
+            if (type === ITEM_TYPE.GROUP_CONTROL && 'group' in data) {
+                data.group.forEach((groupItem) => {
+                    result.push({
+                        id: groupItem.id,
+                        namespace: groupItem.namespace,
+                        type,
+                        title: groupItem.title,
+                    } as DashTabItem);
+                });
+            } else if (type === ITEM_TYPE.WIDGET) {
+                (data as DashTabItemWidget['data']).tabs.forEach(
+                    (tabItem: DashTabItemWidgetTab) => {
+                        result.push({
+                            id: tabItem.id,
+                            namespace,
+                            type,
+                            title: tabItem.title,
+                        } as DashTabItem);
+                    },
+                );
+            } else {
+                result.push({
+                    id,
+                    namespace,
+                    type,
+                    title: 'title' in data ? data.title : '',
+                } as DashTabItem);
+            }
+
+            return result;
+        }, [] as DashTabItem[]);
 });
 
 export const selectCurrentTabRelationDataItems = createSelector(
