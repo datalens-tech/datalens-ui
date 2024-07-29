@@ -7,16 +7,16 @@
     min-width: 1100px;
     flex-direction: column;
 
-    &_embedded {
-        min-height: unset;
-    }
-
     &#{&}_mobile {
         min-width: 320px;
 
         .cc-cloud-folder-select__current_compact {
             margin-left: 15px;
         }
+    }
+
+    &_unset-height {
+        min-height: unset;
     }
 
     &__content {

@@ -75,6 +75,8 @@ export enum Feature {
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
+    /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
+    RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
 }
