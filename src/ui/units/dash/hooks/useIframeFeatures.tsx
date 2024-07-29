@@ -30,12 +30,12 @@ export const useIframeFeatures = ({
             return;
         }
 
-        const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
+        const dashHeightClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
 
-        Utils.addBodyClass(...dashClasses);
+        Utils.addBodyClass(...dashHeightClasses);
 
         return () => {
-            Utils.removeBodyClass(...dashClasses);
+            Utils.removeBodyClass(...dashHeightClasses);
         };
     }, [skipNoScroll, isIframeView]);
 
@@ -44,9 +44,13 @@ export const useIframeFeatures = ({
             return;
         }
 
+        const dashHeightClasses = dashBlock({'without-height': true}).split(' ');
+
         function handleMessageSend(event: MessageEvent) {
             if (event.data === EMBEDDED_DASH_MESSAGE_NAME) {
                 setIsObserverEnabled(true);
+
+                Utils.addBodyClass(...dashHeightClasses);
             }
         }
 
@@ -54,6 +58,7 @@ export const useIframeFeatures = ({
 
         return () => {
             window.removeEventListener('message', handleMessageSend);
+            Utils.removeBodyClass(...dashHeightClasses);
         };
     }, [isIframeView, wrapRef]);
 

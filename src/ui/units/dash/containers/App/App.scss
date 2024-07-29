@@ -7,10 +7,6 @@
     min-width: 1100px;
     flex-direction: column;
 
-    &_embedded {
-        min-height: unset;
-    }
-
     &#{&}_mobile {
         min-width: 320px;
 

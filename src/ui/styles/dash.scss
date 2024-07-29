@@ -4,6 +4,12 @@ body.g-root.dl-dash {
     &_no-scroll {
         overflow-y: hidden;
     }
+
+    &_without-height {
+        .app {
+            min-height: unset;
+        }
+    }
 }
 
 // temporary workaround for contrast themes
