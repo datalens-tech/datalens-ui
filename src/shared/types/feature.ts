@@ -75,6 +75,8 @@ export enum Feature {
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
+    /* Enable dashboard fixed header */
+    EnableDashFixedHeader = 'EnableDashFixedHeader',
 }
 
 export type FeatureConfig = Record<string, boolean>;
