@@ -30,6 +30,7 @@ import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog
 import type {DatalensGlobalState} from 'ui';
 import {DL, EntryDialogName, NavigationMinimal} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
+import {selectDebugMode} from 'ui/store/selectors/user';
 import {openDialogMultidataset} from 'units/wizard/actions/dialog';
 import {
     selectDataset,
@@ -751,6 +752,8 @@ class SectionDataset extends React.Component<Props, State> {
         ));
 
         if (appliedSearchPhrase) {
+            console.log(this.props.dlDebugMode);
+
             dimensions = dimensions.filter((item) => {
                 return (
                     item.title.toLowerCase().includes(appliedSearchPhrase) ||
@@ -1154,6 +1157,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         hierarchies: selectHierarchies(state),
         widget,
         datasetId: selectDatasetId(state),
+        dlDebugMode: selectDebugMode(state),
     };
 };
 
