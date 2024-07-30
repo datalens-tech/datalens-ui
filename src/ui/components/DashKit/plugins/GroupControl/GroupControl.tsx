@@ -48,6 +48,7 @@ import {addItemToLocalQueue, filterSignificantParams} from './utils';
 import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
+const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
@@ -85,7 +86,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsData: Record<string, ExtendedLoadedData | null> = {};
 
     // a quick loader for imitating action by clicking on apply button
-    quickActionLoader = false;
+    _quickActionTimer: ReturnType<typeof setTimeout> | null = null;
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
@@ -125,6 +126,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             stateParams,
             needReload: false,
             localUpdateLoader: false,
+            quickActionLoader: false,
         };
     }
 
@@ -226,7 +228,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     render() {
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.quickActionLoader ||
+            this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
         return (
@@ -732,9 +734,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.quickActionLoader = true;
-                setTimeout(() => {
-                    this.quickActionLoader = false;
+                if (this._quickActionTimer) {
+                    clearTimeout(this._quickActionTimer);
+                }
+
+                this.setState({quickActionLoader: true}, () => {
+                    this._quickActionTimer = setTimeout(() => {
+                        this._quickActionTimer = null;
+                        this.setState({quickActionLoader: false});
+                    }, GROUP_CONTROL_LOADING_EMULATION_TIMEOUT);
                 });
             }
             this.onChange({params: newParams, callChangeByClick});
