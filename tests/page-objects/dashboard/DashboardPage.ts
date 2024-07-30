@@ -1,4 +1,4 @@
-import {Page, Response, expect} from '@playwright/test';
+import {Page, Response, Route, expect} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
@@ -175,13 +175,15 @@ class DashboardPage extends BasePage {
         action?: () => Promise<void>;
     }) {
         const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+        const handler = async (route: Route) => {
+            await expect(loader).toBeVisible();
+
+            await route.continue();
+        };
 
         if (waitForLoader) {
             // check for loader appearence and passing request without changes
-            await this.page.route(CommonUrls.ApiRun, async (route) => {
-                await expect(loader).toBeVisible();
-                route.continue();
-            });
+            await this.page.route(CommonUrls.ApiRun, handler);
         }
 
         // check that requests for passed selectors have completed successfully
@@ -206,6 +208,7 @@ class DashboardPage extends BasePage {
 
         if (waitForLoader) {
             await expect(loader).toBeHidden();
+            await this.page.unroute(CommonUrls.ApiRun, handler);
         }
     }
 

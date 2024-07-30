@@ -396,7 +396,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 });
             } catch (err) {
                 console.log('first check');
-                throw err;
+                throw new Error('found 1');
             }
 
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
@@ -424,7 +424,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 });
             } catch (err) {
                 console.log('second check');
-                throw err;
+                throw new Error('found 2');
             }
 
             // check that count of items doesn't change
