@@ -66,15 +66,15 @@ class AddField extends React.Component<AddFieldProps> {
                         );
                     }}
                     filterOption={(option, filter) => {
+                        // option.data cannot be undefined, added if only for type-check
                         if (option.data) {
                             return matchFieldFilter(filter, dlDebugMode, {
                                 title: option.data.title,
-                                description: option.data?.description,
-                                guid: option.data?.guid,
+                                description: option.data.description,
+                                guid: option.data.guid,
                             });
                         }
-
-                        return option.content === filter;
+                        return true;
                     }}
                     filterable={true}
                     popupClassName={b('popup')}
