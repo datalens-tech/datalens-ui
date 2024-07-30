@@ -24,7 +24,7 @@ module.exports = {
         chunkFormat: 'commonjs',
         module: true,
         library: {
-            name: 'bundledLibraries',
+            name: 'dist',
             type: 'commonjs',
         },
     },

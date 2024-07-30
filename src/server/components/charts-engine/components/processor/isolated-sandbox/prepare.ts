@@ -31,7 +31,7 @@ function require(name) {
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
-        return __modules['bundledLibraries']['bundledLibraries'].datasetModule;
+        return __modules['bundledLibraries']['dist'].datasetModule;
     } else if (__modules[lowerName]) {
         return __modules[lowerName];
     } else {
