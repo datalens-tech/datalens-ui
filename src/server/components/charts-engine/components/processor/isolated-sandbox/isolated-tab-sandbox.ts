@@ -12,7 +12,12 @@ import type {LogItem} from '../console';
 import type {ProcessorHooks} from '../hooks';
 import type {RuntimeMetadata} from '../types';
 
-import {libsControlV1Interop, libsDatalensV3Interop, libsQlChartV1Interop} from './interop';
+import {
+    libsControlV1Interop,
+    libsDatalensV3Interop,
+    libsDatasetV2Interop,
+    libsQlChartV1Interop,
+} from './interop';
 import {prepareChartEditorApi} from './interop/charteditor-api';
 import {getPrepare} from './prepare';
 
@@ -134,6 +139,7 @@ const execute = async ({
     jail.setSync('__timeout', timeout);
 
     try {
+        timeStart = process.hrtime();
         prepareChartEditorApi({
             name: filename,
             jail,
@@ -144,7 +150,7 @@ const execute = async ({
         libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi});
         libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
-        timeStart = process.hrtime();
+        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
         const responseStringify = `
             return JSON.stringify({module}, function(key, val) {

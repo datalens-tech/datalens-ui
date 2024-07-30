@@ -1,6 +1,7 @@
 import {getPrepareApiAdapter} from './interop/charteditor-api';
 import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
+import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
@@ -21,6 +22,7 @@ const console = {log: (...args) => {
 ${libsControlV1Interop.prepareAdapter};
 ${libsDatalensV3Interop.prepareAdapter};
 ${libsQlChartV1Interop.prepareAdapter}
+${libsDatasetV2Interop.prepareAdapter}
 
 function require(name) {
     const lowerName = name.toLowerCase();
@@ -31,7 +33,11 @@ function require(name) {
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
-        return __modules['bundledLibraries']['dist'].datasetModule;
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].datasetModule;
+        } else {
+            return datasetV2prepareAdapter;
+        }
     } else if (__modules[lowerName]) {
         return __modules[lowerName];
     } else {

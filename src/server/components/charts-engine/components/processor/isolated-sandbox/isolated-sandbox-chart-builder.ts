@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 
 import ivm from 'isolated-vm';
 
@@ -16,7 +15,12 @@ import {Sandbox} from './sandbox';
 const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
-const bundledCode = fs.readFileSync(path.join('ce-dist/bundled-libs.js'), 'utf-8');
+const CE_BUNDLE_PATH = 'ce-dist/bundled-libs.js';
+
+let bundledLibriesCode: string;
+if (fs.existsSync(CE_BUNDLE_PATH)) {
+    bundledLibriesCode = fs.readFileSync(CE_BUNDLE_PATH, 'utf-8');
+}
 
 type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;
@@ -84,18 +88,20 @@ export const getIsolatedSandboxChartBuilder = async (
                 processedModules[name] = result;
             }
 
-            const name = 'bundledLibraries';
-            const result = await Sandbox.processModule({
-                name,
-                code: bundledCode,
-                userLogin,
-                userLang,
-                nativeModules: chartsEngine.nativeModules,
-                isScreenshoter,
-                context,
-            });
-            onModuleBuild(result);
-            processedModules[name] = result;
+            if (bundledLibriesCode) {
+                const name = 'bundledLibraries';
+                const result = await Sandbox.processModule({
+                    name,
+                    code: bundledLibriesCode,
+                    userLogin,
+                    userLang,
+                    nativeModules: chartsEngine.nativeModules,
+                    isScreenshoter,
+                    context,
+                });
+                onModuleBuild(result);
+                processedModules[name] = result;
+            }
 
             return processedModules as unknown as Record<string, ChartBuilderResult>;
         },
