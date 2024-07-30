@@ -382,17 +382,22 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             expect(initialItemsCount).toBeGreaterThan(1);
 
-            await dashboardPage.expectControlsRequests({
-                controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
-                action: async () => {
-                    // select influencing value
-                    await dashboardPage.controlActions.selectControlValueByTitle(
-                        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
-                        PARAMS.STATE_VALUE,
-                    );
-                },
-                waitForLoader: true,
-            });
+            try {
+                await dashboardPage.expectControlsRequests({
+                    controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
+                    action: async () => {
+                        // select influencing value
+                        await dashboardPage.controlActions.selectControlValueByTitle(
+                            PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+                            PARAMS.STATE_VALUE,
+                        );
+                    },
+                    waitForLoader: true,
+                });
+            } catch (err) {
+                console.log('first check');
+                throw err;
+            }
 
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
 
@@ -405,17 +410,22 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             const pageURL = new URL(page.url());
             expect(pageURL.searchParams.get('state')).toEqual(null);
 
-            await dashboardPage.expectControlsRequests({
-                controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
-                action: async () => {
-                    // select influencing value
-                    await dashboardPage.controlActions.selectControlValueByTitle(
-                        PARAMS.DATASET_FIRST_CONTROL.appearance.title,
-                        PARAMS.STATE_VALUE,
-                    );
-                },
-                waitForLoader: true,
-            });
+            try {
+                await dashboardPage.expectControlsRequests({
+                    controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
+                    action: async () => {
+                        // select influencing value
+                        await dashboardPage.controlActions.selectControlValueByTitle(
+                            PARAMS.DATASET_FIRST_CONTROL.appearance.title,
+                            PARAMS.STATE_VALUE,
+                        );
+                    },
+                    waitForLoader: true,
+                });
+            } catch (err) {
+                console.log('second check');
+                throw err;
+            }
 
             // check that count of items doesn't change
             expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
