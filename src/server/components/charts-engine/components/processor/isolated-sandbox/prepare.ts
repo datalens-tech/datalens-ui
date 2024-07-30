@@ -6,7 +6,17 @@ import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
 const exports = {};
 const module = {exports};
-const console = {log};
+const console = {log: (...args) => { 
+        const processed = args.map(elem => {
+            if (typeof elem === 'function') {
+                return JSON.stringify(val.toString());    
+            } else {
+                return JSON.stringify(elem);
+            }
+        })
+        return __log(...processed);
+    }
+};
 
 ${libsControlV1Interop.prepareAdapter};
 ${libsDatalensV3Interop.prepareAdapter};
@@ -21,7 +31,7 @@ function require(name) {
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
-        return __modules['bundledLibraries'].datasetModule;
+        return __modules['bundledLibraries']['bundledLibraries'].datasetModule;
     } else if (__modules[lowerName]) {
         return __modules[lowerName];
     } else {
