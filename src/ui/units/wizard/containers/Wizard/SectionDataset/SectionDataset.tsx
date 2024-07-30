@@ -81,6 +81,7 @@ import {
 } from '../../../constants';
 import {
     generateNextTitle,
+    matchFieldFilter,
     prepareFieldForCreate,
     prepareFieldForUpdate,
 } from '../../../utils/helpers';
@@ -752,21 +753,21 @@ class SectionDataset extends React.Component<Props, State> {
         ));
 
         if (appliedSearchPhrase) {
-            dimensions = dimensions.filter((item) => {
-                return (
-                    item.title.toLowerCase().includes(appliedSearchPhrase) ||
-                    item.description.toLowerCase().includes(appliedSearchPhrase) ||
-                    (dlDebugMode && item.guid.includes(appliedSearchPhrase))
-                );
-            });
+            dimensions = dimensions.filter((item) =>
+                matchFieldFilter(appliedSearchPhrase, dlDebugMode, {
+                    title: item.title,
+                    description: item.description,
+                    guid: item.guid,
+                }),
+            );
 
-            measures = measures.filter((item) => {
-                return (
-                    item.title.toLowerCase().includes(appliedSearchPhrase) ||
-                    item.description.toLowerCase().includes(appliedSearchPhrase) ||
-                    (dlDebugMode && item.guid.includes(appliedSearchPhrase))
-                );
-            });
+            measures = measures.filter((item) =>
+                matchFieldFilter(appliedSearchPhrase, dlDebugMode, {
+                    title: item.title,
+                    description: item.description,
+                    guid: item.guid,
+                }),
+            );
         }
 
         const filteredDimensions = dimensions.filter(isFieldVisible);

@@ -76,6 +76,8 @@ class AddFieldContainer extends React.Component<Props> {
                 icon: getIconForDataType(el.data_type),
                 title: el.title,
                 value: el.title,
+                description: el.description,
+                guid: el.guid,
                 iconType,
             };
         });
