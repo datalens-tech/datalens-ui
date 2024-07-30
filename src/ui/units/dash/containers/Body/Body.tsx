@@ -390,22 +390,18 @@ class Body extends React.PureComponent<BodyProps> {
             </div>
         );
 
-        if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
-            return (
-                <DashKitDnDWrapper
-                    onDragStart={() => {
-                        this.setState({isGlobalDragging: true});
-                    }}
-                    onDragEnd={() => {
-                        this.setState({isGlobalDragging: false});
-                    }}
-                >
-                    {content}
-                </DashKitDnDWrapper>
-            );
-        }
-
-        return content;
+        return (
+            <DashKitDnDWrapper
+                onDragStart={() => {
+                    this.setState({isGlobalDragging: true});
+                }}
+                onDragEnd={() => {
+                    this.setState({isGlobalDragging: false});
+                }}
+            >
+                {content}
+            </DashKitDnDWrapper>
+        );
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {
