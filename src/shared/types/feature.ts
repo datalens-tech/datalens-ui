@@ -69,7 +69,6 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     EnableFooter = 'EnableFooter',
-    EnableDashDNDPanel = 'EnableDashDNDPanel',
     /** Chart runner for the execution of trusted code in wizard/ql. */
     WorkerChartBuilder = 'WorkerChartBuilder',
     /** Enable Isolated VM Sandbox */
