@@ -90,8 +90,8 @@ const execute = async ({
     try {
         const prepare = `
            const console = {log};   
-           const exports = {};
-           const module = {exports};
+           let exports = {};
+           let module = {exports};
            const ChartEditor = {
                 getUserLang: () => "${userLang}"
            };
@@ -112,7 +112,7 @@ const execute = async ({
         context.evalClosureSync(prepare + code + after, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace = 'message' in e && (e.message as string);
 
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;

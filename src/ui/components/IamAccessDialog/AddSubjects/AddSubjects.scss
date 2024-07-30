@@ -1,0 +1,14 @@
+.dl-iam-access-dialog-add-subjects {
+    &__header {
+        display: flex;
+        align-items: center;
+    }
+
+    &__title {
+        margin-left: 10px;
+    }
+
+    &__subjects-list {
+        margin-top: 20px;
+    }
+}

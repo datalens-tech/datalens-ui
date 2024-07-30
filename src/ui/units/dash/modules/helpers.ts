@@ -414,13 +414,8 @@ export const getPreparedCopyItemOptions = (
 
 export const getDashkitSettings = (
     settings: DashSettings,
-    skipUrlParam?: boolean,
 ): NonNullable<DashKitProps['settings']> => {
     const dashkitSettings = settings as NonNullable<DashKitProps['settings']>;
-
-    if (skipUrlParam) {
-        return dashkitSettings;
-    }
 
     const {autoupdateInterval} = Utils.getOptionsFromSearch(window.location.search);
     if (autoupdateInterval) {

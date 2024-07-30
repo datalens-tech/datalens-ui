@@ -841,18 +841,14 @@ class Body extends React.PureComponent<BodyProps> {
             </div>
         );
 
-        if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
-            return (
-                <DashKitDnDWrapper
-                    onDragStart={this.onDragStartHandler}
-                    onDragEnd={this.onDragEndHandler}
-                >
-                    {content}
-                </DashKitDnDWrapper>
-            );
-        }
-
-        return content;
+        return (
+            <DashKitDnDWrapper
+                onDragStart={this.onDragStartHandler}
+                onDragEnd={this.onDragEndHandler}
+            >
+                {content}
+            </DashKitDnDWrapper>
+        );
     }
 }
 

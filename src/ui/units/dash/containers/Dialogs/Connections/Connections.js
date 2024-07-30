@@ -262,7 +262,8 @@ class Connections extends React.PureComponent {
                 .filter(({id, type}) => {
                     // filter chart widget types by design
                     let filterChartsWidgetsCondition =
-                        type === ITEM_TYPE.WIDGET && item.type === ITEM_TYPE.CONTROL;
+                        type === ITEM_TYPE.WIDGET &&
+                        (item.type === ITEM_TYPE.CONTROL || item.type === ITEM_TYPE.GROUP_CONTROL);
 
                     // if selected current chart with enableFiltering setting
                     // then don't filter all other charts
@@ -273,7 +274,9 @@ class Connections extends React.PureComponent {
 
                     return (
                         id !== itemId &&
-                        (type === ITEM_TYPE.CONTROL || filterChartsWidgetsCondition)
+                        (type === ITEM_TYPE.CONTROL ||
+                            type === ITEM_TYPE.GROUP_CONTROL ||
+                            filterChartsWidgetsCondition)
                     );
                 })
                 .map(({id, title, type}) => {
@@ -491,7 +494,10 @@ class Connections extends React.PureComponent {
 
         const selectedItem = this.namespacedItems.find(({id}) => id === this.state.itemId);
 
-        if (selectedItem.type === ITEM_TYPE.WIDGET && type === ITEM_TYPE.CONTROL) {
+        if (
+            selectedItem.type === ITEM_TYPE.WIDGET &&
+            (type === ITEM_TYPE.CONTROL || type === ITEM_TYPE.GROUP_CONTROL)
+        ) {
             connectionTypes = [
                 {
                     key: 'connected',
@@ -501,7 +507,11 @@ class Connections extends React.PureComponent {
                 },
                 CONNECTION_TYPE.IGNORE,
             ];
-        } else if (selectedItem.type === ITEM_TYPE.CONTROL && type === ITEM_TYPE.WIDGET) {
+        } else if (
+            (selectedItem.type === ITEM_TYPE.CONTROL ||
+                selectedItem.type === ITEM_TYPE.GROUP_CONTROL) &&
+            type === ITEM_TYPE.WIDGET
+        ) {
             connectionTypes = [
                 {
                     key: 'connected',

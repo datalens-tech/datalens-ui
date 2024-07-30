@@ -1,0 +1,14 @@
+.dl-iam-access-dialog-access-list-action-panel {
+    display: flex;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--g-color-line-generic);
+
+    &__info {
+        flex: 1;
+    }
+
+    &__add-button {
+        margin-left: 6px;
+    }
+}
