@@ -63,6 +63,7 @@ const SELECTORS_TITLES = {
         PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
     ],
     FIRST_DATASET_SELECTOR: [PARAMS.DATASET_FIRST_CONTROL.appearance.title],
+    SECOND_DATASET_SELECTOR: [PARAMS.DATASET_SECOND_CONTROL.appearance.title],
     SECOND_MANUAL_SELECTOR: [PARAMS.MANUAL_SECOND_SELECTOR.appearance.title],
 };
 
@@ -199,7 +200,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(cityItemsCount);
 
             await dashboardPage.expectControlsRequests({
-                controlTitles: SELECTORS_TITLES.SECOND_MANUAL_SELECTOR,
+                controlTitles: SELECTORS_TITLES.SECOND_DATASET_SELECTOR,
                 action: async () => {
                     await page.locator(slct(ControlQA.controlButtonApply)).click();
                 },

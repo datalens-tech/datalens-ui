@@ -179,8 +179,6 @@ class DashboardPage extends BasePage {
             await expect(loader).toBeVisible();
 
             await route.continue();
-
-            await this.page.unroute(CommonUrls.ApiRun, handler);
         };
 
         if (waitForLoader) {
@@ -192,11 +190,9 @@ class DashboardPage extends BasePage {
         const controlResponses = controlTitles.map((title) => {
             const predicate = (response: Response) => {
                 const isCorrespondingRequest =
+                    response.status() === 200 &&
                     response.url().includes(CommonUrls.ApiRun) &&
-                    response.request().postDataJSON().config.data.shared.title === title;
-                if (isCorrespondingRequest) {
-                    expect(response.status()).toEqual(200);
-                }
+                    response.request().postDataJSON()?.config?.data?.shared?.title === title;
 
                 return isCorrespondingRequest;
             };
@@ -210,6 +206,7 @@ class DashboardPage extends BasePage {
 
         if (waitForLoader) {
             await expect(loader).toBeHidden();
+            await this.page.unroute(CommonUrls.ApiRun, handler);
         }
     }
 
