@@ -17,7 +17,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null} = req.body;
+        const {expectedType = null, id, isWidget, config} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -52,6 +52,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         };
 
         const configResolveArgs: ResolveConfigProps = {
+            id: isWidget ? id : undefined,
             embedToken,
             // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
             key: embedId,
@@ -62,9 +63,8 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             requestId: req.id,
         };
 
-        const configPromise = ctx.call('configLoading', (cx) =>
-            resolveConfig(cx, configResolveArgs),
-        );
+        const configPromise =
+            config || ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
@@ -92,25 +92,27 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 res.status(error.status || 500).send(result);
             })
             .then(async (embeddingInfo) => {
-                if (!embeddingInfo || !('token' in embeddingInfo)) {
+                if (!embeddingInfo) {
                     return null;
                 }
 
-                const params: Record<string, unknown> = req.body.params || {};
-                const filteredParams: Record<string, unknown> = {};
+                if ('embed' in embeddingInfo) {
+                    const params: Record<string, unknown> = req.body.params || {};
+                    const filteredParams: Record<string, unknown> = {};
 
-                Object.keys(params).forEach((key) => {
-                    if (embeddingInfo.embed.unsignedParams.includes(key)) {
-                        filteredParams[key] = params[key];
-                    }
-                });
+                    Object.keys(params).forEach((key) => {
+                        if (embeddingInfo.embed.unsignedParams.includes(key)) {
+                            filteredParams[key] = params[key];
+                        }
+                    });
 
-                req.body.params = {
-                    ...embeddingInfo.token.params,
-                    ...filteredParams,
-                };
+                    req.body.params = {
+                        ...embeddingInfo.token.params,
+                        ...filteredParams,
+                    };
+                }
 
-                const config = embeddingInfo.entry;
+                const config = 'entry' in embeddingInfo ? embeddingInfo.entry : embeddingInfo;
 
                 const configResolving = getDuration(hrStart);
                 const configType = config && config.meta && config.meta.stype;
