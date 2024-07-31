@@ -199,7 +199,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(cityItemsCount);
 
             await dashboardPage.expectControlsRequests({
-                controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                controlTitles: SELECTORS_TITLES.SECOND_MANUAL_SELECTOR,
                 action: async () => {
                     await page.locator(slct(ControlQA.controlButtonApply)).click();
                 },
