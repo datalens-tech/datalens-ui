@@ -106,7 +106,7 @@ const prepareRowHeadersForGrid = (grid: any) => {
     return result;
 }
 
-const getChartData = async (host: string, token: string, links: string[], params: any) => {
+const getChartData = async (host: string, token: string, links: string[], body: any) => {
     let data: any = {};
     for(let i = 0; i < links.length; i++) {
         const link = links[i];
@@ -122,7 +122,7 @@ const getChartData = async (host: string, token: string, links: string[], params
             },
             data: {
                 "id": link,
-                "params": params || {},
+                "params": body[link] || {},
                 "responseOptions": {
                     "includeConfig": true,
                     "includeLogs": false
@@ -220,7 +220,7 @@ export async function exportEntries(req: Request, res: Response) {
 
     if(r.body['links']) {
         const links = r.body['links'];
-        const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body['params']);
+        const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body);
 
         const exportPath = path.join(__dirname, '../', '../', '../', 'export');
         const pythonScript = path.join(exportPath, 'dash2sheets.py');
