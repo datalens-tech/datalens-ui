@@ -1,5 +1,5 @@
 import {createContext} from 'react';
 
-import type {EntryGlobalState} from 'ui/store/typings/entryContent';
+import type {Config} from '@gravity-ui/dashkit';
 
-export const DashConfigContext = createContext<EntryGlobalState | null>(null);
+export const DashConfigContext = createContext<Config | null>(null);
