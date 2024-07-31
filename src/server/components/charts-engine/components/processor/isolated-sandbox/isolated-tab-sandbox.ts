@@ -126,13 +126,20 @@ const execute = async ({
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
-    jail.setSync('log', function (...args: unknown[]): void {
-        isolatedConsole.log(...args);
+    jail.setSync('__log', function (...args: unknown[]): void {
+        const processed = args.map((elem) => {
+            if (typeof elem === 'string') {
+                return JSON.parse(elem as string);
+            }
+            return elem;
+        });
+        isolatedConsole.log(...processed);
     });
 
     jail.setSync('__timeout', timeout);
 
     try {
+        timeStart = process.hrtime();
         prepareChartEditorApi({
             name: filename,
             jail,
@@ -144,7 +151,6 @@ const execute = async ({
         libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
-        timeStart = process.hrtime();
 
         const responseStringify = `
             return JSON.stringify({module}, function(key, val) {
