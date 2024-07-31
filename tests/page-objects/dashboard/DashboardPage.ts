@@ -179,6 +179,8 @@ class DashboardPage extends BasePage {
             await expect(loader).toBeVisible();
 
             await route.continue();
+
+            await this.page.unroute(CommonUrls.ApiRun, handler);
         };
 
         if (waitForLoader) {
@@ -208,7 +210,6 @@ class DashboardPage extends BasePage {
 
         if (waitForLoader) {
             await expect(loader).toBeHidden();
-            await this.page.unroute(CommonUrls.ApiRun, handler);
         }
     }
 

@@ -156,8 +156,8 @@ datalensTest.describe(
 
                 const secondControlValue = await secondControlLocator.inputValue();
 
-                expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
-                expect(secondControlValue).toEqual(firstControlValue);
+                await expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
+                await expect(secondControlValue).toEqual(firstControlValue);
 
                 await page.waitForResponse(CommonUrls.CreateDashState);
 
@@ -173,8 +173,8 @@ datalensTest.describe(
                 const firstControlValueAfterReload = await firstControlLocator.inputValue();
                 const secondControlValueAfterReload = await secondControlLocator.inputValue();
 
-                expect(firstControlValueAfterReload).toEqual(PARAMS.INPUT_TEXT_VALUE);
-                expect(secondControlValueAfterReload).toEqual(firstControlValue);
+                await expect(firstControlValueAfterReload).toEqual(PARAMS.INPUT_TEXT_VALUE);
+                await expect(secondControlValueAfterReload).toEqual(firstControlValue);
 
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();
@@ -194,8 +194,8 @@ datalensTest.describe(
                 const firstControlValueWithoutAutoupdate = await firstControlLocator.inputValue();
                 const secondControlValueWithoutAutoupdate = await secondControlLocator.inputValue();
 
-                expect(firstControlValueWithoutAutoupdate).toEqual(PARAMS.INPUT_TEXT_VALUE);
-                expect(secondControlValueWithoutAutoupdate).toEqual('');
+                await expect(firstControlValueWithoutAutoupdate).toEqual(PARAMS.INPUT_TEXT_VALUE);
+                await expect(secondControlValueWithoutAutoupdate).toEqual('');
             },
         );
 
@@ -259,8 +259,8 @@ datalensTest.describe(
                 const firstControlValue = await firstControlLocator.inputValue();
                 const secondControlValue = await secondControlLocator.inputValue();
 
-                expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
-                expect(secondControlValue).toEqual(PARAMS.SIDE_TEXT_VALUE);
+                await expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
+                await expect(secondControlValue).toEqual(PARAMS.SIDE_TEXT_VALUE);
 
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();
@@ -281,8 +281,8 @@ datalensTest.describe(
                 const firstControlValueWithoutAutoupdate = await firstControlLocator.inputValue();
                 const secondControlValueWithoutAutoupdate = await secondControlLocator.inputValue();
 
-                expect(firstControlValueWithoutAutoupdate).toEqual(PARAMS.INPUT_TEXT_VALUE);
-                expect(secondControlValueWithoutAutoupdate).toEqual(PARAMS.SIDE_TEXT_VALUE);
+                await expect(firstControlValueWithoutAutoupdate).toEqual(PARAMS.INPUT_TEXT_VALUE);
+                await expect(secondControlValueWithoutAutoupdate).toEqual(PARAMS.SIDE_TEXT_VALUE);
             },
         );
     },
