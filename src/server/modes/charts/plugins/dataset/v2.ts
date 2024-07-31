@@ -10,7 +10,6 @@ import type {
     ApiV2ResultData,
     ApiV2ResultDataRow,
 } from '../../../../../shared/types/bi-api/v2';
-import {getTimezoneOffsettedTime} from '../datalens/utils/misc-helpers';
 
 const OPERATIONS = {
     ISNULL: 'ISNULL',
@@ -40,6 +39,10 @@ const ORDERS = {
 };
 
 type Options = {utc?: boolean};
+
+function getTimezoneOffsettedTime(value: Date) {
+    return value.getTime() - value.getTimezoneOffset() * 60 * 1000;
+}
 
 function convertSimpleType(data: null | string, dataType: string, options: Options) {
     if (data === null) {
