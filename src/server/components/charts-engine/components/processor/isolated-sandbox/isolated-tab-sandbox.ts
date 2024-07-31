@@ -130,6 +130,8 @@ const execute = async ({
         isolatedConsole.log(...args);
     });
 
+    jail.setSync('__timeout', timeout);
+
     try {
         prepareChartEditorApi({
             name: filename,
@@ -155,6 +157,8 @@ const execute = async ({
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
         const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
             timeout,
+            filename,
+            lineOffset: -prepare.split('\n').length,
         });
         sandboxResult = JSON.parse(result);
     } catch (e) {

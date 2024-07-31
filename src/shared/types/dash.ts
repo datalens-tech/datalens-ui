@@ -155,10 +155,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {
-        hideTitle: boolean;
-        tabs: DashTabItemWidgetTab[];
-    };
+    data: {hideTitle: boolean; tabs: DashTabItemWidgetTab[]};
 }
 
 export interface DashTabItemWidgetTab {

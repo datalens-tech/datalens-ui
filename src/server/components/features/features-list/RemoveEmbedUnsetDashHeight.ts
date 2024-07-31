@@ -1,13 +1,10 @@
 import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
-/**
- * Enable Dash ActionPanel drag'n'drop functionality
- */
 export default createFeatureConfig({
-    name: Feature.EnableDashDNDPanel,
+    name: Feature.RemoveEmbedUnsetDashHeight,
     state: {
-        development: true,
-        production: true,
+        development: false,
+        production: false,
     },
 });

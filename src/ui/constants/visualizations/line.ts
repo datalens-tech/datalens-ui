@@ -1,12 +1,13 @@
 import {ArrowDown, ArrowRight, ArrowUp} from '@gravity-ui/icons';
 import type {Field, GraphShared, Placeholder, Shared} from 'shared';
-import {AxisNullsMode, WizardVisualizationId, isMeasureValue} from 'shared';
+import {AxisNullsMode, WizardVisualizationId} from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {
     lineCommonCheckColor,
     linearCheckColor,
+    linearCheckLabels,
     onLineChartDesignItemsChange,
 } from '../../utils/visualizations/line';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
@@ -99,8 +100,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     },
     checkAllowedDesignItems: linearCheckColor,
     checkAllowedShapes: linearCheckColor,
-    checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+    checkAllowedLabels: linearCheckLabels,
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
@@ -154,8 +154,7 @@ export const AREA_VISUALIZATION: GraphShared['visualization'] = {
     allowLabels: true,
     checkAllowedSort: checkAllowedAreaSort,
     checkAllowedDesignItems: linearCheckColor,
-    checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+    checkAllowedLabels: linearCheckLabels,
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
@@ -251,8 +250,7 @@ export const COLUMN_VISUALIZATION: GraphShared['visualization'] = {
         return selectedItems.some((selectedItem) => selectedItem.guid === item.guid);
     },
     checkAllowedDesignItems: lineCommonCheckColor,
-    checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+    checkAllowedLabels: linearCheckLabels,
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
@@ -341,8 +339,7 @@ export const BAR_VISUALIZATION: GraphShared['visualization'] = {
         return selectedItems.some((selectedItem) => selectedItem.guid === item.guid);
     },
     checkAllowedDesignItems: lineCommonCheckColor,
-    checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+    checkAllowedLabels: linearCheckLabels,
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [

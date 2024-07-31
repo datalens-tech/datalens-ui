@@ -1,0 +1,30 @@
+.dl-iam-access-dialog-access-list-block {
+    padding: 16px 20px;
+    border: 1px solid var(--dl-color-border);
+    border-radius: var(--g-border-radius-l);
+
+    & &__collapse-header {
+        display: flex;
+    }
+
+    & &__collapse-title {
+        flex: 1;
+    }
+
+    &__title {
+        flex: 1;
+        font-size: 15px;
+        line-height: 20px;
+        font-weight: 500;
+    }
+
+    &__counter {
+        margin-left: 8px;
+        color: var(--g-color-text-secondary);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+}

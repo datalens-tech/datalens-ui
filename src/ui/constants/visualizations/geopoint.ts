@@ -1,7 +1,7 @@
 import {ChevronsExpandUpRight, GeoDots} from '@gravity-ui/icons';
 import cloneDeep from 'lodash/cloneDeep';
 import type {Field, VisualizationLayerShared} from 'shared';
-import {isMeasureValue} from 'shared';
+import {isMarkupField, isMeasureValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES} from '../misc';
@@ -21,7 +21,8 @@ export const GEOPOINT_VISUALIZATION = {
     checkAllowedDesignItems: ({item}: {item: Field}) =>
         item.type === 'MEASURE' || item.type === 'DIMENSION',
     checkAllowedLabels: (item: Field) =>
-        ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item),
+        (ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item)) &&
+        !isMarkupField(item),
     availableLabelModes: ['absolute'],
     placeholders: [
         {

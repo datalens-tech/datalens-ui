@@ -886,6 +886,7 @@ export class Processor {
                         });
                         delete result.data.markdown;
                         result.data.html = html.result;
+                        result.data.meta = html.meta;
                     } catch (error) {
                         ctx.logError('Error render markdown', error);
                     }

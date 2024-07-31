@@ -1,0 +1,28 @@
+.dl-iam-access-dialog-access-list-direct-accesses-table-controls {
+    display: flex;
+
+    &__change-role {
+        display: flex;
+        flex: 1;
+        position: relative;
+    }
+
+    &__change-role-loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &__change-role-select {
+        flex: 1;
+    }
+
+    &__delete-role {
+        margin-left: 8px;
+    }
+
+    &__delete-role-icon {
+        opacity: 0.5;
+    }
+}

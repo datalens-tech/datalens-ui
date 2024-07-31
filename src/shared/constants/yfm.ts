@@ -18,3 +18,8 @@ export const enum YfmAttributes {
     TermKey = 'term-key',
     AriaDescribedby = 'aria-describedby',
 }
+
+export const YfmMetaScripts = {
+    LATEX: 'extension:latex',
+    MERMAID: 'extension:mermaid',
+};

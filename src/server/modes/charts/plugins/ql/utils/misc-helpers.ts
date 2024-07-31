@@ -765,8 +765,15 @@ const removeComments = (query: string) => {
     return result;
 };
 
+const removeQuotes = (query: string) => {
+    // eslint-disable-next-line security/detect-unsafe-regex
+    const result = query.replace(/(["'])(?:(?=(\\?))\2.)*?\1/gm, '');
+
+    return result;
+};
+
 export const doesQueryContainOrderBy = (query: string) => {
-    const queryWithoutComments = removeComments(query);
+    const queryWithoutComments = removeComments(removeQuotes(query));
 
     return /order by/gim.test(queryWithoutComments);
 };

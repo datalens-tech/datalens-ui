@@ -49,7 +49,6 @@ export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 export const SHARED_URL_OPTIONS = {
     SAFE_CHART: '_safe_chart',
     WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',
-    SANDBOX_DEBUG: '_sandbox_debug',
 };
 
 export const WIZARD_CHART_NODE = {

@@ -11,7 +11,10 @@ import type {TData, TableProps} from '../../../../../../components/Table/types';
 import Paginator from '../../../components/Widget/components/Table/Paginator/Paginator';
 import {camelCaseCss, hasGroups} from '../../../components/Widget/components/Table/utils';
 import {SNAPTER_HTML_CLASSNAME} from '../../../components/Widget/components/constants';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../helpers/constants';
+import {
+    CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
+    TABLE_DYNAMIC_MIN_SIZE,
+} from '../../../helpers/constants';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {i18n} from '../../../modules/i18n/i18n';
 import Performance from '../../../modules/perfomance';
@@ -38,12 +41,14 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onChange,
             onLoad,
             data: {data: originalData, config, params: currentParams, unresolvedParams},
+            widgetDashState,
         } = props;
         const data = React.useMemo(() => mapTableData(originalData), [originalData]);
         const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
         const ref = React.useRef<HTMLDivElement | null>(null);
         const titleText = typeof config?.title === 'string' ? config.title : config?.title?.text;
-        const shouldHighlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
+        const isHasGroups = hasGroups(data.head);
+        const shouldHighlightRows = get(config, 'settings.highlightRows') ?? !isHasGroups;
         const isPaginationEnabled = Boolean(config?.paginator?.enabled);
         const actionParams = getCurrentActionParams({config, unresolvedParams});
         const {enabled: canDrillDown} = getDrillDownOptions({
@@ -77,14 +82,24 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             }
         }, [generatedId, onLoad, dimensions]);
 
+        // while grouped tables does work with virtualization and while editing dashboards are
+        // struggling to resize\drag dashes with big tables, we're slicing element before render
+        // TODO: remove when Table will support virtualization
+        const isPreviewModeEnabled = isHasGroups && Boolean(widgetDashState?.isPreviewMode);
+
         const tableData: TableProps['data'] = React.useMemo(() => {
             if (!dimensions) {
                 return {};
             }
 
+            const rows =
+                isPreviewModeEnabled && data.rows && data.rows.length > TABLE_DYNAMIC_MIN_SIZE
+                    ? (data.rows as TableCellsRow[]).slice(0, TABLE_DYNAMIC_MIN_SIZE)
+                    : (data.rows as TableCellsRow[]);
+
             return {
                 head: data.head?.map((th) => mapHeadCell(th, dimensions?.width, data.head)),
-                rows: (data.rows as TableCellsRow[])?.map<TData>((r) => {
+                rows: rows?.map<TData>((r) => {
                     return r.cells.map((c, cellIndex) => {
                         const cell = c as TableCommonCell;
                         const isCellClickable =
@@ -121,7 +136,15 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                     return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
                 }),
             };
-        }, [actionParams, canDrillDown, data.footer, data.head, data.rows, dimensions]);
+        }, [
+            actionParams,
+            canDrillDown,
+            data.footer,
+            data.head,
+            data.rows,
+            dimensions,
+            isPreviewModeEnabled,
+        ]);
 
         const {onCellClick, onSortingChange, onPaginationChange} = useTableEvents({
             onChange,
@@ -167,4 +190,4 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
 TableWidget.displayName = 'TableWidget';
 
-export default TableWidget;
+export default React.memo(TableWidget);

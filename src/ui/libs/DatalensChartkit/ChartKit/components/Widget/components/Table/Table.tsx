@@ -7,7 +7,10 @@ import block from 'bem-cn-lite';
 import type {TableCommonCell, TableHead, TableRow} from 'shared';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../helpers/constants';
+import {
+    CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
+    TABLE_DYNAMIC_MIN_SIZE,
+} from '../../../../helpers/constants';
 import {getRandomCKId} from '../../../../helpers/getRandomCKId';
 import {i18n} from '../../../../modules/i18n/i18n';
 import Performance from '../../../../modules/perfomance';
@@ -297,7 +300,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             headerMod: 'multiline',
             // width of the columns is buggy if not static (use on demand)
             dynamicRender: dynamicMode,
-            dynamicRenderMinSize: 300,
+            dynamicRenderMinSize: TABLE_DYNAMIC_MIN_SIZE,
             // with dynamicRender, the width of columns in the header and rows is synchronized
             stickyHead: DataTable.MOVING,
             syncHeadOnResize: true,

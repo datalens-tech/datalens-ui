@@ -57,7 +57,7 @@ async function getChartBuilder({
               chartsEngine,
           });
 
-    return chartBuilder;
+    return {chartBuilder, sandboxVersion: enableIsolatedSandbox ? 2 : 1};
 }
 
 export const runEditor = async (
@@ -81,7 +81,7 @@ export const runEditor = async (
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
-    const chartBuilder = await getChartBuilder({
+    const {chartBuilder, sandboxVersion} = await getChartBuilder({
         parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -90,6 +90,8 @@ export const runEditor = async (
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
     });
+
+    ctx.log(`EditorRunner::Sandbox version: ${sandboxVersion}`);
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,

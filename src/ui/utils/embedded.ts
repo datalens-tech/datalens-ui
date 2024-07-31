@@ -1,4 +1,4 @@
-import {EMBEDDED_MODE, URL_OPTIONS} from '../constants';
+import {DL, EMBEDDED_MODE, URL_OPTIONS} from '../constants';
 
 export const isIframe = () => {
     try {
@@ -26,3 +26,5 @@ export const isNoScrollMode = () => {
     const isNoScrollEnabled = urlParams.get(URL_OPTIONS.NO_SCROLL) === '1';
     return isNoScrollEnabled && isEmbeddedMode();
 };
+
+export const isEmbeddedEntry = () => Boolean(DL.EMBED);

@@ -5,7 +5,6 @@ import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
-"use strict";
 const exports = {};
 const module = {exports};
 const console = {log};
@@ -25,8 +24,8 @@ function require(name) {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
         return datasetV2prepareAdapter;
-    } else if (modules[lowerName]) {
-        return modules[lowerName];
+    } else if (__modules[lowerName]) {
+        return __modules[lowerName];
     } else {
         throw new Error(\`Module "\${lowerName}" is not resolved\`);
     }

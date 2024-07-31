@@ -1,10 +1,6 @@
 import isFunction from 'lodash/isFunction';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
 
-import {DL} from '../../../../../constants';
-
-export const isEmbeddedChart = () => DL.EMBED?.mode === 'chart';
-
 function isHtmlString(value: unknown) {
     return typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value);
 }
