@@ -12,8 +12,6 @@ export interface SharedAppConfig {
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
 
-    chartsMonitoringEnabled?: boolean;
-
     faviconUrl: string;
 
     links?: Link[];
