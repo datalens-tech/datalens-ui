@@ -23,7 +23,7 @@ function Item({id, onClick}) {
     const {type: metaType} = metas[id] || {};
 
     let icon;
-    if (itemType === ITEM_TYPE.CONTROL) {
+    if (itemType === ITEM_TYPE.CONTROL || itemType === ITEM_TYPE.GROUP_CONTROL) {
         icon = iconControl;
     } else if (itemType === ITEM_TYPE.WIDGET && metaType) {
         icon = metaType === 'table' ? iconTable : iconBarChart;
