@@ -16,5 +16,6 @@ export type GetOAuthTokenArgs = {
 };
 
 export type GetOAuthTokenResponse = {
+    access_token: string;
     refresh_token: string;
 };
