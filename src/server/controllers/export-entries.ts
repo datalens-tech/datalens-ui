@@ -130,8 +130,9 @@ const getChartData = async (host: string, token: string, links: string[], params
                 "workbookId": null
             }
         });
-
-        data[link] = response.data;
+        if (Object.keys(response.data.data).length !== 0) {
+            data[link] = response.data;
+        }
     }
 
     return data;
@@ -229,11 +230,12 @@ export async function exportEntries(req: Request, res: Response) {
 
         let files = [];
 
-        for(let i = 0; i < links.length; i++) {
-            let sheetName = (chartData[links[i]].key.split('/').length > 1 ? chartData[links[i]].key.split('/')[1] : links[i]) + '-' + Date.now();
+        const filteredLinks = Object.keys(chartData);
+        for(let i = 0; i < filteredLinks.length; i++) {
+            let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
             const publicOutputCSVPath = path.join(exportPath, `${sheetName}.${r.body['formSettings'].format}`);
             files.push(publicOutputCSVPath);
-            const response = await stringifyData(host, chartData[links[i]], req.headers['x-rpc-authorization'] as string, r.body);
+            const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
 
             await fs.promises.writeFile(publicOutputCSVPath, response.data);
         }
@@ -249,6 +251,11 @@ export async function exportEntries(req: Request, res: Response) {
                 }
             }
         }
+
+        if (filteredLinks.length == 0) {
+            res.status(404).send('Output file is empty');
+            return;
+        } 
 
         // тут нужно вызвать скрипт python
         var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=;`, ...files]);
