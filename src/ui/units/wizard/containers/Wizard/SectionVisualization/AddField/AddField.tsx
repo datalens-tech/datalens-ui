@@ -3,6 +3,7 @@ import React from 'react';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
 import {SectionVisualizationAddItemQa, isMeasureName, isMeasureValue} from 'shared';
+import {selectDebugMode} from 'ui/store/selectors/user';
 import {addFieldContainerFieldsSelector} from 'units/wizard/selectors';
 
 import type {Field, HierarchyField} from '../../../../../../../shared/types';
@@ -24,6 +25,7 @@ interface Props extends StateProps {
     capacityErrorQa?: string;
     items: AddableField[];
     addableFields?: AddableField[];
+    dlDebugMode?: boolean;
 
     onUpdate: (items: AddableField[]) => void;
     checkAllowed: (item: AddableField) => boolean;
@@ -32,7 +34,8 @@ interface Props extends StateProps {
 
 class AddFieldContainer extends React.Component<Props> {
     render() {
-        const {items, className, capacity, capacityError, capacityErrorQa} = this.props;
+        const {items, className, capacity, capacityError, capacityErrorQa, dlDebugMode} =
+            this.props;
         const addableFields = this.getAddableFields();
         const disabled =
             addableFields.length === 0 ||
@@ -54,6 +57,7 @@ class AddFieldContainer extends React.Component<Props> {
                 disabled={disabled}
                 disabledTextQa={disabledTextQa}
                 disabledText={disabledText}
+                dlDebugMode={dlDebugMode}
             />
         );
     }
@@ -103,6 +107,7 @@ class AddFieldContainer extends React.Component<Props> {
 const mapStateToProps = (state: any) => {
     return {
         fields: addFieldContainerFieldsSelector(state),
+        dlDebugMode: selectDebugMode(state),
     };
 };
 
