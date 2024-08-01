@@ -1,3 +1,6 @@
+import {ConnectorType, Feature} from 'shared';
+import Utils from 'ui/utils';
+
 import type {GSheetItem} from '../../../../store';
 import {api} from '../../../../store';
 import type {GSheetListItem} from '../types';
@@ -23,8 +26,18 @@ const openNewWindow = (url: string, target: string): Promise<Window | null> => {
 };
 
 export const getGoogleOAuth2Code = async (): Promise<string> => {
-    const {authorizationUrl} = await api.getGoogleAuthorizationUrl();
-    const oauthPageWindow = await openNewWindow(authorizationUrl, 'authPage');
+    let uri: string | undefined;
+
+    if (Utils.isEnabledFeature(Feature.EnableBIOAuth)) {
+        ({uri} = await api.getOAuthUrl({
+            conn_type: ConnectorType.GsheetsV2,
+            scope: 'google',
+        }));
+    } else {
+        ({uri} = await api.getGoogleAuthorizationUrl());
+    }
+
+    const oauthPageWindow = await openNewWindow(uri, 'authPage');
 
     if (!oauthPageWindow) {
         throw new Error('Failed to open oauth page');
