@@ -135,8 +135,6 @@ export default {
         collectionsEnabled: false,
     },
 
-    chartsMonitoringEnabled: false,
-
     iamResources: {
         collection: {
             roles: {
