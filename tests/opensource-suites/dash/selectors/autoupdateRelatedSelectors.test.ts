@@ -415,7 +415,6 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         PARAMS.STATE_VALUE,
                     );
                 },
-                waitForLoader: true,
             });
 
             // check that count of items doesn't change
