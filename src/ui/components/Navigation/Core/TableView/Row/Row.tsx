@@ -106,7 +106,7 @@ export class Row extends React.Component<RowProps> {
             />
         ) : (
             <div title={name} className={b('name-line')}>
-                <span>{name}</span>
+                <span data-qa={DlNavigationQA.RowName}>{name}</span>
                 {isLocked ? <Icon data={Lock} className={b('lock')} /> : null}
             </div>
         );
