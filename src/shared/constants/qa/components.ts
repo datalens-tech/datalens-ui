@@ -169,3 +169,7 @@ export enum DocSectionQa {
     Item = 'doc-section-item',
     Title = 'doc-item-title',
 }
+
+export enum PreviewQa {
+    Preview = 'preview',
+}
