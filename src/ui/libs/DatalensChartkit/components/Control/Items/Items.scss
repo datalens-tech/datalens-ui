@@ -6,7 +6,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     $class: &;
 
     &__control {
-        gap: 8px;
         display: inline-flex;
         vertical-align: middle;
         align-items: center;
@@ -34,10 +33,16 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         &_vertical {
             flex-direction: column;
             align-items: flex-start;
+
+            #{$class}__title {
+                margin-right: 0;
+                margin-bottom: 8px;
+            }
         }
     }
 
     &__title {
+        margin-right: 8px;
         font-size: 13px;
         font-weight: 500;
         white-space: nowrap;

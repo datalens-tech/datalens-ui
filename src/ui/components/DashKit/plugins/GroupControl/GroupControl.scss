@@ -56,7 +56,11 @@
 
     &__item {
         &_checkbox {
-            padding-bottom: 6px;
+            padding: 6px 0;
+        }
+
+        &_button {
+            align-self: center;
         }
     }
 

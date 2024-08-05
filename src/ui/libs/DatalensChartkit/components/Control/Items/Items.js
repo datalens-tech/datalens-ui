@@ -159,6 +159,7 @@ BaseControlSelect.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    limitLabel: PropTypes.bool,
 };
 
 function BaseControlInput({
