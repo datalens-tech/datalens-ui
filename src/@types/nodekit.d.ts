@@ -54,6 +54,25 @@ export interface SharedAppConfig {
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;
 
+    iamResources?: {
+        collection: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+            };
+        };
+        workbook: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+            };
+        };
+    };
+
     isZitadelEnabled: boolean;
 
     clientId?: string;
