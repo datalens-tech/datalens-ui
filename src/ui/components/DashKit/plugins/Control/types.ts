@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
-import type {schema} from 'shared';
+import type {TitlePlacementOption, schema} from 'shared';
 import type {ServerFilter} from 'shared/types/config/wizard';
 import type {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
@@ -77,6 +77,7 @@ export interface SelectControlProps {
     editMode?: boolean;
     label?: string;
     innerLabel: string;
+    labelPlacement?: TitlePlacementOption;
     limitLabel?: boolean;
     param: string;
     multiselect: boolean;

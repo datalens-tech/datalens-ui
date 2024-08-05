@@ -5,6 +5,7 @@ import type {
     DATASET_FIELD_TYPES,
     DashTabItemControlSourceType,
     DatasetFieldType,
+    TitlePlacementOption,
 } from 'shared/types';
 
 import type {SelectorDialogState} from '../dashTyped';
@@ -39,6 +40,7 @@ export type SelectorSourceType =
 export type ItemDataSource = {
     chartId?: string;
     showTitle?: boolean;
+    titlePlacement?: TitlePlacementOption;
     elementType?: string;
     defaultValue?: string | string[];
     datasetId?: string;
