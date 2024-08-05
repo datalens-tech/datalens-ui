@@ -120,7 +120,7 @@ export const fetchServiceUserAccessToken = async (ctx: AppContext) => {
             },
             params: {
                 grant_type: 'client_credentials',
-                scope: `openid profile urn:zitadel:iam:org:project:id:${ctx.config.zitadelProjectId}:aud`,
+                scope: `openid profile urn:zitadel:iam:org:project:id:${ctx.config.zitadelProjectId}:aud urn:zitadel:iam:org:project:id:zitadel:aud`,
             },
         });
 
