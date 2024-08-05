@@ -44,7 +44,6 @@ import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 //  2) chart-chart фильтрация
 //  3) hierarchy
 //  4) сводная шапка
-//  5) tree-nodes
 
 const b = block('dl-table');
 
@@ -198,7 +197,7 @@ type BodyCellViewData = {
     className?: string;
     type?: 'number';
     pinned?: boolean;
-    onClick?: () => void;
+    onClick?: (event: MouseEvent) => void;
 };
 
 type BodyRowViewData = {
@@ -487,7 +486,8 @@ const usePreparedTableData = (
                             typeof originalCellData?.className === 'function'
                                 ? originalCellData?.className()
                                 : originalCellData?.className,
-                        onClick: () => {
+                        onClick: (event) => {
+                            console.log('onClick', {event, cell, originalCellData, row});
                             // const tableCommonCell = cell as TableCommonCell;
                             // const actionParams = getCurrentActionParams({config, unresolvedParams});
                             // const {
@@ -519,16 +519,16 @@ const usePreparedTableData = (
                             //     return;
                             // }
 
-                            // if (tableCommonCell.treeNode) {
-                            //     const treeState = getUpdatesTreeState({
-                            //         cell: tableCommonCell,
-                            //         params: currentParams,
-                            //     });
-                            //
-                            //     changeParams(treeState ? {treeState} : {});
-                            //     return;
-                            // }
-                            //
+                            if (tableCommonCell.treeNode) {
+                                const treeState = getUpdatesTreeState({
+                                    cell: tableCommonCell,
+                                    params: currentParams,
+                                });
+
+                                changeParams(treeState ? {treeState} : {});
+                                return;
+                            }
+
                             // if (actionParams?.scope) {
                             //     const cellActionParams = getCellActionParams({
                             //         actionParamsData: actionParams,
@@ -666,13 +666,6 @@ export const Table = (props: Props) => {
                                                         )}
                                                         style={cell.style}
                                                         onClick={cell.onClick}
-                                                        // onClick={(event) =>
-                                                        //     handleCellClick({
-                                                        //         row: row.original,
-                                                        //         cell: originalCellData,
-                                                        //         event,
-                                                        //     })
-                                                        // }
                                                         // rowSpan={originalCellData?.rowSpan}
                                                     >
                                                         {cell.content}
