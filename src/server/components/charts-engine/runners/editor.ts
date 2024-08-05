@@ -14,6 +14,27 @@ import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandlerProps} from '.';
 
+const NEW_SANBOX_PERCENT = {
+    [Feature.NewSandbox_1p]: 0.01,
+    [Feature.NewSandbox_10p]: 0.1,
+    [Feature.NewSandbox_33p]: 0.33,
+    [Feature.NewSandbox_50p]: 0.5,
+    [Feature.NewSandbox_75p]: 0.75,
+};
+
+function isEnabledNewSandboxByDefault(ctx: AppContext) {
+    if (isEnabledServerFeature(ctx, Feature.NewSandbox_100p)) {
+        return true;
+    }
+    const features = Object.keys(NEW_SANBOX_PERCENT);
+    const feature = features.find((feat) => isEnabledServerFeature(ctx, feat as Feature));
+    if (!feature) {
+        return false;
+    }
+    const percent = NEW_SANBOX_PERCENT[feature as keyof typeof NEW_SANBOX_PERCENT];
+    return Math.random() <= percent;
+}
+
 async function getChartBuilder({
     parentContext,
     userLang,
@@ -22,6 +43,7 @@ async function getChartBuilder({
     config,
     isScreenshoter,
     chartsEngine,
+    isWizard,
 }: {
     parentContext: AppContext;
     userLang: string;
@@ -30,32 +52,39 @@ async function getChartBuilder({
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
+    isWizard: boolean;
 }) {
-    const sandboxVersion = config.meta.sandbox_version || '0';
+    let sandboxVersion = config.meta.sandbox_version || '0';
+
+    if (sandboxVersion === '0') {
+        sandboxVersion = isEnabledNewSandboxByDefault(parentContext) ? '2' : '1';
+    }
     const enableIsolatedSandbox =
         Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
         sandboxVersion === '2';
+
     const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
-    const chartBuilder = enableIsolatedSandbox
-        ? await getIsolatedSandboxChartBuilder({
-              userLang,
-              userLogin,
-              widgetConfig,
-              config,
-              isScreenshoter,
-              chartsEngine,
-              features: {
-                  noJsonFn,
-              },
-          })
-        : await getSandboxChartBuilder({
-              userLang,
-              userLogin,
-              widgetConfig,
-              config,
-              isScreenshoter,
-              chartsEngine,
-          });
+    const chartBuilder =
+        enableIsolatedSandbox && !isWizard
+            ? await getIsolatedSandboxChartBuilder({
+                  userLang,
+                  userLogin,
+                  widgetConfig,
+                  config,
+                  isScreenshoter,
+                  chartsEngine,
+                  features: {
+                      noJsonFn,
+                  },
+              })
+            : await getSandboxChartBuilder({
+                  userLang,
+                  userLogin,
+                  widgetConfig,
+                  config,
+                  isScreenshoter,
+                  chartsEngine,
+              });
 
     return {chartBuilder, sandboxVersion: enableIsolatedSandbox ? 2 : 1};
 }
@@ -89,6 +118,7 @@ export const runEditor = async (
         config,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
+        isWizard: runnerHandlerProps.isWizard || false,
     });
 
     ctx.log(`EditorRunner::Sandbox version: ${sandboxVersion}`);
