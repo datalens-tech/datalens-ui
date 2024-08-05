@@ -188,6 +188,12 @@
     &__body &__tr:not(&__tr_no-data):hover td:before {
         background: var(--dl-table-row-hover-bg-color);
     }
+
+    &__no-data {
+        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        background: var(--dl-table-no-data-bg-color);
+        border: 1px solid var(--dl-table-border-color);
+    }
 }
 
 

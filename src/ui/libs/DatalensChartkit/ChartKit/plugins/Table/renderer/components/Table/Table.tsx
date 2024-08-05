@@ -25,12 +25,26 @@ import Paginator from '../../../../../components/Widget/components/Table/Paginat
 import {camelCaseCss, hasGroups} from '../../../../../components/Widget/components/Table/utils';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
-import {getCellCss, getCurrentActionParams, mapTableData} from '../../utils';
+import {
+    getCellActionParams,
+    getCellCss,
+    getCurrentActionParams,
+    getUpdatesTreeState,
+    mapTableData,
+} from '../../utils';
 import {getDrillDownOptions} from '../../utils/drill-down';
 import {mapHeadCell} from '../../utils/renderer';
 import {TableTitle} from '../Title/TableTitle';
 
 import './Table.scss';
+
+import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
+
+// Todo:
+//  2) chart-chart фильтрация
+//  3) hierarchy
+//  4) сводная шапка
+//  5) tree-nodes
 
 const b = block('dl-table');
 
@@ -473,6 +487,63 @@ const usePreparedTableData = (
                             typeof originalCellData?.className === 'function'
                                 ? originalCellData?.className()
                                 : originalCellData?.className,
+                        onClick: () => {
+                            // const tableCommonCell = cell as TableCommonCell;
+                            // const actionParams = getCurrentActionParams({config, unresolvedParams});
+                            // const {
+                            //     enabled: canDrillDown,
+                            //     filters: drillDownFilters,
+                            //     level: drillDownLevel,
+                            // } = getDrillDownOptions({
+                            //     params: currentParams,
+                            //     config: config?.drillDown,
+                            // });
+
+                            const tableCommonCell = originalCellData as TableCommonCell;
+                            if (tableCommonCell?.onClick?.action === 'setParams') {
+                                changeParams(tableCommonCell.onClick.args);
+                                return;
+                            }
+
+                            // if (canDrillDown && tableCommonCell.drillDownFilterValue) {
+                            //     changeParams({
+                            //         drillDownLevel: [String(drillDownLevel + 1)],
+                            //         drillDownFilters: drillDownFilters.map((filter: string, index: number) => {
+                            //             if (drillDownLevel === index) {
+                            //                 return String(tableCommonCell.drillDownFilterValue);
+                            //             }
+                            //
+                            //             return filter;
+                            //         }),
+                            //     });
+                            //     return;
+                            // }
+
+                            // if (tableCommonCell.treeNode) {
+                            //     const treeState = getUpdatesTreeState({
+                            //         cell: tableCommonCell,
+                            //         params: currentParams,
+                            //     });
+                            //
+                            //     changeParams(treeState ? {treeState} : {});
+                            //     return;
+                            // }
+                            //
+                            // if (actionParams?.scope) {
+                            //     const cellActionParams = getCellActionParams({
+                            //         actionParamsData: actionParams,
+                            //         rows: data.rows || [],
+                            //         head: data.head,
+                            //         row,
+                            //         cell: tableCommonCell,
+                            //         metaKey: event.metaKey,
+                            //     });
+                            //
+                            //     if (cellActionParams) {
+                            //         changeParams({...cellActionParams});
+                            //     }
+                            // }
+                        },
                     };
                 }),
                 ref: (node) => rowVirtualizer.measureElement(node),
@@ -513,6 +584,8 @@ export const Table = (props: Props) => {
         tableContainerRef,
     });
 
+    const noData = !rows.length;
+
     return (
         <React.Fragment>
             <div
@@ -525,92 +598,99 @@ export const Table = (props: Props) => {
             >
                 <TableTitle title={title} />
                 <div className={b('table-wrapper', {'highlight-rows': settings.highlightRows})}>
-                    <table className={b({final: !prerender})}>
-                        <thead className={b('header', {sticky: settings.sticky})}>
-                            {header.map((headerGroup) => {
-                                return (
-                                    <tr key={headerGroup.id} className={b('tr')}>
-                                        {headerGroup.cells.map((th) => {
-                                            return (
-                                                <th
-                                                    key={th.id}
-                                                    className={b('th', {
-                                                        clickable: th.sortable,
-                                                        pinned: th.pinned,
-                                                    })}
-                                                    style={th.style}
-                                                    colSpan={th.colSpan}
-                                                    rowSpan={th.rowSpan}
-                                                    onClick={th.onClick}
-                                                >
-                                                    <div
-                                                        className={b('th-content', {
-                                                            sortable: th.sortable,
+                    {noData && (
+                        <div className={b('no-data')}>
+                            {i18n('chartkit-table', 'message-no-data')}
+                        </div>
+                    )}
+                    {!noData && (
+                        <table className={b({final: !prerender})}>
+                            <thead className={b('header', {sticky: settings.sticky})}>
+                                {header.map((headerGroup) => {
+                                    return (
+                                        <tr key={headerGroup.id} className={b('tr')}>
+                                            {headerGroup.cells.map((th) => {
+                                                return (
+                                                    <th
+                                                        key={th.id}
+                                                        className={b('th', {
+                                                            clickable: th.sortable,
+                                                            pinned: th.pinned,
                                                         })}
+                                                        style={th.style}
+                                                        colSpan={th.colSpan}
+                                                        rowSpan={th.rowSpan}
+                                                        onClick={th.onClick}
                                                     >
-                                                        {th.content}
-                                                        <SortIcon
-                                                            className={b('sort-icon')}
-                                                            sorting={th.sorting}
-                                                        />
-                                                    </div>
-                                                </th>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </thead>
-                        <tbody
-                            className={b('body')}
-                            style={{height: tBodyHeight ? `${tBodyHeight}px` : null}}
-                        >
-                            {rows.map((row) => {
-                                return (
-                                    <tr
-                                        data-index={row.index}
-                                        key={row.id}
-                                        className={b('tr')}
-                                        ref={row.ref}
-                                        style={{
-                                            transform: `translateY(${row.y}px)`,
-                                        }}
-                                    >
-                                        {row.cells.map((cell) => {
-                                            return (
-                                                <td
-                                                    key={cell.id}
-                                                    className={b(
-                                                        'td',
-                                                        {type: cell.type, pinned: cell.pinned},
-                                                        cell.className,
-                                                    )}
-                                                    style={cell.style}
-                                                    onClick={cell.onClick}
-                                                    // onClick={(event) =>
-                                                    //     handleCellClick({
-                                                    //         row: row.original,
-                                                    //         cell: originalCellData,
-                                                    //         event,
-                                                    //     })
-                                                    // }
-                                                    // rowSpan={originalCellData?.rowSpan}
-                                                >
-                                                    {cell.content}
-                                                    {/*<div*/}
-                                                    {/*    className={b('td-content')}*/}
-                                                    {/*    // style={{width}}*/}
-                                                    {/*>*/}
-                                                    {/*    {cell.content}*/}
-                                                    {/*</div>*/}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                                                        <div
+                                                            className={b('th-content', {
+                                                                sortable: th.sortable,
+                                                            })}
+                                                        >
+                                                            {th.content}
+                                                            <SortIcon
+                                                                className={b('sort-icon')}
+                                                                sorting={th.sorting}
+                                                            />
+                                                        </div>
+                                                    </th>
+                                                );
+                                            })}
+                                        </tr>
+                                    );
+                                })}
+                            </thead>
+                            <tbody
+                                className={b('body')}
+                                style={{height: tBodyHeight ? `${tBodyHeight}px` : null}}
+                            >
+                                {rows.map((row) => {
+                                    return (
+                                        <tr
+                                            data-index={row.index}
+                                            key={row.id}
+                                            className={b('tr')}
+                                            ref={row.ref}
+                                            style={{
+                                                transform: `translateY(${row.y}px)`,
+                                            }}
+                                        >
+                                            {row.cells.map((cell) => {
+                                                return (
+                                                    <td
+                                                        key={cell.id}
+                                                        className={b(
+                                                            'td',
+                                                            {type: cell.type, pinned: cell.pinned},
+                                                            cell.className,
+                                                        )}
+                                                        style={cell.style}
+                                                        onClick={cell.onClick}
+                                                        // onClick={(event) =>
+                                                        //     handleCellClick({
+                                                        //         row: row.original,
+                                                        //         cell: originalCellData,
+                                                        //         event,
+                                                        //     })
+                                                        // }
+                                                        // rowSpan={originalCellData?.rowSpan}
+                                                    >
+                                                        {cell.content}
+                                                        {/*<div*/}
+                                                        {/*    className={b('td-content')}*/}
+                                                        {/*    // style={{width}}*/}
+                                                        {/*>*/}
+                                                        {/*    {cell.content}*/}
+                                                        {/*</div>*/}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
             {pagination.enabled && (
