@@ -54,12 +54,11 @@ function withWrapForControls(WrappedComponent) {
             >
                 {renderOverlay?.()}
                 {showLabel && (
-                    <div className={b('title', {vertical}, labelClassName)}>
-                        <span
-                            data-qa={ControlQA.controlLabel}
-                            title={label}
-                            className={b('title-text')}
-                        >
+                    <div
+                        className={b('title', {vertical}, labelClassName)}
+                        data-qa={ControlQA.controlLabel}
+                    >
+                        <span title={label} className={b('title-text')}>
                             {label}
                         </span>
                         {hint && <MarkdownHelpPopover markdown={hint} />}
