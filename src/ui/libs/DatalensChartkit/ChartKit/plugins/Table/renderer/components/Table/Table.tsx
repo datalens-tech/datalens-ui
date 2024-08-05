@@ -41,9 +41,8 @@ import './Table.scss';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 // Todo:
-//  2) chart-chart фильтрация
-//  3) hierarchy
 //  4) сводная шапка
+//  2) chart-chart фильтрация
 
 const b = block('dl-table');
 
@@ -490,14 +489,14 @@ const usePreparedTableData = (
                             console.log('onClick', {event, cell, originalCellData, row});
                             // const tableCommonCell = cell as TableCommonCell;
                             // const actionParams = getCurrentActionParams({config, unresolvedParams});
-                            // const {
-                            //     enabled: canDrillDown,
-                            //     filters: drillDownFilters,
-                            //     level: drillDownLevel,
-                            // } = getDrillDownOptions({
-                            //     params: currentParams,
-                            //     config: config?.drillDown,
-                            // });
+                            const {
+                                enabled: canDrillDown,
+                                filters: drillDownFilters,
+                                level: drillDownLevel,
+                            } = getDrillDownOptions({
+                                params: currentParams,
+                                config: config?.drillDown,
+                            });
 
                             const tableCommonCell = originalCellData as TableCommonCell;
                             if (tableCommonCell?.onClick?.action === 'setParams') {
@@ -505,19 +504,21 @@ const usePreparedTableData = (
                                 return;
                             }
 
-                            // if (canDrillDown && tableCommonCell.drillDownFilterValue) {
-                            //     changeParams({
-                            //         drillDownLevel: [String(drillDownLevel + 1)],
-                            //         drillDownFilters: drillDownFilters.map((filter: string, index: number) => {
-                            //             if (drillDownLevel === index) {
-                            //                 return String(tableCommonCell.drillDownFilterValue);
-                            //             }
-                            //
-                            //             return filter;
-                            //         }),
-                            //     });
-                            //     return;
-                            // }
+                            if (canDrillDown && tableCommonCell.drillDownFilterValue) {
+                                changeParams({
+                                    drillDownLevel: [String(drillDownLevel + 1)],
+                                    drillDownFilters: drillDownFilters.map(
+                                        (filter: string, index: number) => {
+                                            if (drillDownLevel === index) {
+                                                return String(tableCommonCell.drillDownFilterValue);
+                                            }
+
+                                            return filter;
+                                        },
+                                    ),
+                                });
+                                return;
+                            }
 
                             if (tableCommonCell.treeNode) {
                                 const treeState = getUpdatesTreeState({
