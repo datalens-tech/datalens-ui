@@ -220,7 +220,7 @@ class ActionPanel extends React.Component<Props, State> {
             return false;
         }
 
-        return this.props.enablePublish || false;
+        return Boolean(this.props.enablePublish);
     }
 
     private setEntryContent() {
