@@ -1,5 +1,5 @@
 import type {MutableRefObject} from 'react';
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import type {ColumnDef, Row, SortingState, TableOptions} from '@tanstack/react-table';
 import {
@@ -481,6 +481,7 @@ const usePreparedTableData = (
 
                     const cellStyle: React.CSSProperties = {
                         width: cell.column.getSize() || undefined,
+                        left: pinned ? originalHeadData?.left : undefined,
                         ...originalCellData?.css,
                     };
 
@@ -595,22 +596,49 @@ const usePreparedTableData = (
     };
 };
 
+const useTableHeight = (args: {
+    ref: MutableRefObject<HTMLTableElement | null>;
+    prerender: boolean;
+}) => {
+    const {ref, prerender} = args;
+    const [height, setHeight] = React.useState<number | null>();
+
+    useEffect(() => {
+        if (!prerender) {
+            const table = ref?.current as Element;
+            const tHead = table?.getElementsByTagName('thead')?.[0];
+            const tBody = table?.getElementsByTagName('tbody')?.[0];
+
+            const tableActualHeight = tHead?.clientHeight + tBody?.clientHeight;
+            if (tableActualHeight && tableActualHeight !== height) {
+                setHeight(tableActualHeight);
+            }
+        }
+    }, [height, prerender, ref]);
+
+    return height;
+};
+
 export const Table = React.memo<Props>((props: Props) => {
     const {
-        dimensions: {height: tableHeight},
+        dimensions: {height: tableMaxHeight},
     } = props;
     const tableContainerRef = React.useRef<HTMLDivElement | null>(null);
+    const tableRef = React.useRef<HTMLTableElement | null>(null);
     const {title, header, rows, settings, pagination, prerender, totalSize} = usePreparedTableData({
         ...props,
         tableContainerRef,
     });
+    const tableActualHeight = useTableHeight({ref: tableRef, prerender});
 
-    console.log('Table render:', {totalSize});
+    console.log('Table render:', {totalSize, tableActualHeight});
 
     const noData = !rows.length;
 
     const renderHead = (headerGroup: HeadRowViewData) => {
         return headerGroup.cells.map((th, index) => {
+            const nextCellData = headerGroup.cells[index + 1];
+            const isLastPinnedCell = th.pinned && !nextCellData?.pinned;
             return (
                 <th
                     key={th.id}
@@ -628,6 +656,14 @@ export const Table = React.memo<Props>((props: Props) => {
                     rowSpan={th.rowSpan}
                     onClick={th.onClick}
                 >
+                    {isLastPinnedCell && (
+                        <div
+                            className={b('shadow')}
+                            style={{
+                                height: (tableActualHeight || 0) - 1,
+                            }}
+                        />
+                    )}
                     <div
                         className={b('th-content', {
                             sortable: th.sortable,
@@ -649,7 +685,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     [SNAPTER_HTML_CLASSNAME, CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' '),
                 )}
                 ref={tableContainerRef}
-                style={{maxHeight: tableHeight}}
+                style={{maxHeight: tableMaxHeight}}
             >
                 <TableTitle title={title} />
                 <div
@@ -662,7 +698,11 @@ export const Table = React.memo<Props>((props: Props) => {
                         </div>
                     )}
                     {!noData && (
-                        <table className={b({final: !prerender})} style={{minHeight: totalSize}}>
+                        <table
+                            className={b({final: !prerender})}
+                            style={{minHeight: totalSize}}
+                            ref={tableRef}
+                        >
                             <thead className={b('header', {sticky: settings.sticky})}>
                                 {header.rows.map((headerGroup) => {
                                     // const gridTemplateColumns = headerGroup.cells

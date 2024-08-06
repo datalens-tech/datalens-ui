@@ -190,7 +190,7 @@
         pointer-events: none;
     }
 
-    &__body &__tr:not(&__tr_no-data):hover,
+    &__body &__tr:not(&__tr_no-data):hover td:not(&__td_pinned),
     &__body &__tr:not(&__tr_no-data):hover td:before {
         background: var(--dl-table-row-hover-bg-color);
     }
