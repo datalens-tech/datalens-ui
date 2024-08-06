@@ -16,7 +16,7 @@ datalensTest.describe('Preview', () => {
     });
 
     datalensTest('table widget must be the same', async ({page}) => {
-        const chart = page.locator(slct(PreviewQa.Preview));
+        const chart = page.locator(slct(PreviewQa.ChartWrapper));
         const table = page.locator(slct(ChartKitTableQa.Widget));
 
         await table.waitFor();

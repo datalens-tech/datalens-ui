@@ -226,7 +226,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
             <div
                 className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)}
                 ref={previewRef}
-                data-qa={PreviewQa.Preview}
+                data-qa={PreviewQa.ChartWrapper}
             >
                 {DL.IS_MOBILE && (
                     <WidgetHeader

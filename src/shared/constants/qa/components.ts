@@ -171,5 +171,5 @@ export enum DocSectionQa {
 }
 
 export enum PreviewQa {
-    Preview = 'preview',
+    ChartWrapper = 'preview-chart-wrapper',
 }
