@@ -25,6 +25,8 @@ import Paginator from '../../../../../components/Widget/components/Table/Paginat
 import {camelCaseCss, hasGroups} from '../../../../../components/Widget/components/Table/utils';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
+import {i18n} from '../../../../../modules/i18n/i18n';
+import type {GetCellActionParamsArgs} from '../../utils';
 import {
     getCellActionParams,
     getCellCss,
@@ -38,10 +40,7 @@ import {TableTitle} from '../Title/TableTitle';
 
 import './Table.scss';
 
-import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
-
 // Todo:
-//  4) сводная шапка
 //  2) chart-chart фильтрация
 
 const b = block('dl-table');
@@ -228,9 +227,7 @@ type TableViewData = {
         pageLimit: number;
         onChange: (args: any) => void;
     };
-    height: number | null;
     totalSize: number | null;
-    renderedItemsSize: number | null;
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
 };
@@ -244,7 +241,9 @@ const usePreparedTableData = (
         tableContainerRef,
         onChangeParams,
     } = props;
-    const actionParams = getCurrentActionParams({config, unresolvedParams});
+    const actionParams = React.useMemo(() => {
+        return getCurrentActionParams({config, unresolvedParams});
+    }, [config, unresolvedParams]);
 
     const data = React.useMemo(() => mapTableData(originalData), [originalData]);
     const shouldHighlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
@@ -272,21 +271,13 @@ const usePreparedTableData = (
                     rows: data.rows || [],
                 });
 
-                // const column = data.head?.[cellIndex];
-                // const cellType = cell.type ?? get(column, 'type');
-                // let cellClassName: string | undefined;
-                // if (cellType === 'number') {
-                //     cellClassName = b('number-column');
-                // }
-
                 return {
                     ...cell,
                     css: {cursor, ...actionParamsCss, ...camelCaseCss(cell.css)},
-                    // className: cellClassName,
                 };
             });
         });
-    }, [actionParams, canDrillDown, data.head, data.rows]);
+    }, [actionParams, canDrillDown, data]);
 
     // calculate cell widths
     const cellSizes = useCellSizes({
@@ -367,7 +358,6 @@ const usePreparedTableData = (
                 return rowSpan <= 1;
             });
             const height = simpleCell?.getBoundingClientRect()?.height;
-            // console.log('measureElement', {height});
             return height ?? 0;
         },
         overscan: 20,
@@ -387,27 +377,18 @@ const usePreparedTableData = (
             }
 
             const cells = headerGroup.headers
-                .map((header, index) => {
+                .map((header) => {
                     if (header.column.depth !== headerGroup.depth) {
                         return null;
                     }
 
                     const originalCellData = header.column.columnDef.meta?.head;
-                    // const width = getColumnWidth(header.column);
-                    // const isFixedSize = Boolean(width);
                     const rowSpan = header.isPlaceholder
                         ? headers.length - headerGroup.depth
                         : undefined;
                     const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
-                    // const align = colSpan ? 'center' : 'left';
                     const sortable = header.column.getCanSort();
                     const pinned = Boolean(originalCellData?.pinned);
-                    // const nextCellData =
-                    //     rowCells[index + 1]?.column.columnDef.meta?.head;
-                    // const isLastPinnedCell =
-                    //     pinned && !nextCellData?.pinned;
-                    // const cellDimensions =
-                    //     tableDimensions?.head[rowIndex]?.[index];
                     const cellStyle: React.CSSProperties = {
                         left: pinned ? originalCellData?.left : undefined,
                     };
@@ -471,17 +452,6 @@ const usePreparedTableData = (
           };
 
     const prevCells: any[] = new Array(tableRows[0]?.getVisibleCells()?.length);
-    // const firstRow = tableRows[0] as Row<TData>;
-    // const cellPositions = (firstRow?.getVisibleCells() || []).reduce((acc, cell, index) => {
-    //     const prev = acc[index - 1];
-    //     acc.push({
-    //         width: cell.column.getSize() || undefined,
-    //         left: prev ? prev.left + prev.width : 0,
-    //     });
-    //     return acc;
-    // }, []);
-    //
-    // console.log({cellPositions});
 
     return {
         title: typeof config?.title === 'string' ? config.title : config?.title?.text,
@@ -496,43 +466,21 @@ const usePreparedTableData = (
                 cells: visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                     const originalHeadData = cell.column.columnDef.meta?.head;
                     const enableRowGrouping = get(originalHeadData, 'group', false);
-                    // const width = columnOptions[index]?.width;
-                    //
-                    // const isFixedSize = Boolean(width);
                     const originalCellData = cell.row.original[index];
                     const pinned = Boolean(originalHeadData?.pinned);
-                    // const cellClassName = [
-                    //     b('td', {pinned, 'fixed-size': isFixedSize}),
-                    //     originalCellData?.className,
-                    // ]
-                    //     .filter(Boolean)
-                    //     .join(' ');
-                    //
 
                     if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
-                        // const prevCellIndex = prevCells[index];
                         const prevCellRow = rowsAcc[prevCells[index]];
                         const prevCell = prevCellRow?.cells?.[index];
                         const prevCellData = rowData[prevCellRow?.index][index];
-                        // console.log('calculate rowspan', {
-                        //     'originalCellData.value': originalCellData.value,
-                        //     'prevCellData?.value': prevCellData?.value,
-                        //     cellIndex: index,
-                        //     currentRowIndex: virtualRow.index,
-                        //     prevCellRowIndex: prevCells[index],
-                        // });
                         if (originalCellData.value === prevCellData?.value) {
                             prevCell.rowSpan++;
                             return acc;
                         }
                     }
 
-                    // const left = pinned ? originalHeadData?.left : undefined;
-                    // const left = cellPositions[index].left;
                     const cellStyle: React.CSSProperties = {
                         width: cell.column.getSize() || undefined,
-                        // transform: `translate(${left}px, ${virtualRow.start}px)`,
-                        // left,
                         ...originalCellData?.css,
                     };
 
@@ -561,8 +509,6 @@ const usePreparedTableData = (
                                 : originalCellData?.className,
                         rowSpan: 1,
                         onClick: (event) => {
-                            // const tableCommonCell = cell as TableCommonCell;
-                            // const actionParams = getCurrentActionParams({config, unresolvedParams});
                             const {
                                 enabled: canDrillDown,
                                 filters: drillDownFilters,
@@ -604,20 +550,22 @@ const usePreparedTableData = (
                                 return;
                             }
 
-                            // if (actionParams?.scope) {
-                            //     const cellActionParams = getCellActionParams({
-                            //         actionParamsData: actionParams,
-                            //         rows: data.rows || [],
-                            //         head: data.head,
-                            //         row,
-                            //         cell: tableCommonCell,
-                            //         metaKey: event.metaKey,
-                            //     });
-                            //
-                            //     if (cellActionParams) {
-                            //         changeParams({...cellActionParams});
-                            //     }
-                            // }
+                            if (actionParams?.scope) {
+                                const args: GetCellActionParamsArgs = {
+                                    actionParamsData: actionParams,
+                                    rows: data.rows,
+                                    head: data.head,
+                                    row: data.rows[virtualRow.index]?.cells as TData,
+                                    cell: tableCommonCell,
+                                    metaKey: Boolean(event.metaKey),
+                                };
+
+                                const cellActionParams = getCellActionParams(args);
+
+                                if (cellActionParams) {
+                                    changeParams({...cellActionParams});
+                                }
+                            }
                         },
                     };
 
@@ -635,13 +583,7 @@ const usePreparedTableData = (
             highlightRows: shouldHighlightRows,
             sticky: true,
         },
-        height: prerender ? null : rowVirtualizer.getTotalSize(),
         totalSize: prerender ? null : rowVirtualizer.getTotalSize(),
-        renderedItemsSize: prerender
-            ? null
-            : rowVirtualizer.getVirtualItems().reduce((sum, v) => {
-                  return sum + v.size;
-              }, 0),
         prerender,
         pagination: {
             enabled: isPaginationEnabled,
@@ -653,18 +595,17 @@ const usePreparedTableData = (
     };
 };
 
-export const Table = (props: Props) => {
+export const Table = React.memo<Props>((props: Props) => {
     const {
         dimensions: {height: tableHeight},
     } = props;
     const tableContainerRef = React.useRef<HTMLDivElement | null>(null);
-    const {title, header, rows, settings, pagination, prerender, totalSize, renderedItemsSize} =
-        usePreparedTableData({
-            ...props,
-            tableContainerRef,
-        });
+    const {title, header, rows, settings, pagination, prerender, totalSize} = usePreparedTableData({
+        ...props,
+        tableContainerRef,
+    });
 
-    console.log('Table render:', {rows});
+    console.log('Table render:', {totalSize});
 
     const noData = !rows.length;
 
@@ -713,7 +654,7 @@ export const Table = (props: Props) => {
                 <TableTitle title={title} />
                 <div
                     className={b('table-wrapper', {'highlight-rows': settings.highlightRows})}
-                    style={{height: totalSize}}
+                    // style={{height: totalSize}}
                 >
                     {noData && (
                         <div className={b('no-data')}>
@@ -721,7 +662,7 @@ export const Table = (props: Props) => {
                         </div>
                     )}
                     {!noData && (
-                        <table className={b({final: !prerender})} style={{height: totalSize}}>
+                        <table className={b({final: !prerender})} style={{minHeight: totalSize}}>
                             <thead className={b('header', {sticky: settings.sticky})}>
                                 {header.rows.map((headerGroup) => {
                                     // const gridTemplateColumns = headerGroup.cells
@@ -780,12 +721,6 @@ export const Table = (props: Props) => {
                                                         rowSpan={cell.rowSpan}
                                                     >
                                                         {cell.content}
-                                                        {/*<div*/}
-                                                        {/*    className={b('td-content')}*/}
-                                                        {/*    // style={{width}}*/}
-                                                        {/*>*/}
-                                                        {/*    {cell.content}*/}
-                                                        {/*</div>*/}
                                                     </td>
                                                 );
                                             })}
@@ -807,4 +742,6 @@ export const Table = (props: Props) => {
             )}
         </React.Fragment>
     );
-};
+});
+
+Table.displayName = 'Table';

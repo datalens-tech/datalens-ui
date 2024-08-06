@@ -11,8 +11,8 @@ export function getRowAsMap(args: {row?: TData; head?: TableHead[]}) {
     );
 }
 
-export function mapTableData(data: TableData) {
-    const {head, rows, footer} = data;
+export function mapTableData(data: TableData): Required<TableData> {
+    const {head = [], rows = [], footer = []} = data;
 
     if (head?.length && rows?.length) {
         // old pivot tables
@@ -23,5 +23,5 @@ export function mapTableData(data: TableData) {
         }
     }
 
-    return data;
+    return {head, rows, footer};
 }

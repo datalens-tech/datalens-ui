@@ -63,7 +63,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         }, []);
 
         const debuncedHandleResize = React.useMemo(
-            () => debounce(handleResize, 200),
+            () => debounce(handleResize, 100),
             [handleResize],
         );
 

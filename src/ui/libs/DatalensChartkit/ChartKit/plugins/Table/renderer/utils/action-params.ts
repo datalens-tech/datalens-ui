@@ -49,14 +49,16 @@ export function getCurrentActionParams(args: {
     return undefined;
 }
 
-export function getCellActionParams(args: {
+export type GetCellActionParamsArgs = {
     actionParamsData: ActionParamsData;
     row?: TData;
     cell?: TableCell;
     head?: TableHead[];
     metaKey?: boolean;
     rows: TableRow[];
-}) {
+};
+
+export function getCellActionParams(args: GetCellActionParamsArgs) {
     const {row, head = [], actionParamsData} = args;
 
     if (!actionParamsData) {
