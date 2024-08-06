@@ -5,9 +5,9 @@ import type {IconData} from '@gravity-ui/uikit';
 import {Popover as CommonTooltip, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {AddFieldQA} from 'shared';
+import {matchFieldFilter} from 'ui/utils/helpers';
 
 import {DatasetFieldType} from '../../../../../shared/types';
-import {matchFieldFilter} from '../../utils/helpers';
 import PlaceholderActionIcon from '../PlaceholderActionIcon/PlaceholderActionIcon';
 
 import './AddField.scss';

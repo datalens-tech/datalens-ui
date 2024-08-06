@@ -31,6 +31,7 @@ import type {DatalensGlobalState} from 'ui';
 import {DL, EntryDialogName, NavigationMinimal} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {selectDebugMode} from 'ui/store/selectors/user';
+import {matchFieldFilter} from 'ui/utils/helpers';
 import {openDialogMultidataset} from 'units/wizard/actions/dialog';
 import {
     selectDataset,
@@ -81,7 +82,6 @@ import {
 } from '../../../constants';
 import {
     generateNextTitle,
-    matchFieldFilter,
     prepareFieldForCreate,
     prepareFieldForUpdate,
 } from '../../../utils/helpers';
