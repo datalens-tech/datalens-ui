@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import type {WorkbookId} from 'shared';
-import {Feature} from 'shared';
+import {Feature, PreviewQa} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -223,7 +223,11 @@ const Preview: React.FC<PreviewProps> = (props) => {
             {Boolean(possibleEntryId) && (
                 <SlugifyUrl entryId={possibleEntryId} name={name} history={history} />
             )}
-            <div className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)} ref={previewRef}>
+            <div
+                className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)}
+                ref={previewRef}
+                data-qa={PreviewQa.Preview}
+            >
                 {DL.IS_MOBILE && (
                     <WidgetHeader
                         isFullscreen={true}
