@@ -231,7 +231,11 @@ export async function getControlByTitle(
     controlTitle: string,
 ): Promise<ElementHandle<HTMLElement>> {
     const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-    let controlTitleElement = await page.$(slct('chartkit-control-title', controlTitle));
+    let controlTitleElement = await page
+        .locator(slct(ControlQA.controlLabel))
+        .filter({hasText: controlTitle})
+        .elementHandle();
+
     let control = await controlTitleElement?.getProperty('parentNode');
     if (isEnabledGroupControls && !control) {
         controlTitleElement = await page.waitForSelector(

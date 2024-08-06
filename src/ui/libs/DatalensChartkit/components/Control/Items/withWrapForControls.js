@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
-import {ControlQA} from 'shared';
+import {ControlQA, TitlePlacementOption} from 'shared';
 import {DL} from 'ui/constants';
 
 import {MarkdownHelpPopover} from '../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
@@ -23,6 +23,7 @@ function withWrapForControls(WrappedComponent) {
             renderOverlay,
             labelClassName,
             hint,
+            labelPlacement,
         } = props;
 
         if (hidden) {
@@ -39,11 +40,13 @@ function withWrapForControls(WrappedComponent) {
         const customStyle = style || {width};
         const controlStyle = DL.IS_MOBILE ? {width: '100%'} : customStyle;
 
+        const vertical = showLabel && labelPlacement === TitlePlacementOption.Top;
+
         return (
             <div
                 className={b(
                     'control',
-                    {mobile: DL.IS_MOBILE, 'without-label': !showLabel},
+                    {mobile: DL.IS_MOBILE, 'without-label': !showLabel, vertical},
                     className,
                 )}
                 style={controlStyle}
@@ -51,14 +54,15 @@ function withWrapForControls(WrappedComponent) {
             >
                 {renderOverlay?.()}
                 {showLabel && (
-                    <span
-                        className={b('title', labelClassName)}
+                    <div
+                        className={b('title', {vertical}, labelClassName)}
                         data-qa={ControlQA.controlLabel}
-                        title={label}
                     >
-                        {label}
+                        <span title={label} className={b('title-text')}>
+                            {label}
+                        </span>
                         {hint && <MarkdownHelpPopover markdown={hint} />}
-                    </span>
+                    </div>
                 )}
                 <WrappedComponent {...props} />
                 {hint && !showLabel && <MarkdownHelpPopover markdown={hint} />}
