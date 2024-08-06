@@ -64,6 +64,9 @@ async function getChartBuilder({
         sandboxVersion === '2';
 
     const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
+    const disableErrorTransformer = Boolean(
+        isEnabledServerFeature(parentContext, Feature.NoErrorTransformer),
+    );
     const chartBuilder =
         enableIsolatedSandbox && !isWizard
             ? await getIsolatedSandboxChartBuilder({
@@ -84,6 +87,7 @@ async function getChartBuilder({
                   config,
                   isScreenshoter,
                   chartsEngine,
+                  disableErrorTransformer,
               });
 
     return {chartBuilder, sandboxVersion: enableIsolatedSandbox ? 2 : 1};
