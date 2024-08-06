@@ -28,6 +28,7 @@ export default {
         // updateControlsOnChange: true,
         // required: true,
         // hint: 'description',
+        // labelPlacement: 'top',
     },
     {
         type: 'datepicker',
@@ -37,6 +38,7 @@ export default {
         // updateControlsOnChange: true,
         // required: true,
         // hint: 'description',
+        // labelPlacement: 'top',
     },
     {
         type: 'range-datepicker',
@@ -47,6 +49,7 @@ export default {
         // updateControlsOnChange: true,
         // required: true,
         // hint: 'description',
+        // labelPlacement: 'top',
     },
     {
         type: 'checkbox',

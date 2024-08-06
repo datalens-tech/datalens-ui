@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
+import {selectDebugMode} from 'ui/store/selectors/user';
 import {
     addField,
     batchDeleteFields,
@@ -61,11 +62,12 @@ class DatasetEditor extends React.Component {
     };
 
     get filteredFields() {
-        const {fields, filter, itemsToDisplay} = this.props;
+        const {fields, filter, itemsToDisplay, dlDebugMode} = this.props;
 
         return getFilteredFields({
             fields,
             filter,
+            dlDebugMode,
             showHidden: itemsToDisplay.includes('hiddenFields'),
         });
     }
@@ -382,6 +384,7 @@ DatasetEditor.propTypes = {
     sourceAvatars: PropTypes.array,
     permissions: PropTypes.object,
     workbookId: PropTypes.string,
+    dlDebugMode: PropTypes.bool,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -401,6 +404,7 @@ const mapStateToProps = createStructuredSelector({
     itemsToDisplay: editorItemsToDisplaySelector,
     permissions: datasetPermissionsSelector,
     workbookId: workbookIdSelector,
+    dlDebugMode: selectDebugMode,
 });
 const mapDispatchToProps = {
     updateDatasetByValidation,
