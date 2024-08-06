@@ -179,6 +179,7 @@ type HeadCellViewData = {
     sortable: boolean;
     pinned: boolean;
     style?: React.CSSProperties;
+    width: number;
     sorting: SortDirection | false;
     content: JSX.Element | React.ReactNode;
     onClick: () => void;
@@ -197,6 +198,8 @@ type BodyCellViewData = {
     type?: 'number';
     pinned?: boolean;
     onClick?: (event: MouseEvent) => void;
+    rowSpan?: number;
+    index: number;
 };
 
 type BodyRowViewData = {
@@ -204,11 +207,15 @@ type BodyRowViewData = {
     index: number;
     cells: BodyCellViewData[];
     ref?: (node: HTMLTableRowElement) => void;
+    y: number;
 };
 
 type TableViewData = {
     title?: string;
-    header: HeadRowViewData[];
+    header: {
+        rows: HeadRowViewData[];
+        style?: React.CSSProperties;
+    };
     rows: BodyRowViewData[];
     settings: {
         highlightRows: boolean;
@@ -222,6 +229,8 @@ type TableViewData = {
         onChange: (args: any) => void;
     };
     height: number | null;
+    totalSize: number | null;
+    renderedItemsSize: number | null;
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
 };
@@ -351,8 +360,17 @@ const usePreparedTableData = (
         count: tableRows.length,
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
-        measureElement: (el) => el?.getBoundingClientRect()?.height ?? 0,
-        overscan: 5,
+        measureElement: (el) => {
+            const cells = Array.from(el?.getElementsByTagName('td') || []);
+            const simpleCell = cells.find((c) => {
+                const rowSpan = Number(c.getAttribute('rowspan')) || 0;
+                return rowSpan <= 1;
+            });
+            const height = simpleCell?.getBoundingClientRect()?.height;
+            // console.log('measureElement', {height});
+            return height ?? 0;
+        },
+        overscan: 20,
     });
 
     const PRERENDER_ROW_COUNT = 500;
@@ -362,84 +380,122 @@ const usePreparedTableData = (
               .map((_, index) => ({index, start: 0}))
         : rowVirtualizer.getVirtualItems();
 
+    const headerRows = headers
+        .map((headerGroup, rowIndex) => {
+            if (!headerGroup.headers.length) {
+                return null;
+            }
+
+            const cells = headerGroup.headers
+                .map((header, index) => {
+                    if (header.column.depth !== headerGroup.depth) {
+                        return null;
+                    }
+
+                    const originalCellData = header.column.columnDef.meta?.head;
+                    // const width = getColumnWidth(header.column);
+                    // const isFixedSize = Boolean(width);
+                    const rowSpan = header.isPlaceholder
+                        ? headers.length - headerGroup.depth
+                        : undefined;
+                    const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
+                    // const align = colSpan ? 'center' : 'left';
+                    const sortable = header.column.getCanSort();
+                    const pinned = Boolean(originalCellData?.pinned);
+                    // const nextCellData =
+                    //     rowCells[index + 1]?.column.columnDef.meta?.head;
+                    // const isLastPinnedCell =
+                    //     pinned && !nextCellData?.pinned;
+                    // const cellDimensions =
+                    //     tableDimensions?.head[rowIndex]?.[index];
+                    const cellStyle: React.CSSProperties = {
+                        left: pinned ? originalCellData?.left : undefined,
+                    };
+
+                    const cellWidth = header.getSize();
+                    if (cellWidth) {
+                        cellStyle.width = cellWidth;
+                    }
+
+                    if (typeof originalCellData.width !== 'undefined') {
+                        cellStyle.whiteSpace = 'normal';
+                        cellStyle.wordBreak = 'break-word';
+                    } else if (prerender) {
+                        cellStyle.whiteSpace = 'nowrap';
+                    }
+
+                    if (rowIndex > 0) {
+                        cellStyle.borderTop = 0;
+                    }
+
+                    return {
+                        id: header.id,
+                        rowSpan,
+                        colSpan,
+                        sortable,
+                        pinned,
+                        style: cellStyle,
+                        sorting: header.column.getIsSorted(),
+                        content: flexRender(header.column.columnDef.header, header.getContext()),
+                        onClick: header.column.getToggleSortingHandler(),
+                        width: cellWidth,
+                    };
+                })
+                .filter(Boolean);
+
+            return {
+                id: headerGroup.id,
+                cells,
+            };
+        })
+        .filter(Boolean) as HeadRowViewData[];
+    const header = prerender
+        ? {rows: headerRows}
+        : {
+              rows: [
+                  {
+                      id: '',
+                      cells: headerRows
+                          .reduce((acc, h) => {
+                              acc.push(...h.cells);
+                              return acc;
+                          }, [])
+                          .flat(),
+                  },
+              ],
+              style: {
+                  gridTemplateColumns: headers[headers.length - 1]?.headers
+                      .map((h) => `${h.getSize()}px`)
+                      .join(' '),
+              },
+          };
+
+    const prevCells: any[] = new Array(tableRows[0]?.getVisibleCells()?.length);
+    // const firstRow = tableRows[0] as Row<TData>;
+    // const cellPositions = (firstRow?.getVisibleCells() || []).reduce((acc, cell, index) => {
+    //     const prev = acc[index - 1];
+    //     acc.push({
+    //         width: cell.column.getSize() || undefined,
+    //         left: prev ? prev.left + prev.width : 0,
+    //     });
+    //     return acc;
+    // }, []);
+    //
+    // console.log({cellPositions});
+
     return {
         title: typeof config?.title === 'string' ? config.title : config?.title?.text,
-        header: headers
-            .map((headerGroup) => {
-                if (!headerGroup.headers.length) {
-                    return null;
-                }
-
-                const cells = headerGroup.headers
-                    .map((header) => {
-                        if (header.column.depth !== headerGroup.depth) {
-                            return null;
-                        }
-
-                        const originalCellData = header.column.columnDef.meta?.head;
-                        // const width = getColumnWidth(header.column);
-                        // const isFixedSize = Boolean(width);
-                        const rowSpan = header.isPlaceholder
-                            ? headers.length - headerGroup.depth
-                            : undefined;
-                        const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
-                        // const align = colSpan ? 'center' : 'left';
-                        const sortable = header.column.getCanSort();
-                        const pinned = Boolean(originalCellData?.pinned);
-                        // const nextCellData =
-                        //     rowCells[index + 1]?.column.columnDef.meta?.head;
-                        // const isLastPinnedCell =
-                        //     pinned && !nextCellData?.pinned;
-                        // const cellDimensions =
-                        //     tableDimensions?.head[rowIndex]?.[index];
-                        const cellStyle: React.CSSProperties = {
-                            left: pinned ? originalCellData?.left : undefined,
-                        };
-
-                        const cellWidth = header.getSize();
-                        if (cellWidth) {
-                            cellStyle.width = cellWidth;
-                        }
-
-                        if (typeof originalCellData.width !== 'undefined') {
-                            cellStyle.whiteSpace = 'normal';
-                            cellStyle.wordBreak = 'break-word';
-                        } else if (prerender) {
-                            cellStyle.whiteSpace = 'nowrap';
-                        }
-
-                        return {
-                            id: header.id,
-                            rowSpan,
-                            colSpan,
-                            sortable,
-                            pinned,
-                            style: cellStyle,
-                            sorting: header.column.getIsSorted(),
-                            content: flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                            ),
-                            onClick: header.column.getToggleSortingHandler(),
-                        };
-                    })
-                    .filter(Boolean);
-
-                return {
-                    id: headerGroup.id,
-                    cells,
-                };
-            })
-            .filter(Boolean) as HeadRowViewData[],
-        rows: virtualItems.map((virtualRow) => {
+        header,
+        rows: virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
             const row = tableRows[virtualRow.index] as Row<TData>;
             const visibleCells = row.getVisibleCells();
 
-            return {
+            rowsAcc.push({
                 id: row.id,
                 index: virtualRow.index,
-                cells: visibleCells.map((cell, index) => {
+                cells: visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                     const originalHeadData = cell.column.columnDef.meta?.head;
+                    const enableRowGrouping = get(originalHeadData, 'group', false);
                     // const width = columnOptions[index]?.width;
                     //
                     // const isFixedSize = Boolean(width);
@@ -452,14 +508,31 @@ const usePreparedTableData = (
                     //     .filter(Boolean)
                     //     .join(' ');
                     //
-                    // if (originalCellData?.isVisible === false) {
-                    //     return null;
-                    // }
 
-                    const left = pinned ? originalHeadData?.left : undefined;
+                    if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
+                        // const prevCellIndex = prevCells[index];
+                        const prevCellRow = rowsAcc[prevCells[index]];
+                        const prevCell = prevCellRow?.cells?.[index];
+                        const prevCellData = rowData[prevCellRow?.index][index];
+                        // console.log('calculate rowspan', {
+                        //     'originalCellData.value': originalCellData.value,
+                        //     'prevCellData?.value': prevCellData?.value,
+                        //     cellIndex: index,
+                        //     currentRowIndex: virtualRow.index,
+                        //     prevCellRowIndex: prevCells[index],
+                        // });
+                        if (originalCellData.value === prevCellData?.value) {
+                            prevCell.rowSpan++;
+                            return acc;
+                        }
+                    }
+
+                    // const left = pinned ? originalHeadData?.left : undefined;
+                    // const left = cellPositions[index].left;
                     const cellStyle: React.CSSProperties = {
                         width: cell.column.getSize() || undefined,
-                        left,
+                        // transform: `translate(${left}px, ${virtualRow.start}px)`,
+                        // left,
                         ...originalCellData?.css,
                     };
 
@@ -475,8 +548,9 @@ const usePreparedTableData = (
                             ? cell.column.columnDef.cell
                             : () => cell.column.columnDef.cell;
 
-                    return {
+                    const cellData = {
                         id: cell.id,
+                        index,
                         style: cellStyle,
                         content: renderCell(cell.getContext()),
                         type: originalCellData?.type,
@@ -485,8 +559,8 @@ const usePreparedTableData = (
                             typeof originalCellData?.className === 'function'
                                 ? originalCellData?.className()
                                 : originalCellData?.className,
+                        rowSpan: 1,
                         onClick: (event) => {
-                            console.log('onClick', {event, cell, originalCellData, row});
                             // const tableCommonCell = cell as TableCommonCell;
                             // const actionParams = getCurrentActionParams({config, unresolvedParams});
                             const {
@@ -546,16 +620,28 @@ const usePreparedTableData = (
                             // }
                         },
                     };
-                }),
+
+                    prevCells[index] = rowsAcc.length;
+                    acc.push(cellData);
+                    return acc;
+                }, []),
                 ref: (node) => rowVirtualizer.measureElement(node),
                 y: virtualRow.start,
-            };
-        }),
+            });
+
+            return rowsAcc;
+        }, []),
         settings: {
             highlightRows: shouldHighlightRows,
             sticky: true,
         },
         height: prerender ? null : rowVirtualizer.getTotalSize(),
+        totalSize: prerender ? null : rowVirtualizer.getTotalSize(),
+        renderedItemsSize: prerender
+            ? null
+            : rowVirtualizer.getVirtualItems().reduce((sum, v) => {
+                  return sum + v.size;
+              }, 0),
         prerender,
         pagination: {
             enabled: isPaginationEnabled,
@@ -572,20 +658,47 @@ export const Table = (props: Props) => {
         dimensions: {height: tableHeight},
     } = props;
     const tableContainerRef = React.useRef<HTMLDivElement | null>(null);
-    const {
-        title,
-        header,
-        rows,
-        settings,
-        pagination,
-        prerender,
-        height: tBodyHeight,
-    } = usePreparedTableData({
-        ...props,
-        tableContainerRef,
-    });
+    const {title, header, rows, settings, pagination, prerender, totalSize, renderedItemsSize} =
+        usePreparedTableData({
+            ...props,
+            tableContainerRef,
+        });
+
+    console.log('Table render:', {rows});
 
     const noData = !rows.length;
+
+    const renderHead = (headerGroup: HeadRowViewData) => {
+        return headerGroup.cells.map((th, index) => {
+            return (
+                <th
+                    key={th.id}
+                    className={b('th', {
+                        clickable: th.sortable,
+                        pinned: th.pinned,
+                        'first-cell': index === 0,
+                    })}
+                    style={{
+                        ...th.style,
+                        gridRow: `span ${th.rowSpan}`,
+                        gridColumn: `span ${th.colSpan}`,
+                    }}
+                    colSpan={th.colSpan}
+                    rowSpan={th.rowSpan}
+                    onClick={th.onClick}
+                >
+                    <div
+                        className={b('th-content', {
+                            sortable: th.sortable,
+                        })}
+                    >
+                        {th.content}
+                        <SortIcon className={b('sort-icon')} sorting={th.sorting} />
+                    </div>
+                </th>
+            );
+        });
+    };
 
     return (
         <React.Fragment>
@@ -598,52 +711,45 @@ export const Table = (props: Props) => {
                 style={{maxHeight: tableHeight}}
             >
                 <TableTitle title={title} />
-                <div className={b('table-wrapper', {'highlight-rows': settings.highlightRows})}>
+                <div
+                    className={b('table-wrapper', {'highlight-rows': settings.highlightRows})}
+                    style={{height: totalSize}}
+                >
                     {noData && (
                         <div className={b('no-data')}>
                             {i18n('chartkit-table', 'message-no-data')}
                         </div>
                     )}
                     {!noData && (
-                        <table className={b({final: !prerender})}>
+                        <table className={b({final: !prerender})} style={{height: totalSize}}>
                             <thead className={b('header', {sticky: settings.sticky})}>
-                                {header.map((headerGroup) => {
+                                {header.rows.map((headerGroup) => {
+                                    // const gridTemplateColumns = headerGroup.cells
+                                    //     .map((c) => `${c.width}px`)
+                                    //     .join(' ');
+
+                                    // <tr
+                                    //     key={headerGroup.id}
+                                    //     className={b('tr')}
+                                    //     style={{gridTemplateColumns}}
+                                    // >
                                     return (
-                                        <tr key={headerGroup.id} className={b('tr')}>
-                                            {headerGroup.cells.map((th) => {
-                                                return (
-                                                    <th
-                                                        key={th.id}
-                                                        className={b('th', {
-                                                            clickable: th.sortable,
-                                                            pinned: th.pinned,
-                                                        })}
-                                                        style={th.style}
-                                                        colSpan={th.colSpan}
-                                                        rowSpan={th.rowSpan}
-                                                        onClick={th.onClick}
-                                                    >
-                                                        <div
-                                                            className={b('th-content', {
-                                                                sortable: th.sortable,
-                                                            })}
-                                                        >
-                                                            {th.content}
-                                                            <SortIcon
-                                                                className={b('sort-icon')}
-                                                                sorting={th.sorting}
-                                                            />
-                                                        </div>
-                                                    </th>
-                                                );
-                                            })}
+                                        <tr
+                                            key={headerGroup.id}
+                                            className={b('tr')}
+                                            style={header.style}
+                                        >
+                                            {renderHead(headerGroup)}
                                         </tr>
                                     );
                                 })}
                             </thead>
                             <tbody
                                 className={b('body')}
-                                style={{height: tBodyHeight ? `${tBodyHeight}px` : null}}
+                                style={{
+                                    ...header.style,
+                                    transform: `translateY(${rows[0]?.y}px)`,
+                                }}
                             >
                                 {rows.map((row) => {
                                     return (
@@ -652,9 +758,6 @@ export const Table = (props: Props) => {
                                             key={row.id}
                                             className={b('tr')}
                                             ref={row.ref}
-                                            style={{
-                                                transform: `translateY(${row.y}px)`,
-                                            }}
                                         >
                                             {row.cells.map((cell) => {
                                                 return (
@@ -662,12 +765,19 @@ export const Table = (props: Props) => {
                                                         key={cell.id}
                                                         className={b(
                                                             'td',
-                                                            {type: cell.type, pinned: cell.pinned},
+                                                            {
+                                                                type: cell.type,
+                                                                pinned: cell.pinned,
+                                                                'first-cell': cell.index === 0,
+                                                            },
                                                             cell.className,
                                                         )}
-                                                        style={cell.style}
+                                                        style={{
+                                                            ...cell.style,
+                                                            gridRow: `span ${cell.rowSpan}`,
+                                                        }}
                                                         onClick={cell.onClick}
-                                                        // rowSpan={originalCellData?.rowSpan}
+                                                        rowSpan={cell.rowSpan}
                                                     >
                                                         {cell.content}
                                                         {/*<div*/}

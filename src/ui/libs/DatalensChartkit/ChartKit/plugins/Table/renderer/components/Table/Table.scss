@@ -44,7 +44,13 @@
     &__th,
     &__td {
         border: 1px solid var(--dl-table-border-color);
+        border-top: 0;
+        border-left: 0;
         font-size: 10pt;
+
+        &_first-cell {
+            border-left: 1px solid var(--dl-table-border-color);
+        }
 
         &_clickable {
             cursor: pointer;
@@ -199,8 +205,6 @@
 
 /*----------------- virt -----------------------*/
 table.dl-table_final {
-    display: grid;
-
     thead {
         display: grid;
         position: sticky;
@@ -213,24 +217,17 @@ table.dl-table_final {
         position: relative;
 
         tr {
-            position: absolute;
+            display: contents;
         }
     }
 
-    tr {
-        display: flex;
+    thead tr {
+        display: grid;
         width: 100%;
     }
 
     td, th {
         display: flex;
-
-        border-top: 0;
-        border-left: 0;
-
-        &:first-child {
-            border-left: 1px solid var(--dl-table-border-color);
-        }
     }
 
     tr:first-child {
