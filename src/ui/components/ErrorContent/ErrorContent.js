@@ -292,7 +292,7 @@ class ErrorContent extends React.PureComponent {
 
         return (
             <div className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}>
-                <div className={b('illustration-container')}>
+                <div className={b('illustration-container')} data-qa={`type-${type}`}>
                     <PlaceholderIllustration
                         name={imageName}
                         title={this.renderTitle()}

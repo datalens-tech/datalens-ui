@@ -36,7 +36,7 @@
   "confirm_chart-save_message": "Чтобы экспортировать изображение, сохраните изменения в чарте.",
   "confirm_chart-save_message_alerts": "Чтобы настроить алерты, сначала сохраните изменения в чарте.",
   "dataset-selector_label": "Датасет:",
-  "field_search": "Поиск",
+  "field_search": "Поиск по имени и описанию",
   "label_2-point": "Двухцветный",
   "label_3-point": "Трехцветный",
   "label_absolute": "Абсолютное",

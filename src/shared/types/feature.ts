@@ -78,6 +78,8 @@ export enum Feature {
     RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
+    /** Use BI handles for getting oauth applications tokens */
+    EnableBIOAuth = 'EnableBIOAuth',
 }
 
 export type FeatureConfig = Record<string, boolean>;

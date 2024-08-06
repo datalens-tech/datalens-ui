@@ -713,3 +713,17 @@ export const prepareFieldForCreate = ({
 
     return fieldNext;
 };
+
+export const matchFieldFilter = (
+    filter: string,
+    dlDebugMode: boolean,
+    {title, description, guid}: {title: string; description?: string; guid?: string},
+) => {
+    const filterValue = filter.toLowerCase();
+
+    return Boolean(
+        title.toLowerCase().includes(filterValue) ||
+            description?.toLowerCase().includes(filterValue) ||
+            (dlDebugMode && guid?.includes(filterValue)),
+    );
+};
