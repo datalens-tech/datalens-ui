@@ -1,6 +1,10 @@
 .dashkit-plugin-group-control {
     $class: &;
 
+    $controlDefaultHeight: 28px;
+    $buttonSmallHeight: 24px;
+    $checkboxHeight: 15px;
+
     display: block;
     height: 100%;
     width: 100%;
@@ -38,6 +42,7 @@
         display: flex;
         flex-wrap: wrap;
         padding-bottom: 8px;
+        align-items: flex-end;
     }
 
     &__control-container {
@@ -53,6 +58,17 @@
         padding-right: 10px;
     }
 
+    // TODO: move styles to Items.scss after removing old selectors code
+    &__item {
+        &_button {
+            padding: ($controlDefaultHeight - $buttonSmallHeight)/2 0;
+        }
+
+        &_checkbox {
+            padding: ($controlDefaultHeight - $checkboxHeight)/2 0;
+        }
+    }
+
     &__item-stub {
         height: 28px;
         display: inline-flex;
@@ -62,9 +78,11 @@
 
     &__item-label {
         max-width: 50%;
-        text-overflow: ellipsis;
-        overflow: hidden;
         flex-shrink: 0;
+
+        &_vertical {
+            max-width: 100%;
+        }
     }
 
     &_mobile {
