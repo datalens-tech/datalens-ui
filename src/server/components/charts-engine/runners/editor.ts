@@ -14,7 +14,7 @@ import {prepareErrorForLogger} from './utils';
 
 import type {RunnerHandlerProps} from '.';
 
-const NEW_SANBOX_PERCENT = {
+const NEW_SANDBOX_PERCENT = {
     [Feature.NewSandbox_1p]: 0.01,
     [Feature.NewSandbox_10p]: 0.1,
     [Feature.NewSandbox_33p]: 0.33,
@@ -26,12 +26,12 @@ function isEnabledNewSandboxByDefault(ctx: AppContext) {
     if (isEnabledServerFeature(ctx, Feature.NewSandbox_100p)) {
         return true;
     }
-    const features = Object.keys(NEW_SANBOX_PERCENT);
+    const features = Object.keys(NEW_SANDBOX_PERCENT);
     const feature = features.find((feat) => isEnabledServerFeature(ctx, feat as Feature));
     if (!feature) {
         return false;
     }
-    const percent = NEW_SANBOX_PERCENT[feature as keyof typeof NEW_SANBOX_PERCENT];
+    const percent = NEW_SANDBOX_PERCENT[feature as keyof typeof NEW_SANDBOX_PERCENT];
     return Math.random() <= percent;
 }
 
