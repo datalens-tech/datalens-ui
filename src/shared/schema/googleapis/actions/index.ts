@@ -16,14 +16,14 @@ export const actions = {
                 throw new Error('Oauth2Client isn`t initialized');
             }
 
-            const authorizationUrl = googleOAuthClient.generateAuthUrl({
+            const uri = googleOAuthClient.generateAuthUrl({
                 access_type: 'offline',
                 prompt: 'consent',
                 scope: scopes,
                 include_granted_scopes: true,
             });
 
-            return {authorizationUrl};
+            return {uri};
         },
     ),
     getCredentials: createAction<GetGCredentialsResponse, GetGCredentialsArgs>(

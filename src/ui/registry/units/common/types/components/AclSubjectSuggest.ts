@@ -5,7 +5,7 @@ import type {
     SubjectClaims,
 } from '../../../../../../shared/schema/extensions/types';
 
-type AclSubject = ListItemData<SubjectClaims>;
+export type AclSubject = ListItemData<SubjectClaims>;
 
 export type AclSubjectSuggestProps = {
     availableGroups: {

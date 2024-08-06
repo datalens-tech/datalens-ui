@@ -12,8 +12,6 @@ export interface SharedAppConfig {
 
     regionalEnvConfig?: {allowLanguages?: string[]; defaultLang?: string; langRegion?: string};
 
-    chartsMonitoringEnabled?: boolean;
-
     faviconUrl: string;
 
     links?: Link[];
@@ -55,6 +53,25 @@ export interface SharedAppConfig {
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;
+
+    iamResources?: {
+        collection: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+            };
+        };
+        workbook: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+            };
+        };
+    };
 
     isZitadelEnabled: boolean;
 

@@ -1,7 +1,7 @@
 export type GoogleRefreshToken = string | null | undefined;
 
 export type GetAuthorizationUrlResponse = {
-    authorizationUrl: string;
+    uri: string;
 };
 
 export type GetAuthorizationUrlArgs = {
