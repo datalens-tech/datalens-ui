@@ -43,7 +43,7 @@ export const groupEntitiesByScope = <T = GetRelationsEntry>(relations: ({scope: 
     return relationsByScope;
 };
 
-export const matchFieldFilter = (
+export const matchDatasetFieldFilter = (
     filter: string,
     dlDebugMode: boolean,
     {title, description, guid}: {title: string; description?: string; guid?: string},

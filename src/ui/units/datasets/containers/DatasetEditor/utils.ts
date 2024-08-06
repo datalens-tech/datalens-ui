@@ -1,5 +1,5 @@
 import type {DatasetField} from 'shared';
-import {matchFieldFilter} from 'ui/utils/helpers';
+import {matchDatasetFieldFilter} from 'ui/utils/helpers';
 
 import type {EditorItemToDisplay} from '../../store/types';
 
@@ -16,7 +16,7 @@ export const getFilteredFields = (args: {
             return false;
         }
 
-        return matchFieldFilter(filter, dlDebugMode, {title, description, guid});
+        return matchDatasetFieldFilter(filter, dlDebugMode, {title, description, guid});
     });
 };
 

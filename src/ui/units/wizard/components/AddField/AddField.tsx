@@ -5,7 +5,7 @@ import type {IconData} from '@gravity-ui/uikit';
 import {Popover as CommonTooltip, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {AddFieldQA} from 'shared';
-import {matchFieldFilter} from 'ui/utils/helpers';
+import {matchDatasetFieldFilter} from 'ui/utils/helpers';
 
 import {DatasetFieldType} from '../../../../../shared/types';
 import PlaceholderActionIcon from '../PlaceholderActionIcon/PlaceholderActionIcon';
@@ -72,7 +72,7 @@ export default class AddField extends React.Component<AddFieldProps> {
                     filterOption={(option, filter) => {
                         // option.data cannot be undefined, added "if" only for type-check
                         if (option.data) {
-                            return matchFieldFilter(filter, dlDebugMode, {
+                            return matchDatasetFieldFilter(filter, dlDebugMode, {
                                 title: option.data.title,
                                 description: option.data.description,
                                 guid: option.data.guid,
