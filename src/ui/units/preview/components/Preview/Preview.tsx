@@ -223,11 +223,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
             {Boolean(possibleEntryId) && (
                 <SlugifyUrl entryId={possibleEntryId} name={name} history={history} />
             )}
-            <div
-                className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)}
-                ref={previewRef}
-                data-qa={PreviewQa.ChartWrapper}
-            >
+            <div className={b({mobile: DL.IS_MOBILE}, SNAPTER_DESIRED_CLASS)} ref={previewRef}>
                 {DL.IS_MOBILE && (
                     <WidgetHeader
                         isFullscreen={true}
@@ -261,6 +257,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         isPageHidden={isPageHidden}
                         autoupdateInterval={autoupdateInterval}
                         workbookId={workbookInfo.workbookId}
+                        data-qa={PreviewQa.ChartWrapper}
                     />
                 )}
                 <PreviewExtension />
