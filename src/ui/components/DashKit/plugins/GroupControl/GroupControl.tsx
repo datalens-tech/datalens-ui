@@ -753,7 +753,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         label={i18n('button_apply')}
                         updateOnChange={true}
                         theme="action"
-                        className={b('item')}
+                        className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
                     />
@@ -761,7 +761,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 {controlData.buttonReset && (
                     <ControlButton
                         type={CONTROL_TYPE.BUTTON}
-                        className={b('item')}
+                        className={b('item', {button: true})}
                         label={i18n('button_reset')}
                         onClick={resetAction}
                         onChange={this.handleResetChange}

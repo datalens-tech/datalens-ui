@@ -124,6 +124,7 @@ export const ALLOWED_ATTRIBUTES = [
     'src',
     'stroke',
     'stroke-linecap',
+    'stroke-linejoin',
     'stroke-width',
     'result',
     'rowspan',

@@ -2,14 +2,7 @@ import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
-import type {
-    ClientChartsConfig,
-    Dictionary,
-    Entry,
-    EntryScope,
-    Params,
-    StringParams,
-} from './index';
+import type {ClientChartsConfig, Dictionary, Entry, EntryScope, StringParams} from './index';
 
 export enum ControlType {
     Dash = 'control_dash',
@@ -224,8 +217,14 @@ export type DashTabItemControlElement =
     | DashTabItemControlElementDate
     | DashTabItemControlElementCheckbox;
 
+export enum TitlePlacementOption {
+    Left = 'left',
+    Top = 'top',
+}
+
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
+    titlePlacement?: TitlePlacementOption;
     elementType: DashTabItemControlElementType;
     operation?: Operations;
     showInnerTitle?: boolean;
@@ -299,7 +298,7 @@ export interface DashTabConnection {
 
 export interface DashStateData
     extends Dictionary<{
-        params: Params;
+        params: StringParams;
         state: {
             // for chart state
             tabId: string;

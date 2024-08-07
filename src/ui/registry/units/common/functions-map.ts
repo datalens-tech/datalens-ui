@@ -42,6 +42,7 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
+    getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
