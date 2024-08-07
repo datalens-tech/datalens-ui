@@ -5,6 +5,11 @@
     $buttonSmallHeight: 24px;
     $checkboxHeight: 15px;
 
+    $itemsRightPadding: 10px;
+
+    $buttonVerticalPaddings: ($controlDefaultHeight - $buttonSmallHeight)/2;
+    $checkboxVerticalPaddings: ($controlDefaultHeight - $checkboxHeight)/2;
+
     display: block;
     height: 100%;
     width: 100%;
@@ -55,17 +60,17 @@
         margin-top: 8px;
         max-width: 100%;
         padding: 0;
-        padding-right: 10px;
+        padding-right: $itemsRightPadding;
     }
 
     // TODO: move styles to Items.scss after removing old selectors code
     &__item {
         &_button {
-            padding: ($controlDefaultHeight - $buttonSmallHeight)/2 0;
+            padding: $buttonVerticalPaddings $itemsRightPadding $buttonVerticalPaddings 0;
         }
 
         &_checkbox {
-            padding: ($controlDefaultHeight - $checkboxHeight)/2 0;
+            padding: $checkboxVerticalPaddings $itemsRightPadding $checkboxVerticalPaddings 0;
         }
     }
 
