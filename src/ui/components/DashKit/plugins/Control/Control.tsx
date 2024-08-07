@@ -515,6 +515,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         if (
             this.props.data.sourceType !== DashTabItemControlSourceType.External &&
+            !this.props.data.autoHeight &&
             this.rootNode.current &&
             this.props.layout?.[0].maxH
         ) {
