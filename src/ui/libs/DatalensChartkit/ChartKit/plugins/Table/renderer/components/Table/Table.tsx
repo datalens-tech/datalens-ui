@@ -1,47 +1,34 @@
-import type {MutableRefObject} from 'react';
-import React, {useEffect} from 'react';
+import React from 'react';
 
-import type {ColumnDef, Row, SortingState, TableOptions} from '@tanstack/react-table';
-import {
-    createColumnHelper,
-    flexRender,
-    getCoreRowModel,
-    getGroupedRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
-import {useVirtualizer} from '@tanstack/react-virtual';
-import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-
-import type {SortDirection, StringParams, TableCellsRow, TableCommonCell} from 'shared';
-import {SortIcon} from 'ui/components/Table/components/SortIcon/SortIcon';
-import type {TData, TFoot, THead} from 'ui/components/Table/types';
+import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
+import type {CellData, TData} from 'ui/components/Table/types';
 import type {WidgetDimensions} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/types';
-import type {TableWidgetData} from 'ui/libs/DatalensChartkit/types';
-
-import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
-import {camelCaseCss, hasGroups} from '../../../../../components/Widget/components/Table/utils';
-import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
-import {i18n} from '../../../../../modules/i18n/i18n';
-import type {GetCellActionParamsArgs} from '../../utils';
+import type {GetCellActionParamsArgs} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils';
 import {
     getCellActionParams,
     getCellCss,
     getCurrentActionParams,
+    getDrillDownOptions,
     getUpdatesTreeState,
     mapTableData,
-} from '../../utils';
-import {getDrillDownOptions} from '../../utils/drill-down';
-import {mapHeadCell} from '../../utils/renderer';
+} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils';
+import type {TableWidgetData} from 'ui/libs/DatalensChartkit/types';
+
+import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
+import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
+import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
+import {i18n} from '../../../../../modules/i18n/i18n';
 import {TableTitle} from '../Title/TableTitle';
 
-import './Table.scss';
+import {TableBody} from './TableBody';
+import {TableHead} from './TableHead';
+import {usePreparedTableData} from './usePreparedTableData';
+import {useTableHeight} from './useTableHeight';
 
-// Todo:
-//  2) chart-chart фильтрация
+import './Table.scss';
 
 const b = block('dl-table');
 
@@ -51,253 +38,25 @@ type Props = {
     onChangeParams?: (params: StringParams) => void;
 };
 
-const useCellSizes = (args: {
-    tableContainerRef?: MutableRefObject<HTMLDivElement | null>;
-    width: number;
-    config: TableWidgetData['config'];
-}) => {
-    const {tableContainerRef, width, config} = args;
-    const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
+export const Table = React.memo<Props>((props: Props) => {
+    const {dimensions: widgetDimensions, widgetData, onChangeParams} = props;
+    const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
+    const title = typeof config?.title === 'string' ? config.title : config?.title?.text;
+    const isPaginationEnabled = Boolean(config?.paginator?.enabled);
 
-    React.useLayoutEffect(() => {
-        if (!cellSizes) {
-            const container = tableContainerRef?.current as Element;
-            const table = container?.getElementsByTagName('table')?.[0];
-            const tBody = table?.getElementsByTagName('tbody')?.[0];
-            const tRow = tBody?.getElementsByTagName('tr')?.[0];
-            const tCells = tRow?.getElementsByTagName('td') ?? [];
-
-            const result = Array.from(tCells).map((tCell) => {
-                return tCell.getBoundingClientRect()?.width;
-            });
-
-            setCellSizes(result);
-        }
-    }, [cellSizes, tableContainerRef]);
-
-    React.useEffect(() => {
-        if (cellSizes) {
-            setCellSizes(null);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [width, config]);
-
-    return cellSizes;
-};
-
-function createColumn(args: {headCell: THead; footerCell?: TFoot; index: number; size?: number}) {
-    const {headCell, footerCell, index, size} = args;
-    const {id, width, cell, ...columnOptions} = headCell;
-    const options = {
-        ...columnOptions,
-        id: `${id}__${index}`,
-        meta: {
-            width,
-            footer: footerCell,
-            head: headCell,
-        },
-        size,
-        minSize: 0,
-    } as ColumnDef<TData>;
-
-    if (cell) {
-        options.cell = (context) => {
-            const originalCellData = context.row.original[index];
-            return cell(originalCellData);
-        };
-    }
-
-    if (footerCell) {
-        if (cell) {
-            options.footer = () => cell(footerCell);
-        } else {
-            options.footer = footerCell.formattedValue ?? (footerCell.value as string);
-        }
-    }
-
-    return options;
-}
-
-function createTableColumns(args: {
-    head?: THead[];
-    rows?: unknown[];
-    footer?: TFoot[];
-    cellSizes?: null | number[];
-}) {
-    const {head = [], rows = [], footer = [], cellSizes} = args;
-    const columnHelper = createColumnHelper<TData>();
-
-    let lastColumnIndex = 0;
-    const createHeadColumns = (cells: THead[]): ColumnDef<TData>[] => {
-        return cells.map((headCell) => {
-            const hasChildren = Boolean(headCell.columns?.length);
-            const cellIndex = hasChildren ? -1 : lastColumnIndex;
-            const footerCell = footer?.[cellIndex];
-            const cellSize =
-                cellSizes?.[cellIndex] ??
-                (typeof headCell.width === 'number' ? Number(headCell.width) : 0);
-            const left = (cellSizes || []).reduce(
-                (sum, s, index) => (index < cellIndex ? sum + cellSizes?.[index] : sum),
-                0,
-            );
-            const options = createColumn({
-                headCell: {
-                    ...headCell,
-                    enableSorting: headCell.enableSorting && rows.length > 1,
-                    left,
-                },
-                footerCell,
-                index: cellIndex,
-                size: cellSize,
-            });
-
-            if (hasChildren) {
-                return columnHelper.group({
-                    ...options,
-                    columns: createHeadColumns(headCell.columns || []),
-                } as GroupColumnDef<TData>);
-            } else {
-                lastColumnIndex++;
-            }
-
-            return columnHelper.accessor((row) => {
-                const cellData = row[cellIndex];
-
-                return cellData.formattedValue ?? cellData.value;
-            }, options as DisplayColumnDef<TData>);
-        });
+    const data = React.useMemo(() => mapTableData(originalData), [originalData]);
+    const pagination = {
+        currentPage: Number(get(currentParams, '_page')) || 0,
+        rowsCount: data.rows.length,
+        pageLimit: config?.paginator?.limit ?? Infinity,
     };
 
-    return createHeadColumns(head);
-}
+    const tableContainerRef = React.useRef<HTMLDivElement | null>(null);
+    const tableRef = React.useRef<HTMLTableElement | null>(null);
 
-type HeadCellViewData = {
-    id: string;
-    rowSpan?: number;
-    colSpan?: number;
-    sortable: boolean;
-    pinned: boolean;
-    style?: React.CSSProperties;
-    width: number;
-    sorting: SortDirection | false;
-    content: JSX.Element | React.ReactNode;
-    onClick: () => void;
-};
-
-type HeadRowViewData = {
-    id: string;
-    cells: HeadCellViewData[];
-};
-
-type BodyCellViewData = {
-    id: string;
-    style?: React.CSSProperties;
-    content: JSX.Element | React.ReactNode;
-    className?: string;
-    type?: 'number';
-    pinned?: boolean;
-    onClick?: (event: MouseEvent) => void;
-    rowSpan?: number;
-    index: number;
-};
-
-type BodyRowViewData = {
-    id: string;
-    index: number;
-    cells: BodyCellViewData[];
-    ref?: (node: HTMLTableRowElement) => void;
-    y: number;
-};
-
-type TableViewData = {
-    title?: string;
-    header: {
-        rows: HeadRowViewData[];
-        style?: React.CSSProperties;
-    };
-    rows: BodyRowViewData[];
-    settings: {
-        highlightRows: boolean;
-        sticky: boolean;
-    };
-    pagination: {
-        enabled: boolean;
-        currentPage: number;
-        rowsCount: number;
-        pageLimit: number;
-        onChange: (args: any) => void;
-    };
-    totalSize: number | null;
-    /* rendering table without most options - only to calculate cells size */
-    prerender: boolean;
-};
-
-const usePreparedTableData = (
-    props: Props & {tableContainerRef: MutableRefObject<HTMLDivElement | null>},
-): TableViewData => {
-    const {
-        widgetData: {config, data: originalData, params: currentParams, unresolvedParams},
-        dimensions,
-        tableContainerRef,
-        onChangeParams,
-    } = props;
     const actionParams = React.useMemo(() => {
         return getCurrentActionParams({config, unresolvedParams});
     }, [config, unresolvedParams]);
-
-    const data = React.useMemo(() => mapTableData(originalData), [originalData]);
-    const shouldHighlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-
-    const {enabled: canDrillDown} = getDrillDownOptions({
-        params: currentParams,
-        config: config?.drillDown,
-    });
-    const rowData = React.useMemo(() => {
-        const rows = (data.rows || []) as TableCellsRow[];
-        return rows.map<TData>((r) => {
-            return r.cells.map((c) => {
-                const cell = c as TableCommonCell;
-                const isCellClickable =
-                    Boolean(canDrillDown && cell.drillDownFilterValue) ||
-                    Boolean(cell.treeNode) ||
-                    Boolean(cell.onClick) ||
-                    Boolean(actionParams?.scope);
-                const cursor = isCellClickable ? 'pointer' : undefined;
-                const actionParamsCss = getCellCss({
-                    actionParamsData: actionParams,
-                    row: r,
-                    cell: c,
-                    head: data.head,
-                    rows: data.rows || [],
-                });
-
-                return {
-                    ...cell,
-                    css: {cursor, ...actionParamsCss, ...camelCaseCss(cell.css)},
-                };
-            });
-        });
-    }, [actionParams, canDrillDown, data]);
-
-    // calculate cell widths
-    const cellSizes = useCellSizes({
-        tableContainerRef,
-        width: dimensions.width,
-        config,
-    });
-    const prerender = !cellSizes;
-
-    const columns = React.useMemo(() => {
-        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width, data.head));
-        const footerData = ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
-            const cell = td as TableCommonCell;
-
-            return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
-        });
-        return createTableColumns({head: headData, rows: data.rows, footer: footerData, cellSizes});
-    }, [data, dimensions.width, cellSizes]);
-
-    const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const changeParams = React.useCallback(
         (values: StringParams | null) => {
@@ -308,374 +67,131 @@ const usePreparedTableData = (
         [onChangeParams],
     );
 
-    const isPaginationEnabled = Boolean(config?.paginator?.enabled);
-    const table = useReactTable({
-        data: rowData,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getGroupedRowModel: getGroupedRowModel(),
-        sortDescFirst: true,
-        manualSorting: isPaginationEnabled,
-        manualPagination: true,
-        state: {
-            sorting,
-        },
-        onSortingChange: (updater) => {
-            setSorting(updater);
-
-            const updates = typeof updater === 'function' ? updater(sorting) : updater;
-            const {id, desc} = updates[0] || {};
-            const headCellData = columns.find((c) => c.id === id)?.meta?.head;
-            const sortOrder = desc ? 'desc' : 'asc';
+    const handleSortingChange = React.useCallback(
+        (column, sortOrder) => {
             const sortParams: Record<string, string> = {
                 _columnId: '',
                 _sortOrder: '',
-                _sortColumnMeta: JSON.stringify(headCellData?.custom || {}),
+                _sortColumnMeta: JSON.stringify(column?.custom || {}),
             };
 
-            if (headCellData) {
-                const columnId = headCellData.fieldId ?? headCellData.id;
-                sortParams._columnId = `_id=${columnId}_name=${headCellData.name}`;
+            if (column) {
+                const columnId = get(column, 'fieldId', column.id);
+                sortParams._columnId = `_id=${columnId}_name=${column.name}`;
                 sortParams._sortOrder = String(sortOrder === 'desc' ? -1 : 1);
             }
 
             changeParams(sortParams);
         },
-    } as TableOptions<TData>);
+        [changeParams],
+    );
 
-    const headers = table.getHeaderGroups();
-    const tableRows = table.getRowModel().rows;
-
-    const rowVirtualizer = useVirtualizer({
-        count: tableRows.length,
-        estimateSize: () => 30,
-        getScrollElement: () => tableContainerRef.current,
-        measureElement: (el) => {
-            const cells = Array.from(el?.getElementsByTagName('td') || []);
-            const simpleCell = cells.find((c) => {
-                const rowSpan = Number(c.getAttribute('rowspan')) || 0;
-                return rowSpan <= 1;
-            });
-            const height = simpleCell?.getBoundingClientRect()?.height;
-            return height ?? 0;
-        },
-        overscan: 20,
-    });
-
-    const PRERENDER_ROW_COUNT = 500;
-    const virtualItems = prerender
-        ? new Array(Math.min(tableRows.length, PRERENDER_ROW_COUNT))
-              .fill(null)
-              .map((_, index) => ({index, start: 0}))
-        : rowVirtualizer.getVirtualItems();
-
-    const headerRows = headers
-        .map((headerGroup, rowIndex) => {
-            if (!headerGroup.headers.length) {
-                return null;
-            }
-
-            const cells = headerGroup.headers
-                .map((header) => {
-                    if (header.column.depth !== headerGroup.depth) {
-                        return null;
-                    }
-
-                    const originalCellData = header.column.columnDef.meta?.head;
-                    const rowSpan = header.isPlaceholder
-                        ? headers.length - headerGroup.depth
-                        : undefined;
-                    const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
-                    const sortable = header.column.getCanSort();
-                    const pinned = Boolean(originalCellData?.pinned);
-                    const cellStyle: React.CSSProperties = {
-                        left: pinned ? originalCellData?.left : undefined,
-                    };
-
-                    const cellWidth = header.getSize();
-                    if (cellWidth) {
-                        cellStyle.width = cellWidth;
-                    }
-
-                    if (typeof originalCellData.width !== 'undefined') {
-                        cellStyle.whiteSpace = 'normal';
-                        cellStyle.wordBreak = 'break-word';
-                    } else if (prerender) {
-                        cellStyle.whiteSpace = 'nowrap';
-                    }
-
-                    if (rowIndex > 0) {
-                        cellStyle.borderTop = 0;
-                    }
-
-                    return {
-                        id: header.id,
-                        rowSpan,
-                        colSpan,
-                        sortable,
-                        pinned,
-                        style: cellStyle,
-                        sorting: header.column.getIsSorted(),
-                        content: flexRender(header.column.columnDef.header, header.getContext()),
-                        onClick: header.column.getToggleSortingHandler(),
-                        width: cellWidth,
-                    };
-                })
-                .filter(Boolean);
-
-            return {
-                id: headerGroup.id,
-                cells,
-            };
-        })
-        .filter(Boolean) as HeadRowViewData[];
-    const header = prerender
-        ? {rows: headerRows}
-        : {
-              rows: [
-                  {
-                      id: '',
-                      cells: headerRows
-                          .reduce((acc, h) => {
-                              acc.push(...h.cells);
-                              return acc;
-                          }, [])
-                          .flat(),
-                  },
-              ],
-              style: {
-                  gridTemplateColumns: headers[headers.length - 1]?.headers
-                      .map((h) => `${h.getSize()}px`)
-                      .join(' '),
-              },
-          };
-
-    const prevCells: any[] = new Array(tableRows[0]?.getVisibleCells()?.length);
-
-    return {
-        title: typeof config?.title === 'string' ? config.title : config?.title?.text,
-        header,
-        rows: virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
-            const row = tableRows[virtualRow.index] as Row<TData>;
-            const visibleCells = row.getVisibleCells();
-
-            rowsAcc.push({
-                id: row.id,
-                index: virtualRow.index,
-                cells: visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
-                    const originalHeadData = cell.column.columnDef.meta?.head;
-                    const enableRowGrouping = get(originalHeadData, 'group', false);
-                    const originalCellData = cell.row.original[index];
-                    const pinned = Boolean(originalHeadData?.pinned);
-
-                    if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
-                        const prevCellRow = rowsAcc[prevCells[index]];
-                        const prevCell = prevCellRow?.cells?.[index];
-                        const prevCellData = rowData[prevCellRow?.index][index];
-                        if (originalCellData.value === prevCellData?.value) {
-                            prevCell.rowSpan++;
-                            return acc;
-                        }
-                    }
-
-                    const cellStyle: React.CSSProperties = {
-                        width: cell.column.getSize() || undefined,
-                        left: pinned ? originalHeadData?.left : undefined,
-                        ...originalCellData?.css,
-                    };
-
-                    if (typeof originalHeadData?.width !== 'undefined') {
-                        cellStyle.whiteSpace = 'normal';
-                        cellStyle.wordBreak = 'break-word';
-                    } else if (prerender) {
-                        cellStyle.whiteSpace = 'nowrap';
-                    }
-
-                    const renderCell =
-                        typeof cell.column.columnDef.cell === 'function'
-                            ? cell.column.columnDef.cell
-                            : () => cell.column.columnDef.cell;
-
-                    const cellData = {
-                        id: cell.id,
-                        index,
-                        style: cellStyle,
-                        content: renderCell(cell.getContext()),
-                        type: originalCellData?.type,
-                        pinned,
-                        className:
-                            typeof originalCellData?.className === 'function'
-                                ? originalCellData?.className()
-                                : originalCellData?.className,
-                        rowSpan: 1,
-                        onClick: (event) => {
-                            const {
-                                enabled: canDrillDown,
-                                filters: drillDownFilters,
-                                level: drillDownLevel,
-                            } = getDrillDownOptions({
-                                params: currentParams,
-                                config: config?.drillDown,
-                            });
-
-                            const tableCommonCell = originalCellData as TableCommonCell;
-                            if (tableCommonCell?.onClick?.action === 'setParams') {
-                                changeParams(tableCommonCell.onClick.args);
-                                return;
-                            }
-
-                            if (canDrillDown && tableCommonCell.drillDownFilterValue) {
-                                changeParams({
-                                    drillDownLevel: [String(drillDownLevel + 1)],
-                                    drillDownFilters: drillDownFilters.map(
-                                        (filter: string, index: number) => {
-                                            if (drillDownLevel === index) {
-                                                return String(tableCommonCell.drillDownFilterValue);
-                                            }
-
-                                            return filter;
-                                        },
-                                    ),
-                                });
-                                return;
-                            }
-
-                            if (tableCommonCell.treeNode) {
-                                const treeState = getUpdatesTreeState({
-                                    cell: tableCommonCell,
-                                    params: currentParams,
-                                });
-
-                                changeParams(treeState ? {treeState} : {});
-                                return;
-                            }
-
-                            if (actionParams?.scope) {
-                                const args: GetCellActionParamsArgs = {
-                                    actionParamsData: actionParams,
-                                    rows: data.rows,
-                                    head: data.head,
-                                    row: data.rows[virtualRow.index]?.cells as TData,
-                                    cell: tableCommonCell,
-                                    metaKey: Boolean(event.metaKey),
-                                };
-
-                                const cellActionParams = getCellActionParams(args);
-
-                                if (cellActionParams) {
-                                    changeParams({...cellActionParams});
-                                }
-                            }
-                        },
-                    };
-
-                    prevCells[index] = rowsAcc.length;
-                    acc.push(cellData);
-                    return acc;
-                }, []),
-                ref: (node) => rowVirtualizer.measureElement(node),
-                y: virtualRow.start,
-            });
-
-            return rowsAcc;
-        }, []),
-        settings: {
-            highlightRows: shouldHighlightRows,
-            sticky: true,
-        },
-        totalSize: prerender ? null : rowVirtualizer.getTotalSize(),
-        prerender,
-        pagination: {
-            enabled: isPaginationEnabled,
-            currentPage: Number(currentParams._page) || 0,
-            rowsCount: tableRows.length,
-            pageLimit: config?.paginator?.limit ?? Infinity,
-            onChange: () => {},
-        },
-    };
-};
-
-const useTableHeight = (args: {
-    ref: MutableRefObject<HTMLTableElement | null>;
-    prerender: boolean;
-}) => {
-    const {ref, prerender} = args;
-    const [height, setHeight] = React.useState<number | null>();
-
-    useEffect(() => {
-        if (!prerender) {
-            const table = ref?.current as Element;
-            const tHead = table?.getElementsByTagName('thead')?.[0];
-            const tBody = table?.getElementsByTagName('tbody')?.[0];
-
-            const tableActualHeight = tHead?.clientHeight + tBody?.clientHeight;
-            if (tableActualHeight && tableActualHeight !== height) {
-                setHeight(tableActualHeight);
-            }
-        }
-    }, [height, prerender, ref]);
-
-    return height;
-};
-
-export const Table = React.memo<Props>((props: Props) => {
     const {
-        dimensions: {height: tableMaxHeight},
-    } = props;
-    const tableContainerRef = React.useRef<HTMLDivElement | null>(null);
-    const tableRef = React.useRef<HTMLTableElement | null>(null);
-    const {title, header, rows, settings, pagination, prerender, totalSize} = usePreparedTableData({
-        ...props,
-        tableContainerRef,
+        enabled: canDrillDown,
+        filters: drillDownFilters,
+        level: drillDownLevel,
+    } = getDrillDownOptions({
+        params: currentParams,
+        config: config?.drillDown,
     });
-    const tableActualHeight = useTableHeight({ref: tableRef, prerender});
 
-    console.log('Table render:', {totalSize, tableActualHeight});
-
-    const noData = !rows.length;
-
-    const renderHead = (headerGroup: HeadRowViewData) => {
-        return headerGroup.cells.map((th, index) => {
-            const nextCellData = headerGroup.cells[index + 1];
-            const isLastPinnedCell = th.pinned && !nextCellData?.pinned;
-            return (
-                <th
-                    key={th.id}
-                    className={b('th', {
-                        clickable: th.sortable,
-                        pinned: th.pinned,
-                        'first-cell': index === 0,
-                    })}
-                    style={{
-                        ...th.style,
-                        gridRow: `span ${th.rowSpan}`,
-                        gridColumn: `span ${th.colSpan}`,
-                    }}
-                    colSpan={th.colSpan}
-                    rowSpan={th.rowSpan}
-                    onClick={th.onClick}
-                >
-                    {isLastPinnedCell && (
-                        <div
-                            className={b('shadow')}
-                            style={{
-                                height: (tableActualHeight || 0) - 1,
-                            }}
-                        />
-                    )}
-                    <div
-                        className={b('th-content', {
-                            sortable: th.sortable,
-                        })}
-                    >
-                        {th.content}
-                        <SortIcon className={b('sort-icon')} sorting={th.sorting} />
-                    </div>
-                </th>
-            );
+    const getCellAdditionStyles = (cell: TableCell, row: TableCellsRow) => {
+        const commonCell = cell as TableCommonCell;
+        const isCellClickable =
+            Boolean(canDrillDown && commonCell.drillDownFilterValue) ||
+            Boolean(commonCell.treeNode) ||
+            Boolean(commonCell.onClick) ||
+            Boolean(actionParams?.scope);
+        const cursor = isCellClickable ? 'pointer' : undefined;
+        const actionParamsCss = getCellCss({
+            actionParamsData: actionParams,
+            row,
+            cell,
+            head: data.head,
+            rows: data.rows || [],
         });
+
+        return {cursor, ...actionParamsCss};
     };
+
+    const {header, rows, prerender, totalSize} = usePreparedTableData({
+        widgetData,
+        data,
+        dimensions: widgetDimensions,
+        tableContainerRef,
+        manualSorting: isPaginationEnabled,
+        onSortingChange: handleSortingChange,
+        getCellAdditionStyles,
+    });
+
+    const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
+    const tableActualHeight = useTableHeight({ref: tableRef, prerender});
+    const noData = !props.widgetData.data?.rows?.length;
+
+    const handleCellClick = React.useCallback(
+        (event: MouseEvent, cellData: CellData, rowIndex: number) => {
+            const tableCommonCell = cellData as TableCommonCell;
+            if (tableCommonCell?.onClick?.action === 'setParams') {
+                changeParams(tableCommonCell.onClick.args);
+                return;
+            }
+
+            if (canDrillDown && tableCommonCell.drillDownFilterValue) {
+                changeParams({
+                    drillDownLevel: [String(drillDownLevel + 1)],
+                    drillDownFilters: drillDownFilters.map((filter: string, index: number) => {
+                        if (drillDownLevel === index) {
+                            return String(tableCommonCell.drillDownFilterValue);
+                        }
+
+                        return filter;
+                    }),
+                });
+                return;
+            }
+
+            if (tableCommonCell.treeNode) {
+                const treeState = getUpdatesTreeState({
+                    cell: tableCommonCell,
+                    params: currentParams,
+                });
+
+                changeParams(treeState ? {treeState} : {});
+                return;
+            }
+
+            if (actionParams?.scope) {
+                const args: GetCellActionParamsArgs = {
+                    actionParamsData: actionParams,
+                    rows: data.rows,
+                    head: data.head,
+                    row: data.rows[rowIndex]?.cells as TData,
+                    cell: tableCommonCell,
+                    metaKey: Boolean(event.metaKey),
+                };
+
+                const cellActionParams = getCellActionParams(args);
+
+                if (cellActionParams) {
+                    changeParams({...cellActionParams});
+                }
+            }
+        },
+        [
+            actionParams,
+            canDrillDown,
+            changeParams,
+            currentParams,
+            data,
+            drillDownFilters,
+            drillDownLevel,
+        ],
+    );
+
+    const handlePaginationChange = React.useCallback(
+        (page: number) => changeParams({_page: String(page)}),
+        [changeParams],
+    );
 
     return (
         <React.Fragment>
@@ -685,13 +201,10 @@ export const Table = React.memo<Props>((props: Props) => {
                     [SNAPTER_HTML_CLASSNAME, CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' '),
                 )}
                 ref={tableContainerRef}
-                style={{maxHeight: tableMaxHeight}}
+                style={{maxHeight: widgetDimensions.height}}
             >
                 <TableTitle title={title} />
-                <div
-                    className={b('table-wrapper', {'highlight-rows': settings.highlightRows})}
-                    // style={{height: totalSize}}
-                >
+                <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
                     {noData && (
                         <div className={b('no-data')}>
                             {i18n('chartkit-table', 'message-no-data')}
@@ -703,81 +216,27 @@ export const Table = React.memo<Props>((props: Props) => {
                             style={{minHeight: totalSize}}
                             ref={tableRef}
                         >
-                            <thead className={b('header', {sticky: settings.sticky})}>
-                                {header.rows.map((headerGroup) => {
-                                    // const gridTemplateColumns = headerGroup.cells
-                                    //     .map((c) => `${c.width}px`)
-                                    //     .join(' ');
-
-                                    // <tr
-                                    //     key={headerGroup.id}
-                                    //     className={b('tr')}
-                                    //     style={{gridTemplateColumns}}
-                                    // >
-                                    return (
-                                        <tr
-                                            key={headerGroup.id}
-                                            className={b('tr')}
-                                            style={header.style}
-                                        >
-                                            {renderHead(headerGroup)}
-                                        </tr>
-                                    );
-                                })}
-                            </thead>
-                            <tbody
-                                className={b('body')}
-                                style={{
-                                    ...header.style,
-                                    transform: `translateY(${rows[0]?.y}px)`,
-                                }}
-                            >
-                                {rows.map((row) => {
-                                    return (
-                                        <tr
-                                            data-index={row.index}
-                                            key={row.id}
-                                            className={b('tr')}
-                                            ref={row.ref}
-                                        >
-                                            {row.cells.map((cell) => {
-                                                return (
-                                                    <td
-                                                        key={cell.id}
-                                                        className={b(
-                                                            'td',
-                                                            {
-                                                                type: cell.type,
-                                                                pinned: cell.pinned,
-                                                                'first-cell': cell.index === 0,
-                                                            },
-                                                            cell.className,
-                                                        )}
-                                                        style={{
-                                                            ...cell.style,
-                                                            gridRow: `span ${cell.rowSpan}`,
-                                                        }}
-                                                        onClick={cell.onClick}
-                                                        rowSpan={cell.rowSpan}
-                                                    >
-                                                        {cell.content}
-                                                    </td>
-                                                );
-                                            })}
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
+                            <TableHead
+                                sticky={true}
+                                rows={header.rows}
+                                style={header.style}
+                                tableHeight={tableActualHeight}
+                            />
+                            <TableBody
+                                rows={rows}
+                                style={header.style}
+                                onCellClick={handleCellClick}
+                            />
                         </table>
                     )}
                 </div>
             </div>
-            {pagination.enabled && (
+            {isPaginationEnabled && (
                 <Paginator
                     page={pagination.currentPage}
                     rowsCount={pagination.rowsCount}
                     limit={pagination.pageLimit}
-                    onChange={pagination.onChange}
+                    onChange={handlePaginationChange}
                 />
             )}
         </React.Fragment>
