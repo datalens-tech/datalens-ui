@@ -11,14 +11,19 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
-import type {TData} from 'ui/components/Table/types';
 import {camelCaseCss} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils';
 import {createTableColumns} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/utils';
 import type {WidgetDimensions} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/types';
 import {mapHeadCell} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils/renderer';
 import type {TableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
 
-import type {BodyCellViewData, BodyRowViewData, HeadRowViewData} from './types';
+import type {
+    BodyCellViewData,
+    BodyRowViewData,
+    HeadCellViewData,
+    HeadRowViewData,
+    TData,
+} from './types';
 import {useCellSizes} from './useCellSizes';
 
 const PRERENDER_ROW_COUNT = 500;
@@ -29,7 +34,7 @@ type TableViewData = {
         style?: React.CSSProperties;
     };
     rows: BodyRowViewData[];
-    totalSize: number | null;
+    totalSize: number | undefined;
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
 };
@@ -41,7 +46,7 @@ export const usePreparedTableData = (props: {
     data: Required<TableData>;
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
-    getCellAdditionStyles?: (cell: TableCell, row: TableCellsRow) => React.CSSProperties;
+    getCellAdditionStyles?: (cell: TableCell, rowIndex: number) => React.CSSProperties;
 }): TableViewData => {
     const {
         widgetData: {config},
@@ -74,7 +79,7 @@ export const usePreparedTableData = (props: {
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const tableRowsData = React.useMemo(() => {
-        return data.rows.map<TData>((r) => r.cells || []);
+        return data.rows.map<TData>((r) => get(r, 'cells', []));
     }, [data.rows]);
     const table = useReactTable({
         data: tableRowsData,
@@ -101,7 +106,9 @@ export const usePreparedTableData = (props: {
             const headCellData = columns.find((c) => c.id === id)?.meta?.head as TableHead;
             const sortOrder = desc ? 'desc' : 'asc';
 
-            onSortingChange(headCellData, sortOrder);
+            if (onSortingChange) {
+                onSortingChange(headCellData, sortOrder);
+            }
         },
     } as TableOptions<TData>);
 
@@ -158,7 +165,7 @@ export const usePreparedTableData = (props: {
                         cellStyle.width = cellWidth;
                     }
 
-                    if (typeof originalCellData.width !== 'undefined') {
+                    if (typeof originalCellData?.width !== 'undefined') {
                         cellStyle.whiteSpace = 'normal';
                         cellStyle.wordBreak = 'break-word';
                     } else if (prerender) {
@@ -197,7 +204,7 @@ export const usePreparedTableData = (props: {
                   {
                       id: '',
                       cells: headerRows
-                          .reduce((acc, h) => {
+                          .reduce<HeadCellViewData[]>((acc, h) => {
                               acc.push(...h.cells);
                               return acc;
                           }, [])
@@ -226,18 +233,21 @@ export const usePreparedTableData = (props: {
                     const prevCellRow = rowsAcc[prevCells[index]];
                     const prevCell = prevCellRow?.cells?.[index];
                     const prevCellData = tableRowsData[prevCellRow?.index][index];
-                    if (originalCellData.value === prevCellData?.value) {
-                        prevCell.rowSpan++;
+                    if (
+                        typeof prevCell?.rowSpan !== 'undefined' &&
+                        originalCellData.value === prevCellData?.value
+                    ) {
+                        prevCell.rowSpan += 1;
                         return acc;
                     }
                 }
 
+                const additionalStyles = getCellAdditionStyles
+                    ? getCellAdditionStyles(originalCellData as TableCell, virtualRow.index)
+                    : {};
                 const cellStyle: React.CSSProperties = {
                     left: pinned ? originalHeadData?.left : undefined,
-                    ...getCellAdditionStyles(
-                        originalCellData as TableCell,
-                        cell.row.original as TableCellsRow,
-                    ),
+                    ...additionalStyles,
                     ...camelCaseCss(originalCellData.css),
                 };
 
@@ -258,7 +268,7 @@ export const usePreparedTableData = (props: {
                     index,
                     style: cellStyle,
                     content: renderCell(cell.getContext()),
-                    type: originalCellData?.type,
+                    type: get(originalCellData, 'type'),
                     pinned,
                     className:
                         typeof originalCellData?.className === 'function'
@@ -288,7 +298,7 @@ export const usePreparedTableData = (props: {
     return {
         header,
         rows,
-        totalSize: prerender ? null : rowVirtualizer.getTotalSize(),
+        totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
         prerender,
     };
 };

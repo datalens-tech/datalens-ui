@@ -1,7 +1,8 @@
 import type {ColumnDef} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
-import type {TData, TFoot, THead} from 'ui/components/Table/types';
+
+import type {TData, TFoot, THead} from './types';
 
 export function createColumn(args: {
     headCell: THead;
@@ -47,7 +48,8 @@ export function createTableColumns(args: {
     footer?: TFoot[];
     cellSizes?: null | number[];
 }) {
-    const {head = [], rows = [], footer = [], cellSizes} = args;
+    const {head = [], rows = [], footer = []} = args;
+    const cellSizes = args.cellSizes || [];
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -56,11 +58,11 @@ export function createTableColumns(args: {
             const hasChildren = Boolean(headCell.columns?.length);
             const cellIndex = hasChildren ? -1 : lastColumnIndex;
             const footerCell = footer?.[cellIndex];
-            const cellSize =
-                cellSizes?.[cellIndex] ??
+            const size =
+                cellSizes[cellIndex] ??
                 (typeof headCell.width === 'number' ? Number(headCell.width) : 0);
-            const left = (cellSizes || []).reduce(
-                (sum, s, index) => (index < cellIndex ? sum + cellSizes?.[index] : sum),
+            const left = cellSizes.reduce(
+                (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
                 0,
             );
             const options = createColumn({
@@ -71,7 +73,7 @@ export function createTableColumns(args: {
                 },
                 footerCell,
                 index: cellIndex,
-                size: cellSize,
+                size,
             });
 
             if (hasChildren) {

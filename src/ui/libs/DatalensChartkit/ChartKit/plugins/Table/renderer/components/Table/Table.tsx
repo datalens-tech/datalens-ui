@@ -3,9 +3,14 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
-import type {CellData, TData} from 'ui/components/Table/types';
-import type {WidgetDimensions} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/types';
-import type {GetCellActionParamsArgs} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils';
+
+import type {TableWidgetData} from '../../../../../../types';
+import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
+import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
+import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
+import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
+import {i18n} from '../../../../../modules/i18n/i18n';
+import type {WidgetDimensions} from '../../types';
 import {
     getCellActionParams,
     getCellCss,
@@ -13,18 +18,13 @@ import {
     getDrillDownOptions,
     getUpdatesTreeState,
     mapTableData,
-} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils';
-import type {TableWidgetData} from 'ui/libs/DatalensChartkit/types';
-
-import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
-import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
-import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
-import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
-import {i18n} from '../../../../../modules/i18n/i18n';
+} from '../../utils';
+import type {GetCellActionParamsArgs} from '../../utils';
 import {TableTitle} from '../Title/TableTitle';
 
 import {TableBody} from './TableBody';
 import {TableHead} from './TableHead';
+import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
 import {useTableHeight} from './useTableHeight';
 
@@ -95,7 +95,7 @@ export const Table = React.memo<Props>((props: Props) => {
         config: config?.drillDown,
     });
 
-    const getCellAdditionStyles = (cell: TableCell, row: TableCellsRow) => {
+    const getCellAdditionStyles = (cell: TableCell, rowIndex: number) => {
         const commonCell = cell as TableCommonCell;
         const isCellClickable =
             Boolean(canDrillDown && commonCell.drillDownFilterValue) ||
@@ -105,7 +105,7 @@ export const Table = React.memo<Props>((props: Props) => {
         const cursor = isCellClickable ? 'pointer' : undefined;
         const actionParamsCss = getCellCss({
             actionParamsData: actionParams,
-            row,
+            row: data.rows[rowIndex] as TableCellsRow,
             cell,
             head: data.head,
             rows: data.rows || [],
@@ -129,7 +129,7 @@ export const Table = React.memo<Props>((props: Props) => {
     const noData = !props.widgetData.data?.rows?.length;
 
     const handleCellClick = React.useCallback(
-        (event: MouseEvent, cellData: CellData, rowIndex: number) => {
+        (event: React.MouseEvent, cellData: unknown, rowIndex: number) => {
             const tableCommonCell = cellData as TableCommonCell;
             if (tableCommonCell?.onClick?.action === 'setParams') {
                 changeParams(tableCommonCell.onClick.args);
@@ -165,7 +165,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     actionParamsData: actionParams,
                     rows: data.rows,
                     head: data.head,
-                    row: data.rows[rowIndex]?.cells as TData,
+                    row: (data.rows[rowIndex] as TableCellsRow)?.cells as TData,
                     cell: tableCommonCell,
                     metaKey: Boolean(event.metaKey),
                 };

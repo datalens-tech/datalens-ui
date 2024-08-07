@@ -1,7 +1,8 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {SortIcon} from 'ui/components/Table/components/SortIcon/SortIcon';
+
+import {SortIcon} from '../SortIcon/SortIcon';
 
 import type {HeadRowViewData} from './types';
 

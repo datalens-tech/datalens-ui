@@ -8,13 +8,13 @@ import type {
     TableWidgetEventScope,
 } from 'shared';
 
-import type {TData} from '../../../../../../../components/Table/types';
 import type {TableWidgetData} from '../../../../../types';
 import type {ActionParamsData} from '../../../../components/Widget/components/Table/utils';
 import {
     getActionParams,
     getAdditionalStyles,
 } from '../../../../components/Widget/components/Table/utils/action-params';
+import type {TData} from '../../renderer/components/Table/types';
 
 import {getRowAsMap} from './migrate-to-old-format';
 

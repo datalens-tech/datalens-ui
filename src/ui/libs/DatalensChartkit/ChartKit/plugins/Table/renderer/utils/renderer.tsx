@@ -15,10 +15,10 @@ import type {
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
-import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
+import type {THead} from '../components/Table/types';
 import {TreeCell} from '../components/TreeCell/TreeCell';
 
 import {calculateNumericProperty, isStringValueInPixel} from './math';
@@ -67,14 +67,8 @@ export function mapHeadCell(
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
             const cell = cellData as TableCommonCell;
-            const contentStyles = getCellContentStyles({
-                cell,
-                column: th,
-                columns: head || [],
-            });
             return (
                 <React.Fragment>
-                {/*<span data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>*/}
                     {renderCellContent({cell, column: th})}
                     {cell.sortDirection && (
                         <Icon
@@ -83,7 +77,6 @@ export function mapHeadCell(
                         />
                     )}
                 </React.Fragment>
-                // </span>
             );
         },
         columns: get(th, 'sub', []).map(mapHeadCell),

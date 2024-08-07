@@ -5,7 +5,7 @@ export const useTableHeight = (args: {
     prerender: boolean;
 }) => {
     const {ref, prerender} = args;
-    const [height, setHeight] = React.useState<number | null>();
+    const [height, setHeight] = React.useState<number | undefined>();
 
     React.useEffect(() => {
         if (!prerender) {

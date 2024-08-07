@@ -9,11 +9,7 @@ const b = block('dl-table');
 type Props = {
     rows: BodyRowViewData[];
     style?: React.CSSProperties;
-    onCellClick?: (
-        event: MouseEvent<HTMLTableDataCellElement>,
-        cell: unknown,
-        rowIndex: number,
-    ) => void;
+    onCellClick?: (event: React.MouseEvent, cell: unknown, rowIndex: number) => void;
 };
 
 export const TableBody = React.memo<Props>((props: Props) => {

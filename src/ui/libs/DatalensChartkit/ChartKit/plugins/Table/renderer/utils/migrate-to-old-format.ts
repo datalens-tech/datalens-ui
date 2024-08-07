@@ -1,7 +1,7 @@
 import type {TableHead} from 'shared';
 
-import type {TData} from '../../../../../../../components/Table/types';
 import type {TableData} from '../../../../../types';
+import type {TData} from '../components/Table/types';
 
 export function getRowAsMap(args: {row?: TData; head?: TableHead[]}) {
     const {row, head = []} = args;

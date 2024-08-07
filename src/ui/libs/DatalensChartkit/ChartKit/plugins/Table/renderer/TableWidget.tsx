@@ -34,7 +34,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         Performance.mark(generatedId);
 
         const ref = React.useRef<HTMLDivElement | null>(null);
-        const [dimensions, setDimensions] = React.useState<Partial<WidgetDimensions>>();
+        const [dimensions, setDimensions] = React.useState<WidgetDimensions | undefined>();
         const handleResize = React.useCallback(() => {
             if (ref.current) {
                 const {width, height} = ref.current.getBoundingClientRect();
