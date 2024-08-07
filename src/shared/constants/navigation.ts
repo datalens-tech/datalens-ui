@@ -6,6 +6,7 @@ export const PLACE = {
     WIDGETS: 'widgets',
     CONNECTIONS: 'connections',
     CLUSTERS: 'clusters',
+    PRESENTATIONS: 'presentations',
 } as const;
 
 export const MAP_PLACE_TO_SCOPE = {
@@ -16,4 +17,5 @@ export const MAP_PLACE_TO_SCOPE = {
     [PLACE.WIDGETS]: 'widget',
     [PLACE.CONNECTIONS]: 'connection',
     [PLACE.CLUSTERS]: 'clusters',
+    [PLACE.PRESENTATIONS]: 'presentation',
 } as const;

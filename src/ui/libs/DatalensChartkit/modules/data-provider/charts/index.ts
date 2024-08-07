@@ -23,6 +23,7 @@ import {
     Feature,
     MAX_SEGMENTS_NUMBER,
 } from 'shared';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
@@ -66,7 +67,6 @@ import type {
     Settings,
     SourcesConfig,
 } from './types';
-import {isEmbeddedChart} from './utils';
 import processWizard from './wizard';
 
 // from export-data module
@@ -710,11 +710,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
-        const path = isEmbeddedChart() ? '/embeds/api/run' : '/api/run';
-
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${path}`,
+                url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
             }),
@@ -749,7 +747,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const headers: Record<string, string | null> = {
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (isEmbeddedChart()) {
+        if (isEmbeddedEntry()) {
             const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
             headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }

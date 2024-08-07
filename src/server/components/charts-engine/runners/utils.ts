@@ -38,5 +38,5 @@ export function prepareErrorForLogger(error: unknown) {
             details: errorDetails,
         };
     }
-    return error;
+    return isObject(error) ? error : {error};
 }

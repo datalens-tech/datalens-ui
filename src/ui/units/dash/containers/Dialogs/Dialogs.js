@@ -6,6 +6,7 @@ import {registry} from 'ui/registry';
 
 import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
 import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
+import DialogTitleWidget from '../../../../components/DialogTitleWidget/DialogTitleWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
@@ -22,7 +23,6 @@ import Control2 from './Control2/Control2';
 import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
-import {Title} from './Title/Title';
 
 // TODO: to see if dialogs with complex content will slow down due to the fact that mount/unmount is happening
 // TODO: if there are noticeable lags, it will be possible to render the contents of the dialogs as available
@@ -42,6 +42,9 @@ export function Dialogs() {
     const dialogTextIsVisible = useSelector((state) =>
         selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
     );
+    const dialogTitleIsVisible = useSelector((state) =>
+        selectIsDialogVisible(state, DIALOG_TYPE.TITLE),
+    );
     const dialogChartIsVisible = useSelector((state) =>
         selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
     );
@@ -58,7 +61,17 @@ export function Dialogs() {
         case DIALOG_TYPE.TABS:
             return <Tabs />;
         case DIALOG_TYPE.TITLE:
-            return <Title />;
+            return (
+                <DialogTitleWidget
+                    openedItemId={openedItemId}
+                    openedItemData={openedItemData}
+                    dialogIsVisible={dialogTitleIsVisible}
+                    closeDialog={() => dispatch(closeDialog())}
+                    setItemData={(newItemData) => {
+                        dispatch(setItemData(newItemData));
+                    }}
+                />
+            );
         case DIALOG_TYPE.TEXT: {
             return (
                 <DialogTextWidgetWrapper

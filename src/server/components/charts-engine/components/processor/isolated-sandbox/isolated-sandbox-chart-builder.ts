@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import ivm from 'isolated-vm';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
@@ -12,6 +14,13 @@ import {Sandbox} from './sandbox';
 
 const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
+
+const CE_BUNDLE_PATH = 'ce-dist/bundled-libs.js';
+
+let bundledLibriesCode: string;
+if (fs.existsSync(CE_BUNDLE_PATH)) {
+    bundledLibriesCode = fs.readFileSync(CE_BUNDLE_PATH, 'utf-8');
+}
 
 type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;
@@ -43,7 +52,7 @@ export const getIsolatedSandboxChartBuilder = async (
     let shared: Record<string, any>;
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    context.evalSync('const modules = {}');
+    context.evalSync('const __modules = {}');
 
     return {
         dispose: () => {
@@ -69,6 +78,21 @@ export const getIsolatedSandboxChartBuilder = async (
                 const result = await Sandbox.processModule({
                     name,
                     code: resolvedModule.data.js,
+                    userLogin,
+                    userLang,
+                    nativeModules: chartsEngine.nativeModules,
+                    isScreenshoter,
+                    context,
+                });
+                onModuleBuild(result);
+                processedModules[name] = result;
+            }
+
+            if (bundledLibriesCode) {
+                const name = 'bundledLibraries';
+                const result = await Sandbox.processModule({
+                    name,
+                    code: bundledLibriesCode,
                     userLogin,
                     userLang,
                     nativeModules: chartsEngine.nativeModules,

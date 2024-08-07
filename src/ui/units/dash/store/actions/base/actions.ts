@@ -2,7 +2,7 @@ import {lockedTextInfo} from 'components/RevisionsPanel/RevisionsPanel';
 import type {History, Location} from 'history';
 import {I18n} from 'i18n';
 import {sdk} from 'libs/sdk';
-import type {DashEntry, DashTabItem, DashTabItemWidget, EntryUpdateMode} from 'shared';
+import type {DashEntry, EntryUpdateMode} from 'shared';
 import {DashSchemeConverter, EntryScope, Feature} from 'shared';
 import type {GetEntryArgs} from 'shared/schema';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
@@ -19,7 +19,7 @@ import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
-import {Mode} from '../../../modules/constants';
+import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
 import * as actionTypes from '../../constants/dashActionTypes';
 import type {DashState} from '../../reducers/dashTypedReducer';
@@ -35,26 +35,14 @@ import {
 import {
     DOES_NOT_EXIST_ERROR_TEXT,
     NOT_FOUND_ERROR_TEXT,
+    applyDataProviderChartSettings,
+    getCurrentTab,
+    isCallable,
     prepareLoadedData,
     removeParamAndUpdate,
 } from '../helpers';
 
 const i18n = I18n.keyset('dash.store.view');
-
-/**
- * Type guards
- */
-const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] => {
-    return (
-        (data as DashTabItemWidget['data']).tabs &&
-        (data as DashTabItemWidget['data']).tabs.length > 1
-    );
-};
-
-// TODO remove it
-// Previosly ChartKit static methods resolverd as (arg) => void | undefined
-// This type guard is to save this behaviour
-const isCallable = <T extends (args: any) => void>(fn: T | undefined): T => fn as T;
 
 export const setSelectStateMode = ({
     tabId: selectedTabId,
@@ -325,27 +313,7 @@ export const load = ({
             // without await, they will start following each markdown separately
             await MarkdownProvider.init(data);
 
-            let tabId = (
-                searchParams.has(URL_QUERY.TAB_ID)
-                    ? searchParams.get(URL_QUERY.TAB_ID)
-                    : data.tabs[0].id
-            ) as string;
-            let tabIndex = data.tabs.findIndex(({id}) => id === tabId);
-            const widgetsCurrentTab: DashState['widgetsCurrentTab'] = {};
-            if (tabIndex === -1) {
-                tabIndex = 0;
-                tabId = data.tabs[0].id;
-                removeParamAndUpdate(history, searchParams, URL_QUERY.TAB_ID);
-            }
-
-            data.tabs[tabIndex].items.forEach(({id: widgetId, data}) => {
-                if (hasTabs(data)) {
-                    const defaultTab = data.tabs.find(({isDefault}) => isDefault);
-                    if (defaultTab) {
-                        widgetsCurrentTab[widgetId] = defaultTab.id;
-                    }
-                }
-            });
+            const {tabId, widgetsCurrentTab} = getCurrentTab({searchParams, data, history});
 
             let hashStates = {};
             if (hashData) {
@@ -382,17 +350,7 @@ export const load = ({
                     dispatch(toggleTableOfContent(Boolean(data.settings.expandTOC)));
                 }
 
-                if (data.settings.maxConcurrentRequests) {
-                    isCallable(ChartKit.setDataProviderSettings)({
-                        maxConcurrentRequests: data.settings.maxConcurrentRequests,
-                    });
-                }
-
-                if (data.settings.loadPriority) {
-                    isCallable(ChartKit.setDataProviderSettings)({
-                        loadPriority: data.settings.loadPriority,
-                    });
-                }
+                applyDataProviderChartSettings({data});
             }
 
             dispatch({
@@ -431,8 +389,7 @@ export const load = ({
                 errorMessage === DOES_NOT_EXIST_ERROR_TEXT
             ) {
                 errorParams = {
-                    code: errorMessage,
-                    message: i18n('label_error-404-title'),
+                    code: DashErrorCode.NOT_FOUND,
                     status: 404,
                     _manualError: true,
                 } as ManualError;

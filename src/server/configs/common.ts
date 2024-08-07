@@ -27,7 +27,6 @@ export default {
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
     fetchingTimeout: 95 * 1000,
     singleFetchingTimeout: 95 * 1000,
-    chartsMonitoringEnabled: false,
     faviconUrl: '/favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,

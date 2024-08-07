@@ -11,6 +11,7 @@ import type {
     LoadedWidget,
     LoadedWidgetData,
     OnChangeData,
+    WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 
@@ -109,6 +110,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     renderPluginLoader?: () => React.ReactNode;
     actionParamsEnabled?: boolean;
     paneSplitOrientation?: Split;
+    widgetDashState?: WidgetDashState;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -202,6 +204,7 @@ export type ChartKitWrapperParams = {
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
+    widgetDashState?: WidgetDashState;
 };
 
 export type ChartWidgetData =

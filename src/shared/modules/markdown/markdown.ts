@@ -1,4 +1,5 @@
 import {transform as latex} from '@diplodoc/latex-extension/plugin';
+import {transform as mermaid} from '@diplodoc/mermaid-extension/plugin';
 import yfmTransform from '@diplodoc/transform';
 import cut from '@diplodoc/transform/lib/plugins/cut';
 import deflist from '@diplodoc/transform/lib/plugins/deflist';
@@ -14,7 +15,7 @@ import MarkdownItColor from 'markdown-it-color';
 import Mila from 'markdown-it-link-attributes';
 import uuid from 'uuid';
 
-import {YFM_COLORIFY_MARKDOWN_CLASSNAME} from '../../constants';
+import {YFM_COLORIFY_MARKDOWN_CLASSNAME, YfmMetaScripts} from '../../constants';
 
 import {unifyTermIds} from './markdown-plugins/unify-terms';
 
@@ -24,7 +25,12 @@ type RenderHtmlArgs = {
     plugins?: MarkdownItPluginCb[];
 };
 
-export function renderHTML(args: RenderHtmlArgs): {result: string} {
+export type RenderHtmlOutput = {
+    result: string;
+    meta?: object;
+};
+
+export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
     const {text = '', lang, plugins: additionalPlugins = []} = args;
 
     const uniqPrefix = uuid.v4();
@@ -55,7 +61,11 @@ export function renderHTML(args: RenderHtmlArgs): {result: string} {
         table,
         latex({
             bundle: false,
-            runtime: 'extension:latex',
+            runtime: YfmMetaScripts.LATEX,
+        }),
+        mermaid({
+            bundle: false,
+            runtime: YfmMetaScripts.MERMAID,
         }),
     ];
 
@@ -64,7 +74,7 @@ export function renderHTML(args: RenderHtmlArgs): {result: string} {
     }
 
     const {
-        result: {html},
+        result: {html, meta},
     } = yfmTransform(text, {
         plugins,
         lang,
@@ -76,5 +86,5 @@ export function renderHTML(args: RenderHtmlArgs): {result: string} {
             disableStyleSanitizer: true,
         },
     });
-    return {result: html};
+    return {result: html, meta};
 }

@@ -1,6 +1,6 @@
 import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
 
-import type {OnChangeData, TableWidgetData} from '../../../types';
+import type {OnChangeData, TableWidgetData, WidgetDashState} from '../../../types';
 
 export type TableWidgetProps = {
     id: string;
@@ -12,4 +12,5 @@ export type TableWidgetProps = {
         callChangeByClick?: boolean,
     ) => void;
     onLoad?: (data?: ChartKitOnLoadData<'table'>) => void;
+    widgetDashState?: WidgetDashState;
 };

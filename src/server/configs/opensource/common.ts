@@ -135,8 +135,6 @@ export default {
         collectionsEnabled: false,
     },
 
-    chartsMonitoringEnabled: false,
-
     iamResources: {
         collection: {
             roles: {
@@ -217,4 +215,6 @@ export default {
 
     serviceClientId: process.env.SERVICE_CLIENT_ID || '',
     serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
+
+    runEndpoint: '/api/run',
 };

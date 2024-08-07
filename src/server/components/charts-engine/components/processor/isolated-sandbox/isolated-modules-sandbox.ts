@@ -90,27 +90,29 @@ const execute = async ({
     try {
         const prepare = `
            const console = {log};   
-           const exports = {};
-           const module = {exports};
+           let exports = {};
+           let module = {exports};
            const ChartEditor = {
                 getUserLang: () => "${userLang}"
            };
            
            function require(name) {
                const lowerName = name.toLowerCase();
-               if (modules[lowerName]) {
-                   return modules[lowerName];
+               if (__modules[lowerName]) {
+                   return __modules[lowerName];
                } else {
                    throw new Error(\`Module "\${lowerName}" is not resolved\`);
                }
            };
            `;
 
-        const after = ` modules["${name}"] = module.exports`;
+        const after = `
+            __modules["${name}"] = module.exports
+        `;
         context.evalClosureSync(prepare + code + after, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace = 'message' in e && (e.message as string);
 
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;

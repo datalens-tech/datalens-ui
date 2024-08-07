@@ -108,4 +108,4 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
 
 TableWidget.displayName = 'TableWidget';
 
-export default TableWidget;
+export default React.memo<TableWidgetProps>(TableWidget);

@@ -63,42 +63,46 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                     details: {
                         code: string;
                     };
-                    debug?: {
-                        message: string;
-                    };
                     extra?: {hideRetry: boolean};
                 };
             } = {
                 error: {
-                    code: 'ERR.CHARTS.CONFIG_LOADING_ERROR',
+                    code: 'ERR.ENTRY.CONFIG_LOADING_ERROR',
                     details: {
                         code: (error.response && error.response.status) || error.status || null,
-                    },
-                    debug: {
-                        message: error.message,
                     },
                     extra: {hideRetry: false},
                 },
             };
 
-            delete result.error.debug;
-
             ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
+            res.status(error.status || 500).send(result);
         })
         .then(async (response) => {
             if (response && 'entry' in response) {
-                const {entry} = response;
+                const {entry, embed} = response;
+
+                const params: URLSearchParams = new URLSearchParams(req.body.params) || {};
+                const filteredParams: Record<string, unknown> = {};
+
+                for (const [key] of params) {
+                    if (embed.unsignedParams.includes(key)) {
+                        filteredParams[key] = params.get(key);
+                    }
+                }
 
                 // Add only necessary fields without personal info like createdBy
-                return res.status(200).send({
+                res.status(200).send({
                     entryId: entry.entryId,
                     scope: entry.scope,
                     data: entry.data,
+                    params: filteredParams,
                 });
             }
-
-            ctx.log('CHARTS_ENGINE_RUNNER_ERROR');
-            return res.status(500).send({
+        })
+        .catch((error) => {
+            ctx.logError('CHARTS_ENGINE_RUNNER_ERROR', error);
+            res.status(500).send({
                 error: 'Internal error',
             });
         });

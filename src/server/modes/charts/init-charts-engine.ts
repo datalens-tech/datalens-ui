@@ -8,7 +8,6 @@ import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
-import {startMonitoring} from '../../components/monitoring';
 import {checkValidation} from '../../lib/validation';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 
@@ -27,10 +26,6 @@ export function initChartsEngine({
 }) {
     const getTime = () => new Date().toISOString().replace('T', ' ').split('.')[0];
     const shouldLogChartWithFunction = isEnabledServerFeature(ctx, Feature.ChartWithFnLogging);
-
-    if (config.chartsMonitoringEnabled) {
-        startMonitoring(1000, ctx);
-    }
 
     const telemetryCallbacks: TelemetryCallbacks = {
         onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
@@ -178,7 +173,7 @@ export function initChartsEngine({
         nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
-        runners: getDefaultRunners(ctx),
+        runners: getDefaultRunners(),
     });
 }
 

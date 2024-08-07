@@ -1,0 +1,12 @@
+.dl-iam-access-dialog-resource-info {
+    display: flex;
+    align-items: center;
+
+    &__icon {
+        min-width: 20px;
+    }
+
+    &__title {
+        margin-left: 8px;
+    }
+}

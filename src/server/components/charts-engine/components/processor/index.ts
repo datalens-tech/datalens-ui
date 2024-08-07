@@ -597,10 +597,12 @@ export class Processor {
                     }
                 }
 
-                const {errorTransformer} = sourcesTabResults.runtimeMetadata;
+                if (!isEnabledServerFeature(ctx, Feature.NoErrorTransformer)) {
+                    const {errorTransformer} = sourcesTabResults.runtimeMetadata;
 
-                if (errorTransformer) {
-                    response.error = errorTransformer(response.error);
+                    if (errorTransformer) {
+                        response.error = errorTransformer(response.error);
+                    }
                 }
 
                 injectLogs({target: response});
@@ -886,6 +888,7 @@ export class Processor {
                         });
                         delete result.data.markdown;
                         result.data.html = html.result;
+                        result.data.meta = html.meta;
                     } catch (error) {
                         ctx.logError('Error render markdown', error);
                     }

@@ -4,8 +4,6 @@ import {Checkbox, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import type {ResolveThunks} from 'react-redux';
-import {connect} from 'react-redux';
 import type {DashTabItemTitle} from 'shared';
 import {
     DashTabItemTitleSize,
@@ -13,20 +11,13 @@ import {
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
-import type {DatalensGlobalState} from 'ui';
+import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
-import {DIALOG_TYPE} from '../../../../../constants/dialogs';
-import {setItemData} from '../../../store/actions/dashTyped';
-import {closeDialog} from '../../../store/actions/dialogs/actions';
-import {
-    selectIsDialogVisible,
-    selectOpenedItemData,
-} from '../../../store/selectors/dashTypedSelectors';
-import {PaletteBackground} from '../components/PaletteBackground/PaletteBackground';
+import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
 import HoverRadioButton from './HoverRadioButton/HoverRadioButton';
 
-import './Title.scss';
+import './DialogTitleWidget.scss';
 
 const SIZES = [
     DashTabItemTitleSize.L,
@@ -38,12 +29,7 @@ const RADIO_TEXT = ['Large', 'Medium', 'Small', 'XSmall'];
 
 const b = block('dialog-title');
 
-export interface OwnProps {}
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-
-type State = {
+interface DialogTitleWidgetState {
     prevVisible?: boolean;
     validation?: {text?: string};
     text?: string;
@@ -52,13 +38,23 @@ type State = {
     autoHeight?: boolean;
     hasBackground?: boolean;
     backgroundColor?: string;
-};
+}
 
-type Props = OwnProps & StateProps & DispatchProps;
+interface DialogTitleWidgetProps {
+    openedItemId: string | null;
+    openedItemData: DashTabItemTitle['data'];
+    dialogIsVisible: boolean;
 
-class TitleComponent extends React.PureComponent<Props, State> {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+}
+
+class DialogTitleWidget extends React.PureComponent<
+    DialogTitleWidgetProps,
+    DialogTitleWidgetState
+> {
     static defaultProps = {
-        data: {
+        openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
             showInTOC: true,
@@ -68,33 +64,36 @@ class TitleComponent extends React.PureComponent<Props, State> {
         },
     };
 
-    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        if (nextProps.visible === prevState.prevVisible) {
+    static getDerivedStateFromProps(
+        nextProps: DialogTitleWidgetProps,
+        prevState: DialogTitleWidgetState,
+    ) {
+        if (nextProps.dialogIsVisible === prevState.prevVisible) {
             return null;
         }
 
         return {
-            prevVisible: nextProps.visible,
+            prevVisible: nextProps.dialogIsVisible,
             validation: {},
-            text: nextProps.data.text,
-            size: nextProps.data.size,
-            showInTOC: nextProps.data.showInTOC,
-            autoHeight: Boolean(nextProps.data.autoHeight),
-            hasBackground: Boolean(nextProps.data.background?.enabled),
-            backgroundColor: nextProps.data.background?.color || '',
+            text: nextProps.openedItemData.text,
+            size: nextProps.openedItemData.size,
+            showInTOC: nextProps.openedItemData.showInTOC,
+            autoHeight: Boolean(nextProps.openedItemData.autoHeight),
+            hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
+            backgroundColor: nextProps.openedItemData.background?.color || '',
         };
     }
 
-    state: State = {};
+    state: DialogTitleWidgetState = {};
 
     render() {
-        const {id, visible} = this.props;
+        const {openedItemId, dialogIsVisible} = this.props;
         const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
             this.state;
 
         return (
             <Dialog
-                open={visible}
+                open={dialogIsVisible}
                 onClose={this.props.closeDialog}
                 onEnterKeyDown={this.onApply}
                 qa={DialogDashWidgetItemQA.Title}
@@ -155,7 +154,7 @@ class TitleComponent extends React.PureComponent<Props, State> {
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
                     textButtonApply={
-                        id
+                        openedItemId
                             ? i18n('dash.title-dialog.edit', 'button_save')
                             : i18n('dash.title-dialog.edit', 'button_add')
                     }
@@ -214,15 +213,4 @@ class TitleComponent extends React.PureComponent<Props, State> {
     };
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    id: state.dash.openedItemId,
-    data: selectOpenedItemData(state) as DashTabItemTitle['data'],
-    visible: selectIsDialogVisible(state, DIALOG_TYPE.TITLE),
-});
-
-const mapDispatchToProps = {
-    closeDialog,
-    setItemData,
-};
-
-export const Title = connect(mapStateToProps, mapDispatchToProps)(TitleComponent);
+export default DialogTitleWidget;
