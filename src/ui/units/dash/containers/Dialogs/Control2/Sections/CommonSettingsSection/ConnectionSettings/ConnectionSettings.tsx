@@ -4,6 +4,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 
 import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
+import {RequiredValueCheckbox} from '../../ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
@@ -26,6 +27,7 @@ export const ConnectionSettings = ({hideCommonFields}: {hideCommonFields?: boole
                     {!hideCommonFields && (
                         <React.Fragment>
                             <InputTypeSelector />
+                            <RequiredValueCheckbox />
                             <ValueSelector />
                         </React.Fragment>
                     )}

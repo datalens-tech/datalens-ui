@@ -15,5 +15,8 @@
   "label_selector-settings": "Selector settings",
   "label_selectors-list": "Selectors",
   "label_source": "Source",
-  "label_update-controls-on-change": "Auto-updating dependent selectors"
+  "label_title-placement": "Title placement",
+  "label_update-controls-on-change": "Auto-updating dependent selectors",
+  "value_title-placement-left": "Left",
+  "value_title-placement-top": "Top"
 }

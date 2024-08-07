@@ -597,10 +597,12 @@ export class Processor {
                     }
                 }
 
-                const {errorTransformer} = sourcesTabResults.runtimeMetadata;
+                if (!isEnabledServerFeature(ctx, Feature.NoErrorTransformer)) {
+                    const {errorTransformer} = sourcesTabResults.runtimeMetadata;
 
-                if (errorTransformer) {
-                    response.error = errorTransformer(response.error);
+                    if (errorTransformer) {
+                        response.error = errorTransformer(response.error);
+                    }
                 }
 
                 injectLogs({target: response});
