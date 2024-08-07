@@ -85,6 +85,7 @@ export type DashState = {
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
+    acceptableParams: null | Record<string, string>;
 };
 
 // eslint-disable-next-line complexity
