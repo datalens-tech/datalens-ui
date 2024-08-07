@@ -3,7 +3,7 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, Feature, TitlePlacementOption} from 'shared';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
@@ -86,6 +86,7 @@ export function getSelectorDialogInitialState(args = {}) {
         datasetId: args.lastUsedDatasetId,
         connectionId: args.lastUsedConnectionId,
         showTitle: true,
+        titlePlacement: TitlePlacementOption.Left,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
@@ -128,6 +129,7 @@ export function getSelectorDialogFromData(data, defaults) {
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
         showTitle: data.source.showTitle,
+        titlePlacement: data.source.titlePlacement,
         multiselectable: data.source.multiselectable,
         isRange: data.source.isRange,
         fieldName: data.source.fieldName,

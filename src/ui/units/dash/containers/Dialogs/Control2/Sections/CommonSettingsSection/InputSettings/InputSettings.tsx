@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 
 import {OperationSelector} from '../../OperationSelector/OperationSelector';
+import {RequiredValueCheckbox} from '../../ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
@@ -20,6 +21,7 @@ const InputSettings = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
                 <React.Fragment>
                     <InputTypeSelector />
                     <OperationSelector />
+                    <RequiredValueCheckbox />
                     <ValueSelector />
                 </React.Fragment>
             )}
