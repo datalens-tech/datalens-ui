@@ -260,6 +260,9 @@ export type TableWidgetData = WidgetBaseWithData &
         unresolvedParams?: StringParams;
     };
 
+// for backward compatibility
+export type TableWidget = TableWidgetData;
+
 export interface ControlWidget extends WidgetBaseWithData, WithControls {
     type: 'control';
 }
