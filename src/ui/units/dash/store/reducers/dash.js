@@ -90,7 +90,6 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
-        hint: '',
         showHint: false,
         draftId: getRandomKey(),
     };
