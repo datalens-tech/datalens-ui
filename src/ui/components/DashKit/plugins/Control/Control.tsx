@@ -512,6 +512,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
             this.setErrorData(errorData, LOAD_STATUS.FAIL);
         }
+
+        if (
+            this.props.data.sourceType !== DashTabItemControlSourceType.External &&
+            this.rootNode.current &&
+            this.props.layout?.[0].maxH
+        ) {
+            // if the old selector was edited with autoheight, and then changes were canceled and
+            // the config returned to the old form, we need to turn off the autoheight
+            this.adjustWidgetLayout(true);
+        }
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
