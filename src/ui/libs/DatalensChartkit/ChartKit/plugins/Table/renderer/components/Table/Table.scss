@@ -202,8 +202,6 @@
     }
 }
 
-
-/*----------------- virt -----------------------*/
 table.dl-table_final {
     thead {
         display: grid;
@@ -226,7 +224,8 @@ table.dl-table_final {
         width: 100%;
     }
 
-    td, th {
+    td,
+    th {
         display: flex;
     }
 
