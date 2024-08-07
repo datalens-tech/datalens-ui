@@ -1,11 +1,11 @@
 import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
+import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {StringParams} from 'shared';
 import {ChartKitTableQa} from 'shared';
-import Loader from 'ui/units/dash/components/Loader/Loader';
 
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
