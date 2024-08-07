@@ -20,6 +20,7 @@ type SandboxChartBuilderArgs = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
+    disableErrorTransformer: boolean;
 };
 
 const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
@@ -34,8 +35,16 @@ const extractModules = (modules: Record<string, SandboxExecuteResult>) => {
 export const getSandboxChartBuilder = async (
     args: SandboxChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {userLogin, userLang, isScreenshoter, chartsEngine, config, widgetConfig, workbookId} =
-        args;
+    const {
+        userLogin,
+        userLang,
+        isScreenshoter,
+        chartsEngine,
+        config,
+        widgetConfig,
+        workbookId,
+        disableErrorTransformer,
+    } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
     const modules: Record<string, unknown> = {};
@@ -96,6 +105,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                disableErrorTransformer,
             });
 
             return {
@@ -118,6 +128,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                disableErrorTransformer,
             });
 
             return {
@@ -146,6 +157,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    disableErrorTransformer,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
@@ -164,6 +176,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    disableErrorTransformer,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
@@ -182,6 +195,7 @@ export const getSandboxChartBuilder = async (
                     userLogin,
                     userLang,
                     isScreenshoter,
+                    disableErrorTransformer,
                 });
             }
 
@@ -212,6 +226,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                disableErrorTransformer,
             });
 
             return {
@@ -237,6 +252,7 @@ export const getSandboxChartBuilder = async (
                 userLang,
                 hooks: options.hooks,
                 isScreenshoter,
+                disableErrorTransformer,
             });
 
             return {
@@ -261,6 +277,7 @@ export const getSandboxChartBuilder = async (
                 userLogin,
                 userLang,
                 isScreenshoter,
+                disableErrorTransformer,
             });
 
             return {

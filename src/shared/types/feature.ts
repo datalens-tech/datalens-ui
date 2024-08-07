@@ -86,6 +86,7 @@ export enum Feature {
     NewSandbox_50p = 'NewSandbox_50p',
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
+    NoErrorTransformer = 'NoErrorTransformer',
 }
 
 export type FeatureConfig = Record<string, boolean>;

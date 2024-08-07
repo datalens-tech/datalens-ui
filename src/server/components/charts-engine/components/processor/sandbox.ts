@@ -64,6 +64,7 @@ type ProcessTabParams = {
     userLang: string | null;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
+    disableErrorTransformer: boolean;
 };
 
 export class SandboxError extends Error {
@@ -237,6 +238,7 @@ const processTab = ({
     userLang,
     nativeModules,
     isScreenshoter,
+    disableErrorTransformer,
 }: ProcessTabParams) => {
     const context = getChartApiContext({
         name,
@@ -248,6 +250,7 @@ const processTab = ({
         shared,
         hooks,
         userLang,
+        disableErrorTransformer,
     });
 
     return execute({
