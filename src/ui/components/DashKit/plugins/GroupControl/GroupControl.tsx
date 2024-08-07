@@ -3,7 +3,6 @@ import React from 'react';
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -37,6 +36,7 @@ import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
+import {LocalUpdateLoader} from './LocalUpdateLoader/LocalUpdateLoader';
 import type {
     ContextProps,
     ExtendedLoadedData,
@@ -49,6 +49,7 @@ import {addItemToLocalQueue, filterSignificantParams} from './utils';
 import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
+const LOADER_HIDE_DELAY = 500;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
@@ -90,6 +91,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     // a quick loader for imitating action by clicking on apply button
     quickActionLoader = false;
 
+    autoUpdating = false;
+
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
 
@@ -114,7 +117,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             isInit: false,
             stateParams: this.props.params,
             needReload: false,
-            localUpdateLoader: false,
         };
     }
 
@@ -215,9 +217,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     render() {
         const isLoading =
-            (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.quickActionLoader ||
-            this.state.localUpdateLoader;
+            ((this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
+                this.quickActionLoader) &&
+            !this.autoUpdating;
 
         return (
             <div
@@ -234,15 +236,22 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
-                    {isLoading && (
-                        <div className={b('loader')}>
-                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
-                        </div>
-                    )}
+                    <LocalUpdateLoader
+                        hideDelay={LOADER_HIDE_DELAY}
+                        size="s"
+                        className={b('loader')}
+                        show={isLoading}
+                        qa={ControlQA.groupCommonLoader}
+                        onLoaderShow={this.handleLoaderShow}
+                    />
                 </div>
             </div>
         );
     }
+
+    private handleLoaderShow = () => {
+        this.quickActionLoader = false;
+    };
 
     private get dependentSelectors() {
         return this.props.settings.dependentSelectors ?? false;
@@ -407,8 +416,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             if (controlData.updateControlsOnChange && controlData.buttonApply) {
                 this.setState({
                     stateParams: this.getLocalUpdatedParams(controlId, params),
-                    localUpdateLoader: true,
                 });
+                this.autoUpdating = true;
             } else {
                 this.setState({
                     stateParams: {
@@ -641,6 +650,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        // to make loader be visible
+        if (
+            this.controlsProgressCount &&
+            this.state.status !== LOAD_STATUS.PENDING &&
+            (this.props.data as unknown as DashTabItemGroupControlData).updateControlsOnChange
+        ) {
+            this.setState({status: LOAD_STATUS.PENDING});
+        }
+
         if (!this.controlsProgressCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
@@ -653,7 +671,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 status: LOAD_STATUS.SUCCESS,
                 silentLoading: false,
                 isInit: true,
-                localUpdateLoader: false,
             });
         }
 
@@ -677,6 +694,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
+                autoUpdating={this.autoUpdating}
             />
         );
     }
@@ -722,10 +740,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
+                this.autoUpdating = false;
                 this.quickActionLoader = true;
-                setTimeout(() => {
-                    this.quickActionLoader = false;
-                });
             }
             this.onChange({params: newParams, callChangeByClick});
         }
