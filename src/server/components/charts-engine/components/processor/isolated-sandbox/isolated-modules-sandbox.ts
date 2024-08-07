@@ -90,8 +90,8 @@ const execute = async ({
     try {
         const prepare = `
            const console = {log};   
-           let exports = {};
-           let module = {exports};
+           var module = {exports: {}};
+           var exports = module.exports;
            const ChartEditor = {
                 getUserLang: () => "${userLang}"
            };
