@@ -22,17 +22,9 @@
 
     &_line-breaks_nowrap:not(&_standalone) {
         white-space: nowrap;
-
-        #{$class}__controls {
-            flex-wrap: nowrap;
-        }
     }
 
     &__controls {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-
         &_hidden {
             visibility: hidden;
 

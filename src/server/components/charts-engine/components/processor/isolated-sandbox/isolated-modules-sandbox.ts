@@ -44,6 +44,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 2;
 }
 
 type ExecuteParams = {
@@ -90,8 +91,8 @@ const execute = async ({
     try {
         const prepare = `
            const console = {log};   
-           let exports = {};
-           let module = {exports};
+           var module = {exports: {}};
+           var exports = module.exports;
            const ChartEditor = {
                 getUserLang: () => "${userLang}"
            };

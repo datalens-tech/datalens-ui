@@ -5,8 +5,8 @@ import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
-const exports = {};
-const module = {exports};
+var module = {exports: {}};
+var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
             if (typeof elem === 'function') {
