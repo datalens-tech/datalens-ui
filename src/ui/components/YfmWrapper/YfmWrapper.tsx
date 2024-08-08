@@ -75,7 +75,18 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                     const mermaidNodes = element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`);
 
                     if (mermaidNodes.length) {
-                        renderMermaid({nodes: mermaidNodes}).then(() => {
+                        renderMermaid({
+                            nodes: mermaidNodes,
+                            flowchats: {
+                                htmlLabels: false,
+                            },
+                            dompurifyConfig: {
+                                ALLOWED_TAGS: [],
+                                ALLOWED_ATTRIBUTES: [],
+                                ALLOW_ARIA_ATTR: false,
+                                ALLOW_DATA_ATTR: false,
+                            },
+                        }).then(() => {
                             props.onRenderCallback?.();
                         });
                     }
