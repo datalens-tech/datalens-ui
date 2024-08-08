@@ -163,7 +163,6 @@ const execute = async ({
             });`;
 
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        // const wparredCode = ` let __error; try { ${code} } catch (e) { console.log(e); } `;
         const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
             timeout,
             filename,
@@ -172,9 +171,6 @@ const execute = async ({
         sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            // errorStackTrace = 'message' in e && (e.message as string);
-            // errorStackTrace = `${errorStackTrace} ${'stack' in e && (e.stack as string)}`;
-
             errorStackTrace = 'stack' in e && (e.stack as string);
             errorStackTrace =
                 isString(errorStackTrace) &&
