@@ -2,15 +2,32 @@ import React from 'react';
 
 import {useLatex} from '@diplodoc/latex-extension/react';
 import {useMermaid} from '@diplodoc/mermaid-extension/react';
+import {getThemeType, useThemeValue} from '@gravity-ui/uikit';
 import debounce from 'lodash/debounce';
 import {YfmMetaScripts} from 'shared/constants/yfm';
 import {YFM_LATEX_CLASSNAME, YFM_MERMAID_CLASSNAME} from 'ui/constants';
+import {usePrevious} from 'ui/hooks';
 import {registry} from 'ui/registry';
 
 import type {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
 let hasLatexImported = false;
 let hasMermaidImported = false;
+
+const dompurifyConfig = {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTRIBUTES: [],
+    ALLOW_ARIA_ATTR: false,
+    ALLOW_DATA_ATTR: false,
+};
+
+const MERMAID_THEMES = ['light', 'dark'];
+
+const getMermaidTheme = (theme: string) => {
+    const currentThemeType = getThemeType(theme);
+
+    return MERMAID_THEMES.includes(currentThemeType) ? currentThemeType : MERMAID_THEMES[0];
+};
 
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
     (props, forwardedRef) => {
@@ -36,6 +53,8 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
         const renderLatex = useLatex();
         const renderMermaid = useMermaid();
+        const currentMermaidTheme = getMermaidTheme(useThemeValue());
+        const previousMermaidTheme = usePrevious(currentMermaidTheme);
 
         React.useEffect(() => {
             if (hasLatexScript && !hasLatexImported) {
@@ -76,16 +95,9 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
                     if (mermaidNodes.length) {
                         renderMermaid({
+                            theme: currentMermaidTheme,
                             nodes: mermaidNodes,
-                            flowchats: {
-                                htmlLabels: false,
-                            },
-                            dompurifyConfig: {
-                                ALLOWED_TAGS: [],
-                                ALLOWED_ATTRIBUTES: [],
-                                ALLOW_ARIA_ATTR: false,
-                                ALLOW_DATA_ATTR: false,
-                            },
+                            dompurifyConfig,
                         }).then(() => {
                             props.onRenderCallback?.();
                         });
@@ -103,6 +115,22 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         );
 
         React.useLayoutEffect(() => debounceRender(), [debounceRender]);
+
+        React.useLayoutEffect(() => {
+            const element = elementRef?.current;
+            const isThemeChanged =
+                previousMermaidTheme && currentMermaidTheme !== previousMermaidTheme;
+
+            if (isThemeChanged && hasMermaidScript && element) {
+                const mermaidNodes = element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`);
+
+                renderMermaid({
+                    theme: currentMermaidTheme,
+                    nodes: mermaidNodes,
+                    dompurifyConfig,
+                });
+            }
+        }, [currentMermaidTheme, hasMermaidScript, previousMermaidTheme, renderMermaid]);
 
         return (
             <YfmWrapperContent
