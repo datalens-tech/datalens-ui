@@ -85,6 +85,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 1;
 }
 
 const generateInstance = ({
