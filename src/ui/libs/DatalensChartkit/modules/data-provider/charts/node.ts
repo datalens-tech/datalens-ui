@@ -422,6 +422,14 @@ function applyChartkitHandlers(
         }
 
         if (
+            libraryConfigRef.yAxis?.labels?.formatter ===
+            ChartkitHandlers.WizardScatterYAxisLabelFormatter
+        ) {
+            libraryConfigRef.yAxis.labels.formatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterYAxisLabelFormatter];
+        }
+
+        if (
             libraryConfigRef.exporting?.csv?.columnHeaderFormatter ===
             ChartkitHandlers.WizardExportColumnNamesFormatter
         ) {

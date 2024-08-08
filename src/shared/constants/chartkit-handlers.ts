@@ -10,6 +10,7 @@ export enum ChartkitHandlers {
     WizardXAxisFormatter = 'wizard-x-axis-formatter',
     WizardExportColumnNamesFormatter = 'wizard-export-column-names-formatter',
     WizardScatterTooltipFormatter = 'wizard-scatter-tooltip-formatter',
+    WizardScatterYAxisLabelFormatter = 'wizard-scatter-y-axis-label-formatter',
 }
 
 export const ChartkitHandlersDict = {
@@ -20,6 +21,7 @@ export const ChartkitHandlersDict = {
     [ChartkitHandlers.WizardXAxisFormatter]: wizardXAxisFormatter,
     [ChartkitHandlers.WizardExportColumnNamesFormatter]: wizardExportColumnNamesFormatter,
     [ChartkitHandlers.WizardScatterTooltipFormatter]: wizardScatterTooltipFormatter,
+    [ChartkitHandlers.WizardScatterYAxisLabelFormatter]: wizardScatterYAxisLabelFormatter,
 };
 
 export interface GraphTooltipLine {
@@ -142,6 +144,31 @@ function wizardScatterTooltipFormatter(this: any) {
     }
 
     return result.join('<br/>');
+}
+
+function wizardScatterYAxisLabelFormatter() {
+    let result = '';
+    const value = this.value;
+    const series = this.chart.userOptions.series;
+
+    series.some((s) => {
+        const data = s.data;
+
+        if (data.length) {
+            const point = data.find((somePoint) => somePoint.y === value);
+
+            if (point) {
+                result = point.yLabel;
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    });
+
+    return result;
 }
 
 export const WRAPPED_HTML_KEY = '__wrappedHTML__';

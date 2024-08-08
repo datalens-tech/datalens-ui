@@ -158,28 +158,7 @@ export const buildHighchartsConfigPrivate = (args: {
                     yPlaceholder.settings?.axisFormatMode !== AxisLabelFormatMode.ByField
                 ) {
                     // A special formatter that returns text labels on the Y axis
-                    yAxis.labels.formatter = function () {
-                        let result = '';
-                        const value = this.value;
-                        this.chart.series.some((serial) => {
-                            const data = serial.data;
-
-                            if (data.length) {
-                                const point = data.find((somePoint) => somePoint.y === value);
-
-                                if (point) {
-                                    result = point.yLabel;
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            } else {
-                                return false;
-                            }
-                        });
-
-                        return result;
-                    };
+                    yAxis.labels.formatter = ChartkitHandlers.WizardScatterYAxisLabelFormatter;
                 }
             }
         }
