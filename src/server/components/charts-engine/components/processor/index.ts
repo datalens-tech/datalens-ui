@@ -268,6 +268,14 @@ export class Processor {
         }
 
         function updateParams(userParamsOverride: Record<string, string | string[]> | undefined) {
+            if (params["__user_id"]) {
+                try {
+                    params["__user_id"] = [atob(params['x-rpc-authorization'][0]).split(":")[1]]
+                } catch (error) {
+                    ctx.logError('Extracting __user_id from token error', error);
+                }
+            }
+
             if (userParamsOverride) {
                 Object.keys(userParamsOverride).forEach((key) => {
                     const overridenItem = userParamsOverride[key];
