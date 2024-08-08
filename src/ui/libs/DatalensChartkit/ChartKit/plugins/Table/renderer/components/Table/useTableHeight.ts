@@ -12,8 +12,10 @@ export const useTableHeight = (args: {
             const table = ref?.current as Element;
             const tHead = table?.getElementsByTagName('thead')?.[0];
             const tBody = table?.getElementsByTagName('tbody')?.[0];
+            const tFoot = table?.getElementsByTagName('tfoot')?.[0];
 
-            const tableActualHeight = tHead?.clientHeight + tBody?.clientHeight;
+            const tableActualHeight =
+                (tHead?.clientHeight ?? 0) + tBody?.clientHeight + (tFoot?.clientHeight ?? 0);
             if (tableActualHeight && tableActualHeight !== height) {
                 setHeight(tableActualHeight);
             }

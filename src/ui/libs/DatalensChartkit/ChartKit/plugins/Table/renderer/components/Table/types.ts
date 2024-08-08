@@ -112,3 +112,16 @@ export type BodyRowViewData = {
     ref?: (node: HTMLTableRowElement) => void;
     y: number;
 };
+
+export type FooterCellViewData = {
+    id: string;
+    content: JSX.Element | React.ReactNode;
+    style?: React.CSSProperties;
+    pinned?: boolean;
+    type?: 'number';
+};
+
+export type FooterRowViewData = {
+    id: string;
+    cells: FooterCellViewData[];
+};

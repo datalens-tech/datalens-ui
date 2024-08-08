@@ -11,20 +11,23 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
-import {camelCaseCss} from 'ui/libs/DatalensChartkit/ChartKit/components/Widget/components/Table/utils';
-import {createTableColumns} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/utils';
-import type {WidgetDimensions} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/types';
-import {mapHeadCell} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/utils/renderer';
-import type {TableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
+
+import type {TableData, TableWidgetData} from '../../../../../../types';
+import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
+import type {WidgetDimensions} from '../../types';
+import {mapHeadCell} from '../../utils/renderer';
 
 import type {
     BodyCellViewData,
     BodyRowViewData,
+    FooterCellViewData,
+    FooterRowViewData,
     HeadCellViewData,
     HeadRowViewData,
     TData,
 } from './types';
 import {useCellSizes} from './useCellSizes';
+import {createTableColumns} from './utils';
 
 const PRERENDER_ROW_COUNT = 500;
 
@@ -33,7 +36,14 @@ type TableViewData = {
         rows: HeadRowViewData[];
         style?: React.CSSProperties;
     };
-    rows: BodyRowViewData[];
+    body: {
+        rows: BodyRowViewData[];
+        style?: React.CSSProperties;
+    };
+    footer: {
+        rows: FooterRowViewData[];
+        style?: React.CSSProperties;
+    };
     totalSize: number | undefined;
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
@@ -197,6 +207,9 @@ export const usePreparedTableData = (props: {
             };
         })
         .filter(Boolean) as HeadRowViewData[];
+    const gridTemplateColumns = headers[headers.length - 1]?.headers
+        .map((h) => `${h.getSize()}px`)
+        .join(' ');
     const header = prerender
         ? {rows: headerRows}
         : {
@@ -212,9 +225,7 @@ export const usePreparedTableData = (props: {
                   },
               ],
               style: {
-                  gridTemplateColumns: headers[headers.length - 1]?.headers
-                      .map((h) => `${h.getSize()}px`)
-                      .join(' '),
+                  gridTemplateColumns,
               },
           };
 
@@ -295,9 +306,38 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
+    const footer: TableViewData['footer'] = {
+        rows: table.getFooterGroups().map<FooterRowViewData>((f) => {
+            return {
+                id: f.id,
+                cells: f.headers.map<FooterCellViewData>((cell) => {
+                    const columnDef = cell.column.columnDef;
+                    const originalHeadData = columnDef.meta?.head;
+                    const style = columnDef?.meta?.footer?.css;
+                    const pinned = Boolean(originalHeadData?.pinned);
+
+                    return {
+                        id: cell.id,
+                        style,
+                        pinned,
+                        type: get(originalHeadData, 'type'),
+                        content: cell.isPlaceholder
+                            ? null
+                            : flexRender(columnDef.footer, cell.getContext()),
+                    };
+                }),
+            };
+        }),
+        style: {gridTemplateColumns},
+    };
+
     return {
         header,
-        rows,
+        body: {
+            rows,
+            style: {gridTemplateColumns},
+        },
+        footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
         prerender,
     };

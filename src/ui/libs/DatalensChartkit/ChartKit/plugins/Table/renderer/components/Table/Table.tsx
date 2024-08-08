@@ -23,6 +23,7 @@ import type {GetCellActionParamsArgs} from '../../utils';
 import {TableTitle} from '../Title/TableTitle';
 
 import {TableBody} from './TableBody';
+import {TableFooter} from './TableFooter';
 import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
@@ -114,7 +115,7 @@ export const Table = React.memo<Props>((props: Props) => {
         return {cursor, ...actionParamsCss};
     };
 
-    const {header, rows, prerender, totalSize} = usePreparedTableData({
+    const {header, body, footer, prerender, totalSize} = usePreparedTableData({
         widgetData,
         data,
         dimensions: widgetDimensions,
@@ -223,10 +224,11 @@ export const Table = React.memo<Props>((props: Props) => {
                                 tableHeight={tableActualHeight}
                             />
                             <TableBody
-                                rows={rows}
-                                style={header.style}
+                                rows={body.rows}
+                                style={body.style}
                                 onCellClick={handleCellClick}
                             />
+                            <TableFooter rows={footer.rows} style={body.style} />
                         </table>
                     )}
                 </div>

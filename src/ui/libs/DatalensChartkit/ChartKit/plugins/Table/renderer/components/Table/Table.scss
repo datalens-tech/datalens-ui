@@ -70,6 +70,7 @@
         }
 
         &_type_number {
+            text-align: right;
             justify-content: flex-end;
         }
     }
@@ -150,13 +151,20 @@
 
     &__footer &__td {
         overflow: hidden;
+        padding: 0;
+    }
+
+    &__footer-cell-content {
+        display: flex;
+        justify-content: inherit;
+        width: 100%;
+        height: 100%;
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
         background-color: var(--dl-table-footer-bg-color);
-        text-align: left;
     }
 
     &__header &__th_pinned,
@@ -213,6 +221,14 @@ table.dl-table_final {
     tbody {
         display: grid;
         position: relative;
+
+        tr {
+            display: contents;
+        }
+    }
+
+    tfoot {
+        display: grid;
 
         tr {
             display: contents;
