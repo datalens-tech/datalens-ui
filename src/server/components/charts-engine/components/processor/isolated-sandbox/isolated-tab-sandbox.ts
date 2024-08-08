@@ -1,4 +1,5 @@
 import type IsolatedVM from 'isolated-vm';
+import {isString} from 'lodash';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
@@ -72,6 +73,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 2;
 }
 
 type ExecuteParams = {
@@ -169,8 +171,10 @@ const execute = async ({
         sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'message' in e && (e.message as string);
-
+            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace =
+                isString(errorStackTrace) &&
+                errorStackTrace.split('at (<isolated-vm boundary>)')[0].split('at execute')[0];
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;
             }
