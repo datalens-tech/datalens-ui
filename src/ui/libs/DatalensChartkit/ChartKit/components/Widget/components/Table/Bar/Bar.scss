@@ -1,6 +1,7 @@
 .chartkit-table-bar {
     position: relative;
     left: calc(-1 * var(--chartkit-bg-bar-offset-width) / 2);
+    margin-right: calc(-1 * var(--chartkit-bg-bar-offset-width));
     display: flex;
     align-items: center;
     justify-content: flex-end;
