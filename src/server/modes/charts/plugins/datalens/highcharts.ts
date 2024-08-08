@@ -158,6 +158,7 @@ export const buildHighchartsConfigPrivate = (args: {
                     yPlaceholder.settings?.axisFormatMode !== AxisLabelFormatMode.ByField
                 ) {
                     // A special formatter that returns text labels on the Y axis
+                    // @ts-ignore
                     yAxis.labels.formatter = ChartkitHandlers.WizardScatterYAxisLabelFormatter;
                 }
             }

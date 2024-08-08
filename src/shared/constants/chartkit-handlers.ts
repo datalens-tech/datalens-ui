@@ -146,13 +146,15 @@ function wizardScatterTooltipFormatter(this: any) {
     return result.join('<br/>');
 }
 
-function wizardScatterYAxisLabelFormatter() {
+function wizardScatterYAxisLabelFormatter(
+    ctx: Highcharts.AxisLabelsFormatterContextObject<number>,
+) {
     let result = '';
-    const value = this.value;
-    const series = this.chart.userOptions.series;
+    const value = ctx.value;
+    const series = ctx.chart.userOptions.series;
 
-    series.some((s) => {
-        const data = s.data;
+    series?.some((s) => {
+        const data = get(s, 'data', []) as Highcharts.Point[];
 
         if (data.length) {
             const point = data.find((somePoint) => somePoint.y === value);
