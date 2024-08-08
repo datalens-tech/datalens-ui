@@ -211,6 +211,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     componentWillUnmount() {
         this._isUnmounted = true;
+        if (this.props.data.autoHeight) {
+            this.setAdjustWidgetLayout(true);
+        }
     }
 
     render() {
