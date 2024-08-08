@@ -258,7 +258,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const param = Object.keys(groupItem.defaults)[0];
             const defaultItemParam = groupItem.defaults[param];
 
-            if (!this.state.stateParams[groupItem.id] || !this.props.params[groupItem.id][param]) {
+            if (!checkByProps && !this.state.stateParams[groupItem.id]) {
                 return;
             }
 
