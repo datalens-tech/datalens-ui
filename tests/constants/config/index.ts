@@ -4,6 +4,7 @@ import {ql} from './ql';
 import {wizard} from './wizard';
 import {dash} from './dash';
 import {datasets} from './datasets';
+import {charts} from './charts';
 
 export const config: TestParametrizationConfig = {
     wizard,
@@ -11,4 +12,5 @@ export const config: TestParametrizationConfig = {
     ql,
     dash,
     datasets,
+    charts,
 };

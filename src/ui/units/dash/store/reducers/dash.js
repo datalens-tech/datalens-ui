@@ -90,7 +90,6 @@ export function getSelectorDialogInitialState(args = {}) {
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
-        hint: '',
         showHint: false,
         draftId: getRandomKey(),
     };
@@ -145,6 +144,9 @@ export function getSelectorDialogFromData(data, defaults) {
         showHint: data.source.showHint,
         hint: data.source.hint,
 
+        placementMode: data.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
+        width: data.width || '',
+
         id: data.id,
         namespace: data.namespace,
     };
@@ -153,11 +155,7 @@ export function getSelectorDialogFromData(data, defaults) {
 export function getSelectorGroupDialogFromData(data) {
     return {
         ...data,
-        group: data.group.map((item) => ({
-            ...getSelectorDialogFromData(item),
-            placementMode: item.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
-            width: item.width || '',
-        })),
+        group: data.group.map((item) => getSelectorDialogFromData(item)),
     };
 }
 
