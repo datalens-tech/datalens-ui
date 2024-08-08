@@ -132,7 +132,9 @@
     }
 
     &__body &__tr {
-        min-height: var(--dl-table-row-height);
+        td {
+            min-height: var(--dl-table-row-height);
+        }
 
         &_no-data {
             background: var(--dl-table-no-data-bg-color);
