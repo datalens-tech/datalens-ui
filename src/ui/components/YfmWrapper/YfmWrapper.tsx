@@ -116,7 +116,7 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
 
         React.useLayoutEffect(() => debounceRender(), [debounceRender]);
 
-        React.useEffect(() => {
+        React.useLayoutEffect(() => {
             const element = elementRef?.current;
             const isThemeChanged =
                 previousMermaidTheme && currentMermaidTheme !== previousMermaidTheme;
