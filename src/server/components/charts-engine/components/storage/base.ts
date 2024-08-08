@@ -141,7 +141,14 @@ export class BaseStorage {
         let retrieve: Promise<ResolvedConfig | EmbeddingInfo>;
         let id: string;
 
-        if (params.id) {
+        if (params.id && params.embedToken) {
+            retrieve = this.provider.retrieveByTokenAndId(ctx, {
+                token: params.embedToken,
+                id: params.id,
+                ...storageRetrieveArgs,
+            });
+            id = params.embedId || 'wrongToken';
+        } else if (params.id) {
             retrieve = this.provider.retrieveById(ctx, {
                 id: params.id,
                 workbookId,

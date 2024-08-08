@@ -474,6 +474,60 @@ export class USProvider {
             });
     }
 
+    static retrieveByTokenAndId(
+        ctx: AppContext,
+        {
+            id,
+            token,
+            headers,
+        }: {
+            id: string;
+            token: string;
+            headers: Request['headers'];
+        },
+    ): Promise<ResolvedConfig> {
+        const hrStart = process.hrtime();
+        const headersWithToken = {
+            ...headers,
+            [DL_EMBED_TOKEN_HEADER]: token,
+        };
+        const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
+        const axiosArgs: AxiosRequestConfig = {
+            url: `${storageEndpoint}/embeds/entries/${id}`,
+            method: 'get',
+            headers: injectMetadata(formattedHeaders, ctx),
+            timeout: TEN_SECONDS,
+        };
+
+        return axios
+            .request(axiosArgs)
+            .then((response) => {
+                ctx.log('UNITED_STORAGE_CONFIG_LOADED', {duration: getDuration(hrStart)});
+
+                return formatPassedProperties(response.data);
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 404) {
+                    error.description = 'embedToken';
+                    error.code = ENTRY_NOT_FOUND;
+                    error.status = 404;
+                    throw error;
+                } else if (error.response && error.response.status === 403) {
+                    error.description = 'embedToken';
+                    error.code = ENTRY_FORBIDDEN;
+                    error.status = 403;
+                    throw error;
+                } else {
+                    throw handleError({
+                        code: 'UNITED_STORAGE_OBJECT_RETRIEVE_ERROR',
+                        meta: {extra: {type: 'embedToken'}},
+                        error,
+                        rethrow: false,
+                    });
+                }
+            });
+    }
+
     static create(
         ctx: AppContext,
         {
