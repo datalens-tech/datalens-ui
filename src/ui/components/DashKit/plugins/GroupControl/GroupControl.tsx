@@ -259,7 +259,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             const defaultItemParam = groupItem.defaults[param];
 
             if (!checkByProps && !this.state.stateParams[groupItem.id]) {
-                return;
+                continue;
             }
 
             const isItemSignificant = checkByProps
