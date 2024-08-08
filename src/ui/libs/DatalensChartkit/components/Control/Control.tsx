@@ -206,7 +206,7 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         if (control.type === 'line-break') {
-            return <br className={b('line-beak-element')} key={index} />;
+            return <br key={index} />;
         }
 
         const {label, param} = control;
