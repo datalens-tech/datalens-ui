@@ -304,13 +304,13 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
      * get dash widget meta info (used for relations)
      */
     const handleGetWidgetMeta = React.useCallback(
-        (argResolve, title) => {
+        (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (
                 resolvingData: ResolveWidgetControlDataRefArgs | null,
             ) => {
                 if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData, title);
+                    getCurrentWidgetResolvedMetaInfo(resolvingData);
                 } else {
                     resolveMeta(resolvingData);
                 }
