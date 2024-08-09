@@ -19,12 +19,12 @@ export const TableHead = React.memo<Props>((props: Props) => {
     const {sticky, rows, style, tableHeight} = props;
 
     return (
-        <thead className={b('header', {sticky})}>
-            {rows.map((headerGroup) => {
+        <thead className={b('header', {sticky})} style={style}>
+            {rows.map((row) => {
                 return (
-                    <tr key={headerGroup.id} className={b('tr')} style={style}>
-                        {headerGroup.cells.map((th, index) => {
-                            const nextCellData = headerGroup.cells[index + 1];
+                    <tr key={row.id} className={b('tr')}>
+                        {row.cells.map((th, index) => {
+                            const nextCellData = row.cells[index + 1];
                             const isLastPinnedCell = th.pinned && !nextCellData?.pinned;
                             return (
                                 <th
@@ -32,7 +32,7 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                     className={b('th', {
                                         clickable: th.sortable,
                                         pinned: th.pinned,
-                                        'first-cell': index === 0,
+                                        'first-cell': th.index === 0,
                                     })}
                                     style={{
                                         ...th.style,

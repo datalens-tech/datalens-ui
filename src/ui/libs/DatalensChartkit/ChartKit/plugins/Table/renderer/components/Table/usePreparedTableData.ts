@@ -22,7 +22,6 @@ import type {
     BodyRowViewData,
     FooterCellViewData,
     FooterRowViewData,
-    HeadCellViewData,
     HeadRowViewData,
     TData,
 } from './types';
@@ -162,7 +161,7 @@ export const usePreparedTableData = (props: {
             const height = simpleCell?.getBoundingClientRect()?.height;
             return height ?? 0;
         },
-        overscan: 20,
+        overscan: 100,
     });
 
     const virtualItems = prerender
@@ -178,7 +177,7 @@ export const usePreparedTableData = (props: {
             }
 
             const cells = headerGroup.headers
-                .map((header) => {
+                .map((header, index) => {
                     if (header.column.depth !== headerGroup.depth) {
                         return null;
                     }
@@ -212,6 +211,7 @@ export const usePreparedTableData = (props: {
 
                     return {
                         id: header.id,
+                        index,
                         rowSpan,
                         colSpan,
                         sortable,
@@ -236,17 +236,7 @@ export const usePreparedTableData = (props: {
     const header = prerender
         ? {rows: headerRows}
         : {
-              rows: [
-                  {
-                      id: '',
-                      cells: headerRows
-                          .reduce<HeadCellViewData[]>((acc, h) => {
-                              acc.push(...h.cells);
-                              return acc;
-                          }, [])
-                          .flat(),
-                  },
-              ],
+              rows: headerRows,
               style: {
                   gridTemplateColumns,
               },

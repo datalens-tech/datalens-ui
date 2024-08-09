@@ -74,6 +74,7 @@ export type TableDimensions = {
 
 export type HeadCellViewData = {
     id: string;
+    index: number;
     rowSpan?: number;
     colSpan?: number;
     sortable: boolean;
