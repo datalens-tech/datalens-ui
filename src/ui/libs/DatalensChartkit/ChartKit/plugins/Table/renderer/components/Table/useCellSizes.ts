@@ -18,7 +18,7 @@ export const useCellSizes = (
             const tCells = tRow?.getElementsByTagName('td') ?? [];
 
             const result = Array.from(tCells).map((tCell, index) => {
-                return tCell.getBoundingClientRect()?.width + (index > 0 ? 1 : 0);
+                return tCell.getBoundingClientRect()?.width + (index === 0 ? 1 : 0);
             });
 
             setCellSizes(result);

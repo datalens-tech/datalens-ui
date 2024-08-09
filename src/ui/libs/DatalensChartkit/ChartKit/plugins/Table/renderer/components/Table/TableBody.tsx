@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {ChartKitTableQa} from 'shared';
 
 import type {BodyRowViewData} from './types';
 
@@ -50,7 +51,13 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                     }}
                                     rowSpan={cell.rowSpan}
                                 >
-                                    {cell.content}
+                                    <div
+                                        className={b('cell-content')}
+                                        data-qa={ChartKitTableQa.CellContent}
+                                        style={cell.contentStyle}
+                                    >
+                                        {cell.content}
+                                    </div>
                                 </td>
                             );
                         })}

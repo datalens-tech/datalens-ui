@@ -36,8 +36,8 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                     })}
                                     style={{
                                         ...th.style,
-                                        gridRow: `span ${th.rowSpan}`,
-                                        gridColumn: `span ${th.colSpan}`,
+                                        gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
+                                        gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
                                     }}
                                     colSpan={th.colSpan}
                                     rowSpan={th.rowSpan}

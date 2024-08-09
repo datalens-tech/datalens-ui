@@ -93,6 +93,7 @@ export type HeadRowViewData = {
 export type BodyCellViewData = {
     id: string;
     style?: React.CSSProperties;
+    contentStyle?: React.CSSProperties;
     content: JSX.Element | React.ReactNode;
     className?: string;
     type?: 'number';

@@ -195,7 +195,7 @@ export const usePreparedTableData = (props: {
                     };
 
                     const cellWidth = header.getSize();
-                    if (cellWidth) {
+                    if (prerender && cellWidth) {
                         cellStyle.width = cellWidth;
                     }
 
@@ -220,7 +220,6 @@ export const usePreparedTableData = (props: {
                         sorting: header.column.getIsSorted(),
                         content: flexRender(header.column.columnDef.header, header.getContext()),
                         onClick: header.column.getToggleSortingHandler(),
-                        width: cellWidth,
                     };
                 })
                 .filter(Boolean);
@@ -293,6 +292,11 @@ export const usePreparedTableData = (props: {
                     cellStyle.whiteSpace = 'nowrap';
                 }
 
+                const contentStyle: React.CSSProperties = {};
+                if (typeof originalHeadData?.width !== 'undefined') {
+                    contentStyle.width = originalHeadData.width;
+                }
+
                 const renderCell =
                     typeof cell.column.columnDef.cell === 'function'
                         ? cell.column.columnDef.cell
@@ -302,6 +306,7 @@ export const usePreparedTableData = (props: {
                     id: cell.id,
                     index,
                     style: cellStyle,
+                    contentStyle,
                     content: renderCell(cell.getContext()),
                     type: get(originalCellData, 'type'),
                     pinned,
