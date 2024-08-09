@@ -11,6 +11,7 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
+import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import type {TableData, TableWidgetData} from '../../../../../../types';
 import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
@@ -47,6 +48,25 @@ type TableViewData = {
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
 };
+
+function getNoDataRow(colSpan = 1): BodyRowViewData {
+    return {
+        id: '',
+        index: 0,
+        cells: [
+            {
+                id: '',
+                index: 0,
+                data: null,
+                colSpan,
+                content: i18n('chartkit-table', 'message-no-data'),
+                style: {
+                    background: 'var(--dl-table-no-data-bg-color)',
+                },
+            },
+        ],
+    };
+}
 
 function getFooterRows(table: Table<TData>) {
     return table.getFooterGroups().map<FooterRowViewData>((f) => {
@@ -243,6 +263,11 @@ export const usePreparedTableData = (props: {
           };
 
     const rows = React.useMemo(() => {
+        if (!virtualItems.length) {
+            const colSpan = headers[headers.length - 1]?.headers?.length;
+            return [getNoDataRow(colSpan)];
+        }
+
         const prevCells = new Array(tableRows[0]?.getVisibleCells()?.length);
         return virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
             const row = tableRows[virtualRow.index] as Row<TData>;

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import findLast from 'lodash/findLast';
+
 export const useCellSizes = (
     args: {
         tableContainerRef?: React.MutableRefObject<HTMLDivElement | null>;
@@ -13,11 +15,14 @@ export const useCellSizes = (
         if (!cellSizes) {
             const container = tableContainerRef?.current as Element;
             const table = container?.getElementsByTagName('table')?.[0];
-            const tBody = table?.getElementsByTagName('tbody')?.[0];
-            const tRow = tBody?.getElementsByTagName('tr')?.[0];
-            const tCells = tRow?.getElementsByTagName('td') ?? [];
+            const tRows = Array.from(table?.getElementsByTagName('tr') ?? []);
+            const tRow = findLast(tRows, (r) =>
+                Array.from(r.childNodes).every(
+                    (td) => Number(td.getAttribute('colSpan') || 1) <= 1,
+                ),
+            );
 
-            const result = Array.from(tCells).map((tCell, index) => {
+            const result = Array.from(tRow?.childNodes ?? []).map((tCell, index) => {
                 return tCell.getBoundingClientRect()?.width + (index === 0 ? 1 : 0);
             });
 

@@ -127,7 +127,7 @@ export const Table = React.memo<Props>((props: Props) => {
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
     const tableActualHeight = useTableHeight({ref: tableRef, prerender});
-    const noData = !props.widgetData.data?.rows?.length;
+    const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
         (event: React.MouseEvent, cellData: unknown, rowIndex: number) => {

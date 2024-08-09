@@ -42,7 +42,10 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                     )}
                                     style={{
                                         ...cell.style,
-                                        gridRow: `span ${cell.rowSpan}`,
+                                        gridRow: cell.rowSpan ? `span ${cell.rowSpan}` : undefined,
+                                        gridColumn: cell.colSpan
+                                            ? `span ${cell.colSpan}`
+                                            : undefined,
                                     }}
                                     onClick={(event) => {
                                         if (onCellClick) {
@@ -50,6 +53,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                         }
                                     }}
                                     rowSpan={cell.rowSpan}
+                                    colSpan={cell.colSpan}
                                 >
                                     <div
                                         className={b('cell-content')}

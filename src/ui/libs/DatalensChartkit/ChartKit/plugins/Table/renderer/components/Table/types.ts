@@ -99,8 +99,8 @@ export type BodyCellViewData = {
     className?: string;
     type?: 'number';
     pinned?: boolean;
-    // onClick?: (event: MouseEvent) => void;
     rowSpan?: number;
+    colSpan?: number;
     /* Index of cells in row (usefula with cell grouping) */
     index: number;
     /* Original cell data */
@@ -112,7 +112,7 @@ export type BodyRowViewData = {
     index: number;
     cells: BodyCellViewData[];
     ref?: (node: HTMLTableRowElement) => void;
-    y: number;
+    y?: number;
 };
 
 export type FooterCellViewData = {
