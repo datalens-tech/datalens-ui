@@ -63,6 +63,7 @@ const SELECTORS_TITLES = {
         PARAMS.MANUAL_SECOND_SELECTOR.appearance.title,
     ],
     FIRST_DATASET_SELECTOR: [PARAMS.DATASET_FIRST_CONTROL.appearance.title],
+    SECOND_DATASET_SELECTOR: [PARAMS.DATASET_SECOND_CONTROL.appearance.title],
     SECOND_MANUAL_SELECTOR: [PARAMS.MANUAL_SECOND_SELECTOR.appearance.title],
 };
 
@@ -130,7 +131,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 },
             });
 
-            expect(await getSecondSelectItemsCount(dashboardPage)).toBeGreaterThan(1);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toBeGreaterThan(1);
 
             await dashboardPage.expectControlsRequests({
                 controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
@@ -149,10 +150,10 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     PARAMS.DATASET_SECOND_CONTROL.appearance.title,
                 );
 
-            expect(cityItemsLocator.first()).toHaveText(PARAMS.CITY_VALUE);
+            await expect(cityItemsLocator.first()).toHaveText(PARAMS.CITY_VALUE);
             const cityResultItemsCount = await cityItemsLocator.count();
 
-            expect(cityResultItemsCount).toEqual(1);
+            await expect(cityResultItemsCount).toEqual(1);
         },
     );
 
@@ -188,7 +189,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             });
             // check that initial count of items
             const cityItemsCount = await getSecondSelectItemsCount(dashboardPage);
-            expect(cityItemsCount).toBeGreaterThan(1);
+            await expect(cityItemsCount).toBeGreaterThan(1);
 
             // select influencing value
             await dashboardPage.controlActions.selectControlValueByTitle(
@@ -196,10 +197,10 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 PARAMS.STATE_VALUE,
             );
 
-            expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(cityItemsCount);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(cityItemsCount);
 
             await dashboardPage.expectControlsRequests({
-                controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
+                controlTitles: SELECTORS_TITLES.SECOND_DATASET_SELECTOR,
                 action: async () => {
                     await page.locator(slct(ControlQA.controlButtonApply)).click();
                 },
@@ -207,7 +208,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             });
 
             // after apply the range of values should decrease due to the influence of first selector
-            expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(1);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(1);
         },
     );
 
@@ -263,7 +264,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 .locator('input')
                 .inputValue();
 
-            expect(secondSelectorValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
+            await expect(secondSelectorValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
         },
     );
 
@@ -331,7 +332,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 .locator('input')
                 .inputValue();
 
-            expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
+            await expect(firstSelectorValueAfterApply).toEqual(PARAMS.INPUT_TEXT_VALUE);
         },
     );
 
@@ -380,7 +381,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
             // check that initial count of items more than 1
             const initialItemsCount = await getSecondSelectItemsCount(dashboardPage);
 
-            expect(initialItemsCount).toBeGreaterThan(1);
+            await expect(initialItemsCount).toBeGreaterThan(1);
 
             await dashboardPage.expectControlsRequests({
                 controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
@@ -394,7 +395,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                 waitForLoader: true,
             });
 
-            expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
 
             // disable autoupdate
             await dashboardPage.disableAutoupdateInFirstControl();
@@ -403,7 +404,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
             // Check that there is no state
             const pageURL = new URL(page.url());
-            expect(pageURL.searchParams.get('state')).toEqual(null);
+            await expect(pageURL.searchParams.get('state')).toEqual(null);
 
             await dashboardPage.expectControlsRequests({
                 controlTitles: SELECTORS_TITLES.FIRST_DATASET_SELECTOR,
@@ -414,18 +415,17 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                         PARAMS.STATE_VALUE,
                     );
                 },
-                waitForLoader: true,
             });
 
             // check that count of items doesn't change
-            expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
 
             await page.locator(slct(ControlQA.controlButtonApply)).click();
 
             await page.waitForResponse(CommonUrls.CreateDashState);
 
             // check that count of items still doesn't change
-            expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
+            await expect(await getSecondSelectItemsCount(dashboardPage)).toEqual(initialItemsCount);
         },
     );
 });

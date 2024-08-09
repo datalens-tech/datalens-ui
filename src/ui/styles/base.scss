@@ -32,4 +32,9 @@ body.js-screenshot-mode * {
 body.g-root {
     --g-font-family-sans: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
     --gn-aside-top-panel-height: 0px;
+    overscroll-behavior: none;
+}
+
+body.g-root_mobile {
+    overscroll-behavior: auto;
 }

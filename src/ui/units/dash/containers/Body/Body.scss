@@ -14,7 +14,7 @@ $actionPanelDefaultBottom: 20px;
     display: flex;
     flex-direction: row;
     flex: 1;
-    overflow: hidden;
+    overflow: clip;
     text-size-adjust: none;
     $bodyClass: &;
 
@@ -72,7 +72,7 @@ $actionPanelDefaultBottom: 20px;
         display: flex;
         flex-direction: column;
         flex: 1;
-        overflow: hidden;
+        overflow: clip;
         text-size-adjust: none;
 
         border-right: var(--dl-dash-select-container-border-right-width) solid
@@ -90,7 +90,7 @@ $actionPanelDefaultBottom: 20px;
         display: flex;
         flex-direction: row;
         flex: 1;
-        overflow: hidden;
+        overflow: clip;
         text-size-adjust: none;
         background-color: var(--g-color-base-generic-ultralight);
 
