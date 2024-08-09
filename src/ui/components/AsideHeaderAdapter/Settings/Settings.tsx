@@ -5,7 +5,8 @@ import {Settings as SettingsComponent} from '@gravity-ui/navigation';
 import {getThemeType} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DL, SYSTEM_THEME} from 'ui/constants/common';
+import {SYSTEM_THEME} from 'shared';
+import {DL} from 'ui/constants/common';
 import {setTheme, updateUserSettings} from 'ui/store/actions/user';
 import {selectTheme, selectThemeSettings} from 'ui/store/selectors/user';
 
