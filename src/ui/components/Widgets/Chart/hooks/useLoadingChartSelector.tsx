@@ -86,6 +86,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         chartId,
         widgetType,
         settings,
+        data,
     } = props;
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
@@ -263,13 +264,22 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 chartId,
                 error,
                 widgetParamsDefaults,
+                data,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error, widgetParamsDefaults],
+        [
+            resolveMetaDataRef.current,
+            loadedData,
+            widgetId,
+            chartId,
+            error,
+            widgetParamsDefaults,
+            data,
+        ],
     );
 
     /**
