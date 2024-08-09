@@ -147,8 +147,8 @@
         vertical-align: var(--dl-table-cell-vertical-align);
     }
 
-    &__footer &__tr {
-        height: var(--dl-table-footer-row-height);
+    &__footer &__td {
+        min-height: var(--dl-table-row-height);
     }
 
     &__footer &__td {

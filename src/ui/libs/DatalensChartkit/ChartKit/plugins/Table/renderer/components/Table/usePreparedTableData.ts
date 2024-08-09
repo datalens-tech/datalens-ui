@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Row, SortingState, TableOptions} from '@tanstack/react-table';
+import type {Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -48,6 +48,30 @@ type TableViewData = {
     /* rendering table without most options - only to calculate cells size */
     prerender: boolean;
 };
+
+function getFooterRows(table: Table<TData>) {
+    return table.getFooterGroups().map<FooterRowViewData>((f) => {
+        return {
+            id: f.id,
+            cells: f.headers.map<FooterCellViewData>((cell) => {
+                const columnDef = cell.column.columnDef;
+                const originalHeadData = columnDef.meta?.head;
+                const style = columnDef?.meta?.footer?.css;
+                const pinned = Boolean(originalHeadData?.pinned);
+
+                return {
+                    id: cell.id,
+                    style,
+                    pinned,
+                    type: get(originalHeadData, 'type'),
+                    content: cell.isPlaceholder
+                        ? null
+                        : flexRender(columnDef.footer, cell.getContext()),
+                };
+            }),
+        };
+    });
+}
 
 export const usePreparedTableData = (props: {
     tableContainerRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -306,28 +330,9 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
+    const hasFooter = columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
-        rows: table.getFooterGroups().map<FooterRowViewData>((f) => {
-            return {
-                id: f.id,
-                cells: f.headers.map<FooterCellViewData>((cell) => {
-                    const columnDef = cell.column.columnDef;
-                    const originalHeadData = columnDef.meta?.head;
-                    const style = columnDef?.meta?.footer?.css;
-                    const pinned = Boolean(originalHeadData?.pinned);
-
-                    return {
-                        id: cell.id,
-                        style,
-                        pinned,
-                        type: get(originalHeadData, 'type'),
-                        content: cell.isPlaceholder
-                            ? null
-                            : flexRender(columnDef.footer, cell.getContext()),
-                    };
-                }),
-            };
-        }),
+        rows: hasFooter ? getFooterRows(table) : [],
         style: {gridTemplateColumns},
     };
 
