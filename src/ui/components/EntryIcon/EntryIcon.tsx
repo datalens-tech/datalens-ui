@@ -53,7 +53,6 @@ const typeToIcon: Record<string, IconData> = {
     [ConnectorType.AppMetrica]: iconAppmetrica,
     [ConnectorType.Postgres]: iconPostgreSQL,
     [ConnectorType.MetrikaApi]: iconMetrica,
-    [ConnectorType.MetrikaLogsApi]: iconMetrica,
     [ConnectorType.Oracle]: iconOracle,
     [ConnectorType.Mysql]: iconMySQL,
     [ConnectorType.Yt]: iconYT,

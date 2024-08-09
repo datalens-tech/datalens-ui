@@ -29,7 +29,6 @@ export enum ConnectorType {
     GsheetsV2 = 'gsheets_v2',
     KonturMarket = 'kontur_market',
     MetrikaApi = 'metrika_api',
-    MetrikaLogsApi = 'metrika_logs_api',
     Moysklad = 'moysklad',
     Mssql = 'mssql',
     Mysql = 'mysql',
