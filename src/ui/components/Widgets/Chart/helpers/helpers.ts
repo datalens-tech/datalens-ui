@@ -1,10 +1,17 @@
 import {DL, URL_OPTIONS} from 'constants/common';
 
+import type {ConfigItemData} from '@gravity-ui/dashkit';
 import type {AxiosResponse} from 'axios';
 import type {History} from 'history';
 import isEmpty from 'lodash/isEmpty';
-import type {StringParams} from 'shared';
-import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, isTrueArg} from 'shared';
+import type {DashTabItemControlExternal, StringParams} from 'shared';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    FOCUSED_WIDGET_PARAM_NAME,
+    Feature,
+    isTrueArg,
+} from 'shared';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
@@ -251,23 +258,31 @@ export const getWidgetSelectorMeta = ({
     loadedData,
     error,
     widgetParamsDefaults,
+    data,
 }: {
     id: string;
     chartId: string;
     loadedData: ResolveWidgetControlDataRefArgs | null;
     error: CombinedError | null;
     widgetParamsDefaults: StringParams;
+    data: WidgetPluginDataWithTabs | ConfigItemData;
 }) => {
     const loadedWithError = Boolean(
         (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error || error,
     );
+
+    let title = '';
+
+    if (data.sourceType === DashTabItemControlSourceType.External) {
+        title = (data as unknown as DashTabItemControlExternal).title;
+    }
 
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> &
         Omit<DashkitOldMetaDataItemBase, 'chartId'> & {widgetParams: StringParams} = {
         layoutId: id,
         chartId,
         widgetId: id,
-        title: '',
+        title,
         label: (loadedData?.key && Utils.getEntryNameFromKey(loadedData?.key || '')) || '',
         params: loadedData?.params || {},
         widgetParams: widgetParamsDefaults || {},

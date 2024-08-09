@@ -86,6 +86,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         chartId,
         widgetType,
         settings,
+        data,
     } = props;
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
@@ -263,13 +264,22 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 chartId,
                 error,
                 widgetParamsDefaults,
+                data,
             });
 
             if (resolveMetaDataRef.current) {
                 resolveMetaDataRef.current(meta);
             }
         },
-        [resolveMetaDataRef.current, loadedData, widgetId, chartId, error, widgetParamsDefaults],
+        [
+            resolveMetaDataRef.current,
+            loadedData,
+            widgetId,
+            chartId,
+            error,
+            widgetParamsDefaults,
+            data,
+        ],
     );
 
     /**
@@ -294,13 +304,13 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
      * get dash widget meta info (used for relations)
      */
     const handleGetWidgetMeta = React.useCallback(
-        (argResolve) => {
+        (argResolve, title) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (
                 resolvingData: ResolveWidgetControlDataRefArgs | null,
             ) => {
                 if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData);
+                    getCurrentWidgetResolvedMetaInfo(resolvingData, title);
                 } else {
                     resolveMeta(resolvingData);
                 }
