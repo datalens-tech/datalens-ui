@@ -4,14 +4,9 @@ import type {ConfigItemData} from '@gravity-ui/dashkit';
 import type {AxiosResponse} from 'axios';
 import type {History} from 'history';
 import isEmpty from 'lodash/isEmpty';
-import type {DashTabItemControlExternal, StringParams} from 'shared';
-import {
-    DashTabItemControlSourceType,
-    DashTabItemType,
-    FOCUSED_WIDGET_PARAM_NAME,
-    Feature,
-    isTrueArg,
-} from 'shared';
+import type {StringParams} from 'shared';
+import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, isTrueArg} from 'shared';
+import {isExternalControl} from 'ui/components/DashKit/plugins/Control/utils';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
@@ -273,8 +268,8 @@ export const getWidgetSelectorMeta = ({
 
     let title = '';
 
-    if (data.sourceType === DashTabItemControlSourceType.External) {
-        title = (data as unknown as DashTabItemControlExternal).title;
+    if (isExternalControl(data)) {
+        title = data.title;
     }
 
     const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> &
