@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRightFromSquare, CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
+import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
 import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import {List} from '@gravity-ui/uikit';
@@ -15,6 +15,8 @@ import Utils from 'ui/utils';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import type {AsideHeaderData} from '../../store/typings/asideHeader';
+import {UserAvatar} from '../UserMenu/UserAvatar';
+import {UserMenu} from '../UserMenu/UserMenu';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
 
@@ -45,6 +47,11 @@ type AsideHeaderAdapterProps = {
 
 enum Panel {
     Settings = 'settings',
+}
+
+enum PopupName {
+    Main = 'main',
+    Account = 'account',
 }
 
 const getLinkWrapper = (node: React.ReactNode, path: string) => {
@@ -97,7 +104,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
     const [visiblePanel, setVisiblePanel] = React.useState<Panel>();
-    const [popupVisible, setPopupVisible] = React.useState(false);
+    const [currentPopup, setCurrentPopup] = React.useState<PopupName | null>(null);
 
     const renderAsideHeaderContent = React.useCallback(
         (asideHeaderData: AsideHeaderData) => {
@@ -151,20 +158,6 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                     return getLinkWrapper(makeItem(params), SERVICE_SETTINGS_PATH);
                 },
             },
-            ...(DL.ZITADEL_ENABLED
-                ? [
-                      {
-                          id: 'logout',
-                          title: i18n('label_logout'),
-                          icon: ArrowRightFromSquare,
-                          iconSize: 16,
-                          tooltipText: i18n('label_logout'),
-                          onItemClick: () => {
-                              window.location.assign('/logout');
-                          },
-                      },
-                  ]
-                : []),
         ],
         [pathname],
     );
@@ -201,21 +194,23 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                 <FooterItem
                     compact={isCompact}
                     item={{
-                        id: 'main',
+                        id: PopupName.Main,
                         icon: CircleQuestion,
                         iconSize: FOOTER_ITEM_DEFAULT_SIZE,
                         title: i18n('label_main'),
                         tooltipText: i18n('label_main'),
-                        current: popupVisible,
+                        current: currentPopup === PopupName.Main,
                         onItemClick: () => {
                             setVisiblePanel(undefined);
-                            setPopupVisible(!popupVisible);
+                            setCurrentPopup(
+                                currentPopup === PopupName.Main ? null : PopupName.Main,
+                            );
                         },
                     }}
                     enableTooltip={false}
-                    popupVisible={popupVisible}
+                    popupVisible={currentPopup === PopupName.Main}
                     popupOffset={[0, 8]}
-                    onClosePopup={() => setPopupVisible(false)}
+                    onClosePopup={() => setCurrentPopup(null)}
                     renderPopupContent={() => {
                         return (
                             <List
@@ -241,6 +236,30 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
                         );
                     }}
                 />
+                {DL.ZITADEL_ENABLED && (
+                    <FooterItem
+                        compact={isCompact}
+                        item={{
+                            id: PopupName.Account,
+                            itemWrapper: (params, makeItem) =>
+                                makeItem({...params, icon: <UserAvatar size="m" />}),
+                            title: i18n('label_account'),
+                            tooltipText: i18n('label_account'),
+                            current: currentPopup === PopupName.Account,
+                            onItemClick: () => {
+                                setVisiblePanel(undefined);
+                                setCurrentPopup(
+                                    currentPopup === PopupName.Account ? null : PopupName.Account,
+                                );
+                            },
+                        }}
+                        enableTooltip={false}
+                        popupVisible={currentPopup === PopupName.Account}
+                        popupOffset={[0, 8]}
+                        onClosePopup={() => setCurrentPopup(null)}
+                        renderPopupContent={() => <UserMenu />}
+                    />
+                )}
             </React.Fragment>
         );
     };
