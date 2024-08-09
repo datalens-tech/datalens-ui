@@ -149,9 +149,6 @@
 
     &__footer &__td {
         min-height: var(--dl-table-row-height);
-    }
-
-    &__footer &__td {
         overflow: hidden;
         padding: 0;
     }
@@ -167,6 +164,10 @@
         white-space: nowrap;
         font-weight: 500;
         background-color: var(--dl-table-footer-bg-color);
+    }
+
+    &__footer .chartkit-table-bar {
+        height: fit-content;
     }
 
     &__header &__th_pinned,
