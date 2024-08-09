@@ -2,10 +2,9 @@ import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {DL} from 'ui';
+import {registry} from 'ui/registry';
 
 import {YfmWrapper} from '../../../../../../components/YfmWrapper/YfmWrapper';
-import {getSdk} from '../../../../../../libs/schematic-sdk';
 
 import './HeaderWithTooltip.scss';
 
@@ -32,8 +31,9 @@ const HeaderWithTooltip: React.FC<HeaderTooltipProps> = (props: HeaderTooltipPro
 };
 
 export const getHeaderWithTooltipNode = (title: string, tooltipText: string) => {
-    return getSdk()
-        .mix.renderMarkdown({text: tooltipText, lang: DL.USER_LANG})
+    const fetchRenderedMarkdown = registry.common.functions.get('fetchRenderedMarkdown');
+
+    return fetchRenderedMarkdown(tooltipText)
         .then((data) => {
             const result = data.result;
             return <HeaderWithTooltip title={title} yfmString={result} />;

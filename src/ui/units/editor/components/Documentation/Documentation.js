@@ -112,8 +112,11 @@ function ModuleDocumentation({module}) {
         if (!text) {
             return <div className={b('no-docs')}>{i18n('label_no-module-docs')}</div>;
         }
+
+        const fetchRenderedMarkdown = registry.common.functions.get('fetchRenderedMarkdown');
+
         return (
-            <Fetch fetch={() => getSdk().mix.renderMarkdown({text, lang: DL.USER_LANG})}>
+            <Fetch fetch={() => fetchRenderedMarkdown(text)}>
                 {({data: {result}}) => (
                     <YfmWrapper
                         className={b('module-docs-content')}

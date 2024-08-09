@@ -1,9 +1,8 @@
 import type {DashData, Dictionary} from 'shared';
 import {DashTabItemType} from 'shared';
+import {registry} from 'ui/registry';
 
-import {DL} from '../constants';
 import logger from '../libs/logger';
-import {getSdk} from '../libs/schematic-sdk';
 
 class MarkdownProvider {
     // {<source text>: <markdown>, ...}
@@ -31,10 +30,10 @@ class MarkdownProvider {
 
         if (Object.keys(texts).length) {
             try {
-                const markdowns = await getSdk().mix.batchRenderMarkdown({
-                    texts,
-                    lang: DL.USER_LANG,
-                });
+                const fetchBatchRenderedMarkdown = registry.common.functions.get(
+                    'fetchBatchRenderedMarkdown',
+                );
+                const markdowns = await fetchBatchRenderedMarkdown(texts);
 
                 Object.entries(markdowns).forEach(([key, value]) => {
                     MarkdownProvider.cache[texts[key]] = value.result;
@@ -59,7 +58,8 @@ class MarkdownProvider {
         }
 
         try {
-            const {result, meta} = await getSdk().mix.renderMarkdown({text, lang: DL.USER_LANG});
+            const fetchRenderedMarkdown = registry.common.functions.get('fetchRenderedMarkdown');
+            const {result, meta} = await fetchRenderedMarkdown(text);
             MarkdownProvider.cache[text] = result;
             MarkdownProvider.cacheMeta[text] = meta;
 

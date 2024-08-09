@@ -1,6 +1,6 @@
 import type {ConnectionData} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
-import {DL} from 'ui';
+import {registry} from 'ui/registry';
 
 import type {
     AddGoogleSheetResponse,
@@ -99,10 +99,8 @@ const fetchConnectorSchema = async ({
 
 const fetchRenderedMarkdown = async (text = '') => {
     try {
-        const {result} = await getSdk().mix.renderMarkdown({
-            text,
-            lang: DL.USER_LANG,
-        });
+        const fetchRenderedMarkdownFn = registry.common.functions.get('fetchRenderedMarkdown');
+        const {result} = await fetchRenderedMarkdownFn(text);
 
         return result;
     } catch (error) {

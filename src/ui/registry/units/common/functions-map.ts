@@ -1,7 +1,8 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
-import type {GetEntryResponse} from 'shared/schema';
+import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
+import type {BatchRenderMarkdownResponse, GetEntryResponse} from 'shared/schema';
 
 import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -98,4 +99,9 @@ export const commonFunctionsMap = {
     isEntryId: makeFunctionTemplate<(value: string) => boolean>(),
     extractEntryId: makeFunctionTemplate<(value?: string) => string | null>(),
     getAdditionalMarkdownPlugins: makeFunctionTemplate<() => Promise<MarkdownItPluginCb[]>>(),
+    fetchRenderedMarkdown: makeFunctionTemplate<(text: string) => Promise<RenderHtmlOutput>>(),
+    fetchBatchRenderedMarkdown:
+        makeFunctionTemplate<
+            (texts: Record<string, string>) => Promise<BatchRenderMarkdownResponse>
+        >(),
 } as const;

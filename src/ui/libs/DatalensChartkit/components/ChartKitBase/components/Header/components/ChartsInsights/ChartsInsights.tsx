@@ -8,6 +8,7 @@ import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import type {ChartsInsightsItem} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
+import {fetchBatchRenderedMarkdown} from 'ui/utils/renderMarkdown';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
 import type {ChartsInsightsData} from '../../../../../../types/widget';
@@ -15,7 +16,6 @@ import type {ChartsInsightsData} from '../../../../../../types/widget';
 import {ChartsInsightsIcon} from './components/ChartsInsightsIcon/ChartsInsightsIcon';
 import {TooltipContent} from './components/TooltipContent/TooltipContent';
 import {getIconLevel} from './helpers/getIconLevel';
-import {fetchBatchRenderedMarkdown} from './utils/fetchBatchRenderedMarkdown';
 
 type Props = ChartsInsightsData & {hidden?: boolean};
 

@@ -1,5 +1,6 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
+import {fetchBatchRenderedMarkdown, fetchRenderedMarkdown} from 'ui/utils/renderMarkdown';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
@@ -64,5 +65,7 @@ export const registerCommonPlugins = () => {
         isEntryId,
         extractEntryId,
         getAdditionalMarkdownPlugins: async () => [],
+        fetchRenderedMarkdown,
+        fetchBatchRenderedMarkdown,
     });
 };
