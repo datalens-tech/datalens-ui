@@ -2,11 +2,11 @@ import get from 'lodash/get';
 import type {TableRow, TableWidgetEventScope} from 'shared';
 import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 
-import type {TableWidget} from '../../../../../../types';
+import type {TableWidgetData} from '../../../../../../types';
 
 const AVAILABLE_TABLE_CLICK_SCOPES: TableWidgetEventScope[] = ['row', 'cell'];
 
-function validateConfigEvents(events?: NonNullable<TableWidget['config']>['events']) {
+function validateConfigEvents(events?: NonNullable<TableWidgetData['config']>['events']) {
     if (!events?.click) {
         return;
     }
@@ -37,7 +37,7 @@ function validateConfigEvents(events?: NonNullable<TableWidget['config']>['event
     }
 }
 
-function isContainsActionParamsEvents(events?: NonNullable<TableWidget['config']>['events']) {
+function isContainsActionParamsEvents(events?: NonNullable<TableWidgetData['config']>['events']) {
     if (!events?.click) {
         return false;
     }
@@ -90,7 +90,7 @@ Seems you are trying to define "setActionParams" handler in unsupported way. Thi
     });
 }
 
-export function validateConfigAndData(args: Pick<TableWidget, 'config' | 'data'>) {
+export function validateConfigAndData(args: Pick<TableWidgetData, 'config' | 'data'>) {
     const {config, data} = args;
 
     if (config?.events?.click) {

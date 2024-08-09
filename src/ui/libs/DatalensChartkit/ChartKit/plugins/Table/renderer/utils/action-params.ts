@@ -8,18 +8,18 @@ import type {
     TableWidgetEventScope,
 } from 'shared';
 
-import type {TData} from '../../../../../../../components/Table/types';
-import type {TableWidget} from '../../../../../types';
+import type {TableWidgetData} from '../../../../../types';
 import type {ActionParamsData} from '../../../../components/Widget/components/Table/utils';
 import {
     getActionParams,
     getAdditionalStyles,
 } from '../../../../components/Widget/components/Table/utils/action-params';
+import type {TData} from '../../renderer/components/Table/types';
 
 import {getRowAsMap} from './migrate-to-old-format';
 
 function getActionParamsEventScope(
-    events?: NonNullable<TableWidget['config']>['events'],
+    events?: NonNullable<TableWidgetData['config']>['events'],
 ): TableWidgetEventScope | undefined {
     if (!events?.click) {
         return undefined;
@@ -33,8 +33,8 @@ function getActionParamsEventScope(
 }
 
 export function getCurrentActionParams(args: {
-    config: TableWidget['config'];
-    unresolvedParams: TableWidget['unresolvedParams'];
+    config: TableWidgetData['config'];
+    unresolvedParams: TableWidgetData['unresolvedParams'];
 }) {
     const {config, unresolvedParams} = args;
     const scope = getActionParamsEventScope(config?.events);
@@ -49,14 +49,16 @@ export function getCurrentActionParams(args: {
     return undefined;
 }
 
-export function getCellActionParams(args: {
+export type GetCellActionParamsArgs = {
     actionParamsData: ActionParamsData;
     row?: TData;
     cell?: TableCell;
     head?: TableHead[];
     metaKey?: boolean;
     rows: TableRow[];
-}) {
+};
+
+export function getCellActionParams(args: GetCellActionParamsArgs) {
     const {row, head = [], actionParamsData} = args;
 
     if (!actionParamsData) {

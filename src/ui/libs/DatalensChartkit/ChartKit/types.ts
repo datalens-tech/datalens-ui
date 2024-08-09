@@ -7,7 +7,7 @@ import type {
     LoadedWidgetData,
     OnChangeData,
     OnLoadData,
-    TableWidget,
+    TableWidgetData,
     WidgetDashState,
 } from '../types';
 
@@ -61,7 +61,7 @@ declare module '@gravity-ui/chartkit' {
         };
         table: {
             data: any;
-            widget: TableWidget;
+            widget: TableWidgetData;
         };
     }
 }

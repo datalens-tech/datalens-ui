@@ -1,10 +1,10 @@
 import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
 
-import type {OnChangeData, TableWidget, WidgetDashState} from '../../../types';
+import type {OnChangeData, TableWidgetData, WidgetDashState} from '../../../types';
 
 export type TableWidgetProps = {
     id: string;
-    data: TableWidget;
+    data: TableWidgetData;
     onChange?: (
         data: OnChangeData,
         state: {forceUpdate: boolean},

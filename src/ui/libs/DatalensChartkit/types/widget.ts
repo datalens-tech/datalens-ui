@@ -185,7 +185,7 @@ type D3Widget = WidgetBase & {type: 'd3'};
 
 type WidgetComponentProps =
     | GraphWidget
-    | TableWidget
+    | TableWidgetData
     | MarkdownWidget
     | MetricWidget
     | Metric2Widget
@@ -239,7 +239,7 @@ export type TableData = {
     footer?: TableRow[];
 };
 
-export type TableWidget = WidgetBaseWithData &
+export type TableWidgetData = WidgetBaseWithData &
     WithControls & {
         type: 'table';
         data: TableData;
@@ -259,6 +259,9 @@ export type TableWidget = WidgetBaseWithData &
         };
         unresolvedParams?: StringParams;
     };
+
+// for backward compatibility
+export type TableWidget = TableWidgetData;
 
 export interface ControlWidget extends WidgetBaseWithData, WithControls {
     type: 'control';
@@ -319,7 +322,7 @@ export type MarkupWidget = WidgetBaseWithData & {
 export type Widget =
     | GraphWidget
     | D3Widget
-    | TableWidget
+    | TableWidgetData
     | ControlWidget
     | MapWidget
     | MarkdownWidget

@@ -59,6 +59,7 @@
     "@gravity-ui/i18n": "^1.6.0",
     "@gravity-ui/nodekit": "^1.2.1",
     "@node-rs/crc32": "^1.7.2",
+    "@tanstack/react-virtual": "^3.8.1",
     "acorn": "^8.0.4",
     "ajv": "^8.12.0",
     "aws4": "^1.11.0",
