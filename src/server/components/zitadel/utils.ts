@@ -1,9 +1,10 @@
-import type {Request} from '@gravity-ui/expresskit';
+import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import NodeCache from 'node-cache';
 
+import type {DLUser} from '../../../shared/types/common';
 import {getDuration} from '../charts-engine/components/utils';
 
 const cache = new NodeCache();
@@ -11,7 +12,15 @@ const cache = new NodeCache();
 const axiosInstance = axios.create();
 axiosRetry(axiosInstance, {retries: 3});
 
-export const introspect = async (ctx: AppContext, token?: string): Promise<boolean> => {
+export type IntrospectResult = {
+    active: boolean;
+    login?: string;
+    userId?: string;
+    displayName?: string;
+    email?: string;
+};
+
+export const introspect = async (ctx: AppContext, token?: string): Promise<IntrospectResult> => {
     ctx.log('Token introspection');
 
     if (!ctx.config.zitadelInternalUri) {
@@ -43,14 +52,20 @@ export const introspect = async (ctx: AppContext, token?: string): Promise<boole
             },
         });
 
-        const {active} = response.data;
-        const result = Boolean(active);
+        const {active, preferred_username, name, sub, email} = response.data;
+        const result = {
+            active: Boolean(active),
+            login: preferred_username,
+            userId: sub,
+            displayName: name,
+            email,
+        };
 
         ctx.log(`Token introspected successfully within: ${getDuration(hrStart)} ms`);
         return result;
     } catch (e) {
         ctx.logError('Failed to introspect token', e);
-        return false;
+        return {active: false};
     }
 };
 
@@ -157,7 +172,7 @@ export const generateServiceAccessUserToken = async (
     return token;
 };
 
-export const saveUserToSesson = async (req: Request): Promise<void> => {
+export const saveUserToSession = async (req: Request): Promise<void> => {
     return new Promise((resolve, reject) => {
         const ctx = req.ctx;
         const user = req.user as Express.User;
@@ -172,3 +187,20 @@ export const saveUserToSesson = async (req: Request): Promise<void> => {
         });
     });
 };
+
+export const saveUserToLocals = (res: Response, introspectResult: IntrospectResult) => {
+    res.locals = res.locals || {};
+    res.locals.zitadel = res.locals.zitadel || {};
+    res.locals.zitadel.login = introspectResult.login;
+    res.locals.zitadel.userId = introspectResult.userId;
+    res.locals.zitadel.displayName = introspectResult.displayName;
+    res.locals.zitadel.email = introspectResult.email;
+};
+
+export const getUserInfo = (_req: Request, res: Response): Partial<DLUser> => ({
+    login: res.locals.zitadel.login,
+    email: res.locals.zitadel.email,
+    formattedLogin: res.locals.zitadel.login,
+    displayName: res.locals.zitadel.displayName,
+    uid: res.locals.zitadel.userId,
+});

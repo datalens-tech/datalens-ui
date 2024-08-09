@@ -4,6 +4,7 @@ import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../
 import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
+import {getUserInfo} from '../zitadel/utils';
 
 import {getChartkitLayoutSettings, getPlatform} from './utils';
 
@@ -37,12 +38,20 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang = Language.En;
     }
 
+    const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
+
     // TODO: check and remove optional props;
-    const user: DLUser = {lang} as DLUser;
+    let user: DLUser = {lang} as DLUser;
     const userSettings = {};
-    const iamUserId = '';
+    let iamUserId = '';
     const {scripts: chartkitScripts, inlineScripts: chartkitInlineScripts} =
         getChartkitLayoutSettings(config.chartkitSettings);
+
+    if (isZitadelEnabled) {
+        const userInfo = getUserInfo(req, res);
+        iamUserId = userInfo.uid as string;
+        user = {...user, ...userInfo};
+    }
 
     const DL: DLGlobalData = {
         user,
@@ -59,7 +68,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         chartkitSettings: config.chartkitSettings,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
-        isZitadelEnabled: req.ctx.config.isZitadelEnabled,
+        isZitadelEnabled,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {
