@@ -27,7 +27,7 @@ export type Props = {
     subject: SubjectClaims;
     resourceId: string;
     resourceType: ResourceType;
-    initialRole: string;
+    role: string;
     options: {
         title: string;
         value: string;
@@ -40,19 +40,14 @@ export const Controls = ({
     subject,
     resourceId,
     resourceType,
-    initialRole,
+    role,
     options,
     canUpdate,
     onDeleteButtonClick,
 }: Props) => {
     const dispatch = useDispatch<IamAccessDialogDispatch>();
 
-    const [role, setRole] = React.useState(initialRole);
     const [changeIsLoading, setChangeIsLoading] = React.useState(false);
-
-    React.useEffect(() => {
-        setRole(initialRole);
-    }, [initialRole]);
 
     return (
         <div className={b()}>
@@ -101,8 +96,6 @@ export const Controls = ({
                             }),
                         ).then((res) => {
                             if (res) {
-                                setRole(newRole);
-
                                 dispatch(
                                     updateListAccessBindingsInline({
                                         resourceId,
