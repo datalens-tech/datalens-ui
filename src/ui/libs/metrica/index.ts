@@ -37,6 +37,7 @@ export enum GoalId {
     OpenStartInDataLens = 'DL_HELP-CENTER_START-DL_CLCK',
     MainPageBusinessBannerTryButtonClick = 'DL_MAIN-PAGE_BUSINESS-BANNER_TRY-BUTTON_CLICK',
     MainPageBusinessBannerLearnMoreButtonClick = 'DL_MAIN-PAGE_BUSINESS-BANNER_LEARN-MORE-BUTTON_CLICK',
+    MainPageBusinessBannerShow = 'DL_MAIN-PAGE_BUSINESS-BANNER_SHOW',
     ServicePlanChangeToCommunityPlan = 'DL_SERVICE-PLAN_CHANGE-TO-COMMUNITY-PLAN',
     BillingRatesSwitchToBusinessButtonClick = 'DL_BILLING-RATES_SWITCH-TO-BUSINESS-BUTTON_CLICK',
     BACreateNew = 'DL_BA_CREATE-NEW',
