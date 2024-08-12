@@ -63,10 +63,12 @@
 
         &_align_left {
             text-align: left;
+            justify-content: flex-start;
         }
 
         &_align_center {
             text-align: center;
+            justify-content: center;
         }
 
         &_type_number {
@@ -134,6 +136,7 @@
 
     &__header &__tr:not(:last-child) &__th {
         text-align: center;
+        justify-content: center;
     }
 
     &__header &__sort-icon {
