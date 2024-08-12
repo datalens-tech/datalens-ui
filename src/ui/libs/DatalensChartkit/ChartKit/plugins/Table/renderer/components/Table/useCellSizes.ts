@@ -18,12 +18,12 @@ export const useCellSizes = (
             const tRows = Array.from(table?.getElementsByTagName('tr') ?? []);
             const tRow = findLast(tRows, (r) =>
                 Array.from(r.childNodes).every(
-                    (td) => Number(td.getAttribute('colSpan') || 1) <= 1,
+                    (td) => Number((td as Element).getAttribute('colSpan') || 1) <= 1,
                 ),
             );
 
             const result = Array.from(tRow?.childNodes ?? []).map((tCell, index) => {
-                return tCell.getBoundingClientRect()?.width + (index === 0 ? 1 : 0);
+                return (tCell as Element).getBoundingClientRect()?.width + (index === 0 ? 1 : 0);
             });
 
             setCellSizes(result);
