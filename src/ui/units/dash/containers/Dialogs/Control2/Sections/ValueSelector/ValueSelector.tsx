@@ -34,7 +34,6 @@ import {
 
 import type {ListValueControlProps} from './ListValueControl/ListValueControl';
 import {ListValueControl} from './ListValueControl/ListValueControl';
-import {RequiredValueCheckbox} from './RequiredValueCheckbox/RequiredValueCheckbox';
 
 import './ValueSelector.scss';
 
@@ -291,12 +290,7 @@ const ValueSelector = () => {
         }
     }
 
-    return (
-        <React.Fragment>
-            <RequiredValueCheckbox />
-            {inputControl}
-        </React.Fragment>
-    );
+    return inputControl;
 };
 
 export {ValueSelector};

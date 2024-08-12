@@ -237,15 +237,15 @@ class Control<TProviderData> extends React.PureComponent<
             case CONTROL_TYPE.INPUT:
                 return <ControlInput {...props} />;
             case CONTROL_TYPE.TEXTAREA:
-                return <ControlTextArea {...props} />;
+                return <ControlTextArea {...props} className={b('item', {button: true})} />;
             case CONTROL_TYPE.DATEPICKER:
                 return <ControlDatepicker {...props} />;
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={!notSingleParam} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} />;
+                return <ControlCheckbox {...props} className={b('item', {checkbox: true})} />;
             case CONTROL_TYPE.BUTTON:
-                return <ControlButton {...props} />;
+                return <ControlButton {...props} className={b('item', {button: true})} />;
         }
 
         return null;

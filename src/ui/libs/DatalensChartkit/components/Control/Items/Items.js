@@ -4,7 +4,7 @@ import {Button, Checkbox, Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
-import {ControlQA, resolveIntervalDate, resolveRelativeDate} from 'shared';
+import {ControlQA, TitlePlacementOption, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
@@ -159,6 +159,7 @@ BaseControlSelect.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    limitLabel: PropTypes.bool,
 };
 
 function BaseControlInput({
@@ -308,6 +309,7 @@ function BaseControlDatepicker({
     innerLabel,
     labelInside,
     label,
+    labelPlacement,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -315,6 +317,8 @@ function BaseControlDatepicker({
         ({from}) => onChange(from === null ? '' : from),
         [onChange],
     );
+
+    const vertical = labelPlacement === TitlePlacementOption.Top;
 
     return (
         <DatepickerControl
@@ -333,7 +337,7 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('component')}
+            className={b('component', {vertical})}
             hasValidationError={hasValidationError}
             required={required}
             label={labelInside ? label : innerLabel}
@@ -358,6 +362,7 @@ BaseControlDatepicker.propTypes = {
     hasValidationError: PropTypes.bool,
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
+    labelPlacement: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -374,6 +379,7 @@ function BaseControlRangeDatepicker({
     innerLabel,
     labelInside,
     label,
+    labelPlacement,
 }) {
     let from;
     let to;
@@ -410,6 +416,8 @@ function BaseControlRangeDatepicker({
         [returnInterval, onChange],
     );
 
+    const vertical = labelPlacement === TitlePlacementOption.Top;
+
     return (
         <DatepickerControl
             widgetId={widgetId}
@@ -426,7 +434,7 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('component')}
+            className={b('component', {vertical})}
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}
@@ -461,6 +469,7 @@ BaseControlRangeDatepicker.propTypes = {
     hasValidationError: PropTypes.bool,
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
+    labelPlacement: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange, qa}) {
