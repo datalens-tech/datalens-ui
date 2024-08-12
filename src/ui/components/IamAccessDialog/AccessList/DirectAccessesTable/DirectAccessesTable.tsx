@@ -102,7 +102,7 @@ export const DirectAccessesTable = ({data, canUpdate, refetch}: Props) => {
                                 subject={user?.subjectClaims}
                                 resourceId={object.id}
                                 resourceType={object.type}
-                                initialRole={role}
+                                role={role}
                                 options={options}
                                 canUpdate={canUpdate}
                                 onDeleteButtonClick={() => {
