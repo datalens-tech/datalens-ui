@@ -2,10 +2,11 @@ import {I18n} from 'i18n';
 import type {
     DATASET_FIELD_TYPES,
     DashTabItemControlDataset,
+    DashTabItemControlExternal,
     DashTabItemControlSingle,
     DatasetFieldType,
 } from 'shared';
-import {DATASET_IGNORED_DATA_TYPES} from 'shared';
+import {DATASET_IGNORED_DATA_TYPES, DashTabItemControlSourceType} from 'shared';
 import type {
     ChartsData,
     DatasetFieldsListItem,
@@ -187,3 +188,6 @@ export const prepareSelectorError = (data: ErrorData['data'], requestId?: string
         isCustomError: true,
     };
 };
+
+export const isExternalControl = (data: any): data is DashTabItemControlExternal =>
+    data.sourceType === DashTabItemControlSourceType.External;
