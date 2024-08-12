@@ -16,12 +16,12 @@ export const HIGH_CONTRAST_THEME_SETTINGS: ThemeSettings = {
     systemLightTheme: LIGHT_THEME_HC,
 };
 
-const THEME_SETTINGS: ThemeSettings = {
+export const DEFAULT_THEME_SETTINGS: ThemeSettings = {
     systemDarkTheme: DARK_THEME,
     systemLightTheme: LIGHT_THEME,
 };
 
-export const DEFAULT_THEME_SETTINGS = {
+export const DEFAULT_THEME_CONFIG = {
     theme: SYSTEM_THEME,
-    themeSettings: THEME_SETTINGS,
+    themeSettings: DEFAULT_THEME_SETTINGS,
 };
