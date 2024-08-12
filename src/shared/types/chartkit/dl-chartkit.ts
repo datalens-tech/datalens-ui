@@ -11,9 +11,10 @@ type SetActionParamsEventHandler = {
     type: 'setActionParams';
 };
 
-type GoToEventHandler = {
+export type GoToEventHandler = {
     type: 'goTo';
     url?: string;
+    target?: '_self' | '_blank';
 };
 
 export type WidgetEventHandler = SetActionParamsEventHandler | GoToEventHandler;
