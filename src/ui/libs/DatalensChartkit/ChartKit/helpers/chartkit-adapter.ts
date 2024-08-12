@@ -173,7 +173,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                                 break;
                             }
                             case 'goTo': {
-                                applyGoToEvents({url: handler.url, data, target: handler.target});
+                                applyGoToEvents({data, target: handler.target});
                             }
                         }
                     });

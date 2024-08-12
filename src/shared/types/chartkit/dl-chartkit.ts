@@ -13,7 +13,6 @@ type SetActionParamsEventHandler = {
 
 export type GoToEventHandler = {
     type: 'goTo';
-    url?: string;
     target?: '_self' | '_blank';
 };
 

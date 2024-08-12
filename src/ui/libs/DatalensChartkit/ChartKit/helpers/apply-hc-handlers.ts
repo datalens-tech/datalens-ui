@@ -141,31 +141,25 @@ export const applySetActionParamsEvents = (args: {
 
 function handleSeriesClickForGoTo(args: {
     point?: Highcharts.Point;
-    url?: string;
     target?: GoToEventHandler['target'];
 }) {
-    const {point, url, target = 'blank'} = args;
+    const {point, target = 'blank'} = args;
     const pointUrl = get(point, 'options.custom.url');
-    const resultUrl = pointUrl || url;
 
-    if (!resultUrl) {
+    if (!pointUrl) {
         return;
     }
 
     try {
-        validateUrl(resultUrl);
-        window.open(resultUrl, target === '_self' ? '_self' : '_blank');
+        validateUrl(pointUrl);
+        window.open(pointUrl, target === '_self' ? '_self' : '_blank');
     } catch (e) {
         console.error(e);
     }
 }
 
-export const applyGoToEvents = (args: {
-    data: GraphWidget;
-    url?: string;
-    target?: GoToEventHandler['target'];
-}) => {
-    const {data, url, target} = args;
+export const applyGoToEvents = (args: {data: GraphWidget; target?: GoToEventHandler['target']}) => {
+    const {data, target} = args;
     const pathToSeriesEvents = 'libraryConfig.plotOptions.series.events';
 
     if (!has(data, pathToSeriesEvents)) {
@@ -180,7 +174,7 @@ export const applyGoToEvents = (args: {
             proceed: Highcharts.SeriesClickCallbackFunction,
             event: Highcharts.SeriesClickEventObject,
         ) {
-            handleSeriesClickForGoTo({point: event.point, url, target});
+            handleSeriesClickForGoTo({point: event.point, target});
             proceed?.apply(this, [event]);
         },
     );
