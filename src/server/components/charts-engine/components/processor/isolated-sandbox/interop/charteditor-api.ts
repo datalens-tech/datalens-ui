@@ -109,9 +109,8 @@ export function prepareChartEditorApi({
         return JSON.stringify(chartEditorApi.resolveInterval(intervalStr));
     }) satisfies ChartEditorResolveInterval);
 
-    jail.setSync('_ChartEditor_resolveOperation', ((input?: string) => {
-        const parsedInput = input ? JSON.parse(input) : undefined;
-        return JSON.stringify(chartEditorApi.resolveOperation(parsedInput));
+    jail.setSync('_ChartEditor_resolveOperation', ((input: string) => {
+        return JSON.stringify(chartEditorApi.resolveOperation(input));
     }) satisfies ChartEditorResolveOperation);
 
     jail.setSync('_ChartEditor_setError', ((value?: string) => {
