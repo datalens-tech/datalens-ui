@@ -14,7 +14,7 @@ import {registry} from '../../../../registry';
 import type {WizardWorker} from '../worker/types';
 
 import {getChartApiContext} from './chart-api-context';
-import type {ChartBuilder} from './types';
+import type {ChartBuilder, ChartBuilderResult} from './types';
 
 let wizardWorkersPool: Pool | null = null;
 async function getWizardWorker(): Promise<Proxy<WizardWorker>> {
@@ -91,7 +91,7 @@ export const getWizardChartBuilder = async (
         buildUrls: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const {exports, runtimeMetadata} = await wizardWorker
+            const execResult = await wizardWorker
                 .buildSources({
                     shared: shared as Shared,
                     params,
@@ -105,15 +105,14 @@ export const getWizardChartBuilder = async (
             return {
                 executionTiming: process.hrtime(timeStart),
                 name: 'Urls',
-                runtimeMetadata,
-                exports,
+                ...execResult,
             };
         },
 
         buildChartLibraryConfig: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const {exports, runtimeMetadata} = await wizardWorker
+            const execResult = await wizardWorker
                 .buildLibraryConfig({
                     shared: shared as ServerChartsConfig,
                     params,
@@ -127,15 +126,14 @@ export const getWizardChartBuilder = async (
             return {
                 executionTiming: process.hrtime(timeStart),
                 name: 'Highcharts',
-                runtimeMetadata,
-                exports,
-            };
+                ...execResult,
+            } as ChartBuilderResult;
         },
 
         buildChartConfig: async (options) => {
             const {params, actionParams} = options;
             const timeStart = process.hrtime();
-            const {exports, runtimeMetadata} = await wizardWorker
+            const execResult = await wizardWorker
                 .buildChartConfig({
                     shared: shared as ServerChartsConfig,
                     params,
@@ -149,15 +147,14 @@ export const getWizardChartBuilder = async (
             return {
                 executionTiming: process.hrtime(timeStart),
                 name: 'Config',
-                runtimeMetadata,
-                exports,
+                ...execResult,
             };
         },
 
         buildChart: async (options) => {
             const {data, params, actionParams} = options;
             const timeStart = process.hrtime();
-            const {exports, runtimeMetadata} = await wizardWorker
+            const execResult = await wizardWorker
                 .buildChart({
                     shared: shared as ServerChartsConfig,
                     params,
@@ -173,8 +170,7 @@ export const getWizardChartBuilder = async (
             return {
                 executionTiming: process.hrtime(timeStart),
                 name: 'JavaScript',
-                runtimeMetadata,
-                exports,
+                ...execResult,
             };
         },
 
