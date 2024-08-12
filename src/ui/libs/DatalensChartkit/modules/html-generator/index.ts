@@ -70,7 +70,7 @@ export function generateHtml(
             }
 
             if (ATTRS_WITH_REF_VALIDATION.includes(key)) {
-                validateUrl(key);
+                validateUrl(String(value), `Attribute '${key}' is not valid`);
             }
 
             const preparedValue = TOOLTIP_ATTRS.includes(key)
