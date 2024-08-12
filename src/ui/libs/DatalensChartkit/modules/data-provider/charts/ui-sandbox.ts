@@ -170,7 +170,7 @@ function clearVmProp(prop: unknown) {
             item.points = points.map(clearVmProp);
         }
 
-        return item;
+        return removeSVGElements(item);
     }
 
     if (prop && typeof prop === 'function') {
