@@ -50,6 +50,10 @@ export const Controls = ({
     const [role, setRole] = React.useState(initialRole);
     const [changeIsLoading, setChangeIsLoading] = React.useState(false);
 
+    React.useEffect(() => {
+        setRole(initialRole);
+    }, [initialRole]);
+
     return (
         <div className={b()}>
             <div className={b('change-role')}>
