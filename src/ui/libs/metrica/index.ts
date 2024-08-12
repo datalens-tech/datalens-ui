@@ -47,9 +47,9 @@ const getCounterConfigByName = (counterName?: string) => {
     return DL.METRICA_COUNTERS?.find(({name}) => name === counterName);
 };
 
-export const reachMetricaGoalGeneric = <T extends string>(
+export const reachMetricaGoal = (
     counterName: CounterName,
-    goalId: T,
+    goalId: GoalId,
     params?: Record<string, unknown>,
 ) => {
     const counter = getCounterConfigByName(counterName);
@@ -58,8 +58,6 @@ export const reachMetricaGoalGeneric = <T extends string>(
         window.ym?.(counter.id, 'reachGoal', goalId, params);
     }
 };
-
-export const reachMetricaGoal = reachMetricaGoalGeneric<GoalId>;
 
 export const fireMetricaHit = (counterName: CounterName, url: string) => {
     const counter = getCounterConfigByName(counterName);
