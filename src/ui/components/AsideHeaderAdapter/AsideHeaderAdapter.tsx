@@ -3,6 +3,7 @@ import React from 'react';
 import {ArrowRightFromSquare, CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
 import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
+import type {IconData} from '@gravity-ui/uikit';
 import {List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as baseI18n} from 'i18n';
@@ -18,7 +19,7 @@ import type {AsideHeaderData} from '../../store/typings/asideHeader';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
 
-import iconNavigationDefault from '../../assets/icons/logo.svg';
+import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
 
 import './AsideHeaderAdapter.scss';
@@ -41,6 +42,7 @@ export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
 type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
+    logoIcon?: IconData;
 };
 
 enum Panel {
@@ -92,7 +94,7 @@ const renderDocsItem = (item: DocsItem) => {
     }
 };
 
-export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => {
+export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
@@ -250,7 +252,7 @@ export const AsideHeaderAdapter = ({renderContent}: AsideHeaderAdapterProps) => 
             compact={isCompact}
             logo={{
                 text: PRODUCT_NAME,
-                icon: iconNavigationDefault,
+                icon: logoIcon ?? defaultLogoIcon,
                 iconSize: LOGO_DEFAULT_SIZE,
                 iconClassName: b('logo-icon'),
                 wrapper: getLogoWrapper,

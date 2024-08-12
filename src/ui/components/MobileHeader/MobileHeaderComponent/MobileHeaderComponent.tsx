@@ -8,7 +8,7 @@ import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/co
 
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 
-import logoIcon from 'ui/assets/icons/logo.svg';
+import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
 
 import '../MobileHeader.scss';
@@ -27,11 +27,11 @@ const menuItems = [
     },
 ];
 
-export const MobileHeaderComponent = ({renderContent}: MobileHeaderComponentProps) => {
+export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderComponentProps) => {
     return (
         <MobileHeader
             logo={{
-                icon: logoIcon,
+                icon: logoIcon ?? defaultLogoIcon,
                 text: PRODUCT_NAME,
                 iconClassName: b('logo-icon'),
             }}
