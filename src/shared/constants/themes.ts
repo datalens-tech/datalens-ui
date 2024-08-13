@@ -11,7 +11,7 @@ export const SYSTEM_THEME = 'system';
 export const THEMES: ThemesArray = [LIGHT_THEME, DARK_THEME];
 export const CONTRAST_THEMES: ThemesArray = [LIGHT_THEME_HC, DARK_THEME_HC];
 
-export const ALLOW_THEMES: ReadonlyArray<RealTheme> = [...THEMES, ...CONTRAST_THEMES, SYSTEM_THEME];
+export const ALLOW_THEMES = [...THEMES, ...CONTRAST_THEMES, SYSTEM_THEME] as const;
 
 export const CONTRAST_THEME_SETTINGS: ThemeSettings = {
     systemDarkTheme: DARK_THEME_HC,
