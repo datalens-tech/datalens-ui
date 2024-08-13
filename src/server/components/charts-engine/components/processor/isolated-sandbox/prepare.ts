@@ -9,11 +9,7 @@ var module = {exports: {}};
 var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
-            if (typeof elem === 'function') {
-                return elem.toString();
-            } else {
-                return elem;
-            }
+            return __prepareFunctionsForStringify(elem);
         })
         return __log(...processed);
     }
