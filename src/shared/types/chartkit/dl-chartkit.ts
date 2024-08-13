@@ -11,7 +11,12 @@ type SetActionParamsEventHandler = {
     type: 'setActionParams';
 };
 
-export type WidgetEventHandler = SetActionParamsEventHandler;
+export type GoToEventHandler = {
+    type: 'goTo';
+    target?: '_self' | '_blank';
+};
+
+export type WidgetEventHandler = SetActionParamsEventHandler | GoToEventHandler;
 
 export type GraphWidgetEventScope = 'point';
 

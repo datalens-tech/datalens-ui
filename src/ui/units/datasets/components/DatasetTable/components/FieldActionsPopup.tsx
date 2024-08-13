@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {CopyToClipboard, DropdownMenu} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {DatasetField} from 'shared';
@@ -42,14 +42,28 @@ const getMenuItems = (
     field: DatasetField,
     onClick: FieldActionsPopupProps['onItemClick'],
 ): DropdownMenuItemMixed<MenuItem>[] => {
-    return GROUPED_ITEMS.map((group) => {
-        return group.map(({action, label, theme, hidden = false}) => ({
-            theme,
-            hidden,
-            text: <MenuItemText action={action} label={label} field={field} />,
-            action: () => onClick({action, field}),
-        }));
-    });
+    return GROUPED_ITEMS.reduce<DropdownMenuItemMixed<MenuItem>[]>((items, group) => {
+        const groupWithoutHidden = group.reduce<DropdownMenuItem<MenuItem>[]>(
+            (group, {action, label, theme, hidden = false}) => {
+                if (!hidden) {
+                    group.push({
+                        theme,
+                        hidden,
+                        text: <MenuItemText action={action} label={label} field={field} />,
+                        action: () => onClick({action, field}),
+                    });
+                }
+
+                return group;
+            },
+            [],
+        );
+
+        if (groupWithoutHidden.length) {
+            items.push(groupWithoutHidden);
+        }
+        return items;
+    }, []);
 };
 
 export function FieldActionsPopup(props: FieldActionsPopupProps) {

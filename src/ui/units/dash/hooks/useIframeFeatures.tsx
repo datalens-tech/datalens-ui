@@ -6,6 +6,7 @@ import {EMBEDDED_DASH_MESSAGE_NAME} from 'ui/constants';
 import {isIframe, isNoScrollMode} from 'ui/utils/embedded';
 import Utils from 'ui/utils/utils';
 
+import {Feature} from '../../../../shared/types/feature';
 import {sendEmbedDashHeight} from '../modules/helpers';
 
 const dashBlock = block('dl-dash');
@@ -14,39 +15,39 @@ export type PageTitleExtraSettings = {
     subtitle?: string | null;
 };
 
-export const useIframeFeatures = ({
-    wrapRef,
-    skipNoScroll,
-}: {
-    wrapRef: React.RefObject<HTMLDivElement>;
-    skipNoScroll?: boolean;
-}) => {
+export const useIframeFeatures = ({wrapRef}: {wrapRef: React.RefObject<HTMLDivElement>}) => {
     const [isObserverEnabled, setIsObserverEnabled] = React.useState<boolean>();
 
     const isIframeView = isIframe();
 
     React.useEffect(() => {
-        if (skipNoScroll || !isIframeView) {
+        if (!isIframeView) {
             return;
         }
 
-        const dashClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
+        const dashNoScrollClasses = dashBlock({'no-scroll': isNoScrollMode()}).split(' ');
 
-        Utils.addBodyClass(...dashClasses);
+        Utils.addBodyClass(...dashNoScrollClasses);
 
         return () => {
-            Utils.removeBodyClass(...dashClasses);
+            Utils.removeBodyClass(...dashNoScrollClasses);
         };
-    }, [skipNoScroll, isIframeView]);
+    }, [isIframeView]);
 
     React.useEffect(() => {
         if (!isIframeView || !wrapRef.current || !window.name) {
             return;
         }
 
+        const dashHeightClasses = dashBlock({'without-height': true}).split(' ');
+
         function handleMessageSend(event: MessageEvent) {
             if (event.data === EMBEDDED_DASH_MESSAGE_NAME) {
                 setIsObserverEnabled(true);
+            }
+
+            if (Utils.isEnabledFeature(Feature.RemoveEmbedUnsetDashHeight)) {
+                Utils.addBodyClass(...dashHeightClasses);
             }
         }
 
@@ -54,6 +55,7 @@ export const useIframeFeatures = ({
 
         return () => {
             window.removeEventListener('message', handleMessageSend);
+            Utils.removeBodyClass(...dashHeightClasses);
         };
     }, [isIframeView, wrapRef]);
 

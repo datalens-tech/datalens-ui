@@ -5,6 +5,8 @@ export const opensourceEndpoints = {
             bi: process.env.BI_API_ENDPOINT || 'http://localhost:8081',
             biData: process.env.BI_DATA_ENDPOINT || 'http://localhost:8082',
             rpc: process.env.NODE_RPC_URL || 'http://localhost:5000',
+            biConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://localhost:8084',
+
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
         },
@@ -30,6 +32,8 @@ export const opensourceEndpoints = {
             us: process.env.US_ENDPOINT || 'http://us:8083',
             bi: process.env.BI_API_ENDPOINT || 'http://control-api:8080',
             biData: process.env.BI_DATA_ENDPOINT || 'http://data-api:8080',
+            biConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://file-uploader:8080',
+
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
         },

@@ -1,0 +1,31 @@
+.dl-iam-access-dialog-access-list-inherited-accesses-table {
+    &__filters {
+        margin-bottom: 8px;
+    }
+
+    &__table {
+        table {
+            width: 100%;
+        }
+    }
+
+    &__collection {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+        color: var(--g-color-text-primary);
+        text-decoration: none;
+    }
+
+    &__collection-icon {
+        min-width: 16px;
+    }
+
+    &__collection-title {
+        margin-left: 6px;
+    }
+
+    &__empty {
+        text-align: center;
+    }
+}

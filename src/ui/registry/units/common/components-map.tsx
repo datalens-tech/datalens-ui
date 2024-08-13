@@ -9,6 +9,8 @@ import {Example} from './components/Example/Example';
 import {EXAMPLE_COMPONENT} from './constants/components';
 import type {AccessRightsProps} from './types/components/AccessRights';
 import type {AccessRightsUrlOpenProps} from './types/components/AccessRightsUrlOpen';
+import type {AclSubjectProps} from './types/components/AclSubject';
+import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest';
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
 import type {CloudTreeSelectBaseProps} from './types/components/CloudTreeSelectBase';
@@ -51,4 +53,6 @@ export const commonComponentsMap = {
     MarkupUserInfo: makeDefaultEmpty<MarkupUserInfoProps>(),
     MarkdownControl: makeDefaultEmpty<MarkdownControlProps>(),
     Footer: makeDefaultEmpty(),
+    AclSubject: makeDefaultEmpty<AclSubjectProps>(),
+    AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
 } as const;

@@ -4,6 +4,7 @@ import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../
 import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
+import {getUserInfo} from '../zitadel/utils';
 
 import {getChartkitLayoutSettings, getPlatform} from './utils';
 
@@ -37,12 +38,20 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang = Language.Ru;
     }
 
+    const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
+
     // TODO: check and remove optional props;
-    const user: DLUser = {lang} as DLUser;
+    let user: DLUser = {lang} as DLUser;
     const userSettings = {};
-    const iamUserId = '';
+    let iamUserId = '';
     const {scripts: chartkitScripts, inlineScripts: chartkitInlineScripts} =
         getChartkitLayoutSettings(config.chartkitSettings);
+
+    if (isZitadelEnabled) {
+        const userInfo = getUserInfo(req, res);
+        iamUserId = userInfo.uid as string;
+        user = {...user, ...userInfo};
+    }
 
     const DL: DLGlobalData = {
         user,
@@ -59,7 +68,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         chartkitSettings: config.chartkitSettings,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
-        isZitadelEnabled: req.ctx.config.isZitadelEnabled,
+        isZitadelEnabled,
         oidc: req.ctx.config.oidc,
         oidc_name: req.ctx.config.oidc_name,
         oidc_base_url: req.ctx.config.oidc_base_url,
@@ -89,17 +98,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
             {
                 href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
                 rel: 'stylesheet',
-            },
-            {
-                href: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css',
-                rel: 'stylesheet',
-                //integrity: 'sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH',
-                crossOrigin: 'anonymous'
-            },
-            {
-                href: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js',
-                //integrity: 'sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy',
-                crossOrigin: 'anonymous'
             }
         ],
         bodyContent: {

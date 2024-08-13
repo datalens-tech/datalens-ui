@@ -52,6 +52,11 @@ enum Panel {
     Settings = 'settings',
 }
 
+enum PopupName {
+    Main = 'main',
+    Account = 'account',
+}
+
 const getLinkWrapper = (node: React.ReactNode, path: string) => {
     return (
         <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
@@ -102,7 +107,7 @@ export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapte
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
     const [visiblePanel, setVisiblePanel] = React.useState<Panel>();
-    const [popupVisible, setPopupVisible] = React.useState(false);
+    const [currentPopup, setCurrentPopup] = React.useState<PopupName | null>(null);
 
     const renderAsideHeaderContent = React.useCallback(
         (asideHeaderData: AsideHeaderData) => {
@@ -180,21 +185,7 @@ export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapte
                 itemWrapper: (params: any, makeItem: any) => {
                     return getLinkWrapper(makeItem(params), ROLES_PATH);
                 },
-            }] : []),
-            ...(DL.ZITADEL_ENABLED
-                ? [
-                      {
-                          id: 'logout',
-                          title: i18n('label_logout'),
-                          icon: ArrowRightFromSquare,
-                          iconSize: 16,
-                          tooltipText: i18n('label_logout'),
-                          onItemClick: () => {
-                              window.location.assign('/logout');
-                          },
-                      },
-                  ]
-                : []),
+            }] : [])
         ],
         [pathname],
     );
@@ -231,21 +222,23 @@ export const AsideHeaderAdapter = ({renderContent, superUser}: AsideHeaderAdapte
                 <FooterItem
                     compact={isCompact}
                     item={{
-                        id: 'main',
+                        id: PopupName.Main,
                         icon: CircleQuestion,
                         iconSize: FOOTER_ITEM_DEFAULT_SIZE,
                         title: i18n('label_main'),
                         tooltipText: i18n('label_main'),
-                        current: popupVisible,
+                        current: currentPopup === PopupName.Main,
                         onItemClick: () => {
                             setVisiblePanel(undefined);
-                            setPopupVisible(!popupVisible);
+                            setCurrentPopup(
+                                currentPopup === PopupName.Main ? null : PopupName.Main,
+                            );
                         },
                     }}
                     enableTooltip={false}
-                    popupVisible={popupVisible}
+                    popupVisible={currentPopup === PopupName.Main}
                     popupOffset={[0, 8]}
-                    onClosePopup={() => setPopupVisible(false)}
+                    onClosePopup={() => setCurrentPopup(null)}
                     renderPopupContent={() => {
                         return (
                             <List

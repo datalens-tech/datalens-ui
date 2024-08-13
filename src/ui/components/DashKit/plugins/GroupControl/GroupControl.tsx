@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Plugin, PluginWidgetProps, SettingsProps} from '@gravity-ui/dashkit';
+import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
 import {Loader} from '@gravity-ui/uikit';
@@ -29,6 +29,7 @@ import {
     selectSkipReload,
     selectTabHashState,
 } from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {DashConfigContext} from '../../../../units/dash/utils/context';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
@@ -71,6 +72,8 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const LOCAL_META_VERSION = 2;
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
+    static contextType = DashConfigContext;
+
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
@@ -103,26 +106,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsData[item.id] = null;
         });
 
-        let stateParams: Record<string, StringParams>;
-
-        // to apply initial params from dash state inside group
-        if (controlData.updateControlsOnChange) {
-            this.fillQueueWithInitial(true);
-
-            stateParams = this.getUpdatedGroupParams({
-                params: this.props.params,
-            });
-        } else {
-            stateParams = this.props.params;
-        }
-
-        this.initialParams = stateParams;
+        this.initialParams = this.props.params;
 
         this.state = {
             status: LOAD_STATUS.INITIAL,
             silentLoading: false,
             isInit: false,
-            stateParams,
+            stateParams: this.props.params,
             needReload: false,
             localUpdateLoader: false,
         };
@@ -135,10 +125,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     componentDidUpdate(prevProps: Readonly<PluginGroupControlProps>) {
         if (this.rootNode.current) {
             if (this.props.data.autoHeight) {
-                // if the "Auto-height" flag is set
+                // if the "Autoheight" flag is set
                 this.adjustWidgetLayout(false);
             } else if (prevProps.data.autoHeight) {
-                // if the "Auto-height" flag was set and then removed
+                // if the "Autoheight" flag was set and then removed
                 this.adjustWidgetLayout(true);
             }
         }
@@ -221,6 +211,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     componentWillUnmount() {
         this._isUnmounted = true;
+        if (this.props.data.autoHeight) {
+            this.setAdjustWidgetLayout(true);
+        }
     }
 
     render() {
@@ -267,6 +260,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
             const param = Object.keys(groupItem.defaults)[0];
             const defaultItemParam = groupItem.defaults[param];
+
+            if (!checkByProps && !this.state.stateParams[groupItem.id]) {
+                continue;
+            }
 
             const isItemSignificant = checkByProps
                 ? this.props.params[groupItem.id][param] !== defaultItemParam
@@ -458,7 +455,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // to get changed params considering aliases and relations only inside group
         const updatedStateParams = getItemsParams({
             config: {
-                ...this.props.currentTabConfig,
+                ...(this.props.currentTabConfig || this.context || {aliases: [], connections: []}),
                 items: [currentConfigItem],
             } as Config,
             itemsStateAndParams: {
@@ -763,7 +760,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         label={i18n('button_apply')}
                         updateOnChange={true}
                         theme="action"
-                        className={b('item')}
+                        className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
                     />
@@ -771,7 +768,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 {controlData.buttonReset && (
                     <ControlButton
                         type={CONTROL_TYPE.BUTTON}
-                        className={b('item')}
+                        className={b('item', {button: true})}
                         label={i18n('button_reset')}
                         onClick={resetAction}
                         onChange={this.handleResetChange}
@@ -815,8 +812,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return;
         }
 
+        let stateParams: Record<string, StringParams>;
+        const controlData = this.props.data as unknown as DashTabItemGroupControlData;
+
+        // to apply initial params from dash state inside group
+        if (controlData.updateControlsOnChange) {
+            this.fillQueueWithInitial(true);
+
+            stateParams = this.getUpdatedGroupParams({
+                params: this.props.params,
+            });
+        } else {
+            stateParams = this.props.params;
+        }
+
         this.setState({
             status: LOAD_STATUS.PENDING,
+            stateParams,
         });
     }
 

@@ -145,7 +145,6 @@ class ActionPanel extends React.Component<Props, State> {
             centerItems = [],
             rightItems,
             className: mix,
-            enablePublish,
             sidebarSize,
             entryContent,
             isRevisionsOpened,
@@ -169,7 +168,7 @@ class ActionPanel extends React.Component<Props, State> {
                             <EntryPanel
                                 entry={entry}
                                 additionalEntryItems={additionalEntryItems}
-                                enablePublish={enablePublish}
+                                enablePublish={this.getEnablePublish()}
                             >
                                 {centerItems}
                             </EntryPanel>
@@ -211,6 +210,17 @@ class ActionPanel extends React.Component<Props, State> {
 
     private getEntry() {
         return this.props.entry || this.state.entry;
+    }
+
+    private getEnablePublish() {
+        const getEntryPublishGloballyDisabledFn = registry.common.functions.get(
+            'getEntryPublishGloballyDisabled',
+        );
+        if (getEntryPublishGloballyDisabledFn()) {
+            return false;
+        }
+
+        return Boolean(this.props.enablePublish);
     }
 
     private setEntryContent() {

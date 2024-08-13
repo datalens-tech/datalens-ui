@@ -1,0 +1,43 @@
+export const RESET_STATE = Symbol('iamAccessDialog/RESET_STATE');
+
+export const LIST_ACCESS_BINDINGS_LOADING = Symbol('iamAccessDialog/LIST_ACCESS_BINDINGS_LOADING');
+export const LIST_ACCESS_BINDINGS_SUCCESS = Symbol('iamAccessDialog/LIST_ACCESS_BINDINGS_SUCCESS');
+export const LIST_ACCESS_BINDINGS_FAILED = Symbol('iamAccessDialog/LIST_ACCESS_BINDINGS_FAILED');
+
+export const UPDATE_ACCESS_BINDINGS_LOADING = Symbol(
+    'iamAccessDialog/UPDATE_ACCESS_BINDINGS_LOADING',
+);
+export const UPDATE_ACCESS_BINDINGS_SUCCESS = Symbol(
+    'iamAccessDialog/UPDATE_ACCESS_BINDINGS_SUCCESS',
+);
+export const UPDATE_ACCESS_BINDINGS_FAILED = Symbol(
+    'iamAccessDialog/UPDATE_ACCESS_BINDINGS_FAILED',
+);
+
+export const UPDATE_LIST_ACCESS_BINDINGS_INLINE = Symbol(
+    'iamAccessDialog/UPDATE_LIST_ACCESS_BINDINGS_INLINE',
+);
+
+export const GET_COLLECTION_BREADCRUMBS_LOADING = Symbol(
+    'iamAccessDialog/GET_COLLECTION_BREADCRUMBS_LOADING',
+);
+export const GET_COLLECTION_BREADCRUMBS_SUCCESS = Symbol(
+    'iamAccessDialog/GET_COLLECTION_BREADCRUMBS_SUCCESS',
+);
+export const GET_COLLECTION_BREADCRUMBS_FAILED = Symbol(
+    'iamAccessDialog/GET_COLLECTION_BREADCRUMBS_FAILED',
+);
+
+export const GET_CLAIMS_LOADING = Symbol('iamAccessDialog/GET_CLAIMS_LOADING');
+export const GET_CLAIMS_SUCCESS = Symbol('iamAccessDialog/GET_CLAIMS_SUCCESS');
+export const GET_CLAIMS_FAILED = Symbol('iamAccessDialog/GET_CLAIMS_FAILED');
+
+export const SUGGEST_BATCH_LIST_MEMBERS_LOADING = Symbol(
+    'iamAccessDialog/SUGGEST_BATCH_LIST_MEMBERS_LOADING',
+);
+export const SUGGEST_BATCH_LIST_MEMBERS_SUCCESS = Symbol(
+    'iamAccessDialog/SUGGEST_BATCH_LIST_MEMBERS_SUCCESS',
+);
+export const SUGGEST_BATCH_LIST_MEMBERS_FAILED = Symbol(
+    'iamAccessDialog/SUGGEST_BATCH_LIST_MEMBERS__FAILED',
+);

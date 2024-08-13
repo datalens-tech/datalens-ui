@@ -1,4 +1,5 @@
 import type IsolatedVM from 'isolated-vm';
+import {isString} from 'lodash';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
@@ -72,6 +73,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 2;
 }
 
 type ExecuteParams = {
@@ -121,18 +123,25 @@ const execute = async ({
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
-    let sandboxResult = {module: {exports: undefined}};
+    let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
-    jail.setSync('log', function (...args: unknown[]): void {
-        isolatedConsole.log(...args);
+    jail.setSync('__log', function (...args: unknown[]): void {
+        const processed = args.map((elem) => {
+            if (typeof elem === 'string') {
+                return JSON.parse(elem as string);
+            }
+            return elem;
+        });
+        isolatedConsole.log(...processed);
     });
 
     jail.setSync('__timeout', timeout);
 
     try {
+        timeStart = process.hrtime();
         prepareChartEditorApi({
             name: filename,
             jail,
@@ -144,10 +153,9 @@ const execute = async ({
         libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
-        timeStart = process.hrtime();
 
         const responseStringify = `
-            return JSON.stringify({module}, function(key, val) {
+            return JSON.stringify({module, __shared, __params}, function(key, val) {
                 if (typeof val === 'function') {
                     return val.toString();
                 }
@@ -163,8 +171,10 @@ const execute = async ({
         sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'message' in e && (e.message as string);
-
+            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace =
+                isString(errorStackTrace) &&
+                errorStackTrace.split('at (<isolated-vm boundary>)')[0].split('at execute')[0];
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;
             }
@@ -176,8 +186,16 @@ const execute = async ({
         executionTiming = process.hrtime(timeStart);
     }
 
-    const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
-    const params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+    let shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
+    let params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+
+    if (sandboxResult.__shared) {
+        shared = {...shared, ...sandboxResult.__shared};
+    }
+
+    if (sandboxResult.__params) {
+        params = {...params, ...sandboxResult.__params};
+    }
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);

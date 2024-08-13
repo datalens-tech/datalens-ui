@@ -1,0 +1,15 @@
+.dl-iam-access-dialog-add-user-action-panel {
+    display: flex;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--g-color-line-generic);
+
+    &__info {
+        flex: 1;
+    }
+
+    &__change-role {
+        margin-left: 6px;
+        min-width: 170px;
+    }
+}

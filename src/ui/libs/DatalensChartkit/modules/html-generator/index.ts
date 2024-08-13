@@ -6,13 +6,13 @@ import {getRandomCKId} from '../../helpers/helpers';
 
 import {
     ALLOWED_ATTRIBUTES,
-    ALLOWED_REFERENCES,
     ALLOWED_TAGS,
     ATTR_DATA_TOOLTIP_ANCHOR_ID,
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_PLACEMENT,
     TAG_DL_TOOLTIP,
 } from './constants';
+import {validateUrl} from './utils';
 
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
 const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
@@ -46,6 +46,22 @@ export function generateHtml(
         const elem = document.createElement(isDLTooltip ? 'div' : tag);
         Object.assign(elem.style, isDLTooltip ? {display: 'inline-block'} : {}, style);
 
+        if (style) {
+            const additionalCssProperties: string[] = [];
+
+            Object.entries(style).forEach(([key, value]) => {
+                if (!elem.style[key as keyof CSSStyleDeclaration]) {
+                    additionalCssProperties.push(`${key}: ${escape(String(value))};`);
+                }
+            });
+
+            if (additionalCssProperties.length) {
+                const additionalCssText = additionalCssProperties.join(' ');
+                const elemCssText = elem.style.cssText ? `${elem.style.cssText} ` : '';
+                elem.setAttribute('style', `${elemCssText}${additionalCssText}`);
+            }
+        }
+
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key)) {
                 throw new ChartKitCustomError(null, {
@@ -54,11 +70,7 @@ export function generateHtml(
             }
 
             if (ATTRS_WITH_REF_VALIDATION.includes(key)) {
-                if (!ALLOWED_REFERENCES.some((ref) => String(value).startsWith(ref))) {
-                    throw new ChartKitCustomError(null, {
-                        details: `Attribute '${key}' is not valid`,
-                    });
-                }
+                validateUrl(String(value), `Attribute '${key}' is not valid`);
             }
 
             const preparedValue = TOOLTIP_ATTRS.includes(key)

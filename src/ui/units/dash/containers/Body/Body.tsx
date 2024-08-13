@@ -71,7 +71,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {Error} from '../Error/Error';
+import {DashError} from '../DashError/DashError';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
@@ -89,6 +89,7 @@ type OwnProps = {
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
     dashkitSettings: DashKitProps['settings'];
+    disableHashNavigation?: boolean;
 } & (
     | ({
           onlyView?: boolean;
@@ -117,6 +118,7 @@ type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 type OverlayControls = NonNullable<DashKitProps['overlayControls']>;
 type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
+// Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
     entryDialoguesRef = React.createRef<EntryDialogues>();
@@ -325,6 +327,7 @@ class Body extends React.PureComponent<BodyProps> {
             hideErrorDetails,
             onRetry,
             error,
+            disableHashNavigation,
         } = this.props;
 
         switch (mode) {
@@ -332,7 +335,7 @@ class Body extends React.PureComponent<BodyProps> {
             case Mode.Updating:
                 return <Loader size="l" />;
             case Mode.Error:
-                return <Error error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
+                return <DashError error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
         }
 
         const localTabs = memoizedGetLocalTabs(tabs);
@@ -351,7 +354,7 @@ class Body extends React.PureComponent<BodyProps> {
                             settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
                     })}
                 >
-                    <TableOfContent />
+                    <TableOfContent disableHashNavigation={disableHashNavigation} />
                     <div
                         className={b('content', {
                             'with-table-of-content': showTableOfContent && hasTableOfContent,
@@ -387,22 +390,18 @@ class Body extends React.PureComponent<BodyProps> {
             </div>
         );
 
-        if (Utils.isEnabledFeature(Feature.EnableDashDNDPanel)) {
-            return (
-                <DashKitDnDWrapper
-                    onDragStart={() => {
-                        this.setState({isGlobalDragging: true});
-                    }}
-                    onDragEnd={() => {
-                        this.setState({isGlobalDragging: false});
-                    }}
-                >
-                    {content}
-                </DashKitDnDWrapper>
-            );
-        }
-
-        return content;
+        return (
+            <DashKitDnDWrapper
+                onDragStart={() => {
+                    this.setState({isGlobalDragging: true});
+                }}
+                onDragEnd={() => {
+                    this.setState({isGlobalDragging: false});
+                }}
+            >
+                {content}
+            </DashKitDnDWrapper>
+        );
     }
 
     private getOverlayControls = (): DashKitProps['overlayControls'] => {

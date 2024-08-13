@@ -1,20 +1,22 @@
 import type {DatasetField} from 'shared';
+import {matchDatasetFieldFilter} from 'ui/utils/helpers';
 
 import type {EditorItemToDisplay} from '../../store/types';
 
 export const getFilteredFields = (args: {
     filter: string;
     showHidden: boolean;
+    dlDebugMode?: boolean;
     fields?: DatasetField[];
 }) => {
-    const {filter, showHidden, fields = []} = args;
+    const {filter, showHidden, dlDebugMode = false, fields = []} = args;
 
-    return fields.filter(({title, hidden}) => {
+    return fields.filter(({title, hidden, description, guid}) => {
         if (!showHidden && hidden) {
             return false;
         }
 
-        return title.toLowerCase().includes(filter.toLowerCase());
+        return matchDatasetFieldFilter(filter, dlDebugMode, {title, description, guid});
     });
 };
 

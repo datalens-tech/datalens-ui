@@ -30,6 +30,8 @@ import {closeDialog, openDialog, openDialogParameter} from 'store/actions/dialog
 import type {DatalensGlobalState} from 'ui';
 import {DL, EntryDialogName, NavigationMinimal} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
+import {selectDebugMode} from 'ui/store/selectors/user';
+import {matchDatasetFieldFilter} from 'ui/utils/helpers';
 import {openDialogMultidataset} from 'units/wizard/actions/dialog';
 import {
     selectDataset,
@@ -739,7 +741,7 @@ class SectionDataset extends React.Component<Props, State> {
     };
 
     renderSections = () => {
-        const {visualization} = this.props;
+        const {visualization, dlDebugMode} = this.props;
         let {dimensions, measures} = this.props;
 
         const {searchPhrase, appliedSearchPhrase, datasetItemsLoading} = this.state;
@@ -751,13 +753,21 @@ class SectionDataset extends React.Component<Props, State> {
         ));
 
         if (appliedSearchPhrase) {
-            dimensions = dimensions.filter((item) => {
-                return item.title.toLowerCase().includes(appliedSearchPhrase);
-            });
+            dimensions = dimensions.filter((item) =>
+                matchDatasetFieldFilter(appliedSearchPhrase, dlDebugMode, {
+                    title: item.title,
+                    description: item.description,
+                    guid: item.guid,
+                }),
+            );
 
-            measures = measures.filter((item) => {
-                return item.title.toLowerCase().includes(appliedSearchPhrase);
-            });
+            measures = measures.filter((item) =>
+                matchDatasetFieldFilter(appliedSearchPhrase, dlDebugMode, {
+                    title: item.title,
+                    description: item.description,
+                    guid: item.guid,
+                }),
+            );
         }
 
         const filteredDimensions = dimensions.filter(isFieldVisible);
@@ -1148,6 +1158,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         hierarchies: selectHierarchies(state),
         widget,
         datasetId: selectDatasetId(state),
+        dlDebugMode: selectDebugMode(state),
     };
 };
 
