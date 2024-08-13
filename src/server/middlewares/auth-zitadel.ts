@@ -1,14 +1,16 @@
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
+import {defaultOnFail} from '../callbacks';
 import {
     generateServiceAccessUserToken,
     introspect,
     refreshTokens,
-    saveUserToSesson,
+    saveUserToLocals,
+    saveUserToSession,
 } from '../components/zitadel/utils';
 import {logout} from '../controllers/zitadel';
 
-export default async function (req: Request, res: Response, next: NextFunction) {
+async function authZitadel(req: Request, res: Response, next: NextFunction) {
     const {ctx} = req;
 
     const isAuthenticated = req.isAuthenticated();
@@ -21,9 +23,10 @@ export default async function (req: Request, res: Response, next: NextFunction) 
         const accessToken = req.user.accessToken;
         const refreshToken = req.user.refreshToken;
 
-        const accessTokenIntrospected = await introspect(ctx, accessToken);
+        let introspectResult = await introspect(ctx, accessToken);
 
-        if (accessTokenIntrospected) {
+        if (introspectResult.active) {
+            saveUserToLocals(res, introspectResult);
             return next();
         } else {
             const tokensFirstTrial = await refreshTokens(ctx, refreshToken);
@@ -43,18 +46,24 @@ export default async function (req: Request, res: Response, next: NextFunction) 
                 req.user.accessToken = tokens.accessToken;
                 req.user.refreshToken = tokens.refreshToken;
 
-                await saveUserToSesson(req);
+                await saveUserToSession(req);
+                introspectResult = await introspect(ctx, req.user.accessToken);
 
-                return next();
-            } else if (req.routeInfo?.ui) {
+                if (introspectResult.active) {
+                    saveUserToLocals(res, introspectResult);
+                    return next();
+                }
+            }
+
+            if (req.routeInfo?.ui) {
                 try {
                     return logout(req, res);
                 } catch (e) {
-                    ctx.logError('logout', e);
+                    req.ctx.logError('logout', e);
+                    throw e;
                 }
-            } else {
-                return res.status(498).send('Unauthorized access');
             }
+            return res.status(498).send('Unauthorized access');
         }
     }
 
@@ -68,4 +77,13 @@ export default async function (req: Request, res: Response, next: NextFunction) 
     }
 
     return res.redirect('/auth');
+}
+
+export default async function (req: Request, res: Response, next: NextFunction) {
+    return authZitadel(req, res, next)
+        .catch((error) => {
+            req.ctx.logError('AUTH_ZITADEL_FAILED', error);
+            defaultOnFail(req, res);
+        })
+        .catch((error) => next(error));
 }

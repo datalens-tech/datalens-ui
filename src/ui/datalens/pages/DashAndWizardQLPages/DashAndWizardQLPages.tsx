@@ -49,10 +49,6 @@ const DEFAULT_DASH_PATHS = [
 ];
 
 class DashAndWizardQLAppPage extends React.PureComponent<DashAndWizardQLAppPageProps> {
-    componentDidMount() {
-        window.addEventListener('beforeunload', this.props.deleteLock);
-    }
-
     componentDidUpdate(prevProps: DashAndWizardQLAppPageProps) {
         const prevDashboardId = prevProps.match.params?.parentDashboardId
             ? prevProps.match.params?.parentDashboardId.split('-')[0]
@@ -68,7 +64,6 @@ class DashAndWizardQLAppPage extends React.PureComponent<DashAndWizardQLAppPageP
     }
 
     componentWillUnmount() {
-        window.removeEventListener('beforeunload', this.props.deleteLock);
         this.props.deleteLock();
     }
 

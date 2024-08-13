@@ -125,10 +125,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     componentDidUpdate(prevProps: Readonly<PluginGroupControlProps>) {
         if (this.rootNode.current) {
             if (this.props.data.autoHeight) {
-                // if the "Auto-height" flag is set
+                // if the "Autoheight" flag is set
                 this.adjustWidgetLayout(false);
             } else if (prevProps.data.autoHeight) {
-                // if the "Auto-height" flag was set and then removed
+                // if the "Autoheight" flag was set and then removed
                 this.adjustWidgetLayout(true);
             }
         }
@@ -211,6 +211,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     componentWillUnmount() {
         this._isUnmounted = true;
+        if (this.props.data.autoHeight) {
+            this.setAdjustWidgetLayout(true);
+        }
     }
 
     render() {
@@ -257,6 +260,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             }
             const param = Object.keys(groupItem.defaults)[0];
             const defaultItemParam = groupItem.defaults[param];
+
+            if (!checkByProps && !this.state.stateParams[groupItem.id]) {
+                continue;
+            }
 
             const isItemSignificant = checkByProps
                 ? this.props.params[groupItem.id][param] !== defaultItemParam

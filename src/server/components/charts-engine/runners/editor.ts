@@ -205,7 +205,7 @@ export const runEditor = async (
 
                         const logError = prepareErrorForLogger(result.error);
 
-                        cx.log('PROCESSED_WITH_ERRORS', {error: {...logError, sandboxVersion}});
+                        cx.log('PROCESSED_WITH_ERRORS', {error: logError});
 
                         let statusCode = 500;
 
