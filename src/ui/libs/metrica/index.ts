@@ -52,7 +52,6 @@ export const reachMetricaGoalGeneric = <T extends string>(
     goalId: T,
     params?: Record<string, unknown>,
 ) => {
-    console.log('GOAL');
     const counter = getCounterConfigByName(counterName);
 
     if (counter) {
