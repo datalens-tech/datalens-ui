@@ -8,8 +8,10 @@ import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3'
 import {buildHighchartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/highcharts';
 import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
 import {buildSourcesPrivate} from '../../../../modes/charts/plugins/datalens/url/build-sources';
+import {setConsole} from '../../../../modes/charts/plugins/datalens/utils/misc-helpers';
 import {createI18nInstance} from '../../../../utils/language';
 import {getChartApiContext} from '../processor/chart-api-context';
+import {Console} from '../processor/console';
 
 import type {
     BuildChartArgs,
@@ -31,6 +33,9 @@ const worker: WizardWorker = {
             userLang,
         });
 
+        const console = new Console({});
+        setConsole(console);
+
         return {
             exports: buildSourcesPrivate({
                 apiVersion: '2',
@@ -39,6 +44,7 @@ const worker: WizardWorker = {
                 palettes,
             }),
             runtimeMetadata: context.__runtimeMetadata,
+            logs: console.getLogs(),
         };
     },
     buildLibraryConfig: async (args: BuildLibraryConfigArgs) => {
@@ -51,6 +57,9 @@ const worker: WizardWorker = {
             widgetConfig,
             userLang,
         });
+
+        const console = new Console({});
+        setConsole(console);
 
         let result;
         const visualizationId = shared?.visualization?.id;
@@ -77,6 +86,7 @@ const worker: WizardWorker = {
         return {
             exports: result,
             runtimeMetadata: context.__runtimeMetadata,
+            logs: console.getLogs(),
         };
     },
 
@@ -91,6 +101,9 @@ const worker: WizardWorker = {
             userLang,
         });
 
+        const console = new Console({});
+        setConsole(console);
+
         return {
             exports: buildChartsConfigPrivate({
                 shared: shared as ServerChartsConfig,
@@ -99,6 +112,7 @@ const worker: WizardWorker = {
                 features,
             }),
             runtimeMetadata: context.__runtimeMetadata,
+            logs: console.getLogs(),
         };
     },
 
@@ -117,6 +131,9 @@ const worker: WizardWorker = {
         const i18n = createI18nInstance({lang: userLang});
         context.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
+        const console = new Console({});
+        setConsole(console);
+
         const result = buildGraphPrivate({
             data,
             shared,
@@ -128,6 +145,7 @@ const worker: WizardWorker = {
         return {
             exports: result,
             runtimeMetadata: context.__runtimeMetadata,
+            logs: console.getLogs(),
         };
     },
 };
