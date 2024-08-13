@@ -221,8 +221,6 @@ export const usePreparedTableData = (props: {
                     if (typeof originalCellData?.width !== 'undefined') {
                         cellStyle.whiteSpace = 'normal';
                         cellStyle.wordBreak = 'break-word';
-                    } else if (prerender) {
-                        cellStyle.whiteSpace = 'nowrap';
                     }
 
                     if (rowIndex > 0) {

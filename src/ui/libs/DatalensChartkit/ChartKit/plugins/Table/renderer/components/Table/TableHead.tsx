@@ -33,6 +33,7 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                         clickable: th.sortable,
                                         pinned: th.pinned,
                                         'first-cell': th.index === 0,
+                                        align: th.colSpan && th.colSpan > 1 ? 'center' : undefined,
                                     })}
                                     style={{
                                         ...th.style,

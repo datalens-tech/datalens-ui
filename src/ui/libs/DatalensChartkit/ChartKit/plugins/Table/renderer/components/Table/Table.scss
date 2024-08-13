@@ -134,10 +134,10 @@
         text-align: left;
     }
 
-    &__header &__tr:not(:last-child) &__th {
-        text-align: center;
-        justify-content: center;
-    }
+    //&__header &__tr:not(:last-child):not(:first-child) &__th {
+    //    text-align: center;
+    //    justify-content: center;
+    //}
 
     &__header &__sort-icon {
         position: absolute;

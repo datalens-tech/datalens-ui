@@ -10,11 +10,11 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
     result.forEach((_r, rowIndex) => {
         const row = rows[rowIndex];
         let cellIndex = 0;
-        Array.from(row.childNodes ?? []).forEach((c, index) => {
+        Array.from(row.childNodes ?? []).forEach((c) => {
             const cell = c as Element;
             let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
             let colSpan = Number(cell.getAttribute('colSpan') || 1);
-            const cellWidth = cell.getBoundingClientRect()?.width + (index === 0 ? 1 : 0);
+            const cellWidth = cell.getBoundingClientRect()?.width;
 
             if (result[rowIndex][cellIndex] !== null) {
                 cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);
