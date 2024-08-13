@@ -110,7 +110,8 @@ const execute = async ({
         const after = `
             __modules["${name}"] = module.exports
         `;
-        context.evalClosureSync(prepare + code + after, [], {timeout});
+        const codeWrapper = `(function () { \n ${code} \n })();`;
+        context.evalClosureSync(`${prepare}\n ${codeWrapper} \n ${after}`, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'message' in e && (e.message as string);
