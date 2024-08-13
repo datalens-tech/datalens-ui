@@ -10,14 +10,34 @@ var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
             if (typeof elem === 'function') {
-                return JSON.stringify(val.toString());    
+                return elem.toString();
             } else {
-                return JSON.stringify(elem);
+                return elem;
             }
         })
         return __log(...processed);
     }
 };
+
+const __prepareFunctionsForStringify = (value) => {
+    function replaceFunctions(value) {
+        if(Array.isArray(value)) {
+            return value.map(replaceFunctions);   
+        }
+        if (typeof value === 'object' && value !== null) {
+            const replaced = {};
+            Object.keys(value).forEach(key => {
+                replaced[key] = replaceFunctions(value[key]);     
+            })
+            return replaced;
+        }
+        if (typeof value === 'function') {
+            return value.toString();
+        }
+        return value;
+    }
+    return replaceFunctions(value);
+}
 
 ${libsControlV1Interop.prepareAdapter};
 ${libsDatalensV3Interop.prepareAdapter};
