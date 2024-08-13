@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1906.0] 13.08.2024
+
+Fixed:
+
+- обновление версии 0.1863.0 -> 0.1906.0;
+- исправлена ошибка при просмотре чартов, к которым нет доступа.
+
 ## [0.1863.0] 22.07.2024
 
 Обновление версии 0.1794.0 -> 0.1863.0
