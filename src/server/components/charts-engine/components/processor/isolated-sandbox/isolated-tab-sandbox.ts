@@ -152,7 +152,7 @@ const execute = async ({
             ${filename === 'Highcharts' || filename === 'Config' ? `module = __prepareFunctionsForStringify(module);` : ``};
             return {module, __shared, __params};`;
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        const codeWrapper = `(function () {${code}})();`;
+        const codeWrapper = `(function () { \n ${code} \n })();`;
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
