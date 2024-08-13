@@ -148,11 +148,12 @@ const execute = async ({
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
-        const responseStringify = `
+        const after = `
             ${filename === 'Highcharts' || filename === 'Config' ? `module = __prepareFunctionsForStringify(module);` : ``};
             return {module, __shared, __params};`;
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        sandboxResult = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
+        const codeWrapper = `(function () {${code}})();`;
+        sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
             lineOffset: -prepare.split('\n').length,
