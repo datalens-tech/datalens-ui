@@ -123,7 +123,7 @@ const execute = async ({
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
-    let sandboxResult = {module: {exports: undefined}};
+    let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
@@ -155,7 +155,7 @@ const execute = async ({
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
         const responseStringify = `
-            return JSON.stringify({module}, function(key, val) {
+            return JSON.stringify({module, __shared, __params}, function(key, val) {
                 if (typeof val === 'function') {
                     return val.toString();
                 }
@@ -186,8 +186,16 @@ const execute = async ({
         executionTiming = process.hrtime(timeStart);
     }
 
-    const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
-    const params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+    let shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
+    let params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+
+    if (sandboxResult.__shared) {
+        shared = {...shared, ...sandboxResult.__shared};
+    }
+
+    if (sandboxResult.__params) {
+        params = {...params, ...sandboxResult.__params};
+    }
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);

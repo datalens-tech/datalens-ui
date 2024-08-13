@@ -39,7 +39,7 @@ import {
     shouldUseUISandbox,
     unwrapPossibleFunctions,
 } from './ui-sandbox';
-import {getSafeChartWarnings} from './utils';
+import {getSafeChartWarnings, isPotentiallyUnsafeChart} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 
@@ -325,7 +325,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
+            processHtmlFields(result.data, {
+                allowHtml: !isPotentiallyUnsafeChart(loadedType) || enableJsAndHtml,
+            });
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
 
             applyChartkitHandlers(result.config, result.libraryConfig);
@@ -419,6 +421,14 @@ function applyChartkitHandlers(
         ) {
             libraryConfigRef.yAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.DCMonitoringLabelFormatter];
+        }
+
+        if (
+            libraryConfigRef.yAxis?.labels?.formatter ===
+            ChartkitHandlers.WizardScatterYAxisLabelFormatter
+        ) {
+            libraryConfigRef.yAxis.labels.formatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterYAxisLabelFormatter];
         }
 
         if (

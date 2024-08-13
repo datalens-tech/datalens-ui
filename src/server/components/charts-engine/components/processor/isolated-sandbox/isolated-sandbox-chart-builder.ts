@@ -13,6 +13,7 @@ import type {ModulesSandboxExecuteResult} from './isolated-modules-sandbox';
 import {Sandbox} from './sandbox';
 
 const ONE_SECOND = 1000;
+const UI_EXECUTION_TIMEOUT = ONE_SECOND * 2;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 const CE_BUNDLE_PATH = 'ce-dist/bundled-libs.js';
@@ -274,7 +275,7 @@ export const getIsolatedSandboxChartBuilder = async (
             const tabResult = await Sandbox.processTab({
                 name: 'UI',
                 code: config.data.ui || '',
-                timeout: ONE_SECOND,
+                timeout: UI_EXECUTION_TIMEOUT,
                 hooks: options.hooks,
                 shared,
                 params: options.params,

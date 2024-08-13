@@ -29,4 +29,8 @@
     &__logo-icon {
         color: var(--g-color-base-brand);
     }
+
+    &__user-avatar {
+        cursor: pointer;
+    }
 }
