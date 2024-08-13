@@ -284,7 +284,7 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = [...Object.values(EntryScope), EntryScope.Presentation];
+export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Presentation];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
