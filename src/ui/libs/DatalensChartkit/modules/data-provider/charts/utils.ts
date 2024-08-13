@@ -5,16 +5,13 @@ function isHtmlString(value: unknown) {
     return typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
-export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
-    const chartTypesToCheck = [
-        'graph_node',
-        'map_node',
-        'ymap_node',
-        'timeseries_node',
-        'table_node',
-    ];
+export function isPotentiallyUnsafeChart(chartType: string) {
+    const chartTypesToCheck = ['graph_node', 'map_node', 'ymap_node', 'timeseries_node'];
+    return chartTypesToCheck.includes(chartType);
+}
 
-    if (chartTypesToCheck.includes(chartType)) {
+export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {
+    if (isPotentiallyUnsafeChart(chartType)) {
         const ignoreAttrs = [WRAPPED_FN_KEY, WRAPPED_HTML_KEY];
         const pathToFunction = isObjectWith(widgetData, isFunction, ignoreAttrs);
         if (pathToFunction) {

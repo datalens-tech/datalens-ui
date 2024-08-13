@@ -156,30 +156,33 @@ export const iamAccessDialogReducer = (
         }
 
         case UPDATE_LIST_ACCESS_BINDINGS_INLINE: {
-            const updatedListAccessBindings = state.listAccessBindings.data?.map((item) => {
-                const accessBinding = item;
-                if (accessBinding.resource.id === action.data.resourceId) {
-                    accessBinding.response.accessBindings =
-                        accessBinding.response.accessBindings.map((res) => {
-                            const response = res;
-
-                            if (response.subject.id === action.data.subjectId) {
-                                response.roleId = action.data.roleId;
-                            }
-
-                            return response;
-                        });
+            const updatedItemsAccessBindings = state.itemsAccessBindings?.map((item) => {
+                if (item.resource.id === action.data.resourceId) {
+                    return {
+                        ...item,
+                        response: {
+                            ...item.response,
+                            accessBindings: item.response.accessBindings.map((res) => {
+                                if (res.subject.id === action.data.subjectId) {
+                                    return {
+                                        ...res,
+                                        subject: {
+                                            ...res.subject,
+                                        },
+                                        roleId: action.data.roleId,
+                                    };
+                                }
+                                return res;
+                            }),
+                        },
+                    };
                 }
-
-                return accessBinding;
+                return {...item};
             });
 
             return {
                 ...state,
-                listAccessBindings: {
-                    ...state.listAccessBindings,
-                    data: updatedListAccessBindings,
-                },
+                itemsAccessBindings: updatedItemsAccessBindings,
             };
         }
 

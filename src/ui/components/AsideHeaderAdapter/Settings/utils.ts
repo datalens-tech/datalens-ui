@@ -1,30 +1,25 @@
 import type {ThemeSettings} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {DARK_THEME, DEFAULT_THEME_CONFIG, LIGHT_THEME, SYSTEM_THEME} from 'shared';
 import type {DLUserSettings} from 'shared/types/common';
-import {DARK_THEME, LIGHT_THEME, SYSTEM_THEME} from 'ui/constants';
 
 import type {ThemeSettingsUpdates} from './types';
 import {HighcontrastValue} from './types';
 
 const i18n = I18n.keyset('component.aside-header-settings.view');
 
-const DEFAULT_THEME_SETTINGS = {
-    theme: 'system',
-    themeSettings: {systemDarkTheme: 'dark', systemLightTheme: 'light'},
-};
-
 export const getLocalTheme = (): {theme: string; themeSettings: ThemeSettings} => {
     const rawUserSettings = localStorage.getItem('userSettings');
 
     if (!rawUserSettings) {
-        return DEFAULT_THEME_SETTINGS;
+        return DEFAULT_THEME_CONFIG;
     }
 
     const parsedUserSettings: Partial<DLUserSettings> = JSON.parse(rawUserSettings);
 
     return {
-        theme: parsedUserSettings.theme || DEFAULT_THEME_SETTINGS.theme,
-        themeSettings: parsedUserSettings.themeSettings || DEFAULT_THEME_SETTINGS.themeSettings,
+        theme: parsedUserSettings.theme || DEFAULT_THEME_CONFIG.theme,
+        themeSettings: parsedUserSettings.themeSettings || DEFAULT_THEME_CONFIG.themeSettings,
     };
 };
 

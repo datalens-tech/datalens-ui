@@ -235,9 +235,7 @@ export const DL = {
     },
 };
 
-export const LIGHT_THEME = 'light';
-export const DARK_THEME = 'dark';
-export const SYSTEM_THEME = 'system';
+export {LIGHT_THEME, DARK_THEME, SYSTEM_THEME} from 'shared';
 
 // monaco-editor common themes:
 // https://github.com/microsoft/vscode/blob/main/src/vs/editor/standalone/common/themes.ts
