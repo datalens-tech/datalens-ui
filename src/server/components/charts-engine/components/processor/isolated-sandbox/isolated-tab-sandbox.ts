@@ -156,7 +156,7 @@ const execute = async ({
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
-            lineOffset: -prepare.split('\n').length,
+            lineOffset: -prepare.split('\n').length - 1,
             result: {
                 copy: true,
             },
