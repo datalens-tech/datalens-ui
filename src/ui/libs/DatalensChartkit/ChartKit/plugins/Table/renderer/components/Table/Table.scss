@@ -29,9 +29,7 @@
 
     &__snapter-container {
         &_preparing {
-            position: absolute;
-            left: -100000px;
-            top: -100000px;
+            opacity: 0;
         }
     }
 

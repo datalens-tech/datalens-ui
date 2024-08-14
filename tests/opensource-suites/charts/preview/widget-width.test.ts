@@ -1,7 +1,7 @@
 import type {Page} from '@playwright/test';
 import {expect} from '@playwright/test';
 
-import {ChartKitQa, PreviewQa} from '../../../../src/shared';
+import {PreviewQa} from '../../../../src/shared';
 import type {TestParametrizationConfig} from '../../../types/config';
 import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
@@ -21,9 +21,9 @@ datalensTest.describe('Charts Preview', () => {
     // check that the table occupies 100% of the screen width, there is no horizontal scrolling
     datalensTest('Table widget must be the same @screenshot', async ({page}) => {
         const chartWrapper = page.locator(slct(PreviewQa.ChartWrapper));
-        const previewLoader = chartWrapper.locator(slct(ChartKitQa.Loader));
+        const firstTableCell = page.locator('td').first();
 
-        await expect(previewLoader).not.toBeVisible();
+        await firstTableCell.waitFor();
         await expect(chartWrapper).toHaveScreenshot();
     });
 });
