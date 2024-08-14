@@ -27,6 +27,14 @@
     min-width: 100%;
     width: max-content;
 
+    &__snapter-container {
+        &_preparing {
+            position: absolute;
+            left: -100000px;
+            top: -100000px;
+        }
+    }
+
     &__table-wrapper {
         width: 100%;
 
@@ -134,11 +142,6 @@
         text-align: left;
     }
 
-    //&__header &__tr:not(:last-child):not(:first-child) &__th {
-    //    text-align: center;
-    //    justify-content: center;
-    //}
-
     &__header &__sort-icon {
         position: absolute;
         right: 0;
@@ -228,7 +231,7 @@
     }
 }
 
-table.dl-table_final {
+table.dl-table_prepared {
     thead {
         display: grid;
         position: sticky;

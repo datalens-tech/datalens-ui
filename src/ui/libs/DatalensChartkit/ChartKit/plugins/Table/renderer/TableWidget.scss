@@ -4,10 +4,7 @@
     flex-direction: column;
     height: 100%;
     overflow: auto;
-
-    // left for compatibility with screenshots of old tables
-    // delete after the final move to a new plugin
-    width: calc(100% - 1px);
+    width: 100%;
 
     &__number-column {
         text-align: right;

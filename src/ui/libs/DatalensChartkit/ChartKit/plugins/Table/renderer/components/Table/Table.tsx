@@ -37,10 +37,11 @@ type Props = {
     widgetData: TableWidgetData;
     dimensions: WidgetDimensions;
     onChangeParams?: (params: StringParams) => void;
+    onReady?: () => void;
 };
 
 export const Table = React.memo<Props>((props: Props) => {
-    const {dimensions: widgetDimensions, widgetData, onChangeParams} = props;
+    const {dimensions: widgetDimensions, widgetData, onChangeParams, onReady} = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = typeof config?.title === 'string' ? config.title : config?.title?.text;
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
@@ -125,6 +126,12 @@ export const Table = React.memo<Props>((props: Props) => {
         getCellAdditionStyles,
     });
 
+    React.useEffect(() => {
+        if (onReady && prerender) {
+            setTimeout(onReady, 0);
+        }
+    }, [onReady, prerender]);
+
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
     const tableActualHeight = useTableHeight({ref: tableRef, prerender});
     const noData = !props.widgetData.data?.head?.length;
@@ -199,10 +206,10 @@ export const Table = React.memo<Props>((props: Props) => {
             <div
                 className={b(
                     'snapter-container',
+                    {preparing: prerender},
                     [SNAPTER_HTML_CLASSNAME, CHARTKIT_SCROLLABLE_NODE_CLASSNAME].join(' '),
                 )}
                 ref={tableContainerRef}
-                style={{maxHeight: widgetDimensions.height}}
             >
                 <TableTitle title={title} />
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
@@ -213,7 +220,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     )}
                     {!noData && (
                         <table
-                            className={b({final: !prerender})}
+                            className={b({prepared: !prerender})}
                             style={{minHeight: totalSize}}
                             ref={tableRef}
                         >
@@ -233,7 +240,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     )}
                 </div>
             </div>
-            {isPaginationEnabled && (
+            {isPaginationEnabled && !prerender && (
                 <Paginator
                     page={pagination.currentPage}
                     rowsCount={pagination.rowsCount}

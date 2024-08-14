@@ -69,17 +69,13 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             };
         }, [debuncedHandleResize]);
 
-        React.useLayoutEffect(() => {
-            if (!dimensions?.width) {
-                return;
-            }
-
+        const handleTableReady = React.useCallback(() => {
             const widgetRendering = Performance.getDuration(generatedId);
 
             if (onLoad && widgetRendering) {
                 onLoad({widget: props.data, widgetRendering});
             }
-        }, [generatedId, onLoad, dimensions, props.data]);
+        }, [generatedId, onLoad, props.data]);
 
         const handleChangeParams = React.useCallback(
             (params: StringParams) => {
@@ -97,6 +93,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         widgetData={props.data}
                         dimensions={dimensions}
                         onChangeParams={handleChangeParams}
+                        onReady={handleTableReady}
                     />
                 ) : (
                     <Loader />
