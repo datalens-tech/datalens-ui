@@ -47,6 +47,9 @@ type DialogShareProps = {
     urlIdPrefix?: string;
     initialParams?: Record<string, number>;
     hasDefaultSize?: boolean;
+    showStateSelector?: boolean;
+    showFederationSelector?: boolean;
+    showEmbedLink?: boolean;
 };
 
 const getInitialLink = (
@@ -76,6 +79,18 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     initialParams = {},
     hasDefaultSize,
 }) => {
+    console.log({
+        onClose,
+        showLinkDescription,
+        showMarkupLink,
+        showHideComments,
+        loadedData,
+        propsData,
+        urlIdPrefix,
+        initialParams,
+        hasDefaultSize,
+    });
+
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
     );

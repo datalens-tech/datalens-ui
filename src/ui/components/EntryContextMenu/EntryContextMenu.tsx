@@ -136,6 +136,11 @@ class EntryContextMenu extends React.PureComponent<Props> {
                 // do nothing
                 break;
             }
+            case ENTRY_CONTEXT_MENU_ACTION.SHARE: {
+                console.log('share');
+                // do nothing
+                break;
+            }
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {
                 migrateToWorkbookEntry(this.entryDialoguesRef, entry);
                 break;

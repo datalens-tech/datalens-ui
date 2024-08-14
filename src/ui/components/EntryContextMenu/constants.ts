@@ -1,4 +1,5 @@
 import {
+    ArrowShapeTurnUpRight,
     Clock,
     CodeTrunk,
     Copy,
@@ -29,6 +30,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
     SHOW_RELATED_ENTITIES: 'show-related-entities',
@@ -199,7 +201,20 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Link,
         text: 'value_copy-link',
         enable: () => true,
-        scopes: ALL_SCOPES,
+        scopes: [
+            EntryScope.Connection,
+            EntryScope.Dataset,
+            EntryScope.Folder,
+            EntryScope.Presentation,
+        ],
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        icon: ArrowShapeTurnUpRight,
+        text: 'value_share',
+        enable: () => true,
+        scopes: [EntryScope.Dash, EntryScope.Widget],
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
