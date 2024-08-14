@@ -282,7 +282,7 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = Object.values(Scope);
+export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Presentation];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
@@ -291,6 +291,7 @@ export const OBJECT_SCOPES = [
     EntryScope.Dataset,
     EntryScope.Dash,
     EntryScope.Connection,
+    EntryScope.Presentation,
 ];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
