@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import type IsolatedVM from 'isolated-vm';
 
 import {
@@ -16,7 +17,9 @@ export type ChartEditorGetTranslation = (
     key: string,
     getTranslationParams?: string,
 ) => string;
-export type ChartEditorGetSharedData = () => string;
+export type ChartEditorGetSharedData = () => {
+    [key: string]: object;
+};
 export type ChartEditorUserLang = string;
 export type ChartEditorUserLogin = string;
 export type ChartEditorAttachHandler = (handlerConfig: string) => string;
@@ -30,8 +33,8 @@ export type ChartEditorGetWidgetConfig = () => string;
 export type ChartEditorGetActionParams = () => string;
 export type ChartEditorWrapFnWrappedFnKey = string;
 export type ChartEditorWrapHtmlWrappedHtmlKey = string;
-export type ChartEditorGetParams = () => string;
-export type ChartEditorGetParam = (key: string) => string | null;
+export type ChartEditorGetParams = () => StringParams;
+export type ChartEditorGetParam = (key: string) => string | string[];
 export type ChartEditorGetSortParams = string;
 export type ChartEditorCurrentPage = number;
 export type ChartEditorUpdateParams = (params: string) => undefined;
@@ -78,8 +81,7 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
-        const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
-        return JSON.stringify(shared);
+        return chartEditorApi.getSharedData();
     }) satisfies ChartEditorGetSharedData);
 
     jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang() satisfies ChartEditorUserLang);
@@ -147,11 +149,11 @@ export function prepareChartEditorApi({
     );
 
     jail.setSync('_ChartEditor_getParams', (() => {
-        return JSON.stringify(params);
+        return params;
     }) satisfies ChartEditorGetParams);
 
     jail.setSync('_ChartEditor_getParam', ((paramName: string) => {
-        return JSON.stringify(chartEditorApi.getParam(paramName));
+        return chartEditorApi.getParam(paramName);
     }) satisfies ChartEditorGetParam);
 
     if (name === 'Urls') {

@@ -129,13 +129,7 @@ const execute = async ({
     jail.setSync('global', jail.derefInto());
 
     jail.setSync('__log', function (...args: unknown[]): void {
-        const processed = args.map((elem) => {
-            if (typeof elem === 'string') {
-                return JSON.parse(elem as string);
-            }
-            return elem;
-        });
-        isolatedConsole.log(...processed);
+        isolatedConsole.log(...args);
     });
 
     jail.setSync('__timeout', timeout);
@@ -154,21 +148,19 @@ const execute = async ({
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
-        const responseStringify = `
-            return JSON.stringify({module, __shared, __params}, function(key, val) {
-                if (typeof val === 'function') {
-                    return val.toString();
-                }
-                return val;
-            });`;
-
+        const after = `
+            ${filename === 'Highcharts' || filename === 'Config' ? `module = __prepareFunctionsForStringify(module);` : ``};
+            return {module, __shared, __params};`;
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
+        const codeWrapper = `(function () { \n ${code} \n })();`;
+        sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
-            lineOffset: -prepare.split('\n').length,
+            lineOffset: -prepare.split('\n').length - 1,
+            result: {
+                copy: true,
+            },
         });
-        sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);

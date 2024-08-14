@@ -7,6 +7,7 @@ import type {
     StringParams,
 } from '../../../../../shared';
 import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/build-sources/types';
+import type {LogItem} from '../processor/console';
 import type {RuntimeMetadata} from '../processor/types';
 
 export type BuildSourceArgs = {
@@ -52,17 +53,21 @@ export type WizardWorker = {
     buildSources: (args: BuildSourceArgs) => Promise<{
         runtimeMetadata: RuntimeMetadata;
         exports: SourceRequests;
+        logs?: LogItem[][];
     }>;
     buildLibraryConfig: (args: BuildLibraryConfigArgs) => Promise<{
         runtimeMetadata: RuntimeMetadata;
         exports: Record<string, unknown>;
+        logs?: LogItem[][];
     }>;
     buildChartConfig: (args: BuildChartConfigArgs) => Promise<{
         runtimeMetadata: RuntimeMetadata;
         exports: unknown;
+        logs?: LogItem[][];
     }>;
     buildChart: (args: BuildChartArgs) => Promise<{
         runtimeMetadata: RuntimeMetadata;
         exports: unknown;
+        logs?: LogItem[][];
     }>;
 };
