@@ -92,7 +92,7 @@ const ChartEditor: IChartEditor = {
     getTranslation: (keyset, key, params) =>
         _ChartEditor_getTranslation(keyset, key, JSON.stringify(params)),
     getSharedData: () => {
-        __shared = __shared || JSON.parse(_ChartEditor_getSharedData());
+        __shared = __shared || _ChartEditor_getSharedData();
         return __shared;
     },
     getLang: () => _ChartEditor_userLang,
@@ -140,12 +140,11 @@ const ChartEditor: IChartEditor = {
         },
 
     getParams: () => {
-        __params = __params || JSON.parse(_ChartEditor_getParams());
+        __params = __params || _ChartEditor_getParams();
         return __params;
     },
     getParam: (paramName) => {
-        const param = _ChartEditor_getParam(paramName);
-        return param ? JSON.parse(param) : null;
+        return _ChartEditor_getParam(paramName);
     },
 
     getSortParams: () => JSON.parse(_ChartEditor_getSortParams),
