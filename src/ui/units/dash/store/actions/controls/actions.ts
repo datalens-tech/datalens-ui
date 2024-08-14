@@ -3,7 +3,7 @@ import {type ConfigItemGroup, DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpe
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared/types';
-import {DashTabItemType} from 'shared/types';
+import {DashTabItemType, TitlePlacementOption} from 'shared/types';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
@@ -191,7 +191,10 @@ export const applyGroupControlDialog = () => {
 
         const isSingleControl = selectorsGroup.group.length === 1;
         const autoHeight =
-            !isSingleControl || selectorsGroup.buttonApply || selectorsGroup.buttonReset
+            !isSingleControl ||
+            selectorsGroup.buttonApply ||
+            selectorsGroup.buttonReset ||
+            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
                 ? selectorsGroup.autoHeight
                 : false;
         const updateControlsOnChange =

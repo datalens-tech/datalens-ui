@@ -26,6 +26,7 @@ type GetChartApiContextArgs = {
     shared: Record<string, object> | Shared | ServerChartsConfig;
     hooks?: Record<string, any>;
     userLang: string | null;
+    disableErrorTransformer?: boolean;
 };
 
 export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContext => {
@@ -39,6 +40,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         shared = {},
         hooks,
         userLang,
+        disableErrorTransformer = false,
     } = args;
 
     const api: IChartEditor = {
@@ -114,9 +116,11 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     }
 
     if (name === 'Urls') {
-        api.setErrorTransform = (errorTransformer) => {
-            context.__runtimeMetadata.errorTransformer = errorTransformer;
-        };
+        if (!disableErrorTransformer) {
+            api.setErrorTransform = (errorTransformer) => {
+                context.__runtimeMetadata.errorTransformer = errorTransformer;
+            };
+        }
         api.getSortParams = () => getSortParams(params);
     }
 

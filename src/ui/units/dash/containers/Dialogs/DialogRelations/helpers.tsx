@@ -408,7 +408,6 @@ export const getWidgetsOptions = (
                 });
                 break;
             case DashTabItemType.Widget:
-                // todo add chart name (need to fetch getEntryMeta for title displaying cherteditor widgets)
                 widgetItem.data.tabs.forEach((item) => {
                     options.push({
                         value: item.id,

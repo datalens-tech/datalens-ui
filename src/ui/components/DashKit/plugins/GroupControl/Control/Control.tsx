@@ -18,6 +18,7 @@ import {
     DATASET_FIELD_TYPES,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
+    TitlePlacementOption,
 } from 'shared';
 import {useMountedState} from 'ui/hooks';
 import {
@@ -454,16 +455,21 @@ export const Control = ({
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
-        const {required, operation, elementType} = source;
+        const {required, operation, elementType, titlePlacement} = source;
 
         const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
 
+        const vertical = titlePlacement === TitlePlacementOption.Top;
+
+        // appearance props to help display the control before it is loaded
         const initialProps: Record<string, unknown> = {
             innerLabel,
             label,
+            labelPlacement: titlePlacement,
             className: b('item'),
-            labelClassName: b('item-label'),
+            // TODO: move class to withWrapForContros after cleaning code from old selectors
+            labelClassName: b('item-label', {vertical}),
 
             style,
             renderOverlay,
@@ -488,8 +494,14 @@ export const Control = ({
                     validateValue={validateValue}
                     getDistincts={getDistincts}
                     classMixin={b('item')}
-                    labelMixin={b('item-label')}
-                    selectProps={{innerLabel, label, style, limitLabel: true}}
+                    labelMixin={b('item-label', {vertical})}
+                    selectProps={{
+                        innerLabel,
+                        label,
+                        style,
+                        limitLabel: true,
+                        labelPlacement: titlePlacement,
+                    }}
                     renderOverlay={renderOverlay}
                 />
             );
@@ -557,7 +569,7 @@ export const Control = ({
             case CONTROL_TYPE.RANGE_DATEPICKER:
                 return <ControlRangeDatepicker returnInterval={true} {...props} />;
             case CONTROL_TYPE.CHECKBOX:
-                return <ControlCheckbox {...props} />;
+                return <ControlCheckbox {...props} className={b('item', {checkbox: true})} />;
         }
 
         return null;

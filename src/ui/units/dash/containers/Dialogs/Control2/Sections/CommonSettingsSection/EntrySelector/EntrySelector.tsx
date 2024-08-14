@@ -2,9 +2,12 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
+import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared/types';
 import NavigationInput from 'ui/units/dash/components/NavigationInput/NavigationInput';
 import type {EntryTypeNode} from 'ui/units/dash/modules/constants';
+import {changeNavigationPath} from 'ui/units/dash/store/actions/dashTyped';
+import {selectNavigationPath} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {FieldWrapper} from '../../../../../../../../components/FieldWrapper/FieldWrapper';
 
@@ -45,6 +48,13 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
         includeClickableType,
     } = props;
 
+    const dispatch = useDispatch();
+    const navigationPath = useSelector(selectNavigationPath);
+
+    const handleChangeNavigationPath = (newNavigationPath: string) => {
+        dispatch(changeNavigationPath(newNavigationPath));
+    };
+
     return (
         <FormRow label={label}>
             <FieldWrapper error={errorText}>
@@ -58,6 +68,8 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
                     isInvalid={isInvalid}
                     getEntryLink={getEntryLink}
                     includeClickableType={includeClickableType}
+                    navigationPath={navigationPath}
+                    changeNavigationPath={handleChangeNavigationPath}
                 />
             </FieldWrapper>
         </FormRow>

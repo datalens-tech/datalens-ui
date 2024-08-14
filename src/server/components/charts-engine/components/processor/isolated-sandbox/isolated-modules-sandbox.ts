@@ -44,6 +44,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 2;
 }
 
 type ExecuteParams = {
@@ -90,8 +91,8 @@ const execute = async ({
     try {
         const prepare = `
            const console = {log};   
-           let exports = {};
-           let module = {exports};
+           var module = {exports: {}};
+           var exports = module.exports;
            const ChartEditor = {
                 getUserLang: () => "${userLang}"
            };
@@ -109,7 +110,8 @@ const execute = async ({
         const after = `
             __modules["${name}"] = module.exports
         `;
-        context.evalClosureSync(prepare + code + after, [], {timeout});
+        const codeWrapper = `(function () { \n ${code} \n })();`;
+        context.evalClosureSync(`${prepare}\n ${codeWrapper} \n ${after}`, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'message' in e && (e.message as string);

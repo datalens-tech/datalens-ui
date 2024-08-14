@@ -6,7 +6,12 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    DialogGroupControlQa,
+    TitlePlacementOption,
+} from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
@@ -188,7 +193,12 @@ export const GroupControlSidebar = () => {
     };
 
     const showAutoHeight =
-        isMultipleSelectors || selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+        isMultipleSelectors ||
+        selectorsGroup.buttonApply ||
+        selectorsGroup.buttonReset ||
+        // until we have supported automatic height adjustment for case with top title placement,
+        // we allow to enable autoheight
+        selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (

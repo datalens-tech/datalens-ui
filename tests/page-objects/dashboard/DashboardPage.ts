@@ -1048,9 +1048,7 @@ class DashboardPage extends BasePage {
         // if one of selectors is visible, group selector is loaded
         await expect(firstLabelLocator).toBeVisible();
         const allLabelsLocators = await controlLabelLocator.all();
-        const labels = await Promise.all(
-            allLabelsLocators.map((locator) => locator.getAttribute('title')),
-        );
+        const labels = await Promise.all(allLabelsLocators.map((locator) => locator.textContent()));
 
         return labels;
     }

@@ -30,11 +30,6 @@ export const selectGetClaimsIsLoading = createSelector(
     (getClaims) => getClaims.isLoading,
 );
 
-export const selectListAccessBindingsData = createSelector(
-    [selectListAccessBindings],
-    (listAccessBindings) => listAccessBindings.data,
-);
-
 export const selectGetCollectionBreadcrumbsData = createSelector(
     [selectGetCollectionBreadcrumbs],
     (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,

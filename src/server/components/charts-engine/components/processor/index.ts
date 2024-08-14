@@ -597,10 +597,12 @@ export class Processor {
                     }
                 }
 
-                const {errorTransformer} = sourcesTabResults.runtimeMetadata;
+                if (!isEnabledServerFeature(ctx, Feature.NoErrorTransformer)) {
+                    const {errorTransformer} = sourcesTabResults.runtimeMetadata;
 
-                if (errorTransformer) {
-                    response.error = errorTransformer(response.error);
+                    if (errorTransformer) {
+                        response.error = errorTransformer(response.error);
+                    }
                 }
 
                 injectLogs({target: response});
@@ -897,7 +899,9 @@ export class Processor {
 
             return result;
         } catch (error) {
-            ctx.logError('Run failed', error);
+            const sandboxVersion =
+                isObject(error) && 'sandboxVersion' in error && error.sandboxVersion;
+            ctx.logError('Run failed', error, {sandboxVersion});
 
             const isError = (error: unknown): error is SandboxError => {
                 return isObject(error);
@@ -959,6 +963,7 @@ export class Processor {
                                 ? StackTracePreparer.prepare(executionResult.stackTrace)
                                 : '',
                             tabName: error.executionResult ? error.executionResult.filename : '',
+                            sandboxVersion: error.sandboxVersion || 1,
                         },
                         statusCode: DEFAULT_RUNTIME_ERROR_STATUS,
                     };
