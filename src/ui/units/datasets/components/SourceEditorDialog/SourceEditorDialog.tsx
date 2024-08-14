@@ -106,9 +106,9 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
                 setValidationErrors(nextValidationErrors);
             }
 
-            setSource(getUpdatedSource(source, update));
+            setSource((prevSource) => getUpdatedSource(prevSource, update));
         },
-        [setSource, source, validationErrors],
+        [setSource, validationErrors],
     );
 
     const closeConfirmDialog = React.useCallback(() => {
