@@ -95,6 +95,7 @@ export type BodyCellViewData = {
     id: string;
     style?: React.CSSProperties;
     contentStyle?: React.CSSProperties;
+    contentType?: 'null';
     content: JSX.Element | React.ReactNode;
     className?: string;
     type?: 'number';

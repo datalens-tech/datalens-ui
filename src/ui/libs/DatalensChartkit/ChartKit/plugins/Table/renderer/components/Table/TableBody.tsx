@@ -56,7 +56,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                     colSpan={cell.colSpan}
                                 >
                                     <div
-                                        className={b('cell-content')}
+                                        className={b('cell-content', {type: cell.contentType})}
                                         data-qa={ChartKitTableQa.CellContent}
                                         style={cell.contentStyle}
                                     >

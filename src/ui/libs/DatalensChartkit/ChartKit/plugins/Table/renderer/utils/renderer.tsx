@@ -144,7 +144,7 @@ export function renderCellContent(args: {
         } else if (cellType === 'number') {
             formattedValue = numberFormatter(cell.value as number, column as NumberViewOptions);
         } else {
-            formattedValue = String(cell.value);
+            formattedValue = String(cell.value ?? '');
         }
     }
 

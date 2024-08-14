@@ -96,10 +96,15 @@
 
     &__cell-content {
         display: flex;
-        width: 100%;
+        min-width: 100%;
         height: 100%;
         justify-content: inherit;
         align-items: inherit;
+
+        &_type_null {
+            font-style: italic;
+            opacity: 0.5;
+        }
     }
 
     &__header {

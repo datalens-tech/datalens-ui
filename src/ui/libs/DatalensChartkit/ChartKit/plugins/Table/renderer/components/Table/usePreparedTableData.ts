@@ -322,6 +322,7 @@ export const usePreparedTableData = (props: {
                     contentStyle,
                     content: renderCell(cell.getContext()),
                     type: get(originalCellData, 'type'),
+                    contentType: originalCellData?.value === null ? 'null' : undefined,
                     pinned,
                     className:
                         typeof originalCellData?.className === 'function'
