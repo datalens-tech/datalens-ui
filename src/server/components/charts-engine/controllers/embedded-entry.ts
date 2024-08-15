@@ -1,9 +1,10 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
+import {isObject} from 'lodash';
 
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigProps} from '../components/storage/base';
+import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
@@ -56,12 +57,14 @@ export const embeddedEntryController = (req: Request, res: Response) => {
     ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
     Promise.resolve(configPromise)
-        .catch((error) => {
+        .catch((err: unknown) => {
+            const error: ResolveConfigError =
+                isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);
             const result: {
                 error: {
                     code: string;
                     details: {
-                        code: string;
+                        code: number | null;
                     };
                     extra?: {hideRetry: boolean};
                 };
@@ -76,7 +79,8 @@ export const embeddedEntryController = (req: Request, res: Response) => {
             };
 
             ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
-            res.status(error.status || 500).send(result);
+            const status = (error.response && error.response.status) || error.status || 500;
+            res.status(status).send(result);
         })
         .then(async (response) => {
             if (response && 'entry' in response) {

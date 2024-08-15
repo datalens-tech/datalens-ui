@@ -10,7 +10,7 @@ import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
 import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigProps} from '../components/storage/base';
+import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 type RunControllerExtraSettings = {
@@ -102,13 +102,8 @@ export const runController = (
 
         Promise.resolve(configPromise)
             .catch((err: unknown) => {
-                type ConfigPromiseError = {
-                    message: unknown;
-                    response?: {status: number};
-                    status?: number;
-                };
-                const error: ConfigPromiseError =
-                    isObject(err) && 'message' in err ? err : {message: err};
+                const error: ResolveConfigError =
+                    isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);
                 const result: {
                     error: {
                         code: string;
