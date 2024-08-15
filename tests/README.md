@@ -52,3 +52,31 @@ npm run test:e2e:opensource
 1. Start project `sudo rm -rf tests/metadata && docker compose -f tests/docker-compose.e2e.yml pull && docker compose -f tests/docker-compose.e2e.yml up`
 2. Create necessary test entries in interface
 3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created
+
+### Screenshots tests:
+
+In some cases, you may need to compare the visual representation of widget charts and other elements.
+Playwright Test includes the ability to produce and visually compare screenshots using ```await expect(page).toHaveScreenshot()```.
+Details: https://playwright.dev/docs/test-snapshots
+
+It is convenient to add the ```@screenshot``` tag to the name of such tests so that you can immediately update all snapshots if needed.
+For example:
+
+```
+datalensTest('Date and time on the Y axis @screenshot', async ({page}) => {
+    ...
+});
+```
+
+There are many factors that affect browser rendering on different machines, including hardware & OS configuration.
+The only reliable way to get identical screenshots is to use identical hosts, or VMs with the same image, or containers.
+Therefore, to get the correct screenshots (identical to the reference ones), you need to run playwright inside the container:
+```
+npm run test:e2e:docker
+```
+
+To update snapshots, you must first set the env variable ```E2E_UPDATE_SNAPSHOTS```:
+```
+E2E_UPDATE_SNAPSHOTS=1
+```
+And later commit the resulting screenshots.
