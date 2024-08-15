@@ -264,6 +264,8 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
+    STATE: 'state',
+    YC_FEDERATION_ID: '__yc_federation_id',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;

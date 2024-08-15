@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Ellipsis, NodesRight} from '@gravity-ui/icons';
+import {Ellipsis, Globe} from '@gravity-ui/icons';
 import type {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -296,7 +296,7 @@ class EntryPanel extends React.Component<Props, State> {
             items.push({
                 icon: (
                     <Icon
-                        data={NodesRight}
+                        data={Globe}
                         className={ICONS_ENTRY_MENU_DEFAULT_CLASSNAME}
                         width={ICONS_ENTRY_MENU_DEFAULT_SIZE}
                         height={ICONS_ENTRY_MENU_DEFAULT_SIZE}

@@ -37,7 +37,7 @@ const themeOptions = [
 
 const b = block('dialog-share');
 
-type DialogShareProps = {
+export type DialogShareProps = {
     onClose: () => void;
     showLinkDescription?: boolean;
     showMarkupLink?: boolean;
@@ -47,9 +47,10 @@ type DialogShareProps = {
     urlIdPrefix?: string;
     initialParams?: Record<string, number>;
     hasDefaultSize?: boolean;
-    showStateSelector?: boolean;
-    showFederationSelector?: boolean;
+    showSelectorsCheckbox?: boolean;
+    showFederationCheckbox?: boolean;
     showEmbedLink?: boolean;
+    showHideMenu?: boolean;
 };
 
 const getInitialLink = (
@@ -78,28 +79,26 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     urlIdPrefix,
     initialParams = {},
     hasDefaultSize,
+    showEmbedLink = true,
+    showHideMenu = true, // ???
+    showSelectorsCheckbox,
+    showFederationCheckbox,
 }) => {
-    console.log({
-        onClose,
-        showLinkDescription,
-        showMarkupLink,
-        showHideComments,
-        loadedData,
-        propsData,
-        urlIdPrefix,
-        initialParams,
-        hasDefaultSize,
-    });
-
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
     );
     const [selectedTheme, setSelectedTheme] = React.useState('');
     const [selectedLang, setSelectedLang] = React.useState('');
+    const [isFederationSelected, setIsFederationSelected] = React.useState(
+        DL.USER.isFederationUser,
+    );
     const [hideMenu, setHideMenu] = React.useState(
         Boolean(initialParams[COMMON_URL_OPTIONS.NO_CONTROLS]),
     );
     const [hideComments, setHideComments] = React.useState(
+        Boolean(initialParams[CHARTKIT_URL_OPTIONS.HIDE_COMMENTS]),
+    );
+    const [isSelectorsSaved, setIsSelectorsSaved] = React.useState(
         Boolean(initialParams[CHARTKIT_URL_OPTIONS.HIDE_COMMENTS]),
     );
 
@@ -114,19 +113,35 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     React.useEffect(() => {
         setCurrentUrl((paramsUrl: URI) => {
             const updatedLink = new URI(paramsUrl.toString());
+            const queryState = new URLSearchParams(window.location.search).get(
+                COMMON_URL_OPTIONS.STATE,
+            );
             updatedLink.updateParams({
                 [COMMON_URL_OPTIONS.LANGUAGE]: selectedLang || null,
                 [COMMON_URL_OPTIONS.THEME]: selectedTheme || null,
                 [CHARTKIT_URL_OPTIONS.HIDE_COMMENTS]: hideComments ? 1 : null,
                 [COMMON_URL_OPTIONS.NO_CONTROLS]: hideMenu ? 1 : null,
+                [COMMON_URL_OPTIONS.STATE]: isSelectorsSaved ? queryState : null,
+                [COMMON_URL_OPTIONS.YC_FEDERATION_ID]: isFederationSelected
+                    ? DL.USER.federationId
+                    : null,
             });
 
             return updatedLink;
         });
-    }, [selectedLang, selectedTheme, hideMenu, hideComments]);
+    }, [
+        selectedLang,
+        selectedTheme,
+        hideMenu,
+        hideComments,
+        isSelectorsSaved,
+        isFederationSelected,
+    ]);
 
     const handleChangeMenuParam = () => setHideMenu(!hideMenu);
     const handleChangeCommentsParam = () => setHideComments(!hideComments);
+    const handleChangeSelectorsSaved = () => setIsSelectorsSaved(!isSelectorsSaved);
+    const handleChangeFederationSelected = () => setIsFederationSelected(!isFederationSelected);
     const handleChangeLang = (values: string[]) => setSelectedLang(values[0]);
     const handleChangeTheme = (values: string[]) => setSelectedTheme(values[0]);
 
@@ -160,13 +175,33 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                         <div className={b('description')}>{i18n('label_params-description')}</div>
                     )}
                     <div className={b('checkboxes')}>
-                        <Checkbox
-                            checked={hideMenu}
-                            onChange={handleChangeMenuParam}
-                            size={checkboxSize}
-                        >
-                            {i18n('value_hide-menu')}
-                        </Checkbox>
+                        {showSelectorsCheckbox && (
+                            <Checkbox
+                                checked={isSelectorsSaved}
+                                onChange={handleChangeSelectorsSaved}
+                                size={checkboxSize}
+                            >
+                                Сохранить значения селекторов
+                            </Checkbox>
+                        )}
+                        {showFederationCheckbox && (
+                            <Checkbox
+                                checked={isFederationSelected}
+                                onChange={handleChangeFederationSelected}
+                                size={checkboxSize}
+                            >
+                                Сохранить федерацию: {DL.USER.federationId}
+                            </Checkbox>
+                        )}
+                        {showHideMenu && (
+                            <Checkbox
+                                checked={hideMenu}
+                                onChange={handleChangeMenuParam}
+                                size={checkboxSize}
+                            >
+                                {i18n('value_hide-menu')}
+                            </Checkbox>
+                        )}
                         {showHideComments && (
                             <Checkbox
                                 checked={hideComments}
@@ -220,12 +255,14 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                                 defaultSize={defaultSize}
                             />
                         )}
-                        <ShareLink
-                            title={i18n('label_iframe')}
-                            description={i18n('label_iframe-description')}
-                            text={getHTML()}
-                            showDescription={showLinkDescription}
-                        />
+                        {showEmbedLink && (
+                            <ShareLink
+                                title={i18n('label_iframe')}
+                                description={i18n('label_iframe-description')}
+                                text={getHTML()}
+                                showDescription={showLinkDescription}
+                            />
+                        )}
                     </div>
                 )}
             </div>

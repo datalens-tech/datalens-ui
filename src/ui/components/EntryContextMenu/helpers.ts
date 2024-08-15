@@ -4,7 +4,15 @@ import type {IconData} from '@gravity-ui/uikit';
 // import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {registry} from 'ui/registry';
 
-import {EntryScope, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import {
+    EDITOR_ROUTE,
+    ENTRY_TYPES,
+    EntryScope,
+    MenuItemsIds,
+    QL_ROUTE,
+    WIZARD_ROUTE,
+    getEntryNameByKey,
+} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
 import {DL} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
@@ -12,6 +20,7 @@ import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
+import type {DialogShareProps} from '../DialogShare/DialogShare';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
@@ -157,8 +166,47 @@ export async function showRelatedEntities(
     }
 }
 
-export function showShareDialog() {
-    // как-то вызвать или отрендерить диалог
+export async function showShareDialog(
+    entryDialoguesRef: EntryDialoguesRef,
+    entry: GetEntryResponse,
+) {
+    if (entryDialoguesRef.current) {
+        console.log(entry);
+        const {scope, type} = entry;
+
+        const dialogProps: DialogShareProps = {
+            onClose: () => {},
+            showEmbedLink: false,
+            propsData: {
+                id: entry.entryId,
+            },
+        };
+
+        if (scope === EntryScope.Widget) {
+            dialogProps.showHideMenu = false;
+
+            if (ENTRY_TYPES.wizard.includes(type)) {
+                dialogProps.urlIdPrefix = `/${WIZARD_ROUTE}/`;
+            } else if (ENTRY_TYPES.editor.includes(type)) {
+                dialogProps.urlIdPrefix = `/${EDITOR_ROUTE}/`;
+            } else if (ENTRY_TYPES.ql.includes(type)) {
+                dialogProps.urlIdPrefix = `/${QL_ROUTE}/`;
+            }
+        } else if (scope === EntryScope.Dash) {
+            dialogProps.showSelectorsCheckbox = true;
+            dialogProps.showFederationCheckbox = true;
+        }
+
+        // switch (entry.scope) {
+        //     case EntryScope.Widget: {
+        //     }
+        // }
+
+        await entryDialoguesRef.current.open({
+            dialog: EntryDialogName.Share,
+            dialogProps,
+        });
+    }
 }
 
 type EntryContextMenuIDTypeBase =

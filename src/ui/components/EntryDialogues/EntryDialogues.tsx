@@ -7,6 +7,8 @@ import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
 import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
+import {DialogShare} from '../DialogShare/DialogShare';
+import type {DialogShareProps} from '../DialogShare/DialogShare';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
 import {DialogAccess} from './DialogAccess/DialogAccess';
@@ -68,6 +70,7 @@ export enum EntryDialogName {
     SaveAsNew = 'save-as-new',
     MigrateToWorkbook = 'migrate-to-workbook',
     ShowRelatedEntities = 'show-related-entities',
+    Share = 'share',
 }
 
 const getMapDialogues = (): Record<string, any> => {
@@ -93,6 +96,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNew,
         [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbook,
         [EntryDialogName.ShowRelatedEntities]: DialogRelatedEntities,
+        [EntryDialogName.Share]: DialogShare,
         ...getAdditionalEntryDialoguesMap(),
     };
 };
@@ -118,6 +122,7 @@ interface MapDialoguesProps {
     [EntryDialogName.SetActualConfirm]: DialogMakeActualConfirmProps;
     [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNewProps;
     [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbookProps;
+    [EntryDialogName.Share]: DialogShareProps;
 }
 
 type MethodOpenWithProps<T> = {
