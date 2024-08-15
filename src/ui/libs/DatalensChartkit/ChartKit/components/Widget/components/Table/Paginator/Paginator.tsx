@@ -14,6 +14,7 @@ interface PaginatorProps {
     page?: string[] | number[] | string | number;
     rowsCount?: number;
     limit?: number;
+    className?: string;
 }
 
 interface ArrowButtonProps {
@@ -61,7 +62,7 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({page, qa, reversed, onChange})
     );
 };
 
-const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange}) => {
+const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange, className}) => {
     const [inputValue, setInputValue] = React.useState<string>(String(START_PAGE));
     const currentPage = preparePageValue(page);
 
@@ -89,7 +90,7 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange})
     }, [page]);
 
     return (
-        <div className={b()} data-qa={ChartKitTableQa.Paginator}>
+        <div className={b(null, className)} data-qa={ChartKitTableQa.Paginator}>
             <ArrowButton
                 page={currentPage}
                 qa={ChartKitTableQa.PaginatorPrevPageButton}

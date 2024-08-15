@@ -33,6 +33,12 @@
         }
     }
 
+    &__paginator {
+        &_preparing {
+            opacity: 0;
+        }
+    }
+
     &__table-wrapper {
         width: 100%;
 
@@ -153,6 +159,7 @@
     }
 
     &__body &__tr {
+        min-height: var(--dl-table-row-height);
         td {
             min-height: var(--dl-table-row-height);
         }

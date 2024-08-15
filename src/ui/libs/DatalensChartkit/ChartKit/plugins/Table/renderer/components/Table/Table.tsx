@@ -240,8 +240,9 @@ export const Table = React.memo<Props>((props: Props) => {
                     )}
                 </div>
             </div>
-            {isPaginationEnabled && !prerender && (
+            {isPaginationEnabled && (
                 <Paginator
+                    className={b('paginator', {preparing: prerender})}
                     page={pagination.currentPage}
                     rowsCount={pagination.rowsCount}
                     limit={pagination.pageLimit}
