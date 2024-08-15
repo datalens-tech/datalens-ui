@@ -68,7 +68,7 @@ datalensTest('Date and time on the Y axis @screenshot', async ({page}) => {
 });
 ```
 
-There are many factors that affect browser rendering on different machines, including hardware & OS configuration.
+There are many factors that affect browser rendering on different machines, including hardware and OS configuration.
 The only reliable way to get identical screenshots is to use identical hosts, or VMs with the same image, or containers.
 Therefore, to get the correct screenshots (identical to the reference ones), you need to run playwright inside the container:
 ```
