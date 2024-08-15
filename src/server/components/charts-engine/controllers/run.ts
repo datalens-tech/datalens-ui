@@ -2,6 +2,7 @@ import querystring from 'querystring';
 import url from 'url';
 
 import type {Request, Response} from '@gravity-ui/expresskit';
+import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
@@ -100,16 +101,23 @@ export const runController = (
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {key, id});
 
         Promise.resolve(configPromise)
-            .catch((error) => {
+            .catch((err: unknown) => {
+                type ConfigPromiseError = {
+                    message: unknown;
+                    response?: {status: number};
+                    status?: number;
+                };
+                const error: ConfigPromiseError =
+                    isObject(err) && 'message' in err ? err : {message: err};
                 const result: {
                     error: {
                         code: string;
                         details: {
-                            code: string;
+                            code: number | null;
                             entryId: string;
                         };
                         debug?: {
-                            message: string;
+                            message: unknown;
                         };
                     };
                 } = {
@@ -131,7 +139,8 @@ export const runController = (
                 }
 
                 ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "${key || id}"`, error);
-                res.status(error.status || 500).send(result);
+                const status = (error.response && error.response.status) || error.status || 500;
+                res.status(status).send(result);
             })
             .then(async (config) => {
                 if (!config) {
