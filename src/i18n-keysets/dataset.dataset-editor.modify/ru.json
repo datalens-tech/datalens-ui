@@ -34,7 +34,7 @@
   "column_source": "Источник поля",
   "column_title": "Имя",
   "field_display-rows": "Количество строк:",
-  "field_find-field": "Имя поля",
+  "field_find-field": "Имя или описание поля",
   "label_batch-selected-fields-count": "Выбрано полей — {{value}}",
   "label_column-field-id": "ID поля",
   "label_dataset-auto-creation-process": "Создаём датасет",

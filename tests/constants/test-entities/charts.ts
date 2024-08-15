@@ -8,3 +8,7 @@ export const ChartsParams = {
         url: '/wizard/1txnbnqns0e2p-city-sales-table-chart',
     },
 };
+
+export enum PreviewUrls {
+    FlatTableWithOneColumn = '/preview/yu8pwddfbvrul-table-with-one-column',
+}

@@ -1,3 +1,4 @@
+import type {ChartParametrizationConfig} from './charts';
 import type {ConnectionsParametrizationConfig} from './connections';
 import type {DashParametrizationConfig} from './dash';
 import type {DatasetsParametrizationConfig} from './datasets';
@@ -10,4 +11,5 @@ export type TestParametrizationConfig = {
     ql: QlParametrizationConfig;
     dash: DashParametrizationConfig;
     datasets: DatasetsParametrizationConfig;
+    charts: ChartParametrizationConfig;
 };

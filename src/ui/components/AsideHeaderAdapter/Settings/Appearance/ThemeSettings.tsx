@@ -2,8 +2,7 @@ import React from 'react';
 
 import {RadioButton} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {DARK_THEME, LIGHT_THEME, SYSTEM_THEME} from 'ui/constants';
-
+import {DARK_THEME, LIGHT_THEME, SYSTEM_THEME} from 'shared';
 const i18n = I18n.keyset('component.aside-header-settings.view');
 
 type ThemeSettingsProps = {

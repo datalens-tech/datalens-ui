@@ -6,7 +6,8 @@ import has from 'lodash/has';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
 
-import type {GraphWidgetEventScope} from '../../../../../shared';
+import type {GoToEventHandler, GraphWidgetEventScope} from '../../../../../shared';
+import {validateUrl} from '../../modules/html-generator/utils';
 import type {GraphWidget} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
@@ -138,20 +139,27 @@ export const applySetActionParamsEvents = (args: {
     }
 };
 
-function handleSeriesClickForGoTo(args: {point?: Highcharts.Point; url?: string}) {
-    const {point, url} = args;
+function handleSeriesClickForGoTo(args: {
+    point?: Highcharts.Point;
+    target?: GoToEventHandler['target'];
+}) {
+    const {point, target = 'blank'} = args;
     const pointUrl = get(point, 'options.custom.url');
-    const resultUrl = pointUrl || url;
 
-    if (!resultUrl) {
+    if (!pointUrl) {
         return;
     }
 
-    window.open(resultUrl);
+    try {
+        validateUrl(pointUrl);
+        window.open(pointUrl, target === '_self' ? '_self' : '_blank');
+    } catch (e) {
+        console.error(e);
+    }
 }
 
-export const applyGoToEvents = (args: {data: GraphWidget; url?: string}) => {
-    const {data, url} = args;
+export const applyGoToEvents = (args: {data: GraphWidget; target?: GoToEventHandler['target']}) => {
+    const {data, target} = args;
     const pathToSeriesEvents = 'libraryConfig.plotOptions.series.events';
 
     if (!has(data, pathToSeriesEvents)) {
@@ -166,7 +174,7 @@ export const applyGoToEvents = (args: {data: GraphWidget; url?: string}) => {
             proceed: Highcharts.SeriesClickCallbackFunction,
             event: Highcharts.SeriesClickEventObject,
         ) {
-            handleSeriesClickForGoTo({point: event.point, url});
+            handleSeriesClickForGoTo({point: event.point, target});
             proceed?.apply(this, [event]);
         },
     );

@@ -1,4 +1,5 @@
 import type IsolatedVM from 'isolated-vm';
+import {isString} from 'lodash';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
 import {getTranslationFn} from '../../../../../../shared/modules/language';
@@ -72,6 +73,7 @@ export class SandboxError extends Error {
     };
     details?: Record<string, string | number>;
     stackTrace?: string;
+    sandboxVersion = 2;
 }
 
 type ExecuteParams = {
@@ -121,19 +123,13 @@ const execute = async ({
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
-    let sandboxResult = {module: {exports: undefined}};
+    let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
     jail.setSync('__log', function (...args: unknown[]): void {
-        const processed = args.map((elem) => {
-            if (typeof elem === 'string') {
-                return JSON.parse(elem as string);
-            }
-            return elem;
-        });
-        isolatedConsole.log(...processed);
+        isolatedConsole.log(...args);
     });
 
     jail.setSync('__timeout', timeout);
@@ -152,25 +148,25 @@ const execute = async ({
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
-        const responseStringify = `
-            return JSON.stringify({module}, function(key, val) {
-                if (typeof val === 'function') {
-                    return val.toString();
-                }
-                return val;
-            });`;
-
+        const after = `
+            ${filename === 'Highcharts' || filename === 'Config' ? `module = __prepareFunctionsForStringify(module);` : ``};
+            return {module, __shared, __params};`;
         const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
+        const codeWrapper = `(function () { \n ${code} \n })();`;
+        sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
-            lineOffset: -prepare.split('\n').length,
+            lineOffset: -prepare.split('\n').length - 1,
+            result: {
+                copy: true,
+            },
         });
-        sandboxResult = JSON.parse(result);
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'message' in e && (e.message as string);
-
+            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace =
+                isString(errorStackTrace) &&
+                errorStackTrace.split('at (<isolated-vm boundary>)')[0].split('at execute')[0];
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;
             }
@@ -182,8 +178,16 @@ const execute = async ({
         executionTiming = process.hrtime(timeStart);
     }
 
-    const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
-    const params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+    let shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
+    let params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
+
+    if (sandboxResult.__shared) {
+        shared = {...shared, ...sandboxResult.__shared};
+    }
+
+    if (sandboxResult.__params) {
+        params = {...params, ...sandboxResult.__params};
+    }
 
     if (errorStackTrace) {
         const error = new SandboxError(RUNTIME_ERROR);
