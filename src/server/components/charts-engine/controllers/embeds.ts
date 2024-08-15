@@ -1,5 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
+import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
@@ -69,12 +70,19 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
         Promise.resolve(configPromise)
-            .catch((error) => {
+            .catch((err: unknown) => {
+                type ConfigPromiseError = {
+                    message: unknown;
+                    response?: {status: number};
+                    status?: number;
+                };
+                const error: ConfigPromiseError =
+                    isObject(err) && 'message' in err ? err : {message: err};
                 const result: {
                     error: {
                         code: string;
                         details: {
-                            code: string;
+                            code: number | null;
                         };
                         extra?: {hideRetry: boolean; hideDebugInfo: boolean};
                     };
@@ -89,7 +97,8 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 };
 
                 ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
-                res.status(error.status || 500).send(result);
+                const status = (error.response && error.response.status) || error.status || 500;
+                res.status(status).send(result);
             })
             .then(async (embeddingInfo) => {
                 if (!embeddingInfo || !('token' in embeddingInfo)) {
