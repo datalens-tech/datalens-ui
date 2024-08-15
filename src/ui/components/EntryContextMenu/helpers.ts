@@ -1,6 +1,7 @@
 import type React from 'react';
 
 import type {IconData} from '@gravity-ui/uikit';
+// import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {registry} from 'ui/registry';
 
 import {EntryScope, MenuItemsIds, getEntryNameByKey} from '../../../shared';
@@ -154,6 +155,10 @@ export async function showRelatedEntities(
             },
         });
     }
+}
+
+export function showShareDialog() {
+    // как-то вызвать или отрендерить диалог
 }
 
 type EntryContextMenuIDTypeBase =
