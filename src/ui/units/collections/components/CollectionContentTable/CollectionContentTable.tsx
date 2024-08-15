@@ -6,8 +6,9 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {DEFAULT_DATE_FORMAT, DEFAULT_DATE_TIME_FORMAT} from 'shared/constants';
+import {DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
+import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
 import type {
     CollectionWithPermissions,
@@ -68,6 +69,8 @@ export const CollectionContentTable = React.memo<Props>(
                 return {disabled: true};
             }
         }, [selectedCount, itemsAvailableForSelectionCount]);
+
+        const dateTimeFormat = useSelector(selectDateTimeFormat);
 
         if (DL.IS_MOBILE) {
             return (
@@ -162,7 +165,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div className={b('content-cell', {date: true})}>
                                             <Tooltip
                                                 content={dateTime({input: item.updatedAt}).format(
-                                                    DEFAULT_DATE_TIME_FORMAT,
+                                                    dateTimeFormat,
                                                 )}
                                             >
                                                 <span>
