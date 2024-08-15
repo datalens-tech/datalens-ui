@@ -24,6 +24,12 @@ export type ResolveConfigProps = {
     workbookId?: WorkbookId;
 };
 
+export type ResolveConfigError = {
+    response?: {status: number};
+    status?: number;
+    statusCode?: number;
+} & Error;
+
 export type BaseStorageInitParams = {
     initialPreloadFetchingInterval?: number;
     initialOauthToken: string;
@@ -178,13 +184,13 @@ export class BaseStorage {
                 });
                 return result;
             })
-            .catch((error) => {
+            .catch((error: ResolveConfigError) => {
                 onConfigFetchingFailed(error, {
                     id,
                     requestId,
                     traceId,
                     tenantId,
-                    statusCode: error.status || error.statusCode,
+                    statusCode: error.status || error.statusCode || error.response?.status || 500,
                     latency: new Date().getTime() - startTime,
                     userId,
                 });
