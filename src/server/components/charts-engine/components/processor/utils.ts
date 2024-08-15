@@ -4,6 +4,7 @@ import isString from 'lodash/isString';
 type ValidatedWrapFnArgs = {
     fn: (...args: unknown[]) => unknown;
     args?: unknown;
+    libs?: string[];
 };
 
 // There is a user value here, it could have any type
@@ -15,6 +16,10 @@ export const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
 
     if (typeof value.fn !== 'function') {
         throw new Error('"fn" property should be a function');
+    }
+
+    if (typeof value.libs !== 'undefined' && !Array.isArray(value.libs)) {
+        throw new Error('"libs" property should be a array of string');
     }
 
     return true;

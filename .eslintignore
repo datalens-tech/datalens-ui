@@ -3,3 +3,4 @@ node_modules
 src/i18n/keysets
 tests/dist
 build/
+src/ui/libs/DatalensChartkit/modules/ui-sandbox/libs/

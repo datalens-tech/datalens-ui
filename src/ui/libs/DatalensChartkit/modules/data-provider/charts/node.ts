@@ -319,9 +319,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
-                unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
+                await unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
+                await unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
+                await unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 

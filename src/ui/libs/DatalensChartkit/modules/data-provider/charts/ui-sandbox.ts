@@ -216,11 +216,29 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
     vmFunctionContext.dispose();
 };
 
-const getUnwrappedFunction = (
+async function getUiSandboxLibs(libs: string[]) {
+    const modules = await Promise.all(
+        libs.map((lib) => {
+            switch (lib) {
+                case 'date-utils':
+                case 'date-utils@2.4.0':
+                    return require('../../ui-sandbox/libs/date-utils.v2.4.0?raw');
+                default: {
+                    throw new ChartKitCustomError(`The library '${lib}' is not available`);
+                }
+            }
+        }),
+    );
+
+    return modules.filter(Boolean).join('');
+}
+
+async function getUnwrappedFunction(
     sandbox: QuickJSWASMModule,
     wrappedFn: UISandboxWrappedFunction,
     options?: UiSandboxRuntimeOptions,
-) => {
+) {
+    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     return function (this: unknown, ...args: unknown[]) {
         if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
@@ -240,7 +258,9 @@ const getUnwrappedFunction = (
         defineVmContext(vm, this);
         defineVmGlobalAPI(vm);
         const result = vm.evalCode(
-            `(${wrappedFn.fn}).call(JSON.parse(context), ...(args.length
+            `
+            ${libs}
+            (${wrappedFn.fn}).call(JSON.parse(context), ...(args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
@@ -249,7 +269,8 @@ const getUnwrappedFunction = (
                     }
                     return arg;
                 })
-                : []))`,
+                : []))
+            `,
         );
         let value: unknown | undefined;
 
@@ -272,9 +293,9 @@ const getUnwrappedFunction = (
 
         return resultValue;
     };
-};
+}
 
-export const unwrapPossibleFunctions = (
+export const unwrapPossibleFunctions = async (
     sandbox: QuickJSWASMModule,
     target: TargetValue,
     options?: UiSandboxRuntimeOptions,
@@ -283,22 +304,28 @@ export const unwrapPossibleFunctions = (
         return;
     }
 
-    Object.keys(target).forEach((key) => {
-        const value = target[key];
+    await Promise.all(
+        Object.keys(target).map(async (key) => {
+            const value = target[key];
 
-        if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
-            const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
-            // TODO: it will become unnecessary after removal Feature.NoJsonFn
-            wrappedFn.fn = String(wrappedFn.fn);
-            // Do argument mutation on purpose
-            // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction(sandbox, wrappedFn, options);
-        } else if (Array.isArray(value)) {
-            value.forEach((item) => unwrapPossibleFunctions(sandbox, item, options));
-        } else if (value && typeof value === 'object') {
-            unwrapPossibleFunctions(sandbox, value, options);
-        }
-    });
+            if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
+                const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
+                // TODO: it will become unnecessary after removal Feature.NoJsonFn
+                wrappedFn.fn = String(wrappedFn.fn);
+                // Do argument mutation on purpose
+                // eslint-disable-next-line no-param-reassign
+                target[key] = await getUnwrappedFunction(sandbox, wrappedFn, options);
+            } else if (Array.isArray(value)) {
+                await Promise.all(
+                    value.map(
+                        async (item) => await unwrapPossibleFunctions(sandbox, item, options),
+                    ),
+                );
+            } else if (value && typeof value === 'object') {
+                await unwrapPossibleFunctions(sandbox, value, options);
+            }
+        }),
+    );
 };
 
 export const shouldUseUISandbox = (target: TargetValue) => {
