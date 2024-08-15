@@ -2,11 +2,11 @@ import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {DEFAULT_DATE_FORMAT, DEFAULT_DATE_TIME_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 
 import type {
@@ -160,9 +160,17 @@ export const CollectionContentTable = React.memo<Props>(
                                             collectionId={item.collectionId}
                                         />
                                         <div className={b('content-cell', {date: true})}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
+                                            <Tooltip
+                                                content={dateTime({input: item.updatedAt}).format(
+                                                    DEFAULT_DATE_TIME_FORMAT,
+                                                )}
+                                            >
+                                                <span>
+                                                    {dateTime({
+                                                        input: item.updatedAt,
+                                                    }).fromNow()}
+                                                </span>
+                                            </Tooltip>
                                         </div>
                                         <div
                                             className={b('content-cell', {control: true})}

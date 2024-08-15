@@ -44,6 +44,8 @@ export const DEFAULT_CHART_LINES_LIMIT = 100;
 
 export const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
 
+export const DEFAULT_DATE_TIME_FORMAT = 'DD.MM.YYYY HH:mm';
+
 export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 
 export const SHARED_URL_OPTIONS = {
