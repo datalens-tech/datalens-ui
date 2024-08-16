@@ -4,6 +4,10 @@
     $class: &;
     $yc-control-bottom-padding: 5px;
 
+    $controlDefaultHeight: 28px;
+    $buttonSmallHeight: 24px;
+    $checkboxHeight: 15px;
+
     padding: 0 5px $yc-control-bottom-padding;
     width: 100%;
     position: relative;
@@ -16,7 +20,7 @@
         white-space: normal;
     }
 
-    &_line-breaks_nowrap {
+    &_line-breaks_nowrap:not(&_standalone) {
         white-space: nowrap;
     }
 
@@ -29,10 +33,6 @@
                 display: none;
             }
         }
-    }
-
-    &_standalone {
-        white-space: normal;
     }
 
     &:not(&_standalone) {
@@ -53,6 +53,15 @@
         margin-top: 5px;
         max-width: 100%;
         width: var(--control-custom-width, 'auto');
+
+        // TODO: move styles to Items.scss after removing old selectors code
+        &_button {
+            padding: ($controlDefaultHeight - $buttonSmallHeight)/2 0;
+        }
+
+        &_checkbox {
+            padding: ($controlDefaultHeight - $checkboxHeight)/2 0;
+        }
 
         &:not(:last-child) {
             margin-right: 10px;

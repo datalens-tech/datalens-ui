@@ -187,7 +187,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
 
         let colorValue: string | number = name;
         const legendParts: string[] = [];
-        const formattedNameParts: string[] = [];
+        const formattedNameParts: Array<string> = [];
 
         if (colorField && typeof colorFieldValue !== 'undefined') {
             if (shouldUseGradient) {
@@ -196,10 +196,12 @@ export function preparePieData(args: PrepareFunctionArgs) {
                 colorValue = getDistinctValue(colorFieldValue);
                 legendParts.push(String(colorFieldValue));
                 formattedNameParts.push(
-                    getFormattedValue(colorFieldValue, {
-                        ...colorField,
-                        data_type: idToDataType[colorField.guid],
-                    }),
+                    String(
+                        getFormattedValue(colorFieldValue, {
+                            ...colorField,
+                            data_type: idToDataType[colorField.guid],
+                        }),
+                    ),
                 );
             }
         }
@@ -207,10 +209,12 @@ export function preparePieData(args: PrepareFunctionArgs) {
         if (dimensionField) {
             legendParts.push(String(dimensionValue));
             formattedNameParts.push(
-                getFormattedValue(dimensionValue, {
-                    ...dimensionField,
-                    data_type: idToDataType[dimensionField.guid],
-                }),
+                String(
+                    getFormattedValue(dimensionValue, {
+                        ...dimensionField,
+                        data_type: idToDataType[dimensionField.guid],
+                    }),
+                ),
             );
         }
 

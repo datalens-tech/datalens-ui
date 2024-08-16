@@ -9,9 +9,9 @@ import _mapKeys from 'lodash/mapKeys';
 import _snakeCase from 'lodash/snakeCase';
 import moment from 'moment';
 import type {StringParams} from 'shared';
-import {ENABLE, SHARED_URL_OPTIONS, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
+import {ENABLE, SHARED_URL_OPTIONS, SUPERUSER_SWITCH_MODE_COOKIE_NAME, SYSTEM_THEME} from 'shared';
 
-import {DL, SYSTEM_THEME, URL_OPTIONS} from '../constants';
+import {DL, URL_OPTIONS} from '../constants';
 import {getSdk} from '../libs/schematic-sdk';
 import type {DataLensApiError} from '../typings';
 

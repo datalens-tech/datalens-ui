@@ -69,12 +69,24 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     EnableFooter = 'EnableFooter',
-    EnableDashDNDPanel = 'EnableDashDNDPanel',
     /** Chart runner for the execution of trusted code in wizard/ql. */
     WorkerChartBuilder = 'WorkerChartBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
+    /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
+    RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
+    /* Enable dashboard fixed header */
+    EnableDashFixedHeader = 'EnableDashFixedHeader',
+    /** Use BI handles for getting oauth applications tokens */
+    EnableBIOAuth = 'EnableBIOAuth',
+    NewSandbox_1p = 'NewSandbox_1p',
+    NewSandbox_10p = 'NewSandbox_10p',
+    NewSandbox_33p = 'NewSandbox_33p',
+    NewSandbox_50p = 'NewSandbox_50p',
+    NewSandbox_75p = 'NewSandbox_75p',
+    NewSandbox_100p = 'NewSandbox_100p',
+    NoErrorTransformer = 'NoErrorTransformer',
 }
 
 export type FeatureConfig = Record<string, boolean>;

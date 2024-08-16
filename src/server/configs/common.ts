@@ -30,7 +30,6 @@ export default {
     fetchingTimeout: ((process.env.FETCHING_TIMEOUT_SEC && parseInt(process.env.FETCHING_TIMEOUT_SEC)) || 95) * 1000,
     singleFetchingTimeout: ((process.env.FETCHING_TIMEOUT_SEC && parseInt(process.env.FETCHING_TIMEOUT_SEC)) || 95) * 1000,
     flatTableRowsLimit: ((process.env.FLAT_TABLE_ROWS_LIMIT && parseInt(process.env.FLAT_TABLE_ROWS_LIMIT)) || 100000),
-    chartsMonitoringEnabled: false,
     faviconUrl: '/favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,

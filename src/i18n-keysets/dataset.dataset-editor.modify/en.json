@@ -34,7 +34,7 @@
   "column_source": "Field source",
   "column_title": "Name",
   "field_display-rows": "Number of rows:",
-  "field_find-field": "Field name",
+  "field_find-field": "Field name or description",
   "label_batch-selected-fields-count": "Fields selected — {{value}}",
   "label_column-field-id": "Field ID",
   "label_dataset-auto-creation-process": "Creating dataset",

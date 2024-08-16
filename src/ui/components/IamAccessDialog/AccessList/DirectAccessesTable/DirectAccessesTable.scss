@@ -1,0 +1,15 @@
+.dl-iam-access-dialog-access-list-direct-accesses-table {
+    &__filters {
+        margin-bottom: 8px;
+    }
+
+    &__table {
+        table {
+            width: 100%;
+        }
+    }
+
+    &__empty {
+        text-align: center;
+    }
+}

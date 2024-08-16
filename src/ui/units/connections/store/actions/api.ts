@@ -1,6 +1,6 @@
 import type {ConnectionData} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
-import {DL} from 'ui';
+import {registry} from 'ui/registry';
 
 import type {
     AddGoogleSheetResponse,
@@ -15,6 +15,10 @@ import type {
     GetFileSourcesResponse,
     GetFileStatusResponse,
     GetGCredentialsResponse,
+    GetOAuthTokenArgs,
+    GetOAuthTokenResponse,
+    GetOAuthUriArgs,
+    GetOAuthUriResponse,
     GoogleRefreshToken,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
@@ -95,10 +99,8 @@ const fetchConnectorSchema = async ({
 
 const fetchRenderedMarkdown = async (text = '') => {
     try {
-        const {result} = await getSdk().mix.renderMarkdown({
-            text,
-            lang: DL.USER_LANG,
-        });
+        const fetchRenderedMarkdownFn = registry.common.functions.get('fetchRenderedMarkdown');
+        const {result} = await fetchRenderedMarkdownFn(text);
 
         return result;
     } catch (error) {
@@ -333,7 +335,7 @@ const getGoogleAuthorizationUrl = async (): Promise<
     try {
         return await getSdk().googleapis.getAuthorizationUrl({scopes});
     } catch (error) {
-        return {authorizationUrl: '', error};
+        return {uri: '', error};
     }
 };
 
@@ -377,6 +379,26 @@ const addYandexDocument = async ({
     }
 };
 
+const getOAuthUrl = async (
+    args: GetOAuthUriArgs,
+): Promise<GetOAuthUriResponse & {error?: DataLensApiError}> => {
+    try {
+        return await getSdk().bi.getOAuthUri(args);
+    } catch (error) {
+        return {uri: '', error};
+    }
+};
+
+const getOAuthToken = async (
+    args: GetOAuthTokenArgs,
+): Promise<Partial<GetOAuthTokenResponse> & {error?: DataLensApiError}> => {
+    try {
+        return await getSdk().bi.getOAuthToken(args);
+    } catch (error) {
+        return {access_token: '', error};
+    }
+};
+
 export const api = {
     fetchEntry,
     fetchConnectionData,
@@ -399,4 +421,6 @@ export const api = {
     getGoogleAuthorizationUrl,
     getGoogleCredentials,
     addYandexDocument,
+    getOAuthUrl,
+    getOAuthToken,
 };

@@ -130,9 +130,8 @@ const getChartData = async (host: string, token: string, links: string[], params
                 "workbookId": null
             }
         });
-        if (Object.keys(response.data.data).length !== 0) {
-            data[link] = response.data;
-        }
+
+        data[link] = response.data;
     }
 
     return data;

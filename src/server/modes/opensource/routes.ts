@@ -172,18 +172,7 @@ function getChartsRoutes({
             route: 'POST /api/export',
             handler: chartsEngine.controllers.export,
         },
-        postApiMarkdownRender: {
-            beforeAuth,
-            afterAuth,
-            route: 'POST /api/markdown/render',
-            handler: chartsEngine.controllers.markdown.render,
-        },
-        postApiMarkdownBatchRender: {
-            beforeAuth,
-            afterAuth,
-            route: 'POST /api/markdown/batchRender',
-            handler: chartsEngine.controllers.markdown.batchRender,
-        },
+
         getApiPrivateConfig: {
             beforeAuth,
             afterAuth,

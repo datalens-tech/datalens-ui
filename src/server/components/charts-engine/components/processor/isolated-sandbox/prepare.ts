@@ -5,10 +5,19 @@ import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 
 export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
-"use strict";
-const exports = {};
-const module = {exports};
-const console = {log};
+var module = {exports: {}};
+var exports = module.exports;
+const console = {log: (...args) => { 
+        const processed = args.map(elem => {
+            if (typeof elem === 'function') {
+                return JSON.stringify(val.toString());    
+            } else {
+                return JSON.stringify(elem);
+            }
+        })
+        return __log(...processed);
+    }
+};
 
 ${libsControlV1Interop.prepareAdapter};
 ${libsDatalensV3Interop.prepareAdapter};
@@ -24,9 +33,13 @@ function require(name) {
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
-        return datasetV2prepareAdapter;
-    } else if (modules[lowerName]) {
-        return modules[lowerName];
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].datasetModule;
+        } else {
+            return datasetV2prepareAdapter;
+        }
+    } else if (__modules[lowerName]) {
+        return __modules[lowerName];
     } else {
         throw new Error(\`Module "\${lowerName}" is not resolved\`);
     }

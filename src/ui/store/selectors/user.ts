@@ -31,3 +31,8 @@ export const selectUserThemeSettings = createSelector(
     [selectUserSettings],
     (userSettings) => userSettings.themeSettings,
 );
+
+export const selectSandboxDebugMode = createSelector(
+    selectUserSettings,
+    (userSettings) => userSettings.dlSanboxDebugMode || false,
+);
