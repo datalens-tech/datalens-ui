@@ -496,7 +496,7 @@ class Body extends React.PureComponent<BodyProps> {
                     items={[
                         {
                             action: this.unpinAllElements,
-                            text: 'Unpin all', // TODO i18n
+                            text: i18n('dash.main.view', 'label_unpin-all'),
                             iconStart: <Icon data={PinSlash} />,
                             theme: 'danger',
                         },
@@ -645,7 +645,7 @@ class Body extends React.PureComponent<BodyProps> {
                     ...dashkitMenu.slice(0, -1),
                     {
                         id: 'pin',
-                        title: 'Pin',
+                        title: i18n('dash.main.view', 'label_pin"'),
                         icon: <Icon data={Pin} size={16} />,
                         handler: this.togglePinElement,
                         visible: (configItem) => {
@@ -660,7 +660,7 @@ class Body extends React.PureComponent<BodyProps> {
                     },
                     {
                         id: 'unpin',
-                        title: 'Unpin',
+                        title: i18n('dash.main.view', 'label_unpin'),
                         icon: <Icon data={PinSlash} size={16} />,
                         handler: this.togglePinElement,
                         visible: (configItem) => {
