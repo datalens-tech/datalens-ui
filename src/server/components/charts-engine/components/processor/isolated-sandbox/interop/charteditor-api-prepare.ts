@@ -13,8 +13,6 @@ import type {
     ChartEditorGetActionParams,
     ChartEditorGetLoadedData,
     ChartEditorGetLoadedDataStats,
-    ChartEditorGetParam,
-    ChartEditorGetParams,
     ChartEditorGetSecrets,
     ChartEditorGetSharedData,
     ChartEditorGetSortParams,
@@ -41,6 +39,9 @@ import type {
 } from './charteditor-api';
 
 declare const noJsonFn: boolean;
+declare let __params: Record<string, string | string[]>;
+declare let __runtimeMetadata: {userParamsOverride: unknown};
+declare const __name: string;
 declare const _ChartEditor_getTranslation: ChartEditorGetTranslation;
 declare const _ChartEditor_getSharedData: ChartEditorGetSharedData;
 declare const _ChartEditor_userLang: ChartEditorUserLang;
@@ -57,8 +58,6 @@ declare const _ChartEditor_getWidgetConfig: ChartEditorGetWidgetConfig;
 declare const _ChartEditor_getActionParams: ChartEditorGetActionParams;
 declare const _ChartEditor_wrapFn_WRAPPED_FN_KEY: ChartEditorWrapFnWrappedFnKey;
 declare const _ChartEditor_wrapHtml_WRAPPED_HTML_KEY: ChartEditorWrapHtmlWrappedHtmlKey;
-declare const _ChartEditor_getParams: ChartEditorGetParams;
-declare const _ChartEditor_getParam: ChartEditorGetParam;
 declare const _ChartEditor_getSortParams: ChartEditorGetSortParams;
 declare const _ChartEditor_currentPage: ChartEditorCurrentPage;
 declare const _ChartEditor_updateParams: ChartEditorUpdateParams;
@@ -73,6 +72,8 @@ declare const _ChartEditor_setSideMarkdown: ChartEditorSetSideMarkdown;
 declare const _ChartEditor_setExtra: ChartEditorSetExtra;
 declare const _ChartEditor_setExportFilename: ChartEditorSetExportFilename;
 
+// __runtimeMetadata.userParamsOverride = undefined;
+
 const __updateHighchartsConfig = (config: unknown) =>
     _ChartEditor_updateHighchartsConfig(
         noJsonFn
@@ -86,7 +87,28 @@ const __updateHighchartsConfig = (config: unknown) =>
     );
 
 let __shared: {};
-let __params: {};
+const getSortParams = (params: Record<string, string | string[]>) => {
+    const columnId = Array.isArray(params._columnId) ? params._columnId[0] : params._columnId;
+    const order = Array.isArray(params._sortOrder) ? params._sortOrder[0] : params._sortOrder;
+    const _sortRowMeta = Array.isArray(params._sortRowMeta)
+        ? params._sortRowMeta[0]
+        : params._sortRowMeta;
+    const _sortColumnMeta = Array.isArray(params._sortColumnMeta)
+        ? params._sortColumnMeta[0]
+        : params._sortColumnMeta;
+
+    let meta: Record<string, any>;
+    try {
+        meta = {
+            column: _sortColumnMeta ? JSON.parse(_sortColumnMeta) : {},
+            row: _sortRowMeta ? JSON.parse(_sortRowMeta) : {},
+        };
+    } catch {
+        meta = {};
+    }
+
+    return {columnId, order: Number(order), meta};
+};
 
 const ChartEditor: IChartEditor = {
     getTranslation: (keyset, key, params) =>
@@ -140,18 +162,40 @@ const ChartEditor: IChartEditor = {
         },
 
     getParams: () => {
-        __params = __params || _ChartEditor_getParams();
         return __params;
     },
     getParam: (paramName) => {
-        return _ChartEditor_getParam(paramName);
+        return __params[paramName] || [];
     },
 
-    getSortParams: () => JSON.parse(_ChartEditor_getSortParams),
+    getSortParams: () => {
+        if (__name === 'Urls') {
+            return getSortParams(__params);
+        } else {
+            throw new Error(`Function is not implemented for tab ${__name}`);
+        }
+    },
 
-    getCurrentPage: () => _ChartEditor_currentPage,
+    getCurrentPage: () => {
+        if (__name === 'Urls' || __name === 'JavaScript') {
+            const page = Number(Array.isArray(__params._page) ? __params._page[0] : __params._page);
+            return isNaN(page) ? 1 : page;
+        } else {
+            throw new Error(`Function is not implemented for tab ${__name}`);
+        }
+    },
 
-    updateParams: (params) => _ChartEditor_updateParams(JSON.stringify(params)),
+    updateParams: (updatedParams) => {
+        if (['Params', 'JavaScript', 'UI', 'Urls'].includes(__name)) {
+            __runtimeMetadata.userParamsOverride = Object.assign(
+                {},
+                __runtimeMetadata.userParamsOverride,
+                updatedParams,
+            );
+        } else {
+            throw new Error(`Function is not implemented for tab ${__name}`);
+        }
+    },
     updateActionParams: (params) => _ChartEditor_updateActionParams(JSON.stringify(params)),
 
     getLoadedData: () => JSON.parse(_ChartEditor_getLoadedData()),

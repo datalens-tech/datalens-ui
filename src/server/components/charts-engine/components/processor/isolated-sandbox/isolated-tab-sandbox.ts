@@ -124,6 +124,7 @@ const execute = async ({
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
     let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
+    let resultParams = {};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
@@ -133,9 +134,21 @@ const execute = async ({
     });
 
     jail.setSync('__timeout', timeout);
-
     try {
         timeStart = process.hrtime();
+        // Replace API functions with isolated function invocation
+        // eslint-disable-next-line no-param-reassign
+        chartEditorApi.updateParams = (params) => {
+            context.evalClosureSync(`
+                const updatedParams = JSON.parse('${JSON.stringify(params)}');
+                 __runtimeMetadata.userParamsOverride = Object.assign(
+                    {},
+                    __runtimeMetadata.userParamsOverride,
+                    updatedParams,
+                );
+            `);
+        };
+
         prepareChartEditorApi({
             name: filename,
             jail,
@@ -149,9 +162,33 @@ const execute = async ({
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
         const after = `
-            ${filename === 'Highcharts' || filename === 'Config' ? `module = __prepareFunctionsForStringify(module);` : ``};
-            return {module, __shared, __params};`;
-        const prepare = getPrepare({noJsonFn: features.noJsonFn});
+            ${
+                filename === 'Params'
+                    ? `
+                const usedParams = {...module.exports};
+                
+                __params = Object.assign({}, usedParams, __params);
+                
+                Object.keys(__params).forEach((paramName) => {
+                    const param = __params[paramName];
+                    if (!Array.isArray(param)) {
+                        __params[paramName] = [param];
+                    }
+                });
+                __updateParams(__runtimeMetadata.userParamsOverride);
+                __resolveParams(__params);
+            `
+                    : ``
+            };
+             ${
+                 filename === 'JavaScript' || filename === 'UI'
+                     ? `__updateParams(__runtimeMetadata.userParamsOverride);`
+                     : ``
+             };
+            ${['Highcharts', 'Config', 'Params'].includes(filename) ? `module = __prepareFunctionsForStringify(module);` : ``};
+            return {module, __shared};
+        `;
+        const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
         const codeWrapper = `(function () { \n ${code} \n })();`;
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
@@ -161,6 +198,7 @@ const execute = async ({
                 copy: true,
             },
         });
+        resultParams = JSON.parse(context.evalSync('JSON.stringify(__params)'));
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -179,14 +217,9 @@ const execute = async ({
     }
 
     let shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
-    let params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
 
     if (sandboxResult.__shared) {
         shared = {...shared, ...sandboxResult.__shared};
-    }
-
-    if (sandboxResult.__params) {
-        params = {...params, ...sandboxResult.__params};
     }
 
     if (errorStackTrace) {
@@ -204,8 +237,8 @@ const execute = async ({
     }
 
     return {
+        params: resultParams,
         shared,
-        params,
         executionTiming,
         logs: isolatedConsole.getLogs(),
         filename,
@@ -230,8 +263,8 @@ export const processTab = async ({
     context,
     features,
 }: ProcessTabParams) => {
-    const originalShared = shared;
     const originalParams = params;
+    const originalShared = shared;
     const chartApiContext = getChartApiContext({
         name,
         params,
@@ -260,9 +293,7 @@ export const processTab = async ({
         userLogin,
         features,
     });
-
     Object.assign(originalShared, result.shared);
     Object.assign(originalParams, result.params);
-
     return result;
 };

@@ -53,7 +53,12 @@ export const getIsolatedSandboxChartBuilder = async (
     let shared: Record<string, any>;
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    context.evalSync('const __modules = {}');
+    context.evalSync(
+        `const __modules = {};
+         let __params; 
+         let __runtimeMetadata = {userParamsOverride: undefined};
+    `,
+    );
 
     return {
         dispose: () => {
@@ -108,6 +113,7 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildParams: async (options) => {
+            context.evalSync(`__params = JSON.parse('${JSON.stringify(options.params)}') || {};`);
             const tabResult = await Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
