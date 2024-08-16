@@ -32,12 +32,23 @@ export const CollectionCheckboxCell = ({
         });
     };
 
+    const onCheckboxContainerClick = React.useCallback(
+        (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            if (!canMoveItem) return;
+            if (event.target === event.currentTarget) {
+                event.preventDefault();
+            }
+            event.stopPropagation();
+        },
+        [canMoveItem],
+    );
+
     return (
         <div
             className={b('content-cell', {
                 disabled: !canMoveItem,
             })}
-            onClick={(e) => e.stopPropagation()}
+            onClick={onCheckboxContainerClick}
         >
             <Checkbox
                 size="l"
