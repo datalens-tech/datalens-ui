@@ -218,13 +218,18 @@ const defineVmContext = (vm: QuickJSContext, context: unknown) => {
 
 async function getUiSandboxLibs(libs: string[]) {
     const modules = await Promise.all(
-        libs.map((lib) => {
+        libs.map(async (lib) => {
             switch (lib) {
                 case 'date-utils':
-                case 'date-utils@2.4.0':
-                    return require('../../ui-sandbox/libs/date-utils.v2.4.0?raw');
+                case 'date-utils@2.4.0': {
+                    // @ts-ignore
+                    const module = await import('../../ui-sandbox/libs/date-utils.v2.4.0.js?raw');
+                    return module.default;
+                }
                 default: {
-                    throw new ChartKitCustomError(`The library '${lib}' is not available`);
+                    throw new ChartKitCustomError(null, {
+                        details: `The library '${lib}' is not available`,
+                    });
                 }
             }
         }),
