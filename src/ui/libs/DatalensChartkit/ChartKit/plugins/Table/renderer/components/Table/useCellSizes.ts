@@ -14,11 +14,7 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
             const cell = c as Element;
             let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
             let colSpan = Number(cell.getAttribute('colSpan') || 1);
-            const cellWidth =
-                cell.getBoundingClientRect()?.width +
-                // left border
-                (cellIndex === 0 ? 1 : 0) -
-                -1 / colsCount;
+            const cellWidth = cell.getBoundingClientRect()?.width;
 
             if (result[rowIndex][cellIndex] !== null) {
                 cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);
@@ -44,7 +40,12 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
 
     return result.reduce<number[]>((acc, row) => {
         row.forEach((cellWidth, index) => {
-            acc[index] = acc[index] || cellWidth;
+            const width =
+                cellWidth +
+                // left border
+                (index === 0 ? 1 : 0) -
+                1 / colsCount;
+            acc[index] = acc[index] || width;
         });
         return acc;
     }, []);
