@@ -130,7 +130,7 @@ export type ProcessorParams = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     configOverride?: {
         data: Record<string, string>;
-        key: string;
+        key?: string;
         entryId?: string;
         type?: string;
         meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS};
