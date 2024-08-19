@@ -699,7 +699,7 @@ export class Processor {
                 // ChartEditor.updateParams() has the highest priority,
                 // so now we take the parameters set through this method
                 updateParams({
-                    userParamsOverride: paramsTabResults.runtimeMetadata.userParamsOverride,
+                    userParamsOverride: jsTabResults.runtimeMetadata.userParamsOverride,
                     params,
                     usedParams,
                 });
@@ -732,7 +732,7 @@ export class Processor {
             // ChartEditor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
             updateParams({
-                userParamsOverride: paramsTabResults.runtimeMetadata.userParamsOverride,
+                userParamsOverride: uiTabResults.runtimeMetadata.userParamsOverride,
                 params,
                 usedParams,
             });
