@@ -28,6 +28,8 @@ export type EntryRowProps = {
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
     className?: string;
+    // TODO: Remove version with typo
+    clasName?: string;
     enableHover?: boolean;
     name?: string;
 };
@@ -37,6 +39,7 @@ export const EntryRow = ({
     rightSectionSlot = null,
     nonInteractive,
     className,
+    clasName,
     enableHover,
     name,
 }: EntryRowProps) => {
@@ -74,7 +77,7 @@ export const EntryRow = ({
                     locked: entry.isLocked,
                     hoverable: enableHover,
                 },
-                className,
+                clasName || className,
             )}
         >
             <div className={b('entry')}>
