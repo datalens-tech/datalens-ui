@@ -3,12 +3,7 @@ import workerPool from 'workerpool';
 import type {ServerChartsConfig, Shared} from '../../../../../shared';
 import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
-import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
-import {buildHighchartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/highcharts';
-import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
-import {buildSourcesPrivate} from '../../../../modes/charts/plugins/datalens/url/build-sources';
-import {setConsole} from '../../../../modes/charts/plugins/datalens/utils/misc-helpers';
+import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {createI18nInstance} from '../../../../utils/language';
 import {getChartApiContext} from '../processor/chart-api-context';
 import {Console} from '../processor/console';
@@ -34,10 +29,10 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        datalensModule.setConsole(console);
 
         return {
-            exports: buildSourcesPrivate({
+            exports: datalensModule.buildSources({
                 apiVersion: '2',
                 shared: shared as Shared,
                 params,
@@ -59,7 +54,7 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        datalensModule.setConsole(console);
 
         let result;
         const visualizationId = shared?.visualization?.id;
@@ -71,11 +66,11 @@ const worker: WizardWorker = {
             }
             default: {
                 if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-                    result = buildWizardD3Config({
+                    result = datalensModule.buildD3Config({
                         shared: shared,
                     });
                 } else {
-                    result = buildHighchartsConfigPrivate({
+                    result = datalensModule.buildHighchartsConfig({
                         shared: shared,
                         features,
                     });
@@ -102,10 +97,10 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        datalensModule.setConsole(console);
 
         return {
-            exports: buildChartsConfigPrivate({
+            exports: datalensModule.buildChartsConfig({
                 shared: shared as ServerChartsConfig,
                 params,
                 widgetConfig,
@@ -132,9 +127,9 @@ const worker: WizardWorker = {
         context.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
         const console = new Console({});
-        setConsole(console);
+        datalensModule.setConsole(console);
 
-        const result = buildGraphPrivate({
+        const result = datalensModule.buildGraph({
             data,
             shared,
             ChartEditor: context.ChartEditor,
