@@ -17,7 +17,7 @@ import type {RunnerHandler, RunnerHandlerProps} from '.';
 let wizardWorkersPool: Pool | null = null;
 async function getWizardWorker(): Promise<Proxy<WizardWorker>> {
     if (wizardWorkersPool === null) {
-        const scriptPath = path.resolve(__dirname, '../components/worker');
+        const scriptPath = path.resolve(__dirname, '../components/wizard-worker');
         wizardWorkersPool = workerpool.pool(scriptPath);
     }
 
