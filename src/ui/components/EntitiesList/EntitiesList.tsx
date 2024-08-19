@@ -50,11 +50,10 @@ export const EntitiesList = ({scope, entities, isCurrent, hideTitle}: EntitiesLi
             {title && !hideTitle && <div className={b('title')}>{title}</div>}
             {entities.map((entity) => (
                 <EntryRow
-                    clasName={b('row')}
+                    className={b('row')}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
-                    disableHover={true}
                 />
             ))}
         </div>
