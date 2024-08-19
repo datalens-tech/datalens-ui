@@ -55,7 +55,10 @@ const textPlugin = {
                     layout: props.layout,
                     // TODO: optimize call times in future
                     cb: (...args) => {
-                        onUpdate();
+                        if (onUpdate) {
+                            onUpdate();
+                        }
+
                         return props.adjustWidgetLayout(...args);
                     },
                     mainNodeSelector: `.${YFM_MARKDOWN_CLASSNAME}.${b()}`,
