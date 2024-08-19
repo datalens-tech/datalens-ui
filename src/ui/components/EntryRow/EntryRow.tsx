@@ -28,8 +28,9 @@ export type EntryRowProps = {
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
     className?: string;
-    // TODO: Remove version with typo
+    // TODO: Remove clasName and disableHover
     clasName?: string;
+    disableHover?: boolean;
     enableHover?: boolean;
     name?: string;
 };
