@@ -13,7 +13,7 @@ import {
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
-import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds} from 'shared';
+import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
@@ -239,12 +239,13 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
+            console.log('action');
             return function render(props: MenuItemModalProps) {
                 return (
                     <DialogShare
                         loadedData={loadedData}
                         propsData={propsData}
-                        urlIdPrefix="/preview/"
+                        urlIdPrefix={`/${PREVIEW_ROUTE}/`}
                         onClose={props.onClose}
                         showHideComments={true}
                         showLinkDescription={true}

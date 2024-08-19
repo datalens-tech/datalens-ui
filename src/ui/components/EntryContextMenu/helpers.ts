@@ -4,17 +4,9 @@ import type {IconData} from '@gravity-ui/uikit';
 // import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {registry} from 'ui/registry';
 
-import {
-    EDITOR_ROUTE,
-    ENTRY_TYPES,
-    EntryScope,
-    MenuItemsIds,
-    QL_ROUTE,
-    WIZARD_ROUTE,
-    getEntryNameByKey,
-} from '../../../shared';
+import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
-import {DL} from '../../constants';
+import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
 import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
@@ -171,36 +163,26 @@ export async function showShareDialog(
     entry: GetEntryResponse,
 ) {
     if (entryDialoguesRef.current) {
-        console.log(entry);
-        const {scope, type} = entry;
-
         const dialogProps: DialogShareProps = {
             onClose: () => {},
             showEmbedLink: false,
+            showSelectorsCheckbox: true,
             propsData: {
                 id: entry.entryId,
             },
         };
 
-        if (scope === EntryScope.Widget) {
-            dialogProps.showHideMenu = false;
-
-            if (ENTRY_TYPES.wizard.includes(type)) {
-                dialogProps.urlIdPrefix = `/${WIZARD_ROUTE}/`;
-            } else if (ENTRY_TYPES.editor.includes(type)) {
-                dialogProps.urlIdPrefix = `/${EDITOR_ROUTE}/`;
-            } else if (ENTRY_TYPES.ql.includes(type)) {
-                dialogProps.urlIdPrefix = `/${QL_ROUTE}/`;
-            }
-        } else if (scope === EntryScope.Dash) {
-            dialogProps.showSelectorsCheckbox = true;
-            dialogProps.showFederationCheckbox = true;
+        if (DL.USER.isFederationUser) {
+            dialogProps.showFederation = true;
         }
 
-        // switch (entry.scope) {
-        //     case EntryScope.Widget: {
-        //     }
-        // }
+        if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+            dialogProps.showEmbedLink = true;
+            dialogProps.showMarkupLink = true;
+            dialogProps.initialParams = {
+                [URL_OPTIONS.NO_CONTROLS]: 1,
+            };
+        }
 
         await entryDialoguesRef.current.open({
             dialog: EntryDialogName.Share,

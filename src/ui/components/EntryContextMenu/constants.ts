@@ -1,11 +1,11 @@
 import {
+    ArrowShapeTurnUpRight,
     Clock,
     CodeTrunk,
     Copy,
     FolderArrowDown,
     FontCursor,
     Link,
-    NodesRight,
     Tag,
     TrashBin,
 } from '@gravity-ui/icons';
@@ -206,15 +206,16 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
             EntryScope.Dataset,
             EntryScope.Folder,
             EntryScope.Presentation,
+            EntryScope.Widget,
         ],
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
         action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
-        icon: NodesRight,
+        icon: ArrowShapeTurnUpRight,
         text: 'value_share',
         enable: () => true,
-        scopes: [EntryScope.Dash, EntryScope.Widget],
+        scopes: [EntryScope.Dash],
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

@@ -87,6 +87,7 @@ export enum Feature {
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
     NoErrorTransformer = 'NoErrorTransformer',
+    EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
 }
 
 export type FeatureConfig = Record<string, boolean>;

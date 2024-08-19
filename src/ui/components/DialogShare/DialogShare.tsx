@@ -48,7 +48,7 @@ export type DialogShareProps = {
     initialParams?: Record<string, number>;
     hasDefaultSize?: boolean;
     showSelectorsCheckbox?: boolean;
-    showFederationCheckbox?: boolean;
+    showFederation?: boolean;
     showEmbedLink?: boolean;
     showHideMenu?: boolean;
 };
@@ -80,18 +80,16 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     initialParams = {},
     hasDefaultSize,
     showEmbedLink = true,
-    showHideMenu = true, // ???
+    showHideMenu = true,
     showSelectorsCheckbox,
-    showFederationCheckbox,
+    showFederation,
 }) => {
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
     );
     const [selectedTheme, setSelectedTheme] = React.useState('');
     const [selectedLang, setSelectedLang] = React.useState('');
-    const [isFederationSelected, setIsFederationSelected] = React.useState(
-        DL.USER.isFederationUser,
-    );
+    const [isFederationSelected, setIsFederationSelected] = React.useState(showFederation);
     const [hideMenu, setHideMenu] = React.useState(
         Boolean(initialParams[COMMON_URL_OPTIONS.NO_CONTROLS]),
     );
@@ -103,6 +101,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     );
 
     const defaultSize = hasDefaultSize ? ' width="100%" height="400px"' : '';
+    const queryState = new URLSearchParams(window.location.search).get(COMMON_URL_OPTIONS.STATE);
 
     const getLink = React.useCallback(() => currentUrl.toString(), [currentUrl]);
     const getHTML = React.useCallback(
@@ -113,9 +112,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     React.useEffect(() => {
         setCurrentUrl((paramsUrl: URI) => {
             const updatedLink = new URI(paramsUrl.toString());
-            const queryState = new URLSearchParams(window.location.search).get(
-                COMMON_URL_OPTIONS.STATE,
-            );
+
             updatedLink.updateParams({
                 [COMMON_URL_OPTIONS.LANGUAGE]: selectedLang || null,
                 [COMMON_URL_OPTIONS.THEME]: selectedTheme || null,
@@ -180,17 +177,18 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                                 checked={isSelectorsSaved}
                                 onChange={handleChangeSelectorsSaved}
                                 size={checkboxSize}
+                                disabled={!queryState}
                             >
-                                Сохранить значения селекторов
+                                {i18n('value_selectors-saved')}
                             </Checkbox>
                         )}
-                        {showFederationCheckbox && (
+                        {showFederation && (
                             <Checkbox
                                 checked={isFederationSelected}
                                 onChange={handleChangeFederationSelected}
                                 size={checkboxSize}
                             >
-                                Сохранить федерацию: {DL.USER.federationId}
+                                {i18n('value_federation-selected')}: {DL.USER.federationId}
                             </Checkbox>
                         )}
                         {showHideMenu && (
