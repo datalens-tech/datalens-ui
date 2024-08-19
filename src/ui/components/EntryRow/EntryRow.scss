@@ -9,7 +9,7 @@
     transition: background ease-in-out 0.2s;
     padding-left: 4px;
 
-    &:not(#{$class}_non-interactive, #{$class}_no-hover):hover {
+    &_hoverable:not(#{$class}_non-interactive):hover {
         background: var(--g-color-base-simple-hover);
     }
 
@@ -40,6 +40,10 @@
 
     &__icon {
         flex-shrink: 0;
+
+        &_disabled {
+            opacity: 0.5;
+        }
     }
 
     &__locked-label {

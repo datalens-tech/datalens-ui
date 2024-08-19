@@ -1,16 +1,4 @@
-import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
-
-import type {
-    DashWidgetConfig,
-    FeatureConfig,
-    GraphTooltipLine,
-    GraphWidgetEventScope,
-    ServerChartsConfig,
-    ServerCommonSharedExtraSettings,
-    StringParams,
-    TableWidgetEventScope,
-    WidgetEvent,
-} from '../../../../../shared';
+import type {FeatureConfig, ServerChartsConfig} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     DEFAULT_CHART_LINES_LIMIT,
@@ -18,83 +6,19 @@ import {
     PlaceholderId,
     WizardVisualizationId,
     getIsNavigatorEnabled,
-    getServerFeatures,
     isTreeField,
-} from '../../../../../shared';
-import {registry} from '../../../../registry';
+} from '../../../../../../shared';
+import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
+import {getAllPlaceholderItems, isNeedToCalcClosestPointManually, log} from '../utils/misc-helpers';
 
-import {mapChartsConfigToServerConfig} from './utils/config-helpers';
-import {getAllPlaceholderItems, isNeedToCalcClosestPointManually, log} from './utils/misc-helpers';
-
-enum CommentsMatchType {
-    Full = 'full',
-    Contains = 'contains',
-    Intersection = 'intersection',
-}
-
-interface Comments {
-    feeds?: Feed[];
-    matchedParams?: string[];
-    matchType?: CommentsMatchType;
-}
-
-type Feed = {
-    feed: string;
-    matchedParams?: string[];
-    matchType?: CommentsMatchType;
-};
-
-type BaseConfig = {
-    drillDown?: {
-        breadcrumbs: string[];
-        level: number;
-    };
-    enableJsAndHtml?: boolean;
-};
-
-type GraphConfig = BaseConfig &
-    Pick<
-        HighchartsWidgetData['config'],
-        | 'title'
-        | 'hideHolidaysBands'
-        | 'linesLimit'
-        | 'tooltip'
-        | 'withoutLineLimit'
-        | 'enableSum'
-        | 'showPercentInTooltip'
-    > & {
-        manageTooltipConfig?:
-            | ChartkitHandlers.WizardManageTooltipConfig
-            | ((config: {lines: GraphTooltipLine[]}) => void);
-        comments?: Comments;
-        navigatorSettings?: ServerCommonSharedExtraSettings['navigatorSettings'];
-        calcClosestPointManually?: boolean;
-        enableGPTInsights?: ServerCommonSharedExtraSettings['enableGPTInsights'];
-        events?: {
-            click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
-        };
-    };
-
-type TableConfig = BaseConfig & {
-    settings: {
-        externalSort?: boolean;
-    };
-    paginator?: {
-        enabled: boolean;
-        limit?: number;
-    };
-    events?: {
-        click?: WidgetEvent<TableWidgetEventScope> | WidgetEvent<TableWidgetEventScope>[];
-    };
-};
-
-type MetricConfig = BaseConfig & {
-    metricVersion?: number;
-};
-
-export type Config = GraphConfig | TableConfig | MetricConfig;
-
-type ConfigWithActionParams = TableConfig | GraphConfig;
+import {CommentsMatchType} from './constants';
+import type {
+    BuildChartConfigArgs,
+    Config,
+    ConfigWithActionParams,
+    MetricConfig,
+    TableConfig,
+} from './types';
 
 function getActionParamsEvents(
     visualizationId?: WizardVisualizationId,
@@ -145,12 +69,6 @@ function canUseActionParams(shared: ServerChartsConfig) {
 
     return !hasDrillDownEvents && !hasTreeFields;
 }
-
-type BuildChartConfigArgs = {
-    shared: ServerChartsConfig;
-    params: StringParams;
-    widgetConfig?: DashWidgetConfig['widgetConfig'];
-};
 
 // eslint-disable-next-line complexity
 export const buildChartsConfigPrivate = (
@@ -282,30 +200,4 @@ export const buildChartsConfigPrivate = (
     log(config);
 
     return config;
-};
-
-export const buildChartsConfig = (
-    args: BuildChartConfigArgs | ServerChartsConfig,
-    _params?: StringParams,
-) => {
-    let shared;
-    let params: StringParams;
-    let widgetConfig: DashWidgetConfig['widgetConfig'];
-
-    if ('shared' in args) {
-        shared = args.shared;
-        params = args.params as StringParams;
-        widgetConfig = args.widgetConfig;
-    } else {
-        shared = args;
-        params = _params as StringParams;
-    }
-
-    const app = registry.getApp();
-    return buildChartsConfigPrivate({
-        shared,
-        params,
-        widgetConfig,
-        features: getServerFeatures(app.nodekit.ctx),
-    });
 };

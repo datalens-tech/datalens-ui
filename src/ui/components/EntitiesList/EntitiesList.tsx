@@ -10,6 +10,7 @@ import './EntitiesList.scss';
 
 type EntitiesListProps = {
     entities: EntryRowProps['entry'][];
+    hideTitle?: boolean;
 } & (CurrentEntity | ScopeEntities);
 
 type CurrentEntity = {
@@ -41,19 +42,18 @@ const getLabelByScope = (scope: string) => {
     }
 };
 
-export const EntitiesList = ({scope, entities, isCurrent}: EntitiesListProps) => {
+export const EntitiesList = ({scope, entities, isCurrent, hideTitle}: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
 
     return (
         <div className={b()}>
-            {title && <div className={b('title')}>{title}</div>}
+            {title && !hideTitle && <div className={b('title')}>{title}</div>}
             {entities.map((entity) => (
                 <EntryRow
-                    clasName={b('row')}
+                    className={b('row')}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
-                    disableHover={true}
                 />
             ))}
         </div>

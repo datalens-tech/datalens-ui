@@ -92,6 +92,7 @@ function RelationsList({className, groups, progress, onChange}: Props) {
                         key={entry.entryId}
                         entry={entry}
                         rightSectionSlot={renderRightSection(entry)}
+                        enableHover={true}
                     />
                 ))}
             </div>
