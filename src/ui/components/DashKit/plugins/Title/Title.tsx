@@ -10,6 +10,7 @@ import {
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
 
+import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';
@@ -30,6 +31,8 @@ const titlePlugin = {
 
         const data = props.data as DashTabItemTitle['data'];
 
+        const onUpdate = useBeforeLoad(props.onBeforeLoad);
+
         /**
          * call common for charts & selectors adjust function for widget
          */
@@ -41,7 +44,14 @@ const titlePlugin = {
                     rootNode: rootNodeRef,
                     gridLayout: props.gridLayout,
                     layout: props.layout,
-                    cb: props.adjustWidgetLayout,
+                    // TODO: optimize call times in future
+                    cb: (...args) => {
+                        if (onUpdate) {
+                            onUpdate();
+                        }
+
+                        return props.adjustWidgetLayout(...args);
+                    },
                     mainNodeSelector: `[${PLUGIN_ROOT_ATTR_NAME}="title"]`,
                     scrollableNodeSelector: `.${b()}`,
                     needHeightReset: true,

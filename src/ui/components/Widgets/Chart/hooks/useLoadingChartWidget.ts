@@ -9,6 +9,7 @@ import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
+import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
@@ -129,6 +130,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const history = useHistory();
 
+    const onUpdate = useBeforeLoad(props.onBeforeLoad);
+
     /**
      * debounced call of recalculate widget layout after rerender
      */
@@ -140,7 +143,14 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 rootNode: rootNodeRef,
                 gridLayout,
                 layout,
-                cb: adjustWidgetLayout,
+                // TODO: optimize call times in future
+                cb: (...args) => {
+                    if (onUpdate) {
+                        onUpdate();
+                    }
+
+                    return props.adjustWidgetLayout(...args);
+                },
             });
         },
         [widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],
