@@ -12,8 +12,8 @@ import {
 } from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 
+import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
-import {useBeforeLoad} from '../../helpers';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';

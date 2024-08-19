@@ -10,7 +10,7 @@ import {
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
 
-import {useBeforeLoad} from '../../helpers';
+import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Title.scss';

@@ -9,6 +9,7 @@ import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
+import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
@@ -17,7 +18,6 @@ import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-pr
 import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {useBeforeLoad} from '../../../DashKit/helpers';
 import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
