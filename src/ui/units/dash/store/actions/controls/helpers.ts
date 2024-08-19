@@ -145,6 +145,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
     const {
         sourceType,
 
+        titlePlacement,
         showTitle,
         showInnerTitle,
         innerTitle,
@@ -177,6 +178,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
 
     let source: ItemDataSource = {
         showTitle,
+        titlePlacement: elementType === ELEMENT_TYPE.CHECKBOX ? undefined : titlePlacement,
         elementType,
         defaultValue,
         showInnerTitle,

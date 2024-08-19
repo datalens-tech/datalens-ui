@@ -85,10 +85,16 @@ const __updateHighchartsConfig = (config: unknown) =>
               }),
     );
 
+let __shared: {};
+let __params: {};
+
 const ChartEditor: IChartEditor = {
     getTranslation: (keyset, key, params) =>
         _ChartEditor_getTranslation(keyset, key, JSON.stringify(params)),
-    getSharedData: () => JSON.parse(_ChartEditor_getSharedData()),
+    getSharedData: () => {
+        __shared = __shared || _ChartEditor_getSharedData();
+        return __shared;
+    },
     getLang: () => _ChartEditor_userLang,
     getUserLang: () => _ChartEditor_userLang,
     getUserLogin: () => _ChartEditor_userLogin,
@@ -103,12 +109,12 @@ const ChartEditor: IChartEditor = {
         return interval ? JSON.parse(interval) : null;
     },
     resolveOperation: (input) => {
-        const operation = _ChartEditor_resolveOperation(JSON.stringify(input));
+        const operation = _ChartEditor_resolveOperation(input);
         return operation ? JSON.parse(operation) : null;
     },
     setError: (value) => _ChartEditor_setError(JSON.stringify(value)),
-    _setError: (input) => _ChartEditor_setChartsInsights(JSON.stringify(input)),
-    setChartsInsights: (value) => _ChartEditor_setError(JSON.stringify(value)),
+    _setError: (input) => _ChartEditor_setError(JSON.stringify(input)),
+    setChartsInsights: (value) => _ChartEditor_setChartsInsights(JSON.stringify(value)),
     getWidgetConfig: () => JSON.parse(_ChartEditor_getWidgetConfig()),
     getActionParams: () => JSON.parse(_ChartEditor_getActionParams()),
     wrapFn: (value) => {
@@ -133,10 +139,12 @@ const ChartEditor: IChartEditor = {
             [WRAPPED_HTML_KEY]: ChartKitHtmlItem;
         },
 
-    getParams: () => JSON.parse(_ChartEditor_getParams()),
+    getParams: () => {
+        __params = __params || _ChartEditor_getParams();
+        return __params;
+    },
     getParam: (paramName) => {
-        const param = _ChartEditor_getParam(paramName);
-        return param ? JSON.parse(param) : null;
+        return _ChartEditor_getParam(paramName);
     },
 
     getSortParams: () => JSON.parse(_ChartEditor_getSortParams),

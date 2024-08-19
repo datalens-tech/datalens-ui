@@ -335,12 +335,16 @@ export function dashTypedReducer(
             const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
                 action.payload;
 
+            // if the number of selectors has increased from 1 to several, we enable autoHeight
+            const updatedAutoHeight =
+                selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
+
             return {
                 ...state,
                 selectorsGroup: {
                     ...selectorsGroup,
                     group,
-                    autoHeight,
+                    autoHeight: updatedAutoHeight,
                     buttonApply,
                     buttonReset,
                     updateControlsOnChange,

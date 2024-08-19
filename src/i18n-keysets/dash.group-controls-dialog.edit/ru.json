@@ -15,5 +15,8 @@
   "label_selector-settings": "Настройки селектора",
   "label_selectors-list": "Селекторы",
   "label_source": "Источник",
-  "label_update-controls-on-change": "Автообновление зависимых селекторов"
+  "label_title-placement": "Размещение заголовка",
+  "label_update-controls-on-change": "Автообновление зависимых селекторов",
+  "value_title-placement-left": "Слева",
+  "value_title-placement-top": "Сверху"
 }

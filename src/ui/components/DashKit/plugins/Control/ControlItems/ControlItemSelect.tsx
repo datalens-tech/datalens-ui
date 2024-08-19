@@ -75,7 +75,10 @@ type ControlItemSelectProps = {
     classMixin?: string;
     labelMixin?: string;
     renderOverlay?: () => React.ReactNode;
-    selectProps: Pick<SelectControlProps, 'style' | 'innerLabel' | 'label' | 'limitLabel'>;
+    selectProps: Pick<
+        SelectControlProps,
+        'style' | 'innerLabel' | 'label' | 'limitLabel' | 'labelPlacement'
+    >;
 };
 
 const b = block('control-item-select');

@@ -235,10 +235,6 @@ export const DL = {
     },
 };
 
-export const LIGHT_THEME = 'light';
-export const DARK_THEME = 'dark';
-export const SYSTEM_THEME = 'system';
-
 // monaco-editor common themes:
 // https://github.com/microsoft/vscode/blob/main/src/vs/editor/standalone/common/themes.ts
 export const LIGHT_THEME_MONACO = 'vs';
@@ -286,7 +282,7 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = Object.values(Scope);
+export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Presentation];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
@@ -295,6 +291,7 @@ export const OBJECT_SCOPES = [
     EntryScope.Dataset,
     EntryScope.Dash,
     EntryScope.Connection,
+    EntryScope.Presentation,
 ];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';

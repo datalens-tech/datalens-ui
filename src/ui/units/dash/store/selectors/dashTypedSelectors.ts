@@ -428,3 +428,5 @@ export const selectCurrentTabAliases = createSelector(
     [selectCurrentTab],
     (currentTab) => currentTab?.aliases || null,
 );
+
+export const selectNavigationPath = (state: DatalensGlobalState) => state.dash.navigationPath;

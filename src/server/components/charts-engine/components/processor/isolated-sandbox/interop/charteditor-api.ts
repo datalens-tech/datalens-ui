@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
+import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import type IsolatedVM from 'isolated-vm';
 
 import {
@@ -16,7 +17,9 @@ export type ChartEditorGetTranslation = (
     key: string,
     getTranslationParams?: string,
 ) => string;
-export type ChartEditorGetSharedData = () => string;
+export type ChartEditorGetSharedData = () => {
+    [key: string]: object;
+};
 export type ChartEditorUserLang = string;
 export type ChartEditorUserLogin = string;
 export type ChartEditorAttachHandler = (handlerConfig: string) => string;
@@ -30,8 +33,8 @@ export type ChartEditorGetWidgetConfig = () => string;
 export type ChartEditorGetActionParams = () => string;
 export type ChartEditorWrapFnWrappedFnKey = string;
 export type ChartEditorWrapHtmlWrappedHtmlKey = string;
-export type ChartEditorGetParams = () => string;
-export type ChartEditorGetParam = (key: string) => string | null;
+export type ChartEditorGetParams = () => StringParams;
+export type ChartEditorGetParam = (key: string) => string | string[];
 export type ChartEditorGetSortParams = string;
 export type ChartEditorCurrentPage = number;
 export type ChartEditorUpdateParams = (params: string) => undefined;
@@ -70,7 +73,7 @@ export function prepareChartEditorApi({
 }) {
     const params = chartEditorApi.getParams();
 
-    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams) => {
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams?: string) => {
         const parsedgetTranslationParams = getTranslationParams
             ? JSON.parse(getTranslationParams)
             : undefined;
@@ -78,21 +81,20 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
-        const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
-        return JSON.stringify(shared);
+        return chartEditorApi.getSharedData();
     }) satisfies ChartEditorGetSharedData);
 
     jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang() satisfies ChartEditorUserLang);
 
     jail.setSync('_ChartEditor_userLogin', (userLogin || '') satisfies ChartEditorUserLogin);
 
-    jail.setSync('_ChartEditor_attachHandler', ((handlerConfig) => {
-        const parsedHandlerConfig = JSON.parse(handlerConfig);
+    jail.setSync('_ChartEditor_attachHandler', ((handlerConfig?: string) => {
+        const parsedHandlerConfig = handlerConfig ? JSON.parse(handlerConfig) : undefined;
         return JSON.stringify(chartEditorApi.attachHandler(parsedHandlerConfig));
     }) satisfies ChartEditorAttachHandler);
 
-    jail.setSync('_ChartEditor_attachFormatter', ((formatterConfig) => {
-        const parsedFormatterConfig = JSON.parse(formatterConfig);
+    jail.setSync('_ChartEditor_attachFormatter', ((formatterConfig?: string) => {
+        const parsedFormatterConfig = formatterConfig ? JSON.parse(formatterConfig) : undefined;
         return JSON.stringify(chartEditorApi.attachFormatter(parsedFormatterConfig));
     }) satisfies ChartEditorAttachFormatter);
 
@@ -110,17 +112,16 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorResolveInterval);
 
     jail.setSync('_ChartEditor_resolveOperation', ((input: string) => {
-        const parsedInput = JSON.parse(input);
-        return JSON.stringify(chartEditorApi.resolveOperation(parsedInput));
+        return JSON.stringify(chartEditorApi.resolveOperation(input));
     }) satisfies ChartEditorResolveOperation);
 
-    jail.setSync('_ChartEditor_setError', ((value: string) => {
-        const parsedValue = JSON.parse(value);
+    jail.setSync('_ChartEditor_setError', ((value?: string) => {
+        const parsedValue = value ? JSON.parse(value) : undefined;
         chartEditorApi.setError(parsedValue);
     }) satisfies ChartEditorSetError);
 
-    jail.setSync('_ChartEditor_setChartsInsights', ((input: string) => {
-        const parsedInput = JSON.parse(input);
+    jail.setSync('_ChartEditor_setChartsInsights', ((input?: string) => {
+        const parsedInput = input ? JSON.parse(input) : undefined;
         chartEditorApi.setChartsInsights(parsedInput);
     }) satisfies ChartEditorSetChartsInsights);
 
@@ -148,11 +149,11 @@ export function prepareChartEditorApi({
     );
 
     jail.setSync('_ChartEditor_getParams', (() => {
-        return JSON.stringify(params);
+        return params;
     }) satisfies ChartEditorGetParams);
 
     jail.setSync('_ChartEditor_getParam', ((paramName: string) => {
-        return JSON.stringify(chartEditorApi.getParam(paramName));
+        return chartEditorApi.getParam(paramName);
     }) satisfies ChartEditorGetParam);
 
     if (name === 'Urls') {
@@ -168,12 +169,14 @@ export function prepareChartEditorApi({
     }
 
     if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        jail.setSync('_ChartEditor_updateParams', ((updatedParams: string) => {
-            const parsedUpdatedParams = JSON.parse(updatedParams);
+        jail.setSync('_ChartEditor_updateParams', ((updatedParams?: string) => {
+            const parsedUpdatedParams = updatedParams ? JSON.parse(updatedParams) : undefined;
             JSON.stringify(chartEditorApi.updateParams(parsedUpdatedParams));
         }) satisfies ChartEditorUpdateParams);
-        jail.setSync('_ChartEditor_updateActionParams', ((updateActionParams: string) => {
-            const parsedUpdateActionParams = JSON.parse(updateActionParams);
+        jail.setSync('_ChartEditor_updateActionParams', ((updateActionParams?: string) => {
+            const parsedUpdateActionParams = updateActionParams
+                ? JSON.parse(updateActionParams)
+                : undefined;
             JSON.stringify(chartEditorApi.updateActionParams(parsedUpdateActionParams));
         }) satisfies ChartEditorUpdateActionParams);
     }
@@ -187,17 +190,21 @@ export function prepareChartEditorApi({
             const loadedDataStats = chartEditorApi.getLoadedDataStats();
             return JSON.stringify(loadedDataStats);
         }) satisfies ChartEditorGetLoadedDataStats);
-        jail.setSync('_ChartEditor_setDataSourceInfo', ((dataSourceKey: string, info: string) => {
-            const parsedInfo = JSON.parse(info);
+        jail.setSync('_ChartEditor_setDataSourceInfo', ((dataSourceKey: string, info?: string) => {
+            const parsedInfo = info ? JSON.parse(info) : undefined;
             chartEditorApi.setDataSourceInfo(dataSourceKey, parsedInfo);
         }) satisfies ChartEditorSetDataSourceInfo);
         if (name === 'JavaScript') {
-            jail.setSync('_ChartEditor_updateConfig', ((updatedFragment: string) => {
-                const parsedUpdatedFragment = JSON.parse(updatedFragment);
+            jail.setSync('_ChartEditor_updateConfig', ((updatedFragment?: string) => {
+                const parsedUpdatedFragment = updatedFragment
+                    ? JSON.parse(updatedFragment)
+                    : undefined;
                 chartEditorApi.updateConfig(parsedUpdatedFragment);
             }) satisfies ChartEditorUpdateConfig);
-            jail.setSync('_ChartEditor_updateHighchartsConfig', ((updatedFragment: string) => {
-                const parsedUpdatedFragment = JSON.parse(updatedFragment);
+            jail.setSync('_ChartEditor_updateHighchartsConfig', ((updatedFragment?: string) => {
+                const parsedUpdatedFragment = updatedFragment
+                    ? JSON.parse(updatedFragment)
+                    : undefined;
                 chartEditorApi.updateHighchartsConfig(parsedUpdatedFragment);
             }) satisfies ChartEditorUpdateHighchartsConfig);
             jail.setSync('_ChartEditor_setSideHtml', ((html: string) => {
@@ -206,8 +213,8 @@ export function prepareChartEditorApi({
             jail.setSync('_ChartEditor_setSideMarkdown', ((markdown: string) => {
                 chartEditorApi.setSideMarkdown(markdown);
             }) satisfies ChartEditorSetSideMarkdown);
-            jail.setSync('_ChartEditor_setExtra', ((key: string, value: string) => {
-                const parsedValue = JSON.parse(value);
+            jail.setSync('_ChartEditor_setExtra', ((key: string, value?: string) => {
+                const parsedValue = value ? JSON.parse(value) : undefined;
                 chartEditorApi.setExtra(key, parsedValue);
             }) satisfies ChartEditorSetExtra);
             jail.setSync('_ChartEditor_setExportFilename', ((filename: string) => {

@@ -29,6 +29,7 @@ import type {
     Operations,
     RecursivePartial,
     StringParams,
+    TitlePlacementOption,
 } from 'shared';
 import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
@@ -390,6 +391,7 @@ export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
 
 export type SelectorDialogState = {
     title?: string;
+    titlePlacement?: TitlePlacementOption;
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
