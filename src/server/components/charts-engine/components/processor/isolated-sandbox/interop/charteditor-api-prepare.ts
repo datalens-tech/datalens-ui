@@ -72,7 +72,7 @@ declare const _ChartEditor_setSideMarkdown: ChartEditorSetSideMarkdown;
 declare const _ChartEditor_setExtra: ChartEditorSetExtra;
 declare const _ChartEditor_setExportFilename: ChartEditorSetExportFilename;
 
-// __runtimeMetadata.userParamsOverride = undefined;
+__runtimeMetadata.userParamsOverride = undefined;
 
 const __updateHighchartsConfig = (config: unknown) =>
     _ChartEditor_updateHighchartsConfig(

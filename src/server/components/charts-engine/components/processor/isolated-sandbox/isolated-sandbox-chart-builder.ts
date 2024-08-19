@@ -56,6 +56,7 @@ export const getIsolatedSandboxChartBuilder = async (
     context.evalSync(
         `const __modules = {};
          let __params; 
+         let __usedParams;
          let __runtimeMetadata = {userParamsOverride: undefined};
     `,
     );
@@ -120,6 +121,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 timeout: ONE_SECOND,
                 hooks: options.hooks,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 shared,
@@ -259,6 +261,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 timeout: JS_EXECUTION_TIMEOUT,
                 shared,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 data,
@@ -285,6 +288,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 hooks: options.hooks,
                 shared,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 data,

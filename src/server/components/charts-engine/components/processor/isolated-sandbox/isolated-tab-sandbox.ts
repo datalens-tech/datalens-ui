@@ -39,6 +39,7 @@ type ProcessTabParams = {
     name: string;
     code: string;
     params: Record<string, string | string[]>;
+    usedParams?: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, unknown>;
@@ -99,6 +100,7 @@ export type SandboxExecuteResult = {
     runtimeMetadata: RuntimeMetadata;
     shared: Record<string, object> | Shared | ServerChartsConfig;
     params: Record<string, string | string[]>;
+    usedParams: Record<string, string | string[]>;
 };
 
 const execute = async ({
@@ -125,6 +127,7 @@ const execute = async ({
 
     let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
     let resultParams = {};
+    let resultUsedParams = {};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
@@ -165,9 +168,9 @@ const execute = async ({
             ${
                 filename === 'Params'
                     ? `
-                const usedParams = {...module.exports};
-                
-                __params = Object.assign({}, usedParams, __params);
+                __usedParams = {...module.exports};
+                // Merge used to be here. Merge in this situation does not work as it should for arrays, so assign.    
+                __params = Object.assign({}, __usedParams, __params);
                 
                 Object.keys(__params).forEach((paramName) => {
                     const param = __params[paramName];
@@ -175,14 +178,29 @@ const execute = async ({
                         __params[paramName] = [param];
                     }
                 });
-                __updateParams(__runtimeMetadata.userParamsOverride);
+                // take values from params in usedParams there are always only defaults exported from the Params tab
+                // and in params new passed parameters
+                Object.keys(__usedParams).forEach((paramName) => {
+                    __usedParams[paramName] = __params[paramName];
+                });
+                // ChartEditor.updateParams() has the highest priority,
+                // therefore, now we take the parameters set through this method
+                __updateParams({
+                    userParamsOverride: __runtimeMetadata.userParamsOverride,
+                    params: __params,
+                    usedParams: __usedParams,
+                });
                 __resolveParams(__params);
             `
                     : ``
             };
              ${
                  filename === 'JavaScript' || filename === 'UI'
-                     ? `__updateParams(__runtimeMetadata.userParamsOverride);`
+                     ? `__updateParams({
+                            userParamsOverride: __runtimeMetadata.userParamsOverride,
+                            params: __params,
+                            usedParams: __usedParams,
+                        });`
                      : ``
              };
             ${['Highcharts', 'Config', 'Params'].includes(filename) ? `module = __prepareFunctionsForStringify(module);` : ``};
@@ -199,6 +217,7 @@ const execute = async ({
             },
         });
         resultParams = JSON.parse(context.evalSync('JSON.stringify(__params)'));
+        resultUsedParams = JSON.parse(context.evalSync('JSON.stringify(__usedParams)'));
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -238,6 +257,7 @@ const execute = async ({
 
     return {
         params: resultParams,
+        usedParams: resultUsedParams,
         shared,
         executionTiming,
         logs: isolatedConsole.getLogs(),
@@ -250,6 +270,7 @@ export const processTab = async ({
     name,
     code,
     params,
+    usedParams,
     actionParams,
     widgetConfig,
     data,
@@ -264,6 +285,7 @@ export const processTab = async ({
     features,
 }: ProcessTabParams) => {
     const originalParams = params;
+    const originalUsedParams = usedParams;
     const originalShared = shared;
     const chartApiContext = getChartApiContext({
         name,
@@ -295,5 +317,8 @@ export const processTab = async ({
     });
     Object.assign(originalShared, result.shared);
     Object.assign(originalParams, result.params);
+    if (originalUsedParams) {
+        Object.assign(originalUsedParams, result.usedParams);
+    }
     return result;
 };

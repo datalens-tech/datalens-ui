@@ -417,8 +417,10 @@ export class Processor {
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
+            usedParams = {};
             const paramsTabResults = await builder.buildParams({
                 params: normalizedParamsOverride,
+                usedParams: usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
@@ -430,7 +432,10 @@ export class Processor {
 
             ctx.log('EditorEngine::Params', {duration: getDuration(hrStart)});
 
-            usedParams = {...(paramsTabResults.exports as Record<string, string | string[]>)};
+            usedParams = {
+                ...(paramsTabResults.exports as Record<string, string | string[]>),
+                ...usedParams,
+            };
 
             // Merge used to be here. Merge in this situation does not work as it should for arrays, so assign.
             params = Object.assign({}, usedParams, normalizedParamsOverride);
@@ -670,6 +675,7 @@ export class Processor {
                     data,
                     sources: resolvedSources,
                     params,
+                    usedParams,
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
@@ -708,6 +714,7 @@ export class Processor {
             const uiTabResults = await builder.buildUI({
                 data,
                 params,
+                usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });

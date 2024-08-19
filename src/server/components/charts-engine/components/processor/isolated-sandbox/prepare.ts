@@ -41,20 +41,24 @@ const __prepareFunctionsForStringify = (value) => {
     return replaceFunctions(value);
 }
 
-function __updateParams(userParamsOverride) {
+function __updateParams({
+    userParamsOverride,
+    params,
+    usedParams,
+}) {
     if (userParamsOverride) {
         Object.keys(userParamsOverride).forEach((key) => {
             const overridenItem = userParamsOverride[key];
 
-            if (__params[key] && __params[key].length > 0) {
+            if (params[key] && params[key].length > 0) {
                 if (Array.isArray(overridenItem) && overridenItem.length > 0) {
-                    __params[key] = overridenItem;
+                    params[key] = overridenItem;
                 }
             } else {
-                __params[key] = overridenItem;
+                params[key] = overridenItem;
             }
 
-            // usedParams[key] = __params[key];
+            usedParams[key] = params[key];
         });
     }
 }
@@ -97,7 +101,11 @@ function require(name) {
     if (lowerName === 'libs/datalens/v3') {
         return datalensV3prepareAdapter;
     } else if (lowerName === 'libs/control/v1') {
-        return controlV1prepareAdapter;
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].controlModule;
+        } else {
+            return controlV1prepareAdapter;
+        }
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {

@@ -68,8 +68,7 @@ async function getChartBuilder({
         isEnabledServerFeature(parentContext, Feature.NoErrorTransformer),
     );
     const chartBuilder =
-        // eslint-disable-next-line no-constant-condition
-        true || (enableIsolatedSandbox && !isWizard)
+        enableIsolatedSandbox && !isWizard
             ? await getIsolatedSandboxChartBuilder({
                   userLang,
                   userLogin,
