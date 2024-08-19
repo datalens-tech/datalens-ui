@@ -8,6 +8,7 @@ import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import debounce from 'lodash/debounce';
 import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
@@ -106,3 +107,14 @@ export function getDashKitMenu() {
         },
     ];
 }
+
+const DEBOUNCE_REENDER_TIMEOUT = 200;
+export const useBeforeLoad = (onBeforeLoad: () => () => void) => {
+    const onUpdate = React.useRef<() => void | null>();
+
+    if (!onUpdate.current) {
+        onUpdate.current = debounce(onBeforeLoad(), DEBOUNCE_REENDER_TIMEOUT);
+    }
+
+    return onUpdate.current;
+};

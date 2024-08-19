@@ -17,6 +17,7 @@ import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-pr
 import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
 import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
+import {useBeforeLoad} from '../../../DashKit/helpers';
 import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
@@ -129,6 +130,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const history = useHistory();
 
+    const onUpdate = useBeforeLoad(props.onBeforeLoad);
+
     /**
      * debounced call of recalculate widget layout after rerender
      */
@@ -140,7 +143,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 rootNode: rootNodeRef,
                 gridLayout,
                 layout,
-                cb: adjustWidgetLayout,
+                // TODO: optimize call times in future
+                cb: (...args) => {
+                    onUpdate();
+                    return props.adjustWidgetLayout(...args);
+                },
             });
         },
         [widgetId, rootNodeRef, gridLayout, adjustWidgetLayout],

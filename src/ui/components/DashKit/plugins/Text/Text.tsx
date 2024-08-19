@@ -13,6 +13,7 @@ import {
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
+import {useBeforeLoad} from '../../helpers';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
@@ -39,6 +40,8 @@ const textPlugin = {
         const mutationObserver = React.useRef<MutationObserver | null>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
 
+        const onUpdate = useBeforeLoad(props.onBeforeLoad);
+
         /**
          * call common for charts & selectors adjust function for widget
          */
@@ -50,7 +53,11 @@ const textPlugin = {
                     rootNode: rootNodeRef,
                     gridLayout: props.gridLayout,
                     layout: props.layout,
-                    cb: props.adjustWidgetLayout,
+                    // TODO: optimize call times in future
+                    cb: (...args) => {
+                        onUpdate();
+                        return props.adjustWidgetLayout(...args);
+                    },
                     mainNodeSelector: `.${YFM_MARKDOWN_CLASSNAME}.${b()}`,
                     scrollableNodeSelector: `.${YFM_MARKDOWN_CLASSNAME} .${YFM_MARKDOWN_CLASSNAME}`,
                 });
@@ -74,7 +81,9 @@ const textPlugin = {
                 const text = await pluginText._apiHandler!(arg);
                 const nextMetaScripts = get(text, 'meta.script');
                 setMetaScripts(nextMetaScripts);
-                handleTextRender();
+                if (nextMetaScripts) {
+                    handleTextRender();
+                }
                 return text;
             },
             [pluginText._apiHandler, handleTextRender],
