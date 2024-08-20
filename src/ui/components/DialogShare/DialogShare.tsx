@@ -16,8 +16,6 @@ import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import DialogManager from '../DialogManager/DialogManager';
-import type {EntryDialogOnClose} from '../EntryDialogues';
-import {EntryDialogResolveStatus} from '../EntryDialogues';
 
 import {ShareLink} from './ShareLink/ShareLink';
 
@@ -41,7 +39,8 @@ const themeOptions = [
 const b = block('dialog-share');
 
 export type DialogShareProps = {
-    onClose: (() => void) | EntryDialogOnClose;
+    onClose: () => void;
+    visible?: boolean;
     showLinkDescription?: boolean;
     showMarkupLink?: boolean;
     propsData: ChartKitProps<ChartsProps, ChartsData>;
@@ -75,6 +74,7 @@ const getInitialLink = (
 
 export const DialogShare: React.FC<DialogShareProps> = ({
     onClose,
+    visible = true,
     showLinkDescription,
     showMarkupLink,
     showHideComments,
@@ -140,7 +140,6 @@ export const DialogShare: React.FC<DialogShareProps> = ({
         isFederationSelected,
     ]);
 
-    const handleOnClose = () => onClose({status: EntryDialogResolveStatus.Close});
     const handleChangeMenuParam = () => setHideMenu(!hideMenu);
     const handleChangeCommentsParam = () => setHideComments(!hideComments);
     const handleChangeSelectorsSaved = () => setIsSelectorsSaved(!isSelectorsSaved);
@@ -164,8 +163,8 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     return (
         <AdaptiveDialog
-            onClose={handleOnClose}
-            visible={true}
+            onClose={onClose}
+            visible={visible}
             title={i18n('title_share')}
             dialogProps={{className: b()}}
             sheetContentClassName={b({mobile: DL.IS_MOBILE})}
@@ -175,10 +174,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                     textButtonApply: i18n('button_copy-and-exit'),
                     onClickButtonApply: () => {
                         handleShareClick();
-                        handleOnClose();
-                    },
-                    propsButtonApply: {
-                        children: <Icon data={Copy} />, // fixme,
+                        onClose();
                     },
                 },
             })}

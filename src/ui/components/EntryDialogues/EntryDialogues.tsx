@@ -7,7 +7,6 @@ import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
 import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
-import {DialogShare} from '../DialogShare/DialogShare';
 import type {DialogShareProps} from '../DialogShare/DialogShare';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
@@ -48,6 +47,7 @@ import {DialogSwitchPublic} from './DialogSwitchPublic';
 import type {DialogUnlockProps} from './DialogUnlock';
 import {DialogUnlock} from './DialogUnlock';
 import type {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
+import {DialogShareEntry} from './DialogShareEntry';
 
 export enum EntryDialogName {
     Rename = 'rename',
@@ -96,7 +96,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNew,
         [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbook,
         [EntryDialogName.ShowRelatedEntities]: DialogRelatedEntities,
-        [EntryDialogName.Share]: DialogShare,
+        [EntryDialogName.Share]: DialogShareEntry,
         ...getAdditionalEntryDialoguesMap(),
     };
 };
@@ -194,7 +194,9 @@ class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialogues
         });
     }
 
-    private onClose: EntryDialogOnClose = ({status, data = {}}) => {
+    private onClose: EntryDialogOnClose = (foo) => {
+        console.log(foo);
+        const {status, data} = foo;
         const {resolveOpenDialog} = this.state;
 
         this.setState({...initState});
