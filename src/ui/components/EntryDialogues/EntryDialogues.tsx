@@ -194,8 +194,7 @@ class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialogues
         });
     }
 
-    private onClose: EntryDialogOnClose = (foo) => {
-        const {status, data} = foo;
+    private onClose: EntryDialogOnClose = ({status, data}) => {
         const {resolveOpenDialog} = this.state;
 
         this.setState({...initState});
