@@ -25,6 +25,7 @@ import {
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
 import type {ResolvedConfig} from '../types';
+import { unitedStorageConfigLoadedTimeout } from '../../../../../app-env';
 
 const handleError = createErrorHandler({
     meta: {
@@ -43,7 +44,7 @@ axiosRetry(axios, {
 
 const ENTRY_NOT_FOUND = 'ENTRY_NOT_FOUND';
 const ENTRY_FORBIDDEN = 'ENTRY_FORBIDDEN';
-const TEN_SECONDS = 10000;
+const TEN_SECONDS = unitedStorageConfigLoadedTimeout;
 const PASSED_PROPERTIES: (keyof Entry)[] = [
     'entryId',
     'data',
