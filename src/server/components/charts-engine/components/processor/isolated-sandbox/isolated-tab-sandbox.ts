@@ -203,7 +203,7 @@ const execute = async ({
                         });`
                      : ``
              };
-            ${['Highcharts', 'Config', 'Params'].includes(filename) ? `module = __prepareFunctionsForStringify(module);` : ``};
+            ${['Highcharts', 'Config', 'Params', 'Urls'].includes(filename) ? `module = __safeStringify(module);` : ``};
             return {module, __shared};
         `;
         const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
