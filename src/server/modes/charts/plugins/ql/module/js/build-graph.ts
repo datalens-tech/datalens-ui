@@ -1,10 +1,12 @@
 import type {
+    FeatureConfig,
     Field,
     IChartEditor,
+    Palette,
     QlConfig,
     ServerChartsConfig,
     ServerVisualization,
-} from '../../../../../shared';
+} from '../../../../../../../shared';
 import {
     AxisMode,
     DATASET_FIELD_TYPES,
@@ -12,40 +14,42 @@ import {
     Feature,
     PlaceholderId,
     VISUALIZATION_IDS,
-    getServerFeatures,
-    isEnabledServerFeature,
     isMonitoringOrPrometheusChart,
-} from '../../../../../shared';
-import {isChartSupportMultipleColors} from '../../../../../shared/modules/colors/common-helpers';
-import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import {registry} from '../../../../registry';
-import prepareSingleResult from '../datalens/js/helpers/misc/prepare-single-result';
-import {extractColorPalettesFromData} from '../helpers/color-palettes';
-import {getFieldList} from '../helpers/misc';
-
-import prepareLine from './preparers/line';
-import prepareLineTime from './preparers/line-time';
-import prepareMetric from './preparers/metric';
-import preparePie from './preparers/pie';
-import preparePreviewTable from './preparers/preview-table';
-import prepareTable from './preparers/table';
-import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './utils/constants';
+} from '../../../../../../../shared';
+import {isChartSupportMultipleColors} from '../../../../../../../shared/modules/colors/common-helpers';
+import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
+import prepareSingleResult from '../../../datalens/js/helpers/misc/prepare-single-result';
+import {extractColorPalettesFromData} from '../../../helpers/color-palettes';
+import {getFieldList} from '../../../helpers/misc';
 import {
     doesQueryContainOrderBy,
     getColumnsAndRows,
     log,
     visualizationCanHaveContinuousAxis,
-} from './utils/misc-helpers';
+} from '../../utils/misc-helpers';
+
+import prepareLine from './../../preparers/line';
+import prepareLineTime from './../../preparers/line-time';
+import prepareMetric from './../../preparers/metric';
+import preparePie from './../../preparers/pie';
+import preparePreviewTable from './../../preparers/preview-table';
+import prepareTable from './../../preparers/table';
+import {LINEAR_VISUALIZATIONS, PIE_VISUALIZATIONS} from './../../utils/constants';
 import {
     mapItems,
     mapVisualizationPlaceholdersItems,
     migrateOrAutofillVisualization,
-} from './utils/visualization-utils';
+} from './../../utils/visualization-utils';
+
+type BuildGraphArgs = {
+    shared: QlConfig;
+    ChartEditor: IChartEditor;
+    features: FeatureConfig;
+    palettes: Record<string, Palette>;
+};
 
 // eslint-disable-next-line complexity
-export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const app = registry.getApp();
-    const features = getServerFeatures(app.nodekit.ctx);
+export function buildGraph({shared, ChartEditor, features, palettes}: BuildGraphArgs) {
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -55,8 +59,6 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     let result;
 
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
-    const {getAvailablePalettesMap} = registry.common.functions.getAll();
-    const palettes = getAvailablePalettesMap();
     const {colorPalettes: loadedColorPalettes, loadedData} = extractColorPalettesFromData(data);
 
     const {columns, rows} = getColumnsAndRows({
@@ -210,7 +212,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
         if (visualizationIsEmpty) {
             const isMultipleDistinctsAvailable =
-                isEnabledServerFeature(app.nodekit.ctx, Feature.MultipleColorsInVisualization) &&
+                features[Feature.MultipleColorsInVisualization] &&
                 isChartSupportMultipleColors(config.chartType, sharedVisualization.id);
             // Visualization is empty, so we need to autofill it
             const {colors, visualization} = migrateOrAutofillVisualization({
@@ -438,4 +440,4 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     log('RESULT:', result);
 
     return result;
-};
+}

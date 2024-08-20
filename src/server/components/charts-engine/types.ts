@@ -3,6 +3,7 @@ import type {OutgoingHttpHeaders} from 'http';
 import type {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
 
+import type {EDITOR_TYPE_CONFIG_TABS} from '../../../shared';
 import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
 import type {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
 
@@ -192,3 +193,5 @@ export interface Plugin {
     processorHooks?: Record<string, any>[];
     routes?: PluginRoute[];
 }
+
+export type ChartStorageType = keyof typeof EDITOR_TYPE_CONFIG_TABS;
