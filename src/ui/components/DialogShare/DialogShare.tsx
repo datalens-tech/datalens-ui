@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {Copy} from '@gravity-ui/icons';
-import {Button, Checkbox, Icon, Select} from '@gravity-ui/uikit';
+import {Button, Checkbox, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
