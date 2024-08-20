@@ -3,7 +3,7 @@ import type {
     FeatureConfig,
     ServerChartsConfig,
     ServerPlaceholder,
-} from '../../../../../shared';
+} from '../../../../../../shared';
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
@@ -11,15 +11,12 @@ import {
     LegendDisplayMode,
     VISUALIZATIONS_WITH_LABELS_POSITION,
     getIsNavigatorEnabled,
-    getServerFeatures,
     isDateField,
-} from '../../../../../shared';
-import {registry} from '../../../../registry';
-
-import type {IgnoreProps} from './utils/axis-helpers';
-import {applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
-import {mapChartsConfigToServerConfig} from './utils/config-helpers';
-import {isNumericalDataType, log} from './utils/misc-helpers';
+} from '../../../../../../shared';
+import type {IgnoreProps} from '../utils/axis-helpers';
+import {applyPlaceholderSettingsToAxis} from '../utils/axis-helpers';
+import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
+import {isNumericalDataType, log} from '../utils/misc-helpers';
 
 type ExtendedHighchartsLegendOptions = Omit<Highcharts.LegendOptions, 'labelFormatter'> & {
     labelFormatter?:
@@ -409,18 +406,4 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
             break;
         }
     }
-};
-
-export const buildHighchartsConfig = (
-    ...options: [{shared: ServerChartsConfig} | ServerChartsConfig]
-) => {
-    const app = registry.getApp();
-    let shared: ServerChartsConfig;
-    if ('shared' in options[0]) {
-        shared = options[0].shared;
-    } else {
-        shared = options[0];
-    }
-
-    return buildHighchartsConfigPrivate({shared, features: getServerFeatures(app.nodekit.ctx)});
 };
