@@ -123,7 +123,6 @@ export type RuntimeMetadata = {
         exportFilename?: string;
     };
     chartsInsights?: ChartsInsight[];
-    errorTransformer: <T>(error: T) => T;
 };
 
 export type ChartApiContext = {
