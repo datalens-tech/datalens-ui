@@ -27,18 +27,25 @@ export type EntryRowProps = {
     };
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
+    className?: string;
+    // TODO: Remove clasName and disableHover
     clasName?: string;
     disableHover?: boolean;
+    enableHover?: boolean;
+    name?: string;
 };
 
 export const EntryRow = ({
     entry,
     rightSectionSlot = null,
     nonInteractive,
+    className,
     clasName,
-    disableHover,
+    enableHover,
+    name,
 }: EntryRowProps) => {
-    const entryName = entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
+    const defaultName = entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
+    const entryName = name || defaultName;
 
     const renderLock = () => {
         if (!entry.isLocked) {
@@ -55,8 +62,8 @@ export const EntryRow = ({
         return (
             <EntryIcon
                 entry={entry}
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 className={b('icon', {disabled: entry.disabled})}
             />
         );
@@ -69,9 +76,9 @@ export const EntryRow = ({
                 {
                     'non-interactive': nonInteractive,
                     locked: entry.isLocked,
-                    'no-hover': disableHover,
+                    hoverable: enableHover,
                 },
-                clasName,
+                clasName || className,
             )}
         >
             <div className={b('entry')}>
