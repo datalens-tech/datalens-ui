@@ -41,7 +41,7 @@ const themeOptions = [
 const b = block('dialog-share');
 
 export type DialogShareProps = {
-    onClose: EntryDialogOnClose;
+    onClose: (() => void) | EntryDialogOnClose;
     showLinkDescription?: boolean;
     showMarkupLink?: boolean;
     propsData: ChartKitProps<ChartsProps, ChartsData>;
@@ -94,7 +94,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     );
     const [selectedTheme, setSelectedTheme] = React.useState('');
     const [selectedLang, setSelectedLang] = React.useState('');
-    const [isFederationSelected, setIsFederationSelected] = React.useState(showFederation);
+    const [isFederationSelected, setIsFederationSelected] = React.useState(Boolean(showFederation));
     const [hideMenu, setHideMenu] = React.useState(
         Boolean(initialParams[COMMON_URL_OPTIONS.NO_CONTROLS]),
     );
