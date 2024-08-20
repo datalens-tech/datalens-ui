@@ -96,6 +96,17 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
+        if (x?.isMarkdown) {
+            customConfig.xAxis = {
+                ...(customConfig.xAxis ?? {}),
+                labels: {
+                    // @ts-ignore We use the key here to further replace it with a handler
+                    formatter: ChartkitHandlers.WizardAxisLabelMarkdownFormatter,
+                    useHTML: true,
+                },
+            };
+        }
+
         if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             customConfig.axesFormatting.yAxis.push(
                 getAxisFormattingByField(yPlaceholder, shared.visualization.id),

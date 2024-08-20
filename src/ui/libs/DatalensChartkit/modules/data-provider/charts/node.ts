@@ -4,15 +4,17 @@ import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
-import {omit, partial, partialRight} from 'lodash';
+import {omit} from 'lodash';
 import get from 'lodash/get';
+import partial from 'lodash/partial';
+import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
+import set from 'lodash/set';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
-    ChartkitHandlersDict,
     EDITOR_CHART_NODE,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
@@ -21,6 +23,7 @@ import {
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import Utils from '../../../../../utils';
+import {getYfmRenderFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
     GraphWidget,
@@ -30,6 +33,7 @@ import type {
 } from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
+import {ChartkitHandlersDict, baseRenderFn} from './chartkit-handlers';
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {
@@ -330,7 +334,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             });
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
 
-            applyChartkitHandlers(result.config, result.libraryConfig);
+            await applyChartkitHandlers({
+                config: result.config,
+                libraryConfig: result.libraryConfig,
+                graphs: get(result.data, 'graphs', []),
+            });
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
                 (result as GraphWidget).sideMarkdown = loaded.extra.sideMarkdown;
@@ -391,72 +399,114 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     }
 }
 
-function applyChartkitHandlers(
-    configRef: Widget['config'],
-    libraryConfigRef: Widget['libraryConfig'],
-) {
-    if (libraryConfigRef) {
-        const {tooltipHeaderFormatter} = libraryConfigRef;
+async function applyChartkitHandlers(args: {
+    config: Widget['config'];
+    libraryConfig: Widget['libraryConfig'];
+    graphs: undefined | unknown[];
+}) {
+    const {config, libraryConfig, graphs} = args;
+    if (libraryConfig) {
+        const {tooltipHeaderFormatter} = libraryConfig;
 
         if (typeof tooltipHeaderFormatter === 'string') {
-            libraryConfigRef.tooltipHeaderFormatter =
+            libraryConfig.tooltipHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardTooltipHeaderFormatter](
                     tooltipHeaderFormatter,
                 );
         }
 
-        if (libraryConfigRef.legend?.labelFormatter === ChartkitHandlers.WizardLabelFormatter) {
-            libraryConfigRef.legend.labelFormatter =
+        if (libraryConfig.legend?.labelFormatter === ChartkitHandlers.WizardLabelFormatter) {
+            libraryConfig.legend.labelFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
 
-        if (libraryConfigRef.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
-            libraryConfigRef.xAxis.labels.formatter =
+        if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
+            libraryConfig.xAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardXAxisFormatter];
         }
 
         if (
-            libraryConfigRef.yAxis?.labels?.formatter ===
-            ChartkitHandlers.DCMonitoringLabelFormatter
+            libraryConfig.xAxis?.labels?.formatter ===
+            ChartkitHandlers.WizardAxisLabelMarkdownFormatter
         ) {
-            libraryConfigRef.yAxis.labels.formatter =
+            const renderMarkdown = await getRenderMarkdownFn();
+            libraryConfig.xAxis.labels.formatter = partial(
+                ChartkitHandlersDict[ChartkitHandlers.WizardAxisLabelMarkdownFormatter],
+                renderMarkdown,
+            );
+        }
+
+        if (
+            libraryConfig.yAxis?.labels?.formatter === ChartkitHandlers.DCMonitoringLabelFormatter
+        ) {
+            libraryConfig.yAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.DCMonitoringLabelFormatter];
         }
 
         if (
-            libraryConfigRef.yAxis?.labels?.formatter ===
+            libraryConfig.yAxis?.labels?.formatter ===
             ChartkitHandlers.WizardScatterYAxisLabelFormatter
         ) {
-            libraryConfigRef.yAxis.labels.formatter =
+            libraryConfig.yAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardScatterYAxisLabelFormatter];
         }
 
         if (
-            libraryConfigRef.exporting?.csv?.columnHeaderFormatter ===
+            libraryConfig.exporting?.csv?.columnHeaderFormatter ===
             ChartkitHandlers.WizardExportColumnNamesFormatter
         ) {
-            libraryConfigRef.exporting.csv.columnHeaderFormatter =
+            libraryConfig.exporting.csv.columnHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardExportColumnNamesFormatter];
         }
 
         if (
-            libraryConfigRef.plotOptions?.scatter?.tooltip?.formatter ===
+            libraryConfig.plotOptions?.scatter?.tooltip?.formatter ===
             ChartkitHandlers.WizardScatterTooltipFormatter
         ) {
-            delete libraryConfigRef.plotOptions.scatter.tooltip.formatter;
-            libraryConfigRef.plotOptions.scatter.tooltip.headerFormat = '';
-            libraryConfigRef.plotOptions.scatter.tooltip.pointFormatter =
-                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
+            const hasMarkdown = (graphs ?? []).some((graph) =>
+                get(graph, 'custom.hasMarkdown', false),
+            );
+            const renderItem = hasMarkdown ? await getRenderMarkdownFn() : undefined;
+            delete libraryConfig.plotOptions.scatter.tooltip.formatter;
+            libraryConfig.plotOptions.scatter.tooltip.headerFormat = '';
+            libraryConfig.plotOptions.scatter.tooltip.pointFormatter = partial(
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter],
+                renderItem,
+            );
         }
     }
 
     if (
-        configRef &&
-        (configRef as GraphWidget['config']).manageTooltipConfig ===
+        config &&
+        (config as GraphWidget['config']).manageTooltipConfig ===
             ChartkitHandlers.WizardManageTooltipConfig
     ) {
-        (configRef as GraphWidget['config']).manageTooltipConfig =
+        (config as GraphWidget['config']).manageTooltipConfig =
             ChartkitHandlersDict[ChartkitHandlers.WizardManageTooltipConfig];
+    }
+
+    if (graphs && Array.isArray(graphs)) {
+        const possibleHandlers = {
+            'dataLabels.formatter': [ChartkitHandlers.WizardDataLabelMarkdownFormatter],
+            'tooltip.pointFormatter': [ChartkitHandlers.WizardTreemapTooltipFormatter],
+        };
+        await Promise.all(
+            graphs.map(async (graph) => {
+                const hasMarkdown = get(graph, 'custom.hasMarkdown', false);
+                const renderItem = hasMarkdown ? await getRenderMarkdownFn() : baseRenderFn;
+                Object.entries(possibleHandlers).forEach(([path, handlersToCheck]) => {
+                    handlersToCheck.forEach((handler) => {
+                        if (graph && get(graph, path) === handler) {
+                            const handlerFn = partialRight(
+                                ChartkitHandlersDict[handler],
+                                renderItem,
+                            );
+                            set(graph, path, handlerFn);
+                        }
+                    });
+                });
+            }),
+        );
     }
 }
 

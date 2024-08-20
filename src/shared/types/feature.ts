@@ -89,6 +89,8 @@ export enum Feature {
     NoErrorTransformer = 'NoErrorTransformer',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
+    /** Allow markdown in chart fields. */
+    WizardMarkdownFields = 'WizardMarkdownFields',
 }
 
 export type FeatureConfig = Record<string, boolean>;

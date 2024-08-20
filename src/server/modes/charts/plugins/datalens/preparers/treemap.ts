@@ -1,6 +1,11 @@
 import escape from 'lodash/escape';
 
-import {Feature, MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../shared';
+import {
+    ChartkitHandlers,
+    Feature,
+    MINIMUM_FRACTION_DIGITS,
+    isDateField,
+} from '../../../../../../shared';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -254,6 +259,7 @@ function prepareTreemap({
         ];
     }
 
+    const isMarkdownLabels = d?.some((field) => field?.isMarkdown);
     const graphs = [
         {
             type: 'treemap',
@@ -261,6 +267,7 @@ function prepareTreemap({
             allowTraversingTree: true,
             interactByLeaf: true,
             tooltip: {
+                pointFormatter: ChartkitHandlers.WizardTreemapTooltipFormatter,
                 ...(isFloat && {valueDecimals: MINIMUM_FRACTION_DIGITS}),
             },
             dataLabels: {
@@ -270,10 +277,17 @@ function prepareTreemap({
                 style: {
                     cursor: 'pointer',
                 },
+                ...(isMarkdownLabels && {
+                    formatter: ChartkitHandlers.WizardDataLabelMarkdownFormatter,
+                    useHTML: true,
+                }),
             },
             levelIsConstant: false,
             levels,
             data: treemap,
+            custom: {
+                hasMarkdown: isMarkdownLabels,
+            },
         },
     ];
 

@@ -288,6 +288,7 @@ export function versionExtractor(this: any, key: string, value: any) {
                     backgroundSettings,
                     subTotalsSettings,
                     hintSettings,
+                    isMarkdown: item.isMarkdown,
                 };
             }),
         );

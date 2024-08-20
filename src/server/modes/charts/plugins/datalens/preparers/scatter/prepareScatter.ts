@@ -1,7 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
-import type {PointSizeConfig, ServerField} from '../../../../../../../shared';
+import type {Field, PointSizeConfig, ServerField} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
@@ -386,10 +386,15 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         categories = xCategories;
     }
 
+    const hasMarkdown = [x, y, points, color, shape, size].some(
+        (field) => (field as Field)?.isMarkdown,
+    );
+
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
         graph.custom = {
             ...graph.custom,
+            hasMarkdown,
             tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
         };
 

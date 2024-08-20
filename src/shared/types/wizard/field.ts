@@ -44,6 +44,7 @@ export interface WizardDatasetField extends DatasetField {
     backgroundSettings?: TableFieldBackgroundSettings;
     distincts?: string[];
     hintSettings?: HintSettings;
+    isMarkdown?: boolean;
 }
 
 export type HintSettings = {
