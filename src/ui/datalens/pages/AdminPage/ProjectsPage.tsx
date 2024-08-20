@@ -41,7 +41,8 @@ const ProjectTables = () => {
   }
 
   async function onSave(values: any) {
-    const { err } = await Utils.universalService({ "action": "datalens", "method": "add_or_update_project", "data": [{ id: values.id, c_name: values.constant, c_description: values.name }] });
+    let { err, data } = await Utils.universalService({ "action": "datalens", "method": "add_or_update_project", "data": [{ id: values.id, c_name: values.constant, c_description: values.name }] });
+    err = err || data[0]?.message;
     if (err) {
       return setError(err);
     }

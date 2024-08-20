@@ -67,7 +67,7 @@ const UsersTables = () => {
 
 
     if (!values.id) {
-      const { err } = await Utils.universalService(
+      let { err, data } = await Utils.universalService(
         {
           "action": "datalens",
           "method": "create_user",
@@ -83,11 +83,12 @@ const UsersTables = () => {
           ]
         }
       );
+      err = err || data[0]?.message;
       if (err) {
         return setError(err);
       }
     } else {
-      const { err } = await Utils.universalService(
+      let { err, data } = await Utils.universalService(
         {
           "action": "datalens",
           "method": "update_user",
@@ -100,6 +101,7 @@ const UsersTables = () => {
           }]
         }
       );
+      err = err || data[0]?.message;
       if (err) {
         return setError(err);
       }
