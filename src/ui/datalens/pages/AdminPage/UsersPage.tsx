@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import _ from "lodash";
 import Utils from 'ui/utils';
 import { I18n } from 'i18n';
 import { Table, Button, Text, Loader } from '@gravity-ui/uikit';
@@ -63,9 +64,10 @@ const UsersTables = () => {
   }
 
   async function onSave(values: any) {
-    console.log("onSave", values);
-
-
+    const base_roles = roles.filter((item:any)=>item.isbase).map((item:any)=>item.name);
+    if (_.intersection(base_roles, values.c_claims).length == 0) {
+      return setError(i18n("not_select_require_roles"));
+    }
     if (!values.id) {
       let { err, data } = await Utils.universalService(
         {
@@ -106,7 +108,7 @@ const UsersTables = () => {
         return setError(err);
       }
 
-      const { roles_err } = await Utils.universalService(
+      let { err: roles_err, data: roles_data } = await Utils.universalService(
         {
           "action": "datalens",
           "method": "update_roles",
@@ -116,11 +118,12 @@ const UsersTables = () => {
           }]
         }
       );
+      roles_err = roles_err || roles_data[0]?.message;
       if (roles_err) {
         return setError(roles_err);
       }
 
-      const { password_err } = await Utils.universalService(
+      let { err: password_err, data: password_data } = await Utils.universalService(
         {
           "action": "datalens",
           "method": "password_reset",
@@ -130,6 +133,7 @@ const UsersTables = () => {
           }]
         }
       );
+      password_err = password_err || password_data[0]?.message;
       if (password_err) {
         return setError(password_err);
       }
