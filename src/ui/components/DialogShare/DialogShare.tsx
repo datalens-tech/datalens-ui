@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, Checkbox, Select} from '@gravity-ui/uikit';
+import {Copy} from '@gravity-ui/icons';
+import {Button, Checkbox, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
@@ -15,6 +16,8 @@ import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import DialogManager from '../DialogManager/DialogManager';
+import type {EntryDialogOnClose} from '../EntryDialogues';
+import {EntryDialogResolveStatus} from '../EntryDialogues';
 
 import {ShareLink} from './ShareLink/ShareLink';
 
@@ -38,7 +41,7 @@ const themeOptions = [
 const b = block('dialog-share');
 
 export type DialogShareProps = {
-    onClose: () => void;
+    onClose: EntryDialogOnClose;
     showLinkDescription?: boolean;
     showMarkupLink?: boolean;
     propsData: ChartKitProps<ChartsProps, ChartsData>;
@@ -51,6 +54,7 @@ export type DialogShareProps = {
     showFederation?: boolean;
     showEmbedLink?: boolean;
     showHideMenu?: boolean;
+    showCopyAndExitBtn?: boolean;
 };
 
 const getInitialLink = (
@@ -83,6 +87,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
     showHideMenu = true,
     showSelectorsCheckbox,
     showFederation,
+    showCopyAndExitBtn,
 }) => {
     const [currentUrl, setCurrentUrl] = React.useState(
         getInitialLink(loadedData, propsData, urlIdPrefix, initialParams),
@@ -135,6 +140,7 @@ export const DialogShare: React.FC<DialogShareProps> = ({
         isFederationSelected,
     ]);
 
+    const handleOnClose = () => onClose({status: EntryDialogResolveStatus.Close});
     const handleChangeMenuParam = () => setHideMenu(!hideMenu);
     const handleChangeCommentsParam = () => setHideComments(!hideComments);
     const handleChangeSelectorsSaved = () => setIsSelectorsSaved(!isSelectorsSaved);
@@ -158,12 +164,24 @@ export const DialogShare: React.FC<DialogShareProps> = ({
 
     return (
         <AdaptiveDialog
-            onClose={onClose}
+            onClose={handleOnClose}
             visible={true}
             title={i18n('title_share')}
             dialogProps={{className: b()}}
             sheetContentClassName={b({mobile: DL.IS_MOBILE})}
             id={SHEET_IDS.DIALOG_SHARE}
+            {...(showCopyAndExitBtn && {
+                dialogFooterProps: {
+                    textButtonApply: i18n('button_copy-and-exit'),
+                    onClickButtonApply: () => {
+                        handleShareClick();
+                        handleOnClose();
+                    },
+                    propsButtonApply: {
+                        children: <Icon data={Copy} />, // fixme,
+                    },
+                },
+            })}
         >
             <div className={b('body')} data-qa={ChartkitMenuDialogsQA.chartMenuShareModalBody}>
                 <div className={b('params')}>

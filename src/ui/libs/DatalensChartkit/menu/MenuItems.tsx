@@ -223,7 +223,10 @@ export const getOpenAsTableMenuItem = ({
         }),
 });
 
-export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuItemConfig => ({
+export const getLinkMenuItem = (
+    customConfig?: Partial<MenuItemConfig>,
+    isExternal?: boolean,
+): MenuItemConfig => ({
     id: MenuItemsIds.GET_LINK,
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'get-code');
@@ -239,22 +242,28 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
-            console.log('action');
             return function render(props: MenuItemModalProps) {
+                let initialParams = {};
+                if (!isExternal) {
+                    initialParams = {
+                        [COMMON_URL_OPTIONS.EMBEDDED]: 1,
+                        [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
+                    };
+                }
                 return (
                     <DialogShare
                         loadedData={loadedData}
                         propsData={propsData}
                         urlIdPrefix={`/${PREVIEW_ROUTE}/`}
                         onClose={props.onClose}
-                        showHideComments={true}
+                        showHideComments={!isExternal}
                         showLinkDescription={true}
-                        showMarkupLink={true}
+                        showMarkupLink={!isExternal}
+                        showEmbedLink={!isExternal}
+                        showCopyAndExitBtn={isExternal}
+                        showFederation={DL.USER.isFederationUser}
                         hasDefaultSize={true}
-                        initialParams={{
-                            [COMMON_URL_OPTIONS.EMBEDDED]: 1,
-                            [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
-                        }}
+                        initialParams={initialParams}
                     />
                 );
             };

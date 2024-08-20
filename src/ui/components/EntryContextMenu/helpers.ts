@@ -165,7 +165,6 @@ export async function showShareDialog(
     if (entryDialoguesRef.current) {
         const dialogProps: DialogShareProps = {
             onClose: () => {},
-            showEmbedLink: false,
             showSelectorsCheckbox: true,
             propsData: {
                 id: entry.entryId,
@@ -177,11 +176,13 @@ export async function showShareDialog(
         }
 
         if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
-            dialogProps.showEmbedLink = true;
             dialogProps.showMarkupLink = true;
             dialogProps.initialParams = {
                 [URL_OPTIONS.NO_CONTROLS]: 1,
             };
+        } else {
+            dialogProps.showEmbedLink = false;
+            dialogProps.showCopyAndExitBtn = true;
         }
 
         await entryDialoguesRef.current.open({
