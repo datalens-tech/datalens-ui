@@ -2,6 +2,7 @@ import type {
     DashWidgetConfig,
     FeatureConfig,
     Palette,
+    QlConfig,
     ServerChartsConfig,
     Shared,
     StringParams,
@@ -10,8 +11,10 @@ import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url
 import type {LogItem} from '../processor/console';
 import type {RuntimeMetadata} from '../processor/types';
 
+export type ChartShared = Record<string, object> | Shared | ServerChartsConfig | QlConfig;
+
 export type BuildSourceArgs = {
-    shared: Shared;
+    shared: unknown;
     userLang: string;
     params: StringParams;
     actionParams: StringParams;
@@ -20,7 +23,7 @@ export type BuildSourceArgs = {
 };
 
 export type BuildLibraryConfigArgs = {
-    shared: ServerChartsConfig;
+    shared: ChartShared;
     userLang: string;
     params: StringParams;
     actionParams: StringParams;
@@ -29,7 +32,7 @@ export type BuildLibraryConfigArgs = {
 };
 
 export type BuildChartConfigArgs = {
-    shared: ServerChartsConfig;
+    shared: ChartShared;
     userLang: string;
     params: StringParams;
     actionParams: StringParams;
@@ -38,7 +41,7 @@ export type BuildChartConfigArgs = {
 };
 
 export type BuildChartArgs = {
-    shared: ServerChartsConfig;
+    shared: ChartShared;
     userLang: string;
     params: StringParams;
     actionParams: StringParams;
