@@ -42,12 +42,12 @@ import type {DialogMoveEntryProps} from './DialogMoveEntry';
 import {DialogMoveEntry} from './DialogMoveEntry';
 import type {DialogRenameEntryProps} from './DialogRenameEntry';
 import {DialogRenameEntry} from './DialogRenameEntry';
+import {DialogShareEntry} from './DialogShareEntry';
 import type {DialogSwitchPublicProps} from './DialogSwitchPublic';
 import {DialogSwitchPublic} from './DialogSwitchPublic';
 import type {DialogUnlockProps} from './DialogUnlock';
 import {DialogUnlock} from './DialogUnlock';
 import type {EntryDialogOnClose, EntryDialogOnCloseArg} from './types';
-import {DialogShareEntry} from './DialogShareEntry';
 
 export enum EntryDialogName {
     Rename = 'rename',
@@ -195,7 +195,6 @@ class EntryDialogues extends React.Component<EntryDialoguesProps, EntryDialogues
     }
 
     private onClose: EntryDialogOnClose = (foo) => {
-        console.log(foo);
         const {status, data} = foo;
         const {resolveOpenDialog} = this.state;
 
