@@ -203,11 +203,11 @@ const execute = async ({
                         });`
                      : ``
              };
-            ${['Highcharts', 'Config', 'Params', 'Urls'].includes(filename) ? `module = __safeStringify(module);` : ``};
+            module = __safeStringify(module);
             return {module, __shared};
         `;
         const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
-        const codeWrapper = `(function () { \n ${code} \n })();`;
+        const codeWrapper = `(function () { \n ${code} \n }.bind({chartEditor: ChartEditor, ChartEditor}))();`;
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
