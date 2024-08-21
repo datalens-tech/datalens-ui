@@ -1,9 +1,4 @@
-import type {
-    Dictionary,
-    IChartEditor,
-    ServerChartsConfig,
-    StringParams,
-} from '../../../../../shared';
+import type {Dictionary, ServerChartsConfig, StringParams} from '../../../../../../../shared';
 import {
     ConnectorType,
     QLParamType,
@@ -11,13 +6,17 @@ import {
     resolveIntervalDate,
     resolveOperation,
     resolveRelativeDate,
-} from '../../../../../shared';
-import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
-import {registry} from '../../../../registry';
-import {getColorPalettesRequests} from '../helpers/color-palettes';
+} from '../../../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
+import {getColorPalettesRequests} from '../../../helpers/color-palettes';
+import {
+    buildSource,
+    iterateThroughVisibleQueries,
+    log,
+    prepareQuery,
+} from '../../utils/misc-helpers';
 
-import {buildSource, iterateThroughVisibleQueries, log, prepareQuery} from './utils/misc-helpers';
+import type {BuildSourcesArgs} from './types';
 
 const resolveUrlParameter = (urlParamValue: string | string[]) => {
     if (Array.isArray(urlParamValue)) {
@@ -39,9 +38,8 @@ const prepareDefaultDate = (date: string) => {
     return resolvedDate || date;
 };
 
-export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
-    const {getAvailablePalettesMap} = registry.common.functions.getAll();
-    const palettes = getAvailablePalettesMap();
+export function buildSources(args: BuildSourcesArgs) {
+    const {shared, ChartEditor, palettes} = args;
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const urlParams = ChartEditor.getParams();
@@ -229,4 +227,4 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     return {
         ...sources,
     };
-};
+}

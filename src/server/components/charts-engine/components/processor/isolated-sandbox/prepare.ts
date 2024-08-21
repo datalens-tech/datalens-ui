@@ -11,13 +11,13 @@ var module = {exports: {}};
 var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
-            return __prepareFunctionsForStringify(elem);
+            return __safeStringify(elem);
         })
         return __log(...processed);
     }
 };
 
-const __prepareFunctionsForStringify = (value) => {
+const __safeStringify = (value) => {
     function replaceFunctions(value) {
         if(Array.isArray(value)) {
             return value.map(replaceFunctions);   
