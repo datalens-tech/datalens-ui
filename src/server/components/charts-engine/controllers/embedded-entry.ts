@@ -4,7 +4,7 @@ import {isObject} from 'lodash';
 
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
+import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
@@ -41,7 +41,7 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         [DL_EMBED_TOKEN_HEADER]: embedToken,
     };
 
-    const configResolveArgs: ResolveConfigProps = {
+    const configResolveArgs: EmbedResolveConfigProps = {
         embedToken,
         // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
         key: embedId,

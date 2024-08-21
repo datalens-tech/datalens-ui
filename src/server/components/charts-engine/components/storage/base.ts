@@ -13,7 +13,6 @@ type Config = AppConfig & {preloadList?: string[]};
 
 export type ResolveConfigProps = {
     id?: string;
-    embedToken?: string;
     key: string;
     headers: Request['headers'];
     unreleased?: boolean;
@@ -23,6 +22,8 @@ export type ResolveConfigProps = {
     extraAllowedHeaders?: string[];
     workbookId?: WorkbookId;
 };
+
+export type EmbedResolveConfigProps = ResolveConfigProps & {embedToken: string; embedId: string};
 
 export type ResolveConfigError = {
     response?: {status: number};
@@ -112,18 +113,7 @@ export class BaseStorage {
 
     fetchConfig(
         ctx: AppContext,
-        params: {
-            id?: string;
-            embedToken?: string;
-            embedId?: string;
-            key?: string;
-            headers: Request['headers'];
-            unreleased: boolean;
-            requestId?: string;
-            storageApiPath?: string;
-            extraAllowedHeaders?: string[];
-            workbookId?: WorkbookId;
-        },
+        params: (ResolveConfigProps | EmbedResolveConfigProps) & Required<{unreleased: boolean}>,
     ): Promise<ResolvedConfig | EmbeddingInfo> {
         const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =
             params;
@@ -147,7 +137,7 @@ export class BaseStorage {
         let retrieve: Promise<ResolvedConfig | EmbeddingInfo>;
         let id: string;
 
-        if (params.id && params.embedToken) {
+        if (params.id && 'embedToken' in params && params.embedToken) {
             retrieve = this.provider.retrieveByTokenAndId(ctx, {
                 token: params.embedToken,
                 id: params.id,
@@ -161,7 +151,7 @@ export class BaseStorage {
                 ...storageRetrieveArgs,
             });
             id = params.id;
-        } else if (params.embedToken) {
+        } else if ('embedToken' in params && params.embedToken) {
             retrieve = this.provider.retrieveByToken(ctx, {
                 token: params.embedToken,
                 ...storageRetrieveArgs,
@@ -209,37 +199,14 @@ export class BaseStorage {
         this.cachedConfigs = preloaded;
     }
 
-    resolveConfig(ctx: AppContext, props: ResolveConfigProps) {
-        const {
-            id,
-            key,
-            embedToken,
-            headers,
-            unreleased = false,
-            noCache = false,
-            requestId,
-            storageApiPath,
-            extraAllowedHeaders,
-            workbookId,
-            embedId,
-        } = props;
+    resolveConfig(ctx: AppContext, props: ResolveConfigProps | EmbedResolveConfigProps) {
+        const {key, unreleased = false, noCache = false} = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
             return Promise.resolve(this.cachedConfigs[key]);
         }
 
-        return this.fetchConfig(ctx, {
-            id,
-            key,
-            embedToken,
-            headers,
-            unreleased,
-            requestId,
-            storageApiPath,
-            extraAllowedHeaders,
-            workbookId,
-            embedId,
-        });
+        return this.fetchConfig(ctx, {...props, unreleased, noCache});
     }
 
     private initProvider(config: BaseStorageInitParams['config']) {

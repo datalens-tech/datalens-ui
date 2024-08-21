@@ -5,7 +5,7 @@ import {isObject} from 'lodash';
 import type {ChartsEngine} from '..';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
+import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
@@ -52,7 +52,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             [DL_EMBED_TOKEN_HEADER]: embedToken,
         };
 
-        const configResolveArgs: ResolveConfigProps = {
+        const configResolveArgs: EmbedResolveConfigProps = {
             id: isWidget ? id : undefined,
             embedToken,
             // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
