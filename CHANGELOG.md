@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1906.1] 20.08.2024
+
+Created:
+
+- добавлена переменная `UNITED_STORAGE_CONFIG_LOADED_TIMEOUT` - таймаут на получение информации о связи двух таблиц по связанному ключу, по умолчанию занчение 10000 ms
+
 ## [0.1906.0] 13.08.2024
 
 Fixed:
