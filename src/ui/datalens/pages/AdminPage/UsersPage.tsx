@@ -123,19 +123,21 @@ const UsersTables = () => {
         return setError(roles_err);
       }
 
-      let { err: password_err, data: password_data } = await Utils.universalService(
-        {
-          "action": "datalens",
-          "method": "password_reset",
-          "data": [{
-            "c_login": values.c_login,
-            "c_password": values.c_password,
-          }]
+      if (values.c_password) {
+        let { err: password_err, data: password_data } = await Utils.universalService(
+          {
+            "action": "datalens",
+            "method": "password_reset",
+            "data": [{
+              "c_login": values.c_login,
+              "c_password": values.c_password,
+            }]
+          }
+        );
+        password_err = password_err || password_data[0]?.message;
+        if (password_err) {
+          return setError(password_err);
         }
-      );
-      password_err = password_err || password_data[0]?.message;
-      if (password_err) {
-        return setError(password_err);
       }
     }
     loadUsers().then((users) => {
