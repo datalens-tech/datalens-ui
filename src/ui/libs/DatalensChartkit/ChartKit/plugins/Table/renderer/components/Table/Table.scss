@@ -27,6 +27,26 @@
     min-width: 100%;
     width: max-content;
 
+    &__snapter-container {
+        &_preparing {
+            opacity: 0;
+        }
+    }
+
+    &__paginator {
+        &_preparing {
+            opacity: 0;
+        }
+    }
+
+    &__table-wrapper {
+        width: 100%;
+
+        &_highlight-rows {
+            --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
+        }
+    }
+
     &__title {
         font-weight: 700;
         padding: 5px 40px 5px 0;
@@ -36,7 +56,13 @@
     &__th,
     &__td {
         border: 1px solid var(--dl-table-border-color);
+        border-top: 0;
+        border-left: 0;
         font-size: 10pt;
+
+        &_first-cell {
+            border-left: 1px solid var(--dl-table-border-color);
+        }
 
         &_clickable {
             cursor: pointer;
@@ -49,10 +75,17 @@
 
         &_align_left {
             text-align: left;
+            justify-content: flex-start;
         }
 
         &_align_center {
             text-align: center;
+            justify-content: center;
+        }
+
+        &_type_number {
+            text-align: right;
+            justify-content: flex-end;
         }
     }
 
@@ -67,14 +100,17 @@
         }
     }
 
-    &__header &__th {
-        position: relative;
-        font-weight: 500;
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
-        vertical-align: var(--dl-table-header-cell-vertical-align);
-        box-sizing: border-box;
+    &__cell-content {
+        display: flex;
+        min-width: 100%;
         height: 100%;
-        background: var(--dl-table-header-bg-color);
+        justify-content: inherit;
+        align-items: inherit;
+
+        &_type_null {
+            font-style: italic;
+            opacity: 0.5;
+        }
     }
 
     &__header {
@@ -104,6 +140,17 @@
         }
     }
 
+    &__header &__th {
+        position: relative;
+        font-weight: 500;
+        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        vertical-align: var(--dl-table-header-cell-vertical-align);
+        box-sizing: border-box;
+        height: 100%;
+        background: var(--dl-table-header-bg-color);
+        text-align: left;
+    }
+
     &__header &__sort-icon {
         position: absolute;
         right: 0;
@@ -112,7 +159,10 @@
     }
 
     &__body &__tr {
-        height: var(--dl-table-row-height);
+        min-height: var(--dl-table-row-height);
+        td {
+            min-height: var(--dl-table-row-height);
+        }
 
         &_no-data {
             background: var(--dl-table-no-data-bg-color);
@@ -125,19 +175,27 @@
         vertical-align: var(--dl-table-cell-vertical-align);
     }
 
-    &__footer &__tr {
-        height: var(--dl-table-footer-row-height);
+    &__footer &__td {
+        min-height: var(--dl-table-row-height);
+        overflow: hidden;
+        padding: 0;
     }
 
-    &__footer &__td {
-        overflow: hidden;
+    &__footer-cell-content {
+        display: flex;
+        justify-content: inherit;
+        width: 100%;
+        height: 100%;
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
         background-color: var(--dl-table-footer-bg-color);
-        text-align: left;
+    }
+
+    &__footer .chartkit-table-bar {
+        height: fit-content;
     }
 
     &__header &__th_pinned,
@@ -171,8 +229,55 @@
         pointer-events: none;
     }
 
-    &__body &__tr:not(&__tr_no-data):hover,
+    &__body &__tr:not(&__tr_no-data):hover td:not(&__td_pinned),
     &__body &__tr:not(&__tr_no-data):hover td:before {
         background: var(--dl-table-row-hover-bg-color);
+    }
+
+    &__no-data {
+        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        background: var(--dl-table-no-data-bg-color);
+        border: 1px solid var(--dl-table-border-color);
+    }
+}
+
+table.dl-table_prepared {
+    thead {
+        display: grid;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+
+        tr {
+            display: contents;
+        }
+    }
+
+    tbody {
+        display: grid;
+        position: relative;
+
+        tr {
+            display: contents;
+        }
+    }
+
+    tfoot {
+        display: grid;
+
+        tr {
+            display: contents;
+        }
+    }
+
+    td,
+    th {
+        display: flex;
+    }
+
+    tr:first-child {
+        th {
+            border-top: 1px solid var(--dl-table-border-color);
+        }
     }
 }

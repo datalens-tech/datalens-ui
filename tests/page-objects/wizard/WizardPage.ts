@@ -212,8 +212,8 @@ class WizardPage extends ChartPage {
         const datasetFields = this.page.locator(slct(SectionDatasetQA.DatasetFields));
 
         await this.fieldEditor.open();
-        await this.fieldEditor.setName(fieldName);
         await this.fieldEditor.setFormula(formula);
+        await this.fieldEditor.setName(fieldName);
         await this.fieldEditor.clickToApplyButton();
 
         await expect(
