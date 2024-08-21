@@ -201,13 +201,10 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Link,
         text: 'value_copy-link',
         enable: () => true,
-        scopes: [
-            EntryScope.Connection,
-            EntryScope.Dataset,
-            EntryScope.Folder,
-            EntryScope.Presentation,
-            EntryScope.Widget,
-        ],
+        scopes: ALL_SCOPES,
+        isVisible({entry, showSpecificItems}) {
+            return !(entry?.scope === EntryScope.Dash && showSpecificItems);
+        },
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
@@ -216,6 +213,9 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         text: 'value_share',
         enable: () => true,
         scopes: [EntryScope.Dash],
+        isVisible({showSpecificItems}) {
+            return showSpecificItems;
+        },
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
