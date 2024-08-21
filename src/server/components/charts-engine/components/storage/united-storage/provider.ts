@@ -101,8 +101,10 @@ export type EmbeddingInfo = {
         entryId: string;
         depsIds: string[];
         unsignedParams: string[];
+        privateParams: string[];
         createdBy: string;
         createdAt: string;
+        publicParamsMode: boolean;
     };
     entry: ResolvedConfig;
 };
@@ -485,7 +487,7 @@ export class USProvider {
             token: string;
             headers: Request['headers'];
         },
-    ): Promise<ResolvedConfig> {
+    ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
         const headersWithToken = {
             ...headers,
@@ -504,7 +506,11 @@ export class USProvider {
             .then((response) => {
                 ctx.log('UNITED_STORAGE_CONFIG_LOADED', {duration: getDuration(hrStart)});
 
-                return formatPassedProperties(response.data);
+                return {
+                    token: response.data.embeddingInfo.token,
+                    embed: response.data.embeddingInfo.embed,
+                    entry: formatPassedProperties(response.data),
+                };
             })
             .catch((error) => {
                 if (error.response && error.response.status === 404) {

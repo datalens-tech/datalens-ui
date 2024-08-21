@@ -581,16 +581,18 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         props,
         requestId,
         requestCancellation,
+        isWidget,
     }: {
         props: ChartsProps;
         requestId: string;
         requestCancellation: CancelTokenSource;
+        isWidget?: boolean;
     }) {
         const loaded = await this.load<ResponseSuccess>({
             data: props,
             requestId,
             requestCancellation,
-            isWidget: true,
+            isWidget,
         });
 
         if (loaded) {
@@ -812,7 +814,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 },
                 uiOnly: onlyControls || undefined,
                 workbookId,
-                isWidget,
+                isWidget: isWidget || undefined,
             },
             headers: this.getLoadHeaders(requestId),
             'axios-retry': {

@@ -64,8 +64,14 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             requestId: req.id,
         };
 
-        const configPromise =
-            config || ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));
+        // 1. it's embedded chart, id is not used, chart is resolved by token
+        // 2. it's widget from embedded dash, id is used, chart is resolved by
+        // token and id
+        // 3. it's selector from embedded dash, id is not used, dash is resolved by
+        // token to get embeddedInfo and check token
+        const configPromise = ctx.call('configLoading', (cx) =>
+            resolveConfig(cx, configResolveArgs),
+        );
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 
@@ -96,30 +102,37 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 res.status(status).send(result);
             })
             .then(async (embeddingInfo) => {
-                if (!embeddingInfo) {
+                if (!embeddingInfo || !('token' in embeddingInfo)) {
                     return null;
                 }
 
-                if ('embed' in embeddingInfo) {
-                    const params: Record<string, unknown> = req.body.params || {};
-                    const filteredParams: Record<string, unknown> = {};
+                const params: Record<string, unknown> = req.body.params || {};
+                const filteredParams: Record<string, unknown> = {};
 
+                // the dash widget has only one mode - publicParamsMode: false
+                if (embeddingInfo.embed.publicParamsMode && !isWidget) {
                     Object.keys(params).forEach((key) => {
                         if (embeddingInfo.embed.unsignedParams.includes(key)) {
                             filteredParams[key] = params[key];
                         }
                     });
-
-                    req.body.params = {
-                        ...embeddingInfo.token.params,
-                        ...filteredParams,
-                    };
+                } else {
+                    Object.keys(params).forEach((key) => {
+                        if (!embeddingInfo.embed.privateParams.includes(key)) {
+                            filteredParams[key] = params[key];
+                        }
+                    });
                 }
 
-                const config = 'entry' in embeddingInfo ? embeddingInfo.entry : embeddingInfo;
+                req.body.params = {
+                    ...embeddingInfo.token.params,
+                    ...filteredParams,
+                };
+
+                const entry = config || embeddingInfo.entry;
 
                 const configResolving = getDuration(hrStart);
-                const configType = config && config.meta && config.meta.stype;
+                const configType = entry && entry.meta && entry.meta.stype;
 
                 ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
 
@@ -141,14 +154,14 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     });
                 }
 
-                req.body.config = config;
-                req.body.key = config.key;
+                req.body.config = entry;
+                req.body.key = entry.key;
 
                 return runnerFound.handler(ctx, {
                     chartsEngine,
                     req,
                     res,
-                    config,
+                    config: entry,
                     configResolving,
                 });
             })

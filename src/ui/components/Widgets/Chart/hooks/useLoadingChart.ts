@@ -90,6 +90,7 @@ export type LoadingChartHookProps = {
     isPageHidden?: boolean;
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
+    isWidget?: boolean;
 };
 
 type AutoupdateDataType = {
@@ -146,6 +147,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         autoupdateInterval,
         isPageHidden,
         forceShowSafeChart,
+        isWidget,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -419,6 +421,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 requestCancellation:
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
+                isWidget,
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';

@@ -90,7 +90,7 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                 const filteredParams: Record<string, unknown> = {};
 
                 for (const [key] of params) {
-                    if (embed.unsignedParams.includes(key)) {
+                    if (!embed.privateParams.includes(key)) {
                         filteredParams[key] = params.get(key);
                     }
                 }
