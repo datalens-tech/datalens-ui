@@ -80,7 +80,7 @@ const UsersTables = () => {
               "c_password": values.c_password,
               "c_claims": values.c_claims,
               "b_disabled": values.b_disabled,
-              "c_project_name": values.c_project_name[0]
+              "c_project_name": values.c_project_name && Array.isArray(values.c_project_name) ? values.c_project_name[0] : null
             }
           ]
         }
