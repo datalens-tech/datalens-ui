@@ -15,6 +15,10 @@ export enum GoalId {
     CreatingCloudScreen = 'CREATINGCLOUD_SCREEN',
     ChooseFolderScreen = 'CHOOSEFOLDER_SCREEN',
     FederationUserWithoutSources = 'FEDERATION_USER_WITHOUT_SOURCES',
+    DashboardPublicAccessSubmit = 'DL_DASHBOARD_PUBLIC-ACCESS_SUBMIT',
+    ConnectionCreateSubmit = 'DL_CONNECTION-CREATE_SUBMIT',
+    ConnectionEditSubmit = 'DL_CONNECTION-EDIT_SUBMIT',
+    ConnectionDeleteSubmit = 'DL_CONNECTION-DELETE_SUBMIT',
 }
 
 const getCounterConfigByName = (counterName?: string) => {

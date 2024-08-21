@@ -5,8 +5,10 @@ import {EntryTitle} from 'components/EntryTitle';
 import {I18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
+import {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import type {DatalensGlobalState} from 'ui';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {selectLockToken} from 'ui/store/selectors/entryContent';
 // For now only dash is using lock if any other locks appear change it to entry action
 import {cleanLock} from 'units/dash/store/actions/dashTyped';
@@ -87,7 +89,11 @@ class DialogDeleteEntry extends React.Component<Props> {
     };
 
     private onSuccess = (data: {entryId: string}) => {
+        const {entry} = this.props;
         this.props.onClose({status: EntryDialogResolveStatus.Success, data});
+        if (entry.scope === EntryScope.Connection) {
+            reachMetricaGoal(CounterName.Main, GoalId.ConnectionDeleteSubmit, {type: entry.type});
+        }
     };
 }
 

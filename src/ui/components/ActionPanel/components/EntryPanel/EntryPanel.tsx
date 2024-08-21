@@ -11,9 +11,10 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA} from 'shared';
+import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {sdk} from 'ui';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
 import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
@@ -237,6 +238,10 @@ class EntryPanel extends React.Component<Props, State> {
     onChangePublicClick = async () => {
         if (!this.state.entry || !this.entryDialogsRef.current) {
             return;
+        }
+
+        if (this.state.entry.scope === EntryScope.Dash) {
+            reachMetricaGoal(CounterName.Main, GoalId.DashboardPublicAccessSubmit);
         }
 
         const result = await this.entryDialogsRef.current.open({
