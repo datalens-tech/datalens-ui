@@ -64,7 +64,7 @@ const UsersTables = () => {
   }
 
   async function onSave(values: any) {
-    const base_roles = roles.filter((item:any)=>item.isbase).map((item:any)=>item.name);
+    const base_roles = roles.filter((item:any)=>item.isbase && item.name != 'oidc').map((item:any)=>item.name);
     if (_.intersection(base_roles, values.c_claims).length == 0) {
       return setError(i18n("not_select_require_roles"));
     }
