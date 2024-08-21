@@ -140,12 +140,10 @@ export const collectionsReducer = (
                 return item.collectionId;
             });
 
-            const newCollections = action.data.collections.filter(
-                (collection) => !loadedIds.includes(collection.collectionId),
-            );
-            const newWorkbooks = action.data.workbooks.filter(
-                (workbook) => !loadedIds.includes(workbook.workbookId),
-            );
+            const newItems = action.data.items.filter((item) => {
+                const id = 'workbookId' in item ? item.workbookId : item.collectionId;
+                return !loadedIds.includes(id);
+            });
 
             return {
                 ...state,
@@ -154,7 +152,7 @@ export const collectionsReducer = (
                     data: action.data,
                     error: null,
                 },
-                items: [...state.items, ...newCollections, ...newWorkbooks],
+                items: [...state.items, ...newItems],
             };
         }
         case GET_COLLECTION_CONTENT_FAILED: {

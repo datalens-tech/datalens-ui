@@ -35,10 +35,7 @@ export type Props = {
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumbsResponse;
     items: (Collection | Workbook)[];
-    nextPageTokens: {
-        collectionsNextPageToken?: string | null;
-        workbooksNextPageToken?: string | null;
-    };
+    nextPageToken: string | null;
     pageSize: number;
     isSelectionAllowed: boolean;
     operationDeniedMessage?: string;
@@ -59,7 +56,7 @@ export const StructureItemSelect = React.memo<Props>(
         contentError,
         breadcrumbs,
         items,
-        nextPageTokens,
+        nextPageToken,
         pageSize,
         isSelectionAllowed,
         operationDeniedMessage,
@@ -78,32 +75,19 @@ export const StructureItemSelect = React.memo<Props>(
         }, [contentError]);
 
         const onWaypointEnter = React.useCallback(() => {
-            if (nextPageTokens.collectionsNextPageToken || nextPageTokens.workbooksNextPageToken) {
+            if (nextPageToken) {
                 getCollectionContentRecursively({
                     collectionId,
-                    collectionsPage: nextPageTokens.collectionsNextPageToken,
-                    workbooksPage: nextPageTokens.workbooksNextPageToken,
+                    itemsPage: nextPageToken,
                     pageSize,
                 }).then((res) => {
-                    if (
-                        (res?.collectionsNextPageToken &&
-                            res?.collectionsNextPageToken ===
-                                nextPageTokens.collectionsNextPageToken) ||
-                        (res?.workbooksNextPageToken &&
-                            res?.workbooksNextPageToken === nextPageTokens.workbooksNextPageToken)
-                    ) {
+                    if (res?.nextPageToken && res?.nextPageToken === nextPageToken) {
                         setWaypointDisabled(true);
                     }
                     return res;
                 });
             }
-        }, [
-            collectionId,
-            getCollectionContentRecursively,
-            nextPageTokens.collectionsNextPageToken,
-            nextPageTokens.workbooksNextPageToken,
-            pageSize,
-        ]);
+        }, [collectionId, getCollectionContentRecursively, nextPageToken, pageSize]);
 
         return (
             <div className={b({disabled})}>

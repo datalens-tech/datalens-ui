@@ -61,8 +61,7 @@ export type GetCollectionResponse = Collection | CollectionWithPermissions;
 
 export type GetCollectionContentArgs = {
     collectionId: string | null;
-    collectionsPage?: string | null;
-    workbooksPage?: string | null;
+    itemsPage?: string | null;
     filterString?: string;
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
@@ -73,10 +72,8 @@ export type GetCollectionContentArgs = {
 };
 
 export type GetCollectionContentResponse = {
-    collections: (Collection | CollectionWithPermissions)[];
-    collectionsNextPageToken?: string | null;
-    workbooks: (Workbook | WorkbookWithPermissions)[];
-    workbooksNextPageToken?: string | null;
+    items: (Collection | CollectionWithPermissions | Workbook | WorkbookWithPermissions)[];
+    nextPageToken?: string | null;
 };
 
 export type GetCollectionBreadcrumbsArgs = {

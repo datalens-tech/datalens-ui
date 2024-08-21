@@ -306,8 +306,7 @@ type GetCollectionsContentAction =
 
 export const getCollectionContent = ({
     collectionId,
-    collectionsPage,
-    workbooksPage,
+    itemsPage,
     filterString,
     orderField,
     orderDirection,
@@ -323,8 +322,7 @@ export const getCollectionContent = ({
             .us.getCollectionContent({
                 collectionId,
                 includePermissionsInfo: false,
-                collectionsPage,
-                workbooksPage,
+                itemsPage,
                 filterString,
                 orderField,
                 orderDirection,

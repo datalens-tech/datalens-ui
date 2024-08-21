@@ -37,22 +37,15 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
         (
             args: GetCollectionContentArgs,
         ): CancellablePromise<GetCollectionContentResponse | null> => {
-            let curCollectionsPage = args.collectionsPage;
-            let curWorkbooksPage = args.workbooksPage;
+            let curItemsPage = args.itemsPage;
 
             return dispatch(getCollectionContent(args)).then((result) => {
-                if (
-                    (result?.collections.length === 0 &&
-                        result.collectionsNextPageToken !== null) ||
-                    (result?.workbooks.length === 0 && result.workbooksNextPageToken !== null)
-                ) {
-                    curCollectionsPage = result.collectionsNextPageToken;
-                    curWorkbooksPage = result.workbooksNextPageToken;
+                if (result?.items.length === 0 && result.nextPageToken !== null) {
+                    curItemsPage = result.nextPageToken;
 
                     return getCollectionContentRecursively({
                         ...args,
-                        collectionsPage: curCollectionsPage,
-                        workbooksPage: curWorkbooksPage,
+                        itemsPage: curItemsPage,
                     });
                 } else {
                     return result;

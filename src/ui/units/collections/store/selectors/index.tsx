@@ -37,12 +37,9 @@ export const selectCollectionContentError = createSelector(
     (getCollectionContent) => getCollectionContent.error,
 );
 
-export const selectCollectionContentNextPageTokens = createSelector(
+export const selectCollectionContentNextPageToken = createSelector(
     [selectGetCollectionContent],
-    (getCollectionContent) => ({
-        collectionsNextPageToken: getCollectionContent.data?.collectionsNextPageToken,
-        workbooksNextPageToken: getCollectionContent.data?.workbooksNextPageToken,
-    }),
+    (getCollectionContent) => getCollectionContent.data?.nextPageToken,
 );
 
 export const selectRootCollectionPermissionsIsLoading = createSelector(

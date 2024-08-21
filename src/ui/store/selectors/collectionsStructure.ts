@@ -98,10 +98,10 @@ export const selectCollectionContentError = createSelector(
 );
 
 // Tokens for reloading subsequent content pages
-export const selectNextPageTokens = createSelector([selectGetCollectionContent], (content) => ({
-    collectionsNextPageToken: content.data?.collectionsNextPageToken,
-    workbooksNextPageToken: content.data?.workbooksNextPageToken,
-}));
+export const selectNextPageToken = createSelector(
+    [selectGetCollectionContent],
+    (content) => content.data?.nextPageToken || null,
+);
 
 export const selectCopyTemplateIsLoading = createSelector(
     [selectCopyTemplate],

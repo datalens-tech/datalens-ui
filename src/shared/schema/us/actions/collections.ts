@@ -22,7 +22,7 @@ import type {
 } from '../types';
 
 export const COLLECTIONS_PATH_PREFIX = '/v1/collections';
-const COLLECTION_CONTENT_PATH_PREFIX = '/v1/collection-content';
+const COLLECTION_CONTENT_PATH_PREFIX = '/v1/structure-items';
 const COLLECTION_MOVE_LIST_PATH_PREFIX = '/v1/move-collections';
 const COLLECTION_DELETE_LIST_PATH_PREFIX = '/v1/delete-collections';
 const ROOT_COLLECTION_PERMISSIONS_PATH_PREFIX = '/v1/root-collection-permissions';
@@ -59,8 +59,7 @@ export const collectionsActions = {
                 collectionId,
                 includePermissionsInfo,
                 filterString,
-                collectionsPage,
-                workbooksPage,
+                itemsPage,
                 pageSize,
                 orderField,
                 orderDirection,
@@ -74,8 +73,7 @@ export const collectionsActions = {
                 includePermissionsInfo,
                 filterString,
                 // null is passed from query parameters
-                collectionsPage: collectionsPage === null ? 'null' : collectionsPage,
-                workbooksPage: workbooksPage === null ? 'null' : workbooksPage,
+                itemsPage: itemsPage === null ? 'null' : itemsPage,
                 pageSize,
                 orderField,
                 orderDirection,

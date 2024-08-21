@@ -136,8 +136,7 @@ type GetCollectionsContentAction =
 
 export const getCollectionContent = ({
     collectionId,
-    collectionsPage,
-    workbooksPage,
+    itemsPage,
     filterString,
     orderField,
     orderDirection,
@@ -146,8 +145,7 @@ export const getCollectionContent = ({
     pageSize,
 }: {
     collectionId: string | null;
-    collectionsPage?: string | null;
-    workbooksPage?: string | null;
+    itemsPage?: string | null;
     filterString?: string;
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
@@ -163,8 +161,7 @@ export const getCollectionContent = ({
             .us.getCollectionContent({
                 collectionId,
                 includePermissionsInfo: true,
-                collectionsPage,
-                workbooksPage,
+                itemsPage,
                 filterString,
                 orderField,
                 orderDirection,

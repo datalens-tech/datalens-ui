@@ -35,7 +35,7 @@ import {
     selectCollectionIsLoading,
     selectCreateCollectionIsLoading,
     selectCreateWorkbookIsLoading,
-    selectNextPageTokens,
+    selectNextPageToken,
     selectRootPermissionsData,
 } from 'store/selectors/collectionsStructure';
 
@@ -130,7 +130,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         const collectionContentItems = useSelector(selectCollectionContentItems) ?? [];
         const collectionContentIsLoading = useSelector(selectCollectionContentIsLoading);
         const collectionContentError = useSelector(selectCollectionContentError);
-        const nextPageTokens = useSelector(selectNextPageTokens);
+        const nextPageToken = useSelector(selectNextPageToken);
 
         const createCollectionIsLoading = useSelector(selectCreateCollectionIsLoading);
         const createWorkbookIsLoading = useSelector(selectCreateWorkbookIsLoading);
@@ -157,22 +157,15 @@ export const CollectionStructureDialog = React.memo<Props>(
             (
                 args: GetCollectionContentArgs,
             ): CancellablePromise<GetCollectionContentResponse | null> => {
-                let curCollectionsPage = args.collectionsPage;
-                let curWorkbooksPage = args.workbooksPage;
+                let curItemsPage = args.itemsPage;
 
                 return dispatch(getCollectionContent(args)).then((result) => {
-                    if (
-                        (result?.collections.length === 0 &&
-                            result.collectionsNextPageToken !== null) ||
-                        (result?.workbooks.length === 0 && result.workbooksNextPageToken !== null)
-                    ) {
-                        curCollectionsPage = result.collectionsNextPageToken;
-                        curWorkbooksPage = result.workbooksNextPageToken;
+                    if (result?.items.length === 0 && result.nextPageToken !== null) {
+                        curItemsPage = result.nextPageToken;
 
                         return getCollectionContentRecursively({
                             ...args,
-                            collectionsPage: curCollectionsPage,
-                            workbooksPage: curWorkbooksPage,
+                            itemsPage: curItemsPage,
                         });
                     } else {
                         return result;
@@ -363,7 +356,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                             contentError={collectionContentError}
                             breadcrumbs={breadcrumbs}
                             items={collectionContentItems}
-                            nextPageTokens={nextPageTokens}
+                            nextPageToken={nextPageToken}
                             pageSize={PAGE_SIZE}
                             isSelectionAllowed={isSelectionAllowed}
                             canSelectWorkbook={workbookSelectionMode}

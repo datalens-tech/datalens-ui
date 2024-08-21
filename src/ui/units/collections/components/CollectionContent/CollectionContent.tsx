@@ -22,7 +22,7 @@ import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
     selectCollectionContentError,
     selectCollectionContentIsLoading,
-    selectCollectionContentNextPageTokens,
+    selectCollectionContentNextPageToken,
 } from '../../store/selectors';
 import type {CollectionBatchAction} from '../CollectionBatchPanel/CollectionBatchPanel';
 import {CollectionBatchPanel} from '../CollectionBatchPanel/CollectionBatchPanel';
@@ -87,7 +87,7 @@ export const CollectionContent: React.FC<Props> = ({
 }) => {
     const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
     const collectionContentError = useSelector(selectCollectionContentError);
-    const collectionContentNextPageTokens = useSelector(selectCollectionContentNextPageTokens);
+    const nextPageToken = useSelector(selectCollectionContentNextPageToken);
 
     const isDefaultFilters =
         filters.filterString === DEFAULT_FILTERS.filterString &&
@@ -114,14 +114,10 @@ export const CollectionContent: React.FC<Props> = ({
     );
 
     const onWaypointEnter = React.useCallback(() => {
-        if (
-            collectionContentNextPageTokens.collectionsNextPageToken ||
-            collectionContentNextPageTokens.workbooksNextPageToken
-        ) {
+        if (nextPageToken) {
             getCollectionContentRecursively({
                 collectionId: curCollectionId,
-                collectionsPage: collectionContentNextPageTokens.collectionsNextPageToken,
-                workbooksPage: collectionContentNextPageTokens.workbooksNextPageToken,
+                itemsPage: nextPageToken,
                 pageSize: PAGE_SIZE,
                 filterString: filters.filterString,
                 orderField: filters.orderField,
@@ -129,14 +125,7 @@ export const CollectionContent: React.FC<Props> = ({
                 mode: filters.mode,
                 onlyMy: filters.onlyMy,
             }).then((res) => {
-                if (
-                    (res?.collectionsNextPageToken &&
-                        res?.collectionsNextPageToken ===
-                            collectionContentNextPageTokens.collectionsNextPageToken) ||
-                    (res?.workbooksNextPageToken &&
-                        res?.workbooksNextPageToken ===
-                            collectionContentNextPageTokens.workbooksNextPageToken)
-                ) {
+                if (res?.nextPageToken && res?.nextPageToken === nextPageToken) {
                     setWaypointDisabled(true);
                 }
                 return res;
@@ -150,8 +139,7 @@ export const CollectionContent: React.FC<Props> = ({
         filters.orderDirection,
         filters.orderField,
         getCollectionContentRecursively,
-        collectionContentNextPageTokens.collectionsNextPageToken,
-        collectionContentNextPageTokens.workbooksNextPageToken,
+        nextPageToken,
     ]);
 
     const {getCollectionActions, getWorkbookActions} = useActions({
