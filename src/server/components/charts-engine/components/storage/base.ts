@@ -153,7 +153,7 @@ export class BaseStorage {
                 id: params.id,
                 ...storageRetrieveArgs,
             });
-            id = params.embedId || 'wrongToken';
+            id = params.embedId;
         } else if (params.id) {
             retrieve = this.provider.retrieveById(ctx, {
                 id: params.id,
@@ -166,7 +166,7 @@ export class BaseStorage {
                 token: params.embedToken,
                 ...storageRetrieveArgs,
             });
-            id = params.embedId || 'wrongToken';
+            id = params.embedId;
         } else if (params.key) {
             retrieve = this.provider.retrieveByKey(ctx, {key: params.key, ...storageRetrieveArgs});
             id = params.key;
@@ -221,6 +221,7 @@ export class BaseStorage {
             storageApiPath,
             extraAllowedHeaders,
             workbookId,
+            embedId,
         } = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
@@ -237,6 +238,7 @@ export class BaseStorage {
             storageApiPath,
             extraAllowedHeaders,
             workbookId,
+            embedId,
         });
     }
 

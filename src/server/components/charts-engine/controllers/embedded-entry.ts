@@ -45,6 +45,7 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         embedToken,
         // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
         key: embedId,
+        embedId,
         headers: {
             ...res.locals.subrequestHeaders,
             ...ctx.getMetadata(),

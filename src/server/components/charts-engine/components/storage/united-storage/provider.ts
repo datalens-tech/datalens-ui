@@ -514,19 +514,19 @@ export class USProvider {
             })
             .catch((error) => {
                 if (error.response && error.response.status === 404) {
-                    error.description = 'embedToken';
+                    error.description = 'embedToken and id';
                     error.code = ENTRY_NOT_FOUND;
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.description = 'embedToken';
+                    error.description = 'embedToken and id';
                     error.code = ENTRY_FORBIDDEN;
                     error.status = 403;
                     throw error;
                 } else {
                     throw handleError({
                         code: 'UNITED_STORAGE_OBJECT_RETRIEVE_ERROR',
-                        meta: {extra: {type: 'embedToken'}},
+                        meta: {extra: {type: 'embedToken and id'}},
                         error,
                         rethrow: false,
                     });
