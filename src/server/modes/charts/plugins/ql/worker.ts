@@ -1,25 +1,21 @@
 import workerPool from 'workerpool';
 
-import type {ServerChartsConfig, Shared} from '../../../../../shared';
+import type {QlConfig} from '../../../../../shared';
 import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
-import {buildChartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/config';
-import {buildWizardD3Config} from '../../../../modes/charts/plugins/datalens/d3';
-import {buildHighchartsConfigPrivate} from '../../../../modes/charts/plugins/datalens/highcharts';
-import {buildGraphPrivate} from '../../../../modes/charts/plugins/datalens/js/js';
-import {buildSourcesPrivate} from '../../../../modes/charts/plugins/datalens/url/build-sources';
-import {setConsole} from '../../../../modes/charts/plugins/datalens/utils/misc-helpers';
-import {createI18nInstance} from '../../../../utils/language';
-import {getChartApiContext} from '../processor/chart-api-context';
-import {Console} from '../processor/console';
-
+import {Console} from '../../../../components/charts-engine';
+import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
+import {getChartApiContext} from '../../../../components/charts-engine/components/processor/chart-api-context';
 import type {
     BuildChartArgs,
     BuildChartConfigArgs,
     BuildLibraryConfigArgs,
     BuildSourceArgs,
     WizardWorker,
-} from './types';
+} from '../../../../components/charts-engine/components/wizard-worker/types';
+import {createI18nInstance} from '../../../../utils/language';
+
+import qlModule from './module/private-module';
 
 const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {
@@ -34,13 +30,12 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        qlModule.setConsole(console);
 
         return {
-            exports: buildSourcesPrivate({
-                apiVersion: '2',
-                shared: shared as Shared,
-                params,
+            exports: qlModule.buildSources({
+                shared: shared as QlConfig,
+                ChartEditor: context.ChartEditor,
                 palettes,
             }),
             runtimeMetadata: context.__runtimeMetadata,
@@ -48,7 +43,7 @@ const worker: WizardWorker = {
         };
     },
     buildLibraryConfig: async (args: BuildLibraryConfigArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, features} = args;
+        const {shared, params, actionParams, widgetConfig, userLang} = args;
         const context = getChartApiContext({
             name: 'Highcharts',
             shared,
@@ -59,25 +54,26 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        qlModule.setConsole(console);
 
         let result;
-        const visualizationId = shared?.visualization?.id;
+        const serverChartConfig = shared as QlConfig;
+        const visualizationId = serverChartConfig?.visualization?.id;
         switch (visualizationId) {
-            case WizardVisualizationId.FlatTable:
-            case WizardVisualizationId.PivotTable: {
+            case WizardVisualizationId.FlatTable: {
                 result = {};
                 break;
             }
             default: {
                 if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-                    result = buildWizardD3Config({
-                        shared: shared,
+                    result = qlModule.buildD3Config({
+                        shared: serverChartConfig,
+                        ChartEditor: context.ChartEditor,
                     });
                 } else {
-                    result = buildHighchartsConfigPrivate({
-                        shared: shared,
-                        features,
+                    result = qlModule.buildLibraryConfig({
+                        shared: serverChartConfig,
+                        ChartEditor: context.ChartEditor,
                     });
                 }
             }
@@ -102,13 +98,12 @@ const worker: WizardWorker = {
         });
 
         const console = new Console({});
-        setConsole(console);
+        qlModule.setConsole(console);
 
         return {
-            exports: buildChartsConfigPrivate({
-                shared: shared as ServerChartsConfig,
-                params,
-                widgetConfig,
+            exports: qlModule.buildChartConfig({
+                shared: shared as QlConfig,
+                ChartEditor: context.ChartEditor,
                 features,
             }),
             runtimeMetadata: context.__runtimeMetadata,
@@ -126,17 +121,17 @@ const worker: WizardWorker = {
             actionParams,
             widgetConfig,
             userLang,
+            data: data as GetChartApiContextArgs['data'],
         });
 
         const i18n = createI18nInstance({lang: userLang});
         context.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
         const console = new Console({});
-        setConsole(console);
+        qlModule.setConsole(console);
 
-        const result = buildGraphPrivate({
-            data,
-            shared,
+        const result = qlModule.buildGraph({
+            shared: shared as QlConfig,
             ChartEditor: context.ChartEditor,
             palettes,
             features,
