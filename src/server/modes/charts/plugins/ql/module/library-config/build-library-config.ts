@@ -1,7 +1,13 @@
-import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../../../shared';
+import type {
+    FeatureConfig,
+    IChartEditor,
+    QlConfig,
+    ServerChartsConfig,
+    ServerVisualization,
+} from '../../../../../../../shared';
 import {ChartsConfigVersion, isYAGRVisualization} from '../../../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
-import {buildHighchartsConfig as buildHighchartsConfigWizard} from '../../../datalens/highcharts';
+import {buildHighchartsConfigPrivate as buildHighchartsConfigWizard} from '../../../datalens/highcharts/highcharts';
 import {log} from '../../utils/misc-helpers';
 import buildYagrConfig from '../../yagr';
 import buildHighchartsConfig from '../highcharts';
@@ -9,9 +15,10 @@ import buildHighchartsConfig from '../highcharts';
 type BuildLibraryConfigArgs = {
     shared: QlConfig;
     ChartEditor: IChartEditor;
+    features: FeatureConfig;
 };
 
-export function buildLibraryConfig({shared, ChartEditor}: BuildLibraryConfigArgs) {
+export function buildLibraryConfig({shared, ChartEditor, features}: BuildLibraryConfigArgs) {
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
     const visualization = config.visualization as ServerVisualization;
@@ -35,7 +42,8 @@ export function buildLibraryConfig({shared, ChartEditor}: BuildLibraryConfigArgs
                 version: ChartsConfigVersion.V11,
                 datasetsIds: [],
                 datasetsPartialFields: [],
-            },
+            } as ServerChartsConfig,
+            features,
         });
 
         log('LIBRARY CONFIG (WIZARD HC):');

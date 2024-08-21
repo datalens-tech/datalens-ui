@@ -43,7 +43,7 @@ const worker: WizardWorker = {
         };
     },
     buildLibraryConfig: async (args: BuildLibraryConfigArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, features} = args;
         const context = getChartApiContext({
             name: 'Highcharts',
             shared,
@@ -74,6 +74,7 @@ const worker: WizardWorker = {
                     result = qlModule.buildLibraryConfig({
                         shared: serverChartConfig,
                         ChartEditor: context.ChartEditor,
+                        features,
                     });
                 }
             }
