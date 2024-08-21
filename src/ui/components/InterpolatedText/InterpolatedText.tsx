@@ -8,9 +8,10 @@ type InterpolatedTextProps = {
     text: string;
     href?: string;
     br?: boolean;
+    b?: boolean;
 };
 
-const InterpolatedTextComponent = ({text, href, br}: InterpolatedTextProps) => {
+const InterpolatedTextComponent = ({text, href, br, b}: InterpolatedTextProps) => {
     const matches: Record<string, (match: string) => React.ReactNode> = {};
 
     if (href) {
@@ -26,6 +27,12 @@ const InterpolatedTextComponent = ({text, href, br}: InterpolatedTextProps) => {
     if (br) {
         matches.br = () => {
             return <br />;
+        };
+    }
+
+    if (b) {
+        matches.b = (match) => {
+            return <b>{match}</b>;
         };
     }
 
