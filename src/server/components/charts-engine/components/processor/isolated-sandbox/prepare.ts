@@ -17,6 +17,8 @@ const console = {log: (...args) => {
     }
 };
 
+console.error = console.log;
+
 const __safeStringify = (value) => {
     function replaceFunctions(value) {
         if(Array.isArray(value)) {
