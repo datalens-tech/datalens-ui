@@ -1,9 +1,5 @@
-import type {
-    EDITOR_TYPE_CONFIG_TABS,
-    EntryPublicAuthor,
-    EntryScope,
-    WorkbookId,
-} from '../../../../../shared';
+import type {EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../shared';
+import type {ChartStorageType} from '../../types';
 import type {ChartTemplates} from '../chart-generator';
 
 export type PublicAuthorData = {text?: string; link?: string};
@@ -27,7 +23,7 @@ export type ResolvedConfig = {
     links?: string[];
     meta: {
         is_release: boolean;
-        stype: keyof typeof EDITOR_TYPE_CONFIG_TABS;
+        stype: ChartStorageType;
         owner: string;
         sandbox_version?: string;
     };

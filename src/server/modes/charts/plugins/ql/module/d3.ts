@@ -1,6 +1,6 @@
-import type {IChartEditor, QlConfig} from '../../../../../shared';
-import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import {buildD3Config as buildD3CommonConfig} from '../datalens/d3';
+import type {IChartEditor, QlConfig} from '../../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../../shared/modules/config/ql';
+import {buildD3Config as buildD3CommonConfig} from '../../datalens/d3';
 
 export function buildD3Config({
     shared,

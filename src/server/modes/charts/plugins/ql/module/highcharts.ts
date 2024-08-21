@@ -1,6 +1,6 @@
-import type {IChartEditor} from '../../../../../shared';
-import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
-import type {QlConfig} from '../../../../../shared/types/config/ql';
+import type {IChartEditor} from '../../../../../../shared';
+import {mapQlConfigToLatestVersion} from '../../../../../../shared/modules/config/ql';
+import type {QlConfig} from '../../../../../../shared/types/config/ql';
 
 // eslint-disable-next-line complexity
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
