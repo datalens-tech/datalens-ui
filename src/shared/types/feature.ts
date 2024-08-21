@@ -87,12 +87,9 @@ export enum Feature {
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
     NoErrorTransformer = 'NoErrorTransformer',
-<<<<<<< HEAD
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
-=======
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
->>>>>>> f623528028c708b9173aef049492551b15d445ec
 }
 
 export type FeatureConfig = Record<string, boolean>;
