@@ -72,8 +72,8 @@ export const EntryActions = ({
                   },
               ]
             : []),
+        [...(additionalWorkbookEntryActions as Array<DropdownMenuItem<unknown>>)],
         [
-            ...(additionalWorkbookEntryActions as Array<DropdownMenuItem<unknown>>),
             {
                 action: onShowRelatedClick,
                 text: (
