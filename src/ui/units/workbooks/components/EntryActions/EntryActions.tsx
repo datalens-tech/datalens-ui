@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CodeTrunk, Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
-import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -47,6 +47,8 @@ export const EntryActions = ({
 
     const isFileConnection = isConnection && isS3BasedConnector;
 
+    const additionalWorkbookEntryActions = useAdditionalWorkbookEntryActions(entry, workbook);
+
     const items: DropdownMenuItemMixed<unknown>[] = [
         {
             action: onRenameClick,
@@ -70,8 +72,8 @@ export const EntryActions = ({
                   },
               ]
             : []),
-        ...useAdditionalWorkbookEntryActions(entry, workbook),
         [
+            ...(additionalWorkbookEntryActions as Array<DropdownMenuItem<unknown>>),
             {
                 action: onShowRelatedClick,
                 text: (
