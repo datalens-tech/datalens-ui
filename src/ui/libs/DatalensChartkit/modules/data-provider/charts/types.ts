@@ -20,7 +20,7 @@ import type {
     GraphWidget,
     MarkdownWidget,
     MarkupWidget,
-    TableWidget,
+    TableWidgetData,
     Widget,
     WithControls,
 } from '../../../types';
@@ -418,7 +418,7 @@ export interface ResponseSuccessGraphWizardNode
 
 export interface ResponseSuccessTableNode extends ResponseSuccessNodeBaseWithData, UI {
     type: 'table_node';
-    data: TableWidget['data'];
+    data: TableWidgetData['data'];
 }
 
 interface ResponseSuccessTableWizardNode extends ResponseSuccessNodeBaseWithData, WizardNode {

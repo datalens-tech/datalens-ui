@@ -13,7 +13,7 @@ import type {
     TableRow,
     TableWidgetEventScope,
 } from 'shared';
-import type {DataTableData, TableWidget} from 'ui/libs/DatalensChartkit/types';
+import type {DataTableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
 
 import {addParams, subtractParameters} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
@@ -278,7 +278,7 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): Str
 }
 
 export function getActionParamsEventScope(
-    events?: NonNullable<TableWidget['config']>['events'],
+    events?: NonNullable<TableWidgetData['config']>['events'],
 ): TableWidgetEventScope | undefined {
     if (!events?.click) {
         return undefined;
