@@ -4,26 +4,9 @@
     flex-direction: column;
     height: 100%;
     overflow: auto;
-
-    // left for compatibility with screenshots of old tables
-    // delete after the final move to a new plugin
-    width: calc(100% - 1px);
+    width: 100%;
 
     &__number-column {
         text-align: right;
-    }
-
-    &__title {
-        font-weight: 700;
-        padding: 5px 40px 5px 0;
-        text-align: right;
-    }
-
-    &__table-wrapper {
-        width: 100%;
-
-        &_highlight-rows {
-            --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
-        }
     }
 }

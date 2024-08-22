@@ -17,7 +17,7 @@ import {
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import type {Config} from '../../config';
+import type {Config} from '../../config/types';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
 import {

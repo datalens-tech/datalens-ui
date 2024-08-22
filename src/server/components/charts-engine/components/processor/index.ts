@@ -34,6 +34,7 @@ import type {DataFetcherResult} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
+import {updateActionParams, updateParams} from './paramsUtils';
 import type {SandboxError} from './sandbox';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
@@ -129,7 +130,7 @@ export type ProcessorParams = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     configOverride?: {
         data: Record<string, string>;
-        key: string;
+        key?: string;
         entryId?: string;
         type?: string;
         meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS};
@@ -265,48 +266,6 @@ export class Processor {
             if (responseOptions.includeLogs) {
                 target.logs_v2 = stringifyLogs(logs, hooks);
             }
-        }
-
-        function updateParams(userParamsOverride: Record<string, string | string[]> | undefined) {
-            if (userParamsOverride) {
-                Object.keys(userParamsOverride).forEach((key) => {
-                    const overridenItem = userParamsOverride[key];
-
-                    if (params[key] && params[key].length > 0) {
-                        if (Array.isArray(overridenItem) && overridenItem.length > 0) {
-                            params[key] = overridenItem;
-                        }
-                    } else {
-                        params[key] = overridenItem;
-                    }
-
-                    usedParams[key] = params[key];
-                });
-            }
-        }
-
-        function updateActionParams(
-            userActionParamsOverride: Record<string, string | string[]> | undefined,
-        ) {
-            if (!userActionParamsOverride) {
-                return;
-            }
-            actionParams = userActionParamsOverride;
-
-            // todo after usedParams has fixed CHARTS-6619
-            /*Object.keys(userActionParamsOverride).forEach((key) => {
-                const overridenItem = userActionParamsOverride[key];
-
-                if (params[key] && params[key].length > 0) {
-                    if (Array.isArray(overridenItem) && overridenItem.length > 0) {
-                        params[key] = overridenItem;
-                    }
-                } else {
-                    params[key] = overridenItem;
-                }
-
-                usedParams[key] = params[key];
-            });*/
         }
 
         try {
@@ -458,8 +417,10 @@ export class Processor {
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
+            usedParams = {};
             const paramsTabResults = await builder.buildParams({
                 params: normalizedParamsOverride,
+                usedParams: usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
@@ -471,7 +432,10 @@ export class Processor {
 
             ctx.log('EditorEngine::Params', {duration: getDuration(hrStart)});
 
-            usedParams = {...(paramsTabResults.exports as Record<string, string | string[]>)};
+            usedParams = {
+                ...(paramsTabResults.exports as Record<string, string | string[]>),
+                ...usedParams,
+            };
 
             // Merge used to be here. Merge in this situation does not work as it should for arrays, so assign.
             params = Object.assign({}, usedParams, normalizedParamsOverride);
@@ -492,8 +456,15 @@ export class Processor {
 
             // ChartEditor.updateParams() has the highest priority,
             // therefore, now we take the parameters set through this method
-            updateParams(paramsTabResults.runtimeMetadata.userParamsOverride);
-            updateActionParams(paramsTabResults.runtimeMetadata.userActionParamsOverride);
+            updateParams({
+                userParamsOverride: paramsTabResults.runtimeMetadata.userParamsOverride,
+                params,
+                usedParams,
+            });
+            actionParams = updateActionParams({
+                userActionParamsOverride: paramsTabResults.runtimeMetadata.userActionParamsOverride,
+                actionParams,
+            });
 
             if (paramsTabResults.logs) {
                 logs.Params = paramsTabResults.logs;
@@ -597,14 +568,6 @@ export class Processor {
                     }
                 }
 
-                if (!isEnabledServerFeature(ctx, Feature.NoErrorTransformer)) {
-                    const {errorTransformer} = sourcesTabResults.runtimeMetadata;
-
-                    if (errorTransformer) {
-                        response.error = errorTransformer(response.error);
-                    }
-                }
-
                 injectLogs({target: response});
 
                 if (error instanceof Error) {
@@ -704,6 +667,7 @@ export class Processor {
                     data,
                     sources: resolvedSources,
                     params,
+                    usedParams,
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
@@ -732,12 +696,17 @@ export class Processor {
 
                 // ChartEditor.updateParams() has the highest priority,
                 // so now we take the parameters set through this method
-                updateParams(jsTabResults.runtimeMetadata.userParamsOverride);
+                updateParams({
+                    userParamsOverride: jsTabResults.runtimeMetadata.userParamsOverride,
+                    params,
+                    usedParams,
+                });
             }
 
             const uiTabResults = await builder.buildUI({
                 data,
                 params,
+                usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
@@ -761,7 +730,11 @@ export class Processor {
 
             // ChartEditor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
-            updateParams(uiTabResults.runtimeMetadata.userParamsOverride);
+            updateParams({
+                userParamsOverride: uiTabResults.runtimeMetadata.userParamsOverride,
+                params,
+                usedParams,
+            });
 
             if (uiScheme && userConfig && !userConfig.overlayControls) {
                 userConfig.notOverlayControls = true;
