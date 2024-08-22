@@ -131,8 +131,6 @@ export interface IChartEditor {
 
     setExportFilename(filename: string): void;
 
-    setErrorTransform(errorTransformer: (error: unknown) => unknown): unknown;
-
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
     generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};

@@ -1,7 +1,6 @@
 import type React from 'react';
 
 import type {RowData, SortingFnOption} from '@tanstack/react-table';
-import type {WidgetDashState} from 'ui/libs/DatalensChartkit/types';
 
 declare module '@tanstack/react-table' {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -14,7 +13,7 @@ declare module '@tanstack/react-table' {
     }
 }
 
-interface CellData {
+export interface CellData {
     value: unknown;
     formattedValue?: string;
     css?: React.CSSProperties;
@@ -36,6 +35,7 @@ export type THead = {
     width?: string | number;
     cell?: RenderCellFn<CellData>;
     columns?: THead[];
+    left?: number;
 };
 
 export type TData = CellData[];
@@ -61,7 +61,7 @@ export type TableProps = {
     qa?: string;
     manualSorting?: boolean;
     onSortingChange?: (args: {cell?: THead; sortOrder?: 'asc' | 'desc'}) => void;
-    widgetDashState?: WidgetDashState;
+    parentContainer?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
 export type TableDimensions = {
@@ -70,4 +70,61 @@ export type TableDimensions = {
     minWidth?: number;
     prevWidth?: number;
     width?: number;
+};
+
+export type HeadCellViewData = {
+    id: string;
+    index: number;
+    rowSpan?: number;
+    colSpan?: number;
+    sortable: boolean;
+    pinned: boolean;
+    style?: React.CSSProperties;
+    width: number;
+    sorting: 'asc' | 'desc' | false;
+    content: JSX.Element | React.ReactNode;
+    onClick: () => void;
+};
+
+export type HeadRowViewData = {
+    id: string;
+    cells: HeadCellViewData[];
+};
+
+export type BodyCellViewData = {
+    id: string;
+    style?: React.CSSProperties;
+    contentStyle?: React.CSSProperties;
+    contentType?: 'null';
+    content: JSX.Element | React.ReactNode;
+    className?: string;
+    type?: 'number';
+    pinned?: boolean;
+    rowSpan?: number;
+    colSpan?: number;
+    /* Index of cells in row (usefula with cell grouping) */
+    index: number;
+    /* Original cell data */
+    data: unknown;
+};
+
+export type BodyRowViewData = {
+    id: string;
+    index: number;
+    cells: BodyCellViewData[];
+    ref?: (node: HTMLTableRowElement) => void;
+    y?: number;
+};
+
+export type FooterCellViewData = {
+    id: string;
+    content: JSX.Element | React.ReactNode;
+    style?: React.CSSProperties;
+    pinned?: boolean;
+    type?: 'number';
+};
+
+export type FooterRowViewData = {
+    id: string;
+    cells: FooterCellViewData[];
 };
