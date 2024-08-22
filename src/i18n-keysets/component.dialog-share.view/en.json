@@ -1,6 +1,6 @@
 {
-  "button_share": "Share",
   "button_copy-and-exit": "Copy and close",
+  "button_share": "Share",
   "field_language": "Language: ",
   "field_theme": "Theme: ",
   "label_editors-hint": "The editor type should match the service",
@@ -14,13 +14,13 @@
   "label_params": "Parameters",
   "label_params-description": "How the object will display to users",
   "title_share": "Share object",
+  "value_federation-selected": "Save the federation",
   "value_hide-comments": "Hide comments on chart",
   "value_hide-menu": "Hide menu",
-  "value_selectors-saved": "Save selector values",
-  "value_federation-selected": "Save the federation",
   "value_language-auto": "auto",
   "value_language-eng": "English",
   "value_language-rus": "Russian",
+  "value_selectors-saved": "Save selector values",
   "value_theme-auto": "auto",
   "value_theme-dark": "dark",
   "value_theme-light": "light"

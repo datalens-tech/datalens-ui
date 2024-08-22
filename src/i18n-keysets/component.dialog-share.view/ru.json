@@ -1,6 +1,6 @@
 {
-  "button_share": "Поделиться",
   "button_copy-and-exit": "Скопировать и закрыть",
+  "button_share": "Поделиться",
   "field_language": "Язык: ",
   "field_theme": "Тема: ",
   "label_editors-hint": "Тип редактора должен соответствовать сервису. То есть если Wiki и Tracker у вас переключены на новый интерфейс, используйте новый редактор, если нет — старый.",
@@ -14,13 +14,13 @@
   "label_params": "Параметры",
   "label_params-description": "Как объект будет отображаться у пользователей",
   "title_share": "Поделиться объектом",
+  "value_federation-selected": "Сохранить федерацию",
   "value_hide-comments": "Скрыть комментарии на чарте",
   "value_hide-menu": "Скрыть меню",
-  "value_selectors-saved": "Сохранить значения селекторов",
-  "value_federation-selected": "Сохранить федерацию",
   "value_language-auto": "системный",
   "value_language-eng": "английский",
   "value_language-rus": "русский",
+  "value_selectors-saved": "Сохранить значения селекторов",
   "value_theme-auto": "системная",
   "value_theme-dark": "тёмная",
   "value_theme-light": "светлая"
