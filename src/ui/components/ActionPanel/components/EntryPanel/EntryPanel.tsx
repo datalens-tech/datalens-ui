@@ -241,7 +241,7 @@ class EntryPanel extends React.Component<Props, State> {
         }
 
         if (this.state.entry.scope === EntryScope.Dash) {
-            reachMetricaGoal(CounterName.Main, GoalId.DashboardPublicAccessSubmit);
+            reachMetricaGoal(CounterName.Main, GoalId.DashboardPublicAccessClick);
         }
 
         const result = await this.entryDialogsRef.current.open({
