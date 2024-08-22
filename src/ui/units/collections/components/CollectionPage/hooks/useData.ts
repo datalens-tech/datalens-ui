@@ -4,10 +4,10 @@ import {CancellablePromise} from '@gravity-ui/sdk';
 import {batch, useDispatch, useSelector} from 'react-redux';
 
 import type {
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
 } from '../../../../../../shared/schema';
-import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import type {AppDispatch} from '../../../../../store';
 import {
     getCollectionBreadcrumbs,
@@ -15,17 +15,17 @@ import {
 } from '../../../../collections-navigation/store/actions';
 import {
     getCollection,
-    getCollectionContent,
     getRootCollectionPermissions,
+    getStructureItems,
     resetCollection,
-    resetCollectionContent,
+    resetStructureItems,
 } from '../../../store/actions';
 import {selectRootCollectionPermissions} from '../../../store/selectors';
 import {PAGE_SIZE} from '../../constants';
 
 type UseDataArgs = {
     curCollectionId: string | null;
-    filters: CollectionContentFilters;
+    filters: StructureItemsFilters;
 };
 
 export const useData = ({curCollectionId, filters}: UseDataArgs) => {
@@ -33,19 +33,17 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
 
     const rootPermissions = useSelector(selectRootCollectionPermissions);
 
-    const getCollectionContentRecursively = React.useCallback(
-        (
-            args: GetCollectionContentArgs,
-        ): CancellablePromise<GetCollectionContentResponse | null> => {
-            let curItemsPage = args.itemsPage;
+    const getStructureItemsRecursively = React.useCallback(
+        (args: GetStructureItemsArgs): CancellablePromise<GetStructureItemsResponse | null> => {
+            let curPage = args.page;
 
-            return dispatch(getCollectionContent(args)).then((result) => {
+            return dispatch(getStructureItems(args)).then((result) => {
                 if (result?.items.length === 0 && result.nextPageToken !== null) {
-                    curItemsPage = result.nextPageToken;
+                    curPage = result.nextPageToken;
 
-                    return getCollectionContentRecursively({
+                    return getStructureItemsRecursively({
                         ...args,
-                        itemsPage: curItemsPage,
+                        page: curPage,
                     });
                 } else {
                     return result;
@@ -91,10 +89,10 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
         return [getCollectionPromise, getCollectionBreadcrumbsPromise];
     }, [curCollectionId, dispatch]);
 
-    const fetchCollectionContent = React.useCallback(() => {
-        dispatch(resetCollectionContent());
+    const fetchStructureItems = React.useCallback(() => {
+        dispatch(resetStructureItems());
 
-        const getCollectionContentRecursivelyPromise = getCollectionContentRecursively({
+        const getStructureItemsRecursivelyPromise = getStructureItemsRecursively({
             collectionId: curCollectionId,
             pageSize: PAGE_SIZE,
             filterString: filters.filterString,
@@ -104,10 +102,10 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
             onlyMy: filters.onlyMy,
         });
 
-        return [getCollectionContentRecursivelyPromise];
+        return [getStructureItemsRecursivelyPromise];
     }, [
         dispatch,
-        getCollectionContentRecursively,
+        getStructureItemsRecursively,
         curCollectionId,
         filters.filterString,
         filters.orderField,
@@ -118,8 +116,8 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
 
     const refreshPage = React.useCallback(() => {
         fetchCollectionInfo();
-        fetchCollectionContent();
-    }, [fetchCollectionInfo, fetchCollectionContent]);
+        fetchStructureItems();
+    }, [fetchCollectionInfo, fetchStructureItems]);
 
     React.useEffect(() => {
         const fetchCollectionInfoPromises = fetchCollectionInfo();
@@ -132,19 +130,19 @@ export const useData = ({curCollectionId, filters}: UseDataArgs) => {
     }, [fetchCollectionInfo]);
 
     React.useEffect(() => {
-        const fetchCollectionContentPromises = fetchCollectionContent();
+        const fetchStructureItemsPromises = fetchStructureItems();
 
         return () => {
-            fetchCollectionContentPromises.forEach((promise) => {
+            fetchStructureItemsPromises.forEach((promise) => {
                 promise.cancel();
             });
         };
-    }, [fetchCollectionContent]);
+    }, [fetchStructureItems]);
 
     return {
-        getCollectionContentRecursively,
+        getStructureItemsRecursively,
         fetchCollectionInfo,
-        fetchCollectionContent,
+        fetchStructureItems,
         refreshPage,
     };
 };

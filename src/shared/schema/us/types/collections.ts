@@ -2,7 +2,7 @@ import type {GetDatalensOperationResponse} from './operations';
 import type {OrderBasicField, OrderDirection} from './sort';
 import type {Workbook, WorkbookWithPermissions} from './workbooks';
 
-export type GetCollectionContentMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
+export type GetStructureItemsMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 
 export type CollectionPermissions = {
     listAccessBindings: boolean;
@@ -59,19 +59,19 @@ export type GetCollectionArgs = {
 
 export type GetCollectionResponse = Collection | CollectionWithPermissions;
 
-export type GetCollectionContentArgs = {
+export type GetStructureItemsArgs = {
     collectionId: string | null;
-    itemsPage?: string | null;
+    page?: string | null;
     filterString?: string;
     orderField?: OrderBasicField;
     orderDirection?: OrderDirection;
     onlyMy?: boolean;
-    mode?: GetCollectionContentMode;
+    mode?: GetStructureItemsMode;
     pageSize?: number;
     includePermissionsInfo?: boolean;
 };
 
-export type GetCollectionContentResponse = {
+export type GetStructureItemsResponse = {
     items: (Collection | CollectionWithPermissions | Workbook | WorkbookWithPermissions)[];
     nextPageToken?: string | null;
 };

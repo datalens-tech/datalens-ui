@@ -11,8 +11,8 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import type {
     Collection,
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
 } from '../../../../../shared/schema/us/types/collections';
 import type {Workbook} from '../../../../../shared/schema/us/types/workbooks';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
@@ -41,9 +41,9 @@ export type Props = {
     operationDeniedMessage?: string;
     canSelectWorkbook: boolean;
     disabled?: boolean;
-    getCollectionContentRecursively: (
-        args: GetCollectionContentArgs,
-    ) => CancellablePromise<GetCollectionContentResponse | null>;
+    getStructureItemsRecursively: (
+        args: GetStructureItemsArgs,
+    ) => CancellablePromise<GetStructureItemsResponse | null>;
     onChangeCollection: (newValue: string | null) => void;
     onChangeWorkbook?: (newValue: string) => void;
 };
@@ -62,7 +62,7 @@ export const StructureItemSelect = React.memo<Props>(
         operationDeniedMessage,
         canSelectWorkbook,
         disabled,
-        getCollectionContentRecursively,
+        getStructureItemsRecursively,
         onChangeCollection,
         onChangeWorkbook = () => {},
     }) => {
@@ -76,9 +76,9 @@ export const StructureItemSelect = React.memo<Props>(
 
         const onWaypointEnter = React.useCallback(() => {
             if (nextPageToken) {
-                getCollectionContentRecursively({
+                getStructureItemsRecursively({
                     collectionId,
-                    itemsPage: nextPageToken,
+                    page: nextPageToken,
                     pageSize,
                 }).then((res) => {
                     if (res?.nextPageToken && res?.nextPageToken === nextPageToken) {
@@ -87,7 +87,7 @@ export const StructureItemSelect = React.memo<Props>(
                     return res;
                 });
             }
-        }, [collectionId, getCollectionContentRecursively, nextPageToken, pageSize]);
+        }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize]);
 
         return (
             <div className={b({disabled})}>

@@ -1,26 +1,26 @@
 import type {
     CollectionWithOptionalPermissions,
     CollectionWithPermissions,
-    GetCollectionContentResponse,
     GetRootCollectionPermissionsResponse,
+    GetStructureItemsResponse,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import type {CollectionsAction} from '../actions';
 import {
     DELETE_COLLECTION_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
-    GET_COLLECTION_CONTENT_FAILED,
-    GET_COLLECTION_CONTENT_LOADING,
-    GET_COLLECTION_CONTENT_SUCCESS,
     GET_COLLECTION_FAILED,
     GET_COLLECTION_LOADING,
     GET_COLLECTION_SUCCESS,
     GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
+    GET_STRUCTURE_ITEMS_FAILED,
+    GET_STRUCTURE_ITEMS_LOADING,
+    GET_STRUCTURE_ITEMS_SUCCESS,
     RESET_COLLECTION,
-    RESET_COLLECTION_CONTENT,
     RESET_STATE,
+    RESET_STRUCTURE_ITEMS,
     SET_COLLECTION,
 } from '../constants';
 
@@ -30,9 +30,9 @@ export type CollectionsState = {
         data: CollectionWithOptionalPermissions | null;
         error: Error | null;
     };
-    getCollectionContent: {
+    getStructureItems: {
         isLoading: boolean;
-        data: GetCollectionContentResponse | null;
+        data: GetStructureItemsResponse | null;
         error: Error | null;
     };
     items: (CollectionWithPermissions | WorkbookWithPermissions)[];
@@ -49,7 +49,7 @@ const initialState: CollectionsState = {
         data: null,
         error: null,
     },
-    getCollectionContent: {
+    getStructureItems: {
         isLoading: false,
         data: null,
         error: null,
@@ -122,17 +122,17 @@ export const collectionsReducer = (
             };
         }
 
-        case GET_COLLECTION_CONTENT_LOADING: {
+        case GET_STRUCTURE_ITEMS_LOADING: {
             return {
                 ...state,
-                getCollectionContent: {
-                    ...state.getCollectionContent,
+                getStructureItems: {
+                    ...state.getStructureItems,
                     isLoading: true,
                     error: null,
                 },
             };
         }
-        case GET_COLLECTION_CONTENT_SUCCESS: {
+        case GET_STRUCTURE_ITEMS_SUCCESS: {
             const loadedIds = state.items.map((item) => {
                 if ('workbookId' in item) {
                     return item.workbookId;
@@ -147,7 +147,7 @@ export const collectionsReducer = (
 
             return {
                 ...state,
-                getCollectionContent: {
+                getStructureItems: {
                     isLoading: false,
                     data: action.data,
                     error: null,
@@ -155,21 +155,21 @@ export const collectionsReducer = (
                 items: [...state.items, ...newItems],
             };
         }
-        case GET_COLLECTION_CONTENT_FAILED: {
+        case GET_STRUCTURE_ITEMS_FAILED: {
             return {
                 ...state,
-                getCollectionContent: {
-                    ...state.getCollectionContent,
+                getStructureItems: {
+                    ...state.getStructureItems,
                     isLoading: false,
                     error: action.error,
                 },
             };
         }
 
-        case RESET_COLLECTION_CONTENT: {
+        case RESET_STRUCTURE_ITEMS: {
             return {
                 ...state,
-                getCollectionContent: initialState.getCollectionContent,
+                getStructureItems: initialState.getStructureItems,
                 items: initialState.items,
             };
         }

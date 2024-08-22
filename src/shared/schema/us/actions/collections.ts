@@ -9,10 +9,10 @@ import type {
     GetCollectionArgs,
     GetCollectionBreadcrumbsArgs,
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
     GetCollectionResponse,
     GetRootCollectionPermissionsResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
     MoveCollectionArgs,
     MoveCollectionResponse,
     MoveCollectionsArgs,
@@ -51,7 +51,7 @@ export const collectionsActions = {
         params: ({includePermissionsInfo}, headers) => ({query: {includePermissionsInfo}, headers}),
     }),
 
-    getCollectionContent: createAction<GetCollectionContentResponse, GetCollectionContentArgs>({
+    getStructureItems: createAction<GetStructureItemsResponse, GetStructureItemsArgs>({
         method: 'GET',
         path: () => COLLECTION_CONTENT_PATH_PREFIX,
         params: (
@@ -59,7 +59,7 @@ export const collectionsActions = {
                 collectionId,
                 includePermissionsInfo,
                 filterString,
-                itemsPage,
+                page,
                 pageSize,
                 orderField,
                 orderDirection,
@@ -73,7 +73,7 @@ export const collectionsActions = {
                 includePermissionsInfo,
                 filterString,
                 // null is passed from query parameters
-                itemsPage: itemsPage === null ? 'null' : itemsPage,
+                page: page === null ? 'null' : page,
                 pageSize,
                 orderField,
                 orderDirection,

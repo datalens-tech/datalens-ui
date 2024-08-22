@@ -4,13 +4,12 @@ import type {DatalensGlobalState} from '../../../../';
 
 const selectGetCollection = (state: DatalensGlobalState) => state.collections.getCollection;
 
-const selectGetCollectionContent = (state: DatalensGlobalState) =>
-    state.collections.getCollectionContent;
+const selectGetStructureItems = (state: DatalensGlobalState) => state.collections.getStructureItems;
 
 const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collections.getRootCollectionPermissions;
 
-export const selectCollectionContentItems = (state: DatalensGlobalState) => state.collections.items;
+export const selectStructureItems = (state: DatalensGlobalState) => state.collections.items;
 
 export const selectCollectionIsLoading = createSelector(
     [selectGetCollection],
@@ -27,19 +26,19 @@ export const selectCollectionError = createSelector(
     (getCollection) => getCollection.error,
 );
 
-export const selectCollectionContentIsLoading = createSelector(
-    [selectGetCollectionContent],
-    (getCollectionContent) => getCollectionContent.data === null || getCollectionContent.isLoading,
+export const selectStructureItemsIsLoading = createSelector(
+    [selectGetStructureItems],
+    (getStructureItems) => getStructureItems.data === null || getStructureItems.isLoading,
 );
 
-export const selectCollectionContentError = createSelector(
-    [selectGetCollectionContent],
-    (getCollectionContent) => getCollectionContent.error,
+export const selectStructureItemsError = createSelector(
+    [selectGetStructureItems],
+    (getStructureItems) => getStructureItems.error,
 );
 
-export const selectCollectionContentNextPageToken = createSelector(
-    [selectGetCollectionContent],
-    (getCollectionContent) => getCollectionContent.data?.nextPageToken,
+export const selectStructureItemsNextPageToken = createSelector(
+    [selectGetStructureItems],
+    (getStructureItems) => getStructureItems.data?.nextPageToken,
 );
 
 export const selectRootCollectionPermissionsIsLoading = createSelector(

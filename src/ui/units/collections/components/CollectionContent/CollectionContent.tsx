@@ -10,19 +10,19 @@ import {DL} from 'ui/constants/common';
 
 import type {
     CollectionWithPermissions,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import type {CollectionContentFilters} from '../../../../components/CollectionFilters';
+import type {StructureItemsFilters} from '../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
 import {
-    selectCollectionContentError,
-    selectCollectionContentIsLoading,
-    selectCollectionContentNextPageToken,
+    selectStructureItemsError,
+    selectStructureItemsIsLoading,
+    selectStructureItemsNextPageToken,
 } from '../../store/selectors';
 import type {CollectionBatchAction} from '../CollectionBatchPanel/CollectionBatchPanel';
 import {CollectionBatchPanel} from '../CollectionBatchPanel/CollectionBatchPanel';
@@ -40,7 +40,7 @@ const i18n = I18n.keyset('collections');
 
 interface Props {
     curCollectionId: string | null;
-    filters: CollectionContentFilters;
+    filters: StructureItemsFilters;
     viewMode: CollectionPageViewMode;
     selectedMap: SelectedMap;
     selectedMapWithMovePermission: SelectedMap;
@@ -49,10 +49,10 @@ interface Props {
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
     isEmptyItems: boolean;
-    getCollectionContentRecursively: (
-        args: GetCollectionContentArgs,
-    ) => CancellablePromise<GetCollectionContentResponse | null>;
-    fetchCollectionContent: () => void;
+    getStructureItemsRecursively: (
+        args: GetStructureItemsArgs,
+    ) => CancellablePromise<GetStructureItemsResponse | null>;
+    fetchStructureItems: () => void;
     onCloseMoveDialog: (structureChanged: boolean) => void;
     onCreateWorkbookClick: () => void;
     onClearFiltersClick: () => void;
@@ -74,8 +74,8 @@ export const CollectionContent: React.FC<Props> = ({
     isOpenSelectionMode,
     canCreateWorkbook,
     isEmptyItems,
-    getCollectionContentRecursively,
-    fetchCollectionContent,
+    getStructureItemsRecursively,
+    fetchStructureItems,
     onCloseMoveDialog,
     onCreateWorkbookClick,
     onClearFiltersClick,
@@ -85,9 +85,9 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateAllCheckboxesClick,
     resetSelected,
 }) => {
-    const isCollectionContentLoading = useSelector(selectCollectionContentIsLoading);
-    const collectionContentError = useSelector(selectCollectionContentError);
-    const nextPageToken = useSelector(selectCollectionContentNextPageToken);
+    const isStructureItemsLoading = useSelector(selectStructureItemsIsLoading);
+    const structureItemsError = useSelector(selectStructureItemsError);
+    const nextPageToken = useSelector(selectStructureItemsNextPageToken);
 
     const isDefaultFilters =
         filters.filterString === DEFAULT_FILTERS.filterString &&
@@ -97,10 +97,10 @@ export const CollectionContent: React.FC<Props> = ({
     const [waypointDisabled, setWaypointDisabled] = React.useState(false);
 
     React.useEffect(() => {
-        if (collectionContentError) {
+        if (structureItemsError) {
             setWaypointDisabled(true);
         }
-    }, [collectionContentError]);
+    }, [structureItemsError]);
 
     const onAction = React.useCallback(
         (action: CollectionBatchAction) => {
@@ -115,9 +115,9 @@ export const CollectionContent: React.FC<Props> = ({
 
     const onWaypointEnter = React.useCallback(() => {
         if (nextPageToken) {
-            getCollectionContentRecursively({
+            getStructureItemsRecursively({
                 collectionId: curCollectionId,
-                itemsPage: nextPageToken,
+                page: nextPageToken,
                 pageSize: PAGE_SIZE,
                 filterString: filters.filterString,
                 orderField: filters.orderField,
@@ -138,16 +138,16 @@ export const CollectionContent: React.FC<Props> = ({
         filters.onlyMy,
         filters.orderDirection,
         filters.orderField,
-        getCollectionContentRecursively,
+        getStructureItemsRecursively,
         nextPageToken,
     ]);
 
     const {getCollectionActions, getWorkbookActions} = useActions({
-        fetchCollectionContent,
+        fetchStructureItems,
         onCloseMoveDialog,
     });
 
-    if (isCollectionContentLoading && isEmptyItems) {
+    if (isStructureItemsLoading && isEmptyItems) {
         return <SmartLoader size="l" />;
     }
 
@@ -238,10 +238,10 @@ export const CollectionContent: React.FC<Props> = ({
                 </div>
             )}
 
-            {isCollectionContentLoading && (
+            {isStructureItemsLoading && (
                 <SmartLoader className={b('loader')} size="m" showAfter={0} />
             )}
-            {!isCollectionContentLoading && !waypointDisabled && (
+            {!isStructureItemsLoading && !waypointDisabled && (
                 <Waypoint onEnter={onWaypointEnter} />
             )}
         </div>
