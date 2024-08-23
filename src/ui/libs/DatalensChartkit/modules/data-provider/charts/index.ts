@@ -125,6 +125,7 @@ export interface EntityRequestOptions {
         key?: string;
         path?: string | undefined;
         uiOnly?: boolean;
+        tabId?: string;
         responseOptions?: {
             includeConfig: boolean;
             includeLogs: boolean;

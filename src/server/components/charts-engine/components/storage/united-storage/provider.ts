@@ -6,7 +6,7 @@ import type {AxiosRequestConfig} from 'axios';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-import type {EntryPublicAuthor, WorkbookId} from '../../../../../../shared';
+import type {DashData, EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../../shared';
 import {
     AuthHeader,
     DL_COMPONENT_HEADER,
@@ -106,8 +106,10 @@ export type EmbeddingInfo = {
         createdAt: string;
         publicParamsMode: boolean;
     };
-    entry: ResolvedConfig;
-};
+} & (
+    | {scope: EntryScope.Widget; entry: ResolvedConfig}
+    | {scope: EntryScope.Dash; entry: Omit<ResolvedConfig, 'data'> & {data: DashData}}
+);
 
 export type EmbeddingToken = {
     embedId: string;
@@ -452,6 +454,7 @@ export class USProvider {
                     token: response.data.token,
                     embed: response.data.embed,
                     entry: formatPassedProperties(response.data.entry),
+                    scope: response.data.entry.scope,
                 };
             })
             .catch((error) => {
@@ -510,6 +513,7 @@ export class USProvider {
                     token: response.data.embeddingInfo.token,
                     embed: response.data.embeddingInfo.embed,
                     entry: formatPassedProperties(response.data),
+                    scope: response.data.scope,
                 };
             })
             .catch((error) => {

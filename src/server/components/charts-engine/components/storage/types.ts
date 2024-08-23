@@ -22,9 +22,9 @@ export type ResolvedConfig = {
     key: string;
     links?: string[];
     meta: {
-        is_release: boolean;
+        is_release?: boolean;
         stype: ChartStorageType;
-        owner: string;
+        owner?: string;
         sandbox_version?: string;
     };
     permissions: {execute: boolean; read: boolean; edit: boolean; admin: boolean};
@@ -44,3 +44,5 @@ export type ResolvedConfig = {
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
 };
+
+export type CutResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

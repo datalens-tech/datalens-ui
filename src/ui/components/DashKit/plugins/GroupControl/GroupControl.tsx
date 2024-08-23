@@ -684,6 +684,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
+                parentId={this.props.id}
             />
         );
     }

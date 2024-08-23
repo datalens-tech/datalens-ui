@@ -85,23 +85,13 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         })
         .then(async (response) => {
             if (response && 'entry' in response) {
-                const {entry, embed} = response;
-
-                const params: URLSearchParams = new URLSearchParams(req.body.params) || {};
-                const filteredParams: Record<string, unknown> = {};
-
-                for (const [key] of params) {
-                    if (!embed.privateParams.includes(key)) {
-                        filteredParams[key] = params.get(key);
-                    }
-                }
+                const {entry} = response;
 
                 // Add only necessary fields without personal info like createdBy
                 res.status(200).send({
                     entryId: entry.entryId,
                     scope: entry.scope,
                     data: entry.data,
-                    params: filteredParams,
                 });
             }
         })

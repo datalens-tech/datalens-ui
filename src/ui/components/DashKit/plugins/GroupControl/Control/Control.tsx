@@ -36,6 +36,7 @@ import {
     unwrapFromArray,
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
+import {DashConfigContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -98,6 +99,7 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
+    parentId: string;
 };
 
 export const Control = ({
@@ -111,7 +113,10 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
+    parentId,
 }: ControlProps) => {
+    const currentTab = React.useContext(DashConfigContext);
+
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
     const [prevParams, setPrevParams] = React.useState<StringParams | null>(null);
@@ -192,6 +197,7 @@ export const Control = ({
                     config: {
                         data: {
                             shared: data,
+                            parentId,
                         },
                         meta: {
                             stype: ControlType.Dash,
@@ -199,6 +205,7 @@ export const Control = ({
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
+                    tabId: currentTab?.id,
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,

@@ -3,9 +3,10 @@ import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
+import {ControlType, DL_EMBED_TOKEN_HEADER, EntryScope} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
+import type {CutResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
@@ -18,7 +19,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null, id, isWidget, config} = req.body;
+        const {expectedType = null, id, isWidget, config, tabId} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -110,8 +111,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 const params: Record<string, unknown> = req.body.params || {};
                 const filteredParams: Record<string, unknown> = {};
 
-                // the dash widget has only one mode - publicParamsMode: false
-                if (embeddingInfo.embed.publicParamsMode && !isWidget) {
+                if (embeddingInfo.embed.publicParamsMode) {
                     Object.keys(params).forEach((key) => {
                         if (embeddingInfo.embed.unsignedParams.includes(key)) {
                             filteredParams[key] = params[key];
@@ -130,7 +130,45 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     ...filteredParams,
                 };
 
-                const entry = config || embeddingInfo.entry;
+                let entry;
+
+                if (
+                    config &&
+                    config.meta.stype === ControlType.Dash &&
+                    tabId &&
+                    embeddingInfo.scope === EntryScope.Dash
+                ) {
+                    // support group and old single selectors
+                    const controlId = config.data.parentId || config.data.shared.id;
+                    const controlTab = embeddingInfo.entry?.data.tabs.find(({id}) => id === tabId);
+
+                    const controlConfig = controlTab?.items.find(
+                        ({id, type}) =>
+                            id === controlId && (type === 'group_control' || type === 'control'),
+                    );
+
+                    if (!controlConfig) {
+                        return res.status(404).send({
+                            error: 'Сonfig was not found',
+                        });
+                    }
+
+                    const controlData =
+                        controlConfig.type === 'group_control'
+                            ? controlConfig.data.group.find(({id}) => id === config.data.shared.id)
+                            : controlConfig.data;
+
+                    entry = {
+                        data: {shared: controlData as object},
+                        meta: {stype: ControlType.Dash},
+                    } as CutResolvedConfig;
+                } else if (embeddingInfo.scope === EntryScope.Widget) {
+                    entry = embeddingInfo.entry;
+                } else {
+                    return res.status(400).send({
+                        error: 'Invalid config format',
+                    });
+                }
 
                 const configResolving = getDuration(hrStart);
                 const configType = entry && entry.meta && entry.meta.stype;
