@@ -8,8 +8,6 @@ export enum ChartkitHandlers {
     WizardScatterTooltipFormatter = 'wizard-scatter-tooltip-formatter',
     WizardTreemapTooltipFormatter = 'wizard-treemap-tooltip-formatter',
     WizardScatterYAxisLabelFormatter = 'wizard-scatter-y-axis-label-formatter',
-    WizardDataLabelMarkdownFormatter = 'wizard-data-label-markdown-formatter',
-    WizardAxisLabelMarkdownFormatter = 'wizard-axis-label-markdown-formatter',
 }
 
 export const WRAPPED_HTML_KEY = '__wrappedHTML__';

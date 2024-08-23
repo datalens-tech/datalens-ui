@@ -334,9 +334,9 @@ export function versionExtractor(this: any, key: string, value: any) {
     if (key === 'tooltips') {
         return JSON.stringify(
             target.map((item: Field) => {
-                const {fakeTitle, format, formatting = {}} = item;
+                const {fakeTitle, format, formatting = {}, isMarkdown = false} = item;
 
-                return {guid: item.guid, fakeTitle, format, formatting};
+                return {guid: item.guid, fakeTitle, format, formatting, isMarkdown};
             }),
         );
     }

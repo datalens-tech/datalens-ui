@@ -13,6 +13,7 @@ import {
     getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
+import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
 import type {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
@@ -21,18 +22,23 @@ type HashTable = Record<string, number> & {colorGuid?: string};
 
 export type ColorValue = number | null;
 
-export type ExtendedPointOptionsObject = Omit<Highcharts.PointOptionsObject, 'colorValue'> & {
+export type ExtendedPointOptionsObject = Omit<
+    Highcharts.PointOptionsObject,
+    'colorValue' | 'name'
+> & {
     colorValue?: string | null;
     colorGuid?: string;
     shapeValue?: string | null;
+    name?: string | WrappedMarkdown;
 };
 
 export type ExtendedSeriesScatterOptions = Omit<
     Highcharts.SeriesScatterOptions,
-    'data' | 'type'
+    'data' | 'type' | 'name'
 > & {
     title?: string;
     data?: ExtendedPointOptionsObject[];
+    name?: string | WrappedMarkdown;
 };
 
 interface GradientThresholdValues {

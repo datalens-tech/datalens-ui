@@ -9,6 +9,7 @@ import pick from 'lodash/pick';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 
+import {getRenderMarkupToStringFn, getRenderYfmFn} from '../../../../../../utils';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
 import YandexMapModule, {
@@ -21,8 +22,6 @@ import Legend from './Legend/Legend';
 import {renderPossibleMarkupItems} from './utils';
 
 import './YandexMapComponent.scss';
-
-let ReactDOMServer;
 
 const PROVIDER_DATA_FIELDS = ['data', 'config', 'libraryConfig'];
 
@@ -254,11 +253,13 @@ export class YandexMapComponent extends React.Component {
 
     async init(callBackType) {
         try {
-            ReactDOMServer = await import(
-                /* webpackChunkName: "react-dom/server" */ 'react-dom/server'
-            );
-
             const {data, libraryConfig, config} = this.props.data;
+            let renderMarkdownToString;
+            const renderMarkupToString = await getRenderMarkupToStringFn();
+            if (config.useMarkdown) {
+                renderMarkdownToString = await getRenderYfmFn();
+            }
+
             const {map, geoObjects, mapPerformanceMetrics} = await YandexMapModule.draw({
                 node: this.node,
                 data: data.map((geoObject) => {
@@ -266,17 +267,24 @@ export class YandexMapComponent extends React.Component {
                         geoObject.options && this.geoObjectsStates[geoObject.options.geoObjectId];
                     const children = get(geoObject, 'collection.children', []);
                     const polygons = get(geoObject, 'polygonmap.polygons.features', []);
-                    const renderToString = ReactDOMServer?.renderToString;
 
-                    if (renderToString && children.length) {
+                    if (children.length) {
                         children.forEach((child) => {
                             const childData = get(child, 'feature.properties.data', []);
-                            renderPossibleMarkupItems(renderToString, childData);
+                            renderPossibleMarkupItems(
+                                renderMarkupToString,
+                                renderMarkdownToString,
+                                childData,
+                            );
                         });
-                    } else if (renderToString && polygons.length) {
+                    } else if (polygons.length) {
                         polygons.forEach((polygon) => {
                             const polygonData = get(polygon, 'properties.data', []);
-                            renderPossibleMarkupItems(renderToString, polygonData);
+                            renderPossibleMarkupItems(
+                                renderMarkupToString,
+                                renderMarkdownToString,
+                                polygonData,
+                            );
                         });
                     }
 

@@ -1,10 +1,12 @@
+import type {WrappedMarkdown} from '../../../utils/markdown';
+
 export type PointCustomData = {
-    name?: string | number;
-    xLabel?: string;
-    yLabel?: string;
-    cLabel?: string | null;
-    sLabel?: string | null;
-    sizeLabel?: string | null;
+    name?: string | number | WrappedMarkdown;
+    xLabel?: string | WrappedMarkdown;
+    yLabel?: string | WrappedMarkdown;
+    cLabel?: string | null | WrappedMarkdown;
+    sLabel?: string | null | WrappedMarkdown;
+    sizeLabel?: string | null | WrappedMarkdown;
 };
 
 export type ScatterSeriesCustomData = {

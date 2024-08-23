@@ -114,6 +114,14 @@ export function isFloatField(field: {data_type: string}): field is FloatField {
     return field.data_type === DATASET_FIELD_TYPES.FLOAT;
 }
 
+export function isStringField(field: {data_type: string}) {
+    return field.data_type === DATASET_FIELD_TYPES.STRING;
+}
+
+export function isMarkdownField(field?: {data_type: string; isMarkdown?: boolean}) {
+    return field && isStringField(field) && field.isMarkdown;
+}
+
 export function isNumberField(field?: {data_type: string}): field is NumberField {
     return Boolean(field && (isIntegerField(field) || isFloatField(field)));
 }

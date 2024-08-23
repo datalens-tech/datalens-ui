@@ -6,7 +6,7 @@ import type {
 } from 'shared';
 import {ChartkitHandlers} from 'shared';
 
-type RenderMarkdown = (value: string) => string;
+import type {RenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 
 export const baseRenderFn = (value: unknown) => value;
 
@@ -20,8 +20,6 @@ export const ChartkitHandlersDict = {
     [ChartkitHandlers.WizardScatterTooltipFormatter]: wizardScatterTooltipFormatter,
     [ChartkitHandlers.WizardScatterYAxisLabelFormatter]: wizardScatterYAxisLabelFormatter,
     [ChartkitHandlers.WizardTreemapTooltipFormatter]: wizardTreemapTooltipFormatter,
-    [ChartkitHandlers.WizardDataLabelMarkdownFormatter]: wizardDataLabelMarkdownFormatter,
-    [ChartkitHandlers.WizardAxisLabelMarkdownFormatter]: wizardAxisLabelMarkdownFormatter,
 };
 
 function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
@@ -114,31 +112,27 @@ function DCMonitoringLabelFormatter(this: any) {
     return `${Math.round(this.value * 100) / 100} ${units}`;
 }
 
-function wizardScatterTooltipFormatter(this: any, renderMarkdown?: RenderMarkdown) {
+function wizardScatterTooltipFormatter(this: any) {
     const point = this;
-    const renderItem = renderMarkdown ?? baseRenderFn;
     const seriesTooltipOptions = get(point, 'series.userOptions.custom.tooltipOptions', {});
     const {pointTitle, xTitle, yTitle, shapeTitle, colorTitle, sizeTitle} = seriesTooltipOptions;
 
-    const result: string[] = [
-        `${xTitle}: ${renderItem(point.xLabel)}`,
-        `${yTitle}: ${renderItem(point.yLabel)}`,
-    ];
+    const result: string[] = [`${xTitle}: ${point.xLabel}`, `${yTitle}: ${point.yLabel}`];
 
     if (shapeTitle && shapeTitle !== colorTitle) {
-        result.unshift(`${shapeTitle}: ${renderItem(point.sLabel)}`);
+        result.unshift(`${shapeTitle}: ${point.sLabel}`);
     }
 
     if (colorTitle) {
-        result.unshift(`${colorTitle}: ${renderItem(point.cLabel)}`);
+        result.unshift(`${colorTitle}: ${point.cLabel}`);
     }
 
     if (sizeTitle) {
-        result.unshift(`${sizeTitle}: ${renderItem(point.sizeLabel)}`);
+        result.unshift(`${sizeTitle}: ${point.sizeLabel}`);
     }
 
     if (pointTitle) {
-        result.unshift(`${pointTitle}: <b>${renderItem(point.name)}</b>`);
+        result.unshift(`${pointTitle}: <b>${point.name}</b>`);
     }
 
     return result.join('<br/>');
@@ -147,22 +141,11 @@ function wizardScatterTooltipFormatter(this: any, renderMarkdown?: RenderMarkdow
 function wizardTreemapTooltipFormatter(
     this: any,
     _tooltip: unknown,
-    renderMarkdown: RenderMarkdown,
+    renderMarkdown?: RenderMarkdownFn,
 ) {
     const point = this;
-    return `${renderMarkdown(point.name)}<br/><b>${point.label}</b>`;
-}
-
-function wizardDataLabelMarkdownFormatter(
-    this: any,
-    _options: unknown,
-    renderMarkdown: RenderMarkdown,
-) {
-    return renderMarkdown(this.point.name);
-}
-
-function wizardAxisLabelMarkdownFormatter(this: any, renderMarkdown: RenderMarkdown) {
-    return renderMarkdown(this.value);
+    const name = point.name;
+    return `${renderMarkdown ? renderMarkdown(name) : name}<br/><b>${point.label}</b>`;
 }
 
 function wizardScatterYAxisLabelFormatter(

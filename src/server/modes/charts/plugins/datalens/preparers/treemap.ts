@@ -39,6 +39,7 @@ function prepareTreemap({
     idToTitle,
     idToDataType,
     features,
+    ChartEditor,
 }: PrepareFunctionArgs) {
     // Dimensions
     const d = placeholders[0].items;
@@ -260,6 +261,10 @@ function prepareTreemap({
     }
 
     const isMarkdownLabels = d?.some((field) => field?.isMarkdown);
+    if (isMarkdownLabels) {
+        ChartEditor.updateConfig({useMarkdown: true});
+    }
+
     const graphs = [
         {
             type: 'treemap',
@@ -278,16 +283,12 @@ function prepareTreemap({
                     cursor: 'pointer',
                 },
                 ...(isMarkdownLabels && {
-                    formatter: ChartkitHandlers.WizardDataLabelMarkdownFormatter,
                     useHTML: true,
                 }),
             },
             levelIsConstant: false,
             levels,
             data: treemap,
-            custom: {
-                hasMarkdown: isMarkdownLabels,
-            },
         },
     ];
 

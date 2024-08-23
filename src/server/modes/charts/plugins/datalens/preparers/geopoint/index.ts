@@ -2,10 +2,17 @@ import escape from 'lodash/escape';
 
 import type {
     PointSizeConfig,
+    ServerField,
     ServerFieldFormatting,
     VisualizationLayerShared,
 } from '../../../../../../../shared';
-import {DATASET_FIELD_TYPES, Feature, MINIMUM_FRACTION_DIGITS} from '../../../../../../../shared';
+import {
+    Feature,
+    MINIMUM_FRACTION_DIGITS,
+    WRAPPED_MARKDOWN_KEY,
+    getFakeTitleOrTitle,
+    isMarkupDataType,
+} from '../../../../../../../shared';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -99,48 +106,6 @@ const setPointProperty = ({
     point.feature.properties[propName] = prepareValue(propValue, propType, formatting);
 };
 
-type SetPointTooltipArgs = {
-    index: number;
-    point: GeopointPointConfig | undefined;
-    propKey: string;
-    propValue: any;
-    propType: string;
-    formatting: ServerFieldFormatting | undefined;
-    shouldEscapeUserValue?: boolean;
-};
-
-const setPointTooltip = ({
-    index,
-    point,
-    propKey,
-    propValue,
-    propType,
-    formatting,
-    shouldEscapeUserValue,
-}: SetPointTooltipArgs) => {
-    if (!point) {
-        return;
-    }
-
-    const value = prepareValue(propValue, propType, formatting);
-    const text = `${propKey}: ${value}`;
-    const isFirstTooltip = index === 0;
-
-    if (!point.feature.properties.data) {
-        point.feature.properties.data = [];
-    }
-
-    point.feature.properties.data[index] = {
-        ...(isFirstTooltip && {color: point.options.iconColor}),
-        ...(propType === DATASET_FIELD_TYPES.MARKUP
-            ? {
-                  value,
-                  key: propKey,
-              }
-            : {text: shouldEscapeUserValue ? escape(text) : text}),
-    };
-};
-
 // eslint-disable-next-line complexity
 function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
     const {
@@ -154,6 +119,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         shared,
         idToDataType,
         features,
+        ChartEditor,
     } = options;
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const layerSettings = (options.layerSettings ||
@@ -338,27 +304,57 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 });
             }
 
-            if (tooltips.length && getTooltip(dataTitle)) {
+            const tooltipField = tooltips.length ? getTooltip(dataTitle) : undefined;
+            if (tooltipField) {
                 // Due to the fact that a field that already exists in another section can be installed in a section with a tooltip,
                 // it (the field in the tooltip and other section) comes to the order array in a single instance,
                 // which in turn can lead to an incorrect order of displaying fields in the tooltip.
                 // Therefore, before installing the tooltip, we remember its correct index
                 const index = updatedTooltips.findIndex((t) => t.title === dataTitle);
-                const {title, fakeTitle, formatting, data_type: propType} = getTooltip(dataTitle)!;
+                const itemTitle = getFakeTitleOrTitle(tooltipField as ServerField);
+
+                const pointData: Record<string, unknown> = {};
+
+                if (isMarkupDataType(tooltipField.data_type)) {
+                    pointData.key = itemTitle;
+                    pointData.value = columnData;
+                } else {
+                    const value = prepareValue(
+                        columnData,
+                        tooltipField.data_type,
+                        tooltipField.formatting,
+                    );
+                    const text = `${itemTitle}: ${value}`;
+
+                    if (tooltipField?.isMarkdown) {
+                        pointData[WRAPPED_MARKDOWN_KEY] = text;
+                    } else {
+                        pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                    }
+                }
+
                 allPoints[`points-${valuesIndex}`].forEach((point: GeopointPointConfig) => {
-                    setPointTooltip({
-                        index,
-                        point,
-                        propType,
-                        propKey: fakeTitle || title,
-                        propValue: columnData,
-                        formatting,
-                        shouldEscapeUserValue,
-                    });
+                    if (!point) {
+                        return;
+                    }
+
+                    if (!point.feature.properties.data) {
+                        point.feature.properties.data = [];
+                    }
+
+                    if (index === 0) {
+                        pointData.color = point.options.iconColor;
+                    }
+
+                    point.feature.properties.data[index] = pointData;
                 });
             }
         });
     });
+
+    if (tooltips.some((item) => item.isMarkdown)) {
+        ChartEditor.updateConfig({useMarkdown: true});
+    }
 
     let mapOptions: GeopointMapOptions = {
         opacity: ALPHA,
@@ -374,8 +370,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     }
 
     mapOptions.layerTitle =
-        layerSettings.name ||
-        options.ChartEditor.getTranslation('wizard.prepares', 'label_new-layer');
+        layerSettings.name || ChartEditor.getTranslation('wizard.prepares', 'label_new-layer');
 
     if (size) {
         mapOptions = {

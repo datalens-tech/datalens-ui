@@ -4,7 +4,9 @@ import {registry} from '../../registry';
 
 import {getRenderMarkdownFn} from './get-render-markdown-fn';
 
-export async function getYfmRenderFn() {
+export type RenderMarkdownFn = (value: string) => string;
+
+export async function getRenderYfmFn(): Promise<RenderMarkdownFn> {
     const renderMarkdown = await getRenderMarkdownFn();
     const ReactDOMServer = await import(
         /* webpackChunkName: "react-dom/server" */ 'react-dom/server'
@@ -14,8 +16,6 @@ export async function getYfmRenderFn() {
 
     return (value: string) => {
         const markdown = renderMarkdown(value);
-        return renderToString(
-            <YfmWrapperContent className={''} content={markdown} setByInnerHtml={true} />,
-        );
+        return renderToString(<YfmWrapperContent content={markdown} setByInnerHtml={true} />);
     };
 }

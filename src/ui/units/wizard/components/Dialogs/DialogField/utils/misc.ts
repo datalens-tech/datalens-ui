@@ -50,6 +50,7 @@ export function canUseStringAsMarkdown(
         case WizardVisualizationId.Scatter: {
             const possiblePlaceholders: PlaceholderId[] = [
                 PlaceholderId.X,
+                PlaceholderId.Y,
                 PlaceholderId.Points,
                 PlaceholderId.Colors,
                 PlaceholderId.Shapes,
@@ -58,6 +59,10 @@ export function canUseStringAsMarkdown(
         }
         case WizardVisualizationId.Treemap: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Dimensions];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
+        case WizardVisualizationId.Geopoint: {
+            const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Tooltips];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
         default:

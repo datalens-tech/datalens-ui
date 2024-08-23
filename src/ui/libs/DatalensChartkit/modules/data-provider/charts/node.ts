@@ -19,11 +19,12 @@ import {
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
+    WRAPPED_MARKDOWN_KEY,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import Utils from '../../../../../utils';
-import {getYfmRenderFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
+import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
     GraphWidget,
@@ -33,7 +34,7 @@ import type {
 } from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
-import {ChartkitHandlersDict, baseRenderFn} from './chartkit-handlers';
+import {ChartkitHandlersDict} from './chartkit-handlers';
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {
@@ -333,11 +334,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 allowHtml: !isPotentiallyUnsafeChart(loadedType) || enableJsAndHtml,
             });
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            await unwrapMarkdown({config: result.config, data: result.data});
 
             await applyChartkitHandlers({
                 config: result.config,
                 libraryConfig: result.libraryConfig,
-                graphs: get(result.data, 'graphs', []),
             });
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
@@ -399,12 +400,55 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     }
 }
 
+async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['data']}) {
+    const {config, data} = args;
+    if (config?.useMarkdown) {
+        const renderMarkdown = await getRenderMarkdownFn();
+        const unwrapItem = (item: unknown) => {
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+
+            if (Array.isArray(item)) {
+                item.forEach((value, index, list) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKDOWN_KEY in value) {
+                        const md = value[WRAPPED_MARKDOWN_KEY];
+                        if (typeof md === 'string') {
+                            list[index] = renderMarkdown(md);
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            } else {
+                Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKDOWN_KEY in value) {
+                        const md = value[WRAPPED_MARKDOWN_KEY];
+                        if (typeof md === 'string') {
+                            set(item, key, renderMarkdown(md));
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            }
+        };
+
+        try {
+            unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'categories', []));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
 async function applyChartkitHandlers(args: {
     config: Widget['config'];
     libraryConfig: Widget['libraryConfig'];
-    graphs: undefined | unknown[];
 }) {
-    const {config, libraryConfig, graphs} = args;
+    const {config, libraryConfig} = args;
+
     if (libraryConfig) {
         const {tooltipHeaderFormatter} = libraryConfig;
 
@@ -423,17 +467,6 @@ async function applyChartkitHandlers(args: {
         if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
             libraryConfig.xAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardXAxisFormatter];
-        }
-
-        if (
-            libraryConfig.xAxis?.labels?.formatter ===
-            ChartkitHandlers.WizardAxisLabelMarkdownFormatter
-        ) {
-            const renderMarkdown = await getRenderMarkdownFn();
-            libraryConfig.xAxis.labels.formatter = partial(
-                ChartkitHandlersDict[ChartkitHandlers.WizardAxisLabelMarkdownFormatter],
-                renderMarkdown,
-            );
         }
 
         if (
@@ -463,16 +496,10 @@ async function applyChartkitHandlers(args: {
             libraryConfig.plotOptions?.scatter?.tooltip?.formatter ===
             ChartkitHandlers.WizardScatterTooltipFormatter
         ) {
-            const hasMarkdown = (graphs ?? []).some((graph) =>
-                get(graph, 'custom.hasMarkdown', false),
-            );
-            const renderItem = hasMarkdown ? await getRenderMarkdownFn() : undefined;
             delete libraryConfig.plotOptions.scatter.tooltip.formatter;
             libraryConfig.plotOptions.scatter.tooltip.headerFormat = '';
-            libraryConfig.plotOptions.scatter.tooltip.pointFormatter = partial(
-                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter],
-                renderItem,
-            );
+            libraryConfig.plotOptions.scatter.tooltip.pointFormatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
         }
     }
 
@@ -483,30 +510,6 @@ async function applyChartkitHandlers(args: {
     ) {
         (config as GraphWidget['config']).manageTooltipConfig =
             ChartkitHandlersDict[ChartkitHandlers.WizardManageTooltipConfig];
-    }
-
-    if (graphs && Array.isArray(graphs)) {
-        const possibleHandlers = {
-            'dataLabels.formatter': [ChartkitHandlers.WizardDataLabelMarkdownFormatter],
-            'tooltip.pointFormatter': [ChartkitHandlers.WizardTreemapTooltipFormatter],
-        };
-        await Promise.all(
-            graphs.map(async (graph) => {
-                const hasMarkdown = get(graph, 'custom.hasMarkdown', false);
-                const renderItem = hasMarkdown ? await getRenderMarkdownFn() : baseRenderFn;
-                Object.entries(possibleHandlers).forEach(([path, handlersToCheck]) => {
-                    handlersToCheck.forEach((handler) => {
-                        if (graph && get(graph, path) === handler) {
-                            const handlerFn = partialRight(
-                                ChartkitHandlersDict[handler],
-                                renderItem,
-                            );
-                            set(graph, path, handlerFn);
-                        }
-                    });
-                });
-            }),
-        );
     }
 }
 

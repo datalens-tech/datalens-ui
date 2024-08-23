@@ -6,6 +6,7 @@ import {
     ChartkitHandlers,
     LegendDisplayMode,
     isDateField,
+    isMarkdownField,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
@@ -96,14 +97,19 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (x?.isMarkdown) {
+        if (isMarkdownField(x)) {
             customConfig.xAxis = {
                 ...(customConfig.xAxis ?? {}),
                 labels: {
-                    // @ts-ignore We use the key here to further replace it with a handler
-                    formatter: ChartkitHandlers.WizardAxisLabelMarkdownFormatter,
                     useHTML: true,
                 },
+            };
+        }
+
+        if (isMarkdownField(color)) {
+            customConfig.legend = {
+                ...(customConfig.legend ?? {}),
+                useHTML: true,
             };
         }
 

@@ -8,7 +8,11 @@ import {
     POINT_SHAPES_IN_ORDER,
     getFormatOptions,
     isDateField,
+    isMarkdownField,
+    isStringField,
 } from '../../../../../../../shared';
+import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
+import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import type {ChartColorsConfig} from '../../types';
 import type {ExtendedSeriesScatterOptions} from '../../utils/color-helpers';
 import {
@@ -34,7 +38,7 @@ import {getScatterTooltipOptions} from './helpers/tooltip';
 import type {ScatterPoint} from './types';
 
 export type ScatterGraph = {
-    name?: string;
+    name?: string | WrappedMarkdown;
     color?: string;
     data?: ScatterPoint[];
     marker?: {
@@ -45,7 +49,7 @@ export type ScatterGraph = {
 
 export type PrepareScatterResult = {
     graphs: ScatterGraph[];
-    categories?: (string | number)[];
+    categories?: (string | number | WrappedMarkdown)[];
     x?: ServerField;
     y?: ServerField;
     z?: ServerField;
@@ -72,6 +76,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         features,
         shared,
     } = options;
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const {data, order} = resultData;
@@ -177,7 +182,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 }),
             });
         } else {
-            point.xLabel = shouldEscapeUserValue ? escape(xValue as string) : (xValue as string);
+            let value: string | WrappedMarkdown = xValue as string;
+            if (isMarkdownField(x) && isMarkdownFieldsEnabled) {
+                value = wrapMarkdownValue(value);
+            } else if (shouldEscapeUserValue) {
+                value = escape(value);
+            }
+
+            point.xLabel = value;
         }
 
         let indexOfXValue = xCategories.indexOf(xValue);
@@ -223,8 +235,13 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 }),
             });
         } else {
-            point.yLabel =
+            let yLabel: string | WrappedMarkdown =
                 yValue && shouldEscapeUserValue ? escape(yValue as string) : (yValue as string);
+            if (isMarkdownField(x) && isMarkdownFieldsEnabled) {
+                yLabel = wrapMarkdownValue(String(yLabel));
+            }
+
+            point.yLabel = yLabel;
         }
 
         let indexOfYValue = yCategories.indexOf(yValue);
@@ -245,7 +262,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const zTitle = idToTitle[z.guid];
             const zi = findIndexInOrder(order, z, zTitle);
             zValueRaw = values[zi];
-            let formattedZValue = zValueRaw;
+            let formattedZValue: string | null | WrappedMarkdown = zValueRaw;
 
             if (isNumericalDataType(z.data_type) && z.formatting) {
                 formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
@@ -254,8 +271,12 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 });
             }
 
-            if (formattedZValue && shouldEscapeUserValue) {
-                formattedZValue = escape(formattedZValue as string);
+            if (isStringField(z)) {
+                if (isMarkdownField(z) && isMarkdownFieldsEnabled) {
+                    formattedZValue = wrapMarkdownValue(zValueRaw as string);
+                } else if (shouldEscapeUserValue) {
+                    formattedZValue = escape(formattedZValue as string);
+                }
             }
 
             point.name = formattedZValue || '';
@@ -291,7 +312,12 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (color) {
             const cTitle = idToTitle[color.guid];
             const i = findIndexInOrder(order, color, cTitle);
-            const colorValue = shouldEscapeUserValue ? escape(values[i] as string) : values[i];
+            const colorValue =
+                values[i] && shouldEscapeUserValue ? escape(String(values[i])) : values[i];
+            let colorLabel: string | null | WrappedMarkdown = colorValue;
+            if (isMarkdownField(color) && isMarkdownFieldsEnabled) {
+                colorLabel = wrapMarkdownValue(String(colorValue));
+            }
 
             if (gradientMode) {
                 const numberColorValue = Number(colorValue);
@@ -316,7 +342,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             } else {
                 point.value = colorValue as unknown as number;
                 point.colorValue = colorValue;
-                point.cLabel = colorValue;
+                point.cLabel = colorLabel;
                 point.colorGuid = colors[0] ? colors[0].guid : undefined;
             }
         }
@@ -325,9 +351,13 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
             const shapeValue = escape(values[i] as string) || '';
+            let shapeLabel: WrappedMarkdown | string = shapeValue;
+            if (isMarkdownField(shape) && isMarkdownFieldsEnabled) {
+                shapeLabel = wrapMarkdownValue(String(shapeValue));
+            }
 
             point.shapeValue = shapeValue;
-            point.sLabel = shapeValue;
+            point.sLabel = shapeLabel;
         } else if (shapesConfigured) {
             const shapeValue = yTitle;
 
@@ -380,21 +410,31 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         });
     }
 
-    let categories;
+    if ((isMarkdownField(color) || isMarkdownField(shape)) && isMarkdownFieldsEnabled) {
+        graphs.forEach((g) => {
+            g.name = wrapMarkdownValue(g.name as string);
+        });
+    }
+
+    let categories: (string | number | WrappedMarkdown)[] = [];
 
     if (!xIsNumber && !xIsDate) {
         categories = xCategories;
+
+        if (isMarkdownField(x) && isMarkdownFieldsEnabled) {
+            categories = categories.map((c) => wrapMarkdownValue(c as string));
+        }
     }
 
-    const hasMarkdown = [x, y, points, color, shape, size].some(
-        (field) => (field as Field)?.isMarkdown,
-    );
+    const hasMarkdown = [x, y, z, size, color, shape].some((field) => (field as Field)?.isMarkdown);
+    if (hasMarkdown) {
+        ChartEditor.updateConfig({useMarkdown: true});
+    }
 
     graphs.forEach((graph) => {
         graph.keys = Array.from(keys);
         graph.custom = {
             ...graph.custom,
-            hasMarkdown,
             tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
         };
 
