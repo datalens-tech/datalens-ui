@@ -56,7 +56,6 @@ type ExecuteParams = {
     name: string;
     timeout: number;
     context: IsolatedVM.Context;
-    isolatedConsole: Console;
 };
 
 export type ModulesSandboxExecuteResult = {
@@ -73,7 +72,6 @@ const execute = async ({
     isScreenshoter,
     timeout,
     context,
-    isolatedConsole,
 }: ExecuteParams): Promise<ModulesSandboxExecuteResult> => {
     if (!context) {
         throw new Error('Sandbox context is not initialized');
@@ -83,7 +81,7 @@ const execute = async ({
     let executionTiming;
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
-    const console = new Console({isScreenshoter});
+    const isolatedConsole = new Console({isScreenshoter});
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
@@ -144,7 +142,7 @@ const execute = async ({
         error.code = errorCode;
         error.executionResult = {
             executionTiming,
-            logs: console.getLogs(),
+            logs: isolatedConsole.getLogs(),
             filename: name,
             stackTrace: errorStackTrace,
         };
@@ -155,7 +153,7 @@ const execute = async ({
     return {
         executionTiming,
         filename: name,
-        logs: console.getLogs(),
+        logs: isolatedConsole.getLogs(),
     };
 };
 
@@ -175,6 +173,5 @@ export const processModule = async ({
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,
         context,
-        isolatedConsole: new Console({isScreenshoter}),
     });
 };
