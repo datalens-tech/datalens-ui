@@ -6,8 +6,6 @@ import type {
 } from 'shared';
 import {ChartkitHandlers} from 'shared';
 
-import type {RenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
-
 export const baseRenderFn = (value: unknown) => value;
 
 export const ChartkitHandlersDict = {
@@ -138,14 +136,11 @@ function wizardScatterTooltipFormatter(this: any) {
     return result.join('<br/>');
 }
 
-function wizardTreemapTooltipFormatter(
-    this: any,
-    _tooltip: unknown,
-    renderMarkdown?: RenderMarkdownFn,
-) {
+function wizardTreemapTooltipFormatter(this: any) {
     const point = this;
-    const name = point.name;
-    return `${renderMarkdown ? renderMarkdown(name) : name}<br/><b>${point.label}</b>`;
+    const name = Array.isArray(point.name) ? point.name.join('<br/>') : point.name;
+
+    return `${name}<br/><b>${point.label}</b>`;
 }
 
 function wizardScatterYAxisLabelFormatter(

@@ -501,6 +501,14 @@ async function applyChartkitHandlers(args: {
             libraryConfig.plotOptions.scatter.tooltip.pointFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
         }
+
+        if (
+            libraryConfig.plotOptions?.treemap?.tooltip?.pointFormatter ===
+            ChartkitHandlers.WizardTreemapTooltipFormatter
+        ) {
+            libraryConfig.plotOptions.treemap.tooltip.pointFormatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardTreemapTooltipFormatter];
+        }
     }
 
     if (

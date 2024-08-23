@@ -8,7 +8,12 @@ import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
-import {applyGoToEvents, applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
+import {
+    applyGoToEvents,
+    applySetActionParamsEvents,
+    applyTreemapLabelFormatter,
+    fixPieTotals,
+} from './apply-hc-handlers';
 import {getD3ChartKitData} from './d3-chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
@@ -182,6 +187,10 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
             switch (chartType) {
                 case 'pie': {
                     fixPieTotals({data});
+                    break;
+                }
+                case 'treemap': {
+                    applyTreemapLabelFormatter({data});
                     break;
                 }
             }
