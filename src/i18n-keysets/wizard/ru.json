@@ -190,6 +190,7 @@
   "label_logarithmic": "Логарифмическая",
   "label_manual": "Вручную",
   "label_markdown": "Markdown",
+  "label_markdown-tooltip": "Значение поля будет отформатировано в соответствии с разметкой markdown",
   "label_markup": "Разметка",
   "label_max": "Максимум",
   "label_message-link-copied": "Ссылка скопирована",

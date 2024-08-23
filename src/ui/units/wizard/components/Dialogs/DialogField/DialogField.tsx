@@ -436,6 +436,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             <React.Fragment>
                 <DialogFieldRow
                     title={i18n('wizard', 'label_markdown')}
+                    tooltipText={i18n('wizard', 'label_markdown')}
                     setting={
                         <Switch
                             onUpdate={(checked) => {
