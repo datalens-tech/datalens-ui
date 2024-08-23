@@ -139,6 +139,15 @@ const execute = async ({
     jail.setSync('__timeout', timeout);
     try {
         timeStart = process.hrtime();
+        if (filename === 'Params') {
+            const params = chartEditorApi.getParams();
+            context.evalClosureSync(`__params = $0 || {};`, [params], {
+                arguments: {
+                    copy: true,
+                },
+            });
+        }
+
         // Replace API functions with isolated function invocation
         // eslint-disable-next-line no-param-reassign
         chartEditorApi.updateParams = (params) => {

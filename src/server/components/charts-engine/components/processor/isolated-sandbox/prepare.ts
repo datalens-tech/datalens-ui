@@ -1,8 +1,11 @@
+import {updateParams} from '../paramsUtils';
+
 import {getPrepareApiAdapter} from './interop/charteditor-api';
 import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
 import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
+import {safeStringify} from './utils';
 
 export const getPrepare = ({noJsonFn, name}: {noJsonFn: boolean; name: string}) => {
     return `
@@ -19,52 +22,8 @@ const console = {log: (...args) => {
 
 console.error = console.log;
 
-const __safeStringify = (value) => {
-    function replaceFunctions(value) {
-        if(Array.isArray(value)) {
-            return value.map(replaceFunctions);   
-        }
-        if (typeof value === 'object' && value !== null) {
-            if (('_isAMomentObject' in value && value._isAMomentObject) || value instanceof Date) {
-                return value.toJSON();
-            }
-
-            const replaced = {};
-            Object.keys(value).forEach(key => {
-                replaced[key] = replaceFunctions(value[key]);     
-            })
-            return replaced;
-        }
-        if (typeof value === 'function') {
-            return value.toString();
-        }
-        return value;
-    }
-    return replaceFunctions(value);
-}
-
-function __updateParams({
-    userParamsOverride,
-    params,
-    usedParams,
-}) {
-    if (userParamsOverride) {
-        Object.keys(userParamsOverride).forEach((key) => {
-            const overridenItem = userParamsOverride[key];
-
-            if (params[key] && params[key].length > 0) {
-                if (Array.isArray(overridenItem) && overridenItem.length > 0) {
-                    params[key] = overridenItem;
-                }
-            } else {
-                params[key] = overridenItem;
-            }
-
-            usedParams[key] = params[key];
-        });
-    }
-}
-
+const __safeStringify = ${safeStringify.toString()};
+const __updateParams = ${updateParams.toString()};
 function __resolveParams(params) {
     Object.keys(params).forEach((param) => {
         const paramValues = params[param];
