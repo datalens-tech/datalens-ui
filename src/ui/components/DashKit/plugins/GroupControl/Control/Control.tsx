@@ -205,7 +205,8 @@ export const Control = ({
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
-                    tabId: currentTab?.id,
+                    // TODO: remove check after fix types
+                    tabId: currentTab && 'id' in currentTab ? currentTab?.id : undefined,
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
