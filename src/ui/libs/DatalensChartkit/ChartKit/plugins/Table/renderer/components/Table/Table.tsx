@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 
+import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
 import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
 import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
@@ -169,13 +170,14 @@ export const Table = React.memo<Props>((props: Props) => {
             }
 
             if (actionParams?.scope) {
+                const metaKey = isMacintosh() ? event.metaKey : event.ctrlKey;
                 const args: GetCellActionParamsArgs = {
                     actionParamsData: actionParams,
                     rows: data.rows,
                     head: data.head,
                     row: (data.rows[rowIndex] as TableCellsRow)?.cells as TData,
                     cell: tableCommonCell,
-                    metaKey: Boolean(event.metaKey),
+                    metaKey,
                 };
 
                 const cellActionParams = getCellActionParams(args);

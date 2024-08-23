@@ -18,7 +18,6 @@ export * from './bi-api';
 export * from './googleapis';
 export * from './color-palettes';
 export * from './common-update';
-export {FilterField} from './wizard';
 export * from './menu';
 export * from './entry';
 export * from './chartkit/common';
