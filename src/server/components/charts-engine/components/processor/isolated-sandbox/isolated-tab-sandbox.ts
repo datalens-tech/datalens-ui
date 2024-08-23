@@ -216,7 +216,7 @@ const execute = async ({
             return {module, __shared};
         `;
         const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
-        const codeWrapper = `(function () { \n ${code} \n }.bind({chartEditor: ChartEditor, ChartEditor}))();`;
+        const codeWrapper = `(function () { \n ${code} \n })();`;
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
