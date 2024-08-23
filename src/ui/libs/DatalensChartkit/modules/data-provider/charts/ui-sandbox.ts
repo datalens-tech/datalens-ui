@@ -104,7 +104,7 @@ const HC_FORBIDDEN_ATTRS = [
     'xAxis',
     'yAxis',
 ] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
+const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
