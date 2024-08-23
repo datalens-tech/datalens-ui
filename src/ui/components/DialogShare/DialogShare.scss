@@ -5,7 +5,7 @@ $shareLinkScrollWidth: 2px;
 
 .dialog-share {
     $class: &;
-    width: 716px;
+    width: 840px;
 
     &__body {
         display: flex;
@@ -21,7 +21,7 @@ $shareLinkScrollWidth: 2px;
     }
 
     &__params {
-        flex: 0 0 208px;
+        flex: 0 0 332px;
     }
 
     &__links {
@@ -82,6 +82,10 @@ $shareLinkScrollWidth: 2px;
         flex-direction: column;
         gap: 16px;
         margin-top: 16px;
+    }
+
+    &__federation {
+        word-break: break-all;
     }
 
     &__selects {

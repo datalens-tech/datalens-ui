@@ -199,7 +199,8 @@ export const DialogShare: React.FC<DialogShareProps> = ({
                                 onChange={handleChangeFederationSelected}
                                 size={checkboxSize}
                             >
-                                {i18n('value_federation-selected')}: {DL.USER.federationId}
+                                {i18n('value_federation-selected')}:
+                                <span className={b('federation')}> {DL.USER.federationId}</span>
                             </Checkbox>
                         )}
                         {withHideMenu && (
