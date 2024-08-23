@@ -3,6 +3,8 @@ import type IsolatedVM from 'isolated-vm';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
+import {safeStringify} from './utils';
+
 const {
     RUNTIME_ERROR,
     RUNTIME_TIMEOUT_ERROR,
@@ -54,6 +56,7 @@ type ExecuteParams = {
     name: string;
     timeout: number;
     context: IsolatedVM.Context;
+    isolatedConsole: Console;
 };
 
 export type ModulesSandboxExecuteResult = {
@@ -70,6 +73,7 @@ const execute = async ({
     isScreenshoter,
     timeout,
     context,
+    isolatedConsole,
 }: ExecuteParams): Promise<ModulesSandboxExecuteResult> => {
     if (!context) {
         throw new Error('Sandbox context is not initialized');
@@ -84,13 +88,20 @@ const execute = async ({
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
-    jail.setSync('log', function (...args: any[]) {
-        console.log(...args);
+    jail.setSync('__log', function (...args: any[]) {
+        isolatedConsole.log(...args);
     });
 
     try {
         const prepare = `
-           const console = {log};   
+           const __safeStringify = ${safeStringify.toString()};
+           const console = {log: (...args) => { 
+                    const processed = args.map(elem => {
+                        return __safeStringify(elem);
+                    })
+                    return __log(...processed);
+                }
+            };
            var module = {exports: {}};
            var exports = module.exports;
            const ChartEditor = {
@@ -164,5 +175,6 @@ export const processModule = async ({
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,
         context,
+        isolatedConsole: new Console({isScreenshoter}),
     });
 };

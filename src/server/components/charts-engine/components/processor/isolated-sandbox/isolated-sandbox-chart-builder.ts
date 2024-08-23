@@ -114,7 +114,11 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildParams: async (options) => {
-            context.evalSync(`__params = JSON.parse('${JSON.stringify(options.params)}') || {};`);
+            context.evalClosureSync(`__params = $0 || {};`, [options.params], {
+                arguments: {
+                    copy: true,
+                },
+            });
             const tabResult = await Sandbox.processTab({
                 name: 'Params',
                 code: config.data.params,
