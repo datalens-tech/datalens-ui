@@ -223,10 +223,7 @@ export const getOpenAsTableMenuItem = ({
         }),
 });
 
-export const getLinkMenuItem = (
-    customConfig?: Partial<MenuItemConfig>,
-    isExternal?: boolean,
-): MenuItemConfig => ({
+export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuItemConfig => ({
     id: MenuItemsIds.GET_LINK,
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'get-code');
@@ -243,8 +240,9 @@ export const getLinkMenuItem = (
         customConfig?.action ||
         function action({loadedData, propsData}) {
             return function render(props: MenuItemModalProps) {
+                const isEnabledEmbeds = Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare);
                 let initialParams = {};
-                if (!isExternal) {
+                if (isEnabledEmbeds) {
                     initialParams = {
                         [COMMON_URL_OPTIONS.EMBEDDED]: 1,
                         [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
@@ -256,12 +254,12 @@ export const getLinkMenuItem = (
                         propsData={propsData}
                         urlIdPrefix={`/${PREVIEW_ROUTE}/`}
                         onClose={props.onClose}
-                        showHideComments={!isExternal}
-                        showLinkDescription={true}
-                        showMarkupLink={!isExternal}
-                        showEmbedLink={!isExternal}
-                        showCopyAndExitBtn={isExternal}
-                        showFederation={DL.USER.isFederationUser}
+                        withHideComments={isEnabledEmbeds}
+                        withLinkDescription={true}
+                        withMarkupLink={isEnabledEmbeds}
+                        withEmbedLink={isEnabledEmbeds}
+                        withCopyAndExitBtn={!isEnabledEmbeds}
+                        withFederation={DL.USER.isFederationUser}
                         hasDefaultSize={true}
                         initialParams={initialParams}
                     />
