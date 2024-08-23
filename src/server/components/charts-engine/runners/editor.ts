@@ -65,7 +65,8 @@ async function getChartBuilder({
 
     const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
     const chartBuilder =
-        enableIsolatedSandbox && !isWizard
+        // eslint-disable-next-line no-constant-condition
+        true || (enableIsolatedSandbox && !isWizard)
             ? await getIsolatedSandboxChartBuilder({
                   userLang,
                   userLogin,
