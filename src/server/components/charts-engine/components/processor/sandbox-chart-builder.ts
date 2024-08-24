@@ -41,6 +41,7 @@ export const getSandboxChartBuilder = async (
     const modules: Record<string, unknown> = {};
 
     return {
+        builderType: 'chart',
         buildShared: async () => {
             shared = JSON.parse(config.data.shared || '{}');
         },

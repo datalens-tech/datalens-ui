@@ -10,6 +10,7 @@ import type {
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    StringParams,
     WorkbookId,
 } from '../../../../../shared';
 import {
@@ -40,6 +41,7 @@ import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
     ChartBuilderResult,
+    ControlBuilder,
     ProcessorErrorResponse,
     ProcessorFiles,
     ProcessorLogs,
@@ -149,8 +151,12 @@ export type ProcessorParams = {
     ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
-    builder: ChartBuilder;
+    builder: ChartBuilder | ControlBuilder;
 };
+
+function isControlBuilder(builder: ChartBuilder | ControlBuilder): builder is ControlBuilder {
+    return builder.builderType === 'control';
+}
 
 export class Processor {
     // eslint-disable-next-line complexity
@@ -185,7 +191,7 @@ export class Processor {
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
         let config: ResolvedConfig;
-        let params: Record<string, string | string[]>;
+        let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
         const hooks = new ProcessorHooks({chartsEngine});
@@ -663,14 +669,23 @@ export class Processor {
                 userConfig = configTabResults.exports as UserConfig;
 
                 hrStart = process.hrtime();
-                jsTabResults = await builder.buildChart({
-                    data,
-                    sources: resolvedSources,
-                    params,
-                    usedParams,
-                    actionParams: normalizedActionParamsOverride,
-                    hooks,
-                });
+
+                if (isControlBuilder(builder)) {
+                    jsTabResults = await (builder as ControlBuilder).buildChart({
+                        data,
+                        params,
+                    });
+                } else {
+                    jsTabResults = await (builder as ChartBuilder).buildChart({
+                        data,
+                        sources: resolvedSources,
+                        params,
+                        usedParams,
+                        actionParams: normalizedActionParamsOverride,
+                        hooks,
+                    });
+                }
+
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
                 timings.jsExecution = getDuration(hrStart);
