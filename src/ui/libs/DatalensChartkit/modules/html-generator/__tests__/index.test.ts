@@ -2,6 +2,8 @@ import {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/cha
 
 import {generateHtml} from '../index';
 
+type GenerateHtmlArgs = Parameters<typeof generateHtml>;
+
 describe('generateHtml', () => {
     test('html generation using valid tags', () => {
         const actual = generateHtml({
@@ -85,5 +87,22 @@ describe('generateHtml', () => {
                 },
             }),
         ).toEqual('<div style="color: &amp;lt;a&amp;gt;123&amp;lt;/a&amp;gt;;">123</div>');
+    });
+
+    // @ts-expect-error
+    test.each<GenerateHtmlArgs>([
+        [{tag: 'div', theme: {}}],
+        [{tag: 'div', theme: {dark: null, light: null}}],
+        [{tag: 'div', theme: {dark: 42, light: 42}}],
+        [{tag: 'div', theme: {dark: {}}}],
+        [{tag: 'div', theme: {light: {}}}],
+        [{tag: 'div', theme: {dark: {'--my-var': '#fff'}, light: {}}}],
+        [{tag: 'div', theme: {dark: {'--ce-theme': null}, light: {}}}],
+        [{tag: 'div', theme: {dark: {'--ce-theme': 42}, light: {}}}],
+        [{tag: 'div', theme: {dark: {}, light: {'--my-var': '#fff'}}}],
+        [{tag: 'div', theme: {dark: {}, light: {'--ce-theme': null}}}],
+        [{tag: 'div', theme: {dark: {}, light: {'--ce-theme': 42}}}],
+    ])('should throw an error in case of incorrect theme property (args: %j)', (item) => {
+        expect(() => generateHtml(item)).toThrowError(ChartKitCustomError);
     });
 });

@@ -12,6 +12,10 @@ export type ChartKitHtmlItem = {
     style?: Record<string, string | number>;
     attributes?: Record<string, string | number>;
     content?: ChartKitHtmlItem | ChartKitHtmlItem[] | string;
+    theme?: {
+        dark: Record<string, string>;
+        light: Record<string, string>;
+    };
 };
 
 export interface IChartEditor {
