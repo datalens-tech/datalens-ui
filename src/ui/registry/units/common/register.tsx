@@ -1,5 +1,6 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
+import {fetchDistinctsByApi} from 'ui/utils/datasets';
 import {fetchBatchRenderedMarkdown, fetchRenderedMarkdown} from 'ui/utils/renderMarkdown';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
@@ -67,5 +68,6 @@ export const registerCommonPlugins = () => {
         getAdditionalMarkdownPlugins: async () => [],
         fetchRenderedMarkdown,
         fetchBatchRenderedMarkdown,
+        fetchDistinctsByApi,
     });
 };

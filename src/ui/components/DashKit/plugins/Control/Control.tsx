@@ -60,7 +60,6 @@ import type {
     ChartControlRef,
     ControlSettings,
     ErrorData,
-    GetDistincts,
     LoadStatus,
     PluginControlState,
     ValidationErrorData,
@@ -93,7 +92,7 @@ export interface PluginControlProps
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
 }
 
 const b = block('dashkit-plugin-control');

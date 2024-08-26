@@ -14,7 +14,6 @@ import type {
     StringParams,
 } from 'shared';
 import {
-    DL_EMBED_TOKEN_HEADER,
     DashTabItemControlSourceType,
     DatasetFieldType,
     Feature,
@@ -30,7 +29,6 @@ import {DL} from 'ui/constants/common';
 import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import {registry} from 'ui/registry';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
@@ -38,12 +36,11 @@ import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
 import logger from '../../../../../libs/logger';
-import {isEmbeddedEntry} from '../../../../../utils/embedded';
 import {getControlHint} from '../../../utils';
 import {LIMIT, LOAD_STATUS, TYPE} from '../constants';
 import type {
+    ControlSettings,
     ErrorData,
-    GetDistincts,
     LoadStatus,
     SelectControlProps,
     ValidationErrorData,
@@ -68,7 +65,7 @@ type ControlItemSelectProps = {
     onChange: ({param, value}: {param: string; value: string | string[]}) => void;
     init: () => void;
     setItemsLoader: (loadingItems: boolean) => void;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
     validationError: string | null;
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;
@@ -203,30 +200,20 @@ export const ControlItemSelect = ({
                         };
                     });
 
-                const getSecureEmbeddingToken =
-                    registry.chart.functions.get('getSecureEmbeddingToken');
-                const headers =
-                    isEmbeddedEntry() && getSecureEmbeddingToken
-                        ? {[DL_EMBED_TOKEN_HEADER]: getSecureEmbeddingToken()}
-                        : {};
-
-                const {result} = await getDistincts!(
-                    {
-                        datasetId,
-                        workbookId,
-                        fields: [
-                            {
-                                ref: {type: 'id', id: datasetFieldId},
-                                role_spec: {role: 'distinct'},
-                            },
-                        ],
-                        limit: LIMIT,
-                        offset: LIMIT * nextPageToken,
-                        filters,
-                        parameter_values,
-                    },
-                    {headers},
-                );
+                const {result} = await getDistincts!({
+                    datasetId,
+                    workbookId,
+                    fields: [
+                        {
+                            ref: {type: 'id', id: datasetFieldId},
+                            role_spec: {role: 'distinct'},
+                        },
+                    ],
+                    limit: LIMIT,
+                    offset: LIMIT * nextPageToken,
+                    filters,
+                    parameter_values,
+                });
 
                 return {
                     items: result.data.Data.map(([value]) => ({value, title: value})),

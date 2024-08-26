@@ -173,18 +173,6 @@ export const actions = {
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}/copy`,
         params: ({new_key}, headers) => ({body: {new_key}, headers}),
     }),
-    embedsGetDistinctsApiV2: createAction<
-        GetDistinctsApiV2Response,
-        Omit<GetDistinctsApiV2Args, 'workbookId'>,
-        GetDistinctsApiV2TransformedResponse
-    >({
-        method: 'POST',
-        endpoint: 'datasetDataEmbedsApiEndpoint',
-        path: ({datasetId}) => `${API_DATA_V2}/datasets/${datasetId}/values/distinct`,
-        params: (body, headers) => ({body, headers}),
-        transformResponseData: transformApiV2DistinctsResponse,
-        timeout: TIMEOUT_95_SEC,
-    }),
     getDistinctsApiV2: createAction<
         GetDistinctsApiV2Response,
         GetDistinctsApiV2Args,

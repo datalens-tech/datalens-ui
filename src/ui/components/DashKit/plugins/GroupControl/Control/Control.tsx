@@ -44,7 +44,12 @@ import {getControlHint} from '../../../utils';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
-import type {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
+import type {
+    ControlSettings,
+    ErrorData,
+    LoadStatus,
+    ValidationErrorData,
+} from '../../Control/types';
 import {
     checkDatasetFieldType,
     getDatasetSourceInfo,
@@ -86,7 +91,7 @@ type ControlProps = {
         loadedData?: ExtendedLoadedData | null;
     }) => void;
     silentLoading: boolean;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
     onChange: ({
         params,
         callChangeByClick,
