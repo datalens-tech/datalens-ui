@@ -102,6 +102,10 @@ describe('generateHtml', () => {
         [{tag: 'div', theme: {dark: {}, light: {'--my-var': '#fff'}}}],
         [{tag: 'div', theme: {dark: {}, light: {'--ce-theme': null}}}],
         [{tag: 'div', theme: {dark: {}, light: {'--ce-theme': 42}}}],
+        [{tag: 'div', theme: {dark: {}, light: {}, 'dark-hc': 42}}],
+        [{tag: 'div', theme: {dark: {}, light: {}, 'light-hc': 42}}],
+        [{tag: 'div', theme: {dark: {'--ce-theme-1': '#fff'}, light: {}}}],
+        [{tag: 'div', theme: {dark: {}, light: {'--ce-theme-1': '#fff'}}}],
     ])('should throw an error in case of incorrect theme property (args: %j)', (item) => {
         expect(() => generateHtml(item)).toThrowError(ChartKitCustomError);
     });
