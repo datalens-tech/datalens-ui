@@ -88,6 +88,7 @@ export enum Feature {
     NewSandbox_100p = 'NewSandbox_100p',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
+    EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
 }
 
 export type FeatureConfig = Record<string, boolean>;
