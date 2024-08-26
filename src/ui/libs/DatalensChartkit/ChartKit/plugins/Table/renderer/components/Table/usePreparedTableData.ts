@@ -32,6 +32,7 @@ import {createTableColumns} from './utils';
 const PRERENDER_ROW_COUNT = 500;
 
 type TableViewData = {
+    colgroup?: {width: string}[];
     header: {
         rows: HeadRowViewData[];
         style?: React.CSSProperties;
@@ -248,9 +249,8 @@ export const usePreparedTableData = (props: {
             };
         })
         .filter(Boolean) as HeadRowViewData[];
-    const gridTemplateColumns = headers[headers.length - 1]?.headers
-        .map((h) => `${h.getSize()}px`)
-        .join(' ');
+    const colgroup = headers[headers.length - 1]?.headers.map((h) => ({width: `${h.getSize()}px`}));
+    const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
     const header = prerender
         ? {rows: headerRows}
         : {
@@ -364,5 +364,6 @@ export const usePreparedTableData = (props: {
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
         prerender,
+        colgroup: prerender ? undefined : colgroup,
     };
 };
