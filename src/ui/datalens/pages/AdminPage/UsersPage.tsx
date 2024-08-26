@@ -99,7 +99,7 @@ const UsersTables = () => {
             "c_login": values.c_login,
             "c_email": values.c_email,
             "b_disabled": values.b_disabled,
-            "c_project_name": values.c_project_name[0]
+            "c_project_name": values.c_project_name && Array.isArray(values.c_project_name) ? values.c_project_name[0] : null
           }]
         }
       );
