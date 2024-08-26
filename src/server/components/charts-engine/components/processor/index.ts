@@ -665,7 +665,6 @@ export class Processor {
                 userConfig = configTabResults.exports as UserConfig;
 
                 hrStart = process.hrtime();
-
                 jsTabResults = await builder.buildChart({
                     data,
                     sources: resolvedSources,
@@ -674,7 +673,6 @@ export class Processor {
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
-
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 
                 timings.jsExecution = getDuration(hrStart);
