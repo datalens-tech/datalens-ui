@@ -1,8 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
-import {Feature, isEnabledServerFeature} from '../../../../shared';
-import {chartGenerator} from '../components/chart-generator';
+import {ControlType, Feature, isEnabledServerFeature} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {getControlBuilder} from '../components/processor/control-builder';
@@ -20,79 +19,16 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     }
 
     const {chartsEngine, req, res, config, configResolving, workbookId} = props;
-    let generatedConfig;
-    let chartType;
-    const {template} = config;
 
     const ctx = cx.create('templateControlRunner');
 
-    if (config) {
-        let result;
-        let metadata = null;
-
-        try {
-            if (typeof config.data.shared === 'string') {
-                const data = JSON.parse(config.data.shared);
-
-                if (!template && !data.type) {
-                    data.type = config.meta && config.meta.stype;
-                }
-
-                result = chartGenerator.generateChart({
-                    data,
-                    template,
-                    req,
-                    ctx,
-                });
-
-                metadata = {
-                    key: config.key,
-                    owner: config.owner,
-                    scope: config.scope,
-                };
-
-                chartType = template || data.type;
-            } else {
-                // This is some kind of legacy edge cases.
-                // Just for compatibility purposes;
-                const data = config.data.shared as {type: string};
-
-                if (!template && !data.type) {
-                    data.type = config.meta && config.meta.stype;
-                }
-
-                result = chartGenerator.generateChart({
-                    data,
-                    template,
-                    req,
-                    ctx,
-                });
-
-                chartType = template || data.type;
-            }
-        } catch (error) {
-            ctx.logError('Failed to generate chart in controls runner', error);
-            ctx.end();
-
-            return res.status(400).send({
-                error,
-            });
-        }
-
-        generatedConfig = {
-            data: result.chart,
-            meta: {
-                stype: result.type,
-            },
-            publicAuthor: config.publicAuthor,
-        };
-
-        if (metadata) {
-            Object.assign(generatedConfig, metadata);
-        }
-    } else {
+    if (
+        !config ||
+        !('data' in config) ||
+        !('shared' in config.data) ||
+        config.meta?.stype !== ControlType.Dash
+    ) {
         const error = new Error('CONTROL_RUNNER_CONFIG_MISSING');
-
         ctx.logError('CONTROL_RUNNER_CONFIG_MISSING', error);
         ctx.end();
 
@@ -101,7 +37,23 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         });
     }
 
-    res.locals.subrequestHeaders['x-chart-kind'] = chartType;
+    const generatedConfig = {
+        data: {
+            js: '',
+            documentation_en: '',
+            documentation_ru: '',
+            ui: '',
+            url: '',
+            graph: '',
+            params: '',
+            statface_graph: '',
+            shared: config.data.shared,
+        },
+        meta: {
+            stype: ControlType.Dash,
+        },
+        publicAuthor: config.publicAuthor,
+    } as ResolvedConfig;
 
     const hrStart = process.hrtime();
 
@@ -110,7 +62,7 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
     const controlBuilder = await getControlBuilder({
-        config: generatedConfig as ResolvedConfig,
+        config: generatedConfig,
     });
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
@@ -130,7 +82,7 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
     };
 
     if (generatedConfig) {
-        processorParams.configOverride = generatedConfig as ResolvedConfig;
+        processorParams.configOverride = generatedConfig;
     }
 
     const configWorkbook = workbookId ?? config.workbookId;

@@ -8,7 +8,6 @@ import type {
     IChartEditor,
     StringParams,
 } from '../../../../../shared';
-import type {SourceResponseData} from '../../../../modes/charts/plugins/control/js/types';
 
 import type {
     CommentsFetcherFetchResult,
@@ -140,7 +139,6 @@ export type ChartBuilderResult = {
 };
 
 export type ChartBuilder = {
-    builderType: 'control' | 'chart';
     buildShared: () => Promise<void>;
     buildModules: (args: {
         subrequestHeaders: Record<string, string>;
@@ -187,17 +185,4 @@ export type ChartBuilder = {
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
     dispose: () => void;
-};
-
-export type ControlBuilder = Pick<ChartBuilder, 'buildShared' | 'buildModules' | 'dispose'> & {
-    builderType: 'control' | 'chart';
-    buildParams: (args: {params: StringParams}) => Promise<ChartBuilderResult>;
-    buildUrls: (args: {params: StringParams}) => Promise<ChartBuilderResult>;
-    buildChartLibraryConfig: (args: {params: StringParams}) => Promise<ChartBuilderResult | null>;
-    buildChartConfig: (args: {params: StringParams}) => Promise<ChartBuilderResult>;
-    buildChart: (args: {
-        data: SourceResponseData;
-        params: StringParams;
-    }) => Promise<ChartBuilderResult>;
-    buildUI: (args: {params: StringParams}) => Promise<ChartBuilderResult>;
 };

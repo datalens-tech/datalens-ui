@@ -7,6 +7,7 @@ import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
@@ -41,7 +42,6 @@ import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
     ChartBuilderResult,
-    ControlBuilder,
     ProcessorErrorResponse,
     ProcessorFiles,
     ProcessorLogs,
@@ -135,7 +135,7 @@ export type ProcessorParams = {
         key?: string;
         entryId?: string;
         type?: string;
-        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS};
+        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS | ControlType.Dash};
         publicAuthor?: EntryPublicAuthor;
     };
     useUnreleasedConfig?: boolean;
@@ -151,12 +151,8 @@ export type ProcessorParams = {
     ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
-    builder: ChartBuilder | ControlBuilder;
+    builder: ChartBuilder;
 };
-
-function isControlBuilder(builder: ChartBuilder | ControlBuilder): builder is ControlBuilder {
-    return builder.builderType === 'control';
-}
 
 export class Processor {
     // eslint-disable-next-line complexity
@@ -670,21 +666,14 @@ export class Processor {
 
                 hrStart = process.hrtime();
 
-                if (isControlBuilder(builder)) {
-                    jsTabResults = await builder.buildChart({
-                        data,
-                        params,
-                    } as unknown as Parameters<ControlBuilder['buildChart']>[0]);
-                } else {
-                    jsTabResults = await builder.buildChart({
-                        data,
-                        sources: resolvedSources,
-                        params,
-                        usedParams,
-                        actionParams: normalizedActionParamsOverride,
-                        hooks,
-                    });
-                }
+                jsTabResults = await builder.buildChart({
+                    data,
+                    sources: resolvedSources,
+                    params,
+                    usedParams,
+                    actionParams: normalizedActionParamsOverride,
+                    hooks,
+                });
 
                 logSandboxDuration(jsTabResults.executionTiming, jsTabResults.name, ctx);
 

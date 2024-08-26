@@ -62,7 +62,6 @@ export const getIsolatedSandboxChartBuilder = async (
     );
 
     return {
-        builderType: 'chart',
         dispose: () => {
             context.release();
         },

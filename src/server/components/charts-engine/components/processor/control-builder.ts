@@ -1,13 +1,14 @@
 import type {StringParams} from '../../../../../shared';
 import {buildUI} from '../../../../modes/charts/plugins/control/controls';
 import {buildGraph} from '../../../../modes/charts/plugins/control/js';
+import type {SourceResponseData} from '../../../../modes/charts/plugins/control/js/types';
 import type {ControlShared} from '../../../../modes/charts/plugins/control/types';
 import {buildSources} from '../../../../modes/charts/plugins/control/url';
 
-import {getControlApiContext} from './control-api-context';
-import type {ControlBuilder} from './types';
+import {getChartApiContext} from './chart-api-context';
+import type {ChartBuilder} from './types';
 
-type ControlBuilderArgs = {
+type ChartBuilderArgs = {
     config: {
         data: {
             shared: string;
@@ -15,7 +16,7 @@ type ControlBuilderArgs = {
     };
 };
 
-export const getControlBuilder = async (args: ControlBuilderArgs): Promise<ControlBuilder> => {
+export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBuilder> => {
     const {config} = args;
     let shared: ControlShared;
 
@@ -23,10 +24,12 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
     const emptyStep = (name: string) => async (options: {params: StringParams}) => {
         const {params} = options;
         const timeStart = process.hrtime();
-        const context = getControlApiContext({
+        const context = getChartApiContext({
             name,
             shared,
             params,
+            actionParams: {} as Record<string, string | string[]>,
+            userLang: null,
         });
 
         return {
@@ -37,8 +40,7 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
         };
     };
 
-    const controlBuilder: ControlBuilder = {
-        builderType: 'control',
+    const ChartBuilder: ChartBuilder = {
         buildShared: async () => {
             if (typeof config.data.shared === 'string') {
                 shared = JSON.parse(config.data.shared);
@@ -52,10 +54,12 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
         buildParams: async (options) => {
             const {params} = options;
             const timeStart = process.hrtime();
-            const context = getControlApiContext({
+            const context = getChartApiContext({
                 name: 'Params',
                 shared,
                 params,
+                actionParams: {} as Record<string, string | string[]>,
+                userLang: null,
             });
             return {
                 exports: {},
@@ -68,10 +72,12 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
             const {params} = options;
             const timeStart = process.hrtime();
 
-            const context = getControlApiContext({
+            const context = getChartApiContext({
                 name: 'Urls',
                 shared,
                 params,
+                actionParams: {} as Record<string, string | string[]>,
+                userLang: null,
             });
 
             return {
@@ -93,18 +99,21 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
             const {data, params} = options;
             const timeStart = process.hrtime();
 
-            const context = getControlApiContext({
+            const context = getChartApiContext({
                 name: 'JavaScript',
                 shared,
                 params,
+                actionParams: {} as Record<string, string | string[]>,
+                userLang: null,
             });
 
             buildGraph({
-                data,
+                data: data as unknown as SourceResponseData,
                 shared,
                 params,
                 ChartEditor: context.ChartEditor,
             });
+
             return {
                 exports: {},
                 executionTiming: process.hrtime(timeStart),
@@ -117,10 +126,12 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
             const {params} = options;
             const timeStart = process.hrtime();
 
-            const context = getControlApiContext({
+            const context = getChartApiContext({
                 name: 'UI',
                 shared: shared,
                 params: params,
+                actionParams: {} as Record<string, string | string[]>,
+                userLang: null,
             });
 
             return {
@@ -135,5 +146,5 @@ export const getControlBuilder = async (args: ControlBuilderArgs): Promise<Contr
         dispose: () => {},
     };
 
-    return controlBuilder;
+    return ChartBuilder;
 };
