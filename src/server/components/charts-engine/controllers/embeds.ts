@@ -6,7 +6,7 @@ import type {ChartsEngine} from '..';
 import {ControlType, DL_EMBED_TOKEN_HEADER, EntryScope} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
-import type {CutResolvedConfig} from '../components/storage/types';
+import type {ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
@@ -161,7 +161,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     entry = {
                         data: {shared: controlData as object},
                         meta: {stype: ControlType.Dash},
-                    } as CutResolvedConfig;
+                    } as ReducedResolvedConfig;
                 } else if (embeddingInfo.scope === EntryScope.Widget) {
                     entry = embeddingInfo.entry;
                 } else {

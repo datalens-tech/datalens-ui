@@ -108,7 +108,7 @@ export type EmbeddingInfo = {
     };
 } & (
     | {scope: EntryScope.Widget; entry: ResolvedConfig}
-    | {scope: EntryScope.Dash; entry: Omit<ResolvedConfig, 'data'> & {data: DashData}}
+    | {scope: EntryScope.Dash; entry: ResolvedConfig & {data: DashData}}
 );
 
 export type EmbeddingToken = {

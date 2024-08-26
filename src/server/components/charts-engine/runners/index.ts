@@ -5,7 +5,7 @@ import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
 import {ControlType} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
-import type {CutResolvedConfig, ResolvedConfig} from '../components/storage/types';
+import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
 import {runChart} from './chart';
 import {runEditor} from './editor';
@@ -27,7 +27,7 @@ export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
     res: Response;
-    config: ResolvedConfig | CutResolvedConfig;
+    config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
     isWizard?: boolean;

@@ -45,4 +45,4 @@ export type ResolvedConfig = {
     publicAuthor?: EntryPublicAuthor;
 };
 
-export type CutResolvedConfig = ResolvedConfig & {data: {shared: string | object}};
+export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

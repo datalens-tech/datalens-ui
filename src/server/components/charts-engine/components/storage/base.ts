@@ -113,7 +113,7 @@ export class BaseStorage {
 
     fetchConfig(
         ctx: AppContext,
-        params: (ResolveConfigProps | EmbedResolveConfigProps) & Required<{unreleased: boolean}>,
+        params: (ResolveConfigProps | EmbedResolveConfigProps) & {unreleased: boolean},
     ): Promise<ResolvedConfig | EmbeddingInfo> {
         const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =
             params;

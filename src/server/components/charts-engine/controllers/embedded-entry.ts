@@ -85,13 +85,15 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         })
         .then(async (response) => {
             if (response && 'entry' in response) {
-                const {entry} = response;
+                const {
+                    entry: {entryId, scope, data},
+                } = response;
 
                 // Add only necessary fields without personal info like createdBy
                 res.status(200).send({
-                    entryId: entry.entryId,
-                    scope: entry.scope,
-                    data: entry.data,
+                    entryId,
+                    scope,
+                    data,
                 });
             }
         })
