@@ -18,14 +18,42 @@ type GetControlApiContextArgs = {
 export const getControlApiContext = (args: GetControlApiContextArgs): ChartApiContext => {
     const {name, params, shared = {}} = args;
 
-    const api = {
+    const api: IChartEditor = {
         getSharedData: () => shared,
         resolveRelative: resolveRelativeDate,
         resolveInterval: resolveIntervalDate,
         resolveOperation,
-        getActionParams: () => {},
-        widgetConfig: () => undefined,
-    } as unknown as IChartEditor;
+        getUserLogin: () => '',
+        getUserLang: () => '',
+        getLang: () => '',
+        getTranslation: () => '',
+        getSecrets: () => ({}) as ReturnType<IChartEditor['getSecrets']>,
+        getWidgetConfig: () => undefined,
+        getParams: () => ({}) as ReturnType<IChartEditor['getParams']>,
+        getParam: () => '',
+        getActionParams: () => ({}) as ReturnType<IChartEditor['getActionParams']>,
+        getCurrentPage: () => 0,
+        getSortParams: () => ({}) as ReturnType<IChartEditor['getSortParams']>,
+        updateConfig: () => {},
+        setChartsInsights: () => {},
+        getLoadedData: () => ({}) as ReturnType<IChartEditor['getLoadedData']>,
+        getLoadedDataStats: () => ({}) as ReturnType<IChartEditor['getLoadedDataStats']>,
+        setError: () => {},
+        _setError: () => {},
+        updateHighchartsConfig: () => {},
+        setDataSourceInfo: () => {},
+        setExtra: () => {},
+        updateParams: () => {},
+        updateActionParams: () => {},
+        updateLibraryConfig: () => {},
+        setSideHtml: () => {},
+        setSideMarkdown: () => {},
+        setExportFilename: () => {},
+        wrapFn: () => ({}) as ReturnType<IChartEditor['wrapFn']>,
+        generateHtml: () => ({}) as ReturnType<IChartEditor['generateHtml']>,
+        attachHandler: () => ({}) as ReturnType<IChartEditor['attachHandler']>,
+        attachFormatter: () => ({}) as ReturnType<IChartEditor['attachFormatter']>,
+    };
 
     const context = {
         ChartEditor: api,

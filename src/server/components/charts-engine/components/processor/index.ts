@@ -671,12 +671,12 @@ export class Processor {
                 hrStart = process.hrtime();
 
                 if (isControlBuilder(builder)) {
-                    jsTabResults = await (builder as ControlBuilder).buildChart({
+                    jsTabResults = await builder.buildChart({
                         data,
                         params,
-                    });
+                    } as unknown as Parameters<ControlBuilder['buildChart']>[0]);
                 } else {
-                    jsTabResults = await (builder as ChartBuilder).buildChart({
+                    jsTabResults = await builder.buildChart({
                         data,
                         sources: resolvedSources,
                         params,

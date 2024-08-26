@@ -18,7 +18,6 @@ import {
     WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
-import type {SourceResponseData} from '../../../../modes/charts/plugins/control/js/types';
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
 import type {ChartsEngine} from '../../index';
@@ -131,7 +130,7 @@ const isFetchLimitError = (errorMessage: string) =>
 export type DataFetcherResult = {
     sourceId: string;
     sourceType: string;
-    body: unknown | SourceResponseData;
+    body: unknown;
     responseHeaders: IncomingHttpHeaders;
     status: number;
     latency: number;
