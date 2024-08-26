@@ -6,8 +6,8 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
-import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
+import {registry} from 'ui/registry';
 import Utils from 'ui/utils';
 
 import {socialNets} from '../../modules/constants';
@@ -32,6 +32,8 @@ export const ShareButton = ({
     iconSize?: number;
     popoverClassName?: string;
 }) => {
+    const {DialogShare} = registry.common.components.getAll();
+
     const [showDialogShare, setShowDialogShare] = React.useState(false);
 
     const handleShareButtonClick = () => {

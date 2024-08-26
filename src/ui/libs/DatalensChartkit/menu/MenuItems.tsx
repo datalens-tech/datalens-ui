@@ -15,7 +15,6 @@ import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
-import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
@@ -240,6 +239,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
         customConfig?.action ||
         function action({loadedData, propsData}) {
             return function render(props: MenuItemModalProps) {
+                const {DialogShare} = registry.common.components.getAll();
                 const isEnabledEmbeds = Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare);
                 let initialParams = {};
                 if (isEnabledEmbeds) {
@@ -256,7 +256,6 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
                         onClose={props.onClose}
                         withHideComments={isEnabledEmbeds}
                         withLinkDescription={true}
-                        withMarkupLink={isEnabledEmbeds}
                         withEmbedLink={isEnabledEmbeds}
                         withCopyAndExitBtn={!isEnabledEmbeds}
                         withFederation={DL.USER.isFederationUser}
@@ -281,6 +280,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
         customConfig?.action ||
         function action({propsData, loadedData}) {
             return function render(props: MenuItemModalProps) {
+                const {DialogShare} = registry.common.components.getAll();
                 return (
                     <DialogShare
                         propsData={propsData}

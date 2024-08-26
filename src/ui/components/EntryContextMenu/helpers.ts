@@ -2,6 +2,7 @@ import type React from 'react';
 
 import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
+import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
 import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
@@ -11,7 +12,6 @@ import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
-import type {DialogShareProps} from '../DialogShare/DialogShare';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
@@ -164,7 +164,7 @@ export async function showShareDialog(
     if (entryDialoguesRef.current) {
         const dialogProps: DialogShareProps = {
             onClose: () => {},
-            withSelectorsCheckbox: true,
+            withSelectors: true,
             propsData: {
                 id: entry.entryId,
             },
@@ -175,7 +175,6 @@ export async function showShareDialog(
         }
 
         if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
-            dialogProps.withMarkupLink = true;
             dialogProps.initialParams = {
                 [URL_OPTIONS.NO_CONTROLS]: 1,
             };
