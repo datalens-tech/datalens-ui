@@ -117,7 +117,7 @@ export const Table = React.memo<Props>((props: Props) => {
         return {cursor, ...actionParamsCss};
     };
 
-    const {header, body, footer, prerender, totalSize} = usePreparedTableData({
+    const {colgroup, header, body, footer, prerender, totalSize} = usePreparedTableData({
         widgetData,
         data,
         dimensions: widgetDimensions,
@@ -226,6 +226,13 @@ export const Table = React.memo<Props>((props: Props) => {
                             style={{minHeight: totalSize}}
                             ref={tableRef}
                         >
+                            {colgroup && (
+                                <colgroup>
+                                    {colgroup.map((col, index) => (
+                                        <col width={col.width} key={index} />
+                                    ))}
+                                </colgroup>
+                            )}
                             <TableHead
                                 sticky={true}
                                 rows={header.rows}
