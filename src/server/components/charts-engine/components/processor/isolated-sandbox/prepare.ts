@@ -14,7 +14,7 @@ var module = {exports: {}};
 var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
-            return __safeStringify(elem);
+            return __safeStringify(elem, {isConsole: true});
         })
         return __log(...processed);
     }
