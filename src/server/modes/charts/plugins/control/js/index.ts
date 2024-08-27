@@ -1,4 +1,5 @@
-import {DashTabItemControlElementType, type IChartEditor} from '../../../../../../shared';
+import {DashTabItemControlElementType} from '../../../../../../shared';
+import type {IChartEditor, StringParams} from '../../../../../../shared';
 import {formatIntervalRangeDate, formatRelativeRangeDate, getISOFromToday} from '../helpers/misc';
 import type {ControlShared, UIControl} from '../types';
 
@@ -14,7 +15,7 @@ export const buildGraph = ({
 }: {
     data: SourceResponseData;
     shared: ControlShared;
-    params: Record<string, string | string[]>;
+    params: StringParams;
     ChartEditor: IChartEditor;
 }) => {
     shared.content = processContent({data, shared, ChartEditor, params});
