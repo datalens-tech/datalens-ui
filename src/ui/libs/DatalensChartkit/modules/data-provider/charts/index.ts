@@ -130,6 +130,11 @@ export interface EntityRequestOptions {
             includeConfig: boolean;
             includeLogs: boolean;
         };
+        controlData?: {
+            id: string;
+            tabId?: string;
+            groupId?: string;
+        };
     };
     headers?: Record<string, any>;
     cancelToken?: CancelTokenSource['token'];

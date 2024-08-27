@@ -19,7 +19,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null, id, isWidget, config, tabId} = req.body;
+        const {expectedType = null, id, isWidget, controlData} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -132,34 +132,32 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 let entry;
 
-                if (
-                    config &&
-                    config.meta.stype === ControlType.Dash &&
-                    tabId &&
-                    embeddingInfo.scope === EntryScope.Dash
-                ) {
+                if (controlData && embeddingInfo.scope === EntryScope.Dash) {
                     // support group and old single selectors
-                    const controlId = config.data.parentId || config.data.shared.id;
-                    const controlTab = embeddingInfo.entry?.data.tabs.find(({id}) => id === tabId);
-
-                    const controlConfig = controlTab?.items.find(
-                        ({id, type}) =>
-                            id === controlId && (type === 'group_control' || type === 'control'),
+                    const controlWidgetId = controlData.groupId || controlData.id;
+                    const controlTab = embeddingInfo.entry?.data.tabs.find(
+                        ({id}) => id === controlData.tabId,
                     );
 
-                    if (!controlConfig) {
+                    const controlWidgetConfig = controlTab?.items.find(
+                        ({id, type}) =>
+                            id === controlWidgetId &&
+                            (type === 'group_control' || type === 'control'),
+                    );
+
+                    if (!controlWidgetConfig) {
                         return res.status(404).send({
                             error: 'Сonfig was not found',
                         });
                     }
 
-                    const controlData =
-                        controlConfig.type === 'group_control'
-                            ? controlConfig.data.group.find(({id}) => id === config.data.shared.id)
-                            : controlConfig.data;
+                    const sharedData =
+                        controlWidgetConfig.type === 'group_control'
+                            ? controlWidgetConfig.data.group.find(({id}) => id === controlData.id)
+                            : controlWidgetConfig.data;
 
                     entry = {
-                        data: {shared: controlData as object},
+                        data: {shared: sharedData as object},
                         meta: {stype: ControlType.Dash},
                     } as ReducedResolvedConfig;
                 } else if (embeddingInfo.scope === EntryScope.Widget) {

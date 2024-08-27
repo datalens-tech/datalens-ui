@@ -1,6 +1,6 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
-import {fetchDistinctsByApi} from 'ui/utils/datasets';
+import {fetchDistinctsByApi} from 'ui/utils/getDistinctsApiV2';
 import {fetchBatchRenderedMarkdown, fetchRenderedMarkdown} from 'ui/utils/renderMarkdown';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';

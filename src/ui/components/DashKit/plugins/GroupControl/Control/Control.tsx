@@ -104,7 +104,7 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
-    parentId: string;
+    groupId: string;
 };
 
 export const Control = ({
@@ -118,7 +118,7 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
-    parentId,
+    groupId,
 }: ControlProps) => {
     const currentTab = React.useContext(DashConfigContext);
 
@@ -202,16 +202,19 @@ export const Control = ({
                     config: {
                         data: {
                             shared: data,
-                            parentId,
                         },
                         meta: {
                             stype: ControlType.Dash,
                         },
                     },
+                    controlData: {
+                        id,
+                        groupId,
+                        // TODO: remove check after fix types
+                        tabId: currentTab && 'id' in currentTab ? currentTab?.id : undefined,
+                    },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
-                    // TODO: remove check after fix types
-                    tabId: currentTab && 'id' in currentTab ? currentTab?.id : undefined,
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,

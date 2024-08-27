@@ -439,13 +439,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 data: {
                     config: {
                         data: {
-                            shared: {...data, id: this.props.id},
+                            shared: data,
                         },
                         meta: {
                             stype: ControlType.Dash,
                         },
                     },
-                    tabId: this.context?.id,
+                    controlData: {
+                        id: this.props.id,
+                        tabId: this.context?.id,
+                    },
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
                 },
