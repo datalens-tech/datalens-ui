@@ -77,6 +77,11 @@ const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
     return fn();
 };
 
+const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuParams): boolean =>
+    entry?.scope === EntryScope.Dash &&
+    showSpecificItems &&
+    Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
+
 export const getEntryContextMenu = (): ContextMenuItem[] => [
     {
         id: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
@@ -202,9 +207,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         text: 'value_copy-link',
         enable: () => true,
         scopes: ALL_SCOPES,
-        isVisible({entry, showSpecificItems}) {
-            return !(entry?.scope === EntryScope.Dash && showSpecificItems);
-        },
+        isVisible: (params) => !isVisibleEntryContextShareItem(params),
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
@@ -212,10 +215,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: ArrowShapeTurnUpRight,
         text: 'value_share',
         enable: () => true,
-        scopes: [EntryScope.Dash],
-        isVisible({showSpecificItems}) {
-            return showSpecificItems;
-        },
+        scopes: ALL_SCOPES,
+        isVisible: isVisibleEntryContextShareItem,
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
