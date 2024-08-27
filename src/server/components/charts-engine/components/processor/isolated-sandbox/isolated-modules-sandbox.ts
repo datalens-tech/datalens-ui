@@ -95,7 +95,7 @@ const execute = async ({
            const __safeStringify = ${safeStringify.toString()};
            const console = {log: (...args) => { 
                     const processed = args.map(elem => {
-                        return __safeStringify(elem);
+                        return __safeStringify(elem, {isConsole: true});
                     })
                     return __log(...processed);
                 }

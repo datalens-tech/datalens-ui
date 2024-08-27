@@ -1,4 +1,4 @@
-import type {EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../shared';
+import type {ControlType, EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../shared';
 import type {ChartStorageType} from '../../types';
 import type {ChartTemplates} from '../chart-generator';
 
@@ -23,7 +23,7 @@ export type ResolvedConfig = {
     links?: string[];
     meta: {
         is_release?: boolean;
-        stype: ChartStorageType;
+        stype: ChartStorageType | ControlType.Dash;
         owner?: string;
         sandbox_version?: string;
     };
