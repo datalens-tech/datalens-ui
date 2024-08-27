@@ -318,6 +318,7 @@ export interface YMapWidget extends WidgetBaseWithData {
             click?: WidgetEvent<'point'>;
         };
     };
+    data: any[];
 }
 
 export type MarkupWidget = WidgetBaseWithData & {

@@ -19,7 +19,7 @@ import YandexMapModule, {
 import {StyledSplitPane} from '../../../plugins/components';
 
 import Legend from './Legend/Legend';
-import {applyEventHandlers} from './events';
+import {applyEventHandlers, setSelectedState} from './events';
 import {renderPossibleMarkupItems} from './utils';
 
 import './YandexMapComponent.scss';
@@ -286,7 +286,13 @@ export class YandexMapComponent extends React.Component {
             );
 
             const widgetData = this.props.data;
-            const {data, libraryConfig, config} = widgetData;
+            const {data, libraryConfig, config, unresolvedParams} = widgetData;
+            const actionParams = pickActionParamsFromParams(unresolvedParams);
+            try {
+                setSelectedState({data, actionParams});
+            } catch (e) {
+                console.error(e);
+            }
 
             const {map, geoObjects, mapPerformanceMetrics} = await YandexMapModule.draw({
                 node: this.node,

@@ -362,26 +362,27 @@ class YandexMap {
                         // Setting the shape of the hotspot
                         options.set('shape', circleShape);
 
-                        this.optionsMonitor = new YandexMap._ymaps.Monitor(geoObjectOptions)
-                            .add('opacity', (newValue) => {
+                        // Set additional className
+                        const isActive = geoObjectOptions.get('active');
+                        const classNames = new Set(element.className.split(' '));
+                        if (isActive === true) {
+                            classNames.delete('unactive');
+                            classNames.add('active');
+                        } else if (isActive === false) {
+                            classNames.delete('active');
+                            classNames.add('unactive');
+                        } else {
+                            classNames.delete('unactive');
+                            classNames.delete('active');
+                        }
+                        element.className = Array.from(classNames).join(' ');
+
+                        this.optionsMonitor = new YandexMap._ymaps.Monitor(geoObjectOptions).add(
+                            'opacity',
+                            (newValue) => {
                                 element.style.opacity = newValue;
-                            })
-                            .add('active', (value) => {
-                                const classNames = new Set(element.className.split(' '));
-
-                                if (value === true) {
-                                    classNames.delete('unactive');
-                                    classNames.add('active');
-                                } else if (value === false) {
-                                    classNames.delete('active');
-                                    classNames.add('unactive');
-                                } else {
-                                    classNames.delete('unactive');
-                                    classNames.delete('active');
-                                }
-
-                                element.className = Array.from(classNames).join(' ');
-                            });
+                            },
+                        );
                     },
                     clear: function () {
                         Chips.superclass.clear.call(this);
