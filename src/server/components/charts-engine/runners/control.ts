@@ -5,7 +5,7 @@ import {getControlBuilder} from '../components/processor/control-builder';
 import type {ResolvedConfig} from '../components/storage/types';
 
 import {runChart} from './chart';
-import {commonRunner} from './utils';
+import {commonRunner} from './common';
 
 import type {RunnerHandler, RunnerHandlerProps} from '.';
 

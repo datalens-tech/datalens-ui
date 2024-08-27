@@ -5,8 +5,8 @@ import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 
+import {commonRunner} from './common';
 import {runServerlessEditor} from './serverlessEditor';
-import {commonRunner} from './utils';
 
 import type {RunnerHandlerProps} from '.';
 

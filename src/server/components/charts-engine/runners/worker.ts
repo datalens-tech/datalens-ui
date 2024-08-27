@@ -4,8 +4,8 @@ import {chartGenerator} from '../components/chart-generator';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ChartStorageType} from '../types';
 
-import type {Runners} from './utils';
-import {commonRunner} from './utils';
+import type {Runners} from './common';
+import {commonRunner} from './common';
 
 import type {RunnerHandlerProps} from '.';
 
