@@ -98,6 +98,7 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
+    autoUpdating: boolean;
 };
 
 export const Control = ({
@@ -111,6 +112,7 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
+    autoUpdating,
 }: ControlProps) => {
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
@@ -398,7 +400,11 @@ export const Control = ({
     };
 
     const renderSilentLoader = () => {
-        if (showSilentLoader || (!control && status === LOAD_STATUS.SUCCESS)) {
+        if (
+            showSilentLoader ||
+            (!control && status === LOAD_STATUS.SUCCESS) ||
+            (autoUpdating && status === LOAD_STATUS.PENDING)
+        ) {
             return (
                 <div className={b('loader', {silent: true})}>
                     <Loader size="s" />

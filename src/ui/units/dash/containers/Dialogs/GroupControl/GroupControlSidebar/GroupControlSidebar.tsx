@@ -230,7 +230,7 @@ export const GroupControlSidebar = () => {
                             />
                         </div>
                         <Checkbox
-                            checked={selectorsGroup.updateControlsOnChange}
+                            checked={selectorsGroup.updateControlsOnChange || false}
                             onUpdate={handleChangeUpdateControls}
                             size="l"
                             qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
