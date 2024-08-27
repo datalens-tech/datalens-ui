@@ -2,9 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
 import DialogConfirm, {DialogConfirmApplyStatus} from 'ui/components/DialogConfirm/DialogConfirm';
-import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 
 import DialogManager from '../../../../components/DialogManager/DialogManager';
 import type {AppDispatch} from '../../../../store';
@@ -34,16 +32,10 @@ const DeleteEntryDialog = React.memo<Props>(({open, data, onClose}) => {
     const handleApply = React.useCallback(() => {
         dispatch(
             deleteEntry({
-                entryId: data.entryId,
-                scope: data.scope,
+                entry: data,
                 deleteInline: true,
             }),
         ).then(() => {
-            if (data.scope === EntryScope.Connection) {
-                reachMetricaGoal(CounterName.Main, GoalId.ConnectionDeleteSubmit, {
-                    type: data.type,
-                });
-            }
             onClose();
         });
     }, [data.entryId, data.scope, dispatch, onClose]);
