@@ -212,7 +212,8 @@ const execute = async ({
                         });`
                      : ``
              };
-            module = __safeStringify(module);
+            const jsonFn = ${filename !== 'JavaScript'};
+            module = __safeStringify(module, {jsonFn});
             return {module, __shared};
         `;
         const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
