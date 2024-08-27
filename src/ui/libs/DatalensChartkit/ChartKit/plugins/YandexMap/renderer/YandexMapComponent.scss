@@ -38,6 +38,15 @@
         align-items: center;
         justify-content: center;
         color: var(--g-color-text-light-primary);
+
+        &.active {
+            border: 2px solid var(--g-color-text-light-primary);
+            transform: translate(-2px, -2px);
+        }
+
+        &.unactive {
+            filter: opacity(0.5);
+        }
     }
 
     &__tooltip-container {

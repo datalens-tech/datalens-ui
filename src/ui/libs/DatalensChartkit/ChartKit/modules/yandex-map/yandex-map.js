@@ -325,6 +325,8 @@ class YandexMap {
                         const properties = this.getData().properties;
                         const options = this.getData().options;
                         const geoObjectOptions = this.getData().geoObject.options;
+
+                        // console.log({properties, geoObjectOptions});
                         const radius = properties.get('radius');
                         const label = properties.get('label');
 
@@ -361,12 +363,26 @@ class YandexMap {
                         // Setting the shape of the hotspot
                         options.set('shape', circleShape);
 
-                        this.optionsMonitor = new YandexMap._ymaps.Monitor(geoObjectOptions).add(
-                            'opacity',
-                            (newValue) => {
+                        this.optionsMonitor = new YandexMap._ymaps.Monitor(geoObjectOptions)
+                            .add('opacity', (newValue) => {
                                 element.style.opacity = newValue;
-                            },
-                        );
+                            })
+                            .add('active', (value) => {
+                                const classNames = new Set(element.className.split(' '));
+
+                                if (value === true) {
+                                    classNames.delete('unactive');
+                                    classNames.add('active');
+                                } else if (value === false) {
+                                    classNames.delete('active');
+                                    classNames.add('unactive');
+                                } else {
+                                    classNames.delete('unactive');
+                                    classNames.delete('active');
+                                }
+
+                                element.className = Array.from(classNames).join(' ');
+                            });
                     },
                     clear: function () {
                         Chips.superclass.clear.call(this);
