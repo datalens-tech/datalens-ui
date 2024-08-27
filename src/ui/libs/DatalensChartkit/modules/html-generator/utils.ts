@@ -120,7 +120,8 @@ export function getThemeStyle(value: unknown, dataThemeId: string) {
         const variableEntries = Object.entries(variables);
         const style = variableEntries.reduce(
             (acc, [variable, variableValue], i) => {
-                let nextAcc = `${acc}${variable}:${escape(variableValue)};`;
+                const escapedVariable = escape(`${variable}:${escape(variableValue)}`);
+                let nextAcc = `${acc}${escapedVariable};`;
                 if (i === variableEntries.length - 1) {
                     nextAcc += '}';
                 }
