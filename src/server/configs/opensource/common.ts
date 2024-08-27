@@ -166,7 +166,7 @@ export default {
         highcharts: {
             enabled: isTrueArg(process.env.HC),
             external: true,
-            domain: process.env.HC_ENDPOINT ? process.env.HC_ENDPOINT : 'code.highcharts.com',
+            domain: process.env.HC_ENDPOINT || 'code.highcharts.com',
             modules: process.env.HC_MODULES
                 ? process.env.HC_MODULES.split(',').map((m) => m.trim())
                 : [
