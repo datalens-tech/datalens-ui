@@ -91,6 +91,7 @@ export enum Feature {
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
+    EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
 }
 
 export type FeatureConfig = Record<string, boolean>;
