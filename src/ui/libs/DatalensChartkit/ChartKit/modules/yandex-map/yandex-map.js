@@ -326,7 +326,6 @@ class YandexMap {
                         const options = this.getData().options;
                         const geoObjectOptions = this.getData().geoObject.options;
 
-                        // console.log({properties, geoObjectOptions});
                         const radius = properties.get('radius');
                         const label = properties.get('label');
 
