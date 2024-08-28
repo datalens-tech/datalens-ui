@@ -40,12 +40,14 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
 
     return result.reduce<number[]>((acc, row) => {
         row.forEach((cellWidth, index) => {
-            const width =
-                cellWidth +
-                // left border
-                (index === 0 ? 1 : 0) -
-                1 / colsCount;
-            acc[index] = acc[index] || width;
+            if (cellWidth !== null) {
+                const width =
+                    cellWidth +
+                    // left border
+                    (index === 0 ? 1 : 0) -
+                    1 / colsCount;
+                acc[index] = acc[index] || width;
+            }
         });
         return acc;
     }, []);
