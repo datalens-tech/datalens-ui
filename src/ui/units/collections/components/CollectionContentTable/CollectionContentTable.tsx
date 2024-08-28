@@ -15,7 +15,7 @@ import type {
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {selectCollectionContentItems} from '../../store/selectors';
+import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
@@ -50,7 +50,7 @@ export const CollectionContentTable = React.memo<Props>(
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
-        const items = useSelector(selectCollectionContentItems);
+        const items = useSelector(selectStructureItems);
 
         const selectedCount = React.useMemo(() => Object.keys(selectedMap).length, [selectedMap]);
 

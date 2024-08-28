@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useSelector} from 'react-redux';
 
-import {selectCollectionContentItems} from '../../../store/selectors';
+import {selectStructureItems} from '../../../store/selectors';
 
 export type SelectionEntityType = 'workbook' | 'collection';
 
@@ -19,7 +19,7 @@ type UseSelectionModeArgs = {
 };
 
 export const useSelection = ({curCollectionId}: UseSelectionModeArgs) => {
-    const items = useSelector(selectCollectionContentItems);
+    const items = useSelector(selectStructureItems);
 
     const [selectedMap, setSelectedMap] = React.useState<SelectedMap>({});
     const [isOpenSelectionMode, setIsOpenSelectionMode] = React.useState(false);
