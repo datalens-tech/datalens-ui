@@ -1,17 +1,15 @@
 import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
-import type {TitlePlacementOption, schema} from 'shared';
+import type {TitlePlacementOption} from 'shared';
+import type {
+    GetDistinctsApiV2Args,
+    GetDistinctsApiV2TransformedResponse,
+} from 'shared/schema/types';
 import type {ServerFilter} from 'shared/types/config/wizard';
 import type {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-
-import type {DatalensSdk} from '../../../../libs/schematic-sdk';
-
-export type GetDistincts = DatalensSdk<{
-    root: typeof schema;
-}>['bi']['getDistinctsApiV2'];
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
 export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
@@ -54,7 +52,7 @@ export type SelectorError = {
 };
 
 export interface ControlSettings {
-    getDistincts?: GetDistincts;
+    getDistincts?: (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>;
 }
 
 export interface PluginControlState {

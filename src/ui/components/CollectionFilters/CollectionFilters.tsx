@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import {Feature} from 'shared';
-import type {GetCollectionContentMode} from 'shared/schema/us/types/collections';
+import type {GetStructureItemsMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Tabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
@@ -58,21 +58,21 @@ export const SORT_TYPE_VALUES: Record<
     },
 };
 
-export type CollectionContentFilters = {
+export type StructureItemsFilters = {
     filterString?: string;
     orderField: OrderBasicField;
     orderDirection: OrderDirection;
-    mode: GetCollectionContentMode;
+    mode: GetStructureItemsMode;
     onlyMy: boolean;
 };
 
 type Props = {
     className?: string;
-    filters: CollectionContentFilters;
+    filters: StructureItemsFilters;
     compactMode?: boolean;
     controlSize?: RadioButtonSize;
     viewMode?: CollectionPageViewMode;
-    onChange: (value: CollectionContentFilters) => void;
+    onChange: (value: StructureItemsFilters) => void;
     changeViewMode?: (value: CollectionPageViewMode) => void;
 };
 
@@ -98,7 +98,7 @@ export const CollectionFilters = React.memo<Props>(
         );
 
         const handleChangeFilters = React.useCallback(
-            (updatedValues: Partial<CollectionContentFilters>) =>
+            (updatedValues: Partial<StructureItemsFilters>) =>
                 onChange({...filters, ...updatedValues}),
             [filters, onChange],
         );

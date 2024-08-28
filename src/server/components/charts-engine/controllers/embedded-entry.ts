@@ -4,7 +4,7 @@ import {isObject} from 'lodash';
 
 import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
+import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
@@ -41,10 +41,11 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         [DL_EMBED_TOKEN_HEADER]: embedToken,
     };
 
-    const configResolveArgs: ResolveConfigProps = {
+    const configResolveArgs: EmbedResolveConfigProps = {
         embedToken,
         // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
         key: embedId,
+        embedId,
         headers: {
             ...res.locals.subrequestHeaders,
             ...ctx.getMetadata(),
@@ -84,23 +85,15 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         })
         .then(async (response) => {
             if (response && 'entry' in response) {
-                const {entry, embed} = response;
-
-                const params: URLSearchParams = new URLSearchParams(req.body.params) || {};
-                const filteredParams: Record<string, unknown> = {};
-
-                for (const [key] of params) {
-                    if (embed.unsignedParams.includes(key)) {
-                        filteredParams[key] = params.get(key);
-                    }
-                }
+                const {
+                    entry: {entryId, scope, data},
+                } = response;
 
                 // Add only necessary fields without personal info like createdBy
                 res.status(200).send({
-                    entryId: entry.entryId,
-                    scope: entry.scope,
-                    data: entry.data,
-                    params: filteredParams,
+                    entryId,
+                    scope,
+                    data,
                 });
             }
         })
