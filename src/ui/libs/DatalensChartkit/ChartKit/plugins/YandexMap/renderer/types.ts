@@ -16,13 +16,40 @@ type GeoObject<P, O> = {
     options: DataManager<O>;
 };
 
-type GeoObjectCollection<T> = {
-    toArray: () => T[];
+type EventManager = {
     events: {
-        remove: (eventName: string) => void;
         add: (eventName: string, cb: (event: unknown) => void) => void;
     };
 };
 
+type GeoObjectCollection<T> = {
+    toArray: () => T[];
+} & EventManager;
+
 export type GeoPoint = GeoObject<GeoPointProperties, {active?: boolean}>;
 export type GeoPointCollection = GeoObjectCollection<GeoPoint>;
+
+export type GeoPolygon = {
+    geometry: {
+        type?: string;
+    };
+    properties: {
+        custom?: {
+            actionParams?: StringParams;
+        };
+    };
+    options: {
+        fillOpacity?: number;
+    };
+};
+
+export type GeoPolygonCollection = GeoObject<unknown, unknown> & EventManager;
+
+export type GeoPointData = {
+    feature?: {
+        properties?: GeoPointProperties;
+    };
+    options: {
+        active?: boolean;
+    };
+};

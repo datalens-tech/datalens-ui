@@ -12,18 +12,24 @@ import {addParams, subtractParameters} from '../../../helpers/action-params-hand
 import {hasMatchedActionParams} from '../../../helpers/utils';
 import {GEO_OBJECT_TYPE} from '../../../modules/yandex-map/yandex-map';
 
-import type {GeoPoint, GeoPointCollection} from './types';
+import type {
+    GeoPoint,
+    GeoPointCollection,
+    GeoPointData,
+    GeoPolygon,
+    GeoPolygonCollection,
+} from './types';
 
 type ApplyEventsArgs = YMapWidget &
     Pick<WidgetProps, 'onChange'> & {
-        geoObjects: GeoPointCollection[];
+        geoObjects: (GeoPointCollection | GeoPolygonCollection)[];
     };
 
 export function setSelectedState(args: {data: YMapWidget['data']; actionParams: StringParams}) {
     const {data, actionParams} = args;
 
     data.forEach((item) => {
-        const polygons = get(item, 'polygonmap.polygons.features', []);
+        const polygons: GeoPolygon[] = get(item, 'polygonmap.polygons.features', []);
         if (polygons.length) {
             const anySelected = polygons.some((polygon) => {
                 const ap = polygon?.properties?.custom?.actionParams ?? {};
@@ -42,7 +48,7 @@ export function setSelectedState(args: {data: YMapWidget['data']; actionParams: 
             return;
         }
 
-        const geoPoints = get(item, 'collection.children', []);
+        const geoPoints: GeoPointData[] = get(item, 'collection.children', []);
         if (geoPoints.length) {
             const anySelected = geoPoints.some((point) => {
                 const ap = point?.feature?.properties?.custom?.actionParams ?? {};
@@ -63,32 +69,33 @@ export function setSelectedState(args: {data: YMapWidget['data']; actionParams: 
     });
 }
 
-function getGeoObjectCollection(geoObjectCollection: unknown) {
+function getGeoObjectCollection(geoObjectCollection: any) {
     const type = geoObjectCollection.options.get('geoObjectType');
     switch (type) {
         case GEO_OBJECT_TYPE.POLYGONMAP: {
-            return geoObjectCollection.objectManager.objects.getAll();
+            return geoObjectCollection.objectManager.objects.getAll() as GeoPolygon[];
         }
         case GEO_OBJECT_TYPE.GEOCOLLECTION: {
-            return geoObjectCollection.toArray();
+            return geoObjectCollection.toArray() as GeoPoint[];
         }
     }
 
     return [];
 }
 
-function getGeoObjectActionParams(geoObject: unknown) {
-    if (geoObject.geometry?.type === 'Polygon') {
-        return geoObject.properties.custom?.actionParams ?? {};
+function getGeoObjectActionParams(geoObject: GeoPolygon | GeoPoint) {
+    const geoType = get(geoObject, 'geometry.type');
+    if (geoType === 'Polygon') {
+        return (geoObject as GeoPolygon).properties.custom?.actionParams ?? {};
     }
 
-    return geoObject.properties.get('custom')?.actionParams ?? {};
+    return (geoObject as GeoPoint).properties.get('custom')?.actionParams ?? {};
 }
 
 function getNewActionParams(args: {
     multiSelect: boolean;
-    currentPoint: GeoPoint;
-    geoObjects: GeoPointCollection[];
+    currentPoint: GeoPoint | GeoPolygon;
+    geoObjects: (GeoPointCollection | GeoPolygonCollection)[];
     actionParams: StringParams;
 }) {
     const {multiSelect, currentPoint, geoObjects, actionParams: prevActionParams} = args;
@@ -108,7 +115,7 @@ function getNewActionParams(args: {
                     return getGeoObjectCollection(item).forEach((point) => {
                         const pointActionParams = getGeoObjectActionParams(point);
                         if (hasMatchedActionParams(pointActionParams, newActionParams)) {
-                            newActionParams = addParams(pointActionParams, itemActionParams);
+                            newActionParams = addParams(newActionParams, pointActionParams);
                         }
                     });
                 });
@@ -144,8 +151,8 @@ export function applyEventHandlers(args: ApplyEventsArgs) {
     const {geoObjects, config, unresolvedParams = {}, onChange} = args;
     const prevActionParams = pickActionParamsFromParams(unresolvedParams);
 
-    const handleClick = function (geoObject, event: any) {
-        const multiSelect = isMacintosh() ? event.get('metaKey') : event.get('ctrlKey');
+    const handleClick = function (geoObject: GeoPoint | GeoPolygon, event: YMapClickEvent) {
+        const multiSelect = Boolean(isMacintosh() ? event.get('metaKey') : event.get('ctrlKey'));
         const actions = config?.events?.click ?? [];
         const clickActions = Array.isArray(actions) ? actions : [actions];
 
@@ -189,11 +196,11 @@ export function applyEventHandlers(args: ApplyEventsArgs) {
         });
     };
 
-    geoObjects.forEach((collection) => {
+    geoObjects.forEach((collection: any) => {
         const type = collection.options.get('geoObjectType');
         switch (type) {
             case GEO_OBJECT_TYPE.POLYGONMAP: {
-                collection.objectManager.events.add('click', function (event) {
+                collection.objectManager.events.add('click', function (event: YMapClickEvent) {
                     const objId = event.get('objectId');
                     const object = collection.objectManager.objects.getById(objId);
                     handleClick(object, event);
@@ -201,11 +208,13 @@ export function applyEventHandlers(args: ApplyEventsArgs) {
                 break;
             }
             case GEO_OBJECT_TYPE.GEOCOLLECTION: {
-                collection.events.add('click', function (event) {
-                    handleClick(event.get('target'), event);
+                collection.events.add('click', function (event: YMapClickEvent) {
+                    handleClick(event.get('target') as GeoPolygon, event);
                 });
                 break;
             }
         }
     });
 }
+
+type YMapClickEvent = MouseEvent & {get: (key: string) => unknown};
