@@ -17,6 +17,11 @@ on:
         paths:
             - 'src/i18n-keysets/**'
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    # It is necessary because we cannot stop the running synchronization process with Weblate
+    cancel-in-progress: false
+
 jobs:
     i18n_check:
         runs-on: ubuntu-latest
