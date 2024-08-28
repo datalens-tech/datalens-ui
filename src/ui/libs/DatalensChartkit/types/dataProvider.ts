@@ -16,12 +16,10 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         props,
         requestId,
         requestCancellation,
-        isWidget,
     }: {
         props: T;
         requestId: string;
         requestCancellation: K;
-        isWidget?: boolean;
     }) => Promise<(Widget & R) | null>;
     getControls?: ({
         props,

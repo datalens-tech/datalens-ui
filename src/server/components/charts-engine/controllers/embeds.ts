@@ -19,7 +19,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null, id, isWidget, controlData} = req.body;
+        const {expectedType = null, id, controlData} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -54,7 +54,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         };
 
         const configResolveArgs: EmbedResolveConfigProps = {
-            id: isWidget ? id : undefined,
+            id,
             embedToken,
             // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
             key: embedId,

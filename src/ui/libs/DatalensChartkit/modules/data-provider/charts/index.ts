@@ -587,18 +587,15 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         props,
         requestId,
         requestCancellation,
-        isWidget,
     }: {
         props: ChartsProps;
         requestId: string;
         requestCancellation: CancelTokenSource;
-        isWidget?: boolean;
     }) {
         const loaded = await this.load<ResponseSuccess>({
             data: props,
             requestId,
             requestCancellation,
-            isWidget,
         });
 
         if (loaded) {
@@ -777,13 +774,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId,
         requestCancellation,
         onlyControls = false,
-        isWidget = false,
     }: {
         data: ChartsProps;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
-        isWidget?: boolean;
     }) {
         const {
             id,
@@ -820,7 +815,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 },
                 uiOnly: onlyControls || undefined,
                 workbookId,
-                isWidget: isWidget || undefined,
             },
             headers: this.getLoadHeaders(requestId),
             'axios-retry': {

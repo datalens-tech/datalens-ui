@@ -255,7 +255,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         ignoreUsedParams: true, // tmp fix CHARTS-7290 TODO: CHARTS-6619 return this later with announcement of changes
         enableActionParams,
         clearedOuterParams,
-        isWidget: true,
     });
 
     const {
