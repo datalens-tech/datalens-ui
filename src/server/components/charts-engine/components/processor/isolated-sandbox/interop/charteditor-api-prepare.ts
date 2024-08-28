@@ -124,11 +124,10 @@ const ChartEditor: IChartEditor = {
         JSON.parse(_ChartEditor_attachHandler(JSON.stringify(handlerConfig))),
     attachFormatter: (formatterConfig) =>
         JSON.parse(_ChartEditor_attachFormatter(JSON.stringify(formatterConfig))),
-    getSecrets: () => _ChartEditor_getSecrets && JSON.parse(_ChartEditor_getSecrets()),
+    getSecrets: () => _ChartEditor_getSecrets && _ChartEditor_getSecrets(),
     resolveRelative: (...params) => _ChartEditor_resolveRelative(...params),
     resolveInterval: (intervalStr) => {
-        const interval = _ChartEditor_resolveInterval(intervalStr);
-        return interval ? JSON.parse(interval) : null;
+        return _ChartEditor_resolveInterval(intervalStr);
     },
     resolveOperation: (input) => {
         const operation = _ChartEditor_resolveOperation(input);
