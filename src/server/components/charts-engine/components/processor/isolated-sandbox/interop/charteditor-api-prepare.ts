@@ -222,6 +222,7 @@ const ChartEditor: IChartEditor = {
     setExportFilename: (filename) => _ChartEditor_setExportFilename(filename),
 };
 
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const chartEditor = ChartEditor;
+
+// @ts-ignore
+this.ChartEditor = this.chartEditor = chartEditor;

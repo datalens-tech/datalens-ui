@@ -139,6 +139,15 @@ const execute = async ({
     jail.setSync('__timeout', timeout);
     try {
         timeStart = process.hrtime();
+        if (filename === 'Params') {
+            const params = chartEditorApi.getParams();
+            context.evalClosureSync(`__params = $0 || {};`, [params], {
+                arguments: {
+                    copy: true,
+                },
+            });
+        }
+
         // Replace API functions with isolated function invocation
         // eslint-disable-next-line no-param-reassign
         chartEditorApi.updateParams = (params) => {
@@ -203,11 +212,12 @@ const execute = async ({
                         });`
                      : ``
              };
-            module = __safeStringify(module);
+            const jsonFn = ${filename !== 'JavaScript'};
+            module = __safeStringify(module, {jsonFn});
             return {module, __shared};
         `;
         const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
-        const codeWrapper = `(function () { \n ${code} \n }.bind({chartEditor: ChartEditor, ChartEditor}))();`;
+        const codeWrapper = `(function () { \n ${code} \n })();`;
         sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
