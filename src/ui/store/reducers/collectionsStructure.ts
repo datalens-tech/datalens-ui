@@ -10,10 +10,10 @@ import {
     GET_COLLECTION_LOADING,
     GET_COLLECTION_SUCCESS,
     GET_COLLECTION_FAILED,
-    RESET_COLLECTION_CONTENT,
-    GET_COLLECTION_CONTENT_LOADING,
-    GET_COLLECTION_CONTENT_SUCCESS,
-    GET_COLLECTION_CONTENT_FAILED,
+    RESET_STRUCTURE_ITEMS,
+    GET_STRUCTURE_ITEMS_LOADING,
+    GET_STRUCTURE_ITEMS_SUCCESS,
+    GET_STRUCTURE_ITEMS_FAILED,
     COPY_TEMPLATE_LOADING,
     COPY_TEMPLATE_SUCCESS,
     COPY_TEMPLATE_FAILED,
@@ -64,7 +64,7 @@ import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
     GetRootCollectionPermissionsResponse,
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentResponse,
+    GetStructureItemsResponse,
     CollectionWithPermissions,
     Collection,
     Workbook,
@@ -100,9 +100,9 @@ export type CollectionsStructureState = {
         data: CollectionWithPermissions | null;
         error: Error | null;
     };
-    getCollectionContent: {
+    getStructureItems: {
         isLoading: boolean;
-        data: GetCollectionContentResponse | null;
+        data: GetStructureItemsResponse | null;
         error: Error | null;
     };
     items: (Collection | Workbook)[];
@@ -199,7 +199,7 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
-    getCollectionContent: {
+    getStructureItems: {
         isLoading: false,
         data: null,
         error: null,
@@ -388,7 +388,7 @@ export const collectionsStructure = (
         case GET_COLLECTION_FAILED: {
             return {
                 ...state,
-                getCollectionContent: {
+                getCollection: {
                     ...state.getCollection,
                     isLoading: false,
                     error: action.error,
@@ -397,26 +397,26 @@ export const collectionsStructure = (
         }
 
         // Resetting Collection contents
-        case RESET_COLLECTION_CONTENT: {
+        case RESET_STRUCTURE_ITEMS: {
             return {
                 ...state,
-                getCollectionContent: initialState.getCollectionContent,
+                getStructureItems: initialState.getStructureItems,
                 items: initialState.items,
             };
         }
 
         // Contents of the collection
-        case GET_COLLECTION_CONTENT_LOADING: {
+        case GET_STRUCTURE_ITEMS_LOADING: {
             return {
                 ...state,
-                getCollectionContent: {
-                    ...state.getCollectionContent,
+                getStructureItems: {
+                    ...state.getStructureItems,
                     isLoading: true,
                     error: null,
                 },
             };
         }
-        case GET_COLLECTION_CONTENT_SUCCESS: {
+        case GET_STRUCTURE_ITEMS_SUCCESS: {
             const loadedIds = state.items.map((item) => {
                 if ('workbookId' in item) {
                     return item.workbookId;
@@ -424,28 +424,26 @@ export const collectionsStructure = (
                 return item.collectionId;
             });
 
-            const newCollections = action.data.collections.filter(
-                (collection) => !loadedIds.includes(collection.collectionId),
-            );
-            const newWorkbooks = action.data.workbooks.filter(
-                (workbook) => !loadedIds.includes(workbook.workbookId),
-            );
+            const newItems = action.data.items.filter((item) => {
+                const id = 'workbookId' in item ? item.workbookId : item.collectionId;
+                return !loadedIds.includes(id);
+            });
 
             return {
                 ...state,
-                getCollectionContent: {
+                getStructureItems: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
-                items: [...state.items, ...newCollections, ...newWorkbooks],
+                items: [...state.items, ...newItems],
             };
         }
-        case GET_COLLECTION_CONTENT_FAILED: {
+        case GET_STRUCTURE_ITEMS_FAILED: {
             return {
                 ...state,
-                getCollectionContent: {
-                    ...state.getCollectionContent,
+                getStructureItems: {
+                    ...state.getStructureItems,
                     isLoading: false,
                     error: action.error,
                 },

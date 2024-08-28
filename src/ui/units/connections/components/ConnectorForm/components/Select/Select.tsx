@@ -79,7 +79,7 @@ const SelectComponent = (props: SelectComponentProps) => {
 
     const renderOptionWithDescription = React.useCallback((option: SelectOption) => {
         return (
-            <div className={b('option')}>
+            <div className={b('option', {disabled: option.disabled})}>
                 <div>{option.content}</div>
                 {option.data?.description && (
                     <div className={b('description')}>{option.data?.description}</div>

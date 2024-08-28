@@ -14,7 +14,7 @@ import type {
     CreateCollectionResponse,
     WorkbookWithPermissions,
 } from '../../../../../../shared/schema';
-import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
     DIALOG_ADD_DEMO_WORKBOOK,
@@ -57,7 +57,7 @@ const i18n = I18n.keyset('collections');
 
 type UseLayoutArgs = {
     curCollectionId: string | null;
-    filters: CollectionContentFilters;
+    filters: StructureItemsFilters;
     selectedMap: SelectedMap;
     itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     viewMode: CollectionPageViewMode;
@@ -66,7 +66,7 @@ type UseLayoutArgs = {
     closeSelectionMode: () => void;
     resetSelected: () => void;
     fetchCollectionInfo: () => void;
-    fetchCollectionContent: () => void;
+    fetchStructureItems: () => void;
     handleCreateWorkbook: () => void;
     handeCloseMoveDialog: (structureChanged: boolean) => void;
     updateAllCheckboxes: (checked: boolean) => void;
@@ -83,7 +83,7 @@ export const useLayout = ({
     closeSelectionMode,
     resetSelected,
     fetchCollectionInfo,
-    fetchCollectionContent,
+    fetchStructureItems,
     handleCreateWorkbook,
     handeCloseMoveDialog,
     updateAllCheckboxes,
@@ -137,7 +137,7 @@ export const useLayout = ({
                             workbook={null}
                             onItemClick={({isCurrent, id}) => {
                                 if (isCurrent) {
-                                    fetchCollectionContent();
+                                    fetchStructureItems();
                                 } else if (id !== null) {
                                     batch(() => {
                                         const newBreadcrumbs = cutBreadcrumbs(
@@ -166,7 +166,7 @@ export const useLayout = ({
         collection,
         curCollectionId,
         dispatch,
-        fetchCollectionContent,
+        fetchStructureItems,
         filters,
         isCorrectBreadcrumbs,
         isRootCollection,

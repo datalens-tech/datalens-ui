@@ -7,9 +7,9 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
 import type {
-    GetCollectionContentArgs,
-    GetCollectionContentMode,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsMode,
+    GetStructureItemsResponse,
     OrderBasicField,
     OrderDirection,
 } from 'shared/schema';
@@ -19,27 +19,27 @@ import {
     createWorkbook,
     getCollection,
     getCollectionBreadcrumbs,
-    getCollectionContent,
     getRootCollectionPermissions,
+    getStructureItems,
     resetCollectionBreadcrumbs,
-    resetCollectionContent,
     resetState,
+    resetStructureItems,
 } from 'store/actions/collectionsStructure';
 import {
     selectBreadcrumbs,
     selectBreadcrumbsIsLoading,
-    selectCollectionContentError,
-    selectCollectionContentIsLoading,
-    selectCollectionContentItems,
     selectCollectionData,
     selectCollectionIsLoading,
     selectCreateCollectionIsLoading,
     selectCreateWorkbookIsLoading,
-    selectNextPageTokens,
+    selectNextPageToken,
     selectRootPermissionsData,
+    selectStructureItems,
+    selectStructureItemsError,
+    selectStructureItemsIsLoading,
 } from 'store/selectors/collectionsStructure';
 
-import type {CollectionContentFilters} from '../../CollectionFilters';
+import type {StructureItemsFilters} from '../../CollectionFilters';
 import {CollectionFilters} from '../../CollectionFilters';
 
 import {CreateEntityDialog} from './CreateEntityDialog/CreateEntityDialog';
@@ -58,7 +58,7 @@ const DEFAULT_FILTERS: {
     filterString?: string;
     orderField: OrderBasicField;
     orderDirection: OrderDirection;
-    mode: GetCollectionContentMode;
+    mode: GetStructureItemsMode;
     onlyMy: boolean;
 } = {
     filterString: undefined,
@@ -127,10 +127,10 @@ export const CollectionStructureDialog = React.memo<Props>(
         const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
         const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
 
-        const collectionContentItems = useSelector(selectCollectionContentItems) ?? [];
-        const collectionContentIsLoading = useSelector(selectCollectionContentIsLoading);
-        const collectionContentError = useSelector(selectCollectionContentError);
-        const nextPageTokens = useSelector(selectNextPageTokens);
+        const structureItems = useSelector(selectStructureItems) ?? [];
+        const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
+        const structureItemsError = useSelector(selectStructureItemsError);
+        const nextPageToken = useSelector(selectNextPageToken);
 
         const createCollectionIsLoading = useSelector(selectCreateCollectionIsLoading);
         const createWorkbookIsLoading = useSelector(selectCreateWorkbookIsLoading);
@@ -138,7 +138,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         const [targetCollectionId, setTargetCollectionId] = React.useState(initialCollectionId);
         const [targetWorkbookId, setTargetWorkbookId] = React.useState<string | null>(null);
 
-        const [filters, setFilters] = React.useState<CollectionContentFilters>(DEFAULT_FILTERS);
+        const [filters, setFilters] = React.useState<StructureItemsFilters>(DEFAULT_FILTERS);
 
         const [createCollectionDialogIsOpen, setCreateCollectionDialogIsOpen] =
             React.useState(false);
@@ -153,26 +153,17 @@ export const CollectionStructureDialog = React.memo<Props>(
             onClose(structureChanged);
         }, [structureChanged, onClose]);
 
-        const getCollectionContentRecursively = React.useCallback(
-            (
-                args: GetCollectionContentArgs,
-            ): CancellablePromise<GetCollectionContentResponse | null> => {
-                let curCollectionsPage = args.collectionsPage;
-                let curWorkbooksPage = args.workbooksPage;
+        const getStructureItemsRecursively = React.useCallback(
+            (args: GetStructureItemsArgs): CancellablePromise<GetStructureItemsResponse | null> => {
+                let curPage = args.page;
 
-                return dispatch(getCollectionContent(args)).then((result) => {
-                    if (
-                        (result?.collections.length === 0 &&
-                            result.collectionsNextPageToken !== null) ||
-                        (result?.workbooks.length === 0 && result.workbooksNextPageToken !== null)
-                    ) {
-                        curCollectionsPage = result.collectionsNextPageToken;
-                        curWorkbooksPage = result.workbooksNextPageToken;
+                return dispatch(getStructureItems(args)).then((result) => {
+                    if (result?.items.length === 0 && result.nextPageToken !== null) {
+                        curPage = result.nextPageToken;
 
-                        return getCollectionContentRecursively({
+                        return getStructureItemsRecursively({
                             ...args,
-                            collectionsPage: curCollectionsPage,
-                            workbooksPage: curWorkbooksPage,
+                            page: curPage,
                         });
                     } else {
                         return result;
@@ -185,9 +176,9 @@ export const CollectionStructureDialog = React.memo<Props>(
         const fetchData = React.useCallback(() => {
             const promises: CancellablePromise<unknown>[] = [];
 
-            dispatch(resetCollectionContent());
+            dispatch(resetStructureItems());
             promises.push(
-                getCollectionContentRecursively({
+                getStructureItemsRecursively({
                     collectionId: targetCollectionId,
                     pageSize: PAGE_SIZE,
                     ...filters,
@@ -204,7 +195,7 @@ export const CollectionStructureDialog = React.memo<Props>(
             }
 
             return promises;
-        }, [dispatch, filters, getCollectionContentRecursively, targetCollectionId]);
+        }, [dispatch, filters, getStructureItemsRecursively, targetCollectionId]);
 
         const canCreateCollection = React.useMemo(() => {
             if (targetCollectionId) {
@@ -359,16 +350,16 @@ export const CollectionStructureDialog = React.memo<Props>(
                         <StructureItemSelect
                             collectionId={targetCollectionId}
                             workbookId={targetWorkbookId}
-                            contentIsLoading={collectionContentIsLoading || breadcrumbsIsLoading}
-                            contentError={collectionContentError}
+                            contentIsLoading={structureItemsIsLoading || breadcrumbsIsLoading}
+                            contentError={structureItemsError}
                             breadcrumbs={breadcrumbs}
-                            items={collectionContentItems}
-                            nextPageTokens={nextPageTokens}
+                            items={structureItems}
+                            nextPageToken={nextPageToken}
                             pageSize={PAGE_SIZE}
                             isSelectionAllowed={isSelectionAllowed}
                             canSelectWorkbook={workbookSelectionMode}
                             operationDeniedMessage={operationDeniedMessage}
-                            getCollectionContentRecursively={getCollectionContentRecursively}
+                            getStructureItemsRecursively={getStructureItemsRecursively}
                             onChangeCollection={handleChangeCollection}
                             onChangeWorkbook={handleChangeWorkbook}
                             disabled={applyIsLoading}
@@ -431,8 +422,8 @@ export const CollectionStructureDialog = React.memo<Props>(
 
                         setStructureChanged(true);
 
-                        dispatch(resetCollectionContent());
-                        getCollectionContentRecursively({
+                        dispatch(resetStructureItems());
+                        getStructureItemsRecursively({
                             collectionId: targetCollectionId,
                             pageSize: PAGE_SIZE,
                             ...filters,
@@ -453,8 +444,8 @@ export const CollectionStructureDialog = React.memo<Props>(
 
                         setStructureChanged(true);
 
-                        dispatch(resetCollectionContent());
-                        getCollectionContentRecursively({
+                        dispatch(resetStructureItems());
+                        getStructureItemsRecursively({
                             collectionId: targetCollectionId,
                             pageSize: PAGE_SIZE,
                             ...filters,

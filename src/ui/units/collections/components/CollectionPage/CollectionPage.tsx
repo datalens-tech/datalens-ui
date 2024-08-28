@@ -21,9 +21,9 @@ import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {
     selectCollection,
-    selectCollectionContentItems,
     selectCollectionError,
     selectRootCollectionPermissions,
+    selectStructureItems,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
 import {DEFAULT_FILTERS} from '../constants';
@@ -47,7 +47,7 @@ export const CollectionPage = () => {
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
     const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
-    const items = useSelector(selectCollectionContentItems);
+    const items = useSelector(selectStructureItems);
 
     const {
         selectedMap,
@@ -74,15 +74,11 @@ export const CollectionPage = () => {
         closeSelectionMode,
     });
 
-    const {
-        getCollectionContentRecursively,
-        fetchCollectionInfo,
-        fetchCollectionContent,
-        refreshPage,
-    } = useData({
-        curCollectionId,
-        filters,
-    });
+    const {getStructureItemsRecursively, fetchCollectionInfo, fetchStructureItems, refreshPage} =
+        useData({
+            curCollectionId,
+            filters,
+        });
 
     const handeCloseMoveDialog = React.useCallback(
         (structureChanged: boolean) => {
@@ -135,7 +131,7 @@ export const CollectionPage = () => {
                     onApply: () => {
                         closeSelectionMode();
                         resetSelected();
-                        fetchCollectionContent();
+                        fetchStructureItems();
                     },
                     onClose: handeCloseMoveDialog,
                     initialParentId: collection?.collectionId,
@@ -152,7 +148,7 @@ export const CollectionPage = () => {
         selectedMap,
         closeSelectionMode,
         resetSelected,
-        fetchCollectionContent,
+        fetchStructureItems,
     ]);
 
     const handleDeleteSelectedEntities = React.useCallback(() => {
@@ -183,7 +179,7 @@ export const CollectionPage = () => {
                     onApply: () => {
                         closeSelectionMode();
                         resetSelected();
-                        fetchCollectionContent();
+                        fetchStructureItems();
                     },
                     onClose: () => dispatch(closeDialog()),
                     collectionIds,
@@ -199,7 +195,7 @@ export const CollectionPage = () => {
         dispatch,
         closeSelectionMode,
         resetSelected,
-        fetchCollectionContent,
+        fetchStructureItems,
     ]);
 
     useLayout({
@@ -213,7 +209,7 @@ export const CollectionPage = () => {
         closeSelectionMode,
         resetSelected,
         fetchCollectionInfo,
-        fetchCollectionContent,
+        fetchStructureItems,
         handleCreateWorkbook,
         handeCloseMoveDialog,
         updateAllCheckboxes,
@@ -230,7 +226,7 @@ export const CollectionPage = () => {
                     <ViewError
                         retry={() => {
                             fetchCollectionInfo();
-                            fetchCollectionContent();
+                            fetchStructureItems();
                         }}
                         error={collectionError}
                     />
@@ -271,8 +267,8 @@ export const CollectionPage = () => {
                     itemsAvailableForSelection={itemsAvailableForSelection}
                     isOpenSelectionMode={isOpenSelectionMode}
                     canCreateWorkbook={canCreateWorkbook}
-                    getCollectionContentRecursively={getCollectionContentRecursively}
-                    fetchCollectionContent={fetchCollectionContent}
+                    getStructureItemsRecursively={getStructureItemsRecursively}
+                    fetchStructureItems={fetchStructureItems}
                     onCloseMoveDialog={handeCloseMoveDialog}
                     onCreateWorkbookClick={handleCreateWorkbook}
                     onClearFiltersClick={() => {

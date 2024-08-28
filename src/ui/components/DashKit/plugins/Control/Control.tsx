@@ -25,6 +25,7 @@ import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
+import {DashConfigContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -59,7 +60,6 @@ import type {
     ChartControlRef,
     ControlSettings,
     ErrorData,
-    GetDistincts,
     LoadStatus,
     PluginControlState,
     ValidationErrorData,
@@ -92,7 +92,7 @@ export interface PluginControlProps
 
 export interface PluginControl extends Plugin<PluginControlProps> {
     setSettings: (settings: ControlSettings) => Plugin;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
 }
 
 const b = block('dashkit-plugin-control');
@@ -101,6 +101,8 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
+    static contextType = DashConfigContext;
+
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
@@ -442,6 +444,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         meta: {
                             stype: ControlType.Dash,
                         },
+                    },
+                    controlData: {
+                        id: this.props.id,
+                        tabId: this.context?.id,
                     },
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
