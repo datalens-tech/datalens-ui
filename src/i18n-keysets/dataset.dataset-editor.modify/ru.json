@@ -6,6 +6,8 @@
   "button_batch-hide": "Скрыть",
   "button_batch-remove": "Удалить",
   "button_batch-show": "Показать",
+  "button_batch-type": "Изменить тип",
+  "button_batch-aggregation": "Изменить агрегацию",
   "button_copy-id": "Скопировать ID",
   "button_create": "Создать",
   "button_create-widget": "Создать чарт",

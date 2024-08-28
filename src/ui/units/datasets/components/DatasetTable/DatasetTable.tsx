@@ -320,6 +320,14 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 return;
             }
 
+            case BatchFieldAction.Type: {
+                return;
+            }
+
+            case BatchFieldAction.Aggregation: {
+                return;
+            }
+
             default: {
                 return;
             }

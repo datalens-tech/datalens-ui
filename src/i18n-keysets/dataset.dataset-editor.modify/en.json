@@ -6,6 +6,8 @@
   "button_batch-hide": "Hide",
   "button_batch-remove": "Delete",
   "button_batch-show": "Show",
+  "button_batch-type": "Change type",
+  "button_batch-aggregation": "Change aggregation",
   "button_copy-id": "Copy ID",
   "button_create": "Create",
   "button_create-widget": "Create chart",
