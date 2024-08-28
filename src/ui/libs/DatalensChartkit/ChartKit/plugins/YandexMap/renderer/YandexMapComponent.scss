@@ -44,8 +44,8 @@
             transform: translate(-2px, -2px);
         }
 
-        &.unactive {
-            filter: opacity(0.5);
+        &.inactive {
+            filter: opacity(0.5) saturate(0);
         }
     }
 

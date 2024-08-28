@@ -366,13 +366,13 @@ class YandexMap {
                         const isActive = geoObjectOptions.get('active');
                         const classNames = new Set(element.className.split(' '));
                         if (isActive === true) {
-                            classNames.delete('unactive');
+                            classNames.delete('inactive');
                             classNames.add('active');
                         } else if (isActive === false) {
                             classNames.delete('active');
-                            classNames.add('unactive');
+                            classNames.add('inactive');
                         } else {
-                            classNames.delete('unactive');
+                            classNames.delete('inactive');
                             classNames.delete('active');
                         }
                         element.className = Array.from(classNames).join(' ');
