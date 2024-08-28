@@ -2,7 +2,12 @@ import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
-import type {BatchRenderMarkdownResponse, GetEntryResponse} from 'shared/schema';
+import type {
+    BatchRenderMarkdownResponse,
+    GetDistinctsApiV2Args,
+    GetDistinctsApiV2TransformedResponse,
+    GetEntryResponse,
+} from 'shared/schema';
 
 import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -103,5 +108,9 @@ export const commonFunctionsMap = {
     fetchBatchRenderedMarkdown:
         makeFunctionTemplate<
             (texts: Record<string, string>) => Promise<BatchRenderMarkdownResponse>
+        >(),
+    fetchDistinctsByApi:
+        makeFunctionTemplate<
+            (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>
         >(),
 } as const;

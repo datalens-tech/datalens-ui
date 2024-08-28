@@ -36,6 +36,7 @@ import {
     unwrapFromArray,
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
+import {DashConfigContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -43,7 +44,12 @@ import {getControlHint} from '../../../utils';
 import {ControlItemSelect} from '../../Control/ControlItems/ControlItemSelect';
 import {Error} from '../../Control/Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS} from '../../Control/constants';
-import type {ErrorData, GetDistincts, LoadStatus, ValidationErrorData} from '../../Control/types';
+import type {
+    ControlSettings,
+    ErrorData,
+    LoadStatus,
+    ValidationErrorData,
+} from '../../Control/types';
 import {
     checkDatasetFieldType,
     getDatasetSourceInfo,
@@ -85,7 +91,7 @@ type ControlProps = {
         loadedData?: ExtendedLoadedData | null;
     }) => void;
     silentLoading: boolean;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
     onChange: ({
         params,
         callChangeByClick,
@@ -98,6 +104,7 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
+    groupId: string;
 };
 
 export const Control = ({
@@ -111,7 +118,10 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
+    groupId,
 }: ControlProps) => {
+    const currentTab = React.useContext(DashConfigContext);
+
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
     const [prevParams, setPrevParams] = React.useState<StringParams | null>(null);
@@ -196,6 +206,12 @@ export const Control = ({
                         meta: {
                             stype: ControlType.Dash,
                         },
+                    },
+                    controlData: {
+                        id,
+                        groupId,
+                        // TODO: remove check after fix types
+                        tabId: currentTab && 'id' in currentTab ? currentTab?.id : undefined,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,

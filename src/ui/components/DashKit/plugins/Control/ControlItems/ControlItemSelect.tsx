@@ -39,8 +39,8 @@ import logger from '../../../../../libs/logger';
 import {getControlHint} from '../../../utils';
 import {LIMIT, LOAD_STATUS, TYPE} from '../constants';
 import type {
+    ControlSettings,
     ErrorData,
-    GetDistincts,
     LoadStatus,
     SelectControlProps,
     ValidationErrorData,
@@ -65,7 +65,7 @@ type ControlItemSelectProps = {
     onChange: ({param, value}: {param: string; value: string | string[]}) => void;
     init: () => void;
     setItemsLoader: (loadingItems: boolean) => void;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
     validationError: string | null;
     errorData: null | ErrorData;
     validateValue: (args: ValidationErrorData) => boolean | undefined;

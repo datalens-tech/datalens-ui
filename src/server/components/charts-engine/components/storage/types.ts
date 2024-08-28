@@ -1,4 +1,10 @@
-import type {ControlType, EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../shared';
+import type {
+    ControlType,
+    DashData,
+    EntryPublicAuthor,
+    EntryScope,
+    WorkbookId,
+} from '../../../../../shared';
 import type {ChartStorageType} from '../../types';
 import type {ChartTemplates} from '../chart-generator';
 
@@ -22,9 +28,9 @@ export type ResolvedConfig = {
     key: string;
     links?: string[];
     meta: {
-        is_release: boolean;
+        is_release?: boolean;
         stype: ChartStorageType | ControlType.Dash;
-        owner: string;
+        owner?: string;
         sandbox_version?: string;
     };
     permissions: {execute: boolean; read: boolean; edit: boolean; admin: boolean};
@@ -43,4 +49,36 @@ export type ResolvedConfig = {
     template?: keyof ChartTemplates;
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
+};
+
+export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};
+
+export type EmbeddingInfo = {
+    token: EmbeddingToken;
+    embed: {
+        embedId: string;
+        title: string;
+        embeddingSecretId: string;
+        entryId: string;
+        depsIds: string[];
+        unsignedParams: string[];
+        privateParams: string[];
+        createdBy: string;
+        createdAt: string;
+        publicParamsMode: boolean;
+    };
+    entry: ChartEntryData | DashEntryData;
+};
+
+export type ChartEntryData = ResolvedConfig & {
+    scope: EntryScope.Widget;
+};
+
+export type DashEntryData = ResolvedConfig & {data: DashData; scope: EntryScope.Dash};
+
+type EmbeddingToken = {
+    embedId: string;
+    iat: number;
+    exp: number;
+    params: Record<string, unknown>;
 };

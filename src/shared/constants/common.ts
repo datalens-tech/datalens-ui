@@ -1,5 +1,7 @@
 import {ACTION_PARAM_PREFIX} from '@gravity-ui/dashkit/helpers';
 
+import {ControlType} from '../types/dash';
+
 export enum AppInstallation {
     Opensource = 'opensource',
 }
@@ -92,4 +94,5 @@ export const EDITOR_TYPE_CONFIG_TABS = {
     ...QL_CHART_NODE,
     ...EDITOR_CHART_NODE,
     module: '',
+    control_dash: ControlType.Dash,
 };
