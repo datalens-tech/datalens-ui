@@ -6,7 +6,7 @@ import type {AxiosRequestConfig} from 'axios';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-import type {DashData, EntryPublicAuthor, EntryScope, WorkbookId} from '../../../../../../shared';
+import type {EntryPublicAuthor, WorkbookId} from '../../../../../../shared';
 import {
     AuthHeader,
     DL_COMPONENT_HEADER,
@@ -23,7 +23,7 @@ import {
 } from '../../../../../../shared';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
-import type {ResolvedConfig} from '../types';
+import type {ChartEntryData, DashEntryData, EmbeddingInfo} from '../types';
 
 const handleError = createErrorHandler({
     meta: {
@@ -90,32 +90,6 @@ export type Entry = {
     updatedAt?: string;
     updatedBy?: string;
     workbookId?: WorkbookId;
-};
-
-export type EmbeddingInfo = {
-    token: EmbeddingToken;
-    embed: {
-        embedId: string;
-        title: string;
-        embeddingSecretId: string;
-        entryId: string;
-        depsIds: string[];
-        unsignedParams: string[];
-        privateParams: string[];
-        createdBy: string;
-        createdAt: string;
-        publicParamsMode: boolean;
-    };
-} & (
-    | {scope: EntryScope.Widget; entry: ResolvedConfig}
-    | {scope: EntryScope.Dash; entry: ResolvedConfig & {data: DashData}}
-);
-
-export type EmbeddingToken = {
-    embedId: string;
-    iat: number;
-    exp: number;
-    params: Record<string, unknown>;
 };
 
 const PASSED_HEADERS = [
@@ -210,7 +184,7 @@ function formatPassedProperties(entry: Entry = {}) {
         formattedData.publicAuthor = publicAuthor;
     }
 
-    return formattedData as ResolvedConfig;
+    return formattedData as DashEntryData | ChartEntryData;
 }
 
 let storageEndpoint: string;
@@ -454,7 +428,6 @@ export class USProvider {
                     token: response.data.token,
                     embed: response.data.embed,
                     entry: formatPassedProperties(response.data.entry),
-                    scope: response.data.entry.scope,
                 };
             })
             .catch((error) => {
@@ -513,7 +486,6 @@ export class USProvider {
                     token: response.data.embeddingInfo.token,
                     embed: response.data.embeddingInfo.embed,
                     entry: formatPassedProperties(response.data),
-                    scope: response.data.scope,
                 };
             })
             .catch((error) => {

@@ -4,8 +4,8 @@ import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import type {WorkbookId} from '../../../../../shared';
 import type {TelemetryCallbacks} from '../../types';
 
-import type {ResolvedConfig} from './types';
-import type {EmbeddingInfo, USProvider} from './united-storage/provider';
+import type {EmbeddingInfo, ResolvedConfig} from './types';
+import type {USProvider} from './united-storage/provider';
 
 const DEFAULT_PRELOAD_FETCHING_INTERVAL = 120e3;
 
@@ -143,7 +143,7 @@ export class BaseStorage {
                 id: params.id,
                 ...storageRetrieveArgs,
             });
-            id = params.embedId;
+            id = `embed-${params.embedId}`;
         } else if (params.id) {
             retrieve = this.provider.retrieveById(ctx, {
                 id: params.id,
@@ -156,7 +156,7 @@ export class BaseStorage {
                 token: params.embedToken,
                 ...storageRetrieveArgs,
             });
-            id = params.embedId;
+            id = `embed-${params.embedId}`;
         } else if (params.key) {
             retrieve = this.provider.retrieveByKey(ctx, {key: params.key, ...storageRetrieveArgs});
             id = params.key;

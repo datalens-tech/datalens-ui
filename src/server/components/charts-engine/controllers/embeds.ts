@@ -7,7 +7,7 @@ import {ControlType, DL_EMBED_TOKEN_HEADER, EntryScope} from '../../../../shared
 import {resolveConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {ReducedResolvedConfig} from '../components/storage/types';
-import {getDuration} from '../components/utils';
+import {getDuration, isDashEntry} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
     return function chartsRunController(req: Request, res: Response) {
@@ -132,7 +132,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 let entry;
 
-                if (controlData && embeddingInfo.scope === EntryScope.Dash) {
+                if (controlData && isDashEntry(embeddingInfo.entry)) {
                     // support group and old single selectors
                     const controlWidgetId = controlData.groupId || controlData.id;
                     const controlTab = embeddingInfo.entry?.data.tabs.find(
@@ -160,7 +160,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         data: {shared: sharedData as object},
                         meta: {stype: ControlType.Dash},
                     } as ReducedResolvedConfig;
-                } else if (embeddingInfo.scope === EntryScope.Widget) {
+                } else if (embeddingInfo.entry.scope === EntryScope.Widget) {
                     entry = embeddingInfo.entry;
                 } else {
                     return res.status(400).send({
