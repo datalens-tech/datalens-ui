@@ -41,12 +41,7 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
     return result.reduce<number[]>((acc, row) => {
         row.forEach((cellWidth, index) => {
             if (cellWidth !== null) {
-                const width =
-                    cellWidth +
-                    // left border
-                    (index === 0 ? 1 : 0) -
-                    1 / colsCount;
-                acc[index] = acc[index] || width;
+                acc[index] = acc[index] || cellWidth;
             }
         });
         return acc;
@@ -65,6 +60,7 @@ export const useCellSizes = (
     React.useLayoutEffect(() => {
         if (!cellSizes) {
             document.fonts.ready.finally(() => {
+                let sizes: number[] = [];
                 const container = tableContainerRef?.current as Element;
                 const table = container?.getElementsByTagName('table')?.[0];
                 const tHeadRows = Array.from(
@@ -72,9 +68,17 @@ export const useCellSizes = (
                 );
 
                 if (tHeadRows.length) {
-                    const sizes = getTableSizes(tHeadRows as HTMLTableRowElement[]);
-                    setCellSizes(sizes);
+                    sizes = getTableSizes(tHeadRows as HTMLTableRowElement[]);
+                } else {
+                    const tBodyRows = Array.from(
+                        table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? [],
+                    );
+                    if (tBodyRows.length) {
+                        sizes = getTableSizes([tBodyRows[0] as HTMLTableRowElement]);
+                    }
                 }
+
+                setCellSizes(sizes);
             });
         }
     }, [cellSizes, tableContainerRef]);

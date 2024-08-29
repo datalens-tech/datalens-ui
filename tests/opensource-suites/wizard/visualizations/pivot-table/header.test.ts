@@ -43,6 +43,12 @@ datalensTest.describe('Wizard', () => {
                 'Sales',
             );
 
+            // Set the width of the columns so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open();
+            await wizardPage.columnSettings.switchUnit('Category', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('Category', '100');
+            await wizardPage.columnSettings.apply();
+
             const table = wizardPage.chartkit.getTableLocator();
             await expect(table).toBeVisible();
 
