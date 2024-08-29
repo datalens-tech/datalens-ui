@@ -357,7 +357,7 @@ class DialogChartWidget extends React.PureComponent<
         });
     };
 
-    handleBackgroundEnabledChanged = (..._arguments: any[]) => {
+    handleBackgroundEnabledChanged = () => {
         const {data, tabIndex} = this.state;
 
         if (!data.tabs[tabIndex].background) {
