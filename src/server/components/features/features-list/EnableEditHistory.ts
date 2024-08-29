@@ -5,6 +5,6 @@ export default createFeatureConfig({
     name: Feature.EnableEditHistory,
     state: {
         development: true,
-        production: false,
+        production: true,
     },
 });
