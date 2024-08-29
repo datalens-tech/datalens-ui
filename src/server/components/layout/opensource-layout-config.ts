@@ -89,11 +89,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
                 rel: 'stylesheet',
             },
         ],
-        bodyContent: {
-            theme,
-        },
         pluginsOptions: {
             layout: {name: appLayoutSettings.bundleName},
+            ...(theme ? {uikit: {theme}} : {}),
         },
         ...appLayoutSettings.renderConfig,
     };
