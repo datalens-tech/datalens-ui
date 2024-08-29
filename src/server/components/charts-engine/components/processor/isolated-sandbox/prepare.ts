@@ -14,7 +14,7 @@ var module = {exports: {}};
 var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
-            return __safeStringify(elem);
+            return __safeStringify(elem, {isConsole: true});
         })
         return __log(...processed);
     }
@@ -37,7 +37,7 @@ function __resolveParams(params) {
                         paramValues[i] = resolvedRelative;
                     }
                 } else if (value.indexOf('__interval') === 0) {
-                    const resolvedInterval = _ChartEditor_resolveRelative(value);
+                    const resolvedInterval = _ChartEditor_resolveInterval(value);
 
                     if (resolvedInterval) {
                         // BI-1308

@@ -48,7 +48,7 @@ export const runChart: RunnerHandler = async (
                 chartType = template || data.type;
             } else {
                 // This is some kind of legacy edge cases.
-                // Just for compatibility purposes;
+                // Selectors are transmitted in this format
                 const data = config.data.shared as {type: string};
 
                 if (!template && !data.type) {
