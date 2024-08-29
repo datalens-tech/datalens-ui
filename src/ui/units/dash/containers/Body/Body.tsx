@@ -84,14 +84,12 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
-    // TODO: remove after getting rid of usage
-    enableState?: boolean;
-    disableUrlState?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
     dashkitSettings: DashKitProps['settings'];
     disableHashNavigation?: boolean;
+    disableUrlState?: boolean;
 } & (
     | ({
           onlyView?: boolean;

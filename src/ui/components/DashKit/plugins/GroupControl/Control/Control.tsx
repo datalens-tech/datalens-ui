@@ -210,8 +210,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        // TODO: remove check after fix types
-                        tabId: currentTab && 'id' in currentTab ? currentTab?.id : undefined,
+                        tabId: currentTab,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
