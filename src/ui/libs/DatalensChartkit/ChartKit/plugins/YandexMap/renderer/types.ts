@@ -40,6 +40,8 @@ export type GeoPolygon = {
     };
     options: {
         fillOpacity?: number;
+        fillColor?: string;
+        fillColorHover?: string;
     };
 };
 

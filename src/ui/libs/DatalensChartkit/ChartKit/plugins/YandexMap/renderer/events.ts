@@ -2,6 +2,7 @@ import {
     pickActionParamsFromParams,
     transformParamsToActionParams,
 } from '@gravity-ui/dashkit/helpers';
+import {gray, lab} from 'd3';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import type {StringParams} from 'shared';
@@ -43,7 +44,14 @@ export function setSelectedState(args: {data: YMapWidget['data']; actionParams: 
                     selected = hasMatchedActionParams(ap, actionParams);
                 }
 
-                polygon.options.fillOpacity = selected === false ? 0.25 : 0.8;
+                if (selected === false) {
+                    const originalFillColor = polygon.options.fillColor;
+                    polygon.options.fillColorHover = originalFillColor;
+                    polygon.options.fillColor = originalFillColor
+                        ? gray(lab(originalFillColor).l).formatRgb()
+                        : undefined;
+                    polygon.options.fillOpacity = 0.5;
+                }
             });
             return;
         }
