@@ -23,8 +23,8 @@ export type ChartEditorUserLang = string;
 export type ChartEditorUserLogin = string;
 export type ChartEditorAttachHandler = (handlerConfig: string) => string;
 export type ChartEditorAttachFormatter = (formatterConfig: string) => string;
-export type ChartEditorGetSecrets = () => string;
-export type ChartEditorResolveInterval = (interval: string) => string | null;
+export type ChartEditorGetSecrets = () => {[key: string]: string};
+export type ChartEditorResolveInterval = (interval: string) => {from: string; to: string} | null;
 export type ChartEditorResolveOperation = (operation: string) => string | null;
 export type ChartEditorSetError = (error: string) => undefined;
 export type ChartEditorSetChartsInsights = (insights: string) => undefined;
@@ -95,7 +95,7 @@ export function prepareChartEditorApi({
 
     if (chartEditorApi.getSecrets) {
         jail.setSync('_ChartEditor_getSecrets', (() =>
-            JSON.stringify(chartEditorApi.getSecrets())) satisfies ChartEditorGetSecrets);
+            chartEditorApi.getSecrets()) satisfies ChartEditorGetSecrets);
     }
 
     jail.setSync('_ChartEditor_resolveRelative', ((...resolveRelativeParams) => {
@@ -103,7 +103,7 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorResolveRelative);
 
     jail.setSync('_ChartEditor_resolveInterval', ((intervalStr: string) => {
-        return JSON.stringify(chartEditorApi.resolveInterval(intervalStr));
+        return chartEditorApi.resolveInterval(intervalStr);
     }) satisfies ChartEditorResolveInterval);
 
     jail.setSync('_ChartEditor_resolveOperation', ((input: string) => {

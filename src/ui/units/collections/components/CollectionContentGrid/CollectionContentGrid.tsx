@@ -19,7 +19,7 @@ import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/ac
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
 import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
-import {selectCollectionContentItems} from '../../store/selectors';
+import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
 import './CollectionContentGrid.scss';
@@ -48,7 +48,7 @@ export const CollectionContentGrid = React.memo<Props>(
     }) => {
         const dispatch = useDispatch();
 
-        const items = useSelector(selectCollectionContentItems);
+        const items = useSelector(selectStructureItems);
         const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
         return (

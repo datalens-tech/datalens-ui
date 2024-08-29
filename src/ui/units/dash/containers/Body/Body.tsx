@@ -84,7 +84,9 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
+    // TODO: remove after getting rid of usage
     enableState?: boolean;
+    disableUrlState?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -234,10 +236,10 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     onStateChange = (hashStates: TabsHashStates, config: DashTab) => {
-        if (!this.props.enableState) {
+        this.props.setHashState(hashStates, config);
+        if (this.props.disableUrlState) {
             return;
         }
-        this.props.setHashState(hashStates, config);
         this.updateUrlHashState(hashStates, this.props.tabId);
     };
 

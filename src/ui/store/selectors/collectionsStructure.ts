@@ -10,10 +10,10 @@ export const selectGetCollectionBreadcrumbs = (state: DatalensGlobalState) =>
 export const selectGetCollection = (state: DatalensGlobalState) =>
     state.collectionsStructure.getCollection;
 
-export const selectGetCollectionContent = (state: DatalensGlobalState) =>
-    state.collectionsStructure.getCollectionContent;
+export const selectGetStructureItems = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getStructureItems;
 
-export const selectCollectionContentItems = (state: DatalensGlobalState) =>
+export const selectStructureItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.items;
 
 export const selectCopyTemplate = (state: DatalensGlobalState) =>
@@ -86,22 +86,22 @@ export const selectBreadcrumbs = createSelector(
 );
 
 // Status of loading information about the contents of the collection
-export const selectCollectionContentIsLoading = createSelector(
-    [selectGetCollectionContent],
-    (getCollectionContent) => getCollectionContent.isLoading,
+export const selectStructureItemsIsLoading = createSelector(
+    [selectGetStructureItems],
+    (getStructureItems) => getStructureItems.isLoading,
 );
 
 // Error status of loading information about the contents of the collection
-export const selectCollectionContentError = createSelector(
-    [selectGetCollectionContent],
-    (getCollectionContent) => getCollectionContent.error,
+export const selectStructureItemsError = createSelector(
+    [selectGetStructureItems],
+    (getStructureItems) => getStructureItems.error,
 );
 
 // Tokens for reloading subsequent content pages
-export const selectNextPageTokens = createSelector([selectGetCollectionContent], (content) => ({
-    collectionsNextPageToken: content.data?.collectionsNextPageToken,
-    workbooksNextPageToken: content.data?.workbooksNextPageToken,
-}));
+export const selectNextPageToken = createSelector(
+    [selectGetStructureItems],
+    (content) => content.data?.nextPageToken || null,
+);
 
 export const selectCopyTemplateIsLoading = createSelector(
     [selectCopyTemplate],

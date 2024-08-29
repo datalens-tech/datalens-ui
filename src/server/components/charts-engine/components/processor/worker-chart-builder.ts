@@ -9,8 +9,8 @@ import type {
 import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {WizardWorker} from '../wizard-worker/types';
+import {getChartApiContext} from '../wizard-worker/utils';
 
-import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder, ChartBuilderResult} from './types';
 
 const ONE_SECOND = 1000;
