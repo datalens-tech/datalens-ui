@@ -1,10 +1,8 @@
 import {DashKit} from '@gravity-ui/dashkit';
-import {Feature} from 'shared';
+import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
-import {getSdk} from '../../libs/schematic-sdk';
 import MarkdownProvider from '../../modules/markdownProvider';
-import Utils from '../../utils/utils';
 
 import {getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
@@ -15,15 +13,19 @@ import widgetPlugin from './plugins/Widget/WidgetPlugin';
 
 let isConfigured = false;
 
+const getDistinctsAction = () => {
+    const fetchDistinctsByApi = registry.common.functions.get('fetchDistinctsByApi');
+
+    return fetchDistinctsByApi;
+};
+
 export const getConfiguredDashKit = () => {
     if (isConfigured) {
         return DashKit;
     }
 
     const controlSettings = {
-        getDistincts: Utils.isEnabledFeature(Feature.UsePublicDistincts)
-            ? getSdk().bi.getPublicDistinctsApiV2
-            : getSdk().bi.getDistinctsApiV2,
+        getDistincts: getDistinctsAction(),
     };
 
     isConfigured = true;

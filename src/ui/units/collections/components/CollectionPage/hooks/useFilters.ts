@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {CollectionContentFilters} from '../../../../../components/CollectionFilters';
+import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionFiltersStorage} from '../../../../../utils';
 import {getUserDefaultFilters} from '../utils';
 
@@ -15,10 +15,10 @@ export const useFilters = ({
     closeSelectionMode,
     resetSelected,
 }: UseViewModeArgs) => {
-    const [filters, setFilters] = React.useState<CollectionContentFilters>(getUserDefaultFilters());
+    const [filters, setFilters] = React.useState<StructureItemsFilters>(getUserDefaultFilters());
 
     const updateFilters = React.useCallback(
-        (newFilters: CollectionContentFilters) => {
+        (newFilters: StructureItemsFilters) => {
             closeSelectionMode();
             resetSelected();
 
