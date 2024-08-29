@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
+import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 import Utils from 'ui/utils';
 
 import {socialNets} from '../../modules/constants';
@@ -17,6 +18,8 @@ import './ShareButton.scss';
 const b = block('entity-share-button');
 const i18n = I18n.keyset('chartkit.menu');
 
+interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose'> {}
+
 export const ShareButton = ({
     enablePopover,
     entityId,
@@ -24,6 +27,7 @@ export const ShareButton = ({
     popoverTitle,
     iconSize = 18,
     popoverClassName,
+    dialogShareProps,
 }: {
     enablePopover?: boolean;
     entityId?: string;
@@ -31,6 +35,7 @@ export const ShareButton = ({
     popoverTitle?: string;
     iconSize?: number;
     popoverClassName?: string;
+    dialogShareProps?: DialogSharePropsForShareButton;
 }) => {
     const {DialogShare} = registry.common.components.getAll();
 
@@ -43,6 +48,22 @@ export const ShareButton = ({
     const handleCloseDialogShare = () => {
         setShowDialogShare(false);
     };
+
+    const initDialogShareProps: DialogShareProps = {propsData: {}, onClose: handleCloseDialogShare};
+
+    if (entityId) {
+        initDialogShareProps.propsData.id = entityId;
+    }
+
+    if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+        initDialogShareProps.initialParams = {
+            [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
+        };
+    }
+
+    if (DL.USER.isFederationUser) {
+        initDialogShareProps.withFederation = true;
+    }
 
     const getContent = () => {
         if (enablePopover && (!DL.IS_MOBILE || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
@@ -91,16 +112,8 @@ export const ShareButton = ({
     return (
         <React.Fragment>
             {getContent()}
-            {entityId && showDialogShare && (
-                <DialogShare
-                    onClose={handleCloseDialogShare}
-                    propsData={{id: entityId}}
-                    initialParams={{
-                        [COMMON_URL_OPTIONS.EMBEDDED]: 1,
-                        [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
-                    }}
-                />
-            )}
+            {(dialogShareProps?.propsData.id || initDialogShareProps.propsData.id) &&
+                showDialogShare && <DialogShare {...initDialogShareProps} {...dialogShareProps} />}
         </React.Fragment>
     );
 };
