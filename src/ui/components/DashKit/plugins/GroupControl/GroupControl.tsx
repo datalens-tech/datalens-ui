@@ -33,7 +33,7 @@ import {DashConfigContext} from '../../../../units/dash/utils/context';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
-import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
+import type {ControlSettings, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
@@ -64,7 +64,7 @@ type PluginGroupControlProps = OwnProps & StateProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
     setSettings: (settings: ControlSettings) => Plugin;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
 };
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
@@ -684,6 +684,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
+                groupId={this.props.id}
             />
         );
     }

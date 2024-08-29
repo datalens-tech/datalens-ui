@@ -33,18 +33,16 @@ export const GET_COLLECTION_SUCCESS = Symbol('collectionsStructure/GET_COLLECTIO
 export const GET_COLLECTION_FAILED = Symbol('collectionsStructure/GET_COLLECTION_FAILED');
 
 // Resetting Collection contents
-export const RESET_COLLECTION_CONTENT = Symbol('collectionsStructure/RESET_COLLECTION_CONTENT');
+export const RESET_STRUCTURE_ITEMS = Symbol('collectionsStructure/RESET_STRUCTURE_ITEMS');
 
 // Collection content
-export const GET_COLLECTION_CONTENT_LOADING = Symbol(
-    'collectionsStructure/GET_COLLECTION_CONTENT_LOADING',
+export const GET_STRUCTURE_ITEMS_LOADING = Symbol(
+    'collectionsStructure/GET_STRUCTURE_ITEMS_LOADING',
 );
-export const GET_COLLECTION_CONTENT_SUCCESS = Symbol(
-    'collectionsStructure/GET_COLLECTION_CONTENT_SUCCESS',
+export const GET_STRUCTURE_ITEMS_SUCCESS = Symbol(
+    'collectionsStructure/GET_STRUCTURE_ITEMS_SUCCESS',
 );
-export const GET_COLLECTION_CONTENT_FAILED = Symbol(
-    'collectionsStructure/GET_COLLECTION_CONTENT_FAILED',
-);
+export const GET_STRUCTURE_ITEMS_FAILED = Symbol('collectionsStructure/GET_STRUCTURE_ITEMS_FAILED');
 
 // Copy template
 export const COPY_TEMPLATE_LOADING = Symbol('collectionsStructure/COPY_TEMPLATE_LOADING');
