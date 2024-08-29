@@ -210,7 +210,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        tabId: currentTab,
+                        tabId: currentTab?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
