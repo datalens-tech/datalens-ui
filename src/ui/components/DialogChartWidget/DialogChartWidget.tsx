@@ -94,6 +94,9 @@ export interface DialogChartWidgetProps {
 
     withoutSidebar?: boolean;
 
+    enableAutoheight?: boolean;
+    enableBackgroundColor?: boolean;
+
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
@@ -123,6 +126,8 @@ class DialogChartWidget extends React.PureComponent<
     DialogChartWidgetState
 > {
     static defaultProps = {
+        enableAutoheight: true,
+        enableBackgroundColor: false,
         openedItemData: {
             hideTitle: false,
             tabs: [
@@ -570,7 +575,13 @@ class DialogChartWidget extends React.PureComponent<
 
     renderDialogBody = () => {
         const {data, tabIndex, selectedWidgetType} = this.state;
-        const {workbookId, navigationPath, changeNavigationPath} = this.props;
+        const {
+            workbookId,
+            navigationPath,
+            enableAutoheight,
+            enableBackgroundColor,
+            changeNavigationPath,
+        } = this.props;
 
         const autoHeightCheckboxCaption = (
             <div className={b('caption')}>
@@ -676,39 +687,43 @@ class DialogChartWidget extends React.PureComponent<
                         />
                     </div>
                 </Line>
-                <Line caption={autoHeightCheckboxCaption}>
-                    <Checkbox
-                        size="m"
-                        onChange={this.onAutoHeightRadioButtonChange}
-                        disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
-                        checked={Boolean(autoHeight)}
-                        qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
+                {enableAutoheight && (
+                    <Line caption={autoHeightCheckboxCaption}>
+                        <Checkbox
+                            size="m"
+                            onChange={this.onAutoHeightRadioButtonChange}
+                            disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
+                            checked={Boolean(autoHeight)}
+                            qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
+                        >
+                            {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
+                        </Checkbox>
+                    </Line>
+                )}
+                {enableBackgroundColor && (
+                    <Line
+                        caption={
+                            <div className={b('caption')}>
+                                <span className={b('caption-text')}>
+                                    {i18n('dash.widget-dialog.edit', 'field_background')}
+                                </span>
+                            </div>
+                        }
                     >
-                        {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
-                    </Checkbox>
-                </Line>
-                <Line
-                    caption={
-                        <div className={b('caption')}>
-                            <span className={b('caption-text')}>
-                                {i18n('dash.widget-dialog.edit', 'field_background')}
-                            </span>
-                        </div>
-                    }
-                >
-                    <Checkbox
-                        checked={Boolean(background?.enabled)}
-                        onChange={this.handleBackgroundEnabledChanged}
-                    >
-                        {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                    </Checkbox>
-                    {Boolean(background?.enabled) && (
-                        <PaletteBackground
-                            color={background?.color}
-                            onSelect={this.handleBackgroundColorSelected}
-                        />
-                    )}
-                </Line>
+                        <Checkbox
+                            checked={Boolean(background?.enabled)}
+                            onChange={this.handleBackgroundEnabledChanged}
+                        >
+                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
+                        </Checkbox>
+                        {Boolean(background?.enabled) && (
+                            <PaletteBackground
+                                color={background?.color}
+                                onSelect={this.handleBackgroundColorSelected}
+                            />
+                        )}
+                    </Line>
+                )}
                 {this.renderFilteringCharts()}
                 {this.renderParams()}
             </React.Fragment>
