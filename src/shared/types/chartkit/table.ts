@@ -1,5 +1,6 @@
 import type {Column} from '@gravity-ui/react-data-table';
 
+import type {WrappedHTML} from '../charts';
 import type {StringParams} from '../common';
 import type {MarkupItem} from '../wizard';
 
@@ -73,6 +74,7 @@ export type CommonTableColumn = {
     custom?: Record<string, any>;
     pinned?: boolean;
     hint?: string;
+    header?: WrappedHTML;
 };
 export type TableColumnFormatter = {
     format?: 'number' | 'percent';

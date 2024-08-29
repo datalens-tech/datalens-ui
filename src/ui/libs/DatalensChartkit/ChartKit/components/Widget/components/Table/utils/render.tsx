@@ -22,11 +22,13 @@ import type {
     TableCommonCell,
     TableHead,
     TableRow,
+    WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
+import {generateHtml} from '../../../../../../modules/html-generator';
 import {markupToRawString} from '../../../../../../modules/table';
 import type {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
@@ -41,6 +43,7 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
+    isWrappedHTML,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,
@@ -98,6 +101,10 @@ const diffFormatter = (
     return <span className={b('diff')}>{diff}</span>;
 };
 
+function getReactNodeWithWrappedHTML(value: WrappedHTML) {
+    return <span dangerouslySetInnerHTML={{__html: generateHtml(value.__wrappedHTML__)}} />;
+}
+
 // eslint-disable-next-line complexity
 export function valueFormatter(
     columnType: CommonTableColumn['type'],
@@ -147,6 +154,8 @@ export function valueFormatter(
                     }}
                 />
             );
+        } else if (isWrappedHTML(cell.value)) {
+            resultValue = getReactNodeWithWrappedHTML(cell.value);
         } else if ('value' in cell) {
             resultValue = cell.value;
 
@@ -289,6 +298,25 @@ export function valueFormatter(
     );
 }
 
+function getHeaderNode({markup, formattedName, name, hint, header}: TableColumn) {
+    let content: React.ReactNode;
+
+    if (markup) {
+        content = <Markup item={markup} />;
+    } else if (header) {
+        content = getReactNodeWithWrappedHTML(header);
+    } else {
+        content = formattedName ?? name;
+    }
+
+    return (
+        <span className={b('head-cell', {'with-markup': Boolean(markup)})}>
+            {content}
+            {hint && <MarkdownHelpPopover markdown={hint} />}
+        </span>
+    );
+}
+
 export const getColumnsAndNames = ({
     onChange,
     head,
@@ -389,7 +417,7 @@ export const getColumnsAndNames = ({
                 result.columns.push(columnData);
                 result.names = result.names.concat(names);
             } else {
-                const {id, name, type, css: columnCss, group, autogroup, hint, ...options} = column;
+                const {id, name, type, css: columnCss, group, autogroup, ...options} = column;
                 const columnWidth = topLevelWidth || column.width;
                 const columnName = generateName({id, name, level, shift, index});
 
@@ -424,16 +452,7 @@ export const getColumnsAndNames = ({
                     context.isHasGroups && !isHeadColumn && actionParamsData?.scope === 'cell';
                 const columnData: Column<DataTableData> = {
                     name: columnName,
-                    header: (
-                        <span className={b('head-cell', {'with-markup': Boolean(column.markup)})}>
-                            {column.markup ? (
-                                <Markup item={column.markup} />
-                            ) : (
-                                column.formattedName ?? column.name
-                            )}
-                            {hint && <MarkdownHelpPopover markdown={hint} />}
-                        </span>
-                    ),
+                    header: getHeaderNode(column),
                     className: b('cell', {
                         type,
                         'with-fixed-width': Boolean(columnWidth),
