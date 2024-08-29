@@ -7,12 +7,13 @@ import {getRandomCKId} from '../../helpers/helpers';
 import {
     ALLOWED_ATTRIBUTES,
     ALLOWED_TAGS,
+    ATTR_DATA_CE_THEME,
     ATTR_DATA_TOOLTIP_ANCHOR_ID,
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_PLACEMENT,
     TAG_DL_TOOLTIP,
 } from './constants';
-import {validateUrl} from './utils';
+import {getThemeStyle, validateUrl} from './utils';
 
 const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
 const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
@@ -34,7 +35,7 @@ export function generateHtml(
             return escape(item);
         }
 
-        const {tag, attributes = {}, style = {}, content} = item;
+        const {tag, attributes = {}, style = {}, content, theme} = item;
 
         if (!ALLOWED_TAGS.includes(tag)) {
             throw new ChartKitCustomError(null, {
@@ -92,7 +93,16 @@ export function generateHtml(
             nextOptions.tooltipId = tooltipId;
         }
 
-        elem.innerHTML = generateHtml(content, nextOptions);
+        let themeStyle = '';
+
+        if (theme) {
+            const dataThemeId = getRandomCKId();
+            elem.setAttribute(ATTR_DATA_CE_THEME, dataThemeId);
+            themeStyle = getThemeStyle(theme, dataThemeId);
+        }
+
+        elem.innerHTML = `${themeStyle}${generateHtml(content, nextOptions)}`;
+
         return elem.outerHTML;
     }
 

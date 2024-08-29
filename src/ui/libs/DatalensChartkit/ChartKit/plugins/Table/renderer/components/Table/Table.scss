@@ -239,6 +239,10 @@
         background: var(--dl-table-no-data-bg-color);
         border: 1px solid var(--dl-table-border-color);
     }
+
+    colgroup {
+        display: none;
+    }
 }
 
 table.dl-table_prepared {
