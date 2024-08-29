@@ -29,7 +29,7 @@ datalensTest.describe('Wizard', () => {
             );
         });
 
-        datalensTest.skip('Make some changes, then undo them', async ({page}) => {
+        datalensTest('Make some changes, then undo them', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-graph,.chartkit-d3');
@@ -59,7 +59,7 @@ datalensTest.describe('Wizard', () => {
             });
         });
 
-        datalensTest.skip('Make some changes, then undo them, then redo them', async ({page}) => {
+        datalensTest('Make some changes, then undo them, then redo them', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-graph,.chartkit-d3');
