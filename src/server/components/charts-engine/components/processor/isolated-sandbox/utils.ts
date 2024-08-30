@@ -27,7 +27,7 @@ export const safeStringify = (
             return replaced;
         }
 
-        if (value instanceof Function || typeof value == 'function') {
+        if (value instanceof Function || typeof value === 'function') {
             if (isConsole) {
                 return;
             }
