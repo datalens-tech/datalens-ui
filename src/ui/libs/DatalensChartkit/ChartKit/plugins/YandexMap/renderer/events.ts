@@ -155,12 +155,22 @@ function getNewActionParams(args: {
     return newActionParams;
 }
 
+function shouldUseMultiselect(event: any) {
+    const sourceEvent = typeof event?.getSourceEvent === 'function' ? event.getSourceEvent() : null;
+    if (sourceEvent) {
+        return shouldUseMultiselect(sourceEvent);
+    }
+
+    const originalEvent = event?.originalEvent?.domEvent ?? event?.originalEvent;
+    const key = isMacintosh() ? 'metaKey' : 'ctrlKey';
+    return Boolean(originalEvent?.get?.(key) ?? originalEvent?.[key]);
+}
+
 export function applyEventHandlers(args: ApplyEventsArgs) {
     const {geoObjects, config, unresolvedParams = {}, onChange} = args;
     const prevActionParams = pickActionParamsFromParams(unresolvedParams);
 
     const handleClick = function (geoObject: GeoPoint | GeoPolygon, event: YMapClickEvent) {
-        const multiSelect = Boolean(isMacintosh() ? event.get('metaKey') : event.get('ctrlKey'));
         const actions = config?.events?.click ?? [];
         const clickActions = Array.isArray(actions) ? actions : [actions];
 
@@ -178,7 +188,7 @@ export function applyEventHandlers(args: ApplyEventsArgs) {
                             geoObjects,
                             actionParams: prevActionParams,
                             currentPoint: geoObject,
-                            multiSelect,
+                            multiSelect: shouldUseMultiselect(event),
                         });
 
                         if (isEqual(prevActionParams, newActionParams)) {
