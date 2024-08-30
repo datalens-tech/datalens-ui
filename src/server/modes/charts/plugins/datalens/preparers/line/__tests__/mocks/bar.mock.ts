@@ -1,3 +1,5 @@
+import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
+
 const chartEditorMock = {
     getLang: () => {
         return 'en';
@@ -8,6 +10,7 @@ const chartEditorMock = {
 };
 
 export const calculatedTitle = {
+    ...EmptyPrepapreArgs,
     ChartEditor: chartEditorMock,
     placeholders: [
         {
@@ -69,6 +72,7 @@ export const calculatedTitle = {
 };
 
 export const regularTitle = {
+    ...EmptyPrepapreArgs,
     ChartEditor: chartEditorMock,
     placeholders: [
         {
@@ -122,6 +126,7 @@ export const regularTitle = {
 
 // /wizard/foizv5h101la9-multidatasetnyy-chart-s-odinakovymi-pokazatelyami
 export const preparingDataForFieldsWithSameTitlesFromDifferentDatasets = {
+    ...EmptyPrepapreArgs,
     ChartEditor: chartEditorMock,
     placeholders: [
         {
