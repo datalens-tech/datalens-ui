@@ -10,6 +10,8 @@
   "context_filtering-other-charts": "Опция позволяет применить фильтрацию из этого чарта к другим чартам на дашборде",
   "context_filtering-usage-limitations": "<link>Подробнее о фильтрации</link>",
   "field_autoheight": "Автовысота",
+  "field_background": "Фон",
+  "field_background-enable": "Включить",
   "field_description": "Описание",
   "field_enable-filtering-other-charts": "Включить",
   "field_param-name": "Имя",

@@ -1,10 +1,10 @@
-import {Page} from '@playwright/test';
+import type {Page} from '@playwright/test';
 
 import {DialogColumnSettingsQa} from '../../../src/shared/constants';
 import {slct} from '../../utils';
+import {CommonSelectors} from '../constants/common-selectors';
 
 import {PlaceholderName} from './SectionVisualization';
-import {CommonSelectors} from '../constants/common-selectors';
 
 export class ColumnSettings {
     page: Page;
@@ -57,8 +57,13 @@ export class ColumnSettings {
         await this.page.click(slct(DialogColumnSettingsQa.ApplyButton));
     }
 
-    async open() {
-        await this.page.hover(slct(PlaceholderName.FlatTableColumns));
+    async open(placeholder?: PlaceholderName) {
+        const placeholderLocator = placeholder
+            ? this.page.locator(slct(placeholder))
+            : this.page
+                  .locator(slct(PlaceholderName.FlatTableColumns))
+                  .or(this.page.locator(slct(PlaceholderName.PivotTableColumns)));
+        await placeholderLocator.hover();
 
         await this.page.click(slct('placeholder-action-open-column-settings-dialog'));
 
