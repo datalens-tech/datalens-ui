@@ -121,7 +121,7 @@ export const usePreparedTableData = (props: {
     const prerender = !cellSizes;
 
     const columns = React.useMemo(() => {
-        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width, data.head));
+        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
         const footerData = ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
             const cell = td as TableCommonCell;
 
@@ -192,7 +192,7 @@ export const usePreparedTableData = (props: {
         : rowVirtualizer.getVirtualItems();
 
     const headerRows = headers
-        .map((headerGroup, rowIndex) => {
+        .map((headerGroup) => {
             if (!headerGroup.headers.length) {
                 return null;
             }
@@ -222,10 +222,6 @@ export const usePreparedTableData = (props: {
                     if (typeof originalCellData?.width !== 'undefined') {
                         cellStyle.whiteSpace = 'normal';
                         cellStyle.wordBreak = 'break-word';
-                    }
-
-                    if (rowIndex > 0) {
-                        cellStyle.borderTop = 0;
                     }
 
                     return {
