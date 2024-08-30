@@ -19,6 +19,7 @@ type TwoColumnDialogOwnProps = {
     bodyClassMixin?: string;
     headerClassMixin?: string;
     qa?: string;
+    withoutSidebar?: boolean;
 };
 
 type TwoColumnDialogProps = TwoColumnDialogOwnProps & Omit<DialogProps, 'children'>;
@@ -33,22 +34,35 @@ function TwoColumnDialog({
     sidebarClassMixin,
     bodyClassMixin,
     headerClassMixin,
+    withoutSidebar,
     ...dialogProps
 }: TwoColumnDialogProps) {
-    const hideHeader = !bodyHeader;
+    const preparedBodyHeader = withoutSidebar ? sidebarHeader : bodyHeader;
+
+    const hideHeader = !preparedBodyHeader;
 
     return (
         <Dialog {...dialogProps}>
             <div className={b()}>
-                <div className={b('sidebar', sidebarClassMixin)}>
-                    <Dialog.Header className={b('header')} caption={sidebarHeader} />
-                    <Dialog.Body className={b('sidebar-body')}>{sidebar}</Dialog.Body>
-                </div>
+                {!withoutSidebar && (
+                    <div className={b('sidebar', sidebarClassMixin)}>
+                        <Dialog.Header className={b('header')} caption={sidebarHeader} />
+                        <Dialog.Body className={b('sidebar-body')}>{sidebar}</Dialog.Body>
+                    </div>
+                )}
                 <div className={b('content', {'no-content-header': hideHeader}, contentClassMixin)}>
                     {!hideHeader && (
-                        <Dialog.Header className={headerClassMixin} caption={bodyHeader} />
+                        <Dialog.Header className={headerClassMixin} caption={preparedBodyHeader} />
                     )}
-                    <Dialog.Body className={b('content-body', bodyClassMixin)}>{body}</Dialog.Body>
+                    <Dialog.Body
+                        className={b(
+                            'content-body',
+                            {'without-sidebar': withoutSidebar},
+                            bodyClassMixin,
+                        )}
+                    >
+                        {body}
+                    </Dialog.Body>
                     {footer}
                 </div>
             </div>
