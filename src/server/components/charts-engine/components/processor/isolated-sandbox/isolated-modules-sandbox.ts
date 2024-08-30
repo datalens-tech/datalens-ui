@@ -3,6 +3,8 @@ import type IsolatedVM from 'isolated-vm';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
+import {safeStringify} from './utils';
+
 const {
     RUNTIME_ERROR,
     RUNTIME_TIMEOUT_ERROR,
@@ -79,18 +81,25 @@ const execute = async ({
     let executionTiming;
     let errorStackTrace;
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
-    const console = new Console({isScreenshoter});
+    const isolatedConsole = new Console({isScreenshoter});
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
-    jail.setSync('log', function (...args: any[]) {
-        console.log(...args);
+    jail.setSync('__log', function (...args: any[]) {
+        isolatedConsole.log(...args);
     });
 
     try {
         const prepare = `
-           const console = {log};   
+           const __safeStringify = ${safeStringify.toString()};
+           const console = {log: (...args) => { 
+                    const processed = args.map(elem => {
+                        return __safeStringify(elem, {isConsole: true});
+                    })
+                    return __log(...processed);
+                }
+            };
            var module = {exports: {}};
            var exports = module.exports;
            const ChartEditor = {
@@ -133,7 +142,7 @@ const execute = async ({
         error.code = errorCode;
         error.executionResult = {
             executionTiming,
-            logs: console.getLogs(),
+            logs: isolatedConsole.getLogs(),
             filename: name,
             stackTrace: errorStackTrace,
         };
@@ -144,7 +153,7 @@ const execute = async ({
     return {
         executionTiming,
         filename: name,
-        logs: console.getLogs(),
+        logs: isolatedConsole.getLogs(),
     };
 };
 

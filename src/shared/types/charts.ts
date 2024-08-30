@@ -7,11 +7,19 @@ import type {ChartsInsight, IntervalPart} from '../modules';
 import type {StringParams} from './common';
 import type {UISandboxWrappedFunction} from './ui-sandbox';
 
+const REQUIRED_THEME_VALUES = ['dark', 'light'] as const;
+const OPTIONAL_THEME_VALUES = ['dark-hc', 'light-hc'] as const;
+type RequiredThemes = Record<(typeof REQUIRED_THEME_VALUES)[number], Record<string, string>>;
+type OptionalThemes = Partial<
+    Record<(typeof OPTIONAL_THEME_VALUES)[number], Record<string, string>>
+>;
+
 export type ChartKitHtmlItem = {
     tag: string;
     style?: Record<string, string | number>;
     attributes?: Record<string, string | number>;
     content?: ChartKitHtmlItem | ChartKitHtmlItem[] | string;
+    theme?: RequiredThemes & OptionalThemes;
 };
 
 export interface IChartEditor {

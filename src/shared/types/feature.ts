@@ -71,6 +71,8 @@ export enum Feature {
     EnableFooter = 'EnableFooter',
     /** Chart runner for the execution of trusted code in wizard. */
     WorkerChartBuilder = 'WorkerChartBuilder',
+    /** Dash controls separate runner for the execution of trusted code. */
+    ControlBuilder = 'ControlBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
@@ -90,6 +92,8 @@ export enum Feature {
     QlChartRunner = 'QlChartRunner',
     /** Allow markdown in chart fields. */
     WizardMarkdownFields = 'WizardMarkdownFields',
+    EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
+    EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
 }
 
 export type FeatureConfig = Record<string, boolean>;

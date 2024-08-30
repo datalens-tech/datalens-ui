@@ -3,10 +3,11 @@ import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
+import {ControlType, DL_EMBED_TOKEN_HEADER, EntryScope} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
-import {getDuration} from '../components/utils';
+import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
+import type {ReducedResolvedConfig} from '../components/storage/types';
+import {getDuration, isDashEntry} from '../components/utils';
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
     return function chartsRunController(req: Request, res: Response) {
@@ -18,7 +19,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null} = req.body;
+        const {expectedType = null, id, controlData} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -52,10 +53,12 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             [DL_EMBED_TOKEN_HEADER]: embedToken,
         };
 
-        const configResolveArgs: ResolveConfigProps = {
+        const configResolveArgs: EmbedResolveConfigProps = {
+            id,
             embedToken,
             // Key is legacy but we using it deeply like cache key, so this is just for compatibility purposes
             key: embedId,
+            embedId,
             headers: {
                 ...res.locals.subrequestHeaders,
                 ...ctx.getMetadata(),
@@ -63,6 +66,11 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             requestId: req.id,
         };
 
+        // 1. it's embedded chart, id is not used, chart is resolved by token
+        // 2. it's widget from embedded dash, id is used, chart is resolved by
+        // token and id
+        // 3. it's selector from embedded dash, id is not used, dash is resolved by
+        // token to get embeddedInfo and check token
         const configPromise = ctx.call('configLoading', (cx) =>
             resolveConfig(cx, configResolveArgs),
         );
@@ -103,21 +111,65 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 const params: Record<string, unknown> = req.body.params || {};
                 const filteredParams: Record<string, unknown> = {};
 
-                Object.keys(params).forEach((key) => {
-                    if (embeddingInfo.embed.unsignedParams.includes(key)) {
-                        filteredParams[key] = params[key];
-                    }
-                });
+                if (embeddingInfo.embed.publicParamsMode) {
+                    Object.keys(params).forEach((key) => {
+                        if (embeddingInfo.embed.unsignedParams.includes(key)) {
+                            filteredParams[key] = params[key];
+                        }
+                    });
+                } else {
+                    Object.keys(params).forEach((key) => {
+                        if (!embeddingInfo.embed.privateParams.includes(key)) {
+                            filteredParams[key] = params[key];
+                        }
+                    });
+                }
 
                 req.body.params = {
                     ...embeddingInfo.token.params,
                     ...filteredParams,
                 };
 
-                const config = embeddingInfo.entry;
+                let entry;
+
+                if (controlData && isDashEntry(embeddingInfo.entry)) {
+                    // support group and old single selectors
+                    const controlWidgetId = controlData.groupId || controlData.id;
+                    const controlTab = embeddingInfo.entry?.data.tabs.find(
+                        ({id}) => id === controlData.tabId,
+                    );
+
+                    const controlWidgetConfig = controlTab?.items.find(
+                        ({id, type}) =>
+                            id === controlWidgetId &&
+                            (type === 'group_control' || type === 'control'),
+                    );
+
+                    if (!controlWidgetConfig) {
+                        return res.status(404).send({
+                            error: 'Сonfig was not found',
+                        });
+                    }
+
+                    const sharedData =
+                        controlWidgetConfig.type === 'group_control'
+                            ? controlWidgetConfig.data.group.find(({id}) => id === controlData.id)
+                            : controlWidgetConfig.data;
+
+                    entry = {
+                        data: {shared: sharedData as object},
+                        meta: {stype: ControlType.Dash},
+                    } as ReducedResolvedConfig;
+                } else if (embeddingInfo.entry.scope === EntryScope.Widget) {
+                    entry = embeddingInfo.entry;
+                } else {
+                    return res.status(400).send({
+                        error: 'Invalid config format',
+                    });
+                }
 
                 const configResolving = getDuration(hrStart);
-                const configType = config && config.meta && config.meta.stype;
+                const configType = entry && entry.meta && entry.meta.stype;
 
                 ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
 
@@ -139,14 +191,14 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     });
                 }
 
-                req.body.config = config;
-                req.body.key = config.key;
+                req.body.config = entry;
+                req.body.key = entry.key;
 
                 return runnerFound.handler(ctx, {
                     chartsEngine,
                     req,
                     res,
-                    config,
+                    config: entry,
                     configResolving,
                 });
             })

@@ -5,7 +5,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
+import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
 import Utils from '../../../utils';
@@ -35,10 +35,6 @@ export const runController = (
         const {id, workbookId, expectedType = null, config} = req.body;
 
         let {key, params} = req.body;
-
-        const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
-            ? ''
-            : req.headers[DL_EMBED_TOKEN_HEADER];
 
         if (!id && !key) {
             key = req.body.path || (params && params.name);
@@ -85,7 +81,6 @@ export const runController = (
                 key,
                 id,
                 workbookId,
-                embedToken,
                 headers: {
                     ...res.locals.subrequestHeaders,
                     ...ctx.getMetadata(),
