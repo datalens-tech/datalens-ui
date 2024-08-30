@@ -60,11 +60,28 @@ export const applyPlaceholderSettingsToAxis = (
             placeholder.settings.autoscale === false ||
             (placeholder.settings.scale === 'auto' && placeholder.settings.scaleValue === '0-max')
         ) {
-            axis.min = 0;
+            if (placeholder.settings.type === 'logarithmic') {
+                // Fallback to null for incorrect case
+                axis.min = null;
+            } else {
+                axis.min = 0;
+            }
         } else if (placeholder.settings.scale === 'manual') {
             axis.endOnTick = false;
             axis.min = Number((placeholder.settings.scaleValue as [string, string])[0]);
             axis.max = Number((placeholder.settings.scaleValue as [string, string])[1]);
+
+            if (placeholder.settings.type === 'logarithmic') {
+                if (axis.min <= 0) {
+                    // Fallback to null for incorrect case
+                    axis.min = null;
+                }
+
+                if (axis.max <= 0) {
+                    // Fallback to null for incorrect case
+                    axis.max = null;
+                }
+            }
         }
 
         const axisTitle = getAxisTitle(placeholder.settings, placeholder.items[0]);
@@ -75,7 +92,7 @@ export const applyPlaceholderSettingsToAxis = (
         if (isDateField(placeholder.items[0])) {
             axis.type = 'datetime';
         } else {
-            axis.type = placeholder.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+            axis.type = placeholder.settings.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
 
         if (!isGridEnabled(placeholder.settings)) {

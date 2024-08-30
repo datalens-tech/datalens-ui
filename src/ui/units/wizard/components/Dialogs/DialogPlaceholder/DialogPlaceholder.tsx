@@ -762,10 +762,13 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     };
 
     handleScaleRadioButtonsUpdate = (scaleMode: string) => {
+        const defaultManualValue: [string, string] =
+            this.state.settings.type === SETTINGS.TYPE.LOGARITHMIC
+                ? ['0.001', '100']
+                : ['0', '100'];
+
         const scaleValue =
-            scaleMode === SETTINGS.SCALE.MANUAL
-                ? (['0', '100'] as [string, string])
-                : SETTINGS.SCALE_VALUE.MIN_MAX;
+            scaleMode === SETTINGS.SCALE.MANUAL ? defaultManualValue : SETTINGS.SCALE_VALUE.MIN_MAX;
 
         this.setState({
             settings: {
@@ -786,20 +789,38 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             },
         };
 
-        if (
-            axisType === SETTINGS.TYPE.LOGARITHMIC &&
-            settings.scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX
-        ) {
-            updatedState.settings = {
-                ...updatedState.settings,
-                scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
-            };
-            updatedState.tooltipType = 'scaleValue';
-            updatedState.tooltipContent = (
-                <span data-qa={DialogPlaceholderQa.TooltipZeroToMaxScale}>
-                    {i18n('wizard', 'tooltip_zero-to-max-scale')}
-                </span>
-            );
+        updatedState.tooltipType = undefined;
+        updatedState.tooltipContent = '';
+
+        if (axisType === SETTINGS.TYPE.LOGARITHMIC) {
+            if (settings.scaleValue === SETTINGS.SCALE_VALUE.ZERO_MAX) {
+                updatedState.settings = {
+                    ...updatedState.settings,
+                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                };
+                updatedState.tooltipType = 'scaleValue';
+                updatedState.tooltipContent = (
+                    <span data-qa={DialogPlaceholderQa.TooltipZeroToMaxScale}>
+                        {i18n('wizard', 'tooltip_zero-to-max-scale')}
+                    </span>
+                );
+            } else if (
+                settings.scale === SETTINGS.SCALE.MANUAL &&
+                (Number(settings?.scaleValue?.[0]) <= 0 || Number(settings?.scaleValue?.[1]) <= 0)
+            ) {
+                updatedState.settings = {
+                    ...updatedState.settings,
+                    scale: SETTINGS.SCALE.AUTO,
+                    scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
+                };
+
+                updatedState.tooltipType = 'scaleValue';
+                updatedState.tooltipContent = (
+                    <span data-qa={DialogPlaceholderQa.TooltipZeroToMaxScale}>
+                        {i18n('wizard', 'tooltip_zero-to-max-scale')}
+                    </span>
+                );
+            }
         }
 
         this.setState(
@@ -809,7 +830,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     };
 
     handleScaleValueUpdate = (scaleValue: string) => {
-        const settings = this.state.settings;
+        const {settings} = this.state;
 
         const updatedState: Partial<State> = {
             settings: {
@@ -832,6 +853,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     {i18n('wizard', 'tooltip_logarithmic-axis')}
                 </span>
             );
+        } else {
+            updatedState.tooltipType = undefined;
+            updatedState.tooltipContent = '';
         }
 
         this.setState(
@@ -846,20 +870,37 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const [prevMin, prevMax] = scaleValue;
 
-        const updatedScaleValue = [];
-
-        if (type === 'min') {
-            updatedScaleValue.push(value, prevMax);
-        } else {
-            updatedScaleValue.push(prevMin, value);
-        }
-
-        this.setState({
+        const updatedState: {settings: State['settings']} & Partial<State> = {
             settings: {
                 ...this.state.settings,
-                scaleValue: updatedScaleValue as [string, string],
             },
-        });
+            tooltipType: undefined,
+            tooltipContent: '',
+        };
+
+        if (type === 'min') {
+            updatedState.settings.scaleValue = [value, prevMax];
+        } else {
+            updatedState.settings.scaleValue = [prevMin, value];
+        }
+
+        // Here we need to check whether axis type is logarithmic and min value is 0 or negative
+        if (settings.type === SETTINGS.TYPE.LOGARITHMIC && Number(value) <= 0) {
+            // And if axis type was algorithmic, then we need to reset it to linear in that case
+            updatedState.settings.type = SETTINGS.TYPE.LINEAR;
+
+            updatedState.tooltipType = 'type';
+            updatedState.tooltipContent = (
+                <span data-qa={DialogPlaceholderQa.TooltipLogarithmicAxis}>
+                    {i18n('wizard', 'tooltip_logarithmic-axis')}
+                </span>
+            );
+        }
+
+        this.setState(
+            (prevState: State) => ({...prevState, ...updatedState}),
+            () => this.tooltipRef.current && this.tooltipRef.current.openTooltip(),
+        );
     };
 }
 
