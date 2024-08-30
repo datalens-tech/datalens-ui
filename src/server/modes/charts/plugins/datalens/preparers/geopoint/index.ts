@@ -1,4 +1,5 @@
 import escape from 'lodash/escape';
+import set from 'lodash/set';
 
 import type {
     PointSizeConfig,
@@ -31,6 +32,7 @@ import {
     isGradientMode,
     isNumericalDataType,
 } from '../../utils/misc-helpers';
+import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {DEFAULT_ICON_COLOR, DEFAULT_POINT_RADIUS} from './constants';
@@ -121,6 +123,8 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         features,
         ChartEditor,
     } = options;
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
     const geopointsConfig = (options.geopointsConfig || {}) as PointSizeConfig;
     const layerSettings = (options.layerSettings ||
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
@@ -213,6 +217,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         // at each pass of the string, we collect the points into an array, assuming,
         // that there can be more than one pair of coordinates in a row
         allPoints[`points-${valuesIndex}`] = [];
+        const actionParams: Record<string, any> = {};
 
         // eslint-disable-next-line complexity
         values.forEach((columnData, columnIndex) => {
@@ -304,14 +309,16 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 });
             }
 
-            const tooltipField = tooltips.length ? getTooltip(dataTitle) : undefined;
+            const tooltipField = tooltips.length
+                ? (getTooltip(dataTitle) as ServerField)
+                : undefined;
             if (tooltipField) {
                 // Due to the fact that a field that already exists in another section can be installed in a section with a tooltip,
                 // it (the field in the tooltip and other section) comes to the order array in a single instance,
                 // which in turn can lead to an incorrect order of displaying fields in the tooltip.
                 // Therefore, before installing the tooltip, we remember its correct index
                 const index = updatedTooltips.findIndex((t) => t.title === dataTitle);
-                const itemTitle = getFakeTitleOrTitle(tooltipField as ServerField);
+                const itemTitle = getFakeTitleOrTitle(tooltipField);
 
                 const pointData: Record<string, unknown> = {};
 
@@ -347,6 +354,14 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     }
 
                     point.feature.properties.data[index] = pointData;
+                });
+
+                addActionParamValue(actionParams, tooltipField, columnData);
+            }
+
+            if (isActionParamsEnabled) {
+                allPoints[`points-${valuesIndex}`].forEach((point: GeopointPointConfig) => {
+                    set(point, 'feature.properties.custom.actionParams', actionParams);
                 });
             }
         });

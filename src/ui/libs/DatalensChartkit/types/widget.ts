@@ -81,6 +81,7 @@ export interface WidgetBase {
     entryId?: string;
     data?: object;
     params: StringParams;
+    unresolvedParams?: StringParams;
     initialParams?: StringParams;
     config?: {
         drillDown?: DrillDownConfig;
@@ -317,6 +318,12 @@ export interface Metric2Widget extends WidgetBaseWithData {
 
 export interface YMapWidget extends WidgetBaseWithData {
     type: 'ymap';
+    config: WidgetBaseWithData['config'] & {
+        events?: {
+            click?: WidgetEvent<'point'>;
+        };
+    };
+    data: any[];
 }
 
 export type MarkupWidget = WidgetBaseWithData & {

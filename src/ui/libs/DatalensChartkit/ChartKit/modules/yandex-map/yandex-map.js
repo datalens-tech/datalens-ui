@@ -325,6 +325,7 @@ class YandexMap {
                         const properties = this.getData().properties;
                         const options = this.getData().options;
                         const geoObjectOptions = this.getData().geoObject.options;
+
                         const radius = properties.get('radius');
                         const label = properties.get('label');
 
@@ -360,6 +361,21 @@ class YandexMap {
                         const circleShape = {type: 'Circle', coordinates: [0, 0], radius: size / 2};
                         // Setting the shape of the hotspot
                         options.set('shape', circleShape);
+
+                        // Set additional className
+                        const isActive = geoObjectOptions.get('active');
+                        const classNames = new Set(element.className.split(' '));
+                        if (isActive === true) {
+                            classNames.delete('inactive');
+                            classNames.add('active');
+                        } else if (isActive === false) {
+                            classNames.delete('active');
+                            classNames.add('inactive');
+                        } else {
+                            classNames.delete('inactive');
+                            classNames.delete('active');
+                        }
+                        element.className = Array.from(classNames).join(' ');
 
                         this.optionsMonitor = new YandexMap._ymaps.Monitor(geoObjectOptions).add(
                             'opacity',

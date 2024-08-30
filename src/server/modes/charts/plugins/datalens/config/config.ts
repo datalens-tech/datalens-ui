@@ -53,6 +53,11 @@ function getActionParamsEvents(
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
             };
         }
+        case WizardVisualizationId.Geolayer: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
+            };
+        }
     }
 
     return undefined;

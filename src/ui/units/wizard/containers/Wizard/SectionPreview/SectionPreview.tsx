@@ -169,6 +169,7 @@ class SectionPreview extends Component<Props> {
             }
 
             const params = Utils.getParamsFromSearch(window.location.search);
+            const {actionParamsEnabled} = Utils.getOptionsFromSearch(window.location.search);
 
             return (
                 <ChartWrapper
@@ -182,6 +183,7 @@ class SectionPreview extends Component<Props> {
                     forwardedRef={chartKitRef}
                     onInnerParamsChanged={this.handleInnerParamsChanged}
                     workbookId={workbookId}
+                    actionParamsEnabled={actionParamsEnabled}
                 />
             );
         }

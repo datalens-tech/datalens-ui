@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -19,6 +20,7 @@ import YandexMapModule, {
 import {StyledSplitPane} from '../../../plugins/components';
 
 import Legend from './Legend/Legend';
+import {applyEventHandlers, setSelectedState} from './events';
 import {renderPossibleMarkupItems} from './utils';
 
 import './YandexMapComponent.scss';
@@ -80,6 +82,12 @@ function getNodeHeight(node) {
     return node?.getBoundingClientRect().height || 0;
 }
 
+function hasActionParamsChanged(currentParams, prevParams) {
+    const prevActionParams = pickActionParamsFromParams(currentParams);
+    const actionParams = pickActionParamsFromParams(prevParams);
+    return !isEqual(prevActionParams, actionParams);
+}
+
 export class YandexMapComponent extends React.Component {
     static propTypes = {
         data: PropTypes.shape({
@@ -135,7 +143,11 @@ export class YandexMapComponent extends React.Component {
                 pick(this.props.data, PROVIDER_DATA_FIELDS),
             ) ||
             nextState.geoObjects !== this.state.geoObjects ||
-            nextState.paneSize !== this.state.paneSize;
+            nextState.paneSize !== this.state.paneSize ||
+            hasActionParamsChanged(
+                nextProps.data.unresolvedParams,
+                this.props.data.unresolvedParams,
+            );
 
         return shouldUpdate;
     }
@@ -150,6 +162,10 @@ export class YandexMapComponent extends React.Component {
             !isEqual(
                 pick(prevProps.data, PROVIDER_DATA_FIELDS),
                 pick(this.props.data, PROVIDER_DATA_FIELDS),
+            ) ||
+            hasActionParamsChanged(
+                this.props.data.unresolvedParams,
+                prevProps.data.unresolvedParams,
             );
 
         if (needReInit) {
@@ -251,14 +267,28 @@ export class YandexMapComponent extends React.Component {
         }
     }
 
+    applyEvents() {
+        const {data: widgetData, onChange} = this.props;
+
+        applyEventHandlers({
+            geoObjects: this.state.geoObjects,
+            config: widgetData.config,
+            onChange,
+            unresolvedParams: widgetData.unresolvedParams,
+        });
+    }
+
     async init(callBackType) {
         try {
-            const {data, libraryConfig, config} = this.props.data;
+            const widgetData = this.props.data;
+            const {data, libraryConfig, config, unresolvedParams} = widgetData;
             let renderMarkdownToString;
             const renderMarkupToString = await getRenderMarkupToStringFn();
             if (config.useMarkdown) {
                 renderMarkdownToString = await getRenderYfmFn();
             }
+            const actionParams = pickActionParamsFromParams(unresolvedParams);
+            setSelectedState({data, actionParams});
 
             const {map, geoObjects, mapPerformanceMetrics} = await YandexMapModule.draw({
                 node: this.node,
@@ -350,6 +380,8 @@ export class YandexMapComponent extends React.Component {
                 this.map.controls.add(customControl, {
                     float: 'none',
                 });
+
+                this.applyEvents();
             });
 
             this.destroy();
