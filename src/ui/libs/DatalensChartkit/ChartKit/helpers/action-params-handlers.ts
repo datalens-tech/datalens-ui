@@ -77,7 +77,7 @@ function setSeriesSelectState(series: Highcharts.Series, selected: boolean) {
 }
 
 export function addParams(params: StringParams, addition: StringParams = {}) {
-    const result = cloneDeep(params);
+    const result: StringParams = cloneDeep(params);
 
     return Object.entries(addition).reduce((acc, [key, val]) => {
         if (!(key in acc)) {
@@ -99,7 +99,7 @@ export function addParams(params: StringParams, addition: StringParams = {}) {
 }
 
 export function subtractParameters(params: StringParams, sub: StringParams = {}) {
-    const result = cloneDeep(params);
+    const result: StringParams = cloneDeep(params);
     return Object.entries(sub).reduce((acc, [key, val]) => {
         const paramValue = acc[key];
         if (Array.isArray(paramValue)) {
