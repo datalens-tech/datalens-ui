@@ -65,6 +65,17 @@ export function canUseStringAsMarkdown(
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Tooltips];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p:
+        case WizardVisualizationId.Pie: {
+            const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
         default:
             return false;
     }

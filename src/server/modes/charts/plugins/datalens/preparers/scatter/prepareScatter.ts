@@ -427,7 +427,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     }
 
     const hasMarkdown = [x, y, z, size, color, shape].some((field) => (field as Field)?.isMarkdown);
-    if (hasMarkdown) {
+    if (isMarkdownFieldsEnabled && hasMarkdown) {
         ChartEditor.updateConfig({useMarkdown: true});
     }
 

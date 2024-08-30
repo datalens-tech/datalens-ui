@@ -8,9 +8,11 @@ import type {
 import {
     AxisMode,
     AxisNullsMode,
+    Feature,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
+    isMarkdownField,
     isMeasureField,
     isMeasureValue,
     isNumberField,
@@ -23,6 +25,7 @@ import {
     chartKitFormatNumberWrapper,
     collator,
     formatDate,
+    getLabelValue,
     getTimezoneOffsettedTime,
     isGradientMode,
     numericCollator,
@@ -53,10 +56,12 @@ export function prepareBarYData({
     layerChartMeta,
     usedColors,
     disableDefaultSorting = false,
+    features,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
     const xPlaceholder = placeholders[0];
     const x: ServerField | undefined = placeholders[0].items[0];
     const xDataType = x ? idToDataType[x.guid] : null;
@@ -103,6 +108,7 @@ export function prepareBarYData({
         isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
+    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
 
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
     const isColorizeByMeasure = isMeasureField(colorItem);
@@ -315,6 +321,7 @@ export function prepareBarYData({
                     dataLabels: {
                         enabled: Boolean(labelItem),
                         ...line.dataLabels,
+                        useHTML: isMarkdownLabel,
                     },
                     data: categories
                         .map((category, i) => {
@@ -352,10 +359,7 @@ export function prepareBarYData({
                                 }
                             }
 
-                            const pointLabel = innerLabels && innerLabels[category];
-                            if (pointLabel) {
-                                point.label = pointLabel;
-                            }
+                            point.label = getLabelValue(innerLabels?.[category], isMarkdownLabel);
 
                             if (isActionParamsEnable) {
                                 const [yField] = ySectionItems || [];
@@ -440,6 +444,10 @@ export function prepareBarYData({
                 isSegmentsExists: false,
                 usedColors,
             });
+        }
+
+        if (isMarkdownLabel) {
+            ChartEditor.updateConfig({useMarkdown: true});
         }
 
         if (isXCategoryAxis) {
