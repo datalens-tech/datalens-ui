@@ -40,9 +40,12 @@ axiosRetry(axios, {
     },
 });
 
+export const TEN_SECONDS = 10000;
+
+export const EMBEDDED_ENTRY_PATH = '/v1/embedded-entry';
+
 const ENTRY_NOT_FOUND = 'ENTRY_NOT_FOUND';
 const ENTRY_FORBIDDEN = 'ENTRY_FORBIDDEN';
-const TEN_SECONDS = 10000;
 const PASSED_PROPERTIES: (keyof Entry)[] = [
     'entryId',
     'data',
@@ -413,7 +416,7 @@ export class USProvider {
         };
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
-            url: `${storageEndpoint}/v1/embedded-entry`,
+            url: `${storageEndpoint}${EMBEDDED_ENTRY_PATH}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
