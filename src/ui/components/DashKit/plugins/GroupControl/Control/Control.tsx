@@ -36,7 +36,7 @@ import {
     unwrapFromArray,
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
-import {DashConfigContext} from 'ui/units/dash/utils/context';
+import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -120,7 +120,7 @@ export const Control = ({
     dependentSelectors,
     groupId,
 }: ControlProps) => {
-    const currentTab = React.useContext(DashConfigContext);
+    const currentTab = React.useContext(DashControlsConfigContext)?.config;
 
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);

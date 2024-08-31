@@ -4,7 +4,7 @@ import {registry} from 'ui/registry';
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
-import {getDashKitMenu} from './helpers';
+import {DashkitContainer, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import textPlugin from './plugins/Text/Text';
@@ -47,5 +47,5 @@ export const getConfiguredDashKit = () => {
         menu: getDashKitMenu(),
     });
 
-    return DashKit;
+    return DashkitContainer;
 };

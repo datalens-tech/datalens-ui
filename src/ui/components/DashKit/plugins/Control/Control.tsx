@@ -6,12 +6,11 @@ import type {AxiosResponse} from 'axios';
 import axios from 'axios';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {type DatalensGlobalState} from 'index';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
 import pick from 'lodash/pick';
-import {connect} from 'react-redux';
 import type {
+    DashTab,
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlManual,
@@ -25,7 +24,7 @@ import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {DashConfigContext} from 'ui/units/dash/utils/context';
+import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -44,10 +43,6 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import {
-    selectIsNewRelations,
-    selectSkipReload,
-} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
@@ -78,13 +73,7 @@ type ContextProps = {
     workbookId?: WorkbookId;
 };
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-
-export interface PluginControlProps
-    extends PluginWidgetProps,
-        ContextProps,
-        ControlSettings,
-        StateProps {
+export interface PluginControlProps extends PluginWidgetProps, ContextProps, ControlSettings {
     settings: SettingsProps & {
         dependentSelectors?: boolean;
     };
@@ -101,7 +90,9 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
-    static contextType = DashConfigContext;
+    static contextType = DashControlsConfigContext;
+
+    declare context: React.ContextType<typeof DashControlsConfigContext>;
 
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
@@ -256,7 +247,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     reload = ({silentLoading}: {silentLoading?: boolean} = {}) => {
-        if (this.props.skipReload || !this.state.isInit) {
+        if (this.context?.skipReload || !this.state.isInit) {
             return;
         }
 
@@ -275,7 +266,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.props.data.sourceType === DashTabItemControlSourceType.External) {
             return (this.chartKitRef.current as ChartControlRef)?.getMeta();
         }
-        if (this.props.isNewRelations) {
+        if (this.context?.isNewRelations) {
             return this.getCurrentWidgetMetaInfo();
         }
         if (this.chartKitRef && this.chartKitRef.current) {
@@ -388,7 +379,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
-        const isNewRelations = this.props.isNewRelations;
+        const isNewRelations = this.context?.isNewRelations;
 
         const isAvailableStatus = isNewRelations
             ? [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status)
@@ -447,7 +438,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     },
                     controlData: {
                         id: this.props.id,
-                        tabId: this.context?.id,
+                        tabId: (this.context?.config as DashTab)?.id,
                     },
                     params: this.actualParams,
                     ...(workbookId ? {workbookId} : {}),
@@ -826,13 +817,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    skipReload: selectSkipReload(state),
-    isNewRelations: selectIsNewRelations(state),
-});
-
-const ControlWithStore = connect(mapStateToProps, null, null, {forwardRef: true})(Control);
-
 const plugin: PluginControl = {
     type: 'control',
     defaultLayout: DEFAULT_CONTROL_LAYOUT,
@@ -849,7 +833,7 @@ const plugin: PluginControl = {
         const workbookId = props.context.workbookId;
 
         return (
-            <ControlWithStore
+            <Control
                 {...props}
                 workbookId={workbookId}
                 getDistincts={plugin.getDistincts}

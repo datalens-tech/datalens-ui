@@ -66,8 +66,10 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
+    selectIsNewRelations,
     selectSettings,
     selectShowTableOfContent,
+    selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
@@ -315,6 +317,8 @@ class Body extends React.PureComponent<BodyProps> {
                 defaultGlobalParams={settings.globalParams}
                 globalParams={globalParams}
                 overlayControls={overlayControls}
+                skipReload={this.props.skipReload}
+                isNewRelations={this.props.isNewRelations}
             />
         );
     };
@@ -455,6 +459,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
+    skipReload: selectSkipReload(state),
+    isNewRelations: selectIsNewRelations(state),
 });
 
 const mapDispatchToProps = {

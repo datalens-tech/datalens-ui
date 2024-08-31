@@ -2,7 +2,7 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import type {ConfigItem, ItemState} from '@gravity-ui/dashkit';
+import {type ConfigItem, DashKit, type ItemState} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
@@ -12,6 +12,7 @@ import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
+import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
 import URI from '../../libs/DatalensChartkit/modules/uri/uri';
@@ -106,3 +107,29 @@ export function getDashKitMenu() {
         },
     ];
 }
+
+export const DashkitContainer: React.FC<
+    // DashKit properties
+    React.ComponentProps<typeof DashKit> & {
+        ref?: React.LegacyRef<DashKit>;
+    } & {
+        // Extended Controls props
+        skipReload?: boolean;
+        isNewRelations?: boolean;
+    }
+> = ({skipReload = false, isNewRelations = false, ...props}) => {
+    const contextValue = React.useMemo(() => {
+        return {
+            config: props.config,
+            defaultGlobalParams: props.defaultGlobalParams,
+            skipReload,
+            isNewRelations,
+        };
+    }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
+
+    return (
+        <DashControlsConfigContext.Provider value={contextValue}>
+            <DashKit {...props} />
+        </DashControlsConfigContext.Provider>
+    );
+};
