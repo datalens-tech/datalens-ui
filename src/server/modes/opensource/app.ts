@@ -1,3 +1,4 @@
+import {createUikitPlugin} from '@gravity-ui/app-layout';
 import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
 import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
@@ -71,7 +72,10 @@ function initDataLensApp({
     afterAuth: AppMiddleware[];
 }) {
     beforeAuth.push(
-        createAppLayoutMiddleware({plugins: [createLayoutPlugin()], getAppLayoutSettings}),
+        createAppLayoutMiddleware({
+            plugins: [createLayoutPlugin(), createUikitPlugin()],
+            getAppLayoutSettings,
+        }),
         beforeAuthDefaults,
     );
 

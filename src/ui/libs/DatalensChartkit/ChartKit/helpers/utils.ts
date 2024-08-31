@@ -16,8 +16,11 @@ export function getPointActionParams(point: Point): PointActionParams {
     );
 }
 
-export function hasMatchedActionParams(data: StringParams, actionParams: StringParams = {}) {
-    const matchedParamNames = Object.entries(data).filter(([name]) => {
+export function hasMatchedActionParams(
+    data: StringParams | undefined,
+    actionParams: StringParams = {},
+): boolean {
+    const matchedParamNames = Object.entries(data ?? {}).filter(([name]) => {
         return name in actionParams && !isEmptyParam(actionParams[name]);
     });
 

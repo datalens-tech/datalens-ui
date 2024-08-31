@@ -1,15 +1,15 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../../utils';
 import {
     ChartKitQa,
     GradientType,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
-import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {openTestPage, slct} from '../../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Flat table', () => {
@@ -34,6 +34,13 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.FlatTableColumns,
                 twoPointGradientField,
             );
+
+            // Set the width of the column so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open();
+            await wizardPage.columnSettings.switchUnit(twoPointGradientField, 'percent');
+            await wizardPage.columnSettings.fillWidthValueInput(twoPointGradientField, '50');
+            await wizardPage.columnSettings.apply();
+
             await wizardPage.visualizationItemDialog.open(
                 PlaceholderName.FlatTableColumns,
                 twoPointGradientField,
