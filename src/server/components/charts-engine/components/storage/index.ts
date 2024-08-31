@@ -11,9 +11,9 @@ export function initStorage(data: BaseStorageInitParams) {
     storage.init(data);
 }
 
-export function resolveConfig(ctx: AppContext, options: ResolveConfigProps) {
+export const resolveConfig = (ctx: AppContext, options: ResolveConfigProps) => {
     return storage.resolveConfig(ctx, options);
-}
+};
 
 export function initPreloading(ctx: AppContext) {
     ctx.log('ChartsEngine: initializing config preloading');
