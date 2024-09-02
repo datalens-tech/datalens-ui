@@ -15,16 +15,17 @@ const b = block('entry-row');
 
 const i18n = I18n.keyset('component.entry-row.view');
 
+export type RowEntryData = {
+    entryId: string;
+    disabled?: boolean;
+    key: string;
+    name?: string;
+    scope: string;
+    type: string;
+    isLocked?: boolean;
+};
+
 export type EntryRowProps = {
-    entry: {
-        entryId: string;
-        disabled?: boolean;
-        key: string;
-        name?: string;
-        scope: string;
-        type: string;
-        isLocked?: boolean;
-    };
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
     className?: string;
@@ -32,7 +33,16 @@ export type EntryRowProps = {
     clasName?: string;
     disableHover?: boolean;
     enableHover?: boolean;
-    name?: string;
+} & (RowWithEntry | CustomRow);
+
+type RowWithEntry = {entry: RowEntryData; name?: string; icon?: React.ReactNode};
+type CustomRow = {entry?: RowEntryData; name: string; icon: React.ReactNode};
+
+const getName = (entry?: RowEntryData, name?: string) => {
+    if (!entry || name) {
+        return name;
+    }
+    return entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
 };
 
 export const EntryRow = ({
@@ -43,12 +53,12 @@ export const EntryRow = ({
     clasName,
     enableHover,
     name,
+    icon,
 }: EntryRowProps) => {
-    const defaultName = entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
-    const entryName = name || defaultName;
+    const entryName = getName(entry, name);
 
     const renderLock = () => {
-        if (!entry.isLocked) {
+        if (!entry || !entry.isLocked) {
             return false;
         }
         return (
@@ -59,6 +69,9 @@ export const EntryRow = ({
     };
 
     const renderIcon = () => {
+        if (!entry || icon) {
+            return icon;
+        }
         return (
             <EntryIcon
                 entry={entry}
@@ -69,20 +82,22 @@ export const EntryRow = ({
         );
     };
 
+    const showWithoutLink = nonInteractive || !entry;
+
     return (
         <div
-            key={entry.entryId}
+            key={entry?.entryId || name}
             className={b(
                 {
                     'non-interactive': nonInteractive,
-                    locked: entry.isLocked,
+                    locked: entry?.isLocked,
                     hoverable: enableHover,
                 },
                 clasName || className,
             )}
         >
             <div className={b('entry')}>
-                {nonInteractive ? (
+                {showWithoutLink ? (
                     <React.Fragment>
                         {renderIcon()}
                         <div className={b('name')} title={entryName}>
