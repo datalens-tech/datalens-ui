@@ -68,19 +68,16 @@ export const applyPlaceholderSettingsToAxis = (
             }
         } else if (placeholder.settings.scale === 'manual') {
             axis.endOnTick = false;
-            axis.min = Number((placeholder.settings.scaleValue as [string, string])[0]);
-            axis.max = Number((placeholder.settings.scaleValue as [string, string])[1]);
 
-            if (placeholder.settings.type === 'logarithmic') {
-                if (axis.min <= 0) {
-                    // Fallback to null for incorrect case
-                    axis.min = null;
-                }
+            const minValue = Number((placeholder.settings.scaleValue as [string, string])[0]);
+            const maxValue = Number((placeholder.settings.scaleValue as [string, string])[1]);
 
-                if (axis.max <= 0) {
-                    // Fallback to null for incorrect case
-                    axis.max = null;
-                }
+            if (placeholder.settings.type !== 'logarithmic' || 0 < minValue) {
+                axis.min = minValue;
+            }
+
+            if (placeholder.settings.type !== 'logarithmic' || 0 < maxValue) {
+                axis.max = maxValue;
             }
         }
 
