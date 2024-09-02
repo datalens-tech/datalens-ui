@@ -26,3 +26,9 @@ export type WidgetEvent<T> = {
     handler: WidgetEventHandler | WidgetEventHandler[];
     scope?: T;
 };
+
+export type GraphTooltipLine = {
+    originalValue: number;
+    seriesName: string;
+    value: string;
+};

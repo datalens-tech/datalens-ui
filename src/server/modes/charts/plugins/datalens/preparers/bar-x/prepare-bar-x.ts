@@ -10,11 +10,13 @@ import type {
 import {
     AxisMode,
     AxisNullsMode,
+    Feature,
     PlaceholderId,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
     isDimensionField,
+    isMarkdownField,
     isMeasureField,
     isMeasureValue,
     isPercentVisualization,
@@ -25,6 +27,7 @@ import {
     chartKitFormatNumberWrapper,
     collator,
     formatDate,
+    getLabelValue,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -64,10 +67,13 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         usedColors,
         ChartEditor,
         disableDefaultSorting = false,
+        features,
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
+
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const x: ServerField | undefined = xPlaceholder?.items[0];
     const xDataType = x ? idToDataType[x.guid] : null;
@@ -116,6 +122,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
+    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -334,7 +341,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     id: line.id,
                     title: line.title || 'Null',
                     tooltip: line.tooltip,
-                    dataLabels: line.dataLabels,
+                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel},
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -384,13 +391,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                                 }
                             }
 
-                            const pointLabel = innerLabels && innerLabels[category];
-
-                            if (pointLabel === undefined) {
-                                point.label = '';
-                            } else {
-                                point.label = pointLabel;
-                            }
+                            point.label = getLabelValue(innerLabels?.[category], isMarkdownLabel);
 
                             if (isActionParamsEnable) {
                                 const actionParams: Record<string, any> = {};
@@ -480,6 +481,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 isSegmentsExists: isSegmentsExists,
                 usedColors,
             });
+        }
+
+        if (isMarkdownLabel) {
+            ChartEditor.updateConfig({useMarkdown: true});
         }
 
         if (isXCategoryAxis) {

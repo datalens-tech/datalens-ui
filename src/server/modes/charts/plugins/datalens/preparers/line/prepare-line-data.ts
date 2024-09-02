@@ -4,11 +4,13 @@ import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../sha
 import {
     AxisMode,
     AxisNullsMode,
+    Feature,
     PlaceholderId,
     WizardVisualizationId,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
     isDateField,
+    isMarkdownField,
     isMeasureField,
     isMeasureValue,
     isNumberField,
@@ -21,6 +23,7 @@ import {
     chartKitFormatNumberWrapper,
     collator,
     formatDate,
+    getLabelValue,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -58,9 +61,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
+        features,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField = xPlaceholder?.items[0];
     const xDataType = xField ? idToDataType[xField.guid] : null;
@@ -108,6 +113,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
+    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -345,7 +351,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     id: line.id,
                     title: line.title || 'Null',
                     tooltip: line.tooltip,
-                    dataLabels: line.dataLabels,
+                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel},
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -404,8 +410,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                                 }
                             }
 
-                            const pointLabel = innerLabels && innerLabels[category];
-                            point.label = pointLabel === undefined ? '' : pointLabel;
+                            point.label = getLabelValue(innerLabels?.[category], isMarkdownLabel);
 
                             if (isActionParamsEnable) {
                                 const [yField] = ySectionItems || [];
@@ -512,6 +517,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 isSegmentsExists,
                 isShapesDefault: shapes.length === 0 || isPseudoField(shapes[0]),
             });
+        }
+
+        if (isMarkdownLabel) {
+            ChartEditor.updateConfig({useMarkdown: true});
         }
 
         if (isXCategoryAxis) {
