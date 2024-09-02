@@ -1,5 +1,5 @@
 @mixin flexReactGridLayout {
-    > .react-grid-layout {
+    & > .react-grid-layout {
         flex: 1;
         transition: none;
     }
