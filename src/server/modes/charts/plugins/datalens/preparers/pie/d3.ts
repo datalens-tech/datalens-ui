@@ -41,7 +41,7 @@ function mapPieSeries(args: MapPieSeriesArgs) {
                 };
 
                 if (isLabelsEnabled) {
-                    dataItem.label = getFormattedLabel(item.label, labelField);
+                    dataItem.label = getFormattedLabel(item.label as string | number, labelField);
                 }
 
                 return dataItem;
