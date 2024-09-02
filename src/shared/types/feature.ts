@@ -90,6 +90,8 @@ export enum Feature {
     NewSandbox_100p = 'NewSandbox_100p',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
+    /** Allow markdown in chart fields. */
+    WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
 }
