@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {
+    DashTab,
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
@@ -210,7 +211,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        tabId: currentTab?.id,
+                        tabId: (currentTab as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
