@@ -1,5 +1,6 @@
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 import type {Optional} from 'utility-types';
 
 import type {DashStats} from '../../../../shared';
@@ -10,7 +11,11 @@ const dashStatsVisitedTabs: Set<string> = new Set();
 
 function collectDashStats(data: Optional<DashStats, 'login' | 'userId' | 'tenantId'>) {
     const uniqTab = `${data.dashId}_${data.dashTabId}`;
-    if (Utils.isEnabledFeature(Feature.EnableDashChartStat) && !dashStatsVisitedTabs.has(uniqTab)) {
+    if (
+        Utils.isEnabledFeature(Feature.EnableDashChartStat) &&
+        !dashStatsVisitedTabs.has(uniqTab) &&
+        !isEmbeddedEntry()
+    ) {
         const dashStats = {
             userId: DL.USER_ID,
             tenantId: DL.CURRENT_TENANT_ID || '',

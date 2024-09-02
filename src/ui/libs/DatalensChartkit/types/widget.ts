@@ -97,6 +97,7 @@ export interface WidgetBase {
          * - disabling escaping of the tooltip header in the tooltipHeader value
          */
         unsafe?: boolean;
+        useMarkdown?: boolean;
     };
     libraryConfig?: Highcharts.Options | Record<string, any>;
     requestId?: string;
@@ -160,6 +161,7 @@ export type GraphWidget = WidgetBaseWithData &
             events?: {
                 click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
             };
+            useMarkdown?: boolean;
         };
         libraryConfig: Highcharts.Options;
         comments?: HighchartsComment[];
@@ -257,6 +259,7 @@ export type TableWidgetData = WidgetBaseWithData &
             events?: {
                 click?: WidgetEvent<TableWidgetEventScope> | WidgetEvent<TableWidgetEventScope>[];
             };
+            useMarkdown?: boolean;
         };
         unresolvedParams?: StringParams;
     };
@@ -299,6 +302,7 @@ type MetricWidget = WidgetBaseWithData & {
     config?: {
         metricVersion?: 2;
         drillDown?: DrillDownConfig;
+        useMarkdown?: boolean;
     };
 };
 
@@ -308,6 +312,7 @@ export interface Metric2Widget extends WidgetBaseWithData {
     config?: {
         metricVersion: 2;
         drillDown?: DrillDownConfig;
+        useMarkdown?: boolean;
     };
 }
 

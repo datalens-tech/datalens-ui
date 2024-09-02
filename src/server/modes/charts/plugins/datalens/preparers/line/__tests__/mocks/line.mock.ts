@@ -1,3 +1,5 @@
+import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
+
 const chartEditorMock = {
     getLang: () => {
         return 'en';
@@ -8,6 +10,7 @@ const chartEditorMock = {
 };
 
 export const linesColoredByFieldWithPostfixArgs = {
+    ...EmptyPrepapreArgs,
     ChartEditor: chartEditorMock,
     placeholders: [
         {
