@@ -1,7 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
-import type {Field, PointSizeConfig, ServerField} from '../../../../../../../shared';
+import type {PointSizeConfig, ServerField} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
@@ -416,17 +416,17 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         });
     }
 
-    let categories: (string | number | WrappedMarkdown)[] = [];
+    let categories: (string | number | WrappedMarkdown)[] | undefined;
 
     if (!xIsNumber && !xIsDate) {
         categories = xCategories;
 
         if (isMarkdownField(x) && isMarkdownFieldsEnabled) {
-            categories = categories.map((c) => wrapMarkdownValue(c as string));
+            categories = categories?.map((c) => wrapMarkdownValue(c as string));
         }
     }
 
-    const hasMarkdown = [x, y, z, size, color, shape].some((field) => (field as Field)?.isMarkdown);
+    const hasMarkdown = [x, y, z, size, color, shape].some((field) => isMarkdownField(field));
     if (isMarkdownFieldsEnabled && hasMarkdown) {
         ChartEditor.updateConfig({useMarkdown: true});
     }
