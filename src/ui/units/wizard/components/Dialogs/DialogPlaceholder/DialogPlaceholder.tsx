@@ -77,7 +77,7 @@ interface State {
     firstField: Field | undefined;
     settings: PlaceholderSettings;
     tooltipContent: React.ReactNode;
-    tooltipType: 'type' | 'scaleValue' | undefined;
+    tooltipType: 'type' | 'scale' | 'scaleValue' | undefined;
 }
 
 export type OpenDialogPlaceholderArgs = {
@@ -93,6 +93,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     tooltipRef = React.createRef<PopoverInstanceProps>();
     tooltipScaleValueAnchorRef = React.createRef<any>();
     tooltipAxisTypeAnchorRef = React.createRef<any>();
+    tooltipScaleAnchorRef = React.createRef<any>();
 
     constructor(props: Props) {
         super(props);
@@ -577,6 +578,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     setting={
                         <DialogRadioButtons
                             stretched={true}
+                            ref={this.tooltipScaleAnchorRef}
                             items={SCALE_RADIO_BUTTON_OPTIONS}
                             value={scale}
                             onUpdate={this.handleScaleRadioButtonsUpdate}
@@ -672,6 +674,19 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     renderModalBody() {
         const {tooltipContent, tooltipType} = this.state;
 
+        let anchorRef;
+        switch (tooltipType) {
+            case 'type':
+                anchorRef = this.tooltipAxisTypeAnchorRef;
+                break;
+            case 'scale':
+                anchorRef = this.tooltipScaleAnchorRef;
+                break;
+            case 'scaleValue':
+                anchorRef = this.tooltipScaleValueAnchorRef;
+                break;
+        }
+
         return (
             <div>
                 {this.renderScaleSettings()}
@@ -690,11 +705,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     <Popover
                         ref={this.tooltipRef}
                         hasClose={true}
-                        anchorRef={
-                            tooltipType === 'type'
-                                ? this.tooltipAxisTypeAnchorRef
-                                : this.tooltipScaleValueAnchorRef
-                        }
+                        anchorRef={anchorRef}
                         content={tooltipContent}
                         hasArrow={true}
                     />
@@ -776,6 +787,8 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 scale: scaleMode,
                 scaleValue,
             },
+            tooltipType: undefined,
+            tooltipContent: '',
         });
     };
 
@@ -814,7 +827,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                     scaleValue: SETTINGS.SCALE_VALUE.MIN_MAX,
                 };
 
-                updatedState.tooltipType = 'scaleValue';
+                updatedState.tooltipType = 'scale';
                 updatedState.tooltipContent = (
                     <span data-qa={DialogPlaceholderQa.TooltipZeroToMaxScale}>
                         {i18n('wizard', 'tooltip_zero-to-max-scale')}
