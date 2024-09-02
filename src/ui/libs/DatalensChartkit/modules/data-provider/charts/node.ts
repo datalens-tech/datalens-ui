@@ -336,7 +336,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
             await unwrapMarkdown({config: result.config, data: result.data});
 
-            await applyChartkitHandlers({
+            applyChartkitHandlers({
                 config: result.config,
                 libraryConfig: result.libraryConfig,
             });
@@ -443,7 +443,7 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
     }
 }
 
-async function applyChartkitHandlers(args: {
+function applyChartkitHandlers(args: {
     config: Widget['config'];
     libraryConfig: Widget['libraryConfig'];
 }) {
