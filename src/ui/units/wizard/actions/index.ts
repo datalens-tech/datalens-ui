@@ -607,6 +607,7 @@ export function removeDataset({
                             'formatting',
                             'columnSettings',
                             'barsSettings',
+                            'hintSettings',
                         ];
 
                         if (item.filter) {
