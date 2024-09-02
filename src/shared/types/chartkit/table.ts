@@ -74,7 +74,7 @@ export type CommonTableColumn = {
     custom?: Record<string, any>;
     pinned?: boolean;
     hint?: string;
-    header?: WrappedHTML;
+    htmlName?: WrappedHTML;
 };
 export type TableColumnFormatter = {
     format?: 'number' | 'percent';

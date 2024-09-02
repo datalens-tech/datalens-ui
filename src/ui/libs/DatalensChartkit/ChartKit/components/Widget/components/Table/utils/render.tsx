@@ -298,13 +298,13 @@ export function valueFormatter(
     );
 }
 
-function getHeaderNode({markup, formattedName, name, hint, header}: TableColumn) {
+function getHeaderNode({markup, formattedName, name, hint, htmlName}: TableColumn) {
     let content: React.ReactNode;
 
     if (markup) {
         content = <Markup item={markup} />;
-    } else if (header) {
-        content = getReactNodeWithWrappedHTML(header);
+    } else if (htmlName) {
+        content = getReactNodeWithWrappedHTML(htmlName);
     } else {
         content = formattedName ?? name;
     }
