@@ -32,8 +32,7 @@ const DeleteEntryDialog = React.memo<Props>(({open, data, onClose}) => {
     const handleApply = React.useCallback(() => {
         dispatch(
             deleteEntry({
-                entryId: data.entryId,
-                scope: data.scope,
+                entry: data,
                 deleteInline: true,
             }),
         ).then(() => {

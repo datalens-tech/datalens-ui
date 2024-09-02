@@ -32,6 +32,22 @@ export const fixPieTotals = (args: {data: GraphWidget}) => {
     });
 };
 
+export const applyTreemapLabelFormatter = (args: {data: GraphWidget}) => {
+    const {data} = args;
+    const pathToFormatter = 'libraryConfig.plotOptions.treemap.dataLabels.formatter';
+
+    if (!has(data, pathToFormatter)) {
+        set(data, pathToFormatter, function (this: any) {
+            const name = this.point.name;
+            if (Array.isArray(name)) {
+                return name.join('<br />');
+            }
+
+            return name;
+        });
+    }
+};
+
 export const applySetActionParamsEvents = (args: {
     action: ShapedAction;
     data: GraphWidget;

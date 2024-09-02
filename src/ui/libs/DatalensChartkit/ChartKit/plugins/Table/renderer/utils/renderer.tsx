@@ -15,13 +15,13 @@ import type {
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
-import type {THead} from '../../../../../../../components/Table/types';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
+import type {THead} from '../components/Table/types';
 import {TreeCell} from '../components/TreeCell/TreeCell';
 
-import {calculateNumericProperty, isStringValueInPixel} from './math';
+import {calculateNumericProperty} from './math';
 
 const b = block('chartkit-table-widget');
 
@@ -32,22 +32,13 @@ export type HeadCell = THead & {
     custom?: unknown;
 };
 
-export function mapHeadCell(
-    th: TableHead,
-    tableWidth: number | undefined,
-    head: TableHead[] | undefined,
-): HeadCell {
+export function mapHeadCell(th: TableHead, tableWidth: number | undefined): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
     const hint = get(th, 'hint');
 
-    let cellWidth: number | undefined;
-    if (head?.some((h) => !h.width || !isStringValueInPixel(String(h.width)))) {
-        cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
-    }
-
     return {
         ...th,
-        width: cellWidth,
+        width: calculateNumericProperty({value: th.width, base: tableWidth}),
         id: String(th.id),
         header: () => {
             const cell = {
@@ -67,13 +58,8 @@ export function mapHeadCell(
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
             const cell = cellData as TableCommonCell;
-            const contentStyles = getCellContentStyles({
-                cell,
-                column: th,
-                columns: head || [],
-            });
             return (
-                <div data-qa={ChartKitTableQa.CellContent} style={{...contentStyles}}>
+                <React.Fragment>
                     {renderCellContent({cell, column: th})}
                     {cell.sortDirection && (
                         <Icon
@@ -81,7 +67,7 @@ export function mapHeadCell(
                             data={cell.sortDirection === 'asc' ? CaretLeft : CaretRight}
                         />
                     )}
-                </div>
+                </React.Fragment>
             );
         },
         columns: get(th, 'sub', []).map(mapHeadCell),
@@ -149,7 +135,7 @@ export function renderCellContent(args: {
         } else if (cellType === 'number') {
             formattedValue = numberFormatter(cell.value as number, column as NumberViewOptions);
         } else {
-            formattedValue = String(cell.value);
+            formattedValue = String(cell.value ?? '');
         }
     }
 

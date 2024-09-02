@@ -1,9 +1,4 @@
-import type {
-    DashWidgetConfig,
-    IChartEditor,
-    ServerChartsConfig,
-    Shared,
-} from '../../../../../shared';
+import type {DashWidgetConfig, IChartEditor} from '../../../../../shared';
 import {WRAPPED_FN_KEY} from '../../../../../shared/constants/ui-sandbox';
 import {wrapHtml} from '../../../../../shared/utils/ui-sandbox';
 import {resolveIntervalDate, resolveOperation, resolveRelativeDate} from '../utils';
@@ -16,17 +11,16 @@ function getOrphanedObject() {
     return Object.create(null);
 }
 
-type GetChartApiContextArgs = {
+export type GetChartApiContextArgs = {
     name: string;
     params: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, any>;
     dataStats?: any;
-    shared: Record<string, object> | Shared | ServerChartsConfig;
+    shared: unknown;
     hooks?: Record<string, any>;
     userLang: string | null;
-    disableErrorTransformer?: boolean;
 };
 
 export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContext => {
@@ -40,7 +34,6 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         shared = {},
         hooks,
         userLang,
-        disableErrorTransformer = false,
     } = args;
 
     const api: IChartEditor = {
@@ -116,11 +109,6 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     }
 
     if (name === 'Urls') {
-        if (!disableErrorTransformer) {
-            api.setErrorTransform = (errorTransformer) => {
-                context.__runtimeMetadata.errorTransformer = errorTransformer;
-            };
-        }
         api.getSortParams = () => getSortParams(params);
     }
 

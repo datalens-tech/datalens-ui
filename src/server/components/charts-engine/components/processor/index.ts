@@ -7,9 +7,11 @@ import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    StringParams,
     WorkbookId,
 } from '../../../../../shared';
 import {
@@ -130,10 +132,10 @@ export type ProcessorParams = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     configOverride?: {
         data: Record<string, string>;
-        key: string;
+        key?: string;
         entryId?: string;
         type?: string;
-        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS};
+        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS | ControlType.Dash};
         publicAuthor?: EntryPublicAuthor;
     };
     useUnreleasedConfig?: boolean;
@@ -185,7 +187,7 @@ export class Processor {
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
         let config: ResolvedConfig;
-        let params: Record<string, string | string[]>;
+        let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
         const hooks = new ProcessorHooks({chartsEngine});
@@ -417,8 +419,10 @@ export class Processor {
                 normalizeParams(paramsOverride);
 
             hrStart = process.hrtime();
+            usedParams = {};
             const paramsTabResults = await builder.buildParams({
                 params: normalizedParamsOverride,
+                usedParams: usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });
@@ -430,7 +434,10 @@ export class Processor {
 
             ctx.log('EditorEngine::Params', {duration: getDuration(hrStart)});
 
-            usedParams = {...(paramsTabResults.exports as Record<string, string | string[]>)};
+            usedParams = {
+                ...(paramsTabResults.exports as Record<string, string | string[]>),
+                ...usedParams,
+            };
 
             // Merge used to be here. Merge in this situation does not work as it should for arrays, so assign.
             params = Object.assign({}, usedParams, normalizedParamsOverride);
@@ -563,14 +570,6 @@ export class Processor {
                     }
                 }
 
-                if (!isEnabledServerFeature(ctx, Feature.NoErrorTransformer)) {
-                    const {errorTransformer} = sourcesTabResults.runtimeMetadata;
-
-                    if (errorTransformer) {
-                        response.error = errorTransformer(response.error);
-                    }
-                }
-
                 injectLogs({target: response});
 
                 if (error instanceof Error) {
@@ -670,6 +669,7 @@ export class Processor {
                     data,
                     sources: resolvedSources,
                     params,
+                    usedParams,
                     actionParams: normalizedActionParamsOverride,
                     hooks,
                 });
@@ -708,6 +708,7 @@ export class Processor {
             const uiTabResults = await builder.buildUI({
                 data,
                 params,
+                usedParams,
                 actionParams: normalizedActionParamsOverride,
                 hooks,
             });

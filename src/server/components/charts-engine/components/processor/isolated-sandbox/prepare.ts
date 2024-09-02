@@ -1,38 +1,55 @@
+import {updateParams} from '../paramsUtils';
+
 import {getPrepareApiAdapter} from './interop/charteditor-api';
 import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
 import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
+import {safeStringify} from './utils';
 
-export const getPrepare = ({noJsonFn}: {noJsonFn: boolean}) => `
+export const getPrepare = ({noJsonFn, name}: {noJsonFn: boolean; name: string}) => {
+    return `
+const __name = '${name}';
 var module = {exports: {}};
 var exports = module.exports;
 const console = {log: (...args) => { 
         const processed = args.map(elem => {
-            return __prepareFunctionsForStringify(elem);
+            return __safeStringify(elem, {isConsole: true});
         })
         return __log(...processed);
     }
 };
 
-const __prepareFunctionsForStringify = (value) => {
-    function replaceFunctions(value) {
-        if(Array.isArray(value)) {
-            return value.map(replaceFunctions);   
-        }
-        if (typeof value === 'object' && value !== null) {
-            const replaced = {};
-            Object.keys(value).forEach(key => {
-                replaced[key] = replaceFunctions(value[key]);     
-            })
-            return replaced;
-        }
-        if (typeof value === 'function') {
-            return value.toString();
-        }
-        return value;
-    }
-    return replaceFunctions(value);
+console.error = console.log;
+
+const __safeStringify = ${safeStringify.toString()};
+const __updateParams = ${updateParams.toString()};
+function __resolveParams(params) {
+    Object.keys(params).forEach((param) => {
+        const paramValues = params[param];
+        paramValues.forEach((value, i) => {
+            if (typeof value === 'string') {
+                if (value.indexOf('__relative') === 0) {
+                    const resolvedRelative = _ChartEditor_resolveRelative(value);
+
+                    if (resolvedRelative) {
+                        // BI-1308
+                        paramValues[i] = resolvedRelative;
+                    }
+                } else if (value.indexOf('__interval') === 0) {
+                    const resolvedInterval = _ChartEditor_resolveInterval(value);
+
+                    if (resolvedInterval) {
+                        // BI-1308
+                        const from = resolvedInterval.from;
+                        const to = resolvedInterval.to;
+
+                        paramValues[i] = \`__interval_\${from}_\${to}\`;
+                    }
+                }
+            }
+        });
+    });
 }
 
 ${libsControlV1Interop.prepareAdapter};
@@ -45,7 +62,11 @@ function require(name) {
     if (lowerName === 'libs/datalens/v3') {
         return datalensV3prepareAdapter;
     } else if (lowerName === 'libs/control/v1') {
-        return controlV1prepareAdapter;
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].controlModule;
+        } else {
+            return controlV1prepareAdapter;
+        }
     } else if (lowerName === 'libs/qlchart/v1') {
         return qlChartV1prepareAdapter;
     } else if (lowerName === 'libs/dataset/v2') {
@@ -62,3 +83,4 @@ function require(name) {
 }
 
 ${getPrepareApiAdapter({noJsonFn})}`;
+};

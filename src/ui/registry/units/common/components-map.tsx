@@ -15,6 +15,7 @@ import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEn
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
 import type {CloudTreeSelectBaseProps} from './types/components/CloudTreeSelectBase';
 import type {DialogAddParticipantsProps} from './types/components/DialogAddParticipants';
+import type {DialogShareProps} from './types/components/DialogShare';
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
 import type {IamAccessDialogProps} from './types/components/IamAccessDialog';
@@ -55,4 +56,5 @@ export const commonComponentsMap = {
     Footer: makeDefaultEmpty(),
     AclSubject: makeDefaultEmpty<AclSubjectProps>(),
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
+    DialogShare: makeDefaultEmpty<DialogShareProps>(),
 } as const;

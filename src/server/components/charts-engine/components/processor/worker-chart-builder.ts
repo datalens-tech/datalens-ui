@@ -1,7 +1,4 @@
-import path from 'path';
-
-import workerpool from 'workerpool';
-import type {Pool, Proxy} from 'workerpool';
+import type {Proxy} from 'workerpool';
 
 import type {
     DashWidgetConfig,
@@ -11,20 +8,10 @@ import type {
 } from '../../../../../shared';
 import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
-import type {WizardWorker} from '../worker/types';
+import type {WizardWorker} from '../wizard-worker/types';
+import {getChartApiContext} from '../wizard-worker/utils';
 
-import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder, ChartBuilderResult} from './types';
-
-let wizardWorkersPool: Pool | null = null;
-async function getWizardWorker(): Promise<Proxy<WizardWorker>> {
-    if (wizardWorkersPool === null) {
-        const scriptPath = path.resolve(__dirname, '../worker');
-        wizardWorkersPool = workerpool.pool(scriptPath);
-    }
-
-    return wizardWorkersPool.proxy<WizardWorker>();
-}
 
 const ONE_SECOND = 1000;
 const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
@@ -39,13 +26,14 @@ type WizardChartBuilderArgs = {
     };
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     isScreenshoter: boolean;
+    worker: Proxy<WizardWorker>;
 };
 
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {config, widgetConfig, userLang} = args;
-    const wizardWorker = await getWizardWorker();
+    const {config, widgetConfig, userLang, worker} = args;
+    const wizardWorker = worker;
     let shared: Record<string, any>;
 
     const app = registry.getApp();

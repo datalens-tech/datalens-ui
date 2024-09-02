@@ -1,6 +1,6 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import type {Field as TField} from 'shared';
-import {DATASET_FIELD_TYPES} from 'shared';
+import {DATASET_FIELD_TYPES, PlaceholderId, WizardVisualizationId} from 'shared';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -41,3 +41,42 @@ export const getFormattingDataType = (item: TField, cast: DATASET_FIELD_TYPES | 
 
     return item.data_type;
 };
+
+export function canUseStringAsMarkdown(
+    visualizationId: WizardVisualizationId,
+    placeholderId: PlaceholderId | undefined,
+) {
+    switch (visualizationId) {
+        case WizardVisualizationId.Scatter: {
+            const possiblePlaceholders: PlaceholderId[] = [
+                PlaceholderId.X,
+                PlaceholderId.Y,
+                PlaceholderId.Points,
+                PlaceholderId.Colors,
+                PlaceholderId.Shapes,
+            ];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
+        case WizardVisualizationId.Treemap: {
+            const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Dimensions];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
+        case WizardVisualizationId.Geopoint: {
+            const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Tooltips];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p:
+        case WizardVisualizationId.Pie: {
+            const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
+            return placeholderId && possiblePlaceholders.includes(placeholderId);
+        }
+        default:
+            return false;
+    }
+}

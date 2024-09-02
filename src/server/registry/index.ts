@@ -15,7 +15,7 @@ import commonRegistry from './units/common';
 let app: ExpressKit;
 let chartsEngine: ChartsEngine;
 
-const wrapperGetGatewayControllers = (
+export const wrapperGetGatewayControllers = (
     schemasByScope: SchemasByScope,
     config: GatewayConfig<AppContext, Request, Response>,
 ) => getGatewayControllers<SchemasByScope, AppContext, Request, Response>(schemasByScope, config);
