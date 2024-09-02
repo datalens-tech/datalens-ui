@@ -389,11 +389,11 @@ class Body extends React.PureComponent<BodyProps> {
         return widgetsMap;
     }
 
-    getWidgetLayoutBiId(widgetId: string) {
+    getWidgetLayoutById(widgetId: string) {
         return this.getMemoLayoutMap().byId[widgetId];
     }
 
-    getWidgetLayoutBiGroup(groupId: string) {
+    getWidgetLayoutByGroup(groupId: string) {
         return this.getMemoLayoutMap().byGroup[groupId];
     }
 
@@ -535,7 +535,7 @@ class Body extends React.PureComponent<BodyProps> {
     ) => {
         const isEmpty = params.items.length === 0;
         const hasFixedContainerElements = Boolean(
-            this.getWidgetLayoutBiGroup(FIXED_GROUP_CONTAINER_ID),
+            this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID),
         );
 
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
@@ -562,7 +562,7 @@ class Body extends React.PureComponent<BodyProps> {
         params: DashkitGroupRenderWithContextProps,
     ) => {
         const isEmpty = params.items.length === 0;
-        const hasFixedHeaderElements = Boolean(this.getWidgetLayoutBiGroup(FIXED_GROUP_HEADER_ID));
+        const hasFixedHeaderElements = Boolean(this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID));
 
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
@@ -659,7 +659,7 @@ class Body extends React.PureComponent<BodyProps> {
                         icon: <Icon data={Pin} size={16} />,
                         handler: this.togglePinElement,
                         visible: (configItem) => {
-                            const parent = this.getWidgetLayoutBiId(configItem.id)?.parent;
+                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
                             return (
                                 parent !== FIXED_GROUP_HEADER_ID &&
@@ -674,7 +674,7 @@ class Body extends React.PureComponent<BodyProps> {
                         icon: <Icon data={PinSlash} size={16} />,
                         handler: this.togglePinElement,
                         visible: (configItem) => {
-                            const parent = this.getWidgetLayoutBiId(configItem.id)?.parent;
+                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
                             return (
                                 parent === FIXED_GROUP_HEADER_ID ||
