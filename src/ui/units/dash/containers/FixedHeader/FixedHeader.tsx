@@ -27,7 +27,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
     const [leftOffset, setLeftOffset] = React.useState(0);
     const [width, setWidth] = React.useState<number | string>(0);
 
-    React.useEffect(() => {
+    React.useLayoutEffect(() => {
         const handler = () => {
             const rect = rootRef.current?.getBoundingClientRect();
 
@@ -48,7 +48,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
             resizeObserver.observe(rootRef.current);
         }
 
-        handler();
+        setTimeout(handler);
 
         return () => {
             window.document?.removeEventListener('scroll', handler);
@@ -119,8 +119,9 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
         };
     }, [containerRef, isRenderEmpty]);
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET);
+    const isScrollCaptured = isFixed && !editMode && !props.isCollapsed && isScrollLocked;
 
-    useBodyScrollLock({enabled: isFixed && !editMode && !props.isCollapsed && isScrollLocked});
+    useBodyScrollLock({enabled: isScrollCaptured});
 
     const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
