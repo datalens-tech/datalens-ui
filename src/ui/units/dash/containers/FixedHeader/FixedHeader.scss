@@ -1,3 +1,10 @@
+@mixin flexReactGridLayout {
+    > .react-grid-layout {
+        flex: 1;
+        transition: none;
+    }
+}
+
 .dash-fixed-header {
     &__controls {
         display: flex;
@@ -35,10 +42,7 @@
         display: flex;
         flex-grow: 1;
 
-        > .react-grid-layout {
-            flex: 1;
-            transition: none;
-        }
+        @include flexReactGridLayout;
     }
 
     &__controls-settings {
@@ -57,7 +61,8 @@
     }
 
     &__container-placeholder {
-        margin-bottom: 22px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__container-wrapper {
@@ -66,10 +71,7 @@
         flex-direction: row;
         flex: 1;
 
-        > .react-grid-layout {
-            flex: 1;
-            transition: none;
-        }
+        @include flexReactGridLayout;
     }
 
     &__container {

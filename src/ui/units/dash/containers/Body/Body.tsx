@@ -26,7 +26,7 @@ import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
-import type {DashTab, DashTabItem} from 'shared';
+import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {
     ControlQA,
     DashEntryQa,
@@ -191,7 +191,17 @@ class Body extends React.PureComponent<BodyProps> {
     _memoizedContext: MemoContext = {};
     _memoizedControls: DashKitProps['overlayControls'];
     _memoizedMenu: DashKitProps['overlayMenuItems'];
-    _memoizedWidgetsMap: any = {layout: null, byGroup: {}, byId: {}}; // TODO type
+    _memoizedWidgetsMap: {
+        layout: DashTabLayout[] | null;
+        byGroup: Record<string, DashTabLayout[]>;
+        byId: Record<string, DashTabLayout>;
+        columns: number;
+    } = {
+        layout: null,
+        byGroup: {},
+        byId: {},
+        columns: 0,
+    };
 
     state: DashBodyState = {
         fixedHeaderCollapsed: {},
@@ -768,11 +778,11 @@ class Body extends React.PureComponent<BodyProps> {
         );
     };
 
-    private onDragStartHandler = () => {
+    private handleDragStart = () => {
         this.setState({isGlobalDragging: true});
     };
 
-    private onDragEndHandler = () => {
+    private handleDragEnd = () => {
         this.setState({isGlobalDragging: false});
     };
 
@@ -850,10 +860,7 @@ class Body extends React.PureComponent<BodyProps> {
         );
 
         return (
-            <DashKitDnDWrapper
-                onDragStart={this.onDragStartHandler}
-                onDragEnd={this.onDragEndHandler}
-            >
+            <DashKitDnDWrapper onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
                 {content}
             </DashKitDnDWrapper>
         );
