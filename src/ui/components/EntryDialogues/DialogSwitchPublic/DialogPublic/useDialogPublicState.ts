@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {groupEntitiesByScope} from 'ui/utils/helpers';
 import Utils from 'utils';
 
@@ -485,6 +486,7 @@ export const useDialogPublicState = ({
                     workbookId: propsEntry.workbookId,
                 })
                 .then(() => {
+                    reachMetricaGoal(CounterName.Main, GoalId.DashboardPublicAccessSubmit);
                     toaster.add({
                         name: 'successSwitchPublicationStatus',
                         theme: 'success',

@@ -10,6 +10,8 @@
   "context_filtering-other-charts": "This option enables you to apply filtering from this chart to other charts on the dashboard",
   "context_filtering-usage-limitations": "<link>More about filtration</link>",
   "field_autoheight": "Auto height",
+  "field_background": "Background",
+  "field_background-enable": "Enable",
   "field_description": "Description",
   "field_enable-filtering-other-charts": "Enable",
   "field_param-name": "Name",

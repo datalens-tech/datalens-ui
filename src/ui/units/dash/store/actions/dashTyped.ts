@@ -2,12 +2,12 @@ import type React from 'react';
 
 import type {
     AddConfigItem,
+    AddNewItemOptions,
     Config,
     DashKit,
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
-    SetNewItemOptions,
 } from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
@@ -934,7 +934,7 @@ export const setSettings = (settings: DashSettings): SetSettingsAction => ({
     payload: settings,
 });
 
-export const setCopiedItemData = (payload: {item: AddConfigItem; options: SetNewItemOptions}) => ({
+export const setCopiedItemData = (payload: {item: AddConfigItem; options: AddNewItemOptions}) => ({
     type: actionTypes.SET_COPIED_ITEM_DATA,
     payload,
 });

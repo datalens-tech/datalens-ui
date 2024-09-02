@@ -24,3 +24,4 @@ export * from './user';
 export * from './api-v2';
 export * from './ui-sandbox';
 export * from './themes';
+export * from './markdown';

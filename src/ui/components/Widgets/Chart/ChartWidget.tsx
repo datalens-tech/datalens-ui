@@ -23,6 +23,7 @@ import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
+import {getPreparedWrapSettings} from '../../DashKit/utils';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
@@ -499,14 +500,24 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
+    const showBgColor = Boolean(
+        currentTab.background?.enabled &&
+            currentTab.background?.color &&
+            currentTab.background?.color !== 'transparent',
+    );
+
+    const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
+
     return (
         <div
             ref={rootNodeRef}
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
+                classMod,
                 ['wait-for-init']: !isInit,
             })}`}
+            style={style}
             data-qa="chart-widget"
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >

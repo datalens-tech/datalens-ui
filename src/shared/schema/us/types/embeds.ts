@@ -5,12 +5,10 @@ export type Embed = {
     entryId: string;
     depsIds: string[];
     unsignedParams: string[];
-    // TODO: remove optional
-    privateParams?: string[];
+    privateParams: string[];
     createdBy: string;
     createdAt: string;
-    // TODO: remove optional
-    publicParamsMode?: boolean;
+    publicParamsMode: boolean;
 };
 
 export type CreateEmbedArgs = {
@@ -19,9 +17,8 @@ export type CreateEmbedArgs = {
     entryId: string;
     depsIds: string[];
     unsignedParams: string[];
-    // TODO: remove optional
-    privateParams?: string[];
-    publicParamsMode?: boolean;
+    privateParams: string[];
+    publicParamsMode: boolean;
 };
 
 export type CreateEmbedResponse = Embed;

@@ -93,6 +93,7 @@ export const prepareBarXArgs = {
         order: [x1Field, yField],
         totals: [],
     },
+    features: {},
 };
 
 const monthField = {
@@ -191,6 +192,7 @@ export const prepareBarXWithMeasureValuesArgs = {
     shared: {visualization: {id: 'column'}},
     shapes: [],
     segments: [],
+    features: {},
 } as unknown as PrepareFunctionArgs;
 
 export const prepareBarXWithMeasureValuesResult = {
