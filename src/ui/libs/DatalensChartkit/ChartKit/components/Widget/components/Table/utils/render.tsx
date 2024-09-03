@@ -298,13 +298,15 @@ export function valueFormatter(
     );
 }
 
-function getHeaderNode({markup, formattedName, name, hint, htmlName}: TableColumn) {
+function getHeaderNode(column: TableHead) {
+    const {markup, formattedName, name} = column;
+    const hint = 'hint' in column ? column.hint : undefined;
     let content: React.ReactNode;
 
     if (markup) {
         content = <Markup item={markup} />;
-    } else if (htmlName) {
-        content = getReactNodeWithWrappedHTML(htmlName);
+    } else if (isWrappedHTML(formattedName)) {
+        content = getReactNodeWithWrappedHTML(formattedName);
     } else {
         content = formattedName ?? name;
     }
@@ -382,15 +384,7 @@ export const getColumnsAndNames = ({
 
                 const columnData: Column<DataTableData> = {
                     name: columnName,
-                    header: (
-                        <span className={b('head-cell', {'with-markup': Boolean(column.markup)})}>
-                            {column.markup ? (
-                                <Markup item={column.markup} />
-                            ) : (
-                                column.formattedName ?? column.name
-                            )}
-                        </span>
-                    ),
+                    header: getHeaderNode(column),
                     customStyle: ({row, header, name}) => {
                         if (header) {
                             return camelCaseCss(column.css);

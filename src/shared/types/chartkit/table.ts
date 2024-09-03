@@ -58,8 +58,7 @@ export type TableRow = TableValuesRow | TableCellsRow;
 export type CommonTableColumn = {
     id?: string;
     name: string;
-    /** Formatted number from Wizard */
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     type: TableCommonCellType;
     group?: boolean;
     autogroup?: boolean;
@@ -74,7 +73,6 @@ export type CommonTableColumn = {
     custom?: Record<string, any>;
     pinned?: boolean;
     hint?: string;
-    htmlName?: WrappedHTML;
 };
 export type TableColumnFormatter = {
     format?: 'number' | 'percent';
@@ -136,8 +134,7 @@ export type TableColumn =
 type TableSubColumn = {
     id?: string;
     name: string;
-    // formatted number from Wizard
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     css?: ChartKitCss;
     markup: MarkupItem;
     sub: (TableColumn | TableSubColumn)[];

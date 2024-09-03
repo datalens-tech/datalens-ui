@@ -11,6 +11,7 @@ import type {
     NumberViewOptions,
     TableCommonCell,
     TableHead,
+    WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
@@ -27,7 +28,7 @@ const b = block('chartkit-table-widget');
 
 export type HeadCell = THead & {
     name: string;
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     fieldId?: string;
     custom?: unknown;
 };
@@ -43,7 +44,8 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
         header: () => {
             const cell = {
                 value: th.markup ?? th.name,
-                formattedValue: th.formattedName,
+                // Remove condition after wrappedHTML being supported for new Table
+                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : undefined,
                 type: th.markup ? 'markup' : columnType,
             };
             return (
