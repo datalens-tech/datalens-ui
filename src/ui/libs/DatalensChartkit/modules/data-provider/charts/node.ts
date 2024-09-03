@@ -330,10 +330,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            processHtmlFields(result.data, {
-                allowHtml: !isPotentiallyUnsafeChart(loadedType) || enableJsAndHtml,
-            });
-            processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            if (isPotentiallyUnsafeChart(loadedType)) {
+                processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
+                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            }
+
             await unwrapMarkdown({config: result.config, data: result.data});
 
             applyChartkitHandlers({
