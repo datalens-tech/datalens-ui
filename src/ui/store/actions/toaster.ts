@@ -56,7 +56,6 @@ export const showToast = (opt: ShowToastOptions) => {
             theme: type,
             actions,
             content,
-            autoHiding: false,
         });
     };
 };
