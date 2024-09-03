@@ -126,7 +126,11 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
     const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
     return (
-        <div ref={rootRef} className={b('container-placeholder')} style={{height: containerHeight}}>
+        <div
+            ref={rootRef}
+            className={b('container-placeholder', {'edit-mode': editMode})}
+            style={{height: containerHeight}}
+        >
             <div
                 ref={containerRef}
                 style={style}
