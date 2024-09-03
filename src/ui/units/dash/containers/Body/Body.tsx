@@ -12,7 +12,15 @@ import type {
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
-import {ChevronsDown, ChevronsUp, Gear, Pin, PinSlash} from '@gravity-ui/icons';
+import {
+    ChevronsDown,
+    ChevronsUp,
+    Gear,
+    Pin,
+    PinSlash,
+    Square,
+    SquareCheck,
+} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
@@ -288,7 +296,7 @@ class Body extends React.PureComponent<BodyProps> {
         ) {
             this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
         } else if (config) {
-            this.props.setCurrentTabData(config);
+            this.props.setCurrentTabData(config as unknown as DashTab);
         }
     };
 
@@ -370,7 +378,7 @@ class Body extends React.PureComponent<BodyProps> {
 
     getTabConfig() {
         const {tabData} = this.props;
-        return tabData as DashKitProps['config'];
+        return tabData as DashTab;
     }
 
     getMemoLayoutMap() {
@@ -473,6 +481,18 @@ class Body extends React.PureComponent<BodyProps> {
         }
     };
 
+    toggleDefaultCollapsedState = () => {
+        const config = this.getTabConfig();
+
+        this.props.setCurrentTabData({
+            ...config,
+            settings: {
+                ...config.settings,
+                fixedHeaderCollapsedDefault: !config.settings?.fixedHeaderCollapsedDefault,
+            },
+        });
+    };
+
     toggleFixedHeader = () => {
         const {tabId} = this.props;
 
@@ -480,7 +500,7 @@ class Body extends React.PureComponent<BodyProps> {
             this.setState({
                 fixedHeaderCollapsed: {
                     ...this.state.fixedHeaderCollapsed,
-                    [tabId]: !this.state.fixedHeaderCollapsed[tabId],
+                    [tabId]: !this.getFixedHeaderCollapsedState(),
                 },
             });
         }
@@ -489,11 +509,21 @@ class Body extends React.PureComponent<BodyProps> {
     getFixedHeaderCollapsedState() {
         const {tabId} = this.props;
 
-        return this.state.fixedHeaderCollapsed[tabId as string] || false;
+        if (!tabId) {
+            return false;
+        }
+
+        if (tabId && tabId in this.state.fixedHeaderCollapsed) {
+            return this.state.fixedHeaderCollapsed[tabId as string];
+        }
+
+        const config = this.getTabConfig();
+        return config.settings?.fixedHeaderCollapsedDefault ?? false;
     }
 
     renderFixedControls = (isCollapsed: boolean, hasFixedContainerElements: boolean) => {
         const {mode} = this.props;
+        const config = this.getTabConfig();
 
         if (mode === Mode.Edit) {
             return (
@@ -504,6 +534,19 @@ class Body extends React.PureComponent<BodyProps> {
                         </Button>
                     )}
                     items={[
+                        config.settings?.fixedHeaderCollapsedDefault
+                            ? {
+                                  action: this.toggleDefaultCollapsedState,
+                                  text: i18n('dash.main.view', 'label_fixed-show-default'),
+                                  iconStart: <Icon data={Square} />,
+                                  theme: 'normal',
+                              }
+                            : {
+                                  action: this.toggleDefaultCollapsedState,
+                                  text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
+                                  iconStart: <Icon data={SquareCheck} />,
+                                  theme: 'normal',
+                              },
                         {
                             action: this.unpinAllElements,
                             text: i18n('dash.main.view', 'label_unpin-all'),
@@ -587,10 +630,11 @@ class Body extends React.PureComponent<BodyProps> {
 
     getContext = () => {
         const memoContext = this._memoizedContext;
+        const isCollapsed = this.getFixedHeaderCollapsedState();
 
         if (
             memoContext.workbookId !== this.props.workbookId ||
-            memoContext.fixedHeaderCollapsed !== this.getFixedHeaderCollapsedState()
+            memoContext.fixedHeaderCollapsed !== isCollapsed
         ) {
             const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
@@ -602,7 +646,7 @@ class Body extends React.PureComponent<BodyProps> {
                 ...(memoContext || {}),
                 getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
-                fixedHeaderCollapsed: this.getFixedHeaderCollapsedState(),
+                fixedHeaderCollapsed: isCollapsed,
             };
         }
 
