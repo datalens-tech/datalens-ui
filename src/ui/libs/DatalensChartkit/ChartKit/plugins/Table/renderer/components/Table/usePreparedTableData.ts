@@ -283,7 +283,7 @@ export const usePreparedTableData = (props: {
 
                 if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
                     const prevCellRow = rowsAcc[prevCells[index]];
-                    const prevCell = prevCellRow?.cells?.[index];
+                    const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
                     const prevCellData = tableRowsData[prevCellRow?.index][index];
                     if (
                         typeof prevCell?.rowSpan !== 'undefined' &&
