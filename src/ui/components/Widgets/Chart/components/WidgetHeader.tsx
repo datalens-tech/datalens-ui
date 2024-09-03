@@ -140,7 +140,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                         />
                     </div>
                 )}
-                {!showFiltersClear && (
+                {showFiltersClear && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
                             <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
