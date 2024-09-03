@@ -97,6 +97,7 @@ export type Props = {
         targetTitle?: string;
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;
+    additionalButtons?: React.ReactNode;
 };
 
 export const CollectionStructureDialog = React.memo<Props>(
@@ -116,6 +117,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         massMoveMode,
         onApply,
         onClose,
+        additionalButtons,
     }) => {
         const dispatch = useDispatch<CollectionsStructureDispatch>();
 
@@ -375,31 +377,34 @@ export const CollectionStructureDialog = React.memo<Props>(
                         textButtonCancel={i18n('action_cancel')}
                         loading={applyIsLoading}
                     >
-                        {canCreateCollection && !workbookSelectionMode && (
-                            <Button
-                                size="l"
-                                view="outlined"
-                                onClick={() => {
-                                    setCreateCollectionDialogIsOpen(true);
-                                }}
-                            >
-                                {i18n('action_create-collection')}
-                            </Button>
-                        )}
-                        {canCreateWorkbook && workbookSelectionMode && (
-                            <Button
-                                size="l"
-                                view="outlined"
-                                onClick={() => {
-                                    setCreateWorkbookDialogIsOpen(true);
-                                }}
-                            >
-                                {i18n('action_create-workbook')}
-                            </Button>
-                        )}
+                        <div className={b('footer-buttons')}>
+                            {canCreateCollection && !workbookSelectionMode && (
+                                <Button
+                                    size="l"
+                                    view="outlined"
+                                    onClick={() => {
+                                        setCreateCollectionDialogIsOpen(true);
+                                    }}
+                                >
+                                    {i18n('action_create-collection')}
+                                </Button>
+                            )}
+                            {canCreateWorkbook && workbookSelectionMode && (
+                                <Button
+                                    size="l"
+                                    view="outlined"
+                                    onClick={() => {
+                                        setCreateWorkbookDialogIsOpen(true);
+                                    }}
+                                >
+                                    {i18n('action_create-workbook')}
+                                </Button>
+                            )}
+
+                            {additionalButtons}
+                        </div>
                     </Dialog.Footer>
                 </Dialog>
-
                 <NewTitleDialog
                     open={newTitleDialogIsOpen}
                     isLoading={applyIsLoading}
