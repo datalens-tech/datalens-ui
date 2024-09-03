@@ -17,10 +17,6 @@ export {
     MigrateEntryToWorkbookDialog,
     DIALOG_MIGRATE_ENTRY_TO_WORKBOOK,
 } from './MigrateEntryToWorkbookDialog';
-export {
-    DeployTemplateToWorkbookDialog,
-    DIALOG_DEPLOY_TEMPLATE_TO_WORKBOOK,
-} from './DeployTemplateToWorkbookDialog';
 export {CopyEntriesDialog, DIALOG_COPY_ENTRIES} from './CopyEntriesDialog';
 export {DeleteCollectionDialog, DIALOG_DELETE_COLLECTION} from './DeleteCollectionDialog';
 export {DeleteWorkbookDialog, DIALOG_DELETE_WORKBOOK} from './DeleteWorkbookDialog';
