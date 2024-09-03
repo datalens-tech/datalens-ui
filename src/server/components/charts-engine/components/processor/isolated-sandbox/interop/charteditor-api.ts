@@ -36,7 +36,7 @@ export type ChartEditorGetSortParams = string;
 export type ChartEditorCurrentPage = number;
 export type ChartEditorUpdateParams = (params: string) => undefined;
 export type ChartEditorUpdateActionParams = (params: string) => undefined;
-export type ChartEditorGetLoadedData = () => string;
+export type ChartEditorGetLoadedData = () => Record<string, unknown>;
 export type ChartEditorGetLoadedDataStats = () => string;
 export type ChartEditorSetDataSourceInfo = (dataSourceKey: string, info: string) => undefined;
 export type ChartEditorUpdateConfig = (config: string) => undefined;
@@ -151,8 +151,7 @@ export function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', (() => {
-            const loadedData = chartEditorApi.getLoadedData();
-            return JSON.stringify(loadedData);
+            return chartEditorApi.getLoadedData();
         }) satisfies ChartEditorGetLoadedData);
         jail.setSync('_ChartEditor_getLoadedDataStats', (() => {
             const loadedDataStats = chartEditorApi.getLoadedDataStats();

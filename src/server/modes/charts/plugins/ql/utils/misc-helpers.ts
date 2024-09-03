@@ -32,6 +32,13 @@ import {registry} from '../../../../../registry';
 
 import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING, QUERY_TITLE} from './constants';
 
+export {
+    formatUnknownTypeValue,
+    renderValue,
+    parseNumberValue,
+    parseNumberValueForTable,
+} from './value-helpers';
+
 let currentConsole: {log: Function} = console;
 
 export function setConsole(newConsole: {log: Function}) {
@@ -44,42 +51,6 @@ export function log(...data: unknown[]) {
 
 export function logTiming(...data: unknown[]) {
     return LOG_TIMING && currentConsole.log(...data);
-}
-
-export function parseNumberValue(value: number | string | null) {
-    let result;
-
-    if (value === null) {
-        result = null;
-    } else if (value === '-inf') {
-        result = -Infinity;
-    } else if (value === 'inf') {
-        result = Infinity;
-    } else if (value === 'nan') {
-        result = NaN;
-    } else {
-        result = Number(value);
-    }
-
-    return result;
-}
-
-export function parseNumberValueForTable(value: number | string | null) {
-    let result;
-
-    if (value === null) {
-        result = null;
-    } else if (value === '-inf') {
-        result = '-Infinity';
-    } else if (value === 'inf') {
-        result = 'Infinity';
-    } else if (value === 'nan') {
-        result = 'NaN';
-    } else {
-        result = Number(value);
-    }
-
-    return result;
 }
 
 export interface QLResultEntryMetadata {
@@ -707,22 +678,6 @@ export function getColumnsAndRows({
     }
 
     return {columns, rows};
-}
-
-export function formatUnknownTypeValue(value: string | number | null) {
-    if (value === null) {
-        return null;
-    }
-
-    return JSON.stringify(value);
-}
-
-export function renderValue(value: QLValue) {
-    if (value === null) {
-        return 'null';
-    }
-
-    return value;
 }
 
 export function isGroup(
