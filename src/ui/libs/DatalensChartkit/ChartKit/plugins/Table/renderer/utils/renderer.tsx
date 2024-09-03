@@ -59,7 +59,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
         sortingFn: columnType === 'number' ? 'alphanumeric' : 'auto',
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
-            const cell = cellData as TableCommonCell;
+            const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
                     {renderCellContent({cell, column: th})}
@@ -124,7 +124,7 @@ export function renderCellContent(args: {
     }
 
     let formattedValue: string | undefined = cell.formattedValue;
-    if (typeof formattedValue === 'undefined') {
+    if (!formattedValue) {
         if (cellType === 'date') {
             const dateTimeValue = dateTime({
                 input: cell.value as number,

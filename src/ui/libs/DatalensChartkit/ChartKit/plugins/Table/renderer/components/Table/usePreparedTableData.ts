@@ -70,27 +70,35 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
 }
 
 function getFooterRows(table: Table<TData>) {
-    return table.getFooterGroups().map<FooterRowViewData>((f) => {
-        return {
-            id: f.id,
-            cells: f.headers.map<FooterCellViewData>((cell) => {
-                const columnDef = cell.column.columnDef;
-                const originalHeadData = columnDef.meta?.head;
-                const style = columnDef?.meta?.footer?.css;
-                const pinned = Boolean(originalHeadData?.pinned);
+    return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
+        const cells = f.headers.map<FooterCellViewData>((cell) => {
+            const columnDef = cell.column.columnDef;
+            const originalHeadData = columnDef.meta?.head;
+            const originalFooterData = columnDef?.meta?.footer;
+            const style = originalFooterData?.css;
+            const pinned = Boolean(originalHeadData?.pinned);
+            const content = cell.isPlaceholder
+                ? null
+                : flexRender(columnDef.footer, cell.getContext());
 
-                return {
-                    id: cell.id,
-                    style,
-                    pinned,
-                    type: get(originalHeadData, 'type'),
-                    content: cell.isPlaceholder
-                        ? null
-                        : flexRender(columnDef.footer, cell.getContext()),
-                };
-            }),
-        };
-    });
+            return {
+                id: cell.id,
+                style,
+                pinned,
+                type: get(originalHeadData, 'type'),
+                content,
+            };
+        });
+
+        if (cells.some((c) => c.content)) {
+            acc.push({
+                id: f.id,
+                cells,
+            });
+        }
+
+        return acc;
+    }, []);
 }
 
 export const usePreparedTableData = (props: {
@@ -211,6 +219,7 @@ export const usePreparedTableData = (props: {
                     const sortable = header.column.getCanSort();
                     const pinned = Boolean(originalCellData?.pinned);
                     const cellStyle: React.CSSProperties = {
+                        ...get(originalCellData, 'css', {}),
                         left: pinned ? originalCellData?.left : undefined,
                     };
 
@@ -269,7 +278,7 @@ export const usePreparedTableData = (props: {
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
                 const enableRowGrouping = get(originalHeadData, 'group', false);
-                const originalCellData = cell.row.original[index];
+                const originalCellData = cell.row.original[index] ?? {value: ''};
                 const pinned = Boolean(originalHeadData?.pinned);
 
                 if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
