@@ -257,4 +257,7 @@ $fullscreenZIndex: 999;
         top: -46px;
         right: 12px;
     }
+    &_no-controls .chartkit-loader__loader_compact {
+        right: 15px;
+    }
 }
