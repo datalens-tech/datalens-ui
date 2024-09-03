@@ -8,6 +8,7 @@ export type ChartkitGlobalSettings = {
         /** Use as an external dependency (the files are loaded from CDN) */
         external?: boolean;
         domain?: string;
+        protocol?: string;
         /** List of highcharts modules to be downloaded from CDN. The setting is used only for the enabled "external" flag  */
         modules?: string[];
         version?: string;
