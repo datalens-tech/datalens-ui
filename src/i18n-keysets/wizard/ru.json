@@ -361,7 +361,7 @@
   "tooltip_parameter-changed-icon": "Значение параметра изменено",
   "tooltip_tree-pagination_unavailable": "Пагинация недоступна в таблице с деревьями",
   "tooltip_tree-total_unavailable": "Итоги недоступны в таблице с деревьями",
-  "tooltip_zero-to-max-scale": "Логарифмическая шкала не может содержать значения 0 или отрицательные значения",
+  "tooltip_zero-to-max-scale": "Логарифмическая шкала не может содержать 0 или отрицательные значения",
   "value_geotype-select-geopoint": "Точки (Геоточки)",
   "value_geotype-select-geopoint-with-cluster": "Точки с кластеризацией (Геоточки)",
   "value_geotype-select-geopolygon": "Полигоны (Геoполигоны)",
