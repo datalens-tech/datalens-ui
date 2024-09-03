@@ -9,6 +9,8 @@ export const enum DashboardAddWidgetQa {
 export const enum DashKitOverlayMenuQa {
     RemoveButton = 'dashkit-overlay-control-dl-remove-button',
     CopyButton = 'dashkit-overlay-control-dl-copy-button',
+    PinButton = 'dashkit-overlay-control-dl-pin-button',
+    UnpinButton = 'dashkit-overlay-control-dl-unpin-button',
 }
 
 export const enum DashboardActionPanelControlsQa {
