@@ -1,6 +1,10 @@
 import React from 'react';
 
-import {DashKitDnDWrapper, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
+import {
+    DashKitDnDWrapper,
+    ActionPanel as DashkitActionPanel,
+    DashKit as GravityDashkit,
+} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
     ConfigLayout,
@@ -353,7 +357,7 @@ class Body extends React.PureComponent<BodyProps> {
 
                     default:
                         memo[DEFAULT_GROUP] = {
-                            y: Math.max(memo[DEFAULT_GROUP].y, bottom),
+                            y: 0,
                             x: 0,
                         };
                 }
@@ -401,14 +405,15 @@ class Body extends React.PureComponent<BodyProps> {
         const tabDataConfig = this.getTabConfig();
         const groupCoords = this.getGroupsInsertCoords(true);
 
-        const newLayout = tabDataConfig.layout.map((item) => {
+        let movedItem: ConfigLayout | null = null;
+        const newLayout = tabDataConfig.layout.reduce<ConfigLayout[]>((memo, item) => {
             if (item.i === widget.id) {
                 const {parent, ...itemCopy} = item;
                 const isFixed =
                     parent === FIXED_GROUP_CONTAINER_ID || parent === FIXED_GROUP_HEADER_ID;
 
                 if (isFixed) {
-                    return {
+                    movedItem = {
                         ...itemCopy,
                         ...groupCoords[DEFAULT_GROUP],
                     };
@@ -425,18 +430,25 @@ class Body extends React.PureComponent<BodyProps> {
                             ? FIXED_GROUP_HEADER_ID
                             : FIXED_GROUP_CONTAINER_ID;
 
-                    return {
+                    movedItem = {
                         ...itemCopy,
                         parent: parentId,
                         ...groupCoords[parentId],
                     };
                 }
+            } else {
+                memo.push(item);
             }
 
-            return item;
-        });
+            return memo;
+        }, []);
 
-        this.props.setCurrentTabData({...tabDataConfig, layout: newLayout});
+        if (movedItem) {
+            this.props.setCurrentTabData({
+                ...tabDataConfig,
+                layout: GravityDashkit.reflowLayout(movedItem, newLayout, this.groups),
+            });
+        }
     };
 
     unpinAllElements = () => {
