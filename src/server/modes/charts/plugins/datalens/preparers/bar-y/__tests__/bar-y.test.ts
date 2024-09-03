@@ -108,8 +108,8 @@ describe('prepareBarYData', () => {
         expect(result.graphs.map((g) => pick(g, 'data'))).toEqual([
             {
                 data: [
-                    {y: 100, x: 1694908800000},
-                    {y: 200, x: 1694995200000},
+                    {y: 100, x: 1694908800000, label: ''},
+                    {y: 200, x: 1694995200000, label: ''},
                 ],
             },
         ]);

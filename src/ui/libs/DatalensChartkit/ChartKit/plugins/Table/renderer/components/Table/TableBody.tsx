@@ -36,7 +36,6 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                         {
                                             type: cell.type,
                                             pinned: cell.pinned,
-                                            'first-cell': cell.index === 0,
                                         },
                                         cell.className,
                                     )}

@@ -6,6 +6,7 @@ import {
     ChartkitHandlers,
     LegendDisplayMode,
     isDateField,
+    isMarkdownField,
 } from '../../../../../../../shared';
 import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
@@ -94,6 +95,22 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             customConfig.axesFormatting.xAxis.push(
                 getAxisFormattingByField(xPlaceholder, shared.visualization.id),
             );
+        }
+
+        if (isMarkdownField(x)) {
+            customConfig.xAxis = {
+                ...(customConfig.xAxis ?? {}),
+                labels: {
+                    useHTML: true,
+                },
+            };
+        }
+
+        if (isMarkdownField(color)) {
+            customConfig.legend = {
+                ...(customConfig.legend ?? {}),
+                useHTML: true,
+            };
         }
 
         if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {

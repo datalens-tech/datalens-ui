@@ -5,21 +5,28 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
 import type {Dispatch} from 'redux';
+import {bindActionCreators} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
-import {PlaceholderId, WizardVisualizationId, getDefaultFormatting, isPseudoField} from 'shared';
+import {
+    Feature,
+    PlaceholderId,
+    WizardVisualizationId,
+    getDefaultFormatting,
+    isPseudoField,
+} from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
+import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -52,7 +59,7 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {getFormattingDataType, isOneOfPropChanged} from './utils/misc';
+import {canUseStringAsMarkdown, getFormattingDataType, isOneOfPropChanged} from './utils/misc';
 
 import './DialogField.scss';
 
@@ -95,6 +102,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     hintSettings?: HintSettings;
+    isMarkdown?: boolean;
 };
 
 const b = block('wizard-dialog-field');
@@ -139,6 +147,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             ),
             isErrorOccurred: false,
             currentPlaceholder,
+            isMarkdown: props.item?.isMarkdown,
         };
 
         if (initialState.isBarsSettingsEnabled && props.item) {
@@ -346,6 +355,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         handleDateGroupUpdate={this.handleDateGroupUpdate}
                     />
                 )}
+                {this.renderMarkdownSettings()}
                 {this.renderHintSettings()}
                 {this.props.formattingEnabled && (
                     <Formatting
@@ -407,6 +417,35 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         }
                     />
                 )}
+            </React.Fragment>
+        );
+    }
+
+    private renderMarkdownSettings() {
+        const {item, placeholderId, visualization} = this.props;
+        const canTransformToMarkdown =
+            Utils.isEnabledFeature(Feature.WizardMarkdownFields) &&
+            item?.data_type === DATASET_FIELD_TYPES.STRING &&
+            canUseStringAsMarkdown(visualization.id as WizardVisualizationId, placeholderId);
+
+        if (!canTransformToMarkdown) {
+            return null;
+        }
+
+        return (
+            <React.Fragment>
+                <DialogFieldRow
+                    title={i18n('wizard', 'label_markdown')}
+                    tooltipText={i18n('wizard', 'label_markdown-tooltip')}
+                    setting={
+                        <Switch
+                            onUpdate={(checked) => {
+                                this.setState({isMarkdown: checked});
+                            }}
+                            checked={this.state.isMarkdown ?? false}
+                        />
+                    }
+                />
             </React.Fragment>
         );
     }

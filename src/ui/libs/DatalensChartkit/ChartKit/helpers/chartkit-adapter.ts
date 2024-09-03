@@ -1,8 +1,6 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
-import has from 'lodash/has';
-import set from 'lodash/set';
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
 
@@ -10,7 +8,12 @@ import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
-import {applyGoToEvents, applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
+import {
+    applyGoToEvents,
+    applySetActionParamsEvents,
+    applyTreemapLabelFormatter,
+    fixPieTotals,
+} from './apply-hc-handlers';
 import {getD3ChartKitData} from './d3-chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
@@ -187,12 +190,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                     break;
                 }
                 case 'treemap': {
-                    const tooltipPointFormat =
-                        'libraryConfig.plotOptions.treemap.tooltip.pointFormat';
-
-                    if (!has(data, tooltipPointFormat)) {
-                        set(data, tooltipPointFormat, '{point.name}<br/><b>{point.label}</b>');
-                    }
+                    applyTreemapLabelFormatter({data});
                     break;
                 }
             }

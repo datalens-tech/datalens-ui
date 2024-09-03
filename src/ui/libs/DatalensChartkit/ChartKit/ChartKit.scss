@@ -25,3 +25,14 @@
         }
     }
 }
+
+.chartkit-graph,
+.chartkit-tooltip {
+    .yfm {
+        display: inline-block;
+
+        img {
+            max-width: unset;
+        }
+    }
+}

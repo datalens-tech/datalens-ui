@@ -160,6 +160,10 @@ export interface DashTabItemWidgetTab {
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
+    background?: {
+        enabled: boolean;
+        color: string;
+    };
 }
 
 export interface DashTabItemControl extends DashTabItemBase {
@@ -286,6 +290,7 @@ export interface DashTabLayout {
     w: number;
     x: number;
     y: number;
+    parent?: string;
 }
 
 export interface DashTabAliases extends Dictionary<Array<string[]>> {}

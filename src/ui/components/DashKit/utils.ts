@@ -11,7 +11,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
+import {FIXED_GROUP_HEADER_ID, MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
@@ -121,6 +121,7 @@ const setStyle = (node: HTMLElement, name: string, value: string) => {
     };
 };
 
+// eslint-disable-next-line complexity
 export function adjustWidgetLayout({
     widgetId,
     rootNode,
@@ -133,6 +134,13 @@ export function adjustWidgetLayout({
     needHeightReset,
 }: AdjustWidgetLayoutProps) {
     if (DL.IS_MOBILE || needSetDefault) {
+        cb({widgetId, needSetDefault});
+        return;
+    }
+
+    // Disabling auto-size for grid line widgets
+    const correspondedLayoutItem = layout.find(({i}) => i === widgetId);
+    if (correspondedLayoutItem?.parent === FIXED_GROUP_HEADER_ID) {
         cb({widgetId, needSetDefault});
         return;
     }
