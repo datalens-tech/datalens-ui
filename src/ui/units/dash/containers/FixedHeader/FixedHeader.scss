@@ -1,0 +1,110 @@
+@mixin flexReactGridLayout {
+    & > .react-grid-layout {
+        flex: 1;
+        transition: none;
+    }
+}
+
+.dash-fixed-header {
+    &__controls {
+        display: flex;
+        flex: 1;
+        padding: 8px 0;
+        min-height: 60px;
+
+        &_fixed {
+            position: fixed;
+            top: 40px;
+            background-color: var(
+                --dl-color-fixed-header-background,
+                var(--g-color-base-background)
+            );
+            padding-left: 24px;
+            padding-right: 24px;
+            margin-left: -24px;
+            z-index: 10;
+        }
+
+        &_edit-mode {
+            .react-grid-layout {
+                background-color: var(--g-color-base-background);
+            }
+        }
+    }
+
+    &__controls-placeholder {
+        height: 60px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    &__controls-grid {
+        display: flex;
+        flex-grow: 1;
+
+        @include flexReactGridLayout;
+    }
+
+    &__controls-settings {
+        width: (100% / 36) * 1;
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    &__controls-settings-wrapper {
+        position: absolute;
+        inset: 0px 0px 0px 8px;
+        display: flex;
+        min-width: 28px;
+        align-items: center;
+        justify-content: end;
+    }
+
+    &__container-placeholder {
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__container-wrapper {
+        display: flex;
+        padding-bottom: 8px;
+        flex-direction: row;
+        flex: 1;
+
+        @include flexReactGridLayout;
+    }
+
+    &__container {
+        display: flex;
+        flex-direction: row;
+        min-height: 52px;
+
+        &_fixed {
+            position: fixed;
+            overflow: auto;
+            top: 100px;
+            background-color: var(
+                --dl-color-fixed-header-background,
+                var(--g-color-base-background)
+            );
+            border-bottom: 1px solid var(--g-color-line-generic);
+            padding-left: 24px;
+            padding-right: 24px;
+            margin-left: -24px;
+            z-index: 10;
+            max-height: calc(100vh - 100px);
+        }
+
+        &_edit-mode {
+            .react-grid-layout {
+                background-color: var(--g-color-base-background);
+            }
+        }
+
+        &_collapsed {
+            overflow: clip;
+            min-height: 0;
+            max-height: 0;
+        }
+    }
+}

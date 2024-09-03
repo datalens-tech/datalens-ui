@@ -2,10 +2,8 @@ import workerPool from 'workerpool';
 
 import type {QlConfig} from '../../../../../shared';
 import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
-import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
-import {getChartApiContext} from '../../../../components/charts-engine/components/processor/chart-api-context';
 import type {
     BuildChartArgs,
     BuildChartConfigArgs,
@@ -13,7 +11,7 @@ import type {
     BuildSourceArgs,
     WizardWorker,
 } from '../../../../components/charts-engine/components/wizard-worker/types';
-import {createI18nInstance} from '../../../../utils/language';
+import {getChartApiContext} from '../../../../components/charts-engine/components/wizard-worker/utils';
 
 import qlModule from './module/private-module';
 
@@ -124,9 +122,6 @@ const worker: WizardWorker = {
             userLang,
             data: data as GetChartApiContextArgs['data'],
         });
-
-        const i18n = createI18nInstance({lang: userLang});
-        context.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
 
         const console = new Console({});
         qlModule.setConsole(console);

@@ -25,6 +25,12 @@ datalensTest.describe('Wizard', () => {
 
             await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+
+            // Set the width of the columns so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open(PlaceholderName.Rows);
+            await wizardPage.columnSettings.switchUnit('Category', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('Category', '200');
+            await wizardPage.columnSettings.apply();
         });
 
         datalensTest('Two colors bar @screenshot', async ({page}) => {

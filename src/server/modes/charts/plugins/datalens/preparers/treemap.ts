@@ -1,6 +1,13 @@
 import escape from 'lodash/escape';
 
-import {Feature, MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../shared';
+import {
+    Feature,
+    MINIMUM_FRACTION_DIGITS,
+    isDateField,
+    isMarkdownField,
+} from '../../../../../../shared';
+import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
+import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -15,9 +22,11 @@ import {
 
 import type {PrepareFunctionArgs} from './types';
 
+type TreemapItemName = string | null | WrappedMarkdown;
+
 type TreemapItem = {
     id: string;
-    name: string | null;
+    name: TreemapItemName | TreemapItemName[];
     parent?: string;
     label?: string;
     value?: number;
@@ -34,10 +43,13 @@ function prepareTreemap({
     idToTitle,
     idToDataType,
     features,
+    ChartEditor,
 }: PrepareFunctionArgs) {
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
     // Dimensions
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
+    const useMarkdown = isMarkdownFieldsEnabled && d?.some(isMarkdownField);
 
     // Measures
     const m = placeholders[1].items;
@@ -129,9 +141,14 @@ function prepareTreemap({
             const treemapId =
                 dPath.length >= 1 ? `id_${dPath[0]}/${value}` : `id_${dPath.join()}${value}`;
 
+            const name =
+                isMarkdownField(item) && isMarkdownFieldsEnabled
+                    ? wrapMarkdownValue(value as string)
+                    : value;
+
             const treemapItem: TreemapItem = {
                 id: treemapId,
-                name: value,
+                name,
                 drillDownFilterValue: value,
             };
 
@@ -189,7 +206,11 @@ function prepareTreemap({
         if (lastDimensionItem) {
             lastDimensionItem.value = Number(hashTable[key]?.value);
             lastDimensionItem.label = hashTable[key]?.label;
-            lastDimensionItem.name = dPath.join('<br/>');
+            let name: any[] = dPath;
+            if (useMarkdown) {
+                name = dPath.map((item) => (item ? wrapMarkdownValue(item) : item));
+            }
+            lastDimensionItem.name = name as any;
 
             treemap.push(lastDimensionItem);
         }
@@ -254,6 +275,10 @@ function prepareTreemap({
         ];
     }
 
+    if (useMarkdown) {
+        ChartEditor.updateConfig({useMarkdown: true});
+    }
+
     const graphs = [
         {
             type: 'treemap',
@@ -270,6 +295,9 @@ function prepareTreemap({
                 style: {
                     cursor: 'pointer',
                 },
+                ...(useMarkdown && {
+                    useHTML: true,
+                }),
             },
             levelIsConstant: false,
             levels,

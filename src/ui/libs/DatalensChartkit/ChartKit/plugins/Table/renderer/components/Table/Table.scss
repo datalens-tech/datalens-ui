@@ -17,27 +17,14 @@
         width: calc(100% + 1.99px);
         left: var(--dl-table-cell-border-offset, -1px);
         height: calc(100% + 1.99px);
-        border-left: 1px solid var(--dl-table-border-color);
         pointer-events: none;
     }
 }
 
 .dl-table {
     border-collapse: collapse;
-    min-width: 100%;
+    min-width: calc(100% - 1px);
     width: max-content;
-
-    &__snapter-container {
-        &_preparing {
-            opacity: 0;
-        }
-    }
-
-    &__paginator {
-        &_preparing {
-            opacity: 0;
-        }
-    }
 
     &__table-wrapper {
         width: 100%;
@@ -53,16 +40,16 @@
         text-align: right;
     }
 
+    &__th {
+        text-align: left;
+    }
+
     &__th,
     &__td {
         border: 1px solid var(--dl-table-border-color);
         border-top: 0;
         border-left: 0;
         font-size: 10pt;
-
-        &_first-cell {
-            border-left: 1px solid var(--dl-table-border-color);
-        }
 
         &_clickable {
             cursor: pointer;
@@ -118,6 +105,7 @@
         position: sticky;
         top: 0;
         z-index: 1;
+        border-left: 1px solid var(--dl-table-border-color);
 
         /* stylelint-disable */
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
@@ -140,6 +128,12 @@
         }
     }
 
+    &__header &__tr:first-child {
+        th {
+            border-top: 1px solid var(--dl-table-border-color);
+        }
+    }
+
     &__header &__th {
         position: relative;
         font-weight: 500;
@@ -148,7 +142,6 @@
         box-sizing: border-box;
         height: 100%;
         background: var(--dl-table-header-bg-color);
-        text-align: left;
     }
 
     &__header &__sort-icon {
@@ -156,6 +149,10 @@
         right: 0;
         top: 50%;
         transform: translateY(-50%);
+    }
+
+    &__body {
+        border-left: 1px solid var(--dl-table-border-color);
     }
 
     &__body &__tr {
@@ -173,6 +170,10 @@
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-cell-vertical-align);
+    }
+
+    &__footer {
+        border-left: 1px solid var(--dl-table-border-color);
     }
 
     &__footer &__td {
@@ -238,6 +239,11 @@
         padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
         background: var(--dl-table-no-data-bg-color);
         border: 1px solid var(--dl-table-border-color);
+        min-height: var(--dl-table-row-height);
+        align-items: flex-start;
+        display: flex;
+        // for compatibility with the old table (delete after switching to a new plugin)
+        margin-top: -1px;
     }
 
     colgroup {
@@ -277,11 +283,5 @@ table.dl-table_prepared {
     td,
     th {
         display: flex;
-    }
-
-    tr:first-child {
-        th {
-            border-top: 1px solid var(--dl-table-border-color);
-        }
     }
 }

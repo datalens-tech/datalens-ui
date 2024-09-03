@@ -20,6 +20,7 @@ export const EmptyPrepapreArgs: PrepareFunctionArgs = {
     segments: [],
     idToTitle: {},
     idToDataType: {},
+    features: {},
 };
 
 const datasetId = 'datasetId';

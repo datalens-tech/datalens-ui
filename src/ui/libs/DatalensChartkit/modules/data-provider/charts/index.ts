@@ -125,9 +125,15 @@ export interface EntityRequestOptions {
         key?: string;
         path?: string | undefined;
         uiOnly?: boolean;
+        tabId?: string;
         responseOptions?: {
             includeConfig: boolean;
             includeLogs: boolean;
+        };
+        controlData?: {
+            id: string;
+            tabId?: string;
+            groupId?: string;
         };
     };
     headers?: Record<string, any>;
@@ -710,11 +716,20 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
+        const headers = {...requestOptions.headers};
+
+        if (isEmbeddedEntry()) {
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
+        }
+
         return axiosInstance(
             this.prepareRequestConfig({
                 url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
+                headers,
             }),
         );
     }
@@ -747,10 +762,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const headers: Record<string, string | null> = {
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (isEmbeddedEntry()) {
-            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
-            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
-        }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }

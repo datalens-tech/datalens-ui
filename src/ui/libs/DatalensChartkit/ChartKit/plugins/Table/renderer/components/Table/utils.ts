@@ -53,14 +53,13 @@ export function createTableColumns(args: {
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
-    const createHeadColumns = (cells: THead[]): ColumnDef<TData>[] => {
+    const createHeadColumns = (cells: THead[], defaultWidth = 0): ColumnDef<TData>[] => {
         return cells.map((headCell) => {
-            const hasChildren = Boolean(headCell.columns?.length);
-            const cellIndex = hasChildren ? -1 : lastColumnIndex;
+            const cellIndex = headCell.columns?.length ? -1 : lastColumnIndex;
             const footerCell = footer?.[cellIndex];
-            const size =
-                cellSizes[cellIndex] ??
-                (typeof headCell.width === 'number' ? Number(headCell.width) : 0);
+            const columnWidth =
+                typeof headCell.width === 'number' ? Number(headCell.width) : defaultWidth;
+            const size = cellSizes[cellIndex] ?? columnWidth;
             const left = cellSizes.reduce(
                 (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
                 0,
@@ -70,16 +69,19 @@ export function createTableColumns(args: {
                     ...headCell,
                     enableSorting: headCell.enableSorting && rows.length > 1,
                     left,
+                    width: columnWidth > 0 ? columnWidth : undefined,
                 },
                 footerCell,
                 index: cellIndex,
                 size,
             });
 
-            if (hasChildren) {
+            if (headCell.columns?.length) {
+                const childDefaultWidth =
+                    columnWidth > 0 ? columnWidth / headCell.columns?.length : 0;
                 return columnHelper.group({
                     ...options,
-                    columns: createHeadColumns(headCell.columns || []),
+                    columns: createHeadColumns(headCell.columns || [], childDefaultWidth),
                 } as GroupColumnDef<TData>);
             } else {
                 lastColumnIndex++;

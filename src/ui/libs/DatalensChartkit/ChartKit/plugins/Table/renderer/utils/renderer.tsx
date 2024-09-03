@@ -11,6 +11,7 @@ import type {
     NumberViewOptions,
     TableCommonCell,
     TableHead,
+    WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
@@ -21,38 +22,30 @@ import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import type {THead} from '../components/Table/types';
 import {TreeCell} from '../components/TreeCell/TreeCell';
 
-import {calculateNumericProperty, isStringValueInPixel} from './math';
+import {calculateNumericProperty} from './math';
 
 const b = block('chartkit-table-widget');
 
 export type HeadCell = THead & {
     name: string;
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     fieldId?: string;
     custom?: unknown;
 };
 
-export function mapHeadCell(
-    th: TableHead,
-    tableWidth: number | undefined,
-    head: TableHead[] | undefined,
-): HeadCell {
+export function mapHeadCell(th: TableHead, tableWidth: number | undefined): HeadCell {
     const columnType: TableCommonCell['type'] = get(th, 'type');
     const hint = get(th, 'hint');
 
-    let cellWidth: number | undefined;
-    if (head?.some((h) => !h.width || !isStringValueInPixel(String(h.width)))) {
-        cellWidth = calculateNumericProperty({value: th.width, base: tableWidth});
-    }
-
     return {
         ...th,
-        width: cellWidth,
+        width: calculateNumericProperty({value: th.width, base: tableWidth}),
         id: String(th.id),
         header: () => {
             const cell = {
                 value: th.markup ?? th.name,
-                formattedValue: th.formattedName,
+                // Remove condition after wrappedHTML being supported for new Table
+                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : undefined,
                 type: th.markup ? 'markup' : columnType,
             };
             return (

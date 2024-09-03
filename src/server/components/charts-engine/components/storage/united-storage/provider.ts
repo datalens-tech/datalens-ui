@@ -21,9 +21,10 @@ import {
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../../../../shared';
+import {TIMEOUT_10_SEC} from '../../../../../../shared/constants';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
-import type {ResolvedConfig} from '../types';
+import type {ChartEntryData, DashEntryData, EmbeddingInfo} from '../types';
 
 const handleError = createErrorHandler({
     meta: {
@@ -42,7 +43,6 @@ axiosRetry(axios, {
 
 const ENTRY_NOT_FOUND = 'ENTRY_NOT_FOUND';
 const ENTRY_FORBIDDEN = 'ENTRY_FORBIDDEN';
-const TEN_SECONDS = 10000;
 const PASSED_PROPERTIES: (keyof Entry)[] = [
     'entryId',
     'data',
@@ -90,28 +90,6 @@ export type Entry = {
     updatedAt?: string;
     updatedBy?: string;
     workbookId?: WorkbookId;
-};
-
-export type EmbeddingInfo = {
-    token: EmbeddingToken;
-    embed: {
-        embedId: string;
-        title: string;
-        embeddingSecretId: string;
-        entryId: string;
-        depsIds: string[];
-        unsignedParams: string[];
-        createdBy: string;
-        createdAt: string;
-    };
-    entry: ResolvedConfig;
-};
-
-export type EmbeddingToken = {
-    embedId: string;
-    iat: number;
-    exp: number;
-    params: Record<string, unknown>;
 };
 
 const PASSED_HEADERS = [
@@ -206,7 +184,7 @@ function formatPassedProperties(entry: Entry = {}) {
         formattedData.publicAuthor = publicAuthor;
     }
 
-    return formattedData as ResolvedConfig;
+    return formattedData as DashEntryData | ChartEntryData;
 }
 
 let storageEndpoint: string;
@@ -312,7 +290,7 @@ export class USProvider {
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             params,
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
         };
 
         return axios
@@ -386,7 +364,7 @@ export class USProvider {
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             params,
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
         };
 
         return axios
@@ -438,7 +416,7 @@ export class USProvider {
             url: `${storageEndpoint}/v1/embedded-entry`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
         };
 
         return axios
@@ -467,6 +445,64 @@ export class USProvider {
                     throw handleError({
                         code: 'UNITED_STORAGE_OBJECT_RETRIEVE_ERROR',
                         meta: {extra: {type: 'embedToken'}},
+                        error,
+                        rethrow: false,
+                    });
+                }
+            });
+    }
+
+    static retrieveByTokenAndId(
+        ctx: AppContext,
+        {
+            id,
+            token,
+            headers,
+        }: {
+            id: string;
+            token: string;
+            headers: Request['headers'];
+        },
+    ): Promise<EmbeddingInfo> {
+        const hrStart = process.hrtime();
+        const headersWithToken = {
+            ...headers,
+            [DL_EMBED_TOKEN_HEADER]: token,
+        };
+        const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
+        const axiosArgs: AxiosRequestConfig = {
+            url: `${storageEndpoint}/embeds/entries/${id}`,
+            method: 'get',
+            headers: injectMetadata(formattedHeaders, ctx),
+            timeout: TIMEOUT_10_SEC,
+        };
+
+        return axios
+            .request(axiosArgs)
+            .then((response) => {
+                ctx.log('UNITED_STORAGE_CONFIG_LOADED', {duration: getDuration(hrStart)});
+
+                return {
+                    token: response.data.embeddingInfo.token,
+                    embed: response.data.embeddingInfo.embed,
+                    entry: formatPassedProperties(response.data),
+                };
+            })
+            .catch((error) => {
+                if (error.response && error.response.status === 404) {
+                    error.description = 'embedToken and id';
+                    error.code = ENTRY_NOT_FOUND;
+                    error.status = 404;
+                    throw error;
+                } else if (error.response && error.response.status === 403) {
+                    error.description = 'embedToken and id';
+                    error.code = ENTRY_FORBIDDEN;
+                    error.status = 403;
+                    throw error;
+                } else {
+                    throw handleError({
+                        code: 'UNITED_STORAGE_OBJECT_RETRIEVE_ERROR',
+                        meta: {extra: {type: 'embedToken and id'}},
                         error,
                         rethrow: false,
                     });
@@ -527,7 +563,7 @@ export class USProvider {
             method: 'post',
             headers: injectMetadata(formattedHeaders, ctx),
             data: postedData,
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
             maxBodyLength: DEFAULT_MAX_BODY_LENGTH,
             maxContentLength: DEFAULT_MAX_CONTENT_LENGTH,
         };
@@ -612,7 +648,7 @@ export class USProvider {
             method: 'post',
             headers: injectMetadata(formattedHeaders, ctx),
             data: postedData,
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
             maxBodyLength: DEFAULT_MAX_BODY_LENGTH,
             maxContentLength: DEFAULT_MAX_CONTENT_LENGTH,
         };
@@ -654,7 +690,7 @@ export class USProvider {
             url: `${storageEndpoint}/v1/entries/${id}`,
             method: 'delete',
             headers: injectMetadata(formattedHeaders, ctx),
-            timeout: TEN_SECONDS,
+            timeout: TIMEOUT_10_SEC,
         };
 
         return axios
