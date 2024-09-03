@@ -10,6 +10,7 @@ import {isExternalControl} from 'ui/components/DashKit/plugins/Control/utils';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import type {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
@@ -407,7 +408,7 @@ export const pushStats = (
     scope: ChartsStats['scope'],
     chartsDataProvider: ChartWithProviderProps['dataProvider'],
 ) => {
-    if (Utils.isEnabledFeature(Feature.EnableDashChartStat)) {
+    if (Utils.isEnabledFeature(Feature.EnableDashChartStat) && !isEmbeddedEntry()) {
         chartsDataProvider.pushStats?.(data as ChartKitLoadSuccess<ChartsData>, {
             groupId: DL.REQUEST_ID,
             scope,

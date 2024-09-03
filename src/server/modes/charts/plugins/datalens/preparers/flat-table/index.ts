@@ -27,7 +27,6 @@ import {
 } from '../../utils/constants';
 import {
     findIndexInOrder,
-    getTimezoneOffsettedTime,
     isNumericalDataType,
     isTableBarsSettingsEnabled,
     isTableFieldBackgroundSettingsEnabled,
@@ -248,10 +247,6 @@ function prepareFlatTable({
                 } else {
                     cell.value = Number(value);
                 }
-            } else if (item.isDateType) {
-                const date = new Date(value);
-
-                cell.value = getTimezoneOffsettedTime(date);
             } else if (item.isTreeDataType) {
                 if (legend?.length) {
                     const currentLegend = legend[rowIndex][item.indexInOrder];

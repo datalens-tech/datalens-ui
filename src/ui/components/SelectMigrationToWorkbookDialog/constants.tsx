@@ -33,7 +33,7 @@ const migrateByCopy = {
             text: 'list_third_item_copy',
         },
         {
-            icon: <Icon data={CopyCheck} />,
+            icon: <Icon data={CopyXmark} />,
             text: 'list_fourth_item_copy',
         },
     ],
@@ -58,7 +58,7 @@ const migrateByTransfer = {
             text: 'list_third_item_transfer',
         },
         {
-            icon: <Icon data={CopyXmark} />,
+            icon: <Icon data={CopyCheck} />,
             text: 'list_fourth_item_transfer',
         },
     ],

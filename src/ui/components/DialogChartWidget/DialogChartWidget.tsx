@@ -511,7 +511,7 @@ class DialogChartWidget extends React.PureComponent<
         const {hierarchies} = this.state;
         const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
 
-        if (!showFilterHierarchyWarning) {
+        if (!showFilterHierarchyWarning || !DL.ENDPOINTS.datalensDocs) {
             return null;
         }
 

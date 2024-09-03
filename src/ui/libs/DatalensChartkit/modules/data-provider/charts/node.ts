@@ -4,23 +4,27 @@ import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
-import {omit, partial, partialRight} from 'lodash';
+import {omit} from 'lodash';
 import get from 'lodash/get';
+import partial from 'lodash/partial';
+import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
+import set from 'lodash/set';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
-    ChartkitHandlersDict,
     EDITOR_CHART_NODE,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
+    WRAPPED_MARKDOWN_KEY,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
 import Utils from '../../../../../utils';
+import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
     GraphWidget,
@@ -30,6 +34,7 @@ import type {
 } from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
+import {ChartkitHandlersDict} from './chartkit-handlers';
 import {getChartsInsightsData} from './helpers';
 import type {ChartsData, ResponseSuccessControls, ResponseSuccessNode, UI} from './types';
 import {
@@ -325,12 +330,17 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            processHtmlFields(result.data, {
-                allowHtml: !isPotentiallyUnsafeChart(loadedType) || enableJsAndHtml,
-            });
-            processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            if (isPotentiallyUnsafeChart(loadedType)) {
+                processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
+                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            }
 
-            applyChartkitHandlers(result.config, result.libraryConfig);
+            await unwrapMarkdown({config: result.config, data: result.data});
+
+            applyChartkitHandlers({
+                config: result.config,
+                libraryConfig: result.libraryConfig,
+            });
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
                 (result as GraphWidget).sideMarkdown = loaded.extra.sideMarkdown;
@@ -391,71 +401,123 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     }
 }
 
-function applyChartkitHandlers(
-    configRef: Widget['config'],
-    libraryConfigRef: Widget['libraryConfig'],
-) {
-    if (libraryConfigRef) {
-        const {tooltipHeaderFormatter} = libraryConfigRef;
+async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['data']}) {
+    const {config, data} = args;
+    if (config?.useMarkdown) {
+        const renderMarkdown = await getRenderMarkdownFn();
+        const unwrapItem = (item: unknown) => {
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+
+            if (Array.isArray(item)) {
+                item.forEach((value, index, list) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKDOWN_KEY in value) {
+                        const md = value[WRAPPED_MARKDOWN_KEY];
+                        if (typeof md === 'string') {
+                            list[index] = renderMarkdown(md);
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            } else {
+                Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKDOWN_KEY in value) {
+                        const md = value[WRAPPED_MARKDOWN_KEY];
+                        if (typeof md === 'string') {
+                            set(item, key, renderMarkdown(md));
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            }
+        };
+
+        try {
+            unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'categories', []));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
+function applyChartkitHandlers(args: {
+    config: Widget['config'];
+    libraryConfig: Widget['libraryConfig'];
+}) {
+    const {config, libraryConfig} = args;
+
+    if (libraryConfig) {
+        const {tooltipHeaderFormatter} = libraryConfig;
 
         if (typeof tooltipHeaderFormatter === 'string') {
-            libraryConfigRef.tooltipHeaderFormatter =
+            libraryConfig.tooltipHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardTooltipHeaderFormatter](
                     tooltipHeaderFormatter,
                 );
         }
 
-        if (libraryConfigRef.legend?.labelFormatter === ChartkitHandlers.WizardLabelFormatter) {
-            libraryConfigRef.legend.labelFormatter =
+        if (libraryConfig.legend?.labelFormatter === ChartkitHandlers.WizardLabelFormatter) {
+            libraryConfig.legend.labelFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
 
-        if (libraryConfigRef.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
-            libraryConfigRef.xAxis.labels.formatter =
+        if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
+            libraryConfig.xAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardXAxisFormatter];
         }
 
         if (
-            libraryConfigRef.yAxis?.labels?.formatter ===
-            ChartkitHandlers.DCMonitoringLabelFormatter
+            libraryConfig.yAxis?.labels?.formatter === ChartkitHandlers.DCMonitoringLabelFormatter
         ) {
-            libraryConfigRef.yAxis.labels.formatter =
+            libraryConfig.yAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.DCMonitoringLabelFormatter];
         }
 
         if (
-            libraryConfigRef.yAxis?.labels?.formatter ===
+            libraryConfig.yAxis?.labels?.formatter ===
             ChartkitHandlers.WizardScatterYAxisLabelFormatter
         ) {
-            libraryConfigRef.yAxis.labels.formatter =
+            libraryConfig.yAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardScatterYAxisLabelFormatter];
         }
 
         if (
-            libraryConfigRef.exporting?.csv?.columnHeaderFormatter ===
+            libraryConfig.exporting?.csv?.columnHeaderFormatter ===
             ChartkitHandlers.WizardExportColumnNamesFormatter
         ) {
-            libraryConfigRef.exporting.csv.columnHeaderFormatter =
+            libraryConfig.exporting.csv.columnHeaderFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardExportColumnNamesFormatter];
         }
 
         if (
-            libraryConfigRef.plotOptions?.scatter?.tooltip?.formatter ===
+            libraryConfig.plotOptions?.scatter?.tooltip?.formatter ===
             ChartkitHandlers.WizardScatterTooltipFormatter
         ) {
-            delete libraryConfigRef.plotOptions.scatter.tooltip.formatter;
-            libraryConfigRef.plotOptions.scatter.tooltip.headerFormat = '';
-            libraryConfigRef.plotOptions.scatter.tooltip.pointFormatter =
+            delete libraryConfig.plotOptions.scatter.tooltip.formatter;
+            libraryConfig.plotOptions.scatter.tooltip.headerFormat = '';
+            libraryConfig.plotOptions.scatter.tooltip.pointFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardScatterTooltipFormatter];
+        }
+
+        if (
+            libraryConfig.plotOptions?.treemap?.tooltip?.pointFormatter ===
+            ChartkitHandlers.WizardTreemapTooltipFormatter
+        ) {
+            libraryConfig.plotOptions.treemap.tooltip.pointFormatter =
+                ChartkitHandlersDict[ChartkitHandlers.WizardTreemapTooltipFormatter];
         }
     }
 
     if (
-        configRef &&
-        (configRef as GraphWidget['config']).manageTooltipConfig ===
+        config &&
+        (config as GraphWidget['config']).manageTooltipConfig ===
             ChartkitHandlers.WizardManageTooltipConfig
     ) {
-        (configRef as GraphWidget['config']).manageTooltipConfig =
+        (config as GraphWidget['config']).manageTooltipConfig =
             ChartkitHandlersDict[ChartkitHandlers.WizardManageTooltipConfig];
     }
 }
