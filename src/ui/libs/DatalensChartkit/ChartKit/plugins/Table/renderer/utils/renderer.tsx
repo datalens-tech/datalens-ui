@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import {CaretLeft, CaretRight} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -125,11 +125,8 @@ export function renderCellContent(args: {
 
     let formattedValue: string | undefined = cell.formattedValue;
     if (!formattedValue) {
-        if (cellType === 'date') {
-            const dateTimeValue = dateTime({
-                input: cell.value as number,
-                timeZone: 'UTC',
-            });
+        if (cellType === 'date' && cell.value) {
+            const dateTimeValue = dateTimeUtc({input: cell.value as string});
             const dateTimeFormat = get(column, 'format');
             formattedValue = dateTimeValue?.isValid()
                 ? dateTimeValue.format(dateTimeFormat)
