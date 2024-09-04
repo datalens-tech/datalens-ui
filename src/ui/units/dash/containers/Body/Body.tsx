@@ -870,9 +870,10 @@ class Body extends React.PureComponent<BodyProps> {
         const showEditActionPanel = mode === Mode.Edit;
 
         const content = (
-            <div className={b('content-wrapper')}>
+            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE})}>
                 <div
                     className={b('content-container', {
+                        mobile: DL.IS_MOBILE,
                         'no-title':
                             settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
                         'no-title-with-tabs':
