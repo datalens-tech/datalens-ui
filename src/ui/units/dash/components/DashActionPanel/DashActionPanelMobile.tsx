@@ -53,6 +53,15 @@ export class DashActionPanelMobile extends React.PureComponent<Props> {
             return <CloudTreeSelectBase folderId={DL.CURRENT_TENANT_ID} />;
         }
 
-        return <ShareButton entityId={entryId} />;
+        return (
+            <ShareButton
+                dialogShareProps={{
+                    propsData: {
+                        id: entryId,
+                    },
+                    withSelectors: true,
+                }}
+            />
+        );
     }
 }

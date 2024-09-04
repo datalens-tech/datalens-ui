@@ -14,14 +14,22 @@ export function getRowAsMap(args: {row?: TData; head?: TableHead[]}) {
 export function mapTableData(data: TableData): Required<TableData> {
     const {head = [], rows = [], footer = []} = data;
 
-    if (head?.length && rows?.length) {
+    const newHead = head.map((col, index) => {
+        if (!col?.id) {
+            return {...col, id: String(index)};
+        }
+
+        return col;
+    });
+
+    if (head.length && rows?.length) {
         // old pivot tables
         const firstRow = rows[0];
         if ('cells' in firstRow && !firstRow.cells.length) {
             const cells = new Array(head.length).fill(null).map(() => ({value: ''}));
-            return {head, rows: [{cells}], footer};
+            return {head: newHead, rows: [{cells}], footer};
         }
     }
 
-    return {head, rows, footer};
+    return {head: newHead, rows, footer};
 }

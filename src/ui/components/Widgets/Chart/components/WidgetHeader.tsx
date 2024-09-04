@@ -133,10 +133,14 @@ export const WidgetHeader = (props: HeaderProps) => {
                     <div className={b('share-widget')}>
                         <ShareButton
                             enablePopover={true}
-                            entityId={widgetId}
                             popoverText={widgetTitle}
                             popoverTitle={widgetTitle}
                             iconSize={16}
+                            dialogShareProps={{
+                                propsData: {
+                                    id: widgetId,
+                                },
+                            }}
                         />
                     </div>
                 )}

@@ -1,6 +1,6 @@
 import {expect} from '@playwright/test';
 
-import {WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
+import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
@@ -52,6 +52,47 @@ datalensTest.describe('Wizard', () => {
             const table = wizardPage.chartkit.getTableLocator();
             await expect(table).toBeVisible();
 
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Complex three-level header in the table rows @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'Sales',
+            );
+            await wizardPage.createNewFieldWithFormula('OrdersCount', 'count([order_id])');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'OrdersCount',
+            );
+
+            await wizardPage.sectionVisualization.removeFieldByClick(
+                PlaceholderName.PivotTableColumns,
+                'Measure Names',
+            );
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'region');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Rows,
+                'Measure Names',
+            );
+
+            // Set the width of the columns so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open();
+            await wizardPage.columnSettings.switchUnit('region', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('region', '150');
+            await wizardPage.columnSettings.switchUnit('segment', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('segment', '150');
+            await wizardPage.columnSettings.switchUnit('Measure Names', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('Measure Names', '150');
+            await wizardPage.columnSettings.apply();
+
+            await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
     });

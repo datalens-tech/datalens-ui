@@ -1,6 +1,7 @@
 import React from 'react';
 
 import noop from 'lodash/noop';
+import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
 import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
@@ -41,6 +42,7 @@ import type {DialogMoveEntryProps} from './DialogMoveEntry';
 import {DialogMoveEntry} from './DialogMoveEntry';
 import type {DialogRenameEntryProps} from './DialogRenameEntry';
 import {DialogRenameEntry} from './DialogRenameEntry';
+import {DialogShareEntry} from './DialogShareEntry';
 import type {DialogSwitchPublicProps} from './DialogSwitchPublic';
 import {DialogSwitchPublic} from './DialogSwitchPublic';
 import type {DialogUnlockProps} from './DialogUnlock';
@@ -68,6 +70,7 @@ export enum EntryDialogName {
     SaveAsNew = 'save-as-new',
     MigrateToWorkbook = 'migrate-to-workbook',
     ShowRelatedEntities = 'show-related-entities',
+    Share = 'share',
 }
 
 const getMapDialogues = (): Record<string, any> => {
@@ -93,6 +96,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNew,
         [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbook,
         [EntryDialogName.ShowRelatedEntities]: DialogRelatedEntities,
+        [EntryDialogName.Share]: DialogShareEntry,
         ...getAdditionalEntryDialoguesMap(),
     };
 };
@@ -118,6 +122,7 @@ interface MapDialoguesProps {
     [EntryDialogName.SetActualConfirm]: DialogMakeActualConfirmProps;
     [EntryDialogName.SaveAsNew]: DialogEntrySaveAsNewProps;
     [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbookProps;
+    [EntryDialogName.Share]: DialogShareProps;
 }
 
 type MethodOpenWithProps<T> = {
