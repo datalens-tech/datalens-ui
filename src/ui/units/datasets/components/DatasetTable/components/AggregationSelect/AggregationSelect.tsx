@@ -3,9 +3,8 @@ import React from 'react';
 import {Button, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {connect} from 'react-redux';
-import type {DatasetField, DatasetFieldAggregation} from 'shared';
-import type {DatalensGlobalState} from 'ui';
+import {useSelector} from 'react-redux';
+import type {DatasetFieldAggregation} from 'shared';
 
 import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
 import {AGGREGATION_AUTO, AGGREGATION_NONE} from '../../../../constants';
@@ -16,50 +15,30 @@ import './AggregationSelect.scss';
 
 const b = block('aggregation-select');
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-
-type OwnProps = {
+interface AggregationSelectProps {
     selectedAggregation: string;
     aggregations: string[];
-    field: DatasetField;
-    onSelect: (row: DatasetField, value: DatasetFieldAggregation) => void;
-    tabIndex?: number;
-    debounceTimeout?: number;
-};
+    autoaggregated?: boolean;
+    onSelect: (value: DatasetFieldAggregation) => void;
+}
 
-type Props = StateProps & OwnProps;
+export const AggregationSelect: React.FC<AggregationSelectProps> = ({
+    selectedAggregation: initSelectedAggregation,
+    aggregations,
+    autoaggregated,
+    onSelect,
+}) => {
+    const [selectedAggregation, setSelectedAggregation] = React.useState(initSelectedAggregation);
+    const validation = useSelector(datasetValidationSelector);
 
-class AggregationSelectComponent extends React.Component<Props> {
-    _aggregationSelectRef = React.createRef<any>();
+    React.useEffect(() => {
+        setSelectedAggregation(initSelectedAggregation);
+    }, [initSelectedAggregation]);
 
-    render() {
-        const {field, selectedAggregation} = this.props;
-
-        return (
-            <Select
-                ref={this._aggregationSelectRef}
-                disabled={this.disabled}
-                options={this.aggregationList}
-                value={[selectedAggregation]}
-                onUpdate={(value) => this.onSelect(field, value as [DatasetFieldAggregation])}
-                renderControl={this.renderSelectControl}
-                renderOption={this.renderSelectOption}
-            />
-        );
-    }
-
-    get aggregations() {
-        return this.props.aggregations.includes(AGGREGATION_NONE)
-            ? this.props.aggregations
-            : [AGGREGATION_NONE, ...this.props.aggregations];
-    }
-
-    get aggregationList() {
-        const {validation} = this.props;
-
-        return this.aggregations
+    const aggregationList = () => {
+        return aggregations
             .map<SelectOption>((aggregation) => {
-                const aggregationTitle = this.getAggregationTitle(
+                const aggregationTitle = getAggregationTitle(
                     aggregation as DatasetFieldAggregation,
                 );
 
@@ -82,54 +61,39 @@ class AggregationSelectComponent extends React.Component<Props> {
 
                 return content.localeCompare(contentNext, undefined, {numeric: true});
             });
-    }
+    };
 
-    get type() {
-        const {selectedAggregation, field: {autoaggregated} = {}} = this.props;
-
+    const type = () => {
         return selectedAggregation === AGGREGATION_NONE && !autoaggregated
             ? 'dimension'
             : 'measure';
-    }
+    };
 
-    get disabled() {
-        const {aggregations, selectedAggregation} = this.props;
-
+    const disabled = () => {
         // CHARTS-2870#5eeba2a02b0f671b59207dd8
         return aggregations.length === 1 && aggregations[0] === selectedAggregation;
-    }
+    };
 
-    private getAggregationTitle = (aggregation: DatasetFieldAggregation) => {
-        const {field} = this.props;
-
-        if (aggregation === AGGREGATION_NONE && field?.autoaggregated) {
+    function getAggregationTitle(aggregation: DatasetFieldAggregation) {
+        if (aggregation === AGGREGATION_NONE && autoaggregated) {
             return AGGREGATION_AUTO;
         }
 
         return aggregation;
-    };
+    }
 
-    private onSelect = (row: DatasetField, value: [DatasetFieldAggregation]) => {
-        // TODO: look for correct approach to close popup in dropdown by click on item in it
-        if (this._aggregationSelectRef.current) {
-            const {_onSwitcherClick} = this._aggregationSelectRef.current;
-
-            if (_onSwitcherClick) {
-                _onSwitcherClick();
-            }
-        }
+    const handleOnSelect = (value: [DatasetFieldAggregation]) => {
         const [aggregation] = value;
-        this.props.onSelect(row, aggregation);
+
+        setSelectedAggregation(aggregation);
+        onSelect(aggregation);
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
-        const selectedValue = getSelectedValueForSelect(
-            [this.props.selectedAggregation],
-            this.aggregations,
-        );
+    const renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+        const selectedValue = getSelectedValueForSelect([selectedAggregation], aggregations);
 
         const [aggregation] = selectedValue as [DatasetFieldAggregation];
-        const aggregationTitle = this.getAggregationTitle(aggregation);
+        const aggregationTitle = getAggregationTitle(aggregation);
 
         return (
             <Button
@@ -137,25 +101,28 @@ class AggregationSelectComponent extends React.Component<Props> {
                 ref={ref}
                 extraProps={{onKeyDown}}
                 view="flat"
-                className={b('select-control', {[this.type]: true})}
+                className={b('select-control', {[type()]: true})}
             >
                 <span className={b('selected-value')}>{getLabelValue(aggregationTitle)}</span>
             </Button>
         );
     };
 
-    private renderSelectOption = (option: SelectOption) => {
+    const renderSelectOption = (option: SelectOption) => {
         const modifiers = {
             disabled: option.disabled,
         };
         return <span className={b('select-option', modifiers)}>{option.content}</span>;
     };
-}
 
-const mapStateToProps = (state: DatalensGlobalState) => {
-    return {
-        validation: datasetValidationSelector(state),
-    };
+    return (
+        <Select
+            disabled={disabled()}
+            options={aggregationList()}
+            value={[selectedAggregation]}
+            onUpdate={(value) => handleOnSelect(value as [DatasetFieldAggregation])}
+            renderControl={renderSelectControl}
+            renderOption={renderSelectOption}
+        />
+    );
 };
-
-export const AggregationSelect = connect(mapStateToProps)(AggregationSelectComponent);

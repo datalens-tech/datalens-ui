@@ -26,7 +26,7 @@ import type {
 import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
-import {DisplaySettings} from './components';
+import {AggregationSelect, DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
 import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
@@ -120,6 +120,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             canBeHidden,
             canBeShown,
             allowedTypes,
+            allowedAggregations,
         } = this.getFilteredSelectedRows();
 
         return (
@@ -164,6 +165,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                             ...(canBeHidden.count > 0 ? [] : (['hide'] as const)),
                             ...(canBeShown.count > 0 ? [] : (['show'] as const)),
                             ...(allowedTypes.length > 0 ? [] : (['type'] as const)),
+                            ...(allowedAggregations.length > 0 ? [] : (['aggregation'] as const)),
                         ]}
                     />
                 )}
@@ -209,8 +211,17 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         );
 
         const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
+        const allowedAggregations = intersection(...selectedItems.map((item) => item.aggregations));
 
-        return {count, map, fields: filteredFields, canBeHidden, canBeShown, allowedTypes};
+        return {
+            count,
+            map,
+            fields: filteredFields,
+            canBeHidden,
+            canBeShown,
+            allowedTypes,
+            allowedAggregations,
+        };
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
@@ -356,8 +367,50 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         });
     };
 
+    private openBatchUpdateAggregationsDialog = (
+        fields: DatasetField[],
+        allowedAggregations: DatasetFieldAggregation[],
+    ) => {
+        let selectedAggregation = allowedAggregations[0];
+
+        const handleOnApply = () => {
+            this.props.batchUpdateFields({
+                validateEnabled: false,
+                updatePreview: true,
+                fields: fields.map(({guid}) => ({
+                    guid,
+                    aggregation: selectedAggregation,
+                })),
+            });
+            this.resetSelection();
+            this.props.closeDialog();
+        };
+
+        const handleOnSelect = (aggregation: DatasetFieldAggregation) => {
+            selectedAggregation = aggregation;
+        };
+
+        this.props.openDialog({
+            id: DIALOG_CHANGE_DATASET_FIELDS,
+            props: {
+                open: true,
+                onClose: this.props.closeDialog,
+                warningMessage: 'Не все агрегации могут быть доступны',
+                onApply: handleOnApply,
+                children: (
+                    <AggregationSelect
+                        aggregations={allowedAggregations}
+                        selectedAggregation={selectedAggregation}
+                        onSelect={handleOnSelect}
+                    />
+                ),
+            },
+        });
+    };
+
     private handleBatchUpdate = (action: BatchFieldAction) => {
-        const {fields, canBeShown, canBeHidden, allowedTypes} = this.getFilteredSelectedRows();
+        const {fields, canBeShown, canBeHidden, allowedTypes, allowedAggregations} =
+            this.getFilteredSelectedRows();
 
         switch (action) {
             case BatchFieldAction.Remove: {
@@ -381,6 +434,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
 
             case BatchFieldAction.Aggregation: {
+                this.openBatchUpdateAggregationsDialog(fields, allowedAggregations);
                 return;
             }
 

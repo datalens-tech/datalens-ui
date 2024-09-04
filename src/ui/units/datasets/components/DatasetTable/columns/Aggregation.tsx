@@ -29,13 +29,17 @@ export const getAggregationColumn = ({
     render: function AggregationColumnItem({value, index, row}) {
         const {aggregations = []} = fields.find(({guid}) => guid === row.guid) || {};
 
+        const handleOnUpdate = (aggregation: DatasetFieldAggregation) => {
+            onUpdate(row, aggregation);
+        };
+
         return (
             <AggregationSelect
                 key={index}
-                field={row}
+                autoaggregated={row.autoaggregated}
                 aggregations={aggregations}
                 selectedAggregation={value as string}
-                onSelect={onUpdate}
+                onSelect={handleOnUpdate}
             />
         );
     },
