@@ -128,7 +128,7 @@ export const Table = React.memo<Props>((props: Props) => {
     });
 
     React.useEffect(() => {
-        if (onReady && prerender) {
+        if (onReady && !prerender) {
             setTimeout(onReady, 0);
         }
     }, [onReady, prerender]);
