@@ -62,7 +62,7 @@ export function createTableColumns(args: {
             const size = cellSizes[cellIndex] ?? columnWidth;
             const left = cellSizes.reduce(
                 (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-                0,
+                1,
             );
             const options = createColumn({
                 headCell: {

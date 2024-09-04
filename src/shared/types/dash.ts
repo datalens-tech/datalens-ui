@@ -92,6 +92,9 @@ export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
     settings: Required<DashSettings>;
 };
 
+export interface DashTabSettings {
+    fixedHeaderCollapsedDefault: boolean;
+}
 export interface DashTab {
     id: string;
     title: string;
@@ -99,6 +102,7 @@ export interface DashTab {
     layout: DashTabLayout[];
     aliases: DashTabAliases;
     connections: DashTabConnection[];
+    settings?: DashTabSettings;
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;

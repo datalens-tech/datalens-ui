@@ -73,4 +73,11 @@ export class ColumnSettings {
     async cancel() {
         await this.page.click(slct(DialogColumnSettingsQa.CancelButton));
     }
+
+    async setPinnedColumns(count: number) {
+        const inputLocator = this.page
+            .locator(slct(DialogColumnSettingsQa.PinnedColumnsInput))
+            .locator('input');
+        await inputLocator.fill(String(count));
+    }
 }
