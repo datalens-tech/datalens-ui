@@ -22,7 +22,6 @@ interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose
 
 export const ShareButton = ({
     enablePopover,
-    entityId,
     popoverText,
     popoverTitle,
     iconSize = 18,
@@ -30,7 +29,6 @@ export const ShareButton = ({
     dialogShareProps,
 }: {
     enablePopover?: boolean;
-    entityId?: string;
     popoverText?: string;
     popoverTitle?: string;
     iconSize?: number;
@@ -50,10 +48,6 @@ export const ShareButton = ({
     };
 
     const initDialogShareProps: DialogShareProps = {propsData: {}, onClose: handleCloseDialogShare};
-
-    if (entityId) {
-        initDialogShareProps.propsData.id = entityId;
-    }
 
     if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
         initDialogShareProps.initialParams = {
@@ -77,7 +71,7 @@ export const ShareButton = ({
                     copyIcon={Code}
                     customIcon={ArrowShapeTurnUpRight}
                     iconSize={iconSize}
-                    withCopyLink={Boolean(entityId)}
+                    withCopyLink={Boolean(dialogShareProps?.propsData.id)}
                     className={popoverClassName}
                     renderCopy={({icon}) => (
                         <Button
