@@ -910,7 +910,7 @@ export const setTabs = (tabs: DashTabChanged[]) => ({
     payload: tabs,
 });
 
-export const setCurrentTabData = (data: Config) => ({
+export const setCurrentTabData = (data: DashTab) => ({
     type: actionTypes.SET_CURRENT_TAB_DATA,
     payload: data,
 });

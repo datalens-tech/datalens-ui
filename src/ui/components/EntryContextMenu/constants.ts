@@ -1,4 +1,5 @@
 import {
+    ArrowShapeTurnUpRight,
     Clock,
     CodeTrunk,
     Copy,
@@ -29,6 +30,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
     SHOW_RELATED_ENTITIES: 'show-related-entities',
@@ -74,6 +76,11 @@ const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
 
     return fn();
 };
+
+const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuParams): boolean =>
+    entry?.scope === EntryScope.Dash &&
+    showSpecificItems &&
+    Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
 export const getEntryContextMenu = (): ContextMenuItem[] => [
     {
@@ -200,6 +207,16 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         text: 'value_copy-link',
         enable: () => true,
         scopes: ALL_SCOPES,
+        isVisible: (params) => !isVisibleEntryContextShareItem(params),
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        icon: ArrowShapeTurnUpRight,
+        text: 'value_share',
+        enable: () => true,
+        scopes: ALL_SCOPES,
+        isVisible: isVisibleEntryContextShareItem,
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

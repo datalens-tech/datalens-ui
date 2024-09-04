@@ -20,7 +20,15 @@ import {dashTypedReducer} from './dashTypedReducer';
 
 const i18n = I18n.keyset('dash.store.view');
 
-export const TAB_PROPERTIES = ['id', 'title', 'items', 'layout', 'connections', 'aliases'];
+export const TAB_PROPERTIES = [
+    'id',
+    'title',
+    'items',
+    'layout',
+    'connections',
+    'aliases',
+    'settings',
+];
 
 const initialState = {
     mode: Mode.Loading,
