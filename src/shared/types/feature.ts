@@ -69,8 +69,10 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     EnableFooter = 'EnableFooter',
-    /** Chart runner for the execution of trusted code in wizard/ql. */
+    /** Chart runner for the execution of trusted code in wizard. */
     WorkerChartBuilder = 'WorkerChartBuilder',
+    /** Dash controls separate runner for the execution of trusted code. */
+    ControlBuilder = 'ControlBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
@@ -86,7 +88,12 @@ export enum Feature {
     NewSandbox_50p = 'NewSandbox_50p',
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
-    NoErrorTransformer = 'NoErrorTransformer',
+    /** Chart runner for the execution of trusted code in ql. */
+    QlChartRunner = 'QlChartRunner',
+    /** Allow markdown in chart fields. */
+    WizardMarkdownFields = 'WizardMarkdownFields',
+    EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
+    EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
 }
 
 export type FeatureConfig = Record<string, boolean>;

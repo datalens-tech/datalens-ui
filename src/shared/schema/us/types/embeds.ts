@@ -5,8 +5,10 @@ export type Embed = {
     entryId: string;
     depsIds: string[];
     unsignedParams: string[];
+    privateParams: string[];
     createdBy: string;
     createdAt: string;
+    publicParamsMode: boolean;
 };
 
 export type CreateEmbedArgs = {
@@ -15,6 +17,8 @@ export type CreateEmbedArgs = {
     entryId: string;
     depsIds: string[];
     unsignedParams: string[];
+    privateParams: string[];
+    publicParamsMode: boolean;
 };
 
 export type CreateEmbedResponse = Embed;

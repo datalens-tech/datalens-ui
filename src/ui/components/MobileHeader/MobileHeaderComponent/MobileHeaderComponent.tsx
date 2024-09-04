@@ -13,7 +13,7 @@ import {UserAvatar} from '../../UserMenu/UserAvatar';
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 import {UserPanel} from './UserPanel/UserPanel';
 
-import logoIcon from 'ui/assets/icons/logo.svg';
+import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
 
 import '../MobileHeader.scss';
@@ -36,7 +36,7 @@ enum Panel {
     User = 'user',
 }
 
-export const MobileHeaderComponent = ({renderContent}: MobileHeaderComponentProps) => {
+export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderComponentProps) => {
     const ref = React.useRef<HTMLDivElement>(null);
 
     const sideItem = (
@@ -65,7 +65,7 @@ export const MobileHeaderComponent = ({renderContent}: MobileHeaderComponentProp
         <MobileHeader
             ref={ref}
             logo={{
-                icon: logoIcon,
+                icon: logoIcon ?? defaultLogoIcon,
                 text: PRODUCT_NAME,
                 iconClassName: b('logo-icon'),
             }}

@@ -25,7 +25,7 @@ type MapScatterSeriesArgs = {
 function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustomData> {
     const {xAxisType, yAxisType, graph} = args;
 
-    const series: ScatterSeries<PointCustomData> = {
+    const series = {
         type: 'scatter',
         name: graph.name || '',
         color: typeof graph.color === 'string' ? graph.color : undefined,
@@ -61,7 +61,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
             }) || [],
         // @ts-ignore
         custom: graph.custom,
-    };
+    } as ScatterSeries<PointCustomData>;
 
     if (graph.marker?.symbol) {
         series.symbolType = graph.marker?.symbol as ScatterSeries['symbolType'];

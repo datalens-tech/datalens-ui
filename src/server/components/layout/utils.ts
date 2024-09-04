@@ -30,7 +30,12 @@ export function getChartkitLayoutSettings(
     if (!chartkitSettings.highcharts?.enabled) {
         chartkitInlineScripts.push(`window.Highcharts = {enabled: false};`);
     } else if (chartkitSettings.highcharts.external) {
-        const {domain = 'code.highcharts.com', version, modules = []} = chartkitSettings.highcharts;
+        const {
+            protocol = 'https',
+            domain = 'code.highcharts.com',
+            version,
+            modules = [],
+        } = chartkitSettings.highcharts;
         const items = [
             'highcharts',
             'highcharts-more',
@@ -39,7 +44,7 @@ export function getChartkitLayoutSettings(
 
         chartkitScripts.push(
             ...items.map((item) => ({
-                src: `https://${domain}${version ? `/${version}` : ''}/${item}.js`,
+                src: `${protocol}://${domain}${version ? `/${version}` : ''}/${item}.js`,
                 defer: true,
             })),
         );

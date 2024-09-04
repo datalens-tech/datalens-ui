@@ -59,6 +59,8 @@ export interface DLUserSettings {
     orgId?: string;
     chartsInsightsLocators?: string;
     projectId?: string;
+    dateFormat?: string | 'auto';
+    timeFormat?: '12' | '24';
 
     dlNavFilterOrderByField?: 'name' | 'createdAt';
     dlNavFilterOrderByDirection?: 'asc' | 'desc';

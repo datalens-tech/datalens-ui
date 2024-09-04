@@ -1,11 +1,7 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
-
 import {QL_TYPE} from '../../../../../shared';
-import type {ChartsEngine} from '../../../../components/charts-engine';
-import type {ResolvedConfig} from '../../../../components/charts-engine/components/storage/types';
-import {runChart} from '../../../../components/charts-engine/runners/chart';
 import type {Plugin} from '../../../../components/charts-engine/types';
+
+import {runQlChart} from './ql-chart-runner';
 
 export const plugin: Plugin = {
     runners: [
@@ -26,24 +22,7 @@ export const plugin: Plugin = {
                 QL_TYPE.LEGACY_METRIC_QL_NODE,
             ]),
             safeConfig: true,
-            handler: (
-                ctx: AppContext,
-                {
-                    req,
-                    res,
-                    config,
-                    chartsEngine,
-                    configResolving,
-                }: {
-                    req: Request;
-                    res: Response;
-                    config: ResolvedConfig;
-                    chartsEngine: ChartsEngine;
-                    configResolving: number;
-                },
-            ) => {
-                return runChart(ctx, {chartsEngine, req, res, config, configResolving});
-            },
+            handler: runQlChart,
         },
     ],
 };

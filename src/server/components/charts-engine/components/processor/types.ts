@@ -123,7 +123,6 @@ export type RuntimeMetadata = {
         exportFilename?: string;
     };
     chartsInsights?: ChartsInsight[];
-    errorTransformer: <T>(error: T) => T;
 };
 
 export type ChartApiContext = {
@@ -149,6 +148,7 @@ export type ChartBuilder = {
     }) => Promise<Record<string, ChartBuilderResult>>;
     buildParams: (args: {
         params: StringParams;
+        usedParams: StringParams;
         actionParams: StringParams;
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
@@ -173,12 +173,14 @@ export type ChartBuilder = {
         data: unknown;
         sources?: Record<string, DataFetcherResult>;
         params: StringParams;
+        usedParams: StringParams;
         actionParams: StringParams;
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
     buildUI: (args: {
         data?: unknown;
         params: StringParams;
+        usedParams: StringParams;
         actionParams: StringParams;
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;

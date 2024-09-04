@@ -271,8 +271,6 @@ export const DL = {
     },
 };
 
-export {LIGHT_THEME, DARK_THEME, SYSTEM_THEME} from 'shared';
-
 // monaco-editor common themes:
 // https://github.com/microsoft/vscode/blob/main/src/vs/editor/standalone/common/themes.ts
 export const LIGHT_THEME_MONACO = 'vs';
@@ -302,6 +300,7 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
+    STATE: 'state',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;
@@ -320,7 +319,7 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = Object.values(Scope);
+export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Presentation];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
@@ -329,6 +328,7 @@ export const OBJECT_SCOPES = [
     EntryScope.Dataset,
     EntryScope.Dash,
     EntryScope.Connection,
+    EntryScope.Presentation,
 ];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';

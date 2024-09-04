@@ -2,19 +2,20 @@ import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
+import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
+import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
 import type {
     CollectionWithPermissions,
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {selectCollectionContentItems} from '../../store/selectors';
+import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
@@ -49,7 +50,7 @@ export const CollectionContentTable = React.memo<Props>(
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
-        const items = useSelector(selectCollectionContentItems);
+        const items = useSelector(selectStructureItems);
 
         const selectedCount = React.useMemo(() => Object.keys(selectedMap).length, [selectedMap]);
 
@@ -68,6 +69,8 @@ export const CollectionContentTable = React.memo<Props>(
                 return {disabled: true};
             }
         }, [selectedCount, itemsAvailableForSelectionCount]);
+
+        const dateTimeFormat = useSelector(selectDateTimeFormat);
 
         if (DL.IS_MOBILE) {
             return (
@@ -166,9 +169,17 @@ export const CollectionContentTable = React.memo<Props>(
                                             {item.projectId || ''}
                                         </div>
                                         <div className={b('content-cell', {date: true})}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).fromNow()}
+                                            <Tooltip
+                                                content={dateTime({input: item.updatedAt}).format(
+                                                    dateTimeFormat,
+                                                )}
+                                            >
+                                                <span>
+                                                    {dateTime({
+                                                        input: item.updatedAt,
+                                                    }).fromNow()}
+                                                </span>
+                                            </Tooltip>
                                         </div>
                                         <div
                                             className={b('content-cell', {control: true})}

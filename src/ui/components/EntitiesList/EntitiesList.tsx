@@ -11,6 +11,7 @@ import './EntitiesList.scss';
 
 type EntitiesListProps = {
     entities: EntryRowProps['entry'][];
+    hideTitle?: boolean;
     updatedEntities?: Record<string, boolean>;
     setUpdatedEntities?: any;
 } & (CurrentEntity | ScopeEntities);
@@ -46,7 +47,7 @@ const getLabelByScope = (scope: string) => {
     }
 };
 
-export const EntitiesList = ({scope, entities, isCurrent, updatedEntities, setUpdatedEntities}: EntitiesListProps) => {
+export const EntitiesList = ({scope, entities, isCurrent, hideTitle, updatedEntities, setUpdatedEntities}: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
 
     let checkedCount = 0;
@@ -69,8 +70,8 @@ export const EntitiesList = ({scope, entities, isCurrent, updatedEntities, setUp
     return (
         <div className={b()}>
             <div className={b('title-wrapper')}>
-                {title && <div className={b('title')}>{title}</div>} 
-                {isCurrent || !updatedEntities ? null : 
+            {title && !hideTitle && <div className={b('title')}>{title}</div>}
+            {isCurrent || !updatedEntities ? null : 
                 <Switch size="m" 
                     className={b('switch')}
                     checked={checkedCount == entities.length} 
@@ -81,7 +82,7 @@ export const EntitiesList = ({scope, entities, isCurrent, updatedEntities, setUp
             </div>
             {entities.map((entity) => (
                 <EntryRow
-                    clasName={b('row')}
+                    className={b('row')}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}

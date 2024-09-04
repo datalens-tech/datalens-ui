@@ -1,5 +1,5 @@
 import type {
-    GetCollectionContentMode,
+    GetStructureItemsMode,
     OrderBasicField,
     OrderDirection,
 } from '../../../../shared/schema';
@@ -10,7 +10,7 @@ export const DEFAULT_FILTERS: {
     filterString?: string;
     orderField: OrderBasicField;
     orderDirection: OrderDirection;
-    mode: GetCollectionContentMode;
+    mode: GetStructureItemsMode;
     onlyMy: boolean;
 } = {
     filterString: undefined,

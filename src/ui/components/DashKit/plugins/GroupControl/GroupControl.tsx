@@ -33,7 +33,7 @@ import {DashConfigContext} from '../../../../units/dash/utils/context';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
-import type {ControlSettings, GetDistincts, LoadStatus} from '../Control/types';
+import type {ControlSettings, LoadStatus} from '../Control/types';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
 import {Control} from './Control/Control';
@@ -49,6 +49,7 @@ import {addItemToLocalQueue, filterSignificantParams} from './utils';
 import './GroupControl.scss';
 
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
+const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 
@@ -64,7 +65,7 @@ type PluginGroupControlProps = OwnProps & StateProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
     setSettings: (settings: ControlSettings) => Plugin;
-    getDistincts?: GetDistincts;
+    getDistincts?: ControlSettings['getDistincts'];
 };
 const b = block('dashkit-plugin-group-control');
 const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
@@ -88,7 +89,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     controlsData: Record<string, ExtendedLoadedData | null> = {};
 
     // a quick loader for imitating action by clicking on apply button
-    quickActionLoader = false;
+    _quickActionTimer: ReturnType<typeof setTimeout> | null = null;
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
@@ -115,6 +116,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             stateParams: this.props.params,
             needReload: false,
             localUpdateLoader: false,
+            quickActionLoader: false,
         };
     }
 
@@ -219,7 +221,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     render() {
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
-            this.quickActionLoader ||
+            this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
         return (
@@ -684,6 +686,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
+                groupId={this.props.id}
             />
         );
     }
@@ -729,9 +732,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             !isEqual(newParams, this.props.params)
         ) {
             if (action === CLICK_ACTION_TYPE.SET_PARAMS) {
-                this.quickActionLoader = true;
-                setTimeout(() => {
-                    this.quickActionLoader = false;
+                if (this._quickActionTimer) {
+                    clearTimeout(this._quickActionTimer);
+                }
+
+                this.setState({quickActionLoader: true}, () => {
+                    this._quickActionTimer = setTimeout(() => {
+                        this._quickActionTimer = null;
+                        this.setState({quickActionLoader: false});
+                    }, GROUP_CONTROL_LOADING_EMULATION_TIMEOUT);
                 });
             }
             this.onChange({params: newParams, callChangeByClick});

@@ -20,10 +20,10 @@ import {
     GET_COLLECTION_LOADING,
     GET_COLLECTION_SUCCESS,
     GET_COLLECTION_FAILED,
-    RESET_COLLECTION_CONTENT,
-    GET_COLLECTION_CONTENT_LOADING,
-    GET_COLLECTION_CONTENT_SUCCESS,
-    GET_COLLECTION_CONTENT_FAILED,
+    RESET_STRUCTURE_ITEMS,
+    GET_STRUCTURE_ITEMS_LOADING,
+    GET_STRUCTURE_ITEMS_SUCCESS,
+    GET_STRUCTURE_ITEMS_FAILED,
     CREATE_COLLECTION_LOADING,
     CREATE_COLLECTION_SUCCESS,
     CREATE_COLLECTION_FAILED,
@@ -70,8 +70,8 @@ import {
 
 import type {
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
     CreateCollectionResponse,
     GetRootCollectionPermissionsResponse,
     MoveCollectionResponse,
@@ -276,55 +276,53 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
     };
 };
 
-type ResetCollectionContentAction = {
-    type: typeof RESET_COLLECTION_CONTENT;
+type ResetStructureItemsAction = {
+    type: typeof RESET_STRUCTURE_ITEMS;
 };
 
-export const resetCollectionContent = () => {
+export const resetStructureItems = () => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
-            type: RESET_COLLECTION_CONTENT,
+            type: RESET_STRUCTURE_ITEMS,
         });
     };
 };
 
-type GetCollectionsContentLoadingAction = {
-    type: typeof GET_COLLECTION_CONTENT_LOADING;
+type GetStructureItemsLoadingAction = {
+    type: typeof GET_STRUCTURE_ITEMS_LOADING;
 };
-type GetCollectionsContentSuccessAction = {
-    type: typeof GET_COLLECTION_CONTENT_SUCCESS;
-    data: GetCollectionContentResponse;
+type GetStructureItemsSuccessAction = {
+    type: typeof GET_STRUCTURE_ITEMS_SUCCESS;
+    data: GetStructureItemsResponse;
 };
-type GetCollectionsContentFailedAction = {
-    type: typeof GET_COLLECTION_CONTENT_FAILED;
+type GetStructureItemsFailedAction = {
+    type: typeof GET_STRUCTURE_ITEMS_FAILED;
     error: Error | null;
 };
-type GetCollectionsContentAction =
-    | GetCollectionsContentLoadingAction
-    | GetCollectionsContentSuccessAction
-    | GetCollectionsContentFailedAction;
+type GetStructureItemsAction =
+    | GetStructureItemsLoadingAction
+    | GetStructureItemsSuccessAction
+    | GetStructureItemsFailedAction;
 
-export const getCollectionContent = ({
+export const getStructureItems = ({
     collectionId,
-    collectionsPage,
-    workbooksPage,
+    page,
     filterString,
     orderField,
     orderDirection,
     onlyMy,
     mode,
     pageSize,
-}: GetCollectionContentArgs) => {
+}: GetStructureItemsArgs) => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
-            type: GET_COLLECTION_CONTENT_LOADING,
+            type: GET_STRUCTURE_ITEMS_LOADING,
         });
         return getSdk()
-            .us.getCollectionContent({
+            .us.getStructureItems({
                 collectionId,
                 includePermissionsInfo: false,
-                collectionsPage,
-                workbooksPage,
+                page,
                 filterString,
                 orderField,
                 orderDirection,
@@ -334,7 +332,7 @@ export const getCollectionContent = ({
             })
             .then((data) => {
                 dispatch({
-                    type: GET_COLLECTION_CONTENT_SUCCESS,
+                    type: GET_STRUCTURE_ITEMS_SUCCESS,
                     data,
                 });
                 return data;
@@ -343,7 +341,7 @@ export const getCollectionContent = ({
                 const isCanceled = getSdk().isCancel(error);
 
                 if (!isCanceled) {
-                    logger.logError('collectionsStructure/getCollectionContent failed', error);
+                    logger.logError('collectionsStructure/getStructureItems failed', error);
                     dispatch(
                         showToast({
                             title: error.message,
@@ -353,7 +351,7 @@ export const getCollectionContent = ({
                 }
 
                 dispatch({
-                    type: GET_COLLECTION_CONTENT_FAILED,
+                    type: GET_STRUCTURE_ITEMS_FAILED,
                     error: isCanceled ? null : error,
                 });
 
@@ -1363,8 +1361,8 @@ export type CollectionsStructureAction =
     | ResetCollectionBreadcrumbsAction
     | GetCollectionBreadcrumbsAction
     | GetCollectionAction
-    | ResetCollectionContentAction
-    | GetCollectionsContentAction
+    | ResetStructureItemsAction
+    | GetStructureItemsAction
     | CreateCollectionAction
     | CreateWorkbookAction
     | CopyTemplateAction

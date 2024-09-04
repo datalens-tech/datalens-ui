@@ -9,10 +9,10 @@ import type {
     GetCollectionArgs,
     GetCollectionBreadcrumbsArgs,
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
     GetCollectionResponse,
     GetRootCollectionPermissionsResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
     MoveCollectionArgs,
     MoveCollectionResponse,
     MoveCollectionsArgs,
@@ -22,7 +22,7 @@ import type {
 } from '../types';
 
 export const COLLECTIONS_PATH_PREFIX = '/v1/collections';
-const COLLECTION_CONTENT_PATH_PREFIX = '/v1/collection-content';
+const COLLECTION_CONTENT_PATH_PREFIX = '/v1/structure-items';
 const COLLECTION_MOVE_LIST_PATH_PREFIX = '/v1/move-collections';
 const COLLECTION_DELETE_LIST_PATH_PREFIX = '/v1/delete-collections';
 const ROOT_COLLECTION_PERMISSIONS_PATH_PREFIX = '/v1/root-collection-permissions';
@@ -51,7 +51,7 @@ export const collectionsActions = {
         params: ({includePermissionsInfo}, headers) => ({query: {includePermissionsInfo}, headers}),
     }),
 
-    getCollectionContent: createAction<GetCollectionContentResponse, GetCollectionContentArgs>({
+    getStructureItems: createAction<GetStructureItemsResponse, GetStructureItemsArgs>({
         method: 'GET',
         path: () => COLLECTION_CONTENT_PATH_PREFIX,
         params: (
@@ -59,8 +59,7 @@ export const collectionsActions = {
                 collectionId,
                 includePermissionsInfo,
                 filterString,
-                collectionsPage,
-                workbooksPage,
+                page,
                 pageSize,
                 orderField,
                 orderDirection,
@@ -74,8 +73,7 @@ export const collectionsActions = {
                 includePermissionsInfo,
                 filterString,
                 // null is passed from query parameters
-                collectionsPage: collectionsPage === null ? 'null' : collectionsPage,
-                workbooksPage: workbooksPage === null ? 'null' : workbooksPage,
+                page: page === null ? 'null' : page,
                 pageSize,
                 orderField,
                 orderDirection,

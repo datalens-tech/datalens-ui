@@ -39,6 +39,7 @@ type ProcessTabParams = {
     name: string;
     code: string;
     params: Record<string, string | string[]>;
+    usedParams?: Record<string, string | string[]>;
     actionParams: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     data?: Record<string, unknown>;
@@ -99,6 +100,7 @@ export type SandboxExecuteResult = {
     runtimeMetadata: RuntimeMetadata;
     shared: Record<string, object> | Shared | ServerChartsConfig;
     params: Record<string, string | string[]>;
+    usedParams: Record<string, string | string[]>;
 };
 
 const execute = async ({
@@ -124,24 +126,41 @@ const execute = async ({
     let errorCode: typeof RUNTIME_ERROR | typeof RUNTIME_TIMEOUT_ERROR = RUNTIME_ERROR;
 
     let sandboxResult = {module: {exports: undefined}, __shared: {}, __params: {}};
+    let resultParams = {};
+    let resultUsedParams = {};
 
     const jail = context.global;
     jail.setSync('global', jail.derefInto());
 
     jail.setSync('__log', function (...args: unknown[]): void {
-        const processed = args.map((elem) => {
-            if (typeof elem === 'string') {
-                return JSON.parse(elem as string);
-            }
-            return elem;
-        });
-        isolatedConsole.log(...processed);
+        isolatedConsole.log(...args);
     });
 
     jail.setSync('__timeout', timeout);
-
     try {
         timeStart = process.hrtime();
+        if (filename === 'Params') {
+            const params = chartEditorApi.getParams();
+            context.evalClosureSync(`__params = $0 || {};`, [params], {
+                arguments: {
+                    copy: true,
+                },
+            });
+        }
+
+        // Replace API functions with isolated function invocation
+        // eslint-disable-next-line no-param-reassign
+        chartEditorApi.updateParams = (params) => {
+            context.evalClosureSync(`
+                const updatedParams = JSON.parse('${JSON.stringify(params)}');
+                 __runtimeMetadata.userParamsOverride = Object.assign(
+                    {},
+                    __runtimeMetadata.userParamsOverride,
+                    updatedParams,
+                );
+            `);
+        };
+
         prepareChartEditorApi({
             name: filename,
             jail,
@@ -154,21 +173,61 @@ const execute = async ({
         libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
         libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
-        const responseStringify = `
-            return JSON.stringify({module, __shared, __params}, function(key, val) {
-                if (typeof val === 'function') {
-                    return val.toString();
-                }
-                return val;
-            });`;
-
-        const prepare = getPrepare({noJsonFn: features.noJsonFn});
-        const result = context.evalClosureSync(`${prepare}\n${code}\n${responseStringify}`, [], {
+        const after = `
+            ${
+                filename === 'Params'
+                    ? `
+                __usedParams = {...module.exports};
+                // Merge used to be here. Merge in this situation does not work as it should for arrays, so assign.    
+                __params = Object.assign({}, __usedParams, __params);
+                
+                Object.keys(__params).forEach((paramName) => {
+                    const param = __params[paramName];
+                    if (!Array.isArray(param)) {
+                        __params[paramName] = [param];
+                    }
+                });
+                // take values from params in usedParams there are always only defaults exported from the Params tab
+                // and in params new passed parameters
+                Object.keys(__usedParams).forEach((paramName) => {
+                    __usedParams[paramName] = __params[paramName];
+                });
+                // ChartEditor.updateParams() has the highest priority,
+                // therefore, now we take the parameters set through this method
+                __updateParams({
+                    userParamsOverride: __runtimeMetadata.userParamsOverride,
+                    params: __params,
+                    usedParams: __usedParams,
+                });
+                __resolveParams(__params);
+            `
+                    : ``
+            };
+             ${
+                 filename === 'JavaScript' || filename === 'UI'
+                     ? `__updateParams({
+                            userParamsOverride: __runtimeMetadata.userParamsOverride,
+                            params: __params,
+                            usedParams: __usedParams,
+                        });`
+                     : ``
+             };
+            const jsonFn = ${filename !== 'JavaScript'};
+            module = __safeStringify(module, {jsonFn});
+            return {module, __shared};
+        `;
+        const prepare = getPrepare({noJsonFn: features.noJsonFn, name: filename});
+        const codeWrapper = `(function () { \n ${code} \n })();`;
+        sandboxResult = context.evalClosureSync(`${prepare}\n ${codeWrapper} \n${after}`, [], {
             timeout,
             filename,
-            lineOffset: -prepare.split('\n').length,
+            lineOffset: -prepare.split('\n').length - 1,
+            result: {
+                copy: true,
+            },
         });
-        sandboxResult = JSON.parse(result);
+        resultParams = JSON.parse(context.evalSync('JSON.stringify(__params)'));
+        resultUsedParams = JSON.parse(context.evalSync('JSON.stringify(__usedParams)'));
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
             errorStackTrace = 'stack' in e && (e.stack as string);
@@ -187,14 +246,9 @@ const execute = async ({
     }
 
     let shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : {};
-    let params = chartEditorApi.getParams ? chartEditorApi.getParams() : {};
 
     if (sandboxResult.__shared) {
         shared = {...shared, ...sandboxResult.__shared};
-    }
-
-    if (sandboxResult.__params) {
-        params = {...params, ...sandboxResult.__params};
     }
 
     if (errorStackTrace) {
@@ -212,8 +266,9 @@ const execute = async ({
     }
 
     return {
+        params: resultParams,
+        usedParams: resultUsedParams,
         shared,
-        params,
         executionTiming,
         logs: isolatedConsole.getLogs(),
         filename,
@@ -225,6 +280,7 @@ export const processTab = async ({
     name,
     code,
     params,
+    usedParams,
     actionParams,
     widgetConfig,
     data,
@@ -238,8 +294,9 @@ export const processTab = async ({
     context,
     features,
 }: ProcessTabParams) => {
-    const originalShared = shared;
     const originalParams = params;
+    const originalUsedParams = usedParams;
+    const originalShared = shared;
     const chartApiContext = getChartApiContext({
         name,
         params,
@@ -268,9 +325,10 @@ export const processTab = async ({
         userLogin,
         features,
     });
-
     Object.assign(originalShared, result.shared);
     Object.assign(originalParams, result.params);
-
+    if (originalUsedParams) {
+        Object.assign(originalUsedParams, result.usedParams);
+    }
     return result;
 };

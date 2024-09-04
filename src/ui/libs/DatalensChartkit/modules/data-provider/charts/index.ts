@@ -39,7 +39,7 @@ import type {
     ControlsOnlyWidget,
     DataProvider,
     GraphWidget,
-    TableWidget,
+    TableWidgetData,
     Widget,
 } from '../../../types';
 import axiosInstance, {initConcurrencyManager} from '../../axios/axios';
@@ -125,9 +125,15 @@ export interface EntityRequestOptions {
         key?: string;
         path?: string | undefined;
         uiOnly?: boolean;
+        tabId?: string;
         responseOptions?: {
             includeConfig: boolean;
             includeLogs: boolean;
+        };
+        controlData?: {
+            id: string;
+            tabId?: string;
+            groupId?: string;
         };
     };
     headers?: Record<string, any>;
@@ -306,7 +312,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return new DatalensChartkitCustomError(message, {code, details, debug, extra});
     }
 
-    static graphToTable(graph: GraphWidget & ChartsData): TableWidget & ChartsData {
+    static graphToTable(graph: GraphWidget & ChartsData): TableWidgetData & ChartsData {
         // it looks expensive, but less labor-intensive than trying to parse all possible data options at the lines
         // @ts-ignore
         // TODO@types
@@ -318,8 +324,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         const dataRows = chart.getDataRows();
 
-        const head: TableWidget['data']['head'] = [];
-        const rows: TableWidget['data']['rows'] = [];
+        const head: TableWidgetData['data']['head'] = [];
+        const rows: TableWidgetData['data']['rows'] = [];
 
         if (chart.xAxis[0].options.type === 'datetime') {
             head.push({
@@ -714,11 +720,20 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
+        const headers = {...requestOptions.headers};
+
+        if (isEmbeddedEntry()) {
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
+        }
+
         return axiosInstance(
             this.prepareRequestConfig({
                 url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
+                headers,
             }),
         );
     }
@@ -751,10 +766,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const headers: Record<string, string | null> = {
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (isEmbeddedEntry()) {
-            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
-            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
-        }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }

@@ -63,6 +63,7 @@ export const PREPARE_FUNCTION_ARGS = {
     },
     ChartEditor: {
         getTranslation: (key: string) => key,
+        getWidgetConfig: () => ({}),
     },
     features: [],
 };

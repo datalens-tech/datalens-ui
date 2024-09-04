@@ -735,6 +735,7 @@ class VisualizationItem extends React.Component<Props, State> {
             backgroundSettings,
             subTotalsSettings,
             hintSettings,
+            isMarkdown,
         }: DialogFieldState,
     ) => {
         const clientsideProperties = {
@@ -746,6 +747,7 @@ class VisualizationItem extends React.Component<Props, State> {
             backgroundSettings,
             subTotalsSettings,
             hintSettings,
+            isMarkdown,
         };
 
         const serversideProperties = {
@@ -882,6 +884,8 @@ class VisualizationItem extends React.Component<Props, State> {
         }
 
         target.hintSettings = hintSettings;
+        target.isMarkdown =
+            target.data_type === DATASET_FIELD_TYPES.STRING && isMarkdown ? true : undefined;
 
         if (isClientSidePropertiesChanged && !isServersidePropertiesChanged) {
             this.props.actions.updatePreviewWithRerender();

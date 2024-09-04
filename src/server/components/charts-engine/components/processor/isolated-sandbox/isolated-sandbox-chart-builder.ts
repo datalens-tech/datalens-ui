@@ -53,7 +53,13 @@ export const getIsolatedSandboxChartBuilder = async (
     let shared: Record<string, any>;
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    context.evalSync('const __modules = {}');
+    context.evalSync(
+        `const __modules = {};
+         let __params; 
+         let __usedParams;
+         let __runtimeMetadata = {userParamsOverride: undefined};
+    `,
+    );
 
     return {
         dispose: () => {
@@ -114,6 +120,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 timeout: ONE_SECOND,
                 hooks: options.hooks,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 shared,
@@ -253,6 +260,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 timeout: JS_EXECUTION_TIMEOUT,
                 shared,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 data,
@@ -279,6 +287,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 hooks: options.hooks,
                 shared,
                 params: options.params,
+                usedParams: options.usedParams,
                 actionParams: options.actionParams,
                 widgetConfig,
                 data,

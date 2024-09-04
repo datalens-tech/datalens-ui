@@ -1,5 +1,7 @@
 import {ACTION_PARAM_PREFIX} from '@gravity-ui/dashkit/helpers';
 
+import {ControlType} from '../types/dash';
+
 export enum AppInstallation {
     Opensource = 'opensource',
 }
@@ -44,6 +46,12 @@ export const DEFAULT_CHART_LINES_LIMIT = 100;
 
 export const DEFAULT_DATE_FORMAT = 'DD.MM.YYYY';
 
+export const DEFAULT_TIME_FORMAT = '24';
+
+export const TIME_FORMAT_12 = 'h:mm a';
+
+export const TIME_FORMAT_24 = 'HH:mm';
+
 export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 
 export const SHARED_URL_OPTIONS = {
@@ -86,4 +94,5 @@ export const EDITOR_TYPE_CONFIG_TABS = {
     ...QL_CHART_NODE,
     ...EDITOR_CHART_NODE,
     module: '',
+    control_dash: ControlType.Dash,
 };

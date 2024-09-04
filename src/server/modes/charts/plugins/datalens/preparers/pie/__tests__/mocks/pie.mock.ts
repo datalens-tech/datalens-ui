@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 
 import type {IChartEditor} from '../../../../../../../../../shared';
 import {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
+import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 import type {PrepareFunctionArgs} from '../../../types';
 
 const chartEditorMock = {
@@ -102,6 +103,7 @@ export const piePrepareBaseArgs = {
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
     },
+    features: {},
 };
 
 export const measureNumberAndMeasure = {
@@ -232,6 +234,7 @@ export const piePrepareArgs = {
 };
 
 export const piePrepareForQLArgs = {
+    ...EmptyPrepapreArgs,
     placeholders: [
         {
             allowedTypes: {},

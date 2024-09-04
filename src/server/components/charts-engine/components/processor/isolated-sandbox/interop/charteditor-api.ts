@@ -9,20 +9,22 @@ import {
     WRAPPED_FN_KEY,
     WRAPPED_HTML_KEY,
 } from '../../../../../../../shared';
-import {getCurrentPage, getSortParams} from '../../paramsUtils';
 
 export type ChartEditorGetTranslation = (
     keyset: string,
     key: string,
     getTranslationParams?: string,
 ) => string;
-export type ChartEditorGetSharedData = () => string;
+export type ChartEditorGetSharedData = () => {
+    [key: string]: object;
+};
+
 export type ChartEditorUserLang = string;
 export type ChartEditorUserLogin = string;
 export type ChartEditorAttachHandler = (handlerConfig: string) => string;
 export type ChartEditorAttachFormatter = (formatterConfig: string) => string;
-export type ChartEditorGetSecrets = () => string;
-export type ChartEditorResolveInterval = (interval: string) => string | null;
+export type ChartEditorGetSecrets = () => {[key: string]: string};
+export type ChartEditorResolveInterval = (interval: string) => {from: string; to: string} | null;
 export type ChartEditorResolveOperation = (operation: string) => string | null;
 export type ChartEditorSetError = (error: string) => undefined;
 export type ChartEditorSetChartsInsights = (insights: string) => undefined;
@@ -30,8 +32,6 @@ export type ChartEditorGetWidgetConfig = () => string;
 export type ChartEditorGetActionParams = () => string;
 export type ChartEditorWrapFnWrappedFnKey = string;
 export type ChartEditorWrapHtmlWrappedHtmlKey = string;
-export type ChartEditorGetParams = () => string;
-export type ChartEditorGetParam = (key: string) => string | null;
 export type ChartEditorGetSortParams = string;
 export type ChartEditorCurrentPage = number;
 export type ChartEditorUpdateParams = (params: string) => undefined;
@@ -68,8 +68,6 @@ export function prepareChartEditorApi({
     chartEditorApi: IChartEditor;
     userLogin: string | null;
 }) {
-    const params = chartEditorApi.getParams();
-
     jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams?: string) => {
         const parsedgetTranslationParams = getTranslationParams
             ? JSON.parse(getTranslationParams)
@@ -78,8 +76,7 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
-        const shared = chartEditorApi.getSharedData ? chartEditorApi.getSharedData() : null;
-        return JSON.stringify(shared);
+        return chartEditorApi.getSharedData();
     }) satisfies ChartEditorGetSharedData);
 
     jail.setSync('_ChartEditor_userLang', chartEditorApi.getLang() satisfies ChartEditorUserLang);
@@ -98,7 +95,7 @@ export function prepareChartEditorApi({
 
     if (chartEditorApi.getSecrets) {
         jail.setSync('_ChartEditor_getSecrets', (() =>
-            JSON.stringify(chartEditorApi.getSecrets())) satisfies ChartEditorGetSecrets);
+            chartEditorApi.getSecrets()) satisfies ChartEditorGetSecrets);
     }
 
     jail.setSync('_ChartEditor_resolveRelative', ((...resolveRelativeParams) => {
@@ -106,7 +103,7 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorResolveRelative);
 
     jail.setSync('_ChartEditor_resolveInterval', ((intervalStr: string) => {
-        return JSON.stringify(chartEditorApi.resolveInterval(intervalStr));
+        return chartEditorApi.resolveInterval(intervalStr);
     }) satisfies ChartEditorResolveInterval);
 
     jail.setSync('_ChartEditor_resolveOperation', ((input: string) => {
@@ -146,31 +143,7 @@ export function prepareChartEditorApi({
         WRAPPED_HTML_KEY satisfies ChartEditorWrapHtmlWrappedHtmlKey,
     );
 
-    jail.setSync('_ChartEditor_getParams', (() => {
-        return JSON.stringify(params);
-    }) satisfies ChartEditorGetParams);
-
-    jail.setSync('_ChartEditor_getParam', ((paramName: string) => {
-        return JSON.stringify(chartEditorApi.getParam(paramName));
-    }) satisfies ChartEditorGetParam);
-
-    if (name === 'Urls') {
-        jail.setSync(
-            '_ChartEditor_getSortParams',
-            JSON.stringify(getSortParams(params)) satisfies ChartEditorGetSortParams,
-        );
-    }
-
-    if (name === 'Urls' || name === 'JavaScript') {
-        const page = getCurrentPage(params);
-        jail.setSync('_ChartEditor_currentPage', page satisfies ChartEditorCurrentPage);
-    }
-
     if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
-        jail.setSync('_ChartEditor_updateParams', ((updatedParams?: string) => {
-            const parsedUpdatedParams = updatedParams ? JSON.parse(updatedParams) : undefined;
-            JSON.stringify(chartEditorApi.updateParams(parsedUpdatedParams));
-        }) satisfies ChartEditorUpdateParams);
         jail.setSync('_ChartEditor_updateActionParams', ((updateActionParams?: string) => {
             const parsedUpdateActionParams = updateActionParams
                 ? JSON.parse(updateActionParams)

@@ -14,6 +14,7 @@ export function isEntryTypeWithFiltering(
         WizardType.GraphWizardNode,
         WizardType.D3WizardNode,
         WizardType.TableWizardNode,
+        WizardType.YmapWizardNode,
     ];
 
     if (wizardEntryTypes.includes(entryType as WizardType)) {

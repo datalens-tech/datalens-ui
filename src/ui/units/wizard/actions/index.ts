@@ -607,6 +607,7 @@ export function removeDataset({
                             'formatting',
                             'columnSettings',
                             'barsSettings',
+                            'hintSettings',
                         ];
 
                         if (item.filter) {
@@ -825,7 +826,9 @@ function _receiveVisualization({
 
     // We put all the metadata from it into the saved one
     const placeholders = presetVisualization.placeholders.map((presetPlaceholder) => {
-        const placeholder = previousPlaceholders.find((p) => p.id === presetPlaceholder.id);
+        const placeholder = previousPlaceholders.find(
+            (p) => p.id === presetPlaceholder.id || p.type === presetPlaceholder.type,
+        );
 
         if (placeholder) {
             const items = [...placeholder.items];

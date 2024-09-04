@@ -1,4 +1,4 @@
-import {Page, Response, expect} from '@playwright/test';
+import {Page, Response, Route, expect} from '@playwright/test';
 
 import {
     ConnectionsDialogQA,
@@ -175,24 +175,24 @@ class DashboardPage extends BasePage {
         action?: () => Promise<void>;
     }) {
         const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+        const handler = async (route: Route) => {
+            await expect(loader).toBeVisible();
+
+            await route.continue();
+        };
 
         if (waitForLoader) {
             // check for loader appearence and passing request without changes
-            await this.page.route(CommonUrls.ApiRun, async (route) => {
-                await expect(loader).toBeVisible();
-                route.continue();
-            });
+            await this.page.route(CommonUrls.ApiRun, handler);
         }
 
         // check that requests for passed selectors have completed successfully
         const controlResponses = controlTitles.map((title) => {
             const predicate = (response: Response) => {
                 const isCorrespondingRequest =
+                    response.status() === 200 &&
                     response.url().includes(CommonUrls.ApiRun) &&
-                    response.request().postDataJSON().config.data.shared.title === title;
-                if (isCorrespondingRequest) {
-                    expect(response.status()).toEqual(200);
-                }
+                    response.request().postDataJSON()?.config?.data?.shared?.title === title;
 
                 return isCorrespondingRequest;
             };
@@ -206,6 +206,7 @@ class DashboardPage extends BasePage {
 
         if (waitForLoader) {
             await expect(loader).toBeHidden();
+            await this.page.unroute(CommonUrls.ApiRun, handler);
         }
     }
 

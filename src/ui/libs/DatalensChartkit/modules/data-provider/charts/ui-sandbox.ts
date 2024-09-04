@@ -104,7 +104,7 @@ const HC_FORBIDDEN_ATTRS = [
     'xAxis',
     'yAxis',
 ] as const;
-const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions'];
+const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
@@ -155,22 +155,23 @@ function clearVmProp(prop: unknown) {
             }
         });
 
-        if ('series' in item) {
-            item.series = pick(item.series, ...ALLOWED_SERIES_ATTRS);
-            delete item.series.userOptions.data;
+        // eslint-disable-next-line prefer-const
+        let {series, point, points, this: _this, ...other} = item;
+        if (typeof series !== 'undefined') {
+            series = pick(series, ...ALLOWED_SERIES_ATTRS);
+            delete series.userOptions.data;
         }
 
-        if ('point' in item) {
+        if (typeof point !== 'undefined') {
             const pointClone = clearVmProp(item.point);
-            item.point = removeSVGElements(pointClone);
+            point = removeSVGElements(pointClone);
         }
 
-        if ('points' in item && Array.isArray(item.points)) {
-            const points = item.points as unknown[];
-            item.points = points.map(clearVmProp);
+        if (Array.isArray(points)) {
+            points = points.map(clearVmProp);
         }
 
-        return removeSVGElements(item);
+        return {series, point, points, this: _this, ...(removeSVGElements(other) as object)};
     }
 
     if (prop && typeof prop === 'function') {

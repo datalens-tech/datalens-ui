@@ -2,14 +2,15 @@ import querystring from 'querystring';
 import url from 'url';
 
 import type {Request, Response} from '@gravity-ui/expresskit';
+import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {DL_EMBED_TOKEN_HEADER, Feature, isEnabledServerFeature} from '../../../../shared';
+import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
 import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
-import type {ResolveConfigProps} from '../components/storage/base';
+import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
 import {getDuration} from '../components/utils';
 import { US } from '../../sdk';
 
@@ -35,10 +36,6 @@ export const runController = (
         const {id, workbookId, expectedType = null, config} = req.body;
 
         let {key, params} = req.body;
-
-        const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
-            ? ''
-            : req.headers[DL_EMBED_TOKEN_HEADER];
 
         if (!id && !key) {
             key = req.body.path || (params && params.name);
@@ -85,7 +82,6 @@ export const runController = (
                 key,
                 id,
                 workbookId,
-                embedToken,
                 headers: {
                     ...res.locals.subrequestHeaders,
                     ...ctx.getMetadata(),
@@ -101,16 +97,18 @@ export const runController = (
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {key, id});
 
         Promise.resolve(configPromise)
-        .catch((error) => {
+        .catch((err: unknown) => {
+            const error: ResolveConfigError =
+                isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);
             const result: {
                 error: {
                     code: string;
                     details: {
-                        code: string;
+                        code: number | null;
                         entryId: string;
                     };
                     debug?: {
-                        message: string;
+                        message: unknown;
                     };
                 };
             } = {
@@ -132,7 +130,8 @@ export const runController = (
             }
 
             ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "${key || id}"`, error);
-            res.status(error.status || 500).send(result);
+            const status = (error.response && error.response.status) || error.status || 500;
+            res.status(status).send(result);
         })
         .then(async (config) => {
             if (!config) {

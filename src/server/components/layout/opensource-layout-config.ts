@@ -81,6 +81,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         oidc_4: req.ctx.config.oidc_4,
         oidc_name_4: req.ctx.config.oidc_name_4,
         oidc_base_url_4: req.ctx.config.oidc_base_url_4,
+        ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {
@@ -100,11 +101,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
                 rel: 'stylesheet',
             }
         ],
-        bodyContent: {
-            theme,
-        },
         pluginsOptions: {
             layout: {name: appLayoutSettings.bundleName},
+            ...(theme ? {uikit: {theme}} : {}),
         },
         ...appLayoutSettings.renderConfig,
     };

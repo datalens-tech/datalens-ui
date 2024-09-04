@@ -36,11 +36,11 @@ import {DIALOG_ASSIGN_CLAIMS} from 'ui/components/OpenDialogAssignClaims/OpenDia
 const i18n = I18n.keyset('collections');
 
 type UseActionsArgs = {
-    fetchCollectionContent: () => void;
+    fetchStructureItems: () => void;
     onCloseMoveDialog: (structureChanged: boolean) => void;
 };
 
-export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActionsArgs) => {
+export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsArgs) => {
     const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
@@ -69,7 +69,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                                     description: item?.description ?? '',
                                     onApply: (collection: UpdateCollectionResponse | null) => {
                                         if (collection) {
-                                            fetchCollectionContent();
+                                            fetchStructureItems();
                                         }
                                     },
                                     onClose: () => {
@@ -94,7 +94,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                                     collectionId: item.collectionId,
                                     collectionTitle: item.title,
                                     initialParentId: item.parentId,
-                                    onApply: fetchCollectionContent,
+                                    onApply: fetchStructureItems,
                                     onClose: onCloseMoveDialog,
                                 },
                             }),
@@ -185,7 +185,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
             collectionsAccessEnabled,
             customizeCollectionsActions,
             dispatch,
-            fetchCollectionContent,
+            fetchStructureItems,
             onCloseMoveDialog,
         ],
     );
@@ -210,7 +210,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                                         description: item?.description ?? '',
                                         onApply: (workbook: UpdateWorkbookResponse | null) => {
                                             if (workbook) {
-                                                fetchCollectionContent();
+                                                fetchStructureItems();
                                             }
                                         },
                                         onClose: () => {
@@ -236,7 +236,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
                                     workbookId: item.workbookId,
                                     workbookTitle: item.title,
                                     initialCollectionId: item.collectionId,
-                                    onApply: fetchCollectionContent,
+                                    onApply: fetchStructureItems,
                                     onClose: onCloseMoveDialog,
                                 },
                             }),
@@ -351,7 +351,7 @@ export const useActions = ({fetchCollectionContent, onCloseMoveDialog}: UseActio
             collectionsAccessEnabled,
             customizeWorkbooksActions,
             dispatch,
-            fetchCollectionContent,
+            fetchStructureItems,
             onCloseMoveDialog,
             history,
         ],
