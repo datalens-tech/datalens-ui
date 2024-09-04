@@ -1,9 +1,7 @@
 import React from 'react';
 
-import {registry} from 'ui/registry';
-
 import {YfmWrapper} from '../components/YfmWrapper/YfmWrapper';
-import {DL} from '../constants';
+import {getRenderMarkdownFn} from '../utils/markdown/get-render-markdown-fn';
 
 type Props = {
     value: string;
@@ -19,17 +17,8 @@ async function renderMarkdown(value: string) {
                 MarkdownCollection.delete(firstKey);
             }
 
-            const {getAdditionalMarkdownPlugins} = registry.common.functions.getAll();
-            const {renderHTML} = await import('../../shared/modules/markdown/markdown');
-            const plugins = await getAdditionalMarkdownPlugins();
-
-            const renderedMarkdown = renderHTML({
-                text: value,
-                lang: DL.USER_LANG,
-                plugins,
-            });
-            const yfmString = renderedMarkdown.result;
-            MarkdownCollection.set(value, yfmString);
+            const renderYfm = await getRenderMarkdownFn();
+            MarkdownCollection.set(value, renderYfm(value));
         } catch (e) {
             console.error('useMarkdown failed ', e);
         }

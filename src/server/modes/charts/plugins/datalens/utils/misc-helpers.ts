@@ -22,6 +22,7 @@ import {
     isMeasureField,
     isMeasureValue,
 } from '../../../../../../shared';
+import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
 import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
 import type {
     ChartColorsConfig,
@@ -373,6 +374,18 @@ function isGradientMode({
 
 export function isLegendEnabled(chartSetting?: ServerCommonSharedExtraSettings) {
     return chartSetting?.legendMode !== LegendDisplayMode.Hide;
+}
+
+export function getLabelValue(value: undefined | string, isMarkdownLabel?: boolean) {
+    if (value === undefined) {
+        return '';
+    }
+
+    if (isMarkdownLabel) {
+        return wrapMarkdownValue(value);
+    }
+
+    return value;
 }
 
 export {

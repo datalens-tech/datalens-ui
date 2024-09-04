@@ -204,7 +204,7 @@ export type V11Shape = {
     type: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-};
+} & V11ClientOnlyFields;
 
 export type V11Tooltip = {
     datasetId: string;
@@ -299,4 +299,5 @@ export type V11ChartsConfigDatasetField = {
 export type V11ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
+    isMarkdown?: boolean;
 };

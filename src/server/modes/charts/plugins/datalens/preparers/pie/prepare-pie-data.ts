@@ -1,15 +1,18 @@
 import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
+    Feature,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     getDistinctValue,
     getFakeTitleOrTitle,
     isFieldHierarchy,
+    isMarkdownField,
     isMeasureValue,
     isNumberField,
     isPseudoField,
 } from '../../../../../../../shared';
+import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import type {ChartColorsConfig} from '../../types';
 import type {ColorValue} from '../../utils/color-helpers';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -92,9 +95,11 @@ export function preparePieData(args: PrepareFunctionArgs) {
         ChartEditor,
         disableDefaultSorting = false,
         shared,
+        features,
     } = args;
     const {data, order, totals} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
+    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
 
     const measure = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items[0];
     let colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
@@ -123,6 +128,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
     const labelIndex = labelField
         ? findIndexInOrder(order, labelField, idToTitle[labelField.guid])
         : -1;
+    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
 
     const measureIndex = findIndexInOrder(order, measure, idToTitle[measure.guid]);
     const measureDataType = idToDataType[measure.guid] || measure.data_type;
@@ -156,8 +162,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
                       chartKitFormatting: true,
                       chartKitPrecision: measureDataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
                   },
-        dataLabels:
-            labelFormatting && Object.keys(labelFormatting).length
+        dataLabels: {
+            ...(labelFormatting && Object.keys(labelFormatting).length
                 ? {
                       // need to reset dataLabels.format to use dataLabels.formatter
                       format: null,
@@ -176,7 +182,9 @@ export function preparePieData(args: PrepareFunctionArgs) {
                           labelFinalDataType === DATASET_FIELD_TYPES.FLOAT
                               ? MINIMUM_FRACTION_DIGITS
                               : 0,
-                  },
+                  }),
+            useHTML: isMarkdownLabel,
+        },
     };
 
     const pieData = data.reduce((acc, values) => {
@@ -236,6 +244,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
             } else if (isNumberField(labelField)) {
                 // The value will be formatted using dataLabels.chartKitFormatting
                 point.label = Number(labelValue);
+            } else if (labelValue && isMarkdownLabel) {
+                point.label = wrapMarkdownValue(labelValue);
             } else {
                 point.label = getFormattedValue(labelValue, {
                     ...labelField,
@@ -280,6 +290,10 @@ export function preparePieData(args: PrepareFunctionArgs) {
         pie.data.forEach((d) => {
             d.color = getPieSegmentColor({item: d, colorsConfig, usedColors});
         });
+    }
+
+    if (isMarkdownLabel) {
+        ChartEditor.updateConfig({useMarkdown: true});
     }
 
     return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};

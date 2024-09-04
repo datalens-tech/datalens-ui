@@ -1,7 +1,11 @@
+import set from 'lodash/set';
+
 import type {
     MarkupItem,
+    ServerField,
     ServerFieldFormatting,
     ServerTooltip,
+    StringParams,
     VisualizationLayerShared,
 } from '../../../../../../shared';
 import {DATASET_FIELD_TYPES, MINIMUM_FRACTION_DIGITS} from '../../../../../../shared';
@@ -23,6 +27,7 @@ import {
     isNumericalDataType,
 } from '../utils/misc-helpers';
 
+import {addActionParamValue} from './helpers/action-params';
 import type {PrepareFunctionArgs} from './types';
 
 type GeopolygonConfig = {
@@ -127,7 +132,10 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         idToTitle,
         shared,
         idToDataType,
+        ChartEditor,
     } = options;
+    const widgetConfig = ChartEditor.getWidgetConfig();
+    const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
     const layerSettings = (options.layerSettings ||
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
 
@@ -305,6 +313,8 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
 
     data.forEach((values, valuesIndex) => {
         allPolygons[`polygons-${valuesIndex}`] = [];
+        const polygons = allPolygons[`polygons-${valuesIndex}`];
+        const actionParams: StringParams = {};
 
         values.forEach((columnData, columnIndex) => {
             if (columnData === 'null' || columnData === null) {
@@ -312,7 +322,6 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             const dataTitle = getTitleInOrder(order, columnIndex, coordinates);
-
             if (coordinates.findIndex(({title}) => title === dataTitle) !== -1) {
                 const polygonCoordinates: Coordinate[][] = JSON.parse(columnData);
                 const flattenCoordinates = getFlattenCoordinates(
@@ -324,7 +333,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                     [leftBot, rightTop] = getMapBounds({leftBot, rightTop, current});
                 });
 
-                allPolygons[`polygons-${valuesIndex}`].push(
+                polygons.push(
                     getPolygonConfig({
                         colorData,
                         columnIndex,
@@ -335,8 +344,8 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             const tooltipIndex = getTooltipIndex({tooltips, dataTitle});
-            const polygons = allPolygons[`polygons-${valuesIndex}`];
-            if (tooltipIndex !== -1 && polygons && polygons.length) {
+            const tooltipField = tooltips[tooltipIndex];
+            if (tooltipIndex !== -1 && polygons?.length && tooltipField) {
                 polygons.forEach((polygon) => {
                     setPolygonTooltip({
                         polygon,
@@ -346,11 +355,21 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                 });
 
                 if (tooltipIndex === 0) {
-                    polygons![0]!.properties!.data![0].color =
+                    polygons[0]!.properties!.data![0].color =
                         polygons[0].options.iconColor || DEFAULT_COLOR;
                 }
+
+                addActionParamValue(actionParams, tooltipField as ServerField, columnData);
             }
         });
+
+        if (isActionParamsEnabled) {
+            polygons.forEach((polygon) => {
+                if (polygon) {
+                    set(polygon, 'properties.custom.actionParams', actionParams);
+                }
+            });
+        }
     });
 
     const polygons = {
