@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import {CaretLeft, CaretRight} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -59,7 +59,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
         sortingFn: columnType === 'number' ? 'alphanumeric' : 'auto',
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
-            const cell = cellData as TableCommonCell;
+            const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
                     {renderCellContent({cell, column: th})}
@@ -124,12 +124,9 @@ export function renderCellContent(args: {
     }
 
     let formattedValue: string | undefined = cell.formattedValue;
-    if (typeof formattedValue === 'undefined') {
-        if (cellType === 'date') {
-            const dateTimeValue = dateTime({
-                input: cell.value as number,
-                timeZone: 'UTC',
-            });
+    if (!formattedValue) {
+        if (cellType === 'date' && cell.value) {
+            const dateTimeValue = dateTimeUtc({input: cell.value as string});
             const dateTimeFormat = get(column, 'format');
             formattedValue = dateTimeValue?.isValid()
                 ? dateTimeValue.format(dateTimeFormat)
