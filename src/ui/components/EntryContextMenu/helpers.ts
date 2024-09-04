@@ -2,10 +2,11 @@ import type React from 'react';
 
 import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
+import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
-import {EntryScope, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
-import {DL} from '../../constants';
+import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
 import {getStore} from '../../store';
 import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
@@ -152,6 +153,39 @@ export async function showRelatedEntities(
             dialogProps: {
                 entry,
             },
+        });
+    }
+}
+
+export async function showShareDialog(
+    entryDialoguesRef: EntryDialoguesRef,
+    entry: GetEntryResponse,
+) {
+    if (entryDialoguesRef.current) {
+        const dialogProps: DialogShareProps = {
+            onClose: () => {},
+            withSelectors: true,
+            propsData: {
+                id: entry.entryId,
+            },
+        };
+
+        if (DL.USER.isFederationUser) {
+            dialogProps.withFederation = true;
+        }
+
+        if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+            dialogProps.initialParams = {
+                [URL_OPTIONS.NO_CONTROLS]: 1,
+            };
+        } else {
+            dialogProps.withEmbedLink = false;
+            dialogProps.withCopyAndExitBtn = true;
+        }
+
+        await entryDialoguesRef.current.open({
+            dialog: EntryDialogName.Share,
+            dialogProps,
         });
     }
 }
