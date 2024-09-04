@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DATASET_FIELD_TYPES, DatasetField, DatasetOptionFieldItem} from 'shared';
 
-import {TypeSelect} from '../components';
+import {TypeSelect} from '../components/TypeSelect/TypeSelect';
 import {sortCastColumn} from '../utils';
 
 const b = block('dataset-table');
@@ -26,13 +26,16 @@ export const getCastColumn = ({fields, onUpdate}: GetCastColumnArgs): Column<Dat
     render: function CastColumnItem({value, index, row}) {
         const {casts = []} = fields.find(({guid}) => guid === row.guid) || {};
 
+        const handleOnUpdate = (type: DATASET_FIELD_TYPES) => {
+            onUpdate(row, type);
+        };
+
         return (
             <TypeSelect
                 key={index}
-                field={row}
-                selectedType={value as string}
+                selectedType={value as DATASET_FIELD_TYPES}
                 types={casts}
-                onSelect={onUpdate}
+                onSelect={handleOnUpdate}
             />
         );
     },

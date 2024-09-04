@@ -3,56 +3,48 @@ import React from 'react';
 import {Button, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {connect} from 'react-redux';
-import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
-import type {DatalensGlobalState} from 'ui';
+import {useSelector} from 'react-redux';
+import type {DATASET_FIELD_TYPES} from 'shared';
 import {DataTypeIcon} from 'ui';
+import {datasetValidationSelector} from 'ui/units/datasets/store/selectors';
 
 import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
-import {datasetValidationSelector} from '../../../../store/selectors/dataset';
 import {getLabelValue} from '../../utils';
 
 import './TypeSelect.scss';
 
 const b = block('type-select');
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-
-interface Props extends StateProps {
-    selectedType: string;
+interface TypeSelectProps {
+    selectedType: DATASET_FIELD_TYPES;
     types: DATASET_FIELD_TYPES[];
-    field: DatasetField;
-    onSelect: (row: DatasetField, value: DATASET_FIELD_TYPES) => void;
+    onSelect: (value: DATASET_FIELD_TYPES) => void;
 }
 
-class TypeSelectComponent extends React.Component<Props> {
-    render() {
-        const {selectedType} = this.props;
+export const TypeSelect: React.FC<TypeSelectProps> = ({
+    selectedType: initSelectedType,
+    onSelect,
+    types,
+}) => {
+    const [selectedType, setSelectedType] = React.useState([initSelectedType]);
+    const datasetValidation = useSelector(datasetValidationSelector);
 
-        const selectedOption: string[] = [selectedType];
+    React.useEffect(() => {
+        setSelectedType([initSelectedType]);
+    }, [initSelectedType]);
 
-        return (
-            <Select
-                value={selectedOption}
-                onUpdate={(values) => this.onSelect(values as [DATASET_FIELD_TYPES])}
-                options={this.typeList}
-                renderControl={this.renderSelectControl}
-                renderOption={(options) => {
-                    return this.renderSelectOption(options, true);
-                }}
-            />
-        );
-    }
+    const handleUpdate = (type: string[]) => {
+        setSelectedType(type as DATASET_FIELD_TYPES[]);
+        onSelect(type[0] as DATASET_FIELD_TYPES);
+    };
 
-    get typeList(): SelectOption[] {
-        const {types, validation} = this.props;
-
+    const getTypesList = (): SelectOption[] => {
         return types
             .map((type): SelectOption => {
                 return {
                     value: type,
                     content: getLabelValue(type),
-                    disabled: validation.isLoading,
+                    disabled: datasetValidation.isLoading,
                 };
             })
             .sort((current, next) => {
@@ -61,14 +53,9 @@ class TypeSelectComponent extends React.Component<Props> {
 
                 return content.localeCompare(contentNext, undefined, {numeric: true});
             });
-    }
-
-    private onSelect = (values: [DATASET_FIELD_TYPES]) => {
-        const value = values[0];
-        this.props.onSelect(this.props.field, value);
     };
 
-    private renderSelectOption = (option: SelectOption, isOption?: boolean) => {
+    const renderSelectOption = (option: SelectOption, isOption?: boolean) => {
         const type = option.value as DATASET_FIELD_TYPES;
         const typeName = option.content;
 
@@ -85,9 +72,8 @@ class TypeSelectComponent extends React.Component<Props> {
         );
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
-        const {selectedType} = this.props;
-        const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
+    const renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+        const selectedValue = getSelectedValueForSelect(selectedType, types);
 
         const value = selectedValue[0];
 
@@ -99,16 +85,20 @@ class TypeSelectComponent extends React.Component<Props> {
                 view="flat"
                 className={b('select-control')}
             >
-                {this.renderSelectOption({value, content: getLabelValue(value)})}
+                {renderSelectOption({value, content: getLabelValue(value)})}
             </Button>
         );
     };
-}
 
-const mapStateToProps = (state: DatalensGlobalState) => {
-    return {
-        validation: datasetValidationSelector(state),
-    };
+    return (
+        <Select
+            value={selectedType}
+            onUpdate={handleUpdate}
+            options={getTypesList()}
+            renderControl={renderSelectControl}
+            renderOption={(options) => {
+                return renderSelectOption(options, true);
+            }}
+        />
+    );
 };
-
-export const TypeSelect = connect(mapStateToProps)(TypeSelectComponent);

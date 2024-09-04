@@ -5,7 +5,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {get} from 'lodash';
+import {get, intersection} from 'lodash';
 import type {
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -28,7 +28,9 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
+import {TypeSelect} from './components/TypeSelect/TypeSelect';
 import {BatchFieldAction, FieldAction} from './constants';
 import {getAggregationSwitchTo, getColumns, isHiddenSupported} from './utils';
 
@@ -117,6 +119,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             map: selectedRows,
             canBeHidden,
             canBeShown,
+            allowedTypes,
         } = this.getFilteredSelectedRows();
 
         return (
@@ -160,6 +163,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         disableActions={[
                             ...(canBeHidden.count > 0 ? [] : (['hide'] as const)),
                             ...(canBeShown.count > 0 ? [] : (['show'] as const)),
+                            ...(allowedTypes.length > 0 ? [] : (['type'] as const)),
                         ]}
                     />
                 )}
@@ -169,7 +173,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private getFilteredSelectedRows() {
         const {selectedRows} = this.state;
-        const {fields} = this.props;
+        const {fields, options} = this.props;
 
         let count = 0;
         const canBeHidden: {count: number; fields: DatasetField[]} = {count: 0, fields: []};
@@ -200,11 +204,19 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             return memo;
         }, {});
 
-        return {count, map, fields: filteredFields, canBeHidden, canBeShown};
+        const selectedItems = options.fields.items.filter(
+            (item) => this.state.selectedRows[item.guid],
+        );
+
+        const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
+
+        return {count, map, fields: filteredFields, canBeHidden, canBeShown, allowedTypes};
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
-        return getColumns({
+        console.log('get columns');
+
+        const res = getColumns({
             selectedRows,
             fieldsCount: this.props.fields.length,
             avatars: this.props.sourceAvatars,
@@ -224,6 +236,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
         });
+        console.log(res);
+        return res;
     }
 
     private resetSelection = () => {
@@ -301,8 +315,49 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         });
     };
 
+    private openBatchUpdateTypesDialog = (
+        fields: DatasetField[],
+        allowedTypes: DATASET_FIELD_TYPES[],
+    ) => {
+        let selectedType = allowedTypes[0];
+
+        const handleOnApply = () => {
+            this.props.batchUpdateFields({
+                validateEnabled: false,
+                updatePreview: true,
+                fields: fields.map(({guid}) => ({
+                    guid,
+                    cast: selectedType,
+                })),
+            });
+            this.resetSelection();
+            this.props.closeDialog();
+        };
+
+        const handleOnSelect = (type: DATASET_FIELD_TYPES) => {
+            selectedType = type;
+        };
+
+        this.props.openDialog({
+            id: DIALOG_CHANGE_DATASET_FIELDS,
+            props: {
+                open: true,
+                onClose: this.props.closeDialog,
+                warningMessage: 'Не все типы могут быть доступны',
+                onApply: handleOnApply,
+                children: (
+                    <TypeSelect
+                        types={allowedTypes}
+                        selectedType={selectedType}
+                        onSelect={handleOnSelect}
+                    />
+                ),
+            },
+        });
+    };
+
     private handleBatchUpdate = (action: BatchFieldAction) => {
-        const {fields, canBeShown, canBeHidden} = this.getFilteredSelectedRows();
+        const {fields, canBeShown, canBeHidden, allowedTypes} = this.getFilteredSelectedRows();
 
         switch (action) {
             case BatchFieldAction.Remove: {
@@ -321,6 +376,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
 
             case BatchFieldAction.Type: {
+                this.openBatchUpdateTypesDialog(fields, allowedTypes);
                 return;
             }
 
@@ -374,6 +430,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         {guid, aggregation}: DatasetField,
         cast: DATASET_FIELD_TYPES,
     ) => {
+        console.log('handleTypeSelectUpdate');
         this.props.updateField({
             field: {
                 guid,
