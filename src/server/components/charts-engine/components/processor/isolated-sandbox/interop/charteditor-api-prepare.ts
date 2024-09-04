@@ -111,8 +111,7 @@ const getSortParams = (params: Record<string, string | string[]>) => {
 };
 
 const ChartEditor: IChartEditor = {
-    getTranslation: (keyset, key, params) =>
-        _ChartEditor_getTranslation(keyset, key, JSON.stringify(params)),
+    getTranslation: (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, params),
     getSharedData: () => {
         __shared = __shared || _ChartEditor_getSharedData();
         return __shared;
