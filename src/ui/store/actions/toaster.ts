@@ -14,7 +14,7 @@ const i18n = I18n.keyset('component.toaster.view');
 const toaster = new Toaster();
 
 export type ShowToastOptions = {
-    title?: string;
+    title: string;
     type?: ToastTheme;
     error?: DataLensApiError;
     name?: string;
@@ -47,7 +47,8 @@ export const showToast = (opt: ShowToastOptions) => {
             actions = opt.actions;
         }
 
-        const titleStr = title ? title.replace(/\s/g, '') : undefined;
+        const titleStr = title.replace(/\s/g, '');
+
         const name = opt.name || `toast-${type || 'success'}-store-${titleStr}`;
 
         toaster.add({
