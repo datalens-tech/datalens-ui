@@ -14,7 +14,7 @@ import {
     libsQlChartV1Interop,
 } from './interop';
 import type {ChartEditorGetTranslation} from './interop/charteditor-api';
-import {requireShim} from './requireShim';
+import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
 
 const {
