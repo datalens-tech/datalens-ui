@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
     ChartColumn,
+    CircleQuestion,
     CirclesIntersection,
     CurlyBrackets,
     DisplayPulse,
@@ -29,6 +30,7 @@ const typeIcons = {
     dashboard: LayoutCellsLarge,
     connection: Thunderbolt,
     presentation: DisplayPulse,
+    broken: CircleQuestion,
 };
 
 export type EntityIconType = keyof typeof typeIcons;

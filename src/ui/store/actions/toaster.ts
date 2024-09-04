@@ -48,6 +48,7 @@ export const showToast = (opt: ShowToastOptions) => {
         }
 
         const titleStr = title.replace(/\s/g, '');
+
         const name = opt.name || `toast-${type || 'success'}-store-${titleStr}`;
 
         toaster.add({
