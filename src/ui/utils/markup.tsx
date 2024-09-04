@@ -9,7 +9,7 @@ export const getRenderMarkupToStringFn = async () => {
         /* webpackChunkName: "react-dom/server" */ 'react-dom/server'
     );
     const renderToString = ReactDOMServer.renderToString;
-    return function (d: {key: string; value: MarkupItem}) {
-        return renderToString(<Markup item={d.value} />);
+    return function (value: MarkupItem) {
+        return renderToString(<Markup item={value} />);
     };
 };
