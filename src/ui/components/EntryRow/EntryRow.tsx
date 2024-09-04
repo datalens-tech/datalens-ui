@@ -29,14 +29,12 @@ export type EntryRowProps = {
     nonInteractive?: boolean;
     rightSectionSlot?: React.ReactNode;
     className?: string;
-    // TODO: Remove clasName and disableHover
-    clasName?: string;
-    disableHover?: boolean;
     enableHover?: boolean;
+    showUndefinedIcon?: boolean;
 } & (RowWithEntry | CustomRow);
 
-type RowWithEntry = {entry: RowEntryData; name?: string; icon?: React.ReactNode};
-type CustomRow = {entry?: RowEntryData; name: string; icon: React.ReactNode};
+type RowWithEntry = {entry: RowEntryData; name?: string; showUndefinedIcon?: boolean};
+type CustomRow = {entry?: RowEntryData; name: string; showUndefinedIcon: true};
 
 const getName = (entry?: RowEntryData, name?: string) => {
     if (!entry || name) {
@@ -50,10 +48,9 @@ export const EntryRow = ({
     rightSectionSlot = null,
     nonInteractive,
     className,
-    clasName,
     enableHover,
     name,
-    icon,
+    showUndefinedIcon,
 }: EntryRowProps) => {
     const entryName = getName(entry, name);
 
@@ -69,15 +66,12 @@ export const EntryRow = ({
     };
 
     const renderIcon = () => {
-        if (!entry || icon) {
-            return icon;
-        }
         return (
             <EntryIcon
-                entry={entry}
+                entry={showUndefinedIcon ? {scope: 'broken'} : entry}
                 width={24}
                 height={24}
-                className={b('icon', {disabled: entry.disabled})}
+                className={b('icon', {disabled: entry?.disabled})}
             />
         );
     };
@@ -93,7 +87,7 @@ export const EntryRow = ({
                     locked: entry?.isLocked,
                     hoverable: enableHover,
                 },
-                clasName || className,
+                className,
             )}
         >
             <div className={b('entry')}>
