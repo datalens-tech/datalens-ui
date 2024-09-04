@@ -106,8 +106,9 @@ export const ShareButton = ({
     return (
         <React.Fragment>
             {getContent()}
-            {(dialogShareProps?.propsData.id || initDialogShareProps.propsData.id) &&
-                showDialogShare && <DialogShare {...initDialogShareProps} {...dialogShareProps} />}
+            {dialogShareProps?.propsData.id && showDialogShare && (
+                <DialogShare {...initDialogShareProps} {...dialogShareProps} />
+            )}
         </React.Fragment>
     );
 };
