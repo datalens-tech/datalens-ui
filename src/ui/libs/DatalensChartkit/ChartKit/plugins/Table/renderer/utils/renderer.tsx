@@ -72,7 +72,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
                 </React.Fragment>
             );
         },
-        columns: get(th, 'sub', []).map(mapHeadCell),
+        columns: get(th, 'sub', []).map((subColumn) => mapHeadCell(subColumn, tableWidth)),
         pinned: get(th, 'pinned', false),
     };
 }
