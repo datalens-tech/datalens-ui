@@ -13,6 +13,7 @@ import {
     libsDatasetV2Interop,
     libsQlChartV1Interop,
 } from './interop';
+import type {ChartEditorGetTranslation} from './interop/charteditor-api';
 import {requireShim} from './requireShim';
 import {safeStringify} from './utils';
 
@@ -101,6 +102,10 @@ const execute = async ({
         isolatedConsole.log(...args);
     });
 
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, params) => {
+        return chartEditorApi.getTranslation(keyset, key, params);
+    }) satisfies ChartEditorGetTranslation);
+
     try {
         const prepare = `
            const __safeStringify = ${safeStringify.toString()};
@@ -115,7 +120,7 @@ const execute = async ({
            var exports = module.exports;
            const ChartEditor = {
                 getUserLang: () => "${chartEditorApi.getUserLang()}",
-                getUserLogin: () => "${chartEditorApi.getUserLogin()}"
+                getUserLogin: () => "${chartEditorApi.getUserLogin()}",
                 getTranslation: (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, params),
            };
            
