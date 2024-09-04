@@ -508,6 +508,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
 
+    const disableControls = noControls || urlNoControls;
+
     return (
         <div
             ref={rootNodeRef}
@@ -541,6 +543,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 hideDebugTool={true}
                 showActionParamsFilter={showActionParamsFilter}
                 onFiltersClear={handleFiltersClear}
+                noControls={disableControls}
             />
             <Content
                 initialParams={initialParams}
@@ -555,7 +558,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 widgetBodyClassName={widgetBodyClassName}
                 hasHiddenClassMod={hasHiddenClassMod}
                 chartId={chartId}
-                noControls={noControls || urlNoControls}
+                noControls={disableControls}
                 transformLoadedData={transformLoadedData}
                 splitTooltip={splitTooltip || isFullscreen}
                 nonBodyScroll={nonBodyScroll}

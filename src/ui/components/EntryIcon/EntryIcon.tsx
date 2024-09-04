@@ -134,6 +134,8 @@ const getScopeTypeIcon = (scope: string) => {
             return 'editor';
         case EntryScope.Presentation:
             return 'presentation';
+        case 'broken':
+            return 'broken';
         default:
             return null;
     }
