@@ -13,7 +13,7 @@ import {
 export type ChartEditorGetTranslation = (
     keyset: string,
     key: string,
-    getTranslationParams?: string,
+    params?: Record<string, string | number | string[]>,
 ) => string;
 export type ChartEditorGetSharedData = () => {
     [key: string]: object;
@@ -68,11 +68,8 @@ export function prepareChartEditorApi({
     chartEditorApi: IChartEditor;
     userLogin: string | null;
 }) {
-    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams?: string) => {
-        const parsedgetTranslationParams = getTranslationParams
-            ? JSON.parse(getTranslationParams)
-            : undefined;
-        return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, params) => {
+        return chartEditorApi.getTranslation(keyset, key, params);
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
