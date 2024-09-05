@@ -20,7 +20,6 @@ import {
     type GetEntriesDatasetsFieldsResponse,
     type GetWidgetsDatasetsFieldsArgs,
     type GetWidgetsDatasetsFieldsResponse,
-    StatsRequestStatus,
 } from '../types';
 
 export const dashActions = {
@@ -30,7 +29,7 @@ export const dashActions = {
                 datetime: Date.now(),
                 ...(args as DeepNonNullable<CollectDashStatsArgs>),
             });
-            return {status: StatsRequestStatus.Success};
+            return {status: 'success'};
         },
     ),
     collectChartkitStats: createAction<CollectChartkitStatsResponse, CollectChartkitStatsArgs>(
@@ -40,11 +39,10 @@ export const dashActions = {
             args.forEach((data) => {
                 ctx.stats('chartKitStats', {
                     datetime: new Date().toISOString().replace('T', ' ').split('.')[0],
-                    // @ts-ignore
                     ...(data as DeepNonNullable<ChartsStats>),
                 });
             });
-            return {status: StatsRequestStatus.Success, rowsCount: args.length};
+            return {status: 'success', rowsCount: args.length};
         },
     ),
     // in the entriesIds, the id of the entities for which you need to find out the dataset,
