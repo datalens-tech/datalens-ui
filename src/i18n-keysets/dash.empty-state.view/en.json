@@ -1,6 +1,8 @@
 {
   "button_edit": "Edit",
   "label_empty-dash": "This dashboard is empty for now",
+  "label_empty-fixed-content": "Перетаскивайте блоки с панели снизу в расхлопываемую фиксированную область",
+  "label_empty-fixed-header": "Перетаскивайте в фиксированную при прокрутке область блоки с панели снизу",
   "label_empty-tab": "This tab is empty for now",
   "label_mobile-dash": "You haven't added anything yet",
   "label_mobile-tab": "You haven't added anything yet",

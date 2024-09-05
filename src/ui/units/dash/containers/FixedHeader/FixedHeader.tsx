@@ -2,6 +2,7 @@ import React from 'react';
 
 import {useBodyScrollLock} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 
 import './FixedHeader.scss';
 
@@ -16,11 +17,27 @@ type FixedHeaderControlsProps = FixedHeaderContainerProps & {
 };
 
 const b = block('dash-fixed-header');
+const i18n = I18n.keyset('dash.empty-state.view');
 
 const CONTROLS_TOP_OFFSET = 40;
 const CONTAINER_TOP_OFFSET = CONTROLS_TOP_OFFSET + 60;
 
 const CONTAINER_PADDING_OFFSET = 48;
+
+const EmmptyPlaceholder = ({
+    content,
+    text,
+    mod,
+}: {
+    content: React.ReactNode;
+    text: string;
+    mod?: string;
+}) => (
+    <React.Fragment>
+        {content}
+        <div className={b('empty', mod)}>{text}</div>
+    </React.Fragment>
+);
 
 const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
     const [isFixed, setIsFixed] = React.useState(false);
@@ -67,6 +84,13 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
     const children = !editMode && isEmpty ? null : props.children;
     const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
+    const content =
+        isEmpty && editMode ? (
+            <EmmptyPlaceholder content={children} text={i18n('label_empty-fixed-header')} />
+        ) : (
+            children
+        );
+
     return (
         <div ref={rootRef} className={b('controls-placeholder')}>
             <div
@@ -76,7 +100,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('controls-grid')}>{children}</div>
+                <div className={b('controls-grid')}>{content}</div>
                 <div className={b('controls-settings')}>
                     <div className={b('controls-settings-wrapper')}>{props.controls}</div>
                 </div>
@@ -125,6 +149,17 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
 
     const style = isFixed && !editMode ? {left: leftOffset, width} : {};
 
+    const content =
+        isEmpty && editMode ? (
+            <EmmptyPlaceholder
+                content={props.children}
+                text={i18n('label_empty-fixed-content')}
+                mod="with-offset"
+            />
+        ) : (
+            props.children
+        );
+
     return (
         <div
             ref={rootRef}
@@ -140,7 +175,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('container-wrapper')}>{props.children}</div>
+                <div className={b('container-wrapper')}>{content}</div>
             </div>
         </div>
     );
