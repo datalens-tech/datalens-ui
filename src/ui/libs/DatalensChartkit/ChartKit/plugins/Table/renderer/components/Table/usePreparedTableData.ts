@@ -101,6 +101,20 @@ function getFooterRows(table: Table<TData>) {
     }, []);
 }
 
+function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
+    const current = currentRow
+        .slice(0, cellIndex + 1)
+        .map((cell) => cell?.value ?? '')
+        .join();
+
+    const prev = prevRow
+        .slice(0, cellIndex + 1)
+        .map((cell) => cell?.value ?? '')
+        .join();
+
+    return prev === current;
+}
+
 export const usePreparedTableData = (props: {
     tableContainerRef: React.MutableRefObject<HTMLDivElement | null>;
     widgetData: TableWidgetData;
@@ -284,10 +298,9 @@ export const usePreparedTableData = (props: {
                 if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
                     const prevCellRow = rowsAcc[prevCells[index]];
                     const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
-                    const prevCellData = tableRowsData[prevCellRow?.index][index];
                     if (
                         typeof prevCell?.rowSpan !== 'undefined' &&
-                        originalCellData.value === prevCellData?.value
+                        shouldGroupRow(cell.row.original, tableRowsData[prevCellRow?.index], index)
                     ) {
                         prevCell.rowSpan += 1;
                         return acc;
@@ -326,7 +339,7 @@ export const usePreparedTableData = (props: {
                     style: cellStyle,
                     contentStyle,
                     content: renderCell(cell.getContext()),
-                    type: get(originalCellData, 'type'),
+                    type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,
                     pinned,
                     className:
