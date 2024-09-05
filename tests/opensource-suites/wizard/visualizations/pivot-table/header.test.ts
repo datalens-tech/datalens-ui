@@ -95,5 +95,31 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest(
+            'Grouping rows with the same value in the previous column @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Measures,
+                    'Sales',
+                );
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Rows,
+                    'Category',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Rows,
+                    'country',
+                );
+
+                await expect(previewLoader).not.toBeVisible();
+                await expect(chartContainer).toHaveScreenshot();
+            },
+        );
     });
 });
