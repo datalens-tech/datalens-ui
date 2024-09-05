@@ -80,11 +80,12 @@ export const getIsolatedSandboxChartBuilder = async (
             })) as ResolvedConfig[];
 
             const processedModules: Record<string, ModulesSandboxExecuteResult> = {};
-            for await (const resolvedModule of resolvedModules) {
-                const name = resolvedModule.key;
+
+            if (bundledLibriesCode) {
+                const name = 'bundledLibraries';
                 const result = await Sandbox.processModule({
                     name,
-                    code: resolvedModule.data.js,
+                    code: bundledLibriesCode,
                     userLogin,
                     userLang,
                     nativeModules: chartsEngine.nativeModules,
@@ -95,11 +96,11 @@ export const getIsolatedSandboxChartBuilder = async (
                 processedModules[name] = result;
             }
 
-            if (bundledLibriesCode) {
-                const name = 'bundledLibraries';
+            for await (const resolvedModule of resolvedModules) {
+                const name = resolvedModule.key;
                 const result = await Sandbox.processModule({
                     name,
-                    code: bundledLibriesCode,
+                    code: resolvedModule.data.js,
                     userLogin,
                     userLang,
                     nativeModules: chartsEngine.nativeModules,

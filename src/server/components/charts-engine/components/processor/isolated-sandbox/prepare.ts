@@ -5,7 +5,7 @@ import {libsControlV1Interop} from './interop/libs/control-v1';
 import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
 import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
 import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
-import {requireShim} from './requireShim';
+import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
 
 export const getPrepare = ({noJsonFn, name}: {noJsonFn: boolean; name: string}) => {
