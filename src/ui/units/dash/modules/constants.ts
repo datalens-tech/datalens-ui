@@ -63,8 +63,9 @@ export type WidgetType = (typeof DASH_WIDGET_TYPES)[keyof typeof DASH_WIDGET_TYP
 
 // chart types that can filter other charts
 export const DASH_FILTERING_CHARTS_WIDGET_TYPES = {
-    graph: 'graph',
-    table: 'table',
+    graph: DASH_WIDGET_TYPES.GRAPH,
+    table: DASH_WIDGET_TYPES.TABLE,
+    ymap: DASH_WIDGET_TYPES.YMAP,
     //timeseries: 'timeseries', // will be supported later
 };
 
