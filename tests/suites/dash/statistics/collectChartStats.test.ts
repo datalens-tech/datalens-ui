@@ -5,7 +5,7 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
 
 const URLS = {
-    collectChartStats: '/api/private/stats',
+    collectChartStats: '/gateway/root/mix/collectChartkitStats',
 };
 
 datalensTest.describe('Dashboards - Statistics', () => {
