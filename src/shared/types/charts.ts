@@ -240,3 +240,31 @@ export type DashWidgetConfig = {
         };
     };
 };
+
+export interface Timings {
+    configResolving: number | null;
+    dataFetching: number | null;
+    jsExecution: number | null;
+}
+
+export interface ChartsStats extends Timings {
+    url: string;
+    requestId: string;
+    groupId: string | null;
+    scope: 'dash' | 'preview' | 'snapter' | null;
+    entryId: string;
+    query: string;
+    type: string;
+    // type: 'graph' | 'table'
+    widgetRendering: number | null;
+    yandexMapAPIWaiting?: number | null;
+    sourcesCount: number;
+    // type: 'graph'
+    graphType: string | null;
+    mixedGraphType: 0 | 1 | null;
+    pointsCount: number | null;
+    seriesCount: number | null;
+    // type: 'table'
+    columnsCount: number | null;
+    rowsCount: number | null;
+}

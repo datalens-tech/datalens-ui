@@ -1,12 +1,24 @@
 import type {WizardVisualizationId} from '../../../constants';
-import type {DashStats, WorkbookId} from '../../../types';
+import type {ChartsStats, DashStats, WorkbookId} from '../../../types';
 import type {GetEntriesEntryResponse} from '../../us/types';
 
+export enum StatsRequestStatus {
+    Success = 'success',
+    Error = 'error',
+}
+
 export type CollectDashStatsResponse = {
-    status: 'success';
+    status: StatsRequestStatus;
 };
 
 export type CollectDashStatsArgs = DashStats;
+
+export type CollectChartkitStatsResponse = {
+    status: StatsRequestStatus;
+    rowsCount?: number;
+};
+
+export type CollectChartkitStatsArgs = ChartsStats[];
 
 export type GetEntriesDatasetsFieldsListItem = {
     title: string;

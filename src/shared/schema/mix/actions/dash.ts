@@ -1,5 +1,6 @@
 import type {DeepNonNullable} from 'utility-types';
 
+import type {ChartsStats} from '../../../types/charts';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {getEntryVisualizationType} from '../helpers';
@@ -10,13 +11,16 @@ import {
     prepareDatasetData,
     prepareWidgetDatasetData,
 } from '../helpers/dash';
-import type {
-    CollectDashStatsArgs,
-    CollectDashStatsResponse,
-    GetEntriesDatasetsFieldsArgs,
-    GetEntriesDatasetsFieldsResponse,
-    GetWidgetsDatasetsFieldsArgs,
-    GetWidgetsDatasetsFieldsResponse,
+import {
+    type CollectChartkitStatsArgs,
+    type CollectChartkitStatsResponse,
+    type CollectDashStatsArgs,
+    type CollectDashStatsResponse,
+    type GetEntriesDatasetsFieldsArgs,
+    type GetEntriesDatasetsFieldsResponse,
+    type GetWidgetsDatasetsFieldsArgs,
+    type GetWidgetsDatasetsFieldsResponse,
+    StatsRequestStatus,
 } from '../types';
 
 export const dashActions = {
@@ -26,7 +30,21 @@ export const dashActions = {
                 datetime: Date.now(),
                 ...(args as DeepNonNullable<CollectDashStatsArgs>),
             });
-            return {status: 'success'};
+            return {status: StatsRequestStatus.Success};
+        },
+    ),
+    collectChartkitStats: createAction<CollectChartkitStatsResponse, CollectChartkitStatsArgs>(
+        async (_, args, {ctx}) => {
+            ctx.log('ChartKit stats collect', {rowsCount: args.length});
+
+            args.forEach((data) => {
+                ctx.stats('chartKitStats', {
+                    datetime: new Date().toISOString().replace('T', ' ').split('.')[0],
+                    // @ts-ignore
+                    ...(data as DeepNonNullable<ChartsStats>),
+                });
+            });
+            return {status: StatsRequestStatus.Success, rowsCount: args.length};
         },
     ),
     // in the entriesIds, the id of the entities for which you need to find out the dataset,
