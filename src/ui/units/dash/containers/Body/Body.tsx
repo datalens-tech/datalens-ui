@@ -454,7 +454,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (movedItem) {
             this.props.setCurrentTabData({
                 ...tabDataConfig,
-                layout: GravityDashkit.reflowLayout(movedItem, newLayout, this.groups),
+                layout: GravityDashkit.reflowLayout({
+                    newLayoutItem: movedItem,
+                    layout: newLayout,
+                    groups: this.groups,
+                }),
             });
         }
     };
