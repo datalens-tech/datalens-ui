@@ -354,6 +354,7 @@ export const getPreparedConstants = (props: {
     const mods = {
         'no-tabs': !isFullscreen && hideTabs,
         fullscreen: isFullscreen,
+        'no-controls': noControls,
         [String(widgetType)]: Boolean(widgetType),
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);

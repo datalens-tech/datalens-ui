@@ -52,6 +52,10 @@
         padding: 0 65px 0 16px;
         font-size: 15px;
 
+        &_no-controls {
+            padding: 0 35px 0 16px;
+        }
+
         &_edit-mode.dl-draggable-handle-element {
             cursor: move;
 
