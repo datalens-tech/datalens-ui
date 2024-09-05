@@ -116,16 +116,6 @@ datalensTest.describe('Wizard', () => {
                     PlaceholderName.Rows,
                     'country',
                 );
-                //
-                // // Set the width of the columns so that the screenshots are not flapping due to the auto width
-                // await wizardPage.columnSettings.open();
-                // await wizardPage.columnSettings.switchUnit('region', 'pixel');
-                // await wizardPage.columnSettings.fillWidthValueInput('region', '150');
-                // await wizardPage.columnSettings.switchUnit('segment', 'pixel');
-                // await wizardPage.columnSettings.fillWidthValueInput('segment', '150');
-                // await wizardPage.columnSettings.switchUnit('Measure Names', 'pixel');
-                // await wizardPage.columnSettings.fillWidthValueInput('Measure Names', '150');
-                // await wizardPage.columnSettings.apply();
 
                 await expect(previewLoader).not.toBeVisible();
                 await expect(chartContainer).toHaveScreenshot();
