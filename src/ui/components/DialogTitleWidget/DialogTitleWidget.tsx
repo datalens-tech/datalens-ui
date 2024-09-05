@@ -45,6 +45,8 @@ interface DialogTitleWidgetProps {
     openedItemData: DashTabItemTitle['data'];
     dialogIsVisible: boolean;
 
+    enableAutoheight?: boolean;
+
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
@@ -54,6 +56,7 @@ class DialogTitleWidget extends React.PureComponent<
     DialogTitleWidgetState
 > {
     static defaultProps = {
+        enableAutoheight: true,
         openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
@@ -87,7 +90,7 @@ class DialogTitleWidget extends React.PureComponent<
     state: DialogTitleWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible} = this.props;
+        const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
         const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
             this.state;
 
@@ -128,14 +131,19 @@ class DialogTitleWidget extends React.PureComponent<
                             {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
                         </Checkbox>
                     </div>
-                    <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={Boolean(autoHeight)}
-                            onChange={this.handleAutoHeightChanged}
-                        >
-                            {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
-                        </Checkbox>
-                    </div>
+                    {enableAutoheight && (
+                        <div className={b('setting-row')}>
+                            <Checkbox
+                                checked={Boolean(autoHeight)}
+                                onChange={this.handleAutoHeightChanged}
+                            >
+                                {i18n(
+                                    'dash.dashkit-plugin-common.view',
+                                    'label_autoheight-checkbox',
+                                )}
+                            </Checkbox>
+                        </div>
+                    )}
                     <div className={b('setting-row')}>
                         <Checkbox
                             checked={Boolean(hasBackground)}
