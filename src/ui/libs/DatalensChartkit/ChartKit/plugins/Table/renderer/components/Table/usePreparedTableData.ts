@@ -326,7 +326,7 @@ export const usePreparedTableData = (props: {
                     style: cellStyle,
                     contentStyle,
                     content: renderCell(cell.getContext()),
-                    type: get(originalCellData, 'type'),
+                    type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,
                     pinned,
                     className:
