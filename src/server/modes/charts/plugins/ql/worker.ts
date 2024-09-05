@@ -1,21 +1,39 @@
 import workerPool from 'workerpool';
 
-import type {QlConfig} from '../../../../../shared';
+import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
 import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
+import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
 import type {
     BuildChartArgs,
     BuildChartConfigArgs,
     BuildLibraryConfigArgs,
+    BuildParamsArgs,
     BuildSourceArgs,
     WizardWorker,
 } from '../../../../components/charts-engine/components/wizard-worker/types';
 import {getChartApiContext} from '../../../../components/charts-engine/components/wizard-worker/utils';
+import {createI18nInstance} from '../../../../utils/language';
 
 import qlModule from './module/private-module';
+import {identifyParams} from './utils/identify-params';
 
 const worker: WizardWorker = {
+    buildParams: async (args: BuildParamsArgs) => {
+        const {shared, userLang} = args;
+        const i18n = createI18nInstance({lang: userLang});
+        const result = identifyParams({
+            chart: shared as QlExtendedConfig,
+            getTranslation: getTranslationFn(i18n.getI18nServer()),
+        });
+
+        return {
+            exports: result,
+            runtimeMetadata: {},
+        };
+    },
+
     buildSources: async (args: BuildSourceArgs) => {
         const {shared, params, actionParams, widgetConfig, userLang, palettes} = args;
         const context = getChartApiContext({
