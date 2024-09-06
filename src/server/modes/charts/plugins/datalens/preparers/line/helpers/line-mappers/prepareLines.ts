@@ -100,6 +100,7 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
         idToTitle,
         idToDataType,
         lines,
+        convertMarkupToString = true,
     } = args;
     const key = keys.key;
     const lastKey = keys.lastKey as string | number;
@@ -133,7 +134,7 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
             labelsValues[key][lastKey] = Number(labelValue);
         } else if (isDateField({data_type: labelDataType})) {
             labelsValues[key][lastKey] = new Date(labelValue);
-        } else if (isMarkupField({data_type: labelDataType})) {
+        } else if (convertMarkupToString && isMarkupField({data_type: labelDataType})) {
             labelsValues[key][lastKey] = markupToRawString(labelValue as unknown as MarkupItem);
         } else {
             labelsValues[key][lastKey] = labelValue;
@@ -197,6 +198,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
         segmentIndexInOrder,
         layers = [],
         colorMode,
+        convertMarkupToString,
     } = args;
 
     const x2DataType = x2Field ? (idToDataType[x2Field.guid] as DATASET_FIELD_TYPES) : null;
@@ -340,6 +342,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
             values,
             yDataType,
             yItemFormatting,
+            convertMarkupToString,
         });
 
         const currentLine = lines[keys.key];
