@@ -19,7 +19,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {expectedType = null, id, controlData} = req.body;
+        const {id, controlData} = req.body;
 
         const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
             ? ''
@@ -173,13 +173,6 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
 
-                if (expectedType && expectedType !== configType) {
-                    ctx.log('CHARTS_ENGINE_CONFIG_TYPE_MISMATCH');
-                    return res.status(400).send({
-                        error: `Config type "${configType}" does not match expected type "${expectedType}"`,
-                    });
-                }
-
                 const runnerFound = chartsEngine.runners.find((runner) => {
                     return runner.trigger.has(configType);
                 });
@@ -200,6 +193,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     res,
                     config: entry,
                     configResolving,
+                    forbiddenFields: ['sources', '_confStorageConfig', 'timings', 'key'],
                 });
             })
             .catch((error) => {

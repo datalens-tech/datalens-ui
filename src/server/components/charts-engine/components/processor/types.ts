@@ -76,6 +76,10 @@ export type ProcessorSuccessResponse = {
     highchartsConfig?: string;
     comments?: CommentsFetcherFetchResult;
     publicAuthor?: EntryPublicAuthor;
+    id?: string;
+    _confStorageConfig?: object;
+    key?: string;
+    type?: string;
 };
 
 export type ProcessorFiles =
