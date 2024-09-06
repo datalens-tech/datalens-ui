@@ -91,6 +91,8 @@ export enum Feature {
     WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
+    /** Render markup in chart dataLabels. */
+    MarkupInLabels = 'MarkupInLabels',
 }
 
 export type FeatureConfig = Record<string, boolean>;
