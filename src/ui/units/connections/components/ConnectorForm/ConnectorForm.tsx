@@ -9,7 +9,7 @@ import {
     getConnectorSchema,
     newConnectionSelector,
     schemaLoadingSelector,
-    setSchema,
+    setInitialState,
 } from '../../store';
 import {FormTitle} from '../FormTitle/FormTitle';
 import {WrappedLoader} from '../WrappedLoader/WrappedLoader';
@@ -39,7 +39,7 @@ export const ConnectorForm = ({type}: Props) => {
 
     React.useEffect(() => {
         return () => {
-            dispatch(setSchema({schema: undefined}));
+            dispatch(setInitialState());
         };
     }, [dispatch]);
 
