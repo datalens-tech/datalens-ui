@@ -97,7 +97,8 @@ export const runEditor = async (
         return runServerlessEditor(parentContext, runnerHandlerProps);
     }
 
-    const {chartsEngine, req, res, config, configResolving, workbookId} = runnerHandlerProps;
+    const {chartsEngine, req, res, config, configResolving, workbookId, forbiddenFields} =
+        runnerHandlerProps;
     const ctx = parentContext.create('editorChartRunner');
 
     const hrStart = process.hrtime();
@@ -129,5 +130,6 @@ export const runEditor = async (
         runnerType: 'Editor',
         hrStart,
         subrequestHeadersKind: 'editor',
+        forbiddenFields,
     });
 };

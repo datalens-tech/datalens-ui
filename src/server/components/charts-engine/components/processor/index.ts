@@ -152,6 +152,7 @@ export type ProcessorParams = {
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
     builder: ChartBuilder;
+    forbiddenFields?: (keyof ProcessorSuccessResponse)[];
 };
 
 export class Processor {
@@ -174,6 +175,7 @@ export class Processor {
         ctx,
         workbookId,
         builder,
+        forbiddenFields,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -236,6 +238,8 @@ export class Processor {
             if (actionParams) {
                 target.actionParams = actionParams;
             }
+
+            return target;
         }
 
         function stringifyLogs(localLogs: ProcessorLogs, localHooks: ProcessorHooks) {
@@ -871,6 +875,14 @@ export class Processor {
             }
 
             injectConfigAndParams({target: result});
+
+            if (forbiddenFields) {
+                forbiddenFields.forEach((field) => {
+                    if (result[field]) {
+                        delete result[field];
+                    }
+                });
+            }
 
             return result;
         } catch (error) {
