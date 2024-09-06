@@ -1,8 +1,8 @@
 import {isTrueArg} from '../../../../../../shared';
 import type {ChartColorsConfig} from '../types';
 
-export const LOG_TIMING = isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
-export const LOG_INFO = isTrueArg(process.env.SHOW_CHARTS_LOG);
+export const LOG_TIMING = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
+export const LOG_INFO = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG);
 
 export const LAT = 0;
 export const LONG = 1;

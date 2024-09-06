@@ -2,8 +2,9 @@ import fs from 'fs';
 
 import ivm from 'isolated-vm';
 
-import type {DashWidgetConfig} from '../../../../../../shared';
-import {EDITOR_TYPE_CONFIG_TABS} from '../../../../../../shared';
+import type {DashWidgetConfig, FeatureConfig} from '../../../../../../shared';
+import {EDITOR_TYPE_CONFIG_TABS, Feature} from '../../../../../../shared';
+import {registry} from '../../../../../registry';
 import type {ChartsEngine} from '../../../index';
 import type {ResolvedConfig} from '../../storage/types';
 import {Processor} from '../index';
@@ -31,9 +32,7 @@ type IsolatedSandboxChartBuilderArgs = {
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
-    features: {
-        noJsonFn: boolean;
-    };
+    serverFeatures: FeatureConfig;
 };
 
 export const getIsolatedSandboxChartBuilder = async (
@@ -47,19 +46,27 @@ export const getIsolatedSandboxChartBuilder = async (
         config,
         widgetConfig,
         workbookId,
-        features,
+        serverFeatures,
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+
+    const palettes = getAvailablePalettesMap();
+
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
     context.evalSync(
         `const __modules = {};
-         let __params; 
+         let __params;
          let __usedParams;
          let __runtimeMetadata = {userParamsOverride: undefined};
+         let __features = JSON.parse('${JSON.stringify(serverFeatures)}');
+         let __palettes = JSON.parse('${JSON.stringify(palettes)}');
     `,
     );
+
+    const features = {noJsonFn: serverFeatures[Feature.NoJsonFn]};
 
     return {
         dispose: () => {
