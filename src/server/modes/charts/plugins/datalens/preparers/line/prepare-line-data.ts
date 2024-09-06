@@ -11,6 +11,7 @@ import {
     getFakeTitleOrTitle,
     isDateField,
     isMarkdownField,
+    isMarkupField,
     isMeasureField,
     isMeasureValue,
     isNumberField,
@@ -66,6 +67,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
+    const isMarkupLabelsEnabled = features[Feature.MarkupInLabels];
+
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField = xPlaceholder?.items[0];
     const xDataType = xField ? idToDataType[xField.guid] : null;
@@ -114,6 +117,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
     const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupLabelsEnabled && isMarkupField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -259,6 +263,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
                 colorMode,
+                convertMarkupToString: !isMarkupLabelsEnabled,
             });
         });
 
@@ -351,7 +356,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     id: line.id,
                     title: line.title || 'Null',
                     tooltip: line.tooltip,
-                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel},
+                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel || isMarkupLabel},
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -410,7 +415,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                                 }
                             }
 
-                            point.label = getLabelValue(innerLabels?.[category], isMarkdownLabel);
+                            point.label = getLabelValue(innerLabels?.[category], {
+                                isMarkdownLabel,
+                                isMarkupLabel,
+                            });
 
                             if (isActionParamsEnable) {
                                 const [yField] = ySectionItems || [];
@@ -521,6 +529,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
         if (isMarkdownLabel) {
             ChartEditor.updateConfig({useMarkdown: true});
+        }
+
+        if (isMarkupLabel) {
+            ChartEditor.updateConfig({useMarkup: true});
         }
 
         if (isXCategoryAxis) {

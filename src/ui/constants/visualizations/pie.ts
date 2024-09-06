@@ -1,8 +1,9 @@
 import {BucketPaint, ChartPie, LayoutColumns3} from '@gravity-ui/icons';
 import type {Field, GraphShared, Placeholder} from 'shared';
-import {PlaceholderId, WizardVisualizationId, isMarkupField} from 'shared';
+import {Feature, PlaceholderId, WizardVisualizationId, isMarkupField} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
+import Utils from '../../utils/utils';
 import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY} from '../misc';
 
 import {prepareFieldToDimensionTransformation} from './utils';
@@ -27,7 +28,13 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
 
         return selectedItems.some((selectedItem) => selectedItem.guid === item.guid);
     },
-    checkAllowedLabels: (item: Field) => ITEM_TYPES.ALL.has(item.type) && !isMarkupField(item),
+    checkAllowedLabels: (item: Field) => {
+        if (isMarkupField(item)) {
+            return Utils.isEnabledFeature(Feature.MarkupInLabels);
+        }
+
+        return ITEM_TYPES.ALL.has(item.type);
+    },
     availableLabelModes: ['absolute', 'percent'],
     placeholders: [
         {
