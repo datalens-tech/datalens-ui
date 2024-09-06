@@ -61,6 +61,7 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
+    EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
