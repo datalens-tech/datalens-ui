@@ -193,7 +193,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     res,
                     config: entry,
                     configResolving,
-                    forbiddenFields: ['sources', '_confStorageConfig', 'timings', 'key'],
+                    forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
                 });
             })
             .catch((error) => {
