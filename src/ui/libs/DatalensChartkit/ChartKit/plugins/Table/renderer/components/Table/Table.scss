@@ -158,7 +158,7 @@
     }
 
     &__body &__tr {
-        min-height: var(--dl-table-row-height);
+        height: var(--dl-table-row-height);
         td {
             min-height: var(--dl-table-row-height);
         }
