@@ -122,7 +122,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Tag,
         text: 'value_add-favorites-alias',
         place: PLACE.FAVORITES,
-        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        enable: () => true,
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return !entry?.displayAlias;
@@ -134,7 +134,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Tag,
         text: 'value_edit-favorites-alias',
         place: PLACE.FAVORITES,
-        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        enable: () => true,
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return Boolean(entry?.displayAlias);
