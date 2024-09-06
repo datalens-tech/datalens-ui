@@ -47,7 +47,12 @@ import {
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
+import {
+    FIXED_GROUP_CONTAINER_ID,
+    FIXED_GROUP_HEADER_ID,
+    FIXED_HEADER_GROUP_COLS,
+    FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+} from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 
@@ -152,9 +157,6 @@ type MemoContext = {
     ) => ReturnType<typeof getPreparedCopyItemOptions>;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
-
-const FIXED_HEADER_GROUP_COLS = 35;
-const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
 
 const GROUPS_WEIGHT = {
     [FIXED_GROUP_HEADER_ID]: 2,
