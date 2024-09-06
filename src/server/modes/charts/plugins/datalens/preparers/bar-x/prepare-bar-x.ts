@@ -222,7 +222,6 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     xDataType: x2DataType!,
                     xIsDate: x2IsDate,
                     xIsPseudo: x2IsPseudo,
-                    categoriesMap,
                 });
                 if ((x2Value === null || x2Value === undefined) && !x2IsPseudo) {
                     return;

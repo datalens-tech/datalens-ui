@@ -117,7 +117,7 @@ export type RuntimeMetadata = {
     exportFilename?: string;
     dataSourcesInfos?: unknown;
     sideMarkdown?: string;
-    extra: {
+    extra?: {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;
         exportFilename?: string;

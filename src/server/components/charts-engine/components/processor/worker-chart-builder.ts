@@ -74,7 +74,23 @@ export const getWizardChartBuilder = async (
         buildModules: async () => {
             return {};
         },
-        buildParams: emptyStep('Params'),
+
+        buildParams: async (args) => {
+            if (typeof wizardWorker.buildParams === 'function') {
+                const timeStart = process.hrtime();
+                const execResult = await wizardWorker
+                    .buildParams({shared, userLang})
+                    .timeout(ONE_SECOND);
+
+                return {
+                    executionTiming: process.hrtime(timeStart),
+                    name: 'Params',
+                    ...execResult,
+                };
+            }
+
+            return emptyStep('Params')(args);
+        },
 
         buildUrls: async (options) => {
             const {params, actionParams} = options;

@@ -804,7 +804,7 @@ export class Processor {
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;
                 result.highchartsConfig = stringify(resultLibraryConfig);
-                result.extra = jsTabResults.runtimeMetadata.extra;
+                result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 

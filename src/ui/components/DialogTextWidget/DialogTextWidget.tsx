@@ -19,6 +19,8 @@ export interface DialogTextWidgetProps {
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
 
+    enableAutoheight?: boolean;
+
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
@@ -33,6 +35,7 @@ interface DialogTextWidgetState {
 
 class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, DialogTextWidgetState> {
     static defaultProps = {
+        enableAutoheight: true,
         openedItemData: {
             text: '',
             autoHeight: false,
@@ -61,7 +64,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     state: DialogTextWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible} = this.props;
+        const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
         const {text, autoHeight, hasBackground, backgroundColor} = this.state;
 
         return (
@@ -75,14 +78,19 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 <Dialog.Header caption={i18n('dash.text-dialog.edit', 'label_text')} />
                 <Dialog.Body className={b()}>
                     <TextEditor autofocus onTextUpdate={this.onTextUpdate} text={text} />
-                    <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={Boolean(autoHeight)}
-                            onChange={this.handleAutoHeightChanged}
-                        >
-                            {i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
-                        </Checkbox>
-                    </div>
+                    {enableAutoheight && (
+                        <div className={b('setting-row')}>
+                            <Checkbox
+                                checked={Boolean(autoHeight)}
+                                onChange={this.handleAutoHeightChanged}
+                            >
+                                {i18n(
+                                    'dash.dashkit-plugin-common.view',
+                                    'label_autoheight-checkbox',
+                                )}
+                            </Checkbox>
+                        </div>
+                    )}
                     <div className={b('setting-row')}>
                         <Checkbox
                             checked={Boolean(hasBackground)}
