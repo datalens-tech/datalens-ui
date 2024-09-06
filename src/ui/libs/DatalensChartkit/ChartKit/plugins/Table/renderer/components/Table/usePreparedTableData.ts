@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
@@ -102,17 +103,10 @@ function getFooterRows(table: Table<TData>) {
 }
 
 function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
-    const current = currentRow
-        .slice(0, cellIndex + 1)
-        .map((cell) => cell?.value ?? '')
-        .join();
+    const current = currentRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+    const prev = prevRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
 
-    const prev = prevRow
-        .slice(0, cellIndex + 1)
-        .map((cell) => cell?.value ?? '')
-        .join();
-
-    return prev === current;
+    return isEqual(prev, current);
 }
 
 export const usePreparedTableData = (props: {

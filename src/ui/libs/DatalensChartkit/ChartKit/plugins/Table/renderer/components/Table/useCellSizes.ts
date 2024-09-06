@@ -14,7 +14,7 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
             const cell = c as Element;
             let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
             let colSpan = Number(cell.getAttribute('colSpan') || 1);
-            const cellWidth = cell.clientWidth;
+            const cellWidth = cell.getBoundingClientRect()?.width;
 
             if (result[rowIndex][cellIndex] !== null) {
                 cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);

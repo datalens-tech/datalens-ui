@@ -121,5 +121,30 @@ datalensTest.describe('Wizard', () => {
                 await expect(chartContainer).toHaveScreenshot();
             },
         );
+
+        datalensTest('Grouping rows with markup values @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'Sales',
+            );
+            await wizardPage.createNewFieldWithFormula('markup', 'markup([Category])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'markup');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'country');
+
+            // Set the width of the columns so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open();
+            await wizardPage.columnSettings.switchUnit('markup', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('markup', '150');
+            await wizardPage.columnSettings.switchUnit('country', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('country', '150');
+            await wizardPage.columnSettings.apply();
+
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
     });
 });
