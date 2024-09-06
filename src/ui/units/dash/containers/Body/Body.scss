@@ -49,6 +49,7 @@ $actionPanelDefaultBottom: 20px;
 
         &_with-edit-panel > .dashkit,
         &_with-edit-panel > .dashkit > .react-grid-layout {
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
