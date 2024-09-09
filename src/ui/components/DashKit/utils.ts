@@ -138,7 +138,10 @@ export function adjustWidgetLayout({
     scrollableNodeSelector,
     needHeightReset,
 }: AdjustWidgetLayoutProps) {
-    if (DL.IS_MOBILE || needSetDefault) {
+    const correspondedLayoutItem = layout.find(({i}) => i === widgetId);
+    const isFixedHeaderGroupLine = correspondedLayoutItem?.parent === FIXED_GROUP_HEADER_ID;
+
+    if (DL.IS_MOBILE || (needSetDefault && !isFixedHeaderGroupLine)) {
         cb({widgetId, needSetDefault});
         return;
     }
@@ -154,11 +157,10 @@ export function adjustWidgetLayout({
     }
 
     // Disabling auto-size for grid line widgets
-    const correspondedLayoutItem = layout.find(({i}) => i === widgetId);
-    if (correspondedLayoutItem?.parent === FIXED_GROUP_HEADER_ID) {
+    if (isFixedHeaderGroupLine) {
         cb({
             widgetId,
-            needSetDefault,
+            needSetDefault: false,
             adjustedWidgetLayout: {
                 ...correspondedLayoutItem,
                 h: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
