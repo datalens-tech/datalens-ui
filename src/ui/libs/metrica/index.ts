@@ -1,7 +1,5 @@
 import {DL} from '../../constants';
 
-export * from './utils';
-
 export enum CounterName {
     Cross = 'cross',
     Main = 'main',
