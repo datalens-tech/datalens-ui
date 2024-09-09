@@ -2,7 +2,7 @@ import React from 'react';
 
 import type {ActionsPanelProps} from '@gravity-ui/components';
 import {ActionsPanel} from '@gravity-ui/components';
-import {Eye, EyeSlash, TrashBin} from '@gravity-ui/icons';
+import {Eye, EyeSlash, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
@@ -94,7 +94,10 @@ export const BatchActionPanel = ({
                 id: 'type',
                 button: {
                     props: {
-                        children: i18n('button_batch-type'),
+                        children: [
+                            <Icon key="icon" data={Pencil} size="16" />,
+                            i18n('button_batch-type'),
+                        ],
                         onClick: () => onAction(BatchFieldAction.Type),
                     },
                 },
@@ -112,7 +115,10 @@ export const BatchActionPanel = ({
                 id: 'aggregation',
                 button: {
                     props: {
-                        children: i18n('button_batch-aggregation'),
+                        children: [
+                            <Icon key="icon" data={Pencil} size="16" />,
+                            i18n('button_batch-aggregation'),
+                        ],
                         onClick: () => onAction(BatchFieldAction.Aggregation),
                     },
                 },

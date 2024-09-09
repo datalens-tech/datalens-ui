@@ -40,6 +40,8 @@
   "field_find-field": "Field name or description",
   "label_batch-selected-fields-count": "Fields selected — {{value}}",
   "label_column-field-id": "Field ID",
+  "label_batch-aggregation": "New field aggregation",
+  "label_batch-type": "New type of fields",
   "label_dataset-auto-creation-process": "Creating dataset",
   "label_display-fields-id": "Show field IDs",
   "label_display-hidden-fields": "Show hidden fields",

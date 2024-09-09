@@ -19,6 +19,7 @@ interface AggregationSelectProps {
     selectedAggregation: string;
     aggregations: string[];
     autoaggregated?: boolean;
+    isColored?: boolean;
     onSelect: (value: DatasetFieldAggregation) => void;
 }
 
@@ -26,6 +27,7 @@ export const AggregationSelect: React.FC<AggregationSelectProps> = ({
     selectedAggregation: initSelectedAggregation,
     aggregations,
     autoaggregated,
+    isColored = true,
     onSelect,
 }) => {
     const [selectedAggregation, setSelectedAggregation] = React.useState(initSelectedAggregation);
@@ -101,7 +103,7 @@ export const AggregationSelect: React.FC<AggregationSelectProps> = ({
                 ref={ref}
                 extraProps={{onKeyDown}}
                 view="flat"
-                className={b('select-control', {[type()]: true})}
+                className={b('select-control', {[type()]: isColored})}
             >
                 <span className={b('selected-value')}>{getLabelValue(aggregationTitle)}</span>
             </Button>

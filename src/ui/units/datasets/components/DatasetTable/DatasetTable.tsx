@@ -352,6 +352,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 onClose: this.props.closeDialog,
                 warningMessage: i18n('text_batch-type-alert'),
                 title: i18n('text_batch-type-header'),
+                label: i18n('label_batch-type'),
                 onApply: handleOnApply,
                 children: (
                     <TypeSelect
@@ -395,8 +396,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 warningMessage: i18n('text_batch-aggregation-alert'),
                 title: i18n('text_batch-aggregation-header'),
                 onApply: handleOnApply,
+                label: i18n('label_batch-aggregation'),
                 children: (
                     <AggregationSelect
+                        isColored={false}
                         aggregations={allowedAggregations}
                         selectedAggregation={selectedAggregation}
                         onSelect={handleOnSelect}

@@ -21,6 +21,7 @@ export interface DialogChangeDatasetFieldsProps {
     open: boolean;
     onClose: () => void;
     children: React.ReactElement;
+    label: string;
     warningMessage: string;
     title: string;
     onApply: () => void;
@@ -31,6 +32,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
     onClose,
     children,
     warningMessage,
+    label,
     onApply,
     title,
 }) => {
@@ -39,7 +41,10 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
             <Dialog.Header caption={title} />
             <Dialog.Body>
                 <Alert theme="warning" message={warningMessage} />
-                <div className={b('children')}>{children}</div>
+                <div className={b('content')}>
+                    <span>{label}:</span>
+                    {children}
+                </div>
             </Dialog.Body>
             <Dialog.Footer
                 textButtonCancel={i18n('button_batch-cancel')}

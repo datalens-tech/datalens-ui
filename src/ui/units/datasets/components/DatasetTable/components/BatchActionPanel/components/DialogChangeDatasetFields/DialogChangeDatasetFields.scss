@@ -1,5 +1,8 @@
 .dl-dataset-dialog-change-fields {
-    &__children {
-        margin-top: var(--g-spacing-2);
+    &__content {
+        margin-top: var(--g-spacing-3);
+        display: flex;
+        gap: var(--g-spacing-2);
+        align-items: center;
     }
 }

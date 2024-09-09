@@ -39,6 +39,8 @@
   "field_display-rows": "Количество строк:",
   "field_find-field": "Имя или описание поля",
   "label_batch-selected-fields-count": "Выбрано полей — {{value}}",
+  "label_batch-aggregation": "Новая агрегация полей",
+  "label_batch-type": "Новый тип полей",
   "label_column-field-id": "ID поля",
   "label_dataset-auto-creation-process": "Создаём датасет",
   "label_display-fields-id": "Отображать ID полей",
