@@ -22,6 +22,7 @@ interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose
 
 export const ShareButton = ({
     enablePopover,
+    entityId,
     popoverText,
     popoverTitle,
     iconSize = 18,
@@ -29,6 +30,7 @@ export const ShareButton = ({
     dialogShareProps,
 }: {
     enablePopover?: boolean;
+    entityId?: string;
     popoverText?: string;
     popoverTitle?: string;
     iconSize?: number;
@@ -48,6 +50,10 @@ export const ShareButton = ({
     };
 
     const initDialogShareProps: DialogShareProps = {propsData: {}, onClose: handleCloseDialogShare};
+
+    if (entityId) {
+        initDialogShareProps.propsData.id = entityId;
+    }
 
     if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
         initDialogShareProps.initialParams = {
@@ -71,7 +77,7 @@ export const ShareButton = ({
                     copyIcon={Code}
                     customIcon={ArrowShapeTurnUpRight}
                     iconSize={iconSize}
-                    withCopyLink={Boolean(dialogShareProps?.propsData.id)}
+                    withCopyLink={Boolean(entityId)}
                     className={popoverClassName}
                     renderCopy={({icon}) => (
                         <Button
@@ -106,9 +112,8 @@ export const ShareButton = ({
     return (
         <React.Fragment>
             {getContent()}
-            {dialogShareProps?.propsData.id && showDialogShare && (
-                <DialogShare {...initDialogShareProps} {...dialogShareProps} />
-            )}
+            {(dialogShareProps?.propsData.id || initDialogShareProps.propsData.id) &&
+                showDialogShare && <DialogShare {...initDialogShareProps} {...dialogShareProps} />}
         </React.Fragment>
     );
 };
