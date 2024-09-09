@@ -40,7 +40,14 @@ export type MenuItemConfig = {
 
 type MenuOptionsConfig = Record<MenuItemsIds, MenuItemConfig>;
 
-export type MenuType = 'wizard' | 'widget' | 'panePreview' | 'dash' | 'preview' | 'none';
+export enum MenuType {
+    Wizard = 'wizard',
+    Widget = 'widget',
+    PanePreview = 'panePreview',
+    Dash = 'dash',
+    Preview = 'preview',
+    None = 'none',
+}
 
 export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
     const {type, config, chartsDataProvider, extraOptions} = props;
