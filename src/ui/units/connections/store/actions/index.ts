@@ -240,6 +240,12 @@ export function changeInnerForm(innerFormUpdates: ConnectionsReduxState['innerFo
     };
 }
 
+export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['initialForm']) {
+    return (dispatch: ConnectionsReduxDispatch) => {
+        flow([setInitialForm, dispatch])({updates: initialFormUpdates});
+    };
+}
+
 export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;

@@ -23,6 +23,7 @@ export const runWorkerChart = async (
         workbookId,
         chartBuilder,
         runnerType = 'Worker',
+        forbiddenFields,
     } = props;
     let generatedConfig;
     let chartType;
@@ -121,5 +122,6 @@ export const runWorkerChart = async (
         runnerType,
         hrStart,
         localConfig: config,
+        forbiddenFields,
     });
 };

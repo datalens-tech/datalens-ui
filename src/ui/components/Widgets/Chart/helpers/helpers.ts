@@ -10,13 +10,12 @@ import {isExternalControl} from 'ui/components/DashKit/plugins/Control/utils';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
-import {isEmbeddedEntry} from 'ui/utils/embedded';
 
+import type {ChartsStats} from '../../../../../shared/types/charts';
 import type {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {
     ChartsData,
-    ChartsStats,
     ResponseError,
     ResponseSourcesSuccess,
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
@@ -354,6 +353,7 @@ export const getPreparedConstants = (props: {
     const mods = {
         'no-tabs': !isFullscreen && hideTabs,
         fullscreen: isFullscreen,
+        'no-controls': noControls,
         [String(widgetType)]: Boolean(widgetType),
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);
@@ -408,7 +408,7 @@ export const pushStats = (
     scope: ChartsStats['scope'],
     chartsDataProvider: ChartWithProviderProps['dataProvider'],
 ) => {
-    if (Utils.isEnabledFeature(Feature.EnableDashChartStat) && !isEmbeddedEntry()) {
+    if (Utils.isEnabledFeature(Feature.EnableDashChartStat)) {
         chartsDataProvider.pushStats?.(data as ChartKitLoadSuccess<ChartsData>, {
             groupId: DL.REQUEST_ID,
             scope,

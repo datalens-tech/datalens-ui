@@ -127,7 +127,9 @@ export function renderCellContent(args: {
 
     let formattedValue: string | undefined = cell.formattedValue;
     if (!formattedValue) {
-        if (cellType === 'date' && cell.value) {
+        if (cell.value === null) {
+            formattedValue = String(cell.value);
+        } else if (cellType === 'date' && cell.value) {
             const dateTimeValue = dateTimeUtc({input: cell.value as string});
             const dateTimeFormat = get(column, 'format');
             formattedValue = dateTimeValue?.isValid()

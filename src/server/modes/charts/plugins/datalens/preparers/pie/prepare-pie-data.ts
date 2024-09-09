@@ -8,9 +8,11 @@ import {
     getFakeTitleOrTitle,
     isFieldHierarchy,
     isMarkdownField,
+    isMarkupField,
     isMeasureValue,
     isNumberField,
     isPseudoField,
+    wrapMarkupValue,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import type {ChartColorsConfig} from '../../types';
@@ -100,6 +102,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
     const {data, order, totals} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
+    const isMarkupLabelsEnabled = features[Feature.MarkupInLabels];
 
     const measure = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items[0];
     let colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
@@ -129,6 +132,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
         ? findIndexInOrder(order, labelField, idToTitle[labelField.guid])
         : -1;
     const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupLabelsEnabled && isMarkupField(labelItem);
 
     const measureIndex = findIndexInOrder(order, measure, idToTitle[measure.guid]);
     const measureDataType = idToDataType[measure.guid] || measure.data_type;
@@ -183,7 +187,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
                               ? MINIMUM_FRACTION_DIGITS
                               : 0,
                   }),
-            useHTML: isMarkdownLabel,
+            useHTML: isMarkdownLabel || isMarkupLabel,
         },
     };
 
@@ -246,6 +250,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
                 point.label = Number(labelValue);
             } else if (labelValue && isMarkdownLabel) {
                 point.label = wrapMarkdownValue(labelValue);
+            } else if (labelValue && isMarkupLabel) {
+                point.label = wrapMarkupValue(labelValue);
             } else {
                 point.label = getFormattedValue(labelValue, {
                     ...labelField,
@@ -294,6 +300,10 @@ export function preparePieData(args: PrepareFunctionArgs) {
 
     if (isMarkdownLabel) {
         ChartEditor.updateConfig({useMarkdown: true});
+    }
+
+    if (isMarkupLabel) {
+        ChartEditor.updateConfig({useMarkup: true});
     }
 
     return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};

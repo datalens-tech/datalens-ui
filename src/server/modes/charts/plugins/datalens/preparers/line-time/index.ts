@@ -19,7 +19,7 @@ import {
     formatUnknownTypeValue,
     parseNumberValue,
     renderValue,
-} from '../../../ql/utils/misc-helpers';
+} from '../../../ql/utils/value-helpers';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {
     findIndexInOrder,

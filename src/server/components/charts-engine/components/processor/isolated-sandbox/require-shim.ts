@@ -7,7 +7,11 @@ declare const __modules: Record<string, any>;
 export const requireShim = (name: string) => {
     const lowerName = name.toLowerCase();
     if (lowerName === 'libs/datalens/v3') {
-        return datalensV3prepareAdapter;
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].datalensModule;
+        } else {
+            return datalensV3prepareAdapter;
+        }
     } else if (lowerName === 'libs/control/v1') {
         if (__modules['bundledLibraries']) {
             return __modules['bundledLibraries']['dist'].controlModule;

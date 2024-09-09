@@ -5,12 +5,27 @@
     }
 }
 
+@mixin dndHighlight {
+    &_edit-mode {
+        position: relative;
+        .react-grid-layout {
+            background-color: var(--g-color-base-background);
+            border-radius: var(--g-border-radius-s);
+            outline: 1px dashed var(--g-color-line-generic);
+        }
+    }
+}
+
+$fixedSectionOffset: 8px;
+
 .dash-fixed-header {
     &__controls {
         display: flex;
         flex: 1;
         padding: 8px 0;
         min-height: 60px;
+
+        @include dndHighlight;
 
         &_fixed {
             position: fixed;
@@ -23,12 +38,6 @@
             padding-right: 24px;
             margin-left: -24px;
             z-index: 10;
-        }
-
-        &_edit-mode {
-            .react-grid-layout {
-                background-color: var(--g-color-base-background);
-            }
         }
     }
 
@@ -70,7 +79,7 @@
 
     &__container-wrapper {
         display: flex;
-        padding-bottom: 8px;
+        padding-bottom: $fixedSectionOffset;
         flex-direction: row;
         flex: 1;
 
@@ -81,6 +90,8 @@
         display: flex;
         flex-direction: row;
         min-height: 52px;
+
+        @include dndHighlight;
 
         &_fixed {
             position: fixed;
@@ -98,16 +109,26 @@
             max-height: calc(100vh - 100px);
         }
 
-        &_edit-mode {
-            .react-grid-layout {
-                background-color: var(--g-color-base-background);
-            }
-        }
-
         &_collapsed {
             overflow: clip;
             min-height: 0;
             max-height: 0;
+        }
+    }
+
+    &__empty {
+        position: absolute;
+        left: 0;
+        right: 0;
+        transform: translateY(-50%);
+        top: 50%;
+        pointer-events: none;
+        color: var(--g-color-text-hint);
+        text-align: center;
+
+        &.with-offset {
+            top: calc(50% - #{$fixedSectionOffset});
+            transform: translateY(calc(-1 * calc(50% - calc(#{$fixedSectionOffset}) / 2)));
         }
     }
 }

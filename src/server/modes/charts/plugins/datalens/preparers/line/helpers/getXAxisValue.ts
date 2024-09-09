@@ -28,7 +28,7 @@ export const getXAxisValue = ({
         ys1.forEach((y) => {
             const title = y.fakeTitle || idToTitle[y.guid];
 
-            if (!categoriesMap.has(title)) {
+            if (categoriesMap && !categoriesMap.has(title)) {
                 categoriesMap.set(title, true);
                 categories.push(title);
             }
@@ -48,7 +48,7 @@ export const getXAxisValue = ({
             xValue = getDateAxisValue(value, xDataType);
         }
 
-        if (!categoriesMap.has(xValue as string)) {
+        if (categoriesMap && !categoriesMap.has(xValue as string)) {
             categoriesMap.set(xValue as string, true);
             categories.push(xValue as string);
         }

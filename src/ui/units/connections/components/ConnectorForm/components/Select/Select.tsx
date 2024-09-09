@@ -4,10 +4,12 @@ import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
 import {Button, Select as UiKitSelect} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
+import isEqual from 'lodash/isEqual';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {SelectItem} from 'shared/schema/types';
+import {usePrevious} from 'ui';
 import type {DatalensGlobalState} from 'ui';
 
 import {changeForm, changeInnerForm, setValidationErrors} from '../../../../store';
@@ -51,6 +53,12 @@ const SelectComponent = (props: SelectComponentProps) => {
     const formValue = inner ? innerForm[name] : form[name];
     const value = getPreparedValue((formValue ?? '') as string);
     const error = getValidationError(name, validationErrors);
+    const prevValue = usePrevious(value);
+
+    if (error && !isEqual(prevValue, value)) {
+        const errors = validationErrors.filter((err) => err.name !== error.name);
+        actions.setValidationErrors({errors});
+    }
 
     const selectHandler = React.useCallback(
         (nextValue: string[]) => {

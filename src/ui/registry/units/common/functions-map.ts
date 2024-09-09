@@ -4,6 +4,10 @@ import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/type
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
 import type {
     BatchRenderMarkdownResponse,
+    CollectChartkitStatsArgs,
+    CollectChartkitStatsResponse,
+    CollectDashStatsArgs,
+    CollectDashStatsResponse,
     GetDistinctsApiV2Args,
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
@@ -112,5 +116,13 @@ export const commonFunctionsMap = {
     fetchDistinctsByApi:
         makeFunctionTemplate<
             (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>
+        >(),
+    requestCollectDashStats:
+        makeFunctionTemplate<
+            (dashStats: CollectDashStatsArgs) => Promise<CollectDashStatsResponse>
+        >(),
+    requestCollectChartkitStats:
+        makeFunctionTemplate<
+            (chartkitStats: CollectChartkitStatsArgs) => Promise<CollectChartkitStatsResponse>
         >(),
 } as const;

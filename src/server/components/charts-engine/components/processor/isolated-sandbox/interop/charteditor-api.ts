@@ -151,6 +151,7 @@ export function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', (() => {
+            // There may be objects inside the uploaded data that cannot be transferred
             const loadedData = chartEditorApi.getLoadedData();
             return JSON.stringify(loadedData);
         }) satisfies ChartEditorGetLoadedData);
