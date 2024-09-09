@@ -4,7 +4,7 @@ import {Xmark} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import logger from 'libs/logger';
-import {fetchRenderedMarkdown} from 'ui/utils/renderMarkdown';
+import {fetchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import './SideMarkdown.scss';
 

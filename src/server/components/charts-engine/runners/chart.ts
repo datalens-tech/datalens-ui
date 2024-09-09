@@ -9,7 +9,15 @@ import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runChart: RunnerHandler = async (
     cx: AppContext,
-    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
+    {
+        chartsEngine,
+        req,
+        res,
+        config,
+        configResolving,
+        workbookId,
+        forbiddenFields,
+    }: RunnerHandlerProps,
 ) => {
     let generatedConfig;
 
@@ -107,5 +115,6 @@ export const runChart: RunnerHandler = async (
         configResolving,
         workbookId: workbookId ?? config.workbookId,
         isWizard: true,
+        forbiddenFields,
     });
 };

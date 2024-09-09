@@ -72,7 +72,9 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
                 </React.Fragment>
             );
         },
-        columns: get(th, 'sub', []).map(mapHeadCell),
+        columns: get(th, 'sub', []).map((subColumn: TableHead) =>
+            mapHeadCell(subColumn, tableWidth),
+        ),
         pinned: get(th, 'pinned', false),
     };
 }
@@ -125,7 +127,9 @@ export function renderCellContent(args: {
 
     let formattedValue: string | undefined = cell.formattedValue;
     if (!formattedValue) {
-        if (cellType === 'date' && cell.value) {
+        if (cell.value === null) {
+            formattedValue = String(cell.value);
+        } else if (cellType === 'date' && cell.value) {
             const dateTimeValue = dateTimeUtc({input: cell.value as string});
             const dateTimeFormat = get(column, 'format');
             formattedValue = dateTimeValue?.isValid()

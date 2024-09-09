@@ -87,6 +87,7 @@ const __updateHighchartsConfig = (config: unknown) =>
     );
 
 let __shared: {};
+
 const getSortParams = (params: Record<string, string | string[]>) => {
     const columnId = Array.isArray(params._columnId) ? params._columnId[0] : params._columnId;
     const order = Array.isArray(params._sortOrder) ? params._sortOrder[0] : params._sortOrder;
@@ -111,8 +112,7 @@ const getSortParams = (params: Record<string, string | string[]>) => {
 };
 
 const ChartEditor: IChartEditor = {
-    getTranslation: (keyset, key, params) =>
-        _ChartEditor_getTranslation(keyset, key, JSON.stringify(params)),
+    getTranslation: (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, params),
     getSharedData: () => {
         __shared = __shared || _ChartEditor_getSharedData();
         return __shared;

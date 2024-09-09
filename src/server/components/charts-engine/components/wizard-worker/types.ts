@@ -13,6 +13,11 @@ import type {RuntimeMetadata} from '../processor/types';
 
 export type ChartShared = Record<string, object> | Shared | ServerChartsConfig | QlConfig;
 
+export type BuildParamsArgs = {
+    shared: unknown;
+    userLang: string;
+};
+
 export type BuildSourceArgs = {
     shared: unknown;
     userLang: string;
@@ -53,6 +58,11 @@ export type BuildChartArgs = {
 };
 
 export type WizardWorker = {
+    buildParams?: (args: BuildParamsArgs) => Promise<{
+        runtimeMetadata: RuntimeMetadata;
+        exports: unknown;
+        logs?: LogItem[][];
+    }>;
     buildSources: (args: BuildSourceArgs) => Promise<{
         runtimeMetadata: RuntimeMetadata;
         exports: SourceRequests;

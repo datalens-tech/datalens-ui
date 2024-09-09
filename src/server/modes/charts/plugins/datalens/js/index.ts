@@ -3,10 +3,9 @@ import {getServerFeatures} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 
 import {buildGraphPrivate} from './js';
+import {fallbackJSFunction} from './js-v1.5';
 
-const fallbackJSFuntion = require('./js-v1.5');
-
-type JSTabOptions =
+export type JSTabOptions =
     | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
     | [any, Shared | ServerChartsConfig, IChartEditor];
 
@@ -29,7 +28,7 @@ export const buildGraph = (...options: JSTabOptions) => {
 
     apiVersion = apiVersion || '1.5';
     if (apiVersion === '1.5') {
-        return fallbackJSFuntion.apply(this, options);
+        return fallbackJSFunction.apply(this, options);
     }
 
     const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');

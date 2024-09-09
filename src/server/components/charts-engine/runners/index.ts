@@ -5,6 +5,7 @@ import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
 import {ControlType} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
+import type {ProcessorParams} from '../components/processor';
 import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
 import {runControl} from './control';
@@ -31,6 +32,7 @@ export type RunnerHandlerProps = {
     configResolving: number;
     workbookId?: WorkbookId;
     isWizard?: boolean;
+    forbiddenFields?: ProcessorParams['forbiddenFields'];
 };
 
 export function getDefaultRunners() {
