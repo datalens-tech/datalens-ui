@@ -197,7 +197,7 @@ const ChartEditor: IChartEditor = {
     },
     updateActionParams: (params) => _ChartEditor_updateActionParams(JSON.stringify(params)),
 
-    getLoadedData: () => _ChartEditor_getLoadedData(),
+    getLoadedData: () => JSON.parse(_ChartEditor_getLoadedData()),
     getLoadedDataStats: () => JSON.parse(_ChartEditor_getLoadedDataStats()),
     setDataSourceInfo: (dataSourceKey, info) =>
         _ChartEditor_setDataSourceInfo(dataSourceKey, JSON.stringify(info)),
