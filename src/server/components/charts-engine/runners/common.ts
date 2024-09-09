@@ -155,6 +155,7 @@ export function commonRunner({
     runnerType,
     hrStart,
     subrequestHeadersKind,
+    forbiddenFields,
 }: {
     res: Response;
     req: Request;
@@ -175,6 +176,7 @@ export function commonRunner({
     runnerType: Runners;
     hrStart: [number, number];
     subrequestHeadersKind?: string;
+    forbiddenFields?: ProcessorParams['forbiddenFields'];
 }) {
     res.locals.subrequestHeaders['x-chart-kind'] = chartType;
 
@@ -197,6 +199,7 @@ export function commonRunner({
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         builder,
+        forbiddenFields,
     };
 
     if (req.body.unreleased === 1) {
