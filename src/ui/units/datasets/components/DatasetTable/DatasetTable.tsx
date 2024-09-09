@@ -225,9 +225,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
-        console.log('get columns');
-
-        const res = getColumns({
+        return getColumns({
             selectedRows,
             fieldsCount: this.props.fields.length,
             avatars: this.props.sourceAvatars,
@@ -247,8 +245,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
         });
-        console.log(res);
-        return res;
     }
 
     private resetSelection = () => {
@@ -486,7 +482,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         {guid, aggregation}: DatasetField,
         cast: DATASET_FIELD_TYPES,
     ) => {
-        console.log('handleTypeSelectUpdate');
         this.props.updateField({
             field: {
                 guid,
