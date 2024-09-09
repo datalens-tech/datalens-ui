@@ -4,15 +4,19 @@ import {buildSource, doesQueryContainOrderBy, iterateThroughVisibleQueries} from
 
 const MOCK_ID = 'MOCK_ID';
 
-const mockedBuildSourceArgsSet = {
+const commonBuildSourceArgsSet = {
     id: MOCK_ID,
     connectionType: 'postgres',
+    qlConnectionTypeMap: {postgres: 'postgres'},
+};
+
+const mockedBuildSourceArgsSet = {
+    ...commonBuildSourceArgsSet,
     query: 'select built_year, iznos from public.sample where built_year in {{years}} limit 10',
     params: {years: '1995'},
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
-    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultSet = {
@@ -26,14 +30,12 @@ const expectedBuildSourceResultSet = {
 };
 
 const mockedBuildSourceArgsSingle = {
-    id: MOCK_ID,
-    connectionType: 'postgres',
+    ...commonBuildSourceArgsSet,
     query: 'select built_year, iznos from public.sample where built_year = {{years}} limit 10',
     params: {years: '1995'},
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
-    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultSingle = {
@@ -47,14 +49,12 @@ const expectedBuildSourceResultSingle = {
 };
 
 const mockedBuildSourceArgsPrewrapped = {
-    id: MOCK_ID,
-    connectionType: 'postgres',
+    ...commonBuildSourceArgsSet,
     query: 'select built_year, iznos from public.sample where built_year in ({{years}}) limit 10',
     params: {years: '1995'},
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
-    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultPrewrapped = {
