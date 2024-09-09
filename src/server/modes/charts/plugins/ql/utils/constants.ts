@@ -1,7 +1,7 @@
 import {VISUALIZATION_IDS, isTrueArg} from '../../../../../../shared';
 
-export const LOG_TIMING = isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
-export const LOG_INFO = isTrueArg(process.env.SHOW_CHARTS_LOG);
+export const LOG_TIMING = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
+export const LOG_INFO = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG);
 
 export const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD';
 export const DEFAULT_DATETIME_FORMAT = 'YYYY-MM-DDTHH:mm:ss';

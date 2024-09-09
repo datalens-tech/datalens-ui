@@ -1,7 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {DashWidgetConfig} from '../../../../shared';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {Feature, getServerFeatures, isEnabledServerFeature} from '../../../../shared';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 
@@ -59,7 +59,7 @@ async function getChartBuilder({
         Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
         sandboxVersion === '2';
 
-    const noJsonFn = Boolean(isEnabledServerFeature(parentContext, Feature.NoJsonFn));
+    const serverFeatures = getServerFeatures(parentContext);
     const chartBuilder =
         enableIsolatedSandbox && !isWizard
             ? await getIsolatedSandboxChartBuilder({
@@ -69,9 +69,7 @@ async function getChartBuilder({
                   config,
                   isScreenshoter,
                   chartsEngine,
-                  features: {
-                      noJsonFn,
-                  },
+                  serverFeatures,
               })
             : await getSandboxChartBuilder({
                   userLang,
@@ -97,7 +95,8 @@ export const runEditor = async (
         return runServerlessEditor(parentContext, runnerHandlerProps);
     }
 
-    const {chartsEngine, req, res, config, configResolving, workbookId} = runnerHandlerProps;
+    const {chartsEngine, req, res, config, configResolving, workbookId, forbiddenFields} =
+        runnerHandlerProps;
     const ctx = parentContext.create('editorChartRunner');
 
     const hrStart = process.hrtime();
@@ -129,5 +128,6 @@ export const runEditor = async (
         runnerType: 'Editor',
         hrStart,
         subrequestHeadersKind: 'editor',
+        forbiddenFields,
     });
 };

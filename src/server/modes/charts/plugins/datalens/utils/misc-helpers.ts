@@ -21,6 +21,7 @@ import {
     isDateField,
     isMeasureField,
     isMeasureValue,
+    wrapMarkupValue,
 } from '../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
 import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
@@ -376,13 +377,22 @@ export function isLegendEnabled(chartSetting?: ServerCommonSharedExtraSettings) 
     return chartSetting?.legendMode !== LegendDisplayMode.Hide;
 }
 
-export function getLabelValue(value: undefined | string, isMarkdownLabel?: boolean) {
+export function getLabelValue(
+    value: undefined | string,
+    options: {isMarkdownLabel?: boolean; isMarkupLabel?: boolean} = {},
+) {
+    const {isMarkdownLabel, isMarkupLabel} = options;
+
     if (value === undefined) {
         return '';
     }
 
     if (isMarkdownLabel) {
         return wrapMarkdownValue(value);
+    }
+
+    if (isMarkupLabel) {
+        return wrapMarkupValue(value);
     }
 
     return value;

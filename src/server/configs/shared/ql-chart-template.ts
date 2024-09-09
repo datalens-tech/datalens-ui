@@ -1,52 +1,18 @@
 import type {Request} from '@gravity-ui/expresskit';
 
 import type {ServerI18n} from '../../../i18n/types';
-import type {QlExtendedConfig, StringParams} from '../../../shared';
-import {
-    QLChartType,
-    QL_TYPE,
-    WizardVisualizationId,
-    isMonitoringOrPrometheusChart,
-} from '../../../shared';
+import type {QlExtendedConfig} from '../../../shared';
+import {QL_TYPE, WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
 import {getTranslationFn} from '../../../shared/modules/language';
+import {identifyParams} from '../../modes/charts/plugins/ql/utils/identify-params';
 
 export default {
     module: 'libs/qlchart/v1',
     identifyParams: (chart: QlExtendedConfig, req: Request) => {
         const i18nServer: ServerI18n = req.ctx.get('i18n');
-
-        const config = mapQlConfigToLatestVersion(chart, {
-            i18n: getTranslationFn(i18nServer.getI18nServer()),
-        });
-        const {chartType, params} = config;
-
-        const availableParams: StringParams = {};
-
-        if (params) {
-            params.forEach((param) => {
-                if (
-                    param.type.includes('interval') &&
-                    typeof param.defaultValue === 'object' &&
-                    param.defaultValue !== null
-                ) {
-                    const fromName = `${param.name}_from`;
-                    const toName = `${param.name}_to`;
-
-                    availableParams[`${param.name}`] = '';
-                    availableParams[fromName] = '';
-                    availableParams[toName] = '';
-                } else {
-                    availableParams[param.name] = '';
-                }
-            });
-        }
-
-        if (chartType === QLChartType.Monitoringql) {
-            availableParams['interval'] = '';
-        }
-
-        return availableParams;
+        const getTranslation = getTranslationFn(i18nServer.getI18nServer());
+        return identifyParams({chart, getTranslation});
     },
     identifyChartType: (chart: QlExtendedConfig, req: Request) => {
         const i18nServer: ServerI18n = req.ctx.get('i18n');
