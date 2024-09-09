@@ -552,19 +552,20 @@ class Body extends React.PureComponent<BodyProps> {
                         </Button>
                     )}
                     items={[
-                        config.settings?.fixedHeaderCollapsedDefault
-                            ? {
-                                  action: this.toggleDefaultCollapsedState,
-                                  text: i18n('dash.main.view', 'label_fixed-show-default'),
-                                  iconStart: <Icon data={Square} />,
-                                  theme: 'normal',
-                              }
-                            : {
-                                  action: this.toggleDefaultCollapsedState,
-                                  text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
-                                  iconStart: <Icon data={SquareCheck} />,
-                                  theme: 'normal',
-                              },
+                        {
+                            action: this.toggleDefaultCollapsedState,
+                            text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
+                            iconStart: (
+                                <Icon
+                                    data={
+                                        config.settings?.fixedHeaderCollapsedDefault
+                                            ? SquareCheck
+                                            : Square
+                                    }
+                                />
+                            ),
+                            theme: 'normal',
+                        },
                         {
                             action: this.unpinAllElements,
                             text: i18n('dash.main.view', 'label_unpin-all'),
