@@ -1,4 +1,5 @@
 import type {QLConfigQuery} from '../../../../../../../shared';
+import {ConnectorType} from '../../../../../../../shared';
 import {convertConnectionType} from '../connection';
 import {buildSource, doesQueryContainOrderBy, iterateThroughVisibleQueries} from '../misc-helpers';
 
@@ -7,7 +8,7 @@ const MOCK_ID = 'MOCK_ID';
 const commonBuildSourceArgsSet = {
     id: MOCK_ID,
     connectionType: 'postgres',
-    qlConnectionTypeMap: {postgres: 'postgres'},
+    qlConnectionTypeMap: {postgres: ConnectorType.Postgres},
 };
 
 const mockedBuildSourceArgsSet = {
