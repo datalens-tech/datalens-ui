@@ -1,1 +1,1 @@
-export * from './DialogChangeDatasetFields';
+export * from './DialogChangeDatasetFields/DialogChangeDatasetFields';

@@ -28,7 +28,7 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {AggregationSelect, DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
-import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields';
+import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
 import {TypeSelect} from './components/TypeSelect/TypeSelect';
 import {BatchFieldAction, FieldAction} from './constants';
@@ -354,7 +354,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             props: {
                 open: true,
                 onClose: this.props.closeDialog,
-                warningMessage: 'Не все типы могут быть доступны',
+                warningMessage: i18n('text_batch-type-alert'),
+                title: i18n('text_batch-type-header'),
                 onApply: handleOnApply,
                 children: (
                     <TypeSelect
@@ -395,7 +396,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             props: {
                 open: true,
                 onClose: this.props.closeDialog,
-                warningMessage: 'Не все агрегации могут быть доступны',
+                warningMessage: i18n('text_batch-aggregation-alert'),
+                title: i18n('text_batch-aggregation-header'),
                 onApply: handleOnApply,
                 children: (
                     <AggregationSelect
