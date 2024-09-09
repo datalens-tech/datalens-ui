@@ -13,6 +13,7 @@
   "label_connection": "connection",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
+  "label_create-denied-title": "Insufficient permissions to create entity",
   "label_create-entry-in-workbook": "Choose a workbook to create a",
   "label_dashboard": "dashboard",
   "label_dataset": "dataset",
