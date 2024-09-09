@@ -11,12 +11,20 @@ import type {WizardWorker} from '../../../../components/charts-engine/components
 import type {RunnerHandler, RunnerHandlerProps} from '../../../../components/charts-engine/runners';
 import {runChart} from '../../../../components/charts-engine/runners/chart';
 import {runWorkerChart} from '../../../../components/charts-engine/runners/worker';
+import {registry} from '../../../../registry';
+
+import type {QLAdditionalData} from './types';
 
 let wizardWorkersPool: Pool | null = null;
 async function getQlWorker(): Promise<Proxy<WizardWorker>> {
     if (wizardWorkersPool === null) {
         const scriptPath = path.resolve(__dirname, './worker');
-        wizardWorkersPool = workerpool.pool(scriptPath);
+        const additionalData: QLAdditionalData = {
+            qlConnectionTypeMap: registry.getQLConnectionTypeMap(),
+        };
+        wizardWorkersPool = workerpool.pool(scriptPath, {
+            workerThreadOpts: {workerData: additionalData},
+        });
     }
 
     return wizardWorkersPool.proxy<WizardWorker>();

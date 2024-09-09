@@ -9,6 +9,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
     const features = getServerFeatures(app.nodekit.ctx);
     const {getAvailablePalettesMap} = registry.common.functions.getAll();
     const palettes = getAvailablePalettesMap();
+    const qlConnectionTypeMap = registry.getQLConnectionTypeMap();
 
-    return buildGraph({shared, ChartEditor, features, palettes});
+    return buildGraph({shared, ChartEditor, features, palettes, qlConnectionTypeMap});
 };

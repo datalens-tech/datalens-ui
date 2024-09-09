@@ -12,6 +12,7 @@ const mockedBuildSourceArgsSet = {
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
+    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultSet = {
@@ -32,6 +33,7 @@ const mockedBuildSourceArgsSingle = {
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
+    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultSingle = {
@@ -52,6 +54,7 @@ const mockedBuildSourceArgsPrewrapped = {
     paramsDescription: [
         {type: 'string', name: 'years', defaultValue: ['1990', '1995'], overridenValue: '1995'},
     ],
+    qlConnectionTypeMap: {},
 };
 
 const expectedBuildSourceResultPrewrapped = {
