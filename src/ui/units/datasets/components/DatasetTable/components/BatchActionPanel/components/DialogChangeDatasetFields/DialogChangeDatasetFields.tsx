@@ -4,6 +4,7 @@ import {Alert, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 
 import './DialogChangeDatasetFields.scss';
 
@@ -40,7 +41,10 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
         <Dialog open={open} onClose={onClose} size="s">
             <Dialog.Header caption={title} />
             <Dialog.Body>
-                <Alert theme="warning" message={warningMessage} />
+                <Alert
+                    theme="warning"
+                    message={<YfmWrapper content={warningMessage} setByInnerHtml />}
+                />
                 <div className={b('content')}>
                     <span>{label}:</span>
                     {children}

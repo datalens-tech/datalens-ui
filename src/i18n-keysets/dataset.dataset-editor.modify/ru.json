@@ -71,7 +71,7 @@
   "text_batch-type-header": "Изменить тип полей датасета",
   "text_batch-type-alert": "Не все типы могут быть доступны",
   "text_batch-aggregation-header": "Изменить агрегацию полей датасета",
-  "text_batch-aggregation-alert": "Не все агрегации могут быть доступны",
+  "md_text_batch-aggregation-alert": "Не все [агрегации]({{datalensDocsLink}}/concepts/dataset/data-model#aggregation){target=_blank} могут быть доступны",
   "value_array_float": "Массив дробных чисел",
   "value_array_int": "Массив целых чисел",
   "value_array_str": "Массив строк",

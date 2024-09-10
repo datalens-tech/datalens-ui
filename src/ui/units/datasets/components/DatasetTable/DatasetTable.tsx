@@ -16,6 +16,7 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
+import {DL} from 'ui/constants';
 
 import type {
     OpenDialogConfirmArguments,
@@ -393,7 +394,9 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             props: {
                 open: true,
                 onClose: this.props.closeDialog,
-                warningMessage: i18n('text_batch-aggregation-alert'),
+                warningMessage: i18n('md_text_batch-aggregation-alert', {
+                    datalensDocsLink: DL.ENDPOINTS.datalensDocs,
+                }),
                 title: i18n('text_batch-aggregation-header'),
                 onApply: handleOnApply,
                 label: i18n('label_batch-aggregation'),
