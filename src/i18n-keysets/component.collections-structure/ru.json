@@ -13,7 +13,7 @@
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
-  "label_create-denied-title": "Недостаточно прав для создания сущности",
+  "label_create-denied-title": "Недостаточно прав для создания объекта",
   "label_create-entry-in-workbook": "Выберите воркбук для создания",
   "label_dashboard": "дашборда",
   "label_dataset": "датасета",
