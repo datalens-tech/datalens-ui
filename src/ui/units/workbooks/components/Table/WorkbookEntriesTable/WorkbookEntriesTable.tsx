@@ -43,6 +43,7 @@ type WorkbookEntriesTableProps = {
     mapErrors?: Record<string, boolean>;
     mapLoaders?: Record<string, boolean>;
     chunks: ChunkItem[][];
+    availableScopes?: EntryScope[];
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
@@ -57,6 +58,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         mapErrors,
         mapLoaders,
         chunks,
+        availableScopes,
     }) => {
         const dispatch: AppDispatch = useDispatch();
         const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -154,7 +156,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         };
 
-        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
+        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = [], reportsChunk] =
+            chunks;
 
         const isWidgetEmpty = widgetChunk.length === 0;
         const isDashEmpty = dashChunk.length === 0;
@@ -256,6 +259,28 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             retryLoadEntries={() => retryLoadEntries?.(EntryScope.Connection)}
                             isErrorMessage={mapErrors?.[EntryScope.Connection]}
                             isLoading={mapLoaders?.[EntryScope.Connection]}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                            onShowRelatedClick={onShowRelated}
+                        />
+                    )}
+
+                    {showDataEntities && availableScopes?.includes(EntryScope.Presentation) && (
+                        <MainTabContent
+                            chunk={reportsChunk}
+                            actionCreateText={i18n('action_create-report')}
+                            title={i18n('title_reports')}
+                            actionType={CreateEntryActionType.Report}
+                            isShowMoreBtn={Boolean(
+                                reportsChunk?.length > 0 && mapTokens?.[EntryScope.Presentation],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Presentation)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Presentation)}
+                            isErrorMessage={mapErrors?.[EntryScope.Presentation]}
+                            isLoading={mapLoaders?.[EntryScope.Presentation]}
                             workbook={workbook}
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}

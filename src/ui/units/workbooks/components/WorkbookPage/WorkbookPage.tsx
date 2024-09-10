@@ -9,6 +9,7 @@ import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
 import Utils from 'ui/utils/utils';
 
+import {registry} from '../../../../registry';
 import {getCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
 import {changeFilters, getWorkbook} from '../../store/actions';
@@ -32,17 +33,9 @@ import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
 
-const AVAILABLE_TABS = [TAB_ALL, 'dash', 'widget', 'dataset', 'connection'];
-
 export const WorkbookPage = () => {
     const {search} = useLocation();
     const {workbookId} = useParams<{workbookId: string}>();
-
-    const activeTab = React.useMemo<TabId | undefined>(() => {
-        const queryTab = new URLSearchParams(search).get('tab');
-
-        return queryTab && AVAILABLE_TABS.includes(queryTab) ? (queryTab as TabId) : TAB_ALL;
-    }, [search]);
 
     const dispatch = useDispatch<AppDispatch>();
 
@@ -50,6 +43,17 @@ export const WorkbookPage = () => {
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+
+    const {getWorkbookTabs} = registry.workbooks.functions.getAll();
+    const availableItems = React.useMemo(() => {
+        return workbook ? getWorkbookTabs(workbook).map(({id}) => id as string) : [];
+    }, [getWorkbookTabs, workbook]);
+
+    const activeTab = React.useMemo<TabId | undefined>(() => {
+        const queryTab = new URLSearchParams(search).get('tab');
+
+        return queryTab && availableItems.includes(queryTab) ? (queryTab as TabId) : TAB_ALL;
+    }, [availableItems, search]);
 
     const filters = useSelector(selectWorkbookFilters);
 

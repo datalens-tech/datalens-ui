@@ -6,6 +6,7 @@ import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
 import type {GatewayApiErrorResponse} from '../utils/gateway';
 
+/* eslint-disable consistent-return */
 export default async (req: Request, res: Response): Promise<void> => {
     const {query, ctx} = req;
 
@@ -63,8 +64,11 @@ export default async (req: Request, res: Response): Promise<void> => {
                 return res.redirect(`/${entry.entryId}`);
             case EntryScope.Connection:
                 return res.redirect(`/connections/${entry.entryId}`);
+            case EntryScope.Report:
+                return res.redirect(`/reports/${entry.entryId}`);
+            // TODO delete after update
             case EntryScope.Presentation:
-                return res.redirect(`/presentations/${entry.entryId}`);
+                return res.redirect(`/reports/${entry.entryId}`);
             default:
                 return res.redirect('/navigation');
         }

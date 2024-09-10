@@ -132,8 +132,11 @@ const getScopeTypeIcon = (scope: string) => {
             return 'dashboard';
         case 'monitoring':
             return 'editor';
+        case EntryScope.Report:
+            return 'report';
+        // TODO delete after update
         case EntryScope.Presentation:
-            return 'presentation';
+            return 'report';
         case 'broken':
             return 'broken';
         default:
