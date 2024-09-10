@@ -19,8 +19,17 @@ export const CONNECTOR_TYPE_TO_QL_CONNECTION_TYPE_MAP: Record<string, ConnectorT
     [ConnectorType.MonitoringExt]: DATALENS_QL_CONNECTION_TYPES.MONITORING,
 };
 
-export function convertConnectionType(connectionType: string) {
-    const mappedConnectionType = CONNECTOR_TYPE_TO_QL_CONNECTION_TYPE_MAP[connectionType];
+export function getConnectorToQlConnectionTypeMap() {
+    return CONNECTOR_TYPE_TO_QL_CONNECTION_TYPE_MAP;
+}
+
+export type QLConnectionTypeMap = ReturnType<typeof getConnectorToQlConnectionTypeMap>;
+
+export function convertConnectionType(
+    connectionTypeMap: QLConnectionTypeMap,
+    connectionType: string,
+) {
+    const mappedConnectionType = connectionTypeMap[connectionType];
 
     if (!mappedConnectionType) {
         throw new Error('Unsupported connection type');
