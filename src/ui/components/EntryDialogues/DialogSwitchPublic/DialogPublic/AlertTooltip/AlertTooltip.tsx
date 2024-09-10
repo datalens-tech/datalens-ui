@@ -1,10 +1,9 @@
 import React from 'react';
 
+import {TriangleExclamation} from '@gravity-ui/icons';
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import {Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-
-import alertIcon from '../../../../../assets/icons/alert.svg';
 
 import './AlertTooltip.scss';
 
@@ -23,7 +22,7 @@ function AlertTooltip({className, text, tooltipPlacement}: Props) {
     return (
         <div className={b(null, className)}>
             <Popover content={text} placement={placement}>
-                <Icon data={alertIcon} width={20} height={20} className={b('icon')} />
+                <Icon data={TriangleExclamation} className={b('icon')} />
             </Popover>
         </div>
     );
