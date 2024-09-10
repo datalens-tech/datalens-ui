@@ -73,6 +73,7 @@ export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
             type={ResourceType.Workbook}
             initialCollectionId={initialCollectionId}
             caption={`${i18n('label_create-entry-in-workbook')} ${i18n(`label_${entryType}`)}`}
+            operationDeniedMessage={i18n('label_create-denied-title')}
             textButtonApply={i18n('action_create')}
             workbookSelectionMode={true}
             closeDialogAfterSuccessfulApply={closeDialogAfterSuccessfulApply}
