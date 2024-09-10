@@ -58,6 +58,7 @@ import type {
 import {cleanUpConflictingParameters} from '../utils';
 
 import {useIntersectionObserver} from './useIntersectionObserver';
+import {useMemoCallback} from './useMemoCallback';
 
 export type LoadingChartHookProps = {
     dataProvider: ChartWithProviderProps['dataProvider'];
@@ -776,7 +777,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [dataProvider, initialData, requestId, requestCancellationRef, rootNodeRef, handleError],
     );
 
-    const handleChange = React.useCallback(
+    const handleChange = useMemoCallback(
+        // eslint-disable-next-line complexity
         (
             changedData: OnChangeData,
             _state: {forceUpdate: boolean},
@@ -877,9 +879,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             }
         },
         [
-            prevInnerParamsRefCurrent,
             handleChangeCallback,
-            initialData.params,
             innerParamsRef,
             enableActionParams,
             onInnerParamsChanged,
