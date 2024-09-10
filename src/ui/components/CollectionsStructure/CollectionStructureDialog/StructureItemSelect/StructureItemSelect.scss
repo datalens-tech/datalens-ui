@@ -19,22 +19,22 @@
         overflow-y: auto;
     }
 
-    &__move-denied-wrapper {
+    &__denied-message-wrapper {
         margin-bottom: 8px;
     }
 
-    &__move-denied {
+    &__denied-message {
         display: flex;
         align-items: center;
         padding: 12px;
     }
 
-    &__move-denied-icon {
+    &__denied-message-icon {
         height: 15px;
         margin-right: 10px;
     }
 
-    &__move-denied-text {
+    &__denied-message-text {
         font-size: 13px;
         line-height: 18px;
     }

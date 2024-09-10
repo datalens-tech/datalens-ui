@@ -36,7 +36,7 @@ export type ChartEditorGetSortParams = string;
 export type ChartEditorCurrentPage = number;
 export type ChartEditorUpdateParams = (params: string) => undefined;
 export type ChartEditorUpdateActionParams = (params: string) => undefined;
-export type ChartEditorGetLoadedData = () => Record<string, unknown>;
+export type ChartEditorGetLoadedData = () => string;
 export type ChartEditorGetLoadedDataStats = () => string;
 export type ChartEditorSetDataSourceInfo = (dataSourceKey: string, info: string) => undefined;
 export type ChartEditorUpdateConfig = (config: string) => undefined;
@@ -151,7 +151,9 @@ export function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', (() => {
-            return chartEditorApi.getLoadedData();
+            // There may be objects inside the uploaded data that cannot be transferred
+            const loadedData = chartEditorApi.getLoadedData();
+            return JSON.stringify(loadedData);
         }) satisfies ChartEditorGetLoadedData);
         jail.setSync('_ChartEditor_getLoadedDataStats', (() => {
             const loadedDataStats = chartEditorApi.getLoadedDataStats();
