@@ -1,3 +1,5 @@
+import {workerData} from 'worker_threads';
+
 import workerPool from 'workerpool';
 
 import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
@@ -17,7 +19,14 @@ import {getChartApiContext} from '../../../../components/charts-engine/component
 import {createI18nInstance} from '../../../../utils/language';
 
 import qlModule from './module/private-module';
+import type {QLAdditionalData} from './types';
 import {identifyParams} from './utils/identify-params';
+
+function getQLAdditionalData(): QLAdditionalData {
+    return {
+        qlConnectionTypeMap: workerData?.qlConnectionTypeMap ?? {},
+    };
+}
 
 const worker: WizardWorker = {
     buildParams: async (args: BuildParamsArgs) => {
@@ -48,11 +57,13 @@ const worker: WizardWorker = {
         const console = new Console({});
         qlModule.setConsole(console);
 
+        const {qlConnectionTypeMap} = getQLAdditionalData();
         return {
             exports: qlModule.buildSources({
                 shared: shared as QlConfig,
                 ChartEditor: context.ChartEditor,
                 palettes,
+                qlConnectionTypeMap,
             }),
             runtimeMetadata: context.__runtimeMetadata,
             logs: console.getLogs(),
@@ -144,11 +155,13 @@ const worker: WizardWorker = {
         const console = new Console({});
         qlModule.setConsole(console);
 
+        const {qlConnectionTypeMap} = getQLAdditionalData();
         const result = qlModule.buildGraph({
             shared: shared as QlConfig,
             ChartEditor: context.ChartEditor,
             palettes,
             features,
+            qlConnectionTypeMap,
         });
 
         return {
