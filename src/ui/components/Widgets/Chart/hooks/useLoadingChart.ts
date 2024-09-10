@@ -817,9 +817,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     );
                 }
 
-                const needUpdateChartParams =
-                    !isEqual(initialData.params, newParams) || callChangeByClick;
-
                 // if prev loading chart params contained actionParams
                 // & newParams contain only empty values,
                 // we need to clean it
@@ -828,7 +825,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                         pickActionParamsFromParams(prevInnerParamsRefCurrent || undefined),
                     ) && isAllParamsEmpty(newParams);
 
-                if (newParams && needUpdateChartParams) {
+                if (newParams) {
                     const actionName =
                         isEmpty(newParams) && callChangeByClick
                             ? WIDGET_CHART_RESET_CHANGED_PARAMS
@@ -879,7 +876,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [
             prevInnerParamsRefCurrent,
             handleChangeCallback,
-            initialData.params,
             innerParamsRef,
             enableActionParams,
             onInnerParamsChanged,
