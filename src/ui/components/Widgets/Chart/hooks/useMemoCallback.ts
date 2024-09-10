@@ -13,5 +13,5 @@ export const useMemoCallback = <T extends (...args: any[]) => any>(
 
     return React.useMemo(() => {
         return ((...args: any[]) => callbackRef.current(...args)) as T;
-    }, [...deps]);
+    }, deps);
 };

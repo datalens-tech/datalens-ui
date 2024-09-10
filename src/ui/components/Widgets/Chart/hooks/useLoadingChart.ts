@@ -878,13 +878,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 handleChangeCallback(res);
             }
         },
-        [
-            handleChangeCallback,
-            innerParamsRef,
-            enableActionParams,
-            onInnerParamsChanged,
-            currentDrillDownLevel,
-        ],
+        [],
     );
 
     const handleRetry = React.useCallback(
