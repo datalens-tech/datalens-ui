@@ -7,11 +7,11 @@ import React from 'react';
 export const useMemoCallback = <T extends (...args: any[]) => any>(
     callback: T,
     deps: React.DependencyList,
-) => {
+): T => {
     const callbackRef = React.useRef(callback);
     callbackRef.current = callback;
 
     return React.useMemo(() => {
-        return (...args: any[]) => callbackRef.current(...args);
+        return ((...args: any[]) => callbackRef.current(...args)) as T;
     }, [...deps]);
 };
