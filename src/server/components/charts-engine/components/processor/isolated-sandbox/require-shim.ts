@@ -19,7 +19,11 @@ export const requireShim = (name: string) => {
             return controlV1prepareAdapter;
         }
     } else if (lowerName === 'libs/qlchart/v1') {
-        return qlChartV1prepareAdapter;
+        if (__modules['bundledLibraries']) {
+            return __modules['bundledLibraries']['dist'].qlModule;
+        } else {
+            return qlChartV1prepareAdapter;
+        }
     } else if (lowerName === 'libs/dataset/v2') {
         if (__modules['bundledLibraries']) {
             return __modules['bundledLibraries']['dist'].datasetModule;
