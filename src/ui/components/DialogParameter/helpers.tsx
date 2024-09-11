@@ -20,10 +20,8 @@ const NEW_PARAMETER_FIELD = {
     hidden: false,
 };
 
-// const b = block('dialog-parameter');
-
 export const getTypesList = (): SelectOption[] => {
-    const items = getTypeSelectOptions(AVAILABLE_FIELD_TYPES);
+    const items = getTypeSelectOptions([...AVAILABLE_FIELD_TYPES]);
 
     return items.map((item) => ({...item, qa: `dialog-parameter-${item.value}`}));
 };

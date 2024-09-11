@@ -29,6 +29,7 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import type {DialogChangeDatasetFieldsProps} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
 import {BatchFieldAction, FieldAction} from './constants';
@@ -260,6 +261,30 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
 
+    private batchChangeDialog = (
+        fields: DatasetField[],
+        props: Omit<
+            DialogChangeDatasetFieldsProps,
+            'open' | 'onClose' | 'fieldsGuids' | 'batchUpdateFields' | 'onApply'
+        >,
+    ) => {
+        const handleOnApply = () => {
+            this.resetSelection();
+        };
+
+        this.props.openDialog({
+            id: DIALOG_CHANGE_DATASET_FIELDS,
+            props: {
+                open: true,
+                onClose: this.props.closeDialog,
+                fieldsGuids: fields.map(({guid}) => guid),
+                batchUpdateFields: this.props.batchUpdateFields,
+                onApply: handleOnApply,
+                ...props,
+            },
+        });
+    };
+
     private batchConfirmDialog = (
         options: Partial<OpenDialogConfirmArguments> &
             Pick<
@@ -317,23 +342,11 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         fields: DatasetField[],
         allowedTypes: DATASET_FIELD_TYPES[],
     ) => {
-        const handleOnApply = () => {
-            this.resetSelection();
-        };
-
-        this.props.openDialog({
-            id: DIALOG_CHANGE_DATASET_FIELDS,
-            props: {
-                open: true,
-                onClose: this.props.closeDialog,
-                warningMessage: i18n('text_batch-type-alert'),
-                title: i18n('text_batch-type-header'),
-                label: i18n('label_batch-type'),
-                fieldsGuids: fields.map(({guid}) => guid),
-                batchUpdateFields: this.props.batchUpdateFields,
-                types: allowedTypes,
-                onApply: handleOnApply,
-            },
+        this.batchChangeDialog(fields, {
+            warningMessage: i18n('text_batch-type-alert'),
+            title: i18n('text_batch-type-header'),
+            label: i18n('label_batch-type'),
+            types: allowedTypes,
         });
     };
 
@@ -341,25 +354,13 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         fields: DatasetField[],
         allowedAggregations: DatasetFieldAggregation[],
     ) => {
-        const handleOnApply = () => {
-            this.resetSelection();
-        };
-
-        this.props.openDialog({
-            id: DIALOG_CHANGE_DATASET_FIELDS,
-            props: {
-                open: true,
-                onClose: this.props.closeDialog,
-                warningMessage: i18n('md_text_batch-aggregation-alert', {
-                    datalensDocsLink: DL.ENDPOINTS.datalensDocs,
-                }),
-                title: i18n('text_batch-aggregation-header'),
-                label: i18n('label_batch-aggregation'),
-                fieldsGuids: fields.map(({guid}) => guid),
-                batchUpdateFields: this.props.batchUpdateFields,
-                aggregations: allowedAggregations,
-                onApply: handleOnApply,
-            },
+        this.batchChangeDialog(fields, {
+            warningMessage: i18n('md_text_batch-aggregation-alert', {
+                datalensDocsLink: DL.ENDPOINTS.datalensDocs,
+            }),
+            title: i18n('text_batch-aggregation-header'),
+            label: i18n('label_batch-aggregation'),
+            aggregations: allowedAggregations,
         });
     };
 
