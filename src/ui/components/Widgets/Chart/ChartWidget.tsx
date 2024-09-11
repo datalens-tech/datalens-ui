@@ -356,7 +356,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         handleChange,
         handleError,
         handleRetry,
-        // handleReflow,
         loadChartData,
         setLoadingProps,
         loadControls,
@@ -566,7 +565,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 requestId={requestId}
                 error={error}
                 onRender={handleRenderChart}
-                // onReflow={handleReflow}
                 onChange={handleChange}
                 onRetry={handleRetry}
                 onError={handleError}
