@@ -56,7 +56,6 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             );
         },
         enableSorting: get(th, 'sortable', true),
-        sortingFn: columnType === 'number' ? 'alphanumeric' : 'auto',
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
             const cell = (cellData || {}) as TableCommonCell;

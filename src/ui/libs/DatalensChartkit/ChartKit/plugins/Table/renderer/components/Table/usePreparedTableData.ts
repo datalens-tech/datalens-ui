@@ -294,7 +294,11 @@ export const usePreparedTableData = (props: {
                     const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
                     if (
                         typeof prevCell?.rowSpan !== 'undefined' &&
-                        shouldGroupRow(cell.row.original, tableRowsData[prevCellRow?.index], index)
+                        shouldGroupRow(
+                            cell.row.original,
+                            tableRows[prevCellRow?.index]?.original,
+                            index,
+                        )
                     ) {
                         prevCell.rowSpan += 1;
                         return acc;
