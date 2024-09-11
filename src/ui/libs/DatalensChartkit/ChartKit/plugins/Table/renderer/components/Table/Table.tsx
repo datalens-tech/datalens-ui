@@ -122,7 +122,7 @@ export const Table = React.memo<Props>((props: Props) => {
         data,
         dimensions: widgetDimensions,
         tableContainerRef,
-        manualSorting: isPaginationEnabled,
+        manualSorting: isPaginationEnabled || Boolean(config?.settings?.externalSort),
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
     });
