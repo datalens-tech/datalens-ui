@@ -3,48 +3,55 @@ import React from 'react';
 import {Button, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {useSelector} from 'react-redux';
-import type {DATASET_FIELD_TYPES} from 'shared';
+import {connect} from 'react-redux';
+import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
+import type {DatalensGlobalState} from 'ui';
 import {DataTypeIcon} from 'ui';
-import {datasetValidationSelector} from 'ui/units/datasets/store/selectors';
 
-import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
-import {getLabelValue} from '../../utils';
+import {getDatasetLabelValue, getSelectedValueForSelect} from '../../../../../../utils/helpers';
+import {datasetValidationSelector} from '../../../../store/selectors/dataset';
 
 import './TypeSelect.scss';
 
 const b = block('type-select');
 
-interface TypeSelectProps {
-    selectedType: DATASET_FIELD_TYPES;
+type StateProps = ReturnType<typeof mapStateToProps>;
+
+interface Props extends StateProps {
+    selectedType: string;
     types: DATASET_FIELD_TYPES[];
-    onSelect: (value: DATASET_FIELD_TYPES) => void;
+    field: DatasetField;
+    onSelect: (row: DatasetField, value: DATASET_FIELD_TYPES) => void;
 }
 
-export const TypeSelect: React.FC<TypeSelectProps> = ({
-    selectedType: initSelectedType,
-    onSelect,
-    types,
-}) => {
-    const [selectedType, setSelectedType] = React.useState([initSelectedType]);
-    const datasetValidation = useSelector(datasetValidationSelector);
+class TypeSelectComponent extends React.Component<Props> {
+    render() {
+        const {selectedType} = this.props;
 
-    React.useEffect(() => {
-        setSelectedType([initSelectedType]);
-    }, [initSelectedType]);
+        const selectedOption: string[] = [selectedType];
 
-    const handleUpdate = (type: string[]) => {
-        setSelectedType(type as DATASET_FIELD_TYPES[]);
-        onSelect(type[0] as DATASET_FIELD_TYPES);
-    };
+        return (
+            <Select
+                value={selectedOption}
+                onUpdate={(values) => this.onSelect(values as [DATASET_FIELD_TYPES])}
+                options={this.typeList}
+                renderControl={this.renderSelectControl}
+                renderOption={(options) => {
+                    return this.renderSelectOption(options, true);
+                }}
+            />
+        );
+    }
 
-    const getTypesList = (): SelectOption[] => {
+    get typeList(): SelectOption[] {
+        const {types, validation} = this.props;
+
         return types
             .map((type): SelectOption => {
                 return {
                     value: type,
-                    content: getLabelValue(type),
-                    disabled: datasetValidation.isLoading,
+                    content: getDatasetLabelValue(type),
+                    disabled: validation.isLoading,
                 };
             })
             .sort((current, next) => {
@@ -53,9 +60,14 @@ export const TypeSelect: React.FC<TypeSelectProps> = ({
 
                 return content.localeCompare(contentNext, undefined, {numeric: true});
             });
+    }
+
+    private onSelect = (values: [DATASET_FIELD_TYPES]) => {
+        const value = values[0];
+        this.props.onSelect(this.props.field, value);
     };
 
-    const renderSelectOption = (option: SelectOption, isOption?: boolean) => {
+    private renderSelectOption = (option: SelectOption, isOption?: boolean) => {
         const type = option.value as DATASET_FIELD_TYPES;
         const typeName = option.content;
 
@@ -72,8 +84,9 @@ export const TypeSelect: React.FC<TypeSelectProps> = ({
         );
     };
 
-    const renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
-        const selectedValue = getSelectedValueForSelect(selectedType, types);
+    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+        const {selectedType} = this.props;
+        const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
 
         const value = selectedValue[0];
 
@@ -85,20 +98,16 @@ export const TypeSelect: React.FC<TypeSelectProps> = ({
                 view="flat"
                 className={b('select-control')}
             >
-                {renderSelectOption({value, content: getLabelValue(value)})}
+                {this.renderSelectOption({value, content: getDatasetLabelValue(value)})}
             </Button>
         );
     };
+}
 
-    return (
-        <Select
-            value={selectedType}
-            onUpdate={handleUpdate}
-            options={getTypesList()}
-            renderControl={renderSelectControl}
-            renderOption={(options) => {
-                return renderSelectOption(options, true);
-            }}
-        />
-    );
+const mapStateToProps = (state: DatalensGlobalState) => {
+    return {
+        validation: datasetValidationSelector(state),
+    };
 };
+
+export const TypeSelect = connect(mapStateToProps)(TypeSelectComponent);

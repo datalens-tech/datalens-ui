@@ -27,12 +27,12 @@ import type {
 import type {EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
-import {AggregationSelect, DisplaySettings} from './components';
+import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
 import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
-import {TypeSelect} from './components/TypeSelect/TypeSelect';
 import {BatchFieldAction, FieldAction} from './constants';
+import type {BatchUpdateFields, UpdatePayload} from './types';
 import {getAggregationSwitchTo, getColumns, isHiddenSupported} from './utils';
 
 import './DatasetTable.scss';
@@ -45,12 +45,6 @@ DataTable.setCustomIcons({
     ICON_DESC: <Icon className={b('sort-icon')} data={ArrowUp} />,
 });
 
-type UpdatePayload = {
-    debounce?: boolean;
-    validateEnabled?: boolean;
-    updatePreview?: boolean;
-};
-
 type DatasetTableProps = {
     options: DatasetOptions;
     fields: DatasetField[];
@@ -62,11 +56,7 @@ type DatasetTableProps = {
             field: Partial<DatasetField> & {new_id?: string};
         },
     ) => void;
-    batchUpdateFields: (
-        data: UpdatePayload & {
-            fields: Partial<DatasetField>[] & {new_id?: string}[];
-        },
-    ) => void;
+    batchUpdateFields: BatchUpdateFields;
     duplicateField: (data: {field: DatasetField}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
@@ -327,23 +317,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         fields: DatasetField[],
         allowedTypes: DATASET_FIELD_TYPES[],
     ) => {
-        let selectedType = allowedTypes[0];
-
         const handleOnApply = () => {
-            this.props.batchUpdateFields({
-                validateEnabled: false,
-                updatePreview: true,
-                fields: fields.map(({guid}) => ({
-                    guid,
-                    cast: selectedType,
-                })),
-            });
             this.resetSelection();
-            this.props.closeDialog();
-        };
-
-        const handleOnSelect = (type: DATASET_FIELD_TYPES) => {
-            selectedType = type;
         };
 
         this.props.openDialog({
@@ -354,14 +329,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 warningMessage: i18n('text_batch-type-alert'),
                 title: i18n('text_batch-type-header'),
                 label: i18n('label_batch-type'),
+                fieldsGuids: fields.map(({guid}) => guid),
+                batchUpdateFields: this.props.batchUpdateFields,
+                types: allowedTypes,
                 onApply: handleOnApply,
-                children: (
-                    <TypeSelect
-                        types={allowedTypes}
-                        selectedType={selectedType}
-                        onSelect={handleOnSelect}
-                    />
-                ),
             },
         });
     };
@@ -370,23 +341,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         fields: DatasetField[],
         allowedAggregations: DatasetFieldAggregation[],
     ) => {
-        let selectedAggregation = allowedAggregations[0];
-
         const handleOnApply = () => {
-            this.props.batchUpdateFields({
-                validateEnabled: false,
-                updatePreview: true,
-                fields: fields.map(({guid}) => ({
-                    guid,
-                    aggregation: selectedAggregation,
-                })),
-            });
             this.resetSelection();
-            this.props.closeDialog();
-        };
-
-        const handleOnSelect = (aggregation: DatasetFieldAggregation) => {
-            selectedAggregation = aggregation;
         };
 
         this.props.openDialog({
@@ -398,16 +354,11 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                     datalensDocsLink: DL.ENDPOINTS.datalensDocs,
                 }),
                 title: i18n('text_batch-aggregation-header'),
-                onApply: handleOnApply,
                 label: i18n('label_batch-aggregation'),
-                children: (
-                    <AggregationSelect
-                        isColored={false}
-                        aggregations={allowedAggregations}
-                        selectedAggregation={selectedAggregation}
-                        onSelect={handleOnSelect}
-                    />
-                ),
+                fieldsGuids: fields.map(({guid}) => guid),
+                batchUpdateFields: this.props.batchUpdateFields,
+                aggregations: allowedAggregations,
+                onApply: handleOnApply,
             },
         });
     };

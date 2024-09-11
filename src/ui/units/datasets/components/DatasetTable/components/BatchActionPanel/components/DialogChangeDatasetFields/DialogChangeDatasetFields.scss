@@ -2,7 +2,16 @@
     &__content {
         margin-top: var(--g-spacing-3);
         display: flex;
-        gap: var(--g-spacing-2);
+        gap: var(--g-spacing-6);
         align-items: center;
+        justify-content: space-between;
+
+        & .dl-data-type-icon {
+            color: var(--g-color-text-secondary);
+        }
+    }
+
+    &__select {
+        flex: 1;
     }
 }

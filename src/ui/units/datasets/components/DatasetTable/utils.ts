@@ -14,6 +14,7 @@ import type {
 import {DATASET_FIELD_TYPES, Feature} from 'shared';
 import type {Permissions} from 'shared/types/dls';
 import Utils from 'ui/utils';
+import {getDatasetLabelValue} from 'ui/utils/helpers';
 
 import {
     getAggregationColumn,
@@ -56,10 +57,6 @@ type GetColumnsArgs = {
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
     onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
-};
-
-export const getLabelValue = (key: string) => {
-    return i18n('dataset.dataset-editor.modify', `value_${key as AvailableFieldType}`);
 };
 
 export const getAggregationSwitchTo = (
@@ -217,8 +214,8 @@ export const sortCastColumn = (
 ) => {
     const castValue1 = get(row1, ['row', 'cast']);
     const castValue2 = get(row2, ['row', 'cast']);
-    const castText1 = getLabelValue(castValue1);
-    const castText2 = getLabelValue(castValue2);
+    const castText1 = getDatasetLabelValue(castValue1);
+    const castText2 = getDatasetLabelValue(castValue2);
 
     return castText1.localeCompare(castText2, undefined, {numeric: true});
 };
@@ -242,8 +239,8 @@ export const sortAggregationColumn = (
 ) => {
     const aggregationValue1 = get(row1, ['row', 'aggregation']);
     const aggregationValue2 = get(row2, ['row', 'aggregation']);
-    const aggregationText1 = getLabelValue(aggregationValue1);
-    const aggregationText2 = getLabelValue(aggregationValue2);
+    const aggregationText1 = getDatasetLabelValue(aggregationValue1);
+    const aggregationText2 = getDatasetLabelValue(aggregationValue2);
 
     return aggregationText1.localeCompare(aggregationText2, undefined, {
         numeric: true,
