@@ -385,7 +385,14 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             return;
         }
 
-        const pastedItemData = itemData.data;
+        const {migrateItemDataOnPaste} = registry.common.functions.getAll();
+
+        const migratedItemData = migrateItemDataOnPaste({
+            itemData,
+            toScope: this.props.entry.scope,
+        });
+
+        const pastedItemData = migratedItemData.data;
 
         if (itemData.type === ITEM_TYPE.WIDGET) {
             pastedItemData.tabs =
