@@ -16,8 +16,6 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
             EntryScope.Connection,
 
             EntryScope.Report,
-            // TODO delete after update
-            EntryScope.Presentation,
         ]);
 
         const workbookEntries = entries
@@ -59,7 +57,6 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
                     case EntryScope.Widget:
                         widgetChunk.push(item);
                         break;
-                    case EntryScope.Presentation:
                     case EntryScope.Report:
                         reportChunk.push(item);
                         break;

@@ -293,8 +293,6 @@ export const OBJECT_SCOPES = [
     EntryScope.Dash,
     EntryScope.Connection,
     EntryScope.Report,
-    // TODO delete after update
-    EntryScope.Presentation,
 ];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';

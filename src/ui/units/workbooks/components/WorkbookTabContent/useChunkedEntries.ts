@@ -16,8 +16,6 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
             EntryScope.Dataset,
             EntryScope.Connection,
             EntryScope.Report,
-            // TODO delete after update
-            EntryScope.Presentation,
         ]);
 
         const workbookEntries = entries

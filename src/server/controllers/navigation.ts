@@ -66,9 +66,6 @@ export default async (req: Request, res: Response): Promise<void> => {
                 return res.redirect(`/connections/${entry.entryId}`);
             case EntryScope.Report:
                 return res.redirect(`/reports/${entry.entryId}`);
-            // TODO delete after update
-            case EntryScope.Presentation:
-                return res.redirect(`/reports/${entry.entryId}`);
             default:
                 return res.redirect('/navigation');
         }

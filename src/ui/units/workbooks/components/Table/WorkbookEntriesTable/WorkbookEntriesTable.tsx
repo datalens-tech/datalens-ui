@@ -156,14 +156,21 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         };
 
-        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = [], reportsChunk] =
-            chunks;
+        const [
+            dashChunk = [],
+            connChunk = [],
+            datasetChunk = [],
+            widgetChunk = [],
+            reportChunk = [],
+        ] = chunks;
 
         const isWidgetEmpty = widgetChunk.length === 0;
         const isDashEmpty = dashChunk.length === 0;
+        const isReportEmpty = reportChunk.length === 0;
 
         const clearViewDash = DL.IS_MOBILE && isWidgetEmpty;
         const clearViewWidget = DL.IS_MOBILE && isDashEmpty;
+        const clearViewReport = DL.IS_MOBILE && isReportEmpty;
 
         const showDataEntities = workbook.permissions.view && !DL.IS_MOBILE;
 
@@ -201,7 +208,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         clearView={clearViewDash}
                         onShowRelatedClick={onShowRelated}
                     />
-
                     <MainTabContent
                         chunk={widgetChunk}
                         actionCreateText={i18n('action_create-chart')}
@@ -223,7 +229,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         clearView={clearViewWidget}
                         onShowRelatedClick={onShowRelated}
                     />
-
                     {showDataEntities && (
                         <MainTabContent
                             chunk={datasetChunk}
@@ -245,7 +250,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onShowRelatedClick={onShowRelated}
                         />
                     )}
-
                     {showDataEntities && (
                         <MainTabContent
                             chunk={connChunk}
@@ -267,26 +271,26 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onShowRelatedClick={onShowRelated}
                         />
                     )}
-
-                    {showDataEntities && availableScopes?.includes(EntryScope.Presentation) && (
+                    {availableScopes?.includes(EntryScope.Report) && (
                         <MainTabContent
-                            chunk={reportsChunk}
+                            chunk={reportChunk}
                             actionCreateText={i18n('action_create-report')}
                             title={i18n('title_reports')}
                             actionType={CreateEntryActionType.Report}
                             isShowMoreBtn={Boolean(
-                                reportsChunk?.length > 0 && mapTokens?.[EntryScope.Presentation],
+                                reportChunk?.length > 0 && mapTokens?.[EntryScope.Report],
                             )}
-                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Presentation)}
-                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Presentation)}
-                            isErrorMessage={mapErrors?.[EntryScope.Presentation]}
-                            isLoading={mapLoaders?.[EntryScope.Presentation]}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Report)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Report)}
+                            isErrorMessage={mapErrors?.[EntryScope.Report]}
+                            isLoading={mapLoaders?.[EntryScope.Report]}
                             workbook={workbook}
                             onRenameEntry={onRenameEntry}
                             onDeleteEntry={onDeleteEntry}
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                             onShowRelatedClick={onShowRelated}
+                            clearView={clearViewReport}
                         />
                     )}
                 </React.Fragment>
