@@ -1,8 +1,6 @@
 import type {SortedDataItem} from '@gravity-ui/react-data-table';
-import {i18n} from 'i18n';
 import {get} from 'lodash';
 import type {
-    AvailableFieldType,
     DatasetField,
     DatasetFieldAggregation,
     DatasetOptionFieldItem,
