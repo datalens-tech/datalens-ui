@@ -6,6 +6,7 @@
   "section_empty-scope-connection": "В этом воркбуке пока нет подключений",
   "section_empty-scope-dashboard": "В этом воркбуке пока нет дашбордов",
   "section_empty-scope-dataset": "В этом воркбуке пока нет датасетов",
+  "section_empty-scope-report": "В этом воркбуке пока нет отчётов",
   "section_empty-scope-widget": "В этом воркбуке пока нет чартов",
   "section_not-found": "Ничего не найдено"
 }
