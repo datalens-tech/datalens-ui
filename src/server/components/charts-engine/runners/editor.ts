@@ -50,7 +50,12 @@ async function getChartBuilder({
     isScreenshoter: boolean;
     isWizard: boolean;
 }) {
-    let sandboxVersion = config.meta.sandbox_version || '0';
+    const canUserChangeSandboxVersionManually = isEnabledServerFeature(
+        parentContext,
+        Feature.SandboxEngineSelectSwitch,
+    );
+    let sandboxVersion =
+        (canUserChangeSandboxVersionManually && config.meta.sandbox_version) || '0';
 
     if (sandboxVersion === '0') {
         sandboxVersion = isEnabledNewSandboxByDefault(parentContext) ? '2' : '1';
