@@ -143,12 +143,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 rootNode: rootNodeRef,
                 gridLayout,
                 layout,
-                // TODO: optimize call times in future
                 cb: (...args) => {
-                    if (onUpdate) {
-                        onUpdate();
-                    }
-
                     return props.adjustWidgetLayout(...args);
                 },
             });
@@ -358,7 +353,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * debounced call of chartkit reflow
      */
     const debouncedChartReflow = React.useCallback(
-        debounce(handleChartkitReflow, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        debounce(() => {
+            handleChartkitReflow();
+            requestAnimationFrame(() => onUpdate?.());
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
         [handleChartkitReflow],
     );
 
@@ -388,6 +386,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     React.useEffect(() => {
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
+
+    /**
+     * changed position update
+     */
+    const currentLayout = layout.find(({i}) => i === widgetId);
+    React.useEffect(() => {
+        if (isLoadedWidgetWizard) {
+            onUpdate?.();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentLayout?.x, currentLayout?.y, isLoadedWidgetWizard]);
 
     /**
      * updating widget description by markdown
@@ -680,6 +689,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         handleError,
         handleRetry,
         handleGetWidgetMeta,
+        // handleReflow,
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,

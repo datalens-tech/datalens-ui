@@ -329,7 +329,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     }, [requestCancellationRef, dataProvider, requestId]);
 
     const rootNodeRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.createRef<ChartKit>(); // ref is forwarded to ChartKit
+    const chartKitRef = React.useRef<ChartKit>(null);
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
     const widgetRenderTimeRef = React.useRef<number | null>(null);
 
@@ -356,6 +356,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         handleChange,
         handleError,
         handleRetry,
+        // handleReflow,
         loadChartData,
         setLoadingProps,
         loadControls,
@@ -565,6 +566,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 requestId={requestId}
                 error={error}
                 onRender={handleRenderChart}
+                // onReflow={handleReflow}
                 onChange={handleChange}
                 onRetry={handleRetry}
                 onError={handleError}

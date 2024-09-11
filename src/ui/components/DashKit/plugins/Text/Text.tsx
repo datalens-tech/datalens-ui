@@ -11,6 +11,7 @@ import {
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
+import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
@@ -39,12 +40,18 @@ const textPlugin = {
         const cutNodesRef = React.useRef<NodeList | null>(null);
         const mutationObserver = React.useRef<MutationObserver | null>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
+        const [isPending, setIsPending] = React.useState<boolean>(false);
 
+        const previousPendingState = usePrevious(isPending);
+        const isPendingChanged = isPending !== previousPendingState;
         const onUpdate = useBeforeLoad(props.onBeforeLoad);
 
         /**
          * call common for charts & selectors adjust function for widget
          */
+        const layoutRef = React.useRef(props.layout);
+        layoutRef.current = props.layout;
+
         const adjustLayout = React.useCallback(
             debounce((needSetDefault) => {
                 dashkitAdjustWidgetLayout({
@@ -52,20 +59,15 @@ const textPlugin = {
                     needSetDefault,
                     rootNode: rootNodeRef,
                     gridLayout: props.gridLayout,
-                    layout: props.layout,
-                    // TODO: optimize call times in future
+                    layout: layoutRef.current,
                     cb: (...args) => {
-                        if (onUpdate) {
-                            onUpdate();
-                        }
-
                         return props.adjustWidgetLayout(...args);
                     },
                     mainNodeSelector: `.${YFM_MARKDOWN_CLASSNAME}.${b()}`,
                     scrollableNodeSelector: `.${YFM_MARKDOWN_CLASSNAME} .${YFM_MARKDOWN_CLASSNAME}`,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-            [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],
+            [props.id, rootNodeRef, layoutRef, props.adjustWidgetLayout, props.gridLayout],
         );
 
         /**
@@ -73,6 +75,7 @@ const textPlugin = {
          * and after cut opened/closed
          */
         const handleTextRender = React.useCallback(() => {
+            onUpdate?.();
             adjustLayout(!props.data.autoHeight);
         }, [props.data.autoHeight, adjustLayout]);
 
@@ -81,23 +84,16 @@ const textPlugin = {
          */
         const textHandler = React.useCallback(
             async (arg: {text: string}) => {
+                setIsPending(true);
                 const text = await pluginText._apiHandler!(arg);
                 const nextMetaScripts = get(text, 'meta.script');
+
                 setMetaScripts(nextMetaScripts);
-                if (nextMetaScripts) {
-                    handleTextRender();
-                }
+                setIsPending(false);
                 return text;
             },
-            [pluginText._apiHandler, handleTextRender],
+            [setIsPending],
         );
-
-        /**
-         * force rerender after get markdown text to see magic links
-         */
-        React.useEffect(() => {
-            handleTextRender();
-        }, [handleTextRender]);
 
         /**
          * watching content changes to check if adjustLayout needed for autoheight widgets update
@@ -116,6 +112,8 @@ const textPlugin = {
                     });
                 });
             }
+
+            // eslint-disable-next-line consistent-return
             return () => {
                 mutationObserver.current?.disconnect();
             };
@@ -139,8 +137,34 @@ const textPlugin = {
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
+        React.useEffect(() => {
+            if (isPendingChanged && !isPending) {
+                handleTextRender();
+            }
+        }, [isPendingChanged, isPending, handleTextRender]);
+
+        const currentLayout = props.layout.find(({i}) => i === props.id) || {
+            x: null,
+            y: null,
+            h: null,
+            w: null,
+        };
+        React.useEffect(() => {
+            onUpdate?.();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [
+            currentLayout.x,
+            currentLayout.y,
+            currentLayout.h,
+            currentLayout.w,
+            classMod,
+            data.background?.color,
+            data.text,
+        ]);
+
         return (
             <RendererWrapper
+                id={props.id}
                 type="text"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}

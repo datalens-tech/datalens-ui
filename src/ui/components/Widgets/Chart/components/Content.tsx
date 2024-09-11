@@ -45,6 +45,7 @@ export const Content = (props: ChartContentProps) => {
         onChange,
         onError,
         onRetry,
+        // onReflow,
         loadedData,
         getControls,
         drillDownFilters,
@@ -166,6 +167,7 @@ export const Content = (props: ChartContentProps) => {
                     requestId={requestId}
                     error={error}
                     onLoad={onRender}
+                    // onRender={onReflow}
                     onChange={onChange}
                     onError={onError}
                     onRetry={onRetry}

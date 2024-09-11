@@ -70,7 +70,7 @@ export type LoadingChartHookProps = {
     hasChangedOuterProps: boolean;
     hasChangedOuterParams: boolean;
     hasChartTabChanged?: boolean;
-    chartKitRef: React.RefObject<ChartKit>;
+    chartKitRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | undefined>;
     resolveMetaDataRef?: React.MutableRefObject<ResolveMetaDataRef | undefined>;
     resolveWidgetDataRef?: React.MutableRefObject<
         ResolveWidgetDataRef | ResolveWidgetControlDataRef | undefined

@@ -36,6 +36,9 @@ const titlePlugin = {
         /**
          * call common for charts & selectors adjust function for widget
          */
+        const layoutRef = React.useRef(props.layout);
+        layoutRef.current = props.layout;
+
         const adjustLayout = React.useCallback(
             debounce((needSetDefault) => {
                 dashkitAdjustWidgetLayout({
@@ -43,13 +46,9 @@ const titlePlugin = {
                     needSetDefault,
                     rootNode: rootNodeRef,
                     gridLayout: props.gridLayout,
-                    layout: props.layout,
+                    layout: layoutRef.current,
                     // TODO: optimize call times in future
                     cb: (...args) => {
-                        if (onUpdate) {
-                            onUpdate();
-                        }
-
                         return props.adjustWidgetLayout(...args);
                     },
                     mainNodeSelector: `[${PLUGIN_ROOT_ATTR_NAME}="title"]`,
@@ -57,7 +56,7 @@ const titlePlugin = {
                     needHeightReset: true,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-            [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],
+            [props.id, rootNodeRef, layoutRef, props.adjustWidgetLayout, props.gridLayout],
         );
 
         React.useEffect(() => {
@@ -74,8 +73,29 @@ const titlePlugin = {
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
+        const currentLayout = props.layout.find(({i}) => i === props.id) || {
+            x: null,
+            y: null,
+            h: null,
+            w: null,
+        };
+        React.useEffect(() => {
+            onUpdate?.();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [
+            currentLayout.x,
+            currentLayout.y,
+            currentLayout.h,
+            currentLayout.w,
+            classMod,
+            data.background?.color,
+            data.size,
+            data.text,
+        ]);
+
         return (
             <RendererWrapper
+                id={props.id}
                 type="title"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
