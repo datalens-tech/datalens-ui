@@ -396,7 +396,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             onUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoadedWidgetWizard]);
+    }, [currentLayout?.x, currentLayout?.y, isLoadedWidgetWizard, isLoading]);
 
     /**
      * updating widget description by markdown
@@ -407,7 +407,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         }
         setDescription(loadedDescription);
         handleChartkitReflow();
-    }, [loadedDescription, description, handleChartkitReflow]);
+    }, [loadedDescription, description, handleChartkitReflow, onUpdate]);
 
     /**
      * updating window position on change fullscreen mode (for mob version)
@@ -689,7 +689,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         handleError,
         handleRetry,
         handleGetWidgetMeta,
-        // handleReflow,
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
