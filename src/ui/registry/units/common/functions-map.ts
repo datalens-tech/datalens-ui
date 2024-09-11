@@ -12,8 +12,9 @@ import type {
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
 } from 'shared/schema';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 
-import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
+import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 import type {
     EntryContextMenuItem,
@@ -124,5 +125,16 @@ export const commonFunctionsMap = {
     requestCollectChartkitStats:
         makeFunctionTemplate<
             (chartkitStats: CollectChartkitStatsArgs) => Promise<CollectChartkitStatsResponse>
+        >(),
+
+    migrateItemDataOnPaste:
+        makeFunctionTemplate<
+            ({
+                itemData,
+                toScope,
+            }: {
+                itemData: CopiedConfigData;
+                toScope: EntryScope;
+            }) => CopiedConfigData
         >(),
 } as const;
