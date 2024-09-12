@@ -31,6 +31,7 @@ import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -126,7 +127,6 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (chartkitStats: CollectChartkitStatsArgs) => Promise<CollectChartkitStatsResponse>
         >(),
-
     migrateItemDataOnPaste:
         makeFunctionTemplate<
             ({
@@ -137,4 +137,5 @@ export const commonFunctionsMap = {
                 toScope: EntryScope;
             }) => CopiedConfigData
         >(),
+    checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
 } as const;
