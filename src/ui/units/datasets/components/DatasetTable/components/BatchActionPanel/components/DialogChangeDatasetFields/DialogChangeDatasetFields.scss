@@ -1,6 +1,6 @@
 .dl-dataset-dialog-change-fields {
     &__content {
-        margin-top: var(--g-spacing-3);
+        margin-top: var(--g-spacing-4);
         display: flex;
         gap: var(--g-spacing-6);
         align-items: center;
@@ -13,5 +13,11 @@
 
     &__select {
         flex: 1;
+    }
+
+    &__detail-btn {
+        .g-button__text {
+            margin-right: var(--g-spacing-1);
+        }
     }
 }
