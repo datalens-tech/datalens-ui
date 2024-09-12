@@ -274,6 +274,7 @@ class ErrorContent extends React.PureComponent {
             case ErrorContentTypes.NO_ENTRY_ACCESS:
             case ErrorContentTypes.AUTH_DENIED:
             case ErrorContentTypes.FORBIDDEN_SSO:
+            case ErrorContentTypes.FORBIDDEN_REPORT_ENTRY:
                 imageName = 'noAccess';
                 break;
             case ErrorContentTypes.ERROR:
