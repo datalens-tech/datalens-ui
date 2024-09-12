@@ -1,6 +1,7 @@
 import type {CSSProperties} from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit/helpers';
+import {I18N} from 'i18n';
 import pick from 'lodash/pick';
 import type {DashTabItemControlData} from 'shared';
 import {
@@ -11,6 +12,8 @@ import {
 import type {SelectorError} from '../Control/types';
 
 import type {ExtendedLoadedData, GroupControlLocalMeta} from './types';
+
+const i18n = I18N.keyset('common.errors');
 
 export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],
@@ -75,7 +78,7 @@ export const getErrorTitle = (errorInfo: SelectorError) => {
         datasetsStatus &&
         errorInfo?.details?.sources?.[datasetsStatus]?.status === 409
     ) {
-        return 'Требуется обновление настроек';
+        return i18n('label_error-outdated-message');
     }
 
     return '';
