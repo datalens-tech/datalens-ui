@@ -11,6 +11,7 @@ import {
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
+import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
@@ -39,8 +40,22 @@ const textPlugin = {
         const cutNodesRef = React.useRef<NodeList | null>(null);
         const mutationObserver = React.useRef<MutationObserver | null>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
+        const [isPending, setIsPending] = React.useState<boolean>(false);
 
-        const onUpdate = useBeforeLoad(props.onBeforeLoad);
+        const previousPendingState = usePrevious(isPending);
+        const isPendingChanged = isPending !== previousPendingState;
+        const handleUpdate = useBeforeLoad(props.onBeforeLoad);
+
+        /**
+         * Increment render key
+         */
+        const YfmWrapperKeyRef = React.useRef(0);
+
+        /**
+         * Ref layout so that we could use actual state without passing link to layout object
+         */
+        const layoutRef = React.useRef(props.layout);
+        layoutRef.current = props.layout;
 
         /**
          * call common for charts & selectors adjust function for widget
@@ -52,20 +67,15 @@ const textPlugin = {
                     needSetDefault,
                     rootNode: rootNodeRef,
                     gridLayout: props.gridLayout,
-                    layout: props.layout,
-                    // TODO: optimize call times in future
+                    layout: layoutRef.current,
                     cb: (...args) => {
-                        if (onUpdate) {
-                            onUpdate();
-                        }
-
                         return props.adjustWidgetLayout(...args);
                     },
                     mainNodeSelector: `.${YFM_MARKDOWN_CLASSNAME}.${b()}`,
                     scrollableNodeSelector: `.${YFM_MARKDOWN_CLASSNAME} .${YFM_MARKDOWN_CLASSNAME}`,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-            [props.id, rootNodeRef, props.adjustWidgetLayout, props.layout, props.gridLayout],
+            [props.id, rootNodeRef, layoutRef, props.adjustWidgetLayout, props.gridLayout],
         );
 
         /**
@@ -74,39 +84,44 @@ const textPlugin = {
          */
         const handleTextRender = React.useCallback(() => {
             adjustLayout(!props.data.autoHeight);
-        }, [props.data.autoHeight, adjustLayout]);
+            handleUpdate?.();
+        }, [handleUpdate, adjustLayout, props.data.autoHeight]);
 
         /**
          * get prepared text with markdown
          */
         const textHandler = React.useCallback(
             async (arg: {text: string}) => {
+                setIsPending(true);
                 const text = await pluginText._apiHandler!(arg);
                 const nextMetaScripts = get(text, 'meta.script');
+
                 setMetaScripts(nextMetaScripts);
-                if (nextMetaScripts) {
-                    handleTextRender();
-                }
+                setIsPending(false);
                 return text;
             },
-            [pluginText._apiHandler, handleTextRender],
+            [setIsPending],
         );
 
         /**
-         * force rerender after get markdown text to see magic links
+         * force rerender after get autoheight prop is changed
          */
         React.useEffect(() => {
             handleTextRender();
-        }, [handleTextRender]);
+        }, [props.data.autoHeight]);
 
         /**
          * watching content changes to check if adjustLayout needed for autoheight widgets update
          */
+        // TODO move this logic in isPending check hook and instead of useEffect use it as callback
         React.useEffect(() => {
             if (!mutationObserver) {
                 return;
             }
-            mutationObserver.current = new MutationObserver(handleTextRender);
+
+            mutationObserver.current = new MutationObserver(() => {
+                requestAnimationFrame(() => handleTextRender());
+            });
 
             if (mutationObserver.current && cutNodesRef.current) {
                 cutNodesRef.current.forEach((cutNode) => {
@@ -116,6 +131,8 @@ const textPlugin = {
                     });
                 });
             }
+
+            // eslint-disable-next-line consistent-return
             return () => {
                 mutationObserver.current?.disconnect();
             };
@@ -139,8 +156,50 @@ const textPlugin = {
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
+        const currentLayout = props.layout.find(({i}) => i === props.id) || {
+            x: null,
+            y: null,
+            h: null,
+            w: null,
+        };
+
+        /**
+         * triggering update after text is loaded
+         */
+        React.useEffect(() => {
+            if (isPendingChanged && !isPending) {
+                handleTextRender();
+            }
+        }, [isPendingChanged, isPending, handleTextRender]);
+
+        /**
+         * watching for all visual props of chart
+         */
+        React.useEffect(() => {
+            handleUpdate?.();
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [
+            // Widget dimensions
+            currentLayout.x,
+            currentLayout.y,
+            currentLayout.h,
+            currentLayout.w,
+            // classMod is accumulator of data.background.['enabled' | 'color'] object
+            classMod,
+        ]);
+
+        /**
+         * Increment key to force yfm editor redraw
+         * In that case if text is changed shallow matcher content props will not detect as there is always passed <div/>
+         * So to force YfmWrapper to update when text changes key prop is used
+         */
+        React.useEffect(() => {
+            YfmWrapperKeyRef.current += 1;
+        }, [YfmWrapperKeyRef, data.text]);
+
         return (
             <RendererWrapper
+                id={props.id}
                 type="text"
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
@@ -148,7 +207,7 @@ const textPlugin = {
             >
                 <YfmWrapper
                     // needed for force update when text is changed
-                    key={data.text}
+                    key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
                     className={b({'with-color': Boolean(showBgColor)})}
                     metaScripts={metaScripts}

@@ -6,13 +6,14 @@ import {getThemeType, useThemeValue} from '@gravity-ui/uikit';
 import debounce from 'lodash/debounce';
 import {YfmMetaScripts} from 'shared/constants/yfm';
 import {YFM_LATEX_CLASSNAME, YFM_MERMAID_CLASSNAME} from 'ui/constants';
-import {usePrevious} from 'ui/hooks';
 import {registry} from 'ui/registry';
 
 import type {YfmWrapperProps} from '../../registry/units/common/types/components/YfmWrapper';
 
 let hasLatexImported = false;
 let hasMermaidImported = false;
+
+const PLUGINS_REDRAW_TIMEOUT = 100;
 
 const dompurifyConfig = {
     ALLOWED_TAGS: [],
@@ -27,6 +28,15 @@ const getMermaidTheme = (theme: string) => {
     const currentThemeType = getThemeType(theme);
 
     return MERMAID_THEMES.includes(currentThemeType) ? currentThemeType : MERMAID_THEMES[0];
+};
+
+/**
+ * Check latex and mermaid containers
+ * when containers are first time passed they are empty and all data is stored in data attribute
+ * if they don't have any child element it's an indicator that we need to update them
+ */
+const isNeedToUpdateNode = (el: Element) => {
+    return el.children?.length === 0;
 };
 
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
@@ -54,7 +64,6 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         const renderLatex = useLatex();
         const renderMermaid = useMermaid();
         const currentMermaidTheme = getMermaidTheme(useThemeValue());
-        const previousMermaidTheme = usePrevious(currentMermaidTheme);
 
         React.useEffect(() => {
             if (hasLatexScript && !hasLatexImported) {
@@ -81,7 +90,9 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 }
 
                 if (hasLatexScript) {
-                    const latexNodes = element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`);
+                    const latexNodes = [
+                        ...element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`),
+                    ].filter(isNeedToUpdateNode);
 
                     if (latexNodes.length) {
                         renderLatex({nodes: latexNodes}).then(() => {
@@ -91,7 +102,9 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 }
 
                 if (hasMermaidScript) {
-                    const mermaidNodes = element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`);
+                    const mermaidNodes = [
+                        ...element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`),
+                    ].filter(isNeedToUpdateNode);
 
                     if (mermaidNodes.length) {
                         renderMermaid({
@@ -103,11 +116,12 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                         });
                     }
                 }
-            }, 100),
+            }, PLUGINS_REDRAW_TIMEOUT),
             [
                 elementRef,
                 hasLatexScript,
                 hasMermaidScript,
+                currentMermaidTheme,
                 renderLatex,
                 renderMermaid,
                 props.onRenderCallback,
@@ -115,22 +129,6 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         );
 
         React.useLayoutEffect(() => debounceRender(), [debounceRender]);
-
-        React.useLayoutEffect(() => {
-            const element = elementRef?.current;
-            const isThemeChanged =
-                previousMermaidTheme && currentMermaidTheme !== previousMermaidTheme;
-
-            if (isThemeChanged && hasMermaidScript && element) {
-                const mermaidNodes = element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`);
-
-                renderMermaid({
-                    theme: currentMermaidTheme,
-                    nodes: mermaidNodes,
-                    dompurifyConfig,
-                });
-            }
-        }, [currentMermaidTheme, hasMermaidScript, previousMermaidTheme, renderMermaid]);
 
         return (
             <YfmWrapperContent
