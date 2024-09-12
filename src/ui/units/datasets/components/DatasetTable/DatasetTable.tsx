@@ -356,7 +356,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     ) => {
         this.batchChangeDialog(fields, {
             warningMessage: i18n('md_text_batch-aggregation-alert', {
-                datalensDocsLink: DL.ENDPOINTS.datalensDocs,
+                aggregationsLink: `${DL.ENDPOINTS.datalensDocs}/dataset/data-model#aggregation`,
             }),
             title: i18n('text_batch-aggregation-header'),
             label: i18n('label_batch-aggregation'),
