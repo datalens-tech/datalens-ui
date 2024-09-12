@@ -280,7 +280,6 @@ export type ChartContentProps = Pick<
         initialParams: StringParams;
         enableActionParams?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
-        // onReflow?: () => void;
     };
 
 export type WidgetDataRef = React.MutableRefObject<
