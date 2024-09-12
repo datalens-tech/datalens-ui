@@ -29,7 +29,7 @@ const typeIcons = {
     editor: CurlyBrackets,
     dashboard: LayoutCellsLarge,
     connection: Thunderbolt,
-    presentation: DisplayPulse,
+    report: DisplayPulse,
     broken: CircleQuestion,
 };
 

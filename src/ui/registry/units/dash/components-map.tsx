@@ -7,10 +7,5 @@ export const dashComponentsMap = {
     DashSelectState: makeDefaultEmpty(),
     DashSelectStateDialog: makeDefaultEmpty(),
     DialogDashMeta: makeDefaultEmpty<DialogDashMetaProps>(),
-
-    // Old one
-    DialogText: makeDefaultEmpty(),
-
-    // New one
     DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
 } as const;

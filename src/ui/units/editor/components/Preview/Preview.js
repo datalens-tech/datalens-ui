@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {useLocation} from 'react-router-dom';
+import {MenuType} from 'ui/libs/DatalensChartkit/menu/constants';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import {URL_QUERY} from '../../../../constants';
@@ -26,6 +27,8 @@ const Preview = ({
         onLoadData({data: result.data, status});
     };
 
+    const menuType = chartData.id ? MenuType.Preview : MenuType.PanePreview;
+
     return (
         <div className={b()} data-qa="chart-preview">
             <ChartWrapper
@@ -38,6 +41,7 @@ const Preview = ({
                 forwardedRef={widgetRef}
                 workbookId={workbookId}
                 forceShowSafeChart={true}
+                menuType={menuType}
             />
         </div>
     );

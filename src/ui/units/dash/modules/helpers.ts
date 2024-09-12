@@ -19,6 +19,7 @@ import type {
     DashTabItem,
     DashTabItemBase,
     DashTabLayout,
+    EntryScope,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -34,6 +35,7 @@ import {PostMessage} from './postMessage';
 
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
+    fromScope: EntryScope;
 };
 
 export type CopiedConfigData = ConfigItem &
@@ -381,7 +383,9 @@ export const getPreparedCopyItemOptions = (
     copyContext?: CopiedConfigContext,
 ) => {
     if (copyContext) {
-        itemToCopy.copyContext = copyContext;
+        itemToCopy.copyContext = {
+            ...copyContext,
+        };
     }
 
     if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {

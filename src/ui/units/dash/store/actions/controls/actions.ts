@@ -74,7 +74,7 @@ export const copyControlToStorage = (controlIndex: number) => {
         const {
             selectorsGroup,
             activeSelectorIndex,
-            entry: {workbookId},
+            entry: {workbookId, scope},
         } = state.dash;
         const openedItem = selectOpenedItem(state);
 
@@ -128,6 +128,7 @@ export const copyControlToStorage = (controlIndex: number) => {
 
         const preparedOptions = getPreparedCopyItemOptions(options, null, {
             workbookId: workbookId ?? null,
+            fromScope: scope,
         });
 
         localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));

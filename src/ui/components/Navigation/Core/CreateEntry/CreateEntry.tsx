@@ -5,6 +5,7 @@ import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Feature} from 'shared';
 
+import {registry} from '../../../../registry';
 import Utils from '../../../../utils';
 import {PLACE} from '../../constants';
 
@@ -46,6 +47,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
     onClick,
     isOnlyCollectionsMode = false,
 }) => {
+    const {checkCreateEntryButtonVisibility} = registry.common.functions.getAll();
     const withMenu =
         place === PLACE.ROOT ||
         place === PLACE.FAVORITES ||
@@ -65,6 +67,10 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
             isOnlyCollectionsMode,
         });
     }, [withMenu, place, onClick, isOnlyCollectionsMode]);
+
+    if (!checkCreateEntryButtonVisibility(place)) {
+        return null;
+    }
 
     return (
         <DropdownMenu
