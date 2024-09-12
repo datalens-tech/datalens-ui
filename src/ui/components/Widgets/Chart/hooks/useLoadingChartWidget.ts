@@ -130,7 +130,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const history = useHistory();
 
-    const onUpdate = useBeforeLoad(props.onBeforeLoad);
+    const handleUpdate = useBeforeLoad(props.onBeforeLoad);
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -143,12 +143,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 rootNode: rootNodeRef,
                 gridLayout,
                 layout,
-                // TODO: optimize call times in future
                 cb: (...args) => {
-                    if (onUpdate) {
-                        onUpdate();
-                    }
-
                     return props.adjustWidgetLayout(...args);
                 },
             });
@@ -358,7 +353,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * debounced call of chartkit reflow
      */
     const debouncedChartReflow = React.useCallback(
-        debounce(handleChartkitReflow, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        debounce(() => {
+            handleChartkitReflow();
+            // Triggering update after chart changed it size
+            if (handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
         [handleChartkitReflow],
     );
 
@@ -388,6 +389,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     React.useEffect(() => {
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
+
+    /**
+     * changed position and loaded state watcher
+     */
+    const currentLayout = layout.find(({i}) => i === widgetId);
+    React.useEffect(() => {
+        if (isInit && !isLoading) {
+            handleUpdate?.();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, handleUpdate]);
 
     /**
      * updating widget description by markdown
