@@ -70,7 +70,7 @@
   "text_batch-show-message": "Вы уверены, что хотите показать выбранные поля датасета?",
   "text_batch-type-alert": "Не все типы могут быть доступны",
   "text_batch-aggregation-header": "Изменить агрегацию полей датасета",
-  "md_text_batch-aggregation-alert": "Не все [агрегации]({{aggregationsLink}}){target=_blank} могут быть доступны",
+  "text_batch-aggregation-alert": "Не все <link>агрегации</link> могут быть доступны",
   "text_batch-type-header": "Изменить тип полей датасета",
   "value_array_float": "Массив дробных чисел",
   "value_array_int": "Массив целых чисел",

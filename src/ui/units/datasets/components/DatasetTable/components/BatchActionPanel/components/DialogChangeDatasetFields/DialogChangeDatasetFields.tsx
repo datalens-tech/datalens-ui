@@ -7,7 +7,6 @@ import {I18n} from 'i18n';
 import type {DATASET_FIELD_TYPES, DatasetFieldAggregation} from 'shared';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
-import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {getTypeSelectOptions} from 'ui/utils/getTypeSelectOptions';
 import {getDatasetLabelValue} from 'ui/utils/helpers';
 
@@ -29,7 +28,7 @@ export interface DialogChangeDatasetFieldsProps {
     open: boolean;
     onClose: () => void;
     label: string;
-    warningMessage: string;
+    warningMessage: string | React.ReactElement;
     title: string;
     fieldsGuids: string[];
     batchUpdateFields: BatchUpdateFields;
@@ -93,10 +92,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
         <Dialog open={open} onClose={onClose} size="s">
             <Dialog.Header caption={title} />
             <Dialog.Body>
-                <Alert
-                    theme="warning"
-                    message={<YfmWrapper content={warningMessage} setByInnerHtml />}
-                />
+                <Alert theme="warning" message={warningMessage} />
                 <div className={b('content')}>
                     <span>{label}</span>
                     {Boolean(typeItems.length) && (
