@@ -1,6 +1,8 @@
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {EntryScope} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
+import type {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import type {Item} from 'units/workbooks/components/WorkbookTabs/types';
 import type {WorkbookEntry} from 'units/workbooks/types';
 
@@ -26,4 +28,18 @@ export const workbooksFunctionsMap = {
         makeFunctionTemplate<
             (workbook: WorkbookWithPermissions) => DropdownMenuItemMixed<unknown>[]
         >(),
+    useCreateEntryOptions: makeFunctionTemplate<
+        ({
+            scope,
+            handleAction,
+        }: {
+            scope?: EntryScope;
+            handleAction: (action: CreateEntryActionType) => void;
+        }) => {
+            buttonText: string;
+            handleClick?: () => void;
+            items: DropdownMenuItemMixed<unknown>[];
+            hasMenu: boolean;
+        }
+    >(),
 } as const;

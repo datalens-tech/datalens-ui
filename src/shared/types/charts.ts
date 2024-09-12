@@ -22,6 +22,8 @@ export type ChartKitHtmlItem = {
     theme?: RequiredThemes & OptionalThemes;
 };
 
+export type WrappedHTML = {[WRAPPED_HTML_KEY]: ChartKitHtmlItem | ChartKitHtmlItem[] | string};
+
 export interface IChartEditor {
     /**
      * Return current user login
@@ -141,7 +143,7 @@ export interface IChartEditor {
 
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
-    generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
+    generateHtml(value: ChartKitHtmlItem): WrappedHTML;
 
     attachHandler(
         handlerConfig: Record<string, unknown>,
@@ -238,3 +240,31 @@ export type DashWidgetConfig = {
         };
     };
 };
+
+export interface Timings {
+    configResolving: number | null;
+    dataFetching: number | null;
+    jsExecution: number | null;
+}
+
+export interface ChartsStats extends Timings {
+    url: string;
+    requestId: string;
+    groupId: string | null;
+    scope: 'dash' | 'preview' | 'snapter' | null;
+    entryId: string;
+    query: string;
+    type: string;
+    // type: 'graph' | 'table'
+    widgetRendering: number | null;
+    yandexMapAPIWaiting?: number | null;
+    sourcesCount: number;
+    // type: 'graph'
+    graphType: string | null;
+    mixedGraphType: 0 | 1 | null;
+    pointsCount: number | null;
+    seriesCount: number | null;
+    // type: 'table'
+    columnsCount: number | null;
+    rowsCount: number | null;
+}

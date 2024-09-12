@@ -1,11 +1,12 @@
 import type {Column} from '@gravity-ui/react-data-table';
 
+import type {WrappedHTML} from '../charts';
 import type {StringParams} from '../common';
 import type {MarkupItem} from '../wizard';
 
 import type {ChartKitCss} from './common';
 
-type TableCellValue = MarkupItem | string | number | [number, number] | null;
+type TableCellValue = MarkupItem | WrappedHTML | string | number | [number, number] | null;
 type TableValuesRow = {
     values: TableCellValue[];
 };
@@ -57,8 +58,7 @@ export type TableRow = TableValuesRow | TableCellsRow;
 export type CommonTableColumn = {
     id?: string;
     name: string;
-    /** Formatted number from Wizard */
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     type: TableCommonCellType;
     group?: boolean;
     autogroup?: boolean;
@@ -134,8 +134,7 @@ export type TableColumn =
 type TableSubColumn = {
     id?: string;
     name: string;
-    // formatted number from Wizard
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     css?: ChartKitCss;
     markup: MarkupItem;
     sub: (TableColumn | TableSubColumn)[];

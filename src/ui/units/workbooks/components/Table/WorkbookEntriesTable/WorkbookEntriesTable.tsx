@@ -43,6 +43,7 @@ type WorkbookEntriesTableProps = {
     mapErrors?: Record<string, boolean>;
     mapLoaders?: Record<string, boolean>;
     chunks: ChunkItem[][];
+    availableScopes?: EntryScope[];
 };
 
 export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
@@ -57,6 +58,7 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         mapErrors,
         mapLoaders,
         chunks,
+        availableScopes,
     }) => {
         const dispatch: AppDispatch = useDispatch();
         const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -154,13 +156,21 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         };
 
-        const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
+        const [
+            dashChunk = [],
+            connChunk = [],
+            datasetChunk = [],
+            widgetChunk = [],
+            reportChunk = [],
+        ] = chunks;
 
         const isWidgetEmpty = widgetChunk.length === 0;
         const isDashEmpty = dashChunk.length === 0;
+        const isReportEmpty = reportChunk.length === 0;
 
         const clearViewDash = DL.IS_MOBILE && isWidgetEmpty;
         const clearViewWidget = DL.IS_MOBILE && isDashEmpty;
+        const clearViewReport = DL.IS_MOBILE && isReportEmpty;
 
         const showDataEntities = workbook.permissions.view && !DL.IS_MOBILE;
 
@@ -198,7 +208,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         clearView={clearViewDash}
                         onShowRelatedClick={onShowRelated}
                     />
-
                     <MainTabContent
                         chunk={widgetChunk}
                         actionCreateText={i18n('action_create-chart')}
@@ -220,7 +229,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                         clearView={clearViewWidget}
                         onShowRelatedClick={onShowRelated}
                     />
-
                     {showDataEntities && (
                         <MainTabContent
                             chunk={datasetChunk}
@@ -242,7 +250,6 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onShowRelatedClick={onShowRelated}
                         />
                     )}
-
                     {showDataEntities && (
                         <MainTabContent
                             chunk={connChunk}
@@ -262,6 +269,28 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                             onShowRelatedClick={onShowRelated}
+                        />
+                    )}
+                    {availableScopes?.includes(EntryScope.Report) && (
+                        <MainTabContent
+                            chunk={reportChunk}
+                            actionCreateText={i18n('action_create-report')}
+                            title={i18n('title_reports')}
+                            actionType={CreateEntryActionType.Report}
+                            isShowMoreBtn={Boolean(
+                                reportChunk?.length > 0 && mapTokens?.[EntryScope.Report],
+                            )}
+                            loadMoreEntries={() => loadMoreEntries?.(EntryScope.Report)}
+                            retryLoadEntries={() => retryLoadEntries?.(EntryScope.Report)}
+                            isErrorMessage={mapErrors?.[EntryScope.Report]}
+                            isLoading={mapLoaders?.[EntryScope.Report]}
+                            workbook={workbook}
+                            onRenameEntry={onRenameEntry}
+                            onDeleteEntry={onDeleteEntry}
+                            onDuplicateEntry={onDuplicateEntry}
+                            onCopyEntry={onCopyEntry}
+                            onShowRelatedClick={onShowRelated}
+                            clearView={clearViewReport}
                         />
                     )}
                 </React.Fragment>

@@ -1,6 +1,7 @@
 :root {
     --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
+    --dl-table-header-row-height: 28px;
     --dl-table-row-height: 30px;
     --dl-table-cell-horizontal-padding: 10px;
     --dl-table-cell-vertical-padding: 5px;
@@ -84,6 +85,7 @@
         &_sortable {
             position: relative;
             padding-right: var(--dl-table-sort-icon-space);
+            height: fit-content;
         }
     }
 
@@ -131,6 +133,7 @@
     &__header &__tr:first-child {
         th {
             border-top: 1px solid var(--dl-table-border-color);
+            min-height: var(--dl-table-header-row-height);
         }
     }
 
@@ -156,7 +159,7 @@
     }
 
     &__body &__tr {
-        min-height: var(--dl-table-row-height);
+        height: var(--dl-table-row-height);
         td {
             min-height: var(--dl-table-row-height);
         }
@@ -209,6 +212,7 @@
         @include stickyCellBg();
         &:before {
             border-bottom: 1px solid var(--dl-table-border-color);
+            border-left: 1px solid var(--dl-table-border-color);
         }
     }
 

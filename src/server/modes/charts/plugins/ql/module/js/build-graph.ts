@@ -21,6 +21,7 @@ import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/co
 import prepareSingleResult from '../../../datalens/js/helpers/misc/prepare-single-result';
 import {extractColorPalettesFromData} from '../../../helpers/color-palettes';
 import {getFieldList} from '../../../helpers/misc';
+import type {QLConnectionTypeMap} from '../../utils/connection';
 import {
     doesQueryContainOrderBy,
     getColumnsAndRows,
@@ -46,10 +47,12 @@ type BuildGraphArgs = {
     ChartEditor: IChartEditor;
     features: FeatureConfig;
     palettes: Record<string, Palette>;
+    qlConnectionTypeMap: QLConnectionTypeMap;
 };
 
 // eslint-disable-next-line complexity
-export function buildGraph({shared, ChartEditor, features, palettes}: BuildGraphArgs) {
+export function buildGraph(args: BuildGraphArgs) {
+    const {shared, ChartEditor, features, palettes, qlConnectionTypeMap} = args;
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -67,6 +70,7 @@ export function buildGraph({shared, ChartEditor, features, palettes}: BuildGraph
         queries: config.queries,
         connectionType: config.connection.type,
         data: loadedData,
+        qlConnectionTypeMap,
     });
 
     if (

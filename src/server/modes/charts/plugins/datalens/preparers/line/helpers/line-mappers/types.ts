@@ -40,6 +40,7 @@ export interface PrepareLinesArgs {
     segmentIndexInOrder: number;
     layers?: ServerVisualizationLayer[];
     colorMode?: ColorMode;
+    convertMarkupToString?: boolean;
 }
 
 export interface GetMappedDataToLinesArgs {
@@ -145,6 +146,7 @@ export interface MergeLabelDataWithLinesArgs {
     values: PrepareFunctionDataRow;
     yDataType: DATASET_FIELD_TYPES;
     yItemFormatting: CommonNumberFormattingOptions | undefined;
+    convertMarkupToString?: boolean;
 }
 
 export interface ExtendLineWithSegmentDataArgs {

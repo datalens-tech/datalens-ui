@@ -2,8 +2,9 @@ import React from 'react';
 
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
+import {registry} from 'ui/registry';
 import type {AppDispatch} from 'ui/store';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -16,6 +17,7 @@ import {
 import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
 import type {WorkbookEntriesFilters} from '../../types';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
+import {TAB_ALL} from '../WorkbookTabs/constants';
 
 import {useChunkedEntries} from './useChunkedEntries';
 
@@ -39,16 +41,20 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
 
     const chunks = useChunkedEntries(entries);
 
+    const {getWorkbookTabs} = registry.workbooks.functions.getAll();
+
+    const availableScopes = React.useMemo(() => {
+        return workbook
+            ? getWorkbookTabs(workbook)
+                  .map(({id}) => id as string)
+                  .filter((item) => item !== TAB_ALL)
+            : [];
+    }, [getWorkbookTabs, workbook]) as EntryScope[];
+
     React.useEffect(() => {
         if (workbook?.workbookId === workbookId) {
             (async () => {
                 dispatch(resetWorkbookEntries());
-
-                const scopesForRequest = [EntryScope.Dash, EntryScope.Widget];
-
-                if (workbook?.permissions.view) {
-                    scopesForRequest.push(EntryScope.Dataset, EntryScope.Connection);
-                }
 
                 setIsLoading(true);
 
@@ -56,37 +62,21 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     getAllWorkbookEntriesSeparately({
                         workbookId,
                         filters,
-                        scopes: scopesForRequest,
+                        scopes: availableScopes,
                         pageSize: PAGE_SIZE_MAIN_TAB,
                     }),
                 );
 
                 const errors: Record<string, boolean> = {};
-
-                const [dataDashes, dataWidgets, dataDatasets, dataConnections] = data;
-
-                if (dataDashes === null) {
-                    errors[EntryScope.Dash] = true;
-                }
-
-                if (dataDatasets === null) {
-                    errors[EntryScope.Dataset] = true;
-                }
-
-                if (dataWidgets === null) {
-                    errors[EntryScope.Widget] = true;
-                }
-
-                if (dataConnections === null) {
-                    errors[EntryScope.Connection] = true;
-                }
-
                 const tokensMap: Record<string, string> = {};
 
-                tokensMap[EntryScope.Dash] = dataDashes?.nextPageToken || '';
-                tokensMap[EntryScope.Dataset] = dataDatasets?.nextPageToken || '';
-                tokensMap[EntryScope.Widget] = dataWidgets?.nextPageToken || '';
-                tokensMap[EntryScope.Connection] = dataConnections?.nextPageToken || '';
+                availableScopes.forEach((scope, i) => {
+                    if (data[i] === null) {
+                        errors[scope] = true;
+                    }
+
+                    tokensMap[scope] = data[i]?.nextPageToken || '';
+                });
 
                 setMapTokens(tokensMap);
 
@@ -95,7 +85,14 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 setIsLoading(false);
             })();
         }
-    }, [dispatch, filters, workbook?.workbookId, workbook?.permissions.view, workbookId]);
+    }, [
+        dispatch,
+        filters,
+        workbook?.workbookId,
+        workbook.permissions.view,
+        workbookId,
+        availableScopes,
+    ]);
 
     const loadMoreEntries = React.useCallback(
         (entryScope: EntryScope) => {
@@ -209,6 +206,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 mapErrors={mapErrors}
                 mapLoaders={mapLoaders}
                 chunks={chunks}
+                availableScopes={availableScopes}
             />
         </AnimateBlock>
     );

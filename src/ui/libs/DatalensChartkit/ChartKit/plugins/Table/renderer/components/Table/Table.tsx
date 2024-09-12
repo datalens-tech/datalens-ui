@@ -122,13 +122,13 @@ export const Table = React.memo<Props>((props: Props) => {
         data,
         dimensions: widgetDimensions,
         tableContainerRef,
-        manualSorting: isPaginationEnabled,
+        manualSorting: isPaginationEnabled || Boolean(config?.settings?.externalSort),
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
     });
 
     React.useEffect(() => {
-        if (onReady && prerender) {
+        if (onReady && !prerender) {
             setTimeout(onReady, 0);
         }
     }, [onReady, prerender]);

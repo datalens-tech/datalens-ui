@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {dateTime} from '@gravity-ui/date-utils';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import {CaretLeft, CaretRight} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -11,6 +11,7 @@ import type {
     NumberViewOptions,
     TableCommonCell,
     TableHead,
+    WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
@@ -27,7 +28,7 @@ const b = block('chartkit-table-widget');
 
 export type HeadCell = THead & {
     name: string;
-    formattedName?: string;
+    formattedName?: WrappedHTML | string;
     fieldId?: string;
     custom?: unknown;
 };
@@ -43,7 +44,8 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
         header: () => {
             const cell = {
                 value: th.markup ?? th.name,
-                formattedValue: th.formattedName,
+                // Remove condition after wrappedHTML being supported for new Table
+                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : undefined,
                 type: th.markup ? 'markup' : columnType,
             };
             return (
@@ -54,10 +56,9 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             );
         },
         enableSorting: get(th, 'sortable', true),
-        sortingFn: columnType === 'number' ? 'alphanumeric' : 'auto',
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
-            const cell = cellData as TableCommonCell;
+            const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
                     {renderCellContent({cell, column: th})}
@@ -70,7 +71,9 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
                 </React.Fragment>
             );
         },
-        columns: get(th, 'sub', []).map(mapHeadCell),
+        columns: get(th, 'sub', []).map((subColumn: TableHead) =>
+            mapHeadCell(subColumn, tableWidth),
+        ),
         pinned: get(th, 'pinned', false),
     };
 }
@@ -122,12 +125,11 @@ export function renderCellContent(args: {
     }
 
     let formattedValue: string | undefined = cell.formattedValue;
-    if (typeof formattedValue === 'undefined') {
-        if (cellType === 'date') {
-            const dateTimeValue = dateTime({
-                input: cell.value as number,
-                timeZone: 'UTC',
-            });
+    if (!formattedValue) {
+        if (cell.value === null) {
+            formattedValue = String(cell.value);
+        } else if (cellType === 'date' && cell.value) {
+            const dateTimeValue = dateTimeUtc({input: cell.value as string});
             const dateTimeFormat = get(column, 'format');
             formattedValue = dateTimeValue?.isValid()
                 ? dateTimeValue.format(dateTimeFormat)

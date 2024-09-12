@@ -4,7 +4,6 @@ import type {ConfigLayout} from '@gravity-ui/dashkit';
 import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
-import update from 'immutability-helper';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import type {ResolveThunks} from 'react-redux';
@@ -29,7 +28,6 @@ import Utils, {formDocsEndpointDL} from 'ui/utils';
 
 const i18n = I18n.keyset('dash.main.view');
 
-import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {
     cleanRevisions,
     setRevisionsListMode,
@@ -385,33 +383,22 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             return;
         }
 
-        const pastedItemData = itemData.data;
+        const {migrateItemDataOnPaste} = registry.common.functions.getAll();
 
-        if (itemData.type === ITEM_TYPE.WIDGET) {
-            pastedItemData.tabs =
-                itemData.data.tabs &&
-                itemData.data.tabs.map((tab) => {
-                    return update(tab, {
-                        $unset: ['id'],
-                    });
-                });
-        }
+        const migratedItemData = migrateItemDataOnPaste({
+            itemData,
+            toScope: this.props.entry.scope,
+        }) as CopiedConfigData;
 
-        if (itemData.type === ITEM_TYPE.GROUP_CONTROL) {
-            pastedItemData.group = pastedItemData.group?.map((item) => {
-                return update(item, {$unset: ['id']});
-            });
-        }
-
-        const data = update(pastedItemData, {$unset: ['id']});
+        const data = migratedItemData.data;
 
         this.props.setCopiedItemData({
             item: {
                 data,
-                type: itemData.type,
-                defaults: itemData.defaults,
-                namespace: itemData.namespace,
-                layout: itemData?.layout,
+                type: migratedItemData.type,
+                defaults: migratedItemData.defaults,
+                namespace: migratedItemData.namespace,
+                layout: migratedItemData?.layout,
             },
             options: {
                 updateLayout,

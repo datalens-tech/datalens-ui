@@ -1,11 +1,13 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import type {TableHead} from 'shared';
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
+import {hasGroups} from '../components/Widget/components/Table/utils';
 import type {ChartKitAdapterProps} from '../types';
 
 import {
@@ -20,6 +22,11 @@ import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 export const extractWidgetType = (data?: LoadedWidgetData) => {
     return data && 'type' in data && data.type;
 };
+
+function isPivotTable(data?: LoadedWidgetData) {
+    const tableHead: TableHead[] = get(data, 'data.head', []);
+    return hasGroups(tableHead) || tableHead.some((th) => get(th, 'sub'));
+}
 
 export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefined => {
     const type = extractWidgetType(data);
@@ -84,8 +91,10 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'table': {
+            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
             const shouldRenderNewTable =
-                (get(data, 'isNewWizard') || get(data, 'isQL')) &&
+                isWizardOrQl &&
+                !isPivotTable(data) &&
                 Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl);
 
             if (shouldRenderNewTable) {

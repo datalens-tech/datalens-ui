@@ -61,7 +61,6 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
-    EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
@@ -71,8 +70,6 @@ export enum Feature {
     EnableFooter = 'EnableFooter',
     /** Chart runner for the execution of trusted code in wizard. */
     WorkerChartBuilder = 'WorkerChartBuilder',
-    /** Dash controls separate runner for the execution of trusted code. */
-    ControlBuilder = 'ControlBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
@@ -88,12 +85,15 @@ export enum Feature {
     NewSandbox_50p = 'NewSandbox_50p',
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
+    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
     /** Allow markdown in chart fields. */
     WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
+    /** Render markup in chart dataLabels. */
+    MarkupInLabels = 'MarkupInLabels',
 }
 
 export type FeatureConfig = Record<string, boolean>;

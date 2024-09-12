@@ -36,6 +36,7 @@ export const enum DialogColumnSettingsQa {
     CancelButton = 'dialog-column-settings-cancel-button',
     UnitRadioButtons = 'dialog-column-settings-unit-radio-buttons',
     WidthValueInput = 'dialog-column-settings-width-input',
+    PinnedColumnsInput = 'dialog-column-settings-pinned-columns-input',
 }
 
 export const enum DialogFieldBackgroundSettingsQa {

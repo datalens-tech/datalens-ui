@@ -6,8 +6,8 @@ import {i18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {formatDuration} from 'shared/modules/format-units/formatUnit';
 
+import type {ChartsStats} from '../../../../../../../../../../../../shared/types/charts';
 import {DL} from '../../../../../../../../../../../constants/common';
-import type {ChartsStats} from '../../../../../../../../../modules/data-provider/charts';
 
 import './Timings.scss';
 

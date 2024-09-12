@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
@@ -70,27 +71,42 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
 }
 
 function getFooterRows(table: Table<TData>) {
-    return table.getFooterGroups().map<FooterRowViewData>((f) => {
-        return {
-            id: f.id,
-            cells: f.headers.map<FooterCellViewData>((cell) => {
-                const columnDef = cell.column.columnDef;
-                const originalHeadData = columnDef.meta?.head;
-                const style = columnDef?.meta?.footer?.css;
-                const pinned = Boolean(originalHeadData?.pinned);
+    return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
+        const cells = f.headers.map<FooterCellViewData>((cell) => {
+            const columnDef = cell.column.columnDef;
+            const originalHeadData = columnDef.meta?.head;
+            const originalFooterData = columnDef?.meta?.footer;
+            const style = originalFooterData?.css;
+            const pinned = Boolean(originalHeadData?.pinned);
+            const content = cell.isPlaceholder
+                ? null
+                : flexRender(columnDef.footer, cell.getContext());
 
-                return {
-                    id: cell.id,
-                    style,
-                    pinned,
-                    type: get(originalHeadData, 'type'),
-                    content: cell.isPlaceholder
-                        ? null
-                        : flexRender(columnDef.footer, cell.getContext()),
-                };
-            }),
-        };
-    });
+            return {
+                id: cell.id,
+                style,
+                pinned,
+                type: get(originalHeadData, 'type'),
+                content,
+            };
+        });
+
+        if (cells.some((c) => c.content)) {
+            acc.push({
+                id: f.id,
+                cells,
+            });
+        }
+
+        return acc;
+    }, []);
+}
+
+function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
+    const current = currentRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+    const prev = prevRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+
+    return isEqual(prev, current);
 }
 
 export const usePreparedTableData = (props: {
@@ -211,6 +227,7 @@ export const usePreparedTableData = (props: {
                     const sortable = header.column.getCanSort();
                     const pinned = Boolean(originalCellData?.pinned);
                     const cellStyle: React.CSSProperties = {
+                        ...get(originalCellData, 'css', {}),
                         left: pinned ? originalCellData?.left : undefined,
                     };
 
@@ -269,16 +286,19 @@ export const usePreparedTableData = (props: {
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
                 const enableRowGrouping = get(originalHeadData, 'group', false);
-                const originalCellData = cell.row.original[index];
+                const originalCellData = cell.row.original[index] ?? {value: ''};
                 const pinned = Boolean(originalHeadData?.pinned);
 
                 if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
                     const prevCellRow = rowsAcc[prevCells[index]];
-                    const prevCell = prevCellRow?.cells?.[index];
-                    const prevCellData = tableRowsData[prevCellRow?.index][index];
+                    const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
                     if (
                         typeof prevCell?.rowSpan !== 'undefined' &&
-                        originalCellData.value === prevCellData?.value
+                        shouldGroupRow(
+                            cell.row.original,
+                            tableRows[prevCellRow?.index]?.original,
+                            index,
+                        )
                     ) {
                         prevCell.rowSpan += 1;
                         return acc;
@@ -317,7 +337,7 @@ export const usePreparedTableData = (props: {
                     style: cellStyle,
                     contentStyle,
                     content: renderCell(cell.getContext()),
-                    type: get(originalCellData, 'type'),
+                    type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,
                     pinned,
                     className:

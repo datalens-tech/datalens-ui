@@ -58,6 +58,7 @@ import type {
 import {cleanUpConflictingParameters} from '../utils';
 
 import {useIntersectionObserver} from './useIntersectionObserver';
+import {useMemoCallback} from './useMemoCallback';
 
 export type LoadingChartHookProps = {
     dataProvider: ChartWithProviderProps['dataProvider'];
@@ -70,7 +71,7 @@ export type LoadingChartHookProps = {
     hasChangedOuterProps: boolean;
     hasChangedOuterParams: boolean;
     hasChartTabChanged?: boolean;
-    chartKitRef: React.RefObject<ChartKit>;
+    chartKitRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | undefined>;
     resolveMetaDataRef?: React.MutableRefObject<ResolveMetaDataRef | undefined>;
     resolveWidgetDataRef?: React.MutableRefObject<
         ResolveWidgetDataRef | ResolveWidgetControlDataRef | undefined
@@ -776,7 +777,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [dataProvider, initialData, requestId, requestCancellationRef, rootNodeRef, handleError],
     );
 
-    const handleChange = React.useCallback(
+    const handleChange = useMemoCallback(
+        // eslint-disable-next-line complexity
         (
             changedData: OnChangeData,
             _state: {forceUpdate: boolean},
@@ -876,15 +878,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 handleChangeCallback(res);
             }
         },
-        [
-            prevInnerParamsRefCurrent,
-            handleChangeCallback,
-            initialData.params,
-            innerParamsRef,
-            enableActionParams,
-            onInnerParamsChanged,
-            currentDrillDownLevel,
-        ],
+        [],
     );
 
     const handleRetry = React.useCallback(

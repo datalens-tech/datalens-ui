@@ -17,9 +17,9 @@ import type {
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
 import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import {DL, Interpolate} from 'ui';
-import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants/common';
 
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
 import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
@@ -511,7 +511,7 @@ class DialogChartWidget extends React.PureComponent<
         const {hierarchies} = this.state;
         const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
 
-        if (!showFilterHierarchyWarning) {
+        if (!showFilterHierarchyWarning || !DL.ENDPOINTS.datalensDocs) {
             return null;
         }
 
@@ -552,7 +552,6 @@ class DialogChartWidget extends React.PureComponent<
                     className={b('help-tooltip')}
                     content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
                 />
-                <BetaMark className={b('beta')} />
             </div>
         );
 

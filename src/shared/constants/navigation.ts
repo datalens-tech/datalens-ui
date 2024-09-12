@@ -6,6 +6,8 @@ export const PLACE = {
     WIDGETS: 'widgets',
     CONNECTIONS: 'connections',
     CLUSTERS: 'clusters',
+    REPORTS: 'reports',
+    // TODO delete after update
     PRESENTATIONS: 'presentations',
 } as const;
 
@@ -17,5 +19,7 @@ export const MAP_PLACE_TO_SCOPE = {
     [PLACE.WIDGETS]: 'widget',
     [PLACE.CONNECTIONS]: 'connection',
     [PLACE.CLUSTERS]: 'clusters',
-    [PLACE.PRESENTATIONS]: 'presentation',
+    [PLACE.REPORTS]: 'report',
+    // TODO delete after update
+    [PLACE.PRESENTATIONS]: 'presentations',
 } as const;

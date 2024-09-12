@@ -20,10 +20,12 @@ import {
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
     WRAPPED_MARKDOWN_KEY,
+    WRAPPED_MARKUP_KEY,
+    isMarkupItem,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import Utils from '../../../../../utils';
+import Utils, {getRenderMarkupToStringFn} from '../../../../../utils';
 import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
@@ -330,11 +332,13 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            processHtmlFields(result.data, {
-                allowHtml: !isPotentiallyUnsafeChart(loadedType) || enableJsAndHtml,
-            });
-            processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            if (isPotentiallyUnsafeChart(loadedType)) {
+                processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
+                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            }
+
             await unwrapMarkdown({config: result.config, data: result.data});
+            await unwrapMarkup({config: result.config, data: result.data});
 
             applyChartkitHandlers({
                 config: result.config,
@@ -426,6 +430,49 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
                         const md = value[WRAPPED_MARKDOWN_KEY];
                         if (typeof md === 'string') {
                             set(item, key, renderMarkdown(md));
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            }
+        };
+
+        try {
+            unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'categories', []));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
+async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data']}) {
+    const {config, data} = args;
+    if (config?.useMarkup) {
+        const renderMarkup = await getRenderMarkupToStringFn();
+        const unwrapItem = (item: unknown) => {
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+
+            if (Array.isArray(item)) {
+                item.forEach((value, index, list) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
+                        const markupItem = value[WRAPPED_MARKUP_KEY];
+                        if (isMarkupItem(markupItem)) {
+                            list[index] = renderMarkup(markupItem);
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            } else {
+                Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
+                        const markupItem = value[WRAPPED_MARKUP_KEY];
+                        if (isMarkupItem(markupItem)) {
+                            set(item, key, renderMarkup(markupItem));
                         }
                     } else {
                         unwrapItem(value);

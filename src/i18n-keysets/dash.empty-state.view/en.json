@@ -1,6 +1,8 @@
 {
   "button_edit": "Edit",
   "label_empty-dash": "This dashboard is empty for now",
+  "label_empty-fixed-content": "This area can be collapsed and expanded. To fill it, drag the necessary blocks from the panel at the bottom of the page.",
+  "label_empty-fixed-header": "This area is fixed when scrolling the page. To fill it, drag the necessary blocks from the panel at the bottom of the page.",
   "label_empty-tab": "This tab is empty for now",
   "label_mobile-dash": "You haven't added anything yet",
   "label_mobile-tab": "You haven't added anything yet",

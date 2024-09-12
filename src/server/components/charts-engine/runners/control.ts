@@ -1,20 +1,15 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import {ControlType, Feature, isEnabledServerFeature} from '../../../../shared';
+import {ControlType} from '../../../../shared';
 import {getControlBuilder} from '../components/processor/control-builder';
 import type {ResolvedConfig} from '../components/storage/types';
 
-import {runChart} from './chart';
 import {commonRunner} from './common';
 
 import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    if (!isEnabledServerFeature(cx, Feature.ControlBuilder)) {
-        return runChart(cx, props);
-    }
-
-    const {chartsEngine, req, res, config, configResolving, workbookId} = props;
+    const {chartsEngine, req, res, config, configResolving, workbookId, forbiddenFields} = props;
 
     const ctx = cx.create('templateControlRunner');
 
@@ -69,5 +64,6 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         runnerType: 'Control',
         hrStart,
         localConfig: config,
+        forbiddenFields,
     });
 };

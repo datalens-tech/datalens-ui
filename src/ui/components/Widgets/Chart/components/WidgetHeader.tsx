@@ -38,6 +38,7 @@ type HeaderProps = {
     showActionParamsFilter?: boolean;
     onFiltersClear?: () => void;
     title?: string;
+    noControls?: boolean;
 };
 
 const b = block('widget-header');
@@ -57,6 +58,7 @@ export const WidgetHeader = (props: HeaderProps) => {
         showActionParamsFilter,
         onFiltersClear,
         title,
+        noControls,
     } = props;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
@@ -67,7 +69,13 @@ export const WidgetHeader = (props: HeaderProps) => {
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
     const renderTabs = () => (
-        <div className={b('tabs', {'edit-mode': editMode}, DRAGGABLE_HANDLE_CLASS_NAME)}>
+        <div
+            className={b(
+                'tabs',
+                {'edit-mode': editMode, 'no-controls': noControls},
+                DRAGGABLE_HANDLE_CLASS_NAME,
+            )}
+        >
             {showTabs && (
                 <AdaptiveTabs
                     size={size}
@@ -125,10 +133,14 @@ export const WidgetHeader = (props: HeaderProps) => {
                     <div className={b('share-widget')}>
                         <ShareButton
                             enablePopover={true}
-                            entityId={widgetId}
                             popoverText={widgetTitle}
                             popoverTitle={widgetTitle}
                             iconSize={16}
+                            dialogShareProps={{
+                                propsData: {
+                                    id: widgetId,
+                                },
+                            }}
                         />
                     </div>
                 )}
