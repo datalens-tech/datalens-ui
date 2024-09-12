@@ -6,6 +6,7 @@
   "section_empty-scope-connection": "There are no connections in this workbook yet",
   "section_empty-scope-dashboard": "There are no dashboards in this workbook yet",
   "section_empty-scope-dataset": "There are no datasets in this workbook yet",
+  "section_empty-scope-report": "There are no reports in this workbook yet",
   "section_empty-scope-widget": "There are no charts in this workbook yet",
   "section_not-found": "Nothing found"
 }

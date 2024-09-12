@@ -15,6 +15,7 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
             EntryScope.Widget,
             EntryScope.Dataset,
             EntryScope.Connection,
+            EntryScope.Report,
         ]);
 
         const workbookEntries = entries

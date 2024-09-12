@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.DashAutorefresh,
+    name: Feature.SandboxEngineSelectSwitch,
     state: {
-        development: true,
-        production: true,
+        development: false,
+        production: false,
     },
 });

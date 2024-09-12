@@ -12,8 +12,9 @@ import type {
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
 } from 'shared/schema';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 
-import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
+import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 import type {
     EntryContextMenuItem,
@@ -30,6 +31,7 @@ import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -125,4 +127,15 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (chartkitStats: CollectChartkitStatsArgs) => Promise<CollectChartkitStatsResponse>
         >(),
+    migrateItemDataOnPaste:
+        makeFunctionTemplate<
+            ({
+                itemData,
+                toScope,
+            }: {
+                itemData: CopiedConfigData;
+                toScope: EntryScope;
+            }) => CopiedConfigData
+        >(),
+    checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
 } as const;

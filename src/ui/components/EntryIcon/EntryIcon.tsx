@@ -132,8 +132,8 @@ const getScopeTypeIcon = (scope: string) => {
             return 'dashboard';
         case 'monitoring':
             return 'editor';
-        case EntryScope.Presentation:
-            return 'presentation';
+        case EntryScope.Report:
+            return 'report';
         case 'broken':
             return 'broken';
         default:

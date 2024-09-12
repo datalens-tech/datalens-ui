@@ -658,6 +658,7 @@ class Body extends React.PureComponent<BodyProps> {
             const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
                     workbookId: this.props.workbookId ?? null,
+                    fromScope: this.props.entry.scope,
                 });
             };
 

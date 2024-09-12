@@ -85,6 +85,7 @@ export enum Feature {
     NewSandbox_50p = 'NewSandbox_50p',
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
+    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
     /** Allow markdown in chart fields. */

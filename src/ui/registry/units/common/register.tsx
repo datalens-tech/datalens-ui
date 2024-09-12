@@ -24,6 +24,7 @@ import {YfmWrapperContent} from '../../../components/YfmWrapper/YfmWrapperConten
 import {DatepickerControl} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {getIconDataById} from '../../../utils/icons';
+import {migrateItemDataOnPaste} from '../../../utils/migrateItemDataOnPaste';
 import {
     fetchBatchRenderedMarkdown,
     fetchDistinctsByApi,
@@ -76,5 +77,7 @@ export const registerCommonPlugins = () => {
         fetchDistinctsByApi,
         requestCollectDashStats,
         requestCollectChartkitStats,
+        migrateItemDataOnPaste,
+        checkCreateEntryButtonVisibility: () => true,
     });
 };
