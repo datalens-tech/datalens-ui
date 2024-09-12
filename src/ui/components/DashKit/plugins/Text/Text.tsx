@@ -75,9 +75,9 @@ const textPlugin = {
          * and after cut opened/closed
          */
         const handleTextRender = React.useCallback(() => {
-            onUpdate?.();
             adjustLayout(!props.data.autoHeight);
-        }, [props.data.autoHeight, adjustLayout]);
+            onUpdate?.();
+        }, [onUpdate, adjustLayout, props.data.autoHeight]);
 
         /**
          * get prepared text with markdown
@@ -96,13 +96,22 @@ const textPlugin = {
         );
 
         /**
+         * force rerender after get markdown text to see magic links
+         */
+        React.useEffect(() => {
+            handleTextRender();
+        }, [props.data.autoHeight]);
+
+        /**
          * watching content changes to check if adjustLayout needed for autoheight widgets update
          */
         React.useEffect(() => {
             if (!mutationObserver) {
                 return;
             }
-            mutationObserver.current = new MutationObserver(handleTextRender);
+            mutationObserver.current = new MutationObserver(() => {
+                requestAnimationFrame(() => handleTextRender());
+            });
 
             if (mutationObserver.current && cutNodesRef.current) {
                 cutNodesRef.current.forEach((cutNode) => {

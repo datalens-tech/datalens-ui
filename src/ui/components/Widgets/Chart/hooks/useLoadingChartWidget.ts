@@ -392,11 +392,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
     React.useEffect(() => {
-        if (isLoadedWidgetWizard) {
+        if (!isLoading) {
             onUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoadedWidgetWizard, isLoading]);
+    }, [currentLayout?.x, currentLayout?.y, isLoading]);
 
     /**
      * updating widget description by markdown
