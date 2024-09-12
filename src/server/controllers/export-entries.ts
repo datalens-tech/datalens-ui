@@ -231,12 +231,14 @@ export async function exportEntries(req: Request, res: Response) {
 
         const filteredLinks = Object.keys(chartData);
         for(let i = 0; i < filteredLinks.length; i++) {
-            let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
-            const publicOutputCSVPath = path.join(exportPath, `${sheetName}.${r.body['formSettings'].format}`);
-            files.push(publicOutputCSVPath);
-            const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
+            if(chartData[filteredLinks[i]].extra.datasets) {
+                let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
+                const publicOutputCSVPath = path.join(exportPath, `${sheetName}.${r.body['formSettings'].format}`);
+                files.push(publicOutputCSVPath);
 
-            await fs.promises.writeFile(publicOutputCSVPath, response.data);
+                const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
+                await fs.promises.writeFile(publicOutputCSVPath, response.data);
+            }
         }
 
         const destroy = async () => {
