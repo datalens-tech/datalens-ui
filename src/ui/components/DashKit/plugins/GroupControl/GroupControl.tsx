@@ -761,6 +761,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
 
+        if (Object.values(this.controlsStatus).every((status) => status === LOAD_STATUS.FAIL)) {
+            return null;
+        }
+
         return (
             <React.Fragment>
                 {controlData.buttonApply && (

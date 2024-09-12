@@ -37,6 +37,7 @@ import {
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
 import {DashConfigContext} from 'ui/units/dash/utils/context';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -48,6 +49,7 @@ import type {
     ControlSettings,
     ErrorData,
     LoadStatus,
+    SelectorError,
     ValidationErrorData,
 } from '../../Control/types';
 import {
@@ -59,7 +61,12 @@ import {
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {ExtendedLoadedData} from '../types';
-import {clearLoaderTimer, filterSignificantParams, getControlWidthStyle} from '../utils';
+import {
+    clearLoaderTimer,
+    filterSignificantParams,
+    getControlWidthStyle,
+    getErrorTitle,
+} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -258,14 +265,21 @@ export const Control = ({
             let errorData = null;
 
             if (error.response && error.response.data) {
+                const errorInfo = error.response.data?.error as SelectorError;
+
                 errorData = {
-                    data: {error: error.response.data?.error, status: error.response.data?.status},
+                    data: {
+                        error: errorInfo,
+                        status: error.response.data?.status,
+                        title: getErrorTitle(errorInfo),
+                    },
                     requestId: error.response.headers['x-request-id'],
+                    // TODO: move value to context
+                    extra: {disableActions: isEmbeddedEntry()},
                 };
             } else {
                 errorData = {data: {message: error.message}};
             }
-
             setErrorState(errorData, LOAD_STATUS.FAIL);
         }
     };
@@ -467,6 +481,10 @@ export const Control = ({
         return null;
     };
 
+    const handleClickRetry = () => {
+        reload();
+    };
+
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
@@ -588,10 +606,6 @@ export const Control = ({
         }
 
         return null;
-    };
-
-    const handleClickRetry = () => {
-        reload();
     };
 
     return renderControl();

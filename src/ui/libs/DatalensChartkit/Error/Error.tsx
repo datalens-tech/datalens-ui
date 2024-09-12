@@ -248,10 +248,24 @@ const ChartKitError: React.FC<any> = (props) => {
             iconData = errorDatabase;
             break;
         }
-        case 'ERR.CHARTS.WRONG_EMBED_TOKEN': {
-            if (extraParams.message) {
-                detailedTitle = extraParams.message;
-            }
+        case ErrorCode.EntryForbidden: {
+            detailedTitle = i18n('common.errors', 'label_error-access-message');
+            break;
+        }
+        case ErrorCode.InvalidTokenFormat: {
+            detailedTitle = i18n('common.errors', 'label_error-invalid-format-token-message');
+            break;
+        }
+        case ErrorCode.TokenNotFound: {
+            detailedTitle = i18n('common.errors', 'label_error-token-not-found-message');
+            break;
+        }
+        case ErrorCode.InvalidToken: {
+            detailedTitle = i18n('common.errors', 'label_error-invalid-token-message');
+            break;
+        }
+        case ErrorCode.OutdatedDependencies: {
+            detailedTitle = i18n('common.errors', 'label_error-outdated-message');
             break;
         }
     }

@@ -22,14 +22,16 @@ export type ErrorData = {
         status?: number;
     };
     requestId?: string;
+    extra?: {disableActions: boolean};
 };
 
 export type SelectorError = {
     code: string;
     debug: string | {requestId?: string};
     details?: {
-        sources?: {
-            distincts?: {
+        sources?: Record<
+            string,
+            {
                 body?: {
                     debug: Record<string, string>;
                     message: string;
@@ -46,8 +48,8 @@ export type SelectorError = {
                 status?: number;
                 uiUrl?: string;
                 url?: string;
-            };
-        };
+            }
+        >;
     };
 };
 

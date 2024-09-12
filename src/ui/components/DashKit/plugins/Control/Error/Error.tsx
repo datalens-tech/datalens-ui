@@ -26,7 +26,15 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     const dispatch = useDispatch();
     const errorTitle = errorData?.data?.title;
 
+    const disableActions = errorData?.extra?.disableActions;
+
+    const errorText = disableActions ? errorTitle : i18n('label_error');
+
     const handleClick = () => {
+        if (disableActions) {
+            return;
+        }
+
         if (errorData) {
             dispatch(
                 openDialogErrorWithTabs({
@@ -45,8 +53,12 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
     };
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})} onClick={handleClick}>
-            <span className={b('label')}>{i18n('label_error')}</span>
+        <div
+            className={b({mobile: DL.IS_MOBILE, 'with-hover': !disableActions})}
+            onClick={handleClick}
+            title={errorText}
+        >
+            <span className={b('label')}>{errorText}</span>
             <Icon data={TriangleExclamationFill} className={b('icon')} />
         </div>
     );

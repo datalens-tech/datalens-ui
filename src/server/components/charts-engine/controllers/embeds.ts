@@ -1,13 +1,25 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AxiosError} from 'axios';
 import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {ControlType, DL_EMBED_TOKEN_HEADER, EntryScope} from '../../../../shared';
+import {
+    ControlType,
+    DL_EMBED_TOKEN_HEADER,
+    EntryScope,
+    ErrorCode,
+    Feature,
+    isEnabledServerFeature,
+} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
+
+const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
+    return Boolean(isObject(error) && 'response' in error && error.response);
+};
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
     return function chartsRunController(req: Request, res: Response) {
@@ -28,7 +40,12 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         if (!embedToken) {
             ctx.log('CHARTS_ENGINE_NO_TOKEN');
             res.status(400).send({
-                error: 'You must provide embedToken',
+                code: ErrorCode.TokenNotFound,
+                extra: {
+                    message: 'You must provide embedToken',
+                    hideRetry: true,
+                    hideDebugInfo: true,
+                },
             });
 
             return;
@@ -39,7 +56,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         if (!payload || typeof payload === 'string' || !('embedId' in payload)) {
             ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
             res.status(400).send({
-                code: 'ERR.CHARTS.WRONG_EMBED_TOKEN',
+                code: ErrorCode.InvalidToken,
                 extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
             });
 
@@ -79,6 +96,22 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         Promise.resolve(configPromise)
             .catch((err: unknown) => {
+                if (
+                    isResponseError(err) &&
+                    (err.response?.data.code === ErrorCode.IncorrectEntry ||
+                        err.response?.data.code === ErrorCode.IncorrectDepsIds)
+                ) {
+                    res.status(409).send({
+                        code: ErrorCode.OutdatedDependencies,
+                        extra: {
+                            message: 'Dependecies of embed are outdated',
+                            hideRetry: true,
+                            hideDebugInfo: true,
+                        },
+                    });
+
+                    return;
+                }
                 const error: ResolveConfigError =
                     isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);
                 const result: {
@@ -164,7 +197,12 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     entry = embeddingInfo.entry;
                 } else {
                     return res.status(400).send({
-                        error: 'Invalid config format',
+                        code: ErrorCode.InvalidToken,
+                        extra: {
+                            message: 'Invalid token',
+                            hideRetry: true,
+                            hideDebugInfo: true,
+                        },
                     });
                 }
 
@@ -181,6 +219,16 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
                     return res.status(400).send({
                         error: `Unknown config type ${configType}`,
+                    });
+                }
+
+                if (
+                    !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                    runnerFound.name === 'editor'
+                ) {
+                    ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
+                    return res.status(400).send({
+                        error: 'ChartEditor is disabled',
                     });
                 }
 

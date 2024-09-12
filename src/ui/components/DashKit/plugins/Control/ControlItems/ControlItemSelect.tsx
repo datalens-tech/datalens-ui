@@ -253,42 +253,49 @@ export const ControlItemSelect = ({
         const data = errorData?.data;
         const errorText = getErrorText(data || {});
         const errorTitle = data?.title;
+        const errorMessage = errorTitle || errorText;
+
+        const showButtons = !errorData?.extra?.disableActions;
 
         const buttonsSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
         const buttonsWidth = DL.IS_MOBILE ? 'max' : 'auto';
 
         return (
             <div className={b('error', {inside: true, mobile: DL.IS_MOBILE})}>
-                <span className={b('error-text')} title={errorText}>
-                    {errorTitle || errorText}
+                <span className={b('error-text')} title={errorMessage}>
+                    {errorMessage}
                 </span>
-                <div className={b('buttons')}>
-                    <Button
-                        size={buttonsSize}
-                        onClick={() => {
-                            setItemsLoader(true);
-                            init();
-                        }}
-                        width={buttonsWidth}
-                    >
-                        {i18n('button_retry')}
-                    </Button>
-                    <Button
-                        size={buttonsSize}
-                        view="flat"
-                        onClick={() =>
-                            dispatch(
-                                openDialogErrorWithTabs({
-                                    error: prepareSelectorError(data || {}) as ChartKitCustomError,
-                                    title: errorTitle,
-                                }),
-                            )
-                        }
-                        width={buttonsWidth}
-                    >
-                        {i18n('button_details')}
-                    </Button>
-                </div>
+                {showButtons && (
+                    <div className={b('buttons')}>
+                        <Button
+                            size={buttonsSize}
+                            onClick={() => {
+                                setItemsLoader(true);
+                                init();
+                            }}
+                            width={buttonsWidth}
+                        >
+                            {i18n('button_retry')}
+                        </Button>
+                        <Button
+                            size={buttonsSize}
+                            view="flat"
+                            onClick={() =>
+                                dispatch(
+                                    openDialogErrorWithTabs({
+                                        error: prepareSelectorError(
+                                            data || {},
+                                        ) as ChartKitCustomError,
+                                        title: errorTitle,
+                                    }),
+                                )
+                            }
+                            width={buttonsWidth}
+                        >
+                            {i18n('button_details')}
+                        </Button>
+                    </div>
+                )}
             </div>
         );
     };

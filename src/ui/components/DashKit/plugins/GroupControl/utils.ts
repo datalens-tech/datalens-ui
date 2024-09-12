@@ -3,7 +3,12 @@ import type {CSSProperties} from 'react';
 import type {StringParams} from '@gravity-ui/dashkit/helpers';
 import pick from 'lodash/pick';
 import type {DashTabItemControlData} from 'shared';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import {
+    CHARTS_ERROR_CODE,
+    type ResponseSuccessControls,
+} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+
+import type {SelectorError} from '../Control/types';
 
 import type {ExtendedLoadedData, GroupControlLocalMeta} from './types';
 
@@ -57,4 +62,21 @@ export const filterSignificantParams = ({
     }
 
     return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
+};
+
+export const getErrorTitle = (errorInfo: SelectorError) => {
+    const datasetsStatus =
+        errorInfo?.details && 'sources' in errorInfo.details && errorInfo.details.sources
+            ? Object.keys(errorInfo.details.sources)[0]
+            : '';
+    // TODO: use specific code instead of status
+    if (
+        errorInfo?.code === CHARTS_ERROR_CODE.DATA_FETCHING_ERROR &&
+        datasetsStatus &&
+        errorInfo?.details?.sources?.[datasetsStatus]?.status === 409
+    ) {
+        return 'Требуется обновление настроек';
+    }
+
+    return '';
 };

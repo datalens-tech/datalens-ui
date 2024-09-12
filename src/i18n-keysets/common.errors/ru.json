@@ -1,0 +1,7 @@
+{
+  "label_error-access-message": "Нет прав на просмотр",
+  "label_error-invalid-format-token-message": "Токен неверного формата",
+  "label_error-invalid-token-message": "Неподходящий токен",
+  "label_error-outdated-message": "Настройки встраивания не актуальны",
+  "label_error-token-not-found-message": "Токен не предоставлен"
+}
