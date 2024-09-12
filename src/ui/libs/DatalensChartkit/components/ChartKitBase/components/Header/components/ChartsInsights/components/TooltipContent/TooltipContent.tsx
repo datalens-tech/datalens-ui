@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {isEmpty} from 'lodash';
 import type {ChartsInsightsItem} from 'shared';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 
 import {ChartsInsightsIcon} from '../ChartsInsightsIcon/ChartsInsightsIcon';
 
@@ -35,10 +36,7 @@ export const TooltipContent = ({items, messages, onButtonClick}: TooltipContentP
                             {item.title}
                         </div>
                         {messages[item.locator] && (
-                            <div
-                                className={b('tooltip-message')}
-                                dangerouslySetInnerHTML={{__html: messages[item.locator].result}}
-                            />
+                            <YfmWrapper content={messages[item.locator].result} setByInnerHtml />
                         )}
                         <Button
                             className={b('tooltip-button')}
