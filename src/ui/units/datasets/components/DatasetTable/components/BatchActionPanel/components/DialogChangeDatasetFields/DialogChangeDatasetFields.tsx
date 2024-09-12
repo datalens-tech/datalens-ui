@@ -92,7 +92,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
         <Dialog open={open} onClose={onClose} size="s">
             <Dialog.Header caption={title} />
             <Dialog.Body>
-                <Alert theme="warning" message={warningMessage} />
+                <Alert theme="warning" message={<div>{warningMessage}</div>} />
                 <div className={b('content')}>
                     <span>{label}</span>
                     {Boolean(typeItems.length) && (
