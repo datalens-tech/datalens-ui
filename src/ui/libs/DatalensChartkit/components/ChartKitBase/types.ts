@@ -87,7 +87,7 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
-    forwardedRef: React.RefObject<ChartKit>;
+    forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
 };
 
 export interface ChartKitWrapperState {

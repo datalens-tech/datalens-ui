@@ -124,7 +124,7 @@ export type ChartWidgetProviderPropsWithRefProps = Omit<
 
 export type ChartProviderPropsWithRefProps = Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit>;
+        forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
         usageType: 'chart';
         isPageHidden?: boolean;
         autoupdateInterval?: number;
