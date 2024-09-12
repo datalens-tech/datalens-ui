@@ -650,6 +650,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        this.controlsStatus[controlId] = status;
+
         if (!this.controlsProgressCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
@@ -665,8 +667,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 localUpdateLoader: false,
             });
         }
-
-        this.controlsStatus[controlId] = status;
     };
 
     private renderControl(item: DashTabItemControlSingle) {
@@ -761,9 +761,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
 
-        if (Object.values(this.controlsStatus).every((status) => status === LOAD_STATUS.FAIL)) {
-            return null;
-        }
+        const disableButtons =
+            this.state.status === LOAD_STATUS.SUCCESS &&
+            Object.values(this.controlsStatus).every((status) => status === LOAD_STATUS.FAIL);
 
         return (
             <React.Fragment>
@@ -776,6 +776,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
+                        disabled={disableButtons}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -786,6 +787,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         onClick={resetAction}
                         onChange={this.handleResetChange}
                         qa={ControlQA.controlButtonReset}
+                        disabled={disableButtons}
                     />
                 )}
             </React.Fragment>
