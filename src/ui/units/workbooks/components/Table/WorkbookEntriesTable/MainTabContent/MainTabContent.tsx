@@ -68,7 +68,7 @@ const MainTabContent = ({
             return <div className={b('error-text')}>{i18n('label_error-load-entities')}</div>;
         }
 
-        if (chunk.length > 0 && isOpen) {
+        if (chunk && chunk.length > 0 && isOpen) {
             return (
                 <ChunkGroup
                     key={chunk[0].key}
