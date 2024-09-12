@@ -1,5 +1,6 @@
 import type {ConnectionData} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 
 import type {
@@ -114,6 +115,9 @@ const createConnection = async (
 ): Promise<{id?: string; error?: DataLensApiError}> => {
     try {
         const {id} = await getSdk().bi.createConnection(form);
+        reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
+            type: form.type,
+        });
         return {id};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchMetricaCounters failed', error);
@@ -124,9 +128,13 @@ const createConnection = async (
 const updateConnection = async (
     form: FormDict,
     connectionId: string,
+    dbType: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
         await getSdk().bi.updateConnection({...form, connectionId});
+        reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
+            type: dbType,
+        });
         return {error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchMetricaCounters failed', error);
