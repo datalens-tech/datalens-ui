@@ -29,14 +29,28 @@ function getSortingFunction(args: {
             const date1 = dateTimeUtc({input: cell1Value});
             const date2 = dateTimeUtc({input: cell2Value});
 
-            let result = 0;
             if (date1.isValid() && date1.isAfter(date2)) {
-                result = 1;
-            } else if (date2.isValid() && date2.isAfter(date1)) {
-                result = -1;
+                return 1;
             }
 
-            return result;
+            if (date2.isValid() && date2.isAfter(date1)) {
+                return -1;
+            }
+
+            return 0;
+        };
+    }
+
+    if (columnType === 'number') {
+        return function (row1, row2) {
+            const cell1Value = row1.original[columnIndex].value as number;
+            const cell2Value = row2.original[columnIndex].value as number;
+
+            if (cell1Value > cell2Value) {
+                return 1;
+            }
+
+            return cell1Value < cell2Value ? -1 : 0;
         };
     }
 
