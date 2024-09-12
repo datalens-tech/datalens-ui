@@ -151,4 +151,39 @@ datalensTest.describe('Wizard', () => {
             expect(rowCells).toEqual(initialRowContent);
         });
     });
+
+    datalensTest.describe('Pivot table', () => {
+        datalensTest.beforeEach(async ({page, config}) => {
+            await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+            const wizardPage = new WizardPage({page});
+
+            await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
+        });
+
+        datalensTest('Sorting text columns', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+
+            await expect(previewLoader).not.toBeVisible();
+            const initialOrder = [
+                ['Furniture', ''],
+                ['Office Supplies', ''],
+                ['Technology', ''],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(initialOrder);
+
+            // Sort values by clicking on header
+            await chartContainer.locator('thead', {hasText: 'Category'}).first().click();
+            await expect(previewLoader).not.toBeVisible();
+            const expectedOrder = [
+                ['Technology', ''],
+                ['Office Supplies', ''],
+                ['Furniture', ''],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
+        });
+    });
 });
