@@ -130,7 +130,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const history = useHistory();
 
-    const onUpdate = useBeforeLoad(props.onBeforeLoad);
+    const handleUpdate = useBeforeLoad(props.onBeforeLoad);
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -355,7 +355,10 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const debouncedChartReflow = React.useCallback(
         debounce(() => {
             handleChartkitReflow();
-            requestAnimationFrame(() => onUpdate?.());
+            // Triggering update after chart changed it size
+            if (handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
         [handleChartkitReflow],
     );
@@ -388,15 +391,15 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     }, [width, height, debouncedChartReflow]);
 
     /**
-     * changed position update
+     * changed position and loaded state watcher
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
     React.useEffect(() => {
-        if (!isLoading) {
-            onUpdate?.();
+        if (isInit && !isLoading) {
+            handleUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoading]);
+    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, handleUpdate]);
 
     /**
      * updating widget description by markdown
@@ -407,7 +410,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         }
         setDescription(loadedDescription);
         handleChartkitReflow();
-    }, [loadedDescription, description, handleChartkitReflow, onUpdate]);
+    }, [loadedDescription, description, handleChartkitReflow]);
 
     /**
      * updating window position on change fullscreen mode (for mob version)

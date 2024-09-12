@@ -31,14 +31,17 @@ const titlePlugin = {
 
         const data = props.data as DashTabItemTitle['data'];
 
-        const onUpdate = useBeforeLoad(props.onBeforeLoad);
+        const handleUpdate = useBeforeLoad(props.onBeforeLoad);
 
         /**
-         * call common for charts & selectors adjust function for widget
+         * Ref layout so that we could use actual state without passing link to layout object
          */
         const layoutRef = React.useRef(props.layout);
         layoutRef.current = props.layout;
 
+        /**
+         * call common for charts & selectors adjust function for widget
+         */
         const adjustLayout = React.useCallback(
             debounce((needSetDefault) => {
                 dashkitAdjustWidgetLayout({
@@ -80,7 +83,7 @@ const titlePlugin = {
             w: null,
         };
         React.useEffect(() => {
-            onUpdate?.();
+            handleUpdate?.();
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [
             currentLayout.x,
@@ -88,7 +91,6 @@ const titlePlugin = {
             currentLayout.h,
             currentLayout.w,
             classMod,
-            data.background?.color,
             data.size,
             data.text,
         ]);

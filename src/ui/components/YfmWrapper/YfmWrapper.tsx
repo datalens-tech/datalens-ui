@@ -30,6 +30,15 @@ const getMermaidTheme = (theme: string) => {
     return MERMAID_THEMES.includes(currentThemeType) ? currentThemeType : MERMAID_THEMES[0];
 };
 
+/**
+ * Check latex and mermaid containers
+ * when containers are first time passed they are empty and all data is stored in data attribute
+ * if they don't have any child element it's an indicator that we need to update them
+ */
+const isNeedToUpdateNode = (el: Element) => {
+    return el.children?.length === 0;
+};
+
 export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps, 'ref'>>(
     (props, forwardedRef) => {
         const YfmWrapperContent = registry.common.components.get('YfmWrapperContent');
@@ -83,9 +92,7 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 if (hasLatexScript) {
                     const latexNodes = [
                         ...element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`),
-                    ].filter((el) => {
-                        return el?.childNodes.length === 0;
-                    });
+                    ].filter(isNeedToUpdateNode);
 
                     if (latexNodes.length) {
                         renderLatex({nodes: latexNodes}).then(() => {
@@ -97,9 +104,7 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 if (hasMermaidScript) {
                     const mermaidNodes = [
                         ...element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`),
-                    ].filter((el) => {
-                        return el?.childNodes.length === 0;
-                    });
+                    ].filter(isNeedToUpdateNode);
 
                     if (mermaidNodes.length) {
                         renderMermaid({

@@ -18,12 +18,12 @@ type RendererProps = {
 
 export const RendererWrapper: React.FC<RendererProps> = React.memo(
     ({children, type, nodeRef, classMod, ...props}) => {
-        const _nodeRef = React.useRef(null);
-        useWidgetContext(props.id, nodeRef || _nodeRef);
+        const innerNodeRef = React.useRef(null);
+        useWidgetContext(props.id, nodeRef || innerNodeRef);
 
         return (
             <div
-                ref={nodeRef || _nodeRef}
+                ref={nodeRef || innerNodeRef}
                 className={b('wrapper', {
                     [type]: Boolean(type),
                     [String(classMod)]: Boolean(classMod),

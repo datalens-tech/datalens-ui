@@ -44,14 +44,22 @@ const textPlugin = {
 
         const previousPendingState = usePrevious(isPending);
         const isPendingChanged = isPending !== previousPendingState;
-        const onUpdate = useBeforeLoad(props.onBeforeLoad);
+        const handleUpdate = useBeforeLoad(props.onBeforeLoad);
 
         /**
-         * call common for charts & selectors adjust function for widget
+         * Increment render key
+         */
+        const YfmWrapperKeyRef = React.useRef(0);
+
+        /**
+         * Ref layout so that we could use actual state without passing link to layout object
          */
         const layoutRef = React.useRef(props.layout);
         layoutRef.current = props.layout;
 
+        /**
+         * call common for charts & selectors adjust function for widget
+         */
         const adjustLayout = React.useCallback(
             debounce((needSetDefault) => {
                 dashkitAdjustWidgetLayout({
@@ -76,8 +84,8 @@ const textPlugin = {
          */
         const handleTextRender = React.useCallback(() => {
             adjustLayout(!props.data.autoHeight);
-            onUpdate?.();
-        }, [onUpdate, adjustLayout, props.data.autoHeight]);
+            handleUpdate?.();
+        }, [handleUpdate, adjustLayout, props.data.autoHeight]);
 
         /**
          * get prepared text with markdown
@@ -96,7 +104,7 @@ const textPlugin = {
         );
 
         /**
-         * force rerender after get markdown text to see magic links
+         * force rerender after get autoheight prop is changed
          */
         React.useEffect(() => {
             handleTextRender();
@@ -105,10 +113,12 @@ const textPlugin = {
         /**
          * watching content changes to check if adjustLayout needed for autoheight widgets update
          */
+        // TODO move this logic in isPending check hook and instead of useEffect use it as callback
         React.useEffect(() => {
             if (!mutationObserver) {
                 return;
             }
+
             mutationObserver.current = new MutationObserver(() => {
                 requestAnimationFrame(() => handleTextRender());
             });
@@ -146,30 +156,46 @@ const textPlugin = {
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
 
-        React.useEffect(() => {
-            if (isPendingChanged && !isPending) {
-                handleTextRender();
-            }
-        }, [isPendingChanged, isPending, handleTextRender]);
-
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
             y: null,
             h: null,
             w: null,
         };
+
+        /**
+         * triggering update after text is loaded
+         */
         React.useEffect(() => {
-            onUpdate?.();
+            if (isPendingChanged && !isPending) {
+                handleTextRender();
+            }
+        }, [isPendingChanged, isPending, handleTextRender]);
+
+        /**
+         * watching for all visual props of chart
+         */
+        React.useEffect(() => {
+            handleUpdate?.();
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [
+            // Widget dimensions
             currentLayout.x,
             currentLayout.y,
             currentLayout.h,
             currentLayout.w,
+            // classMod is accumulator of data.background.['enabled' | 'color'] object
             classMod,
-            data.background?.color,
-            data.text,
         ]);
+
+        /**
+         * Increment key to force yfm editor redraw
+         * In that case if text is changed shallow matcher content props will not detect as there is always passed <div/>
+         * So to force YfmWrapper to update when text changes key prop is used
+         */
+        React.useEffect(() => {
+            YfmWrapperKeyRef.current += 1;
+        }, [YfmWrapperKeyRef, data.text]);
 
         return (
             <RendererWrapper
@@ -181,7 +207,7 @@ const textPlugin = {
             >
                 <YfmWrapper
                     // needed for force update when text is changed
-                    key={data.text}
+                    key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
                     className={b({'with-color': Boolean(showBgColor)})}
                     metaScripts={metaScripts}
