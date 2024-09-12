@@ -215,7 +215,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     }, [requestCancellationRef, dataProvider, requestId]);
 
     const rootNodeRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.createRef<ChartKit>(); // ref is forwarded to ChartKit
+    const chartKitRef = React.useRef<ChartKit>(); // ref is forwarded to ChartKit
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
 
     const [initialParams, setInitialParams] = React.useState<StringParams>(
