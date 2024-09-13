@@ -3,7 +3,6 @@ import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
-import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
@@ -309,9 +308,6 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
         if (connectionId) {
             // technotes [2]
             flow([resetFormsData, dispatch])();
-            reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
-                type: resultForm.type,
-            });
         }
 
         if (templateFolderId) {
@@ -375,14 +371,15 @@ export function updateConnection() {
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
-        const {error} = await api.updateConnection(resultForm, connectionData.id as string);
+        const {error} = await api.updateConnection(
+            resultForm,
+            connectionData.id as string,
+            connectionData.db_type as string,
+        );
         batch(() => {
             if (error) {
                 flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
-                reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
-                    type: connectionData.db_type,
-                });
                 flow([setInitialForm, dispatch])({updates: form});
             }
 
