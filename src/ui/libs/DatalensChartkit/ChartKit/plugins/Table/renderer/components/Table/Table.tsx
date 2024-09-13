@@ -244,7 +244,7 @@ export const Table = React.memo<Props>((props: Props) => {
                                 style={body.style}
                                 onCellClick={handleCellClick}
                             />
-                            <TableFooter rows={footer.rows} style={body.style} />
+                            <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
                     )}
                 </div>

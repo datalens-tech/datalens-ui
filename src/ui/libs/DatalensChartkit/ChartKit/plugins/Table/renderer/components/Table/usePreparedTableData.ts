@@ -369,18 +369,19 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
+    const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
     const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
     const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
         rows: hasFooter ? getFooterRows(table) : [],
-        style: {gridTemplateColumns},
+        style: {gridTemplateColumns, transform},
     };
 
     return {
         header,
         body: {
             rows,
-            style: {gridTemplateColumns, transform: `translateY(${rows[0]?.y}px)`},
+            style: {gridTemplateColumns, transform},
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
