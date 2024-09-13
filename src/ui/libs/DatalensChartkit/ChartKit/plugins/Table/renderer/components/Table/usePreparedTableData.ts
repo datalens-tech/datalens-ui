@@ -83,7 +83,6 @@ function getFooterRows(table: Table<TData>) {
 
             const cellStyle: React.CSSProperties = {
                 left: pinned ? originalHeadData?.left : undefined,
-                // ...(originalFooterData?.css ?? {}),
             };
 
             return {
