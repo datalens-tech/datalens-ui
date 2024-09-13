@@ -30,8 +30,11 @@ export const TableFooter = React.memo<Props>((props: Props) => {
                                     pinned: cell.pinned,
                                     type: cell.type,
                                 })}
+                                style={{
+                                    ...cell.style,
+                                }}
                             >
-                                <div style={cell.style} className={b('footer-cell-content')}>
+                                <div style={cell.contentStyle} className={b('footer-cell-content')}>
                                     {cell.content}
                                 </div>
                             </td>

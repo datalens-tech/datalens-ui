@@ -76,15 +76,19 @@ function getFooterRows(table: Table<TData>) {
             const columnDef = cell.column.columnDef;
             const originalHeadData = columnDef.meta?.head;
             const originalFooterData = columnDef?.meta?.footer;
-            const style = originalFooterData?.css;
             const pinned = Boolean(originalHeadData?.pinned);
             const content = cell.isPlaceholder
                 ? null
                 : flexRender(columnDef.footer, cell.getContext());
 
+            const cellStyle: React.CSSProperties = {
+                left: pinned ? originalHeadData?.left : undefined,
+            };
+
             return {
                 id: cell.id,
-                style,
+                style: cellStyle,
+                contentStyle: originalFooterData?.css ?? {},
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
