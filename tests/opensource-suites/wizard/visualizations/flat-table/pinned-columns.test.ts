@@ -1,6 +1,11 @@
 import {expect} from '@playwright/test';
 
-import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
+import {
+    ChartKitQa,
+    DialogFieldBarsSettingsQa,
+    WizardPageQa,
+    WizardVisualizationId,
+} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
@@ -27,19 +32,23 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.FlatTableColumns,
                 'postal_code',
             );
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.FlatTableColumns,
-                'product_name',
-            );
-            await wizardPage.sectionVisualization.addFieldByClick(
-                PlaceholderName.FlatTableColumns,
-                'product_name',
-            );
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum(float([Sales]))');
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.FlatTableColumns,
                 'SalesSum',
             );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'product_name',
+            );
+
+            // Add a linear indicator to check that it is not visible through the pinned columns
+            await wizardPage.visualizationItemDialog.open(
+                PlaceholderName.FlatTableColumns,
+                'SalesSum',
+            );
+            await wizardPage.page.locator(slct(DialogFieldBarsSettingsQa.EnableButton)).click();
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
             await wizardPage.columnSettings.open();
             await wizardPage.columnSettings.switchUnit('product_name', 'percent');
@@ -53,6 +62,9 @@ datalensTest.describe('Wizard', () => {
             await table.hover({position: {x: 10, y: 10}});
 
             await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+
+            await page.mouse.wheel(50, 0);
             await expect(chartContainer).toHaveScreenshot();
 
             await page.mouse.wheel(10000, 0);
