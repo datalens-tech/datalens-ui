@@ -96,6 +96,7 @@ export interface DialogChartWidgetProps {
 
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
+    enableFiltering?: boolean;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
@@ -128,6 +129,7 @@ class DialogChartWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableBackgroundColor: false,
+        enableFiltering: true,
         openedItemData: {
             hideTitle: false,
             tabs: [
@@ -579,6 +581,7 @@ class DialogChartWidget extends React.PureComponent<
             navigationPath,
             enableAutoheight,
             enableBackgroundColor,
+            enableFiltering,
             changeNavigationPath,
         } = this.props;
 
@@ -723,7 +726,7 @@ class DialogChartWidget extends React.PureComponent<
                         )}
                     </Line>
                 )}
-                {this.renderFilteringCharts()}
+                {enableFiltering && this.renderFilteringCharts()}
                 {this.renderParams()}
             </React.Fragment>
         );
