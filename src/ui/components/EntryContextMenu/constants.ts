@@ -173,7 +173,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     // different Copy menu for dash/widgets and datasets/configs
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dash, EntryScope.Widget],
+        scopes: [EntryScope.Dash, EntryScope.Widget, EntryScope.Report],
         // allow to show if there are no permissions
     },
     {
