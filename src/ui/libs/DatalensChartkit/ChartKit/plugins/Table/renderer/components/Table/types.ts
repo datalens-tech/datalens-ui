@@ -120,6 +120,7 @@ export type FooterCellViewData = {
     id: string;
     content: JSX.Element | React.ReactNode;
     style?: React.CSSProperties;
+    contentStyle?: React.CSSProperties;
     pinned?: boolean;
     type?: 'number';
 };
