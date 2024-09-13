@@ -369,7 +369,8 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
-    const hasFooter = columns.some((column) => column.footer);
+    const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
+    const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
         rows: hasFooter ? getFooterRows(table) : [],
         style: {gridTemplateColumns},
@@ -379,7 +380,7 @@ export const usePreparedTableData = (props: {
         header,
         body: {
             rows,
-            style: {gridTemplateColumns},
+            style: {gridTemplateColumns, transform: `translateY(${rows[0]?.y}px)`},
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
