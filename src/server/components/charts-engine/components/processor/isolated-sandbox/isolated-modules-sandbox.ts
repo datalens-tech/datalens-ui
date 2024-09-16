@@ -7,12 +7,6 @@ import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
-import {
-    libsControlV1Interop,
-    libsDatalensV3Interop,
-    libsDatasetV2Interop,
-    libsQlChartV1Interop,
-} from './interop';
 import type {ChartEditorGetTranslation} from './interop/charteditor-api';
 import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
@@ -123,19 +117,9 @@ const execute = async ({
                 getUserLogin: () => "${chartEditorApi.getUserLogin()}",
                 getTranslation: (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, params),
            };
-           
-           ${libsControlV1Interop.prepareAdapter};
-           ${libsDatalensV3Interop.prepareAdapter};
-           ${libsQlChartV1Interop.prepareAdapter}
-           ${libsDatasetV2Interop.prepareAdapter}
 
            const require = ${requireShim.toString()};
            `;
-
-        libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi});
-        libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
-        libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
-        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
         const after = `
             __modules["${name}"] = module.exports
