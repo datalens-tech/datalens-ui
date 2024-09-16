@@ -4,7 +4,7 @@ import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {isNull} from 'lodash';
+import isNull from 'lodash/isNull';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -273,6 +273,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const modalBody = this.renderModalBody();
         if (!modalBody) {
+            // Added onCancel to not add dialogs to redux storage
             this.props.onCancel();
             return null;
         }
