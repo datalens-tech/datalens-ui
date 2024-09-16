@@ -10,9 +10,9 @@ import {
     NumberFormatType,
     NumberFormatUnit,
 } from 'shared';
-import NumberInput from 'ui/units/wizard/components/NumberInput/NumberInput';
 import type {Required} from 'utility-types';
 
+import NumberInput from '../../../../NumberInput/NumberInput';
 import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 
 import './Number.scss';

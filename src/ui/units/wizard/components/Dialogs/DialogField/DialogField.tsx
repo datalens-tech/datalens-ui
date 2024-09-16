@@ -4,6 +4,7 @@ import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
+import {isNull} from 'lodash';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -326,7 +327,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             this.renderBackgroundSettings(),
         ];
 
-        if (bodyItems.every((bodyItem) => !bodyItem)) {
+        if (bodyItems.every(isNull)) {
             return null;
         }
 
@@ -359,38 +360,36 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             currentPlaceholder,
         } = this.state;
 
-        if (!item || !options) {
+        if (!item || !options || isPseudoField(item)) {
             return null;
         }
 
         return (
-            !isPseudoField(item) && (
-                <DialogFieldMainSection
-                    placeholderId={placeholderId}
-                    item={item}
-                    extra={extra}
-                    title={title}
-                    originTitle={originTitle}
-                    hideLabelMode={hideLabelMode}
-                    options={options}
-                    data_type={data_type}
-                    format={format}
-                    aggregation={aggregation}
-                    grouping={grouping}
-                    cast={cast}
-                    availableLabelModes={availableLabelModes}
-                    visualizationId={visualizationId}
-                    formatting={formatting}
-                    currentPlaceholder={currentPlaceholder}
-                    handleTitleInputUpdate={this.handleTitleInput}
-                    handleLabelModeUpdate={this.handleLabelModeUpdate}
-                    handleFieldTypeUpdate={this.handleFieldTypeUpdate}
-                    handleLabelHideUpdate={this.handleLabelHideUpdate}
-                    handleDateFormatUpdate={this.handleDateFormatUpdate}
-                    handleAggregationUpdate={this.handleAggregationUpdate}
-                    handleDateGroupUpdate={this.handleDateGroupUpdate}
-                />
-            )
+            <DialogFieldMainSection
+                placeholderId={placeholderId}
+                item={item}
+                extra={extra}
+                title={title}
+                originTitle={originTitle}
+                hideLabelMode={hideLabelMode}
+                options={options}
+                data_type={data_type}
+                format={format}
+                aggregation={aggregation}
+                grouping={grouping}
+                cast={cast}
+                availableLabelModes={availableLabelModes}
+                visualizationId={visualizationId}
+                formatting={formatting}
+                currentPlaceholder={currentPlaceholder}
+                handleTitleInputUpdate={this.handleTitleInput}
+                handleLabelModeUpdate={this.handleLabelModeUpdate}
+                handleFieldTypeUpdate={this.handleFieldTypeUpdate}
+                handleLabelHideUpdate={this.handleLabelHideUpdate}
+                handleDateFormatUpdate={this.handleDateFormatUpdate}
+                handleAggregationUpdate={this.handleAggregationUpdate}
+                handleDateGroupUpdate={this.handleDateGroupUpdate}
+            />
         );
     }
 
