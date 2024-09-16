@@ -29,6 +29,19 @@ export function mapTableData(data: TableData): Required<TableData> {
             const cells = new Array(head.length).fill(null).map(() => ({value: ''}));
             return {head: newHead, rows: [{cells}], footer};
         }
+
+        // chart as table
+        if ('values' in firstRow) {
+            return {
+                head: newHead,
+                rows: rows.map(({values}) => ({
+                    cells: values.map((val) => {
+                        return {value: val};
+                    }),
+                })),
+                footer,
+            };
+        }
     }
 
     return {head: newHead, rows, footer};
