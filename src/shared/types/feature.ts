@@ -70,6 +70,7 @@ export enum Feature {
     NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
+    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
     /** Chart runner for the execution of trusted code in wizard. */
     WorkerChartBuilder = 'WorkerChartBuilder',
