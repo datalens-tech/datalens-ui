@@ -1,14 +1,12 @@
 import React from 'react';
 
-import {ArrowUpRightFromSquare} from '@gravity-ui/icons';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Alert, Button, Dialog, Icon, Select} from '@gravity-ui/uikit';
+import {Alert, Dialog, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DATASET_FIELD_TYPES, DatasetFieldAggregation} from 'shared';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
-import {DL} from 'ui/constants';
 import {getTypeSelectOptions} from 'ui/utils/getTypeSelectOptions';
 import {getDatasetLabelValue} from 'ui/utils/helpers';
 
@@ -30,7 +28,7 @@ export interface DialogChangeDatasetFieldsProps {
     open: boolean;
     onClose: () => void;
     label: string;
-    warningMessage: string;
+    warningMessage: React.ReactElement | string;
     title: string;
     fieldsGuids: string[];
     batchUpdateFields: BatchUpdateFields;
@@ -97,20 +95,20 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
             <Dialog.Body>
                 <Alert
                     theme="info"
-                    message={warningMessage}
+                    message={<div>{warningMessage}</div>}
                     layout="horizontal"
-                    actions={
-                        isAggregationsDialog && (
-                            <Button
-                                size="s"
-                                className={b('detail-btn')}
-                                href={`${DL.ENDPOINTS.datalensDocs}/dataset/data-model#aggregation`}
-                                target="_blank"
-                            >
-                                Подробнее <Icon data={ArrowUpRightFromSquare} />
-                            </Button>
-                        )
-                    }
+                    // actions={
+                    //     isAggregationsDialog && (
+                    //         <Button
+                    //             size="s"
+                    //             className={b('detail-btn')}
+                    //             href={`${DL.ENDPOINTS.datalensDocs}/dataset/data-model#aggregation`}
+                    //             target="_blank"
+                    //         >
+                    //             Подробнее <Icon data={ArrowUpRightFromSquare} />
+                    //         </Button>
+                    //     )
+                    // }
                 />
                 <div className={b('content')}>
                     <span>{label}</span>
