@@ -4,7 +4,6 @@ import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
-import {isNull} from 'lodash';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -327,7 +326,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             this.renderBackgroundSettings(),
         ];
 
-        if (bodyItems.every(isNull)) {
+        if (bodyItems.every((bodyItem) => !bodyItem)) {
             return null;
         }
 
