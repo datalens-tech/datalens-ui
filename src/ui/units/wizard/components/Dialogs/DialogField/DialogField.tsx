@@ -4,6 +4,7 @@ import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
+import isNull from 'lodash/isNull';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -52,7 +53,10 @@ import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSett
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
 import {DialogFieldMainSection} from './components/DialogFieldMainSection/DialogFieldMainSection';
 import {DialogFieldRow} from './components/DialogFieldRow/DialogFieldRow';
-import Formatting from './components/Formatting/Formatting';
+import NumberComponent, {
+    isFloatNumberFormatting,
+    isIntegerNumberFormatting,
+} from './components/Number/Number';
 import {SubTotalsSettings} from './components/SubTotalsSettings/SubTotalsSettings';
 import {
     getDefaultBackgroundSettings,
@@ -267,6 +271,13 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 !Number.isNaN((formatting as CommonNumberFormattingOptions).precision);
         }
 
+        const modalBody = this.renderModalBody();
+        if (!modalBody) {
+            // Added onCancel to remove dialog from redux storage
+            this.props.onCancel();
+            return null;
+        }
+
         return (
             <Dialog
                 open={true}
@@ -279,7 +290,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         caption={item.fakeTitle || item.title}
                         insertBefore={<Icon data={dataTypeIconData} width="16" />}
                     />
-                    <Dialog.Body className={b('body')}>{this.renderModalBody()}</Dialog.Body>
+                    <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
                     <Dialog.Footer
                         preset="default"
                         onClickButtonCancel={() => {
@@ -301,6 +312,36 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
     }
 
     renderModalBody() {
+        const {item} = this.state;
+
+        if (!item) {
+            return null;
+        }
+
+        const bodyItems = [
+            this.renderMainSection(),
+            this.renderMarkdownSettings(),
+            this.renderHintSettings(),
+            this.renderFormattingItem(),
+            this.renderSubTotalsSettings(),
+            this.renderBarsSettings(),
+            this.renderBackgroundSettings(),
+        ];
+
+        if (bodyItems.every(isNull)) {
+            return null;
+        }
+
+        return (
+            <>
+                {bodyItems.map((bodyItem, index) => (
+                    <React.Fragment key={index}>{bodyItem}</React.Fragment>
+                ))}
+            </>
+        );
+    }
+
+    private renderMainSection() {
         const {
             visualizationId,
             item,
@@ -320,58 +361,61 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             currentPlaceholder,
         } = this.state;
 
-        if (!item) {
+        if (!item || !options || isPseudoField(item)) {
+            return null;
+        }
+
+        return (
+            <DialogFieldMainSection
+                placeholderId={placeholderId}
+                item={item}
+                extra={extra}
+                title={title}
+                originTitle={originTitle}
+                hideLabelMode={hideLabelMode}
+                options={options}
+                data_type={data_type}
+                format={format}
+                aggregation={aggregation}
+                grouping={grouping}
+                cast={cast}
+                availableLabelModes={availableLabelModes}
+                visualizationId={visualizationId}
+                formatting={formatting}
+                currentPlaceholder={currentPlaceholder}
+                handleTitleInputUpdate={this.handleTitleInput}
+                handleLabelModeUpdate={this.handleLabelModeUpdate}
+                handleFieldTypeUpdate={this.handleFieldTypeUpdate}
+                handleLabelHideUpdate={this.handleLabelHideUpdate}
+                handleDateFormatUpdate={this.handleDateFormatUpdate}
+                handleAggregationUpdate={this.handleAggregationUpdate}
+                handleDateGroupUpdate={this.handleDateGroupUpdate}
+            />
+        );
+    }
+
+    private renderFormattingItem = () => {
+        const {item, cast, formatting} = this.state;
+
+        if (!item || !this.props.formattingEnabled) {
             return null;
         }
 
         const formattingDataType = getFormattingDataType(item, cast);
 
-        return (
-            <>
-                {!isPseudoField(item) && (
-                    <DialogFieldMainSection
-                        placeholderId={placeholderId}
-                        item={item}
-                        extra={extra}
-                        title={title}
-                        originTitle={originTitle}
-                        hideLabelMode={hideLabelMode}
-                        options={options}
-                        data_type={data_type}
-                        format={format}
-                        aggregation={aggregation}
-                        grouping={grouping}
-                        cast={cast}
-                        availableLabelModes={availableLabelModes}
-                        visualizationId={visualizationId}
-                        formatting={formatting}
-                        currentPlaceholder={currentPlaceholder}
-                        handleTitleInputUpdate={this.handleTitleInput}
-                        handleLabelModeUpdate={this.handleLabelModeUpdate}
-                        handleFieldTypeUpdate={this.handleFieldTypeUpdate}
-                        handleLabelHideUpdate={this.handleLabelHideUpdate}
-                        handleDateFormatUpdate={this.handleDateFormatUpdate}
-                        handleAggregationUpdate={this.handleAggregationUpdate}
-                        handleDateGroupUpdate={this.handleDateGroupUpdate}
-                    />
-                )}
-                {this.renderMarkdownSettings()}
-                {this.renderHintSettings()}
-                {this.props.formattingEnabled && (
-                    <Formatting
-                        dataType={formattingDataType}
-                        formatting={formatting}
-                        onChange={(updatedFormatting) =>
-                            this.setState({formatting: updatedFormatting})
-                        }
-                    />
-                )}
-                {this.renderSubTotalsSettings()}
-                {this.renderBarsSettings()}
-                {this.renderBackgroundSettings()}
-            </>
-        );
-    }
+        const numberProps = {
+            dataType: formattingDataType,
+            formatting,
+            onChange: (updatedFormatting: CommonNumberFormattingOptions) =>
+                this.setState({formatting: updatedFormatting}),
+        };
+
+        if (isFloatNumberFormatting(numberProps) || isIntegerNumberFormatting(numberProps)) {
+            return <NumberComponent {...numberProps} />;
+        }
+
+        return null;
+    };
 
     private renderHintSettings() {
         const {item, placeholderId} = this.props;
