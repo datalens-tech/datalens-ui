@@ -94,18 +94,18 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 this.isMetricVisualization) &&
             (commonDataType === 'date' || item.grouping);
 
-        const items = [
-            this.renderOriginTitleInput(),
-            this.renderTitleInput(),
-            this.renderModesSelect(),
-            this.renderFieldTypeSelect(),
-            (commonDataType === 'date' || grouping) && this.renderDateGroupSelect(),
-            enableFormat && this.renderDateFormatSelect(),
-            this.renderAggregationSelect(),
-            this.renderLabelHide(),
-        ];
-
-        return <React.Fragment>{items.map((item) => item)}</React.Fragment>;
+        return (
+            <React.Fragment>
+                {this.renderOriginTitleInput()}
+                {this.renderTitleInput()}
+                {this.renderModesSelect()}
+                {this.renderFieldTypeSelect()}
+                {(commonDataType === 'date' || grouping) && this.renderDateGroupSelect()}
+                {enableFormat && this.renderDateFormatSelect()}
+                {this.renderAggregationSelect()}
+                {this.renderLabelHide()}
+            </React.Fragment>
+        );
     }
     renderOriginTitleInput() {
         const {extra, originTitle} = this.props;
