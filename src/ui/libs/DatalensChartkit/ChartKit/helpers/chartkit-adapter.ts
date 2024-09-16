@@ -92,10 +92,11 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
         case 'table': {
             const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
+            const isPivot = isPivotTable(data);
             const shouldRenderNewTable =
                 isWizardOrQl &&
-                !isPivotTable(data) &&
-                Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl);
+                ((isPivot && Utils.isEnabledFeature(Feature.NewPluginForPivotTables)) ||
+                    (!isPivot && Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl)));
 
             if (shouldRenderNewTable) {
                 chartkitType = 'table';

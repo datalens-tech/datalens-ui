@@ -17,13 +17,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
     const {rows, style, onCellClick} = props;
 
     return (
-        <tbody
-            className={b('body')}
-            style={{
-                ...style,
-                transform: `translateY(${rows[0]?.y}px)`,
-            }}
-        >
+        <tbody className={b('body')} style={style}>
             {rows.map((row) => {
                 return (
                     <tr data-index={row.index} key={row.id} className={b('tr')} ref={row.ref}>
