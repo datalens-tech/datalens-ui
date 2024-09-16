@@ -1,4 +1,3 @@
-import type {ConfigItemData} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import type {EntryScope} from 'shared';
 import {ITEM_TYPE} from 'ui/constants/dialogs';
@@ -26,7 +25,7 @@ export const migrateItemDataOnPaste = ({
     }
 
     if (itemData.type === ITEM_TYPE.GROUP_CONTROL) {
-        migratedItemData.data.group = (itemData as ConfigItemData).group?.map((item) => {
+        migratedItemData.data.group = itemData.data.group?.map((item) => {
             return update(item, {$unset: ['id']});
         });
     }

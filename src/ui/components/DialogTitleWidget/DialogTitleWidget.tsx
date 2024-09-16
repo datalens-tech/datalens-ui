@@ -46,6 +46,7 @@ interface DialogTitleWidgetProps {
     dialogIsVisible: boolean;
 
     enableAutoheight?: boolean;
+    enableShowInTOC?: boolean;
 
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
@@ -57,6 +58,7 @@ class DialogTitleWidget extends React.PureComponent<
 > {
     static defaultProps = {
         enableAutoheight: true,
+        enableShowInTOC: true,
         openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
@@ -90,7 +92,7 @@ class DialogTitleWidget extends React.PureComponent<
     state: DialogTitleWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
+        const {openedItemId, dialogIsVisible, enableAutoheight, enableShowInTOC} = this.props;
         const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
             this.state;
 
@@ -120,17 +122,21 @@ class DialogTitleWidget extends React.PureComponent<
                         radioText={RADIO_TEXT}
                         onChange={this.onSizeChange}
                     />
-                    <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={showInTOC}
-                            onChange={() =>
-                                this.setState((prevState) => ({showInTOC: !prevState.showInTOC}))
-                            }
-                            className={b('checkbox')}
-                        >
-                            {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
-                        </Checkbox>
-                    </div>
+                    {enableShowInTOC && (
+                        <div className={b('setting-row')}>
+                            <Checkbox
+                                checked={showInTOC}
+                                onChange={() =>
+                                    this.setState((prevState) => ({
+                                        showInTOC: !prevState.showInTOC,
+                                    }))
+                                }
+                                className={b('checkbox')}
+                            >
+                                {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
+                            </Checkbox>
+                        </div>
+                    )}
                     {enableAutoheight && (
                         <div className={b('setting-row')}>
                             <Checkbox

@@ -79,7 +79,7 @@ export const Table = React.memo<Props>((props: Props) => {
             };
 
             if (column) {
-                const columnId = get(column, 'fieldId', column.id);
+                const columnId = column.id;
                 sortParams._columnId = `_id=${columnId}_name=${column.name}`;
                 sortParams._sortOrder = String(sortOrder === 'desc' ? -1 : 1);
             }
@@ -244,7 +244,7 @@ export const Table = React.memo<Props>((props: Props) => {
                                 style={body.style}
                                 onCellClick={handleCellClick}
                             />
-                            <TableFooter rows={footer.rows} style={body.style} />
+                            <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
                     )}
                 </div>
