@@ -22,6 +22,7 @@ import type {
     DatasetFieldCalcMode,
     Field,
     PlaceholderSettings,
+    QLChartType,
     Shared,
     Sort,
 } from 'shared';
@@ -40,6 +41,7 @@ import {
 } from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
+import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
 import {
     createFieldFromVisualization,
@@ -87,6 +89,8 @@ import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEdito
 import {updateVisualizationPlaceholderItems} from '../../../../actions/placeholder';
 import {parseFilterDate, parseParameterDefaultValue} from '../../../../utils/wizard';
 
+import {emptyQaDialogTypes} from './constants';
+
 import './VisualizationItem.scss';
 
 const b = block('wizard-visualization-item');
@@ -99,6 +103,7 @@ interface Props extends StateProps, DispatchProps {
     sdk: SDK;
     visualization: Shared['visualization'];
     onUpdate?: () => void;
+    qlChartType: QLChartType | null;
 }
 
 interface State {}
@@ -333,7 +338,10 @@ class VisualizationItem extends React.Component<Props, State> {
                 <div
                     className={`item-icon ${item.data_type}-icon`}
                     onClick={(event) => {
-                        if (isParameter(item)) {
+                        const isEmptyQaDialog =
+                            this.props.qlChartType && emptyQaDialogTypes.includes(item.data_type);
+
+                        if (isParameter(item) || isEmptyQaDialog) {
                             return;
                         }
 
@@ -967,6 +975,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
         workbookId: selectWizardWorkbookId(state),
+        qlChartType: getChartType(state),
     };
 };
 
