@@ -13,7 +13,7 @@ import {
 export type ChartEditorGetTranslation = (
     keyset: string,
     key: string,
-    getTranslationParams?: string,
+    params?: Record<string, string | number | string[]>,
 ) => string;
 export type ChartEditorGetSharedData = () => {
     [key: string]: object;
@@ -23,8 +23,8 @@ export type ChartEditorUserLang = string;
 export type ChartEditorUserLogin = string;
 export type ChartEditorAttachHandler = (handlerConfig: string) => string;
 export type ChartEditorAttachFormatter = (formatterConfig: string) => string;
-export type ChartEditorGetSecrets = () => string;
-export type ChartEditorResolveInterval = (interval: string) => string | null;
+export type ChartEditorGetSecrets = () => {[key: string]: string};
+export type ChartEditorResolveInterval = (interval: string) => {from: string; to: string} | null;
 export type ChartEditorResolveOperation = (operation: string) => string | null;
 export type ChartEditorSetError = (error: string) => undefined;
 export type ChartEditorSetChartsInsights = (insights: string) => undefined;
@@ -68,11 +68,8 @@ export function prepareChartEditorApi({
     chartEditorApi: IChartEditor;
     userLogin: string | null;
 }) {
-    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams?: string) => {
-        const parsedgetTranslationParams = getTranslationParams
-            ? JSON.parse(getTranslationParams)
-            : undefined;
-        return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, params) => {
+        return chartEditorApi.getTranslation(keyset, key, params);
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
@@ -95,7 +92,7 @@ export function prepareChartEditorApi({
 
     if (chartEditorApi.getSecrets) {
         jail.setSync('_ChartEditor_getSecrets', (() =>
-            JSON.stringify(chartEditorApi.getSecrets())) satisfies ChartEditorGetSecrets);
+            chartEditorApi.getSecrets()) satisfies ChartEditorGetSecrets);
     }
 
     jail.setSync('_ChartEditor_resolveRelative', ((...resolveRelativeParams) => {
@@ -103,7 +100,7 @@ export function prepareChartEditorApi({
     }) satisfies ChartEditorResolveRelative);
 
     jail.setSync('_ChartEditor_resolveInterval', ((intervalStr: string) => {
-        return JSON.stringify(chartEditorApi.resolveInterval(intervalStr));
+        return chartEditorApi.resolveInterval(intervalStr);
     }) satisfies ChartEditorResolveInterval);
 
     jail.setSync('_ChartEditor_resolveOperation', ((input: string) => {
@@ -154,6 +151,7 @@ export function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', (() => {
+            // There may be objects inside the uploaded data that cannot be transferred
             const loadedData = chartEditorApi.getLoadedData();
             return JSON.stringify(loadedData);
         }) satisfies ChartEditorGetLoadedData);

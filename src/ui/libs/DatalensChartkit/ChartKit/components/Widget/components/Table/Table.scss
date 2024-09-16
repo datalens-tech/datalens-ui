@@ -176,4 +176,8 @@
         // safari(15) cannot apply 100% row height to a cell
         height: auto;
     }
+
+    &__th {
+        font-size: 10pt;
+    }
 }

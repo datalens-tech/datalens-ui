@@ -61,11 +61,13 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
-    EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
+    /** New Table plugin for wizard and QL(flat tables only). */
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    /** New Table plugin for wizard and QL(pivot tables). */
+    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
     EnableFooter = 'EnableFooter',
@@ -86,8 +88,15 @@ export enum Feature {
     NewSandbox_50p = 'NewSandbox_50p',
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
+    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     /** Chart runner for the execution of trusted code in ql. */
     QlChartRunner = 'QlChartRunner',
+    /** Allow markdown in chart fields. */
+    WizardMarkdownFields = 'WizardMarkdownFields',
+    EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
+    EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
+    /** Render markup in chart dataLabels. */
+    MarkupInLabels = 'MarkupInLabels',
 }
 
 export type FeatureConfig = Record<string, boolean>;

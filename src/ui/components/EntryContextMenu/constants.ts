@@ -1,4 +1,5 @@
 import {
+    ArrowShapeTurnUpRight,
     Clock,
     CodeTrunk,
     Copy,
@@ -29,6 +30,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
     SHOW_RELATED_ENTITIES: 'show-related-entities',
@@ -75,6 +77,11 @@ const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
     return fn();
 };
 
+const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuParams): boolean =>
+    entry?.scope === EntryScope.Dash &&
+    showSpecificItems &&
+    Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
+
 export const getEntryContextMenu = (): ContextMenuItem[] => [
     {
         id: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
@@ -115,7 +122,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Tag,
         text: 'value_add-favorites-alias',
         place: PLACE.FAVORITES,
-        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        enable: () => true,
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return !entry?.displayAlias;
@@ -127,7 +134,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         icon: Tag,
         text: 'value_edit-favorites-alias',
         place: PLACE.FAVORITES,
-        enable: () => Utils.isEnabledFeature(Feature.EnableFavoritesNameAliases),
+        enable: () => true,
         scopes: ALL_SCOPES,
         isVisible({entry}: ContextMenuParams) {
             return Boolean(entry?.displayAlias);
@@ -166,7 +173,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
     // different Copy menu for dash/widgets and datasets/configs
     {
         ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dash, EntryScope.Widget],
+        scopes: [EntryScope.Dash, EntryScope.Widget, EntryScope.Report],
         // allow to show if there are no permissions
     },
     {
@@ -200,6 +207,16 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         text: 'value_copy-link',
         enable: () => true,
         scopes: ALL_SCOPES,
+        isVisible: (params) => !isVisibleEntryContextShareItem(params),
+    },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        icon: ArrowShapeTurnUpRight,
+        text: 'value_share',
+        enable: () => true,
+        scopes: ALL_SCOPES,
+        isVisible: isVisibleEntryContextShareItem,
     },
     {
         id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

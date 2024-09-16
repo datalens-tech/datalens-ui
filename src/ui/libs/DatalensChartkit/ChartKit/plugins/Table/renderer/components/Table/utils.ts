@@ -1,16 +1,70 @@
-import type {ColumnDef} from '@tanstack/react-table';
+import {dateTimeUtc} from '@gravity-ui/date-utils';
+import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
+import get from 'lodash/get';
+import type {TableCellsRow, TableCommonCell, TableRow} from 'shared';
+
+import {getTreeCellColumnIndex, getTreeSetColumnSortAscending} from '../../utils';
 
 import type {TData, TFoot, THead} from './types';
 
-export function createColumn(args: {
+function getSortingFunction(args: {
+    th: THead;
+    columnIndex: number;
+    rows?: TableRow[];
+}): SortingFnOption<TData> {
+    const {th, columnIndex, rows} = args;
+    const hasTreeCell = getTreeCellColumnIndex(rows?.[0] as TableCellsRow) !== -1;
+    if (hasTreeCell) {
+        return getTreeSetColumnSortAscending(columnIndex, rows ?? []);
+    }
+
+    const columnType: TableCommonCell['type'] = get(th, 'type');
+    if (columnType === 'date') {
+        return function (row1, row2) {
+            const cell1Value = String(row1.original[columnIndex].value);
+            const cell2Value = String(row2.original[columnIndex].value);
+
+            const date1 = dateTimeUtc({input: cell1Value});
+            const date2 = dateTimeUtc({input: cell2Value});
+
+            if (date1.isValid() && date1.isAfter(date2)) {
+                return 1;
+            }
+
+            if (date2.isValid() && date2.isAfter(date1)) {
+                return -1;
+            }
+
+            return 0;
+        };
+    }
+
+    if (columnType === 'number') {
+        return function (row1, row2) {
+            const cell1Value = row1.original[columnIndex].value as number;
+            const cell2Value = row2.original[columnIndex].value as number;
+
+            if (cell1Value > cell2Value) {
+                return 1;
+            }
+
+            return cell1Value < cell2Value ? -1 : 0;
+        };
+    }
+
+    return 'auto';
+}
+
+function createColumn(args: {
     headCell: THead;
+    rows?: TableRow[];
     footerCell?: TFoot;
     index: number;
     size?: number;
 }) {
-    const {headCell, footerCell, index, size} = args;
+    const {headCell, footerCell, index, size, rows} = args;
     const {id, width, cell, ...columnOptions} = headCell;
     const options = {
         ...columnOptions,
@@ -22,6 +76,7 @@ export function createColumn(args: {
         },
         size,
         minSize: 0,
+        sortingFn: getSortingFunction({th: headCell, columnIndex: index, rows}),
     } as ColumnDef<TData>;
 
     if (cell) {
@@ -44,7 +99,7 @@ export function createColumn(args: {
 
 export function createTableColumns(args: {
     head?: THead[];
-    rows?: unknown[];
+    rows?: TableRow[];
     footer?: TFoot[];
     cellSizes?: null | number[];
 }) {
@@ -53,33 +108,36 @@ export function createTableColumns(args: {
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
-    const createHeadColumns = (cells: THead[]): ColumnDef<TData>[] => {
+    const createHeadColumns = (cells: THead[], defaultWidth = 0): ColumnDef<TData>[] => {
         return cells.map((headCell) => {
-            const hasChildren = Boolean(headCell.columns?.length);
-            const cellIndex = hasChildren ? -1 : lastColumnIndex;
+            const cellIndex = headCell.columns?.length ? -1 : lastColumnIndex;
             const footerCell = footer?.[cellIndex];
-            const size =
-                cellSizes[cellIndex] ??
-                (typeof headCell.width === 'number' ? Number(headCell.width) : 0);
+            const columnWidth =
+                typeof headCell.width === 'number' ? Number(headCell.width) : defaultWidth;
+            const size = cellSizes[cellIndex] ?? columnWidth;
             const left = cellSizes.reduce(
                 (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-                0,
+                1,
             );
             const options = createColumn({
                 headCell: {
                     ...headCell,
                     enableSorting: headCell.enableSorting && rows.length > 1,
                     left,
+                    width: columnWidth > 0 ? columnWidth : undefined,
                 },
                 footerCell,
                 index: cellIndex,
                 size,
+                rows,
             });
 
-            if (hasChildren) {
+            if (headCell.columns?.length) {
+                const childDefaultWidth =
+                    columnWidth > 0 ? columnWidth / headCell.columns?.length : 0;
                 return columnHelper.group({
                     ...options,
-                    columns: createHeadColumns(headCell.columns || []),
+                    columns: createHeadColumns(headCell.columns || [], childDefaultWidth),
                 } as GroupColumnDef<TData>);
             } else {
                 lastColumnIndex++;

@@ -6,6 +6,8 @@ import {
     PlaceholderId,
     WizardVisualizationId,
     getIsNavigatorEnabled,
+    isDimensionField,
+    isFieldHierarchy,
     isTreeField,
 } from '../../../../../../shared';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
@@ -49,6 +51,11 @@ function getActionParamsEvents(
         case WizardVisualizationId.Donut:
         case WizardVisualizationId.DonutD3:
         case WizardVisualizationId.CombinedChart: {
+            return {
+                click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
+            };
+        }
+        case WizardVisualizationId.Geolayer: {
             return {
                 click: [{handler: {type: 'setActionParams'}, scope: 'point'}],
             };
@@ -110,11 +117,13 @@ export const buildChartsConfigPrivate = (
         ) {
             const tableExtraSettings = shared.extraSettings;
             const items = getAllPlaceholderItems(shared.visualization.placeholders);
-            const hasDimentions = items.some(({type}) => type === 'DIMENSION');
+            const hasDimensions = items.some(
+                (field) => isDimensionField(field) || isFieldHierarchy(field),
+            );
 
             // No pagination if all columns are measures
             (config as TableConfig).paginator = {
-                enabled: hasDimentions && tableExtraSettings?.pagination === 'on',
+                enabled: hasDimensions && tableExtraSettings?.pagination === 'on',
                 limit: tableExtraSettings?.limit && tableExtraSettings?.limit,
             };
         }

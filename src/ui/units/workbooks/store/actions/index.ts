@@ -2,12 +2,12 @@ import type {DatalensGlobalState} from 'index';
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import type {ThunkDispatch} from 'redux-thunk';
-import type {EntryScope} from 'shared';
+import {EntryScope} from 'shared';
 import {showToast} from 'store/actions/toaster';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 
 import type {
     AddFavoriteResponse,
-    DeleteEntryArgs,
     DeleteEntryResponse,
     DeleteFavoriteResponse,
     GetCollectionBreadcrumbsResponse,
@@ -18,7 +18,7 @@ import type {
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import type {CreateEntryActionType} from '../../constants';
-import type {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters, WorkbookEntry} from '../../types';
 import {
     ADD_WORKBOOK_INFO,
     CHANGE_FAVORITE_ENTRY_FAILED,
@@ -566,15 +566,14 @@ type DeleteEntryAction =
     | DeleteEntryInlineAction;
 
 export const deleteEntry = ({
-    entryId,
-    scope,
+    entry,
     deleteInline = false,
 }: {
-    entryId: string;
-    scope: DeleteEntryArgs['scope'];
+    entry: WorkbookEntry;
     deleteInline?: boolean;
 }) => {
     return (dispatch: WorkbooksDispatch) => {
+        const {entryId, scope} = entry;
         dispatch({
             type: DELETE_ENTRY_LOADING,
         });
@@ -584,6 +583,11 @@ export const deleteEntry = ({
                 scope,
             })
             .then((data) => {
+                if (scope === EntryScope.Connection) {
+                    reachMetricaGoal(CounterName.Main, GoalId.ConnectionDeleteSubmit, {
+                        type: entry.type,
+                    });
+                }
                 dispatch({
                     type: DELETE_ENTRY_SUCCESS,
                     data,

@@ -14,7 +14,7 @@ $actionPanelDefaultBottom: 20px;
     display: flex;
     flex-direction: row;
     flex: 1;
-    overflow: hidden;
+    overflow: clip;
     text-size-adjust: none;
     $bodyClass: &;
 
@@ -49,6 +49,7 @@ $actionPanelDefaultBottom: 20px;
 
         &_with-edit-panel > .dashkit,
         &_with-edit-panel > .dashkit > .react-grid-layout {
+            min-height: 100px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -72,8 +73,12 @@ $actionPanelDefaultBottom: 20px;
         display: flex;
         flex-direction: column;
         flex: 1;
-        overflow: hidden;
+        overflow: clip;
         text-size-adjust: none;
+
+        &_mobile {
+            overflow: hidden;
+        }
 
         border-right: var(--dl-dash-select-container-border-right-width) solid
             var(--dl-dash-select-container-border-color);
@@ -90,9 +95,13 @@ $actionPanelDefaultBottom: 20px;
         display: flex;
         flex-direction: row;
         flex: 1;
-        overflow: hidden;
+        overflow: clip;
         text-size-adjust: none;
         background-color: var(--g-color-base-generic-ultralight);
+
+        &_mobile {
+            overflow: hidden;
+        }
 
         &_no-title #{$bodyClass}__content_aside {
             padding-top: #{$contentPadding};

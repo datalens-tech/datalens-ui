@@ -264,6 +264,7 @@ export const URL_OPTIONS = {
     ACTION_PARAMS_ENABLED: '_action_params',
     NO_SCROLL: '_no_scroll',
     AUTOUPDATE: '_autoupdate',
+    STATE: 'state',
 };
 
 export const MIN_AUTOUPDATE_CHART_INTERVAL = 15;
@@ -282,7 +283,7 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Presentation];
+export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Report];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
@@ -291,7 +292,7 @@ export const OBJECT_SCOPES = [
     EntryScope.Dataset,
     EntryScope.Dash,
     EntryScope.Connection,
-    EntryScope.Presentation,
+    EntryScope.Report,
 ];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';

@@ -81,7 +81,11 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
         const connectionData = get(getState().connections, ['connectionData']);
         const form = get(getState().connections, ['form']);
 
-        const {error} = await api.updateConnection(form, connectionData.id as string);
+        const {error} = await api.updateConnection(
+            form,
+            connectionData.id as string,
+            connectionData.db_type as string,
+        );
 
         batch(() => {
             if (error) {

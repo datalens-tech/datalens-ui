@@ -1,3 +1,4 @@
+import {useCreateEntryOptions} from '../../../units/workbooks/components/CreateEntry/utils';
 import {
     getNewDashUrl,
     getWorkbookDashboardEntryUrl,
@@ -16,5 +17,6 @@ export const registerWorkbooksPlugins = () => {
         getNewDashUrl,
         useAdditionalWorkbookEntryActions,
         useAdditionalWorkbookActions,
+        useCreateEntryOptions,
     });
 };

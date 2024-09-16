@@ -61,9 +61,9 @@ function ActionPanelService({
         <React.Fragment key="additionalEntryItems">
             <ActionPanelButton entry={entry} className={b('custom-button')} />
             <EntryLabel entry={entry} />
-            {Utils.isEnabledFeature(Feature.EnableIsolatedSandbox) && sandboxDebugMode && (
-                <SandboxEngineSelect entry={entry} />
-            )}
+            {Utils.isEnabledFeature(Feature.EnableIsolatedSandbox) &&
+                Utils.isEnabledFeature(Feature.SandboxEngineSelectSwitch) &&
+                sandboxDebugMode && <SandboxEngineSelect entry={entry} />}
         </React.Fragment>,
     ];
 

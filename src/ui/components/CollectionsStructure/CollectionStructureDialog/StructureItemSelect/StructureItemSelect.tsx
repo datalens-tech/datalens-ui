@@ -11,8 +11,8 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import type {
     Collection,
     GetCollectionBreadcrumbsResponse,
-    GetCollectionContentArgs,
-    GetCollectionContentResponse,
+    GetStructureItemsArgs,
+    GetStructureItemsResponse,
 } from '../../../../../shared/schema/us/types/collections';
 import type {Workbook} from '../../../../../shared/schema/us/types/workbooks';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
@@ -35,18 +35,15 @@ export type Props = {
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumbsResponse;
     items: (Collection | Workbook)[];
-    nextPageTokens: {
-        collectionsNextPageToken?: string | null;
-        workbooksNextPageToken?: string | null;
-    };
+    nextPageToken: string | null;
     pageSize: number;
     isSelectionAllowed: boolean;
     operationDeniedMessage?: string;
     canSelectWorkbook: boolean;
     disabled?: boolean;
-    getCollectionContentRecursively: (
-        args: GetCollectionContentArgs,
-    ) => CancellablePromise<GetCollectionContentResponse | null>;
+    getStructureItemsRecursively: (
+        args: GetStructureItemsArgs,
+    ) => CancellablePromise<GetStructureItemsResponse | null>;
     onChangeCollection: (newValue: string | null) => void;
     onChangeWorkbook?: (newValue: string) => void;
 };
@@ -59,13 +56,13 @@ export const StructureItemSelect = React.memo<Props>(
         contentError,
         breadcrumbs,
         items,
-        nextPageTokens,
+        nextPageToken,
         pageSize,
         isSelectionAllowed,
         operationDeniedMessage,
         canSelectWorkbook,
         disabled,
-        getCollectionContentRecursively,
+        getStructureItemsRecursively,
         onChangeCollection,
         onChangeWorkbook = () => {},
     }) => {
@@ -78,32 +75,19 @@ export const StructureItemSelect = React.memo<Props>(
         }, [contentError]);
 
         const onWaypointEnter = React.useCallback(() => {
-            if (nextPageTokens.collectionsNextPageToken || nextPageTokens.workbooksNextPageToken) {
-                getCollectionContentRecursively({
+            if (nextPageToken) {
+                getStructureItemsRecursively({
                     collectionId,
-                    collectionsPage: nextPageTokens.collectionsNextPageToken,
-                    workbooksPage: nextPageTokens.workbooksNextPageToken,
+                    page: nextPageToken,
                     pageSize,
                 }).then((res) => {
-                    if (
-                        (res?.collectionsNextPageToken &&
-                            res?.collectionsNextPageToken ===
-                                nextPageTokens.collectionsNextPageToken) ||
-                        (res?.workbooksNextPageToken &&
-                            res?.workbooksNextPageToken === nextPageTokens.workbooksNextPageToken)
-                    ) {
+                    if (res?.nextPageToken && res?.nextPageToken === nextPageToken) {
                         setWaypointDisabled(true);
                     }
                     return res;
                 });
             }
-        }, [
-            collectionId,
-            getCollectionContentRecursively,
-            nextPageTokens.collectionsNextPageToken,
-            nextPageTokens.workbooksNextPageToken,
-            pageSize,
-        ]);
+        }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize]);
 
         return (
             <div className={b({disabled})}>
@@ -120,13 +104,13 @@ export const StructureItemSelect = React.memo<Props>(
                             />
                         </div>
                         {!isSelectionAllowed && (
-                            <div className={b('move-denied-wrapper')}>
+                            <div className={b('denied-message-wrapper')}>
                                 <Card theme="info" type="container" view="filled">
-                                    <div className={b('move-denied')}>
-                                        <div className={b('move-denied-icon')}>
+                                    <div className={b('denied-message')}>
+                                        <div className={b('denied-message-icon')}>
                                             <Icon data={infoIcon} size={15} />
                                         </div>
-                                        <div className={b('move-denied-text')}>
+                                        <div className={b('denied-message-text')}>
                                             {operationDeniedMessage}
                                         </div>
                                     </div>

@@ -21,6 +21,7 @@ export enum WizardVisualizationId {
     FlatTable = 'flatTable',
     PivotTable = 'pivotTable',
     Geolayer = 'geolayer',
+    Geopoint = 'geopoint',
     CombinedChart = 'combined-chart',
 }
 

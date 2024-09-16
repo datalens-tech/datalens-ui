@@ -1,6 +1,7 @@
 import {dateTime} from '@gravity-ui/date-utils';
 
 import {AxisMode} from '../../../../../../../../../shared';
+import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 
 export const expectedResult = {
     timeline: [
@@ -50,6 +51,7 @@ export const expectedResult = {
 };
 
 export const options = {
+    ...EmptyPrepapreArgs,
     placeholders: [
         {
             allowedTypes: {},

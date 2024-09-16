@@ -7,12 +7,22 @@ import type {ChartsInsight, IntervalPart} from '../modules';
 import type {StringParams} from './common';
 import type {UISandboxWrappedFunction} from './ui-sandbox';
 
+const REQUIRED_THEME_VALUES = ['dark', 'light'] as const;
+const OPTIONAL_THEME_VALUES = ['dark-hc', 'light-hc'] as const;
+type RequiredThemes = Record<(typeof REQUIRED_THEME_VALUES)[number], Record<string, string>>;
+type OptionalThemes = Partial<
+    Record<(typeof OPTIONAL_THEME_VALUES)[number], Record<string, string>>
+>;
+
 export type ChartKitHtmlItem = {
     tag: string;
     style?: Record<string, string | number>;
     attributes?: Record<string, string | number>;
     content?: ChartKitHtmlItem | ChartKitHtmlItem[] | string;
+    theme?: RequiredThemes & OptionalThemes;
 };
+
+export type WrappedHTML = {[WRAPPED_HTML_KEY]: ChartKitHtmlItem | ChartKitHtmlItem[] | string};
 
 export interface IChartEditor {
     /**
@@ -133,7 +143,7 @@ export interface IChartEditor {
 
     wrapFn(value: any): {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
 
-    generateHtml(value: ChartKitHtmlItem): {[WRAPPED_HTML_KEY]: ChartKitHtmlItem};
+    generateHtml(value: ChartKitHtmlItem): WrappedHTML;
 
     attachHandler(
         handlerConfig: Record<string, unknown>,
@@ -230,3 +240,31 @@ export type DashWidgetConfig = {
         };
     };
 };
+
+export interface Timings {
+    configResolving: number | null;
+    dataFetching: number | null;
+    jsExecution: number | null;
+}
+
+export interface ChartsStats extends Timings {
+    url: string;
+    requestId: string;
+    groupId: string | null;
+    scope: 'dash' | 'preview' | 'snapter' | null;
+    entryId: string;
+    query: string;
+    type: string;
+    // type: 'graph' | 'table'
+    widgetRendering: number | null;
+    yandexMapAPIWaiting?: number | null;
+    sourcesCount: number;
+    // type: 'graph'
+    graphType: string | null;
+    mixedGraphType: 0 | 1 | null;
+    pointsCount: number | null;
+    seriesCount: number | null;
+    // type: 'table'
+    columnsCount: number | null;
+    rowsCount: number | null;
+}

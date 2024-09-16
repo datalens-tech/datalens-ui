@@ -1,7 +1,5 @@
 import {DL} from '../../constants';
 
-export * from './utils';
-
 export enum CounterName {
     Cross = 'cross',
     Main = 'main',
@@ -15,6 +13,11 @@ export enum GoalId {
     CreatingCloudScreen = 'CREATINGCLOUD_SCREEN',
     ChooseFolderScreen = 'CHOOSEFOLDER_SCREEN',
     FederationUserWithoutSources = 'FEDERATION_USER_WITHOUT_SOURCES',
+    DashboardPublicAccessClick = 'DL_DASHBOARD_PUBLIC-ACCESS_CLICK',
+    DashboardPublicAccessSubmit = 'DL_DASHBOARD_PUBLIC-ACCESS_SUBMIT',
+    ConnectionCreateSubmit = 'DL_CONNECTION-CREATE_SUBMIT',
+    ConnectionEditSubmit = 'DL_CONNECTION-EDIT_SUBMIT',
+    ConnectionDeleteSubmit = 'DL_CONNECTION-DELETE_SUBMIT',
 }
 
 const getCounterConfigByName = (counterName?: string) => {

@@ -7,9 +7,11 @@ import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    StringParams,
     WorkbookId,
 } from '../../../../../shared';
 import {
@@ -133,7 +135,7 @@ export type ProcessorParams = {
         key?: string;
         entryId?: string;
         type?: string;
-        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS};
+        meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS | ControlType.Dash};
         publicAuthor?: EntryPublicAuthor;
     };
     useUnreleasedConfig?: boolean;
@@ -150,6 +152,7 @@ export type ProcessorParams = {
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
     builder: ChartBuilder;
+    forbiddenFields?: (keyof ProcessorSuccessResponse)[];
 };
 
 export class Processor {
@@ -172,6 +175,7 @@ export class Processor {
         ctx,
         workbookId,
         builder,
+        forbiddenFields,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -185,7 +189,7 @@ export class Processor {
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
         let config: ResolvedConfig;
-        let params: Record<string, string | string[]>;
+        let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
         const hooks = new ProcessorHooks({chartsEngine});
@@ -234,6 +238,8 @@ export class Processor {
             if (actionParams) {
                 target.actionParams = actionParams;
             }
+
+            return target;
         }
 
         function stringifyLogs(localLogs: ProcessorLogs, localHooks: ProcessorHooks) {
@@ -802,7 +808,7 @@ export class Processor {
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;
                 result.highchartsConfig = stringify(resultLibraryConfig);
-                result.extra = jsTabResults.runtimeMetadata.extra;
+                result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
@@ -869,6 +875,14 @@ export class Processor {
             }
 
             injectConfigAndParams({target: result});
+
+            if (forbiddenFields) {
+                forbiddenFields.forEach((field) => {
+                    if (result[field]) {
+                        delete result[field];
+                    }
+                });
+            }
 
             return result;
         } catch (error) {

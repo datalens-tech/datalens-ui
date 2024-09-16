@@ -1,22 +1,32 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
-import has from 'lodash/has';
-import set from 'lodash/set';
+import type {TableHead} from 'shared';
 import {Feature} from 'shared';
 import Utils from 'ui/utils';
 
 import {DL} from '../../../../constants/common';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
+import {hasGroups} from '../components/Widget/components/Table/utils';
 import type {ChartKitAdapterProps} from '../types';
 
-import {applyGoToEvents, applySetActionParamsEvents, fixPieTotals} from './apply-hc-handlers';
+import {
+    applyGoToEvents,
+    applySetActionParamsEvents,
+    applyTreemapLabelFormatter,
+    fixPieTotals,
+} from './apply-hc-handlers';
 import {getD3ChartKitData} from './d3-chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
     return data && 'type' in data && data.type;
 };
+
+function isPivotTable(data?: LoadedWidgetData) {
+    const tableHead: TableHead[] = get(data, 'data.head', []);
+    return hasGroups(tableHead) || tableHead.some((th) => get(th, 'sub'));
+}
 
 export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefined => {
     const type = extractWidgetType(data);
@@ -81,9 +91,12 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'table': {
+            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
+            const isPivot = isPivotTable(data);
             const shouldRenderNewTable =
-                (get(data, 'isNewWizard') || get(data, 'isQL')) &&
-                Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl);
+                isWizardOrQl &&
+                ((isPivot && Utils.isEnabledFeature(Feature.NewPluginForPivotTables)) ||
+                    (!isPivot && Utils.isEnabledFeature(Feature.NewTablePluginForWizardAndQl)));
 
             if (shouldRenderNewTable) {
                 chartkitType = 'table';
@@ -187,12 +200,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
                     break;
                 }
                 case 'treemap': {
-                    const tooltipPointFormat =
-                        'libraryConfig.plotOptions.treemap.tooltip.pointFormat';
-
-                    if (!has(data, tooltipPointFormat)) {
-                        set(data, tooltipPointFormat, '{point.name}<br/><b>{point.label}</b>');
-                    }
+                    applyTreemapLabelFormatter({data});
                     break;
                 }
             }

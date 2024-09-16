@@ -9,9 +9,11 @@ type MarkupCellProps = {
 
 export const MarkupCell = (props: MarkupCellProps) => {
     const {cell} = props;
+    const key = JSON.stringify(cell?.value ?? {});
 
     return (
         <Markup
+            key={key}
             item={cell?.value as MarkupItem}
             externalProps={{
                 url: {

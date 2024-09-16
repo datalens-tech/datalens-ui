@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table';
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
@@ -32,6 +33,7 @@ import {createTableColumns} from './utils';
 const PRERENDER_ROW_COUNT = 500;
 
 type TableViewData = {
+    colgroup?: {width: string}[];
     header: {
         rows: HeadRowViewData[];
         style?: React.CSSProperties;
@@ -69,27 +71,46 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
 }
 
 function getFooterRows(table: Table<TData>) {
-    return table.getFooterGroups().map<FooterRowViewData>((f) => {
-        return {
-            id: f.id,
-            cells: f.headers.map<FooterCellViewData>((cell) => {
-                const columnDef = cell.column.columnDef;
-                const originalHeadData = columnDef.meta?.head;
-                const style = columnDef?.meta?.footer?.css;
-                const pinned = Boolean(originalHeadData?.pinned);
+    return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
+        const cells = f.headers.map<FooterCellViewData>((cell) => {
+            const columnDef = cell.column.columnDef;
+            const originalHeadData = columnDef.meta?.head;
+            const originalFooterData = columnDef?.meta?.footer;
+            const pinned = Boolean(originalHeadData?.pinned);
+            const content = cell.isPlaceholder
+                ? null
+                : flexRender(columnDef.footer, cell.getContext());
 
-                return {
-                    id: cell.id,
-                    style,
-                    pinned,
-                    type: get(originalHeadData, 'type'),
-                    content: cell.isPlaceholder
-                        ? null
-                        : flexRender(columnDef.footer, cell.getContext()),
-                };
-            }),
-        };
-    });
+            const cellStyle: React.CSSProperties = {
+                left: pinned ? originalHeadData?.left : undefined,
+            };
+
+            return {
+                id: cell.id,
+                style: cellStyle,
+                contentStyle: originalFooterData?.css ?? {},
+                pinned,
+                type: get(originalHeadData, 'type'),
+                content,
+            };
+        });
+
+        if (cells.some((c) => c.content)) {
+            acc.push({
+                id: f.id,
+                cells,
+            });
+        }
+
+        return acc;
+    }, []);
+}
+
+function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
+    const current = currentRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+    const prev = prevRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+
+    return isEqual(prev, current);
 }
 
 export const usePreparedTableData = (props: {
@@ -120,7 +141,7 @@ export const usePreparedTableData = (props: {
     const prerender = !cellSizes;
 
     const columns = React.useMemo(() => {
-        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width, data.head));
+        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
         const footerData = ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
             const cell = td as TableCommonCell;
 
@@ -191,7 +212,7 @@ export const usePreparedTableData = (props: {
         : rowVirtualizer.getVirtualItems();
 
     const headerRows = headers
-        .map((headerGroup, rowIndex) => {
+        .map((headerGroup) => {
             if (!headerGroup.headers.length) {
                 return null;
             }
@@ -210,6 +231,7 @@ export const usePreparedTableData = (props: {
                     const sortable = header.column.getCanSort();
                     const pinned = Boolean(originalCellData?.pinned);
                     const cellStyle: React.CSSProperties = {
+                        ...get(originalCellData, 'css', {}),
                         left: pinned ? originalCellData?.left : undefined,
                     };
 
@@ -221,10 +243,6 @@ export const usePreparedTableData = (props: {
                     if (typeof originalCellData?.width !== 'undefined') {
                         cellStyle.whiteSpace = 'normal';
                         cellStyle.wordBreak = 'break-word';
-                    }
-
-                    if (rowIndex > 0) {
-                        cellStyle.borderTop = 0;
                     }
 
                     return {
@@ -248,9 +266,8 @@ export const usePreparedTableData = (props: {
             };
         })
         .filter(Boolean) as HeadRowViewData[];
-    const gridTemplateColumns = headers[headers.length - 1]?.headers
-        .map((h) => `${h.getSize()}px`)
-        .join(' ');
+    const colgroup = headers[headers.length - 1]?.headers.map((h) => ({width: `${h.getSize()}px`}));
+    const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
     const header = prerender
         ? {rows: headerRows}
         : {
@@ -273,16 +290,19 @@ export const usePreparedTableData = (props: {
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
                 const enableRowGrouping = get(originalHeadData, 'group', false);
-                const originalCellData = cell.row.original[index];
+                const originalCellData = cell.row.original[index] ?? {value: ''};
                 const pinned = Boolean(originalHeadData?.pinned);
 
                 if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
                     const prevCellRow = rowsAcc[prevCells[index]];
-                    const prevCell = prevCellRow?.cells?.[index];
-                    const prevCellData = tableRowsData[prevCellRow?.index][index];
+                    const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
                     if (
                         typeof prevCell?.rowSpan !== 'undefined' &&
-                        originalCellData.value === prevCellData?.value
+                        shouldGroupRow(
+                            cell.row.original,
+                            tableRows[prevCellRow?.index]?.original,
+                            index,
+                        )
                     ) {
                         prevCell.rowSpan += 1;
                         return acc;
@@ -321,7 +341,7 @@ export const usePreparedTableData = (props: {
                     style: cellStyle,
                     contentStyle,
                     content: renderCell(cell.getContext()),
-                    type: get(originalCellData, 'type'),
+                    type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,
                     pinned,
                     className:
@@ -349,20 +369,23 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
-    const hasFooter = columns.some((column) => column.footer);
+    const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
+    const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
+    const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
         rows: hasFooter ? getFooterRows(table) : [],
-        style: {gridTemplateColumns},
+        style: {gridTemplateColumns, transform},
     };
 
     return {
         header,
         body: {
             rows,
-            style: {gridTemplateColumns},
+            style: {gridTemplateColumns, transform},
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
         prerender,
+        colgroup: prerender ? undefined : colgroup,
     };
 };

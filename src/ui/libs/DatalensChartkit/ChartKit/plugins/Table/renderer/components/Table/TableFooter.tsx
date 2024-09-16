@@ -22,17 +22,19 @@ export const TableFooter = React.memo<Props>((props: Props) => {
         <tfoot className={b('footer')} style={style}>
             {rows.map((row) => (
                 <tr key={row.id} className={b('tr')}>
-                    {row.cells.map((cell, index) => {
+                    {row.cells.map((cell) => {
                         return (
                             <td
                                 key={cell.id}
                                 className={b('td', {
-                                    'first-cell': index === 0,
                                     pinned: cell.pinned,
                                     type: cell.type,
                                 })}
+                                style={{
+                                    ...cell.style,
+                                }}
                             >
-                                <div style={cell.style} className={b('footer-cell-content')}>
+                                <div style={cell.contentStyle} className={b('footer-cell-content')}>
                                     {cell.content}
                                 </div>
                             </td>

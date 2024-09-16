@@ -2,9 +2,19 @@ import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
-import type {BatchRenderMarkdownResponse, GetEntryResponse} from 'shared/schema';
+import type {
+    BatchRenderMarkdownResponse,
+    CollectChartkitStatsArgs,
+    CollectChartkitStatsResponse,
+    CollectDashStatsArgs,
+    CollectDashStatsResponse,
+    GetDistinctsApiV2Args,
+    GetDistinctsApiV2TransformedResponse,
+    GetEntryResponse,
+} from 'shared/schema';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 
-import type {DLUserSettings, IconId, formatNumber} from '../../../../shared';
+import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 import type {
     EntryContextMenuItem,
@@ -21,6 +31,7 @@ import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -104,4 +115,27 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             (texts: Record<string, string>) => Promise<BatchRenderMarkdownResponse>
         >(),
+    fetchDistinctsByApi:
+        makeFunctionTemplate<
+            (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>
+        >(),
+    requestCollectDashStats:
+        makeFunctionTemplate<
+            (dashStats: CollectDashStatsArgs) => Promise<CollectDashStatsResponse>
+        >(),
+    requestCollectChartkitStats:
+        makeFunctionTemplate<
+            (chartkitStats: CollectChartkitStatsArgs) => Promise<CollectChartkitStatsResponse>
+        >(),
+    migrateItemDataOnPaste:
+        makeFunctionTemplate<
+            ({
+                itemData,
+                toScope,
+            }: {
+                itemData: CopiedConfigData;
+                toScope: EntryScope;
+            }) => CopiedConfigData
+        >(),
+    checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
 } as const;

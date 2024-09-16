@@ -9,7 +9,15 @@ import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runChart: RunnerHandler = async (
     cx: AppContext,
-    {chartsEngine, req, res, config, configResolving, workbookId}: RunnerHandlerProps,
+    {
+        chartsEngine,
+        req,
+        res,
+        config,
+        configResolving,
+        workbookId,
+        forbiddenFields,
+    }: RunnerHandlerProps,
 ) => {
     let generatedConfig;
 
@@ -48,7 +56,7 @@ export const runChart: RunnerHandler = async (
                 chartType = template || data.type;
             } else {
                 // This is some kind of legacy edge cases.
-                // Just for compatibility purposes;
+                // Selectors are transmitted in this format
                 const data = config.data.shared as {type: string};
 
                 if (!template && !data.type) {
@@ -107,5 +115,6 @@ export const runChart: RunnerHandler = async (
         configResolving,
         workbookId: workbookId ?? config.workbookId,
         isWizard: true,
+        forbiddenFields,
     });
 };

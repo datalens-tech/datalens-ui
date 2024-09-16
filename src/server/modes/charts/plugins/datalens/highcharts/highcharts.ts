@@ -164,6 +164,11 @@ export const buildHighchartsConfigPrivate = (args: {
 
     if (shared.visualization.id === 'treemap') {
         chart.zoomType = undefined;
+        plotOptions.treemap = {
+            tooltip: {
+                pointFormatter: ChartkitHandlers.WizardTreemapTooltipFormatter,
+            },
+        };
     }
 
     if (shared.extraSettings?.legendMode === LegendDisplayMode.Hide) {

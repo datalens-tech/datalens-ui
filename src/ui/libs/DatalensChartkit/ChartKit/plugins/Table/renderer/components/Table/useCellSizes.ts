@@ -1,6 +1,6 @@
 import React from 'react';
 
-function getTableSizes(rows: HTMLTableRowElement[]) {
+function getTableSizes(rows: HTMLTableRowElement[], tableScale = 1) {
     const colsCount = Array.from(rows[0]?.childNodes ?? []).reduce((sum, c) => {
         const colSpan = Number((c as Element).getAttribute('colSpan') || 1);
         return sum + colSpan;
@@ -14,7 +14,7 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
             const cell = c as Element;
             let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
             let colSpan = Number(cell.getAttribute('colSpan') || 1);
-            const cellWidth = cell.getBoundingClientRect()?.width;
+            const cellWidth = cell.getBoundingClientRect()?.width / tableScale;
 
             if (result[rowIndex][cellIndex] !== null) {
                 cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);
@@ -40,12 +40,9 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
 
     return result.reduce<number[]>((acc, row) => {
         row.forEach((cellWidth, index) => {
-            const width =
-                cellWidth +
-                // left border
-                (index === 0 ? 1 : 0) -
-                1 / colsCount;
-            acc[index] = acc[index] || width;
+            if (cellWidth !== null) {
+                acc[index] = acc[index] || cellWidth;
+            }
         });
         return acc;
     }, []);
@@ -63,16 +60,27 @@ export const useCellSizes = (
     React.useLayoutEffect(() => {
         if (!cellSizes) {
             document.fonts.ready.finally(() => {
+                let sizes: number[] = [];
                 const container = tableContainerRef?.current as Element;
                 const table = container?.getElementsByTagName('table')?.[0];
                 const tHeadRows = Array.from(
                     table?.getElementsByTagName('thead')?.[0]?.childNodes ?? [],
                 );
 
+                const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
+
                 if (tHeadRows.length) {
-                    const sizes = getTableSizes(tHeadRows as HTMLTableRowElement[]);
-                    setCellSizes(sizes);
+                    sizes = getTableSizes(tHeadRows as HTMLTableRowElement[], tableScale);
+                } else {
+                    const tBodyRows = Array.from(
+                        table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? [],
+                    );
+                    if (tBodyRows.length) {
+                        sizes = getTableSizes([tBodyRows[0] as HTMLTableRowElement], tableScale);
+                    }
                 }
+
+                setCellSizes(sizes);
             });
         }
     }, [cellSizes, tableContainerRef]);

@@ -17,9 +17,9 @@ import type {
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
 import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
-import {DL, Interpolate} from 'ui';
-import {BetaMark} from 'ui/components/BetaMark/BetaMark';
 import {Collapse} from 'ui/components/Collapse/Collapse';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants/common';
 
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
 import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
@@ -31,6 +31,7 @@ import {
     validateParamTitle,
 } from '../../units/dash/components/ParamsSettings/helpers';
 import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
+import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
@@ -91,6 +92,12 @@ export interface DialogChartWidgetProps {
         [key: string]: string;
     };
 
+    withoutSidebar?: boolean;
+
+    enableAutoheight?: boolean;
+    enableBackgroundColor?: boolean;
+    enableFilteringSetting?: boolean;
+
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
@@ -120,6 +127,9 @@ class DialogChartWidget extends React.PureComponent<
     DialogChartWidgetState
 > {
     static defaultProps = {
+        enableAutoheight: true,
+        enableBackgroundColor: false,
+        enableFilteringSetting: true,
         openedItemData: {
             hideTitle: false,
             tabs: [
@@ -129,6 +139,10 @@ class DialogChartWidget extends React.PureComponent<
                     },
                     isDefault: true,
                     description: '',
+                    background: {
+                        enabled: false,
+                        color: 'transparent',
+                    },
                 },
             ],
         } as DashTabItemWidget['data'],
@@ -181,7 +195,7 @@ class DialogChartWidget extends React.PureComponent<
     private afterSettingSelectedWidgetTypeCallback: AfterSettingsWidgetCallback = null;
 
     render() {
-        const {dialogIsVisible, closeDialog} = this.props;
+        const {dialogIsVisible, withoutSidebar, closeDialog} = this.props;
 
         const sidebar = this.renderDialogSidebar();
         const footer = this.renderDialogFooter();
@@ -189,7 +203,7 @@ class DialogChartWidget extends React.PureComponent<
 
         return (
             <TwoColumnDialog
-                className={b({long: true})}
+                className={b({long: true, 'without-sidebar': withoutSidebar})}
                 open={dialogIsVisible}
                 onClose={closeDialog}
                 sidebarHeader={i18n('dash.widget-dialog.edit', 'label_widget')}
@@ -201,6 +215,7 @@ class DialogChartWidget extends React.PureComponent<
                 bodyClassMixin={b('content-body')}
                 disableFocusTrap={true}
                 disableEscapeKeyDown={true}
+                withoutSidebar={withoutSidebar}
             />
         );
     }
@@ -344,6 +359,45 @@ class DialogChartWidget extends React.PureComponent<
         });
     };
 
+    handleBackgroundEnabledChanged = () => {
+        const {data, tabIndex} = this.state;
+
+        if (!data.tabs[tabIndex].background) {
+            data.tabs[tabIndex].background = {
+                enabled: false,
+                color: 'transparent',
+            };
+        }
+
+        this.setState({
+            data: update(data, {
+                tabs: {
+                    [tabIndex]: {
+                        background: {
+                            enabled: {$set: !data.tabs[tabIndex].background?.enabled},
+                        },
+                    },
+                },
+            }),
+        });
+    };
+
+    handleBackgroundColorSelected = (color: string) => {
+        const {data, tabIndex} = this.state;
+
+        this.setState({
+            data: update(data, {
+                tabs: {
+                    [tabIndex]: {
+                        background: {
+                            color: {$set: color},
+                        },
+                    },
+                },
+            }),
+        });
+    };
+
     handleChangeFiltering = () => {
         const {data, tabIndex} = this.state;
         const currentCondition = this.state.data.tabs[tabIndex].enableActionParams;
@@ -459,7 +513,7 @@ class DialogChartWidget extends React.PureComponent<
         const {hierarchies} = this.state;
         const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
 
-        if (!showFilterHierarchyWarning) {
+        if (!showFilterHierarchyWarning || !DL.ENDPOINTS.datalensDocs) {
             return null;
         }
 
@@ -500,7 +554,6 @@ class DialogChartWidget extends React.PureComponent<
                     className={b('help-tooltip')}
                     content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
                 />
-                <BetaMark className={b('beta')} />
             </div>
         );
 
@@ -523,7 +576,14 @@ class DialogChartWidget extends React.PureComponent<
 
     renderDialogBody = () => {
         const {data, tabIndex, selectedWidgetType} = this.state;
-        const {workbookId, navigationPath, changeNavigationPath} = this.props;
+        const {
+            workbookId,
+            navigationPath,
+            enableAutoheight,
+            enableBackgroundColor,
+            enableFilteringSetting,
+            changeNavigationPath,
+        } = this.props;
 
         const autoHeightCheckboxCaption = (
             <div className={b('caption')}>
@@ -540,7 +600,7 @@ class DialogChartWidget extends React.PureComponent<
             </div>
         );
 
-        const {title, chartId, description, autoHeight} = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, background} = data.tabs[tabIndex];
 
         return (
             <React.Fragment>
@@ -629,18 +689,44 @@ class DialogChartWidget extends React.PureComponent<
                         />
                     </div>
                 </Line>
-                <Line caption={autoHeightCheckboxCaption}>
-                    <Checkbox
-                        size="m"
-                        onChange={this.onAutoHeightRadioButtonChange}
-                        disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
-                        checked={Boolean(autoHeight)}
-                        qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
+                {enableAutoheight && (
+                    <Line caption={autoHeightCheckboxCaption}>
+                        <Checkbox
+                            size="m"
+                            onChange={this.onAutoHeightRadioButtonChange}
+                            disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
+                            checked={Boolean(autoHeight)}
+                            qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
+                        >
+                            {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
+                        </Checkbox>
+                    </Line>
+                )}
+                {enableBackgroundColor && (
+                    <Line
+                        caption={
+                            <div className={b('caption')}>
+                                <span className={b('caption-text')}>
+                                    {i18n('dash.widget-dialog.edit', 'field_background')}
+                                </span>
+                            </div>
+                        }
                     >
-                        {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
-                    </Checkbox>
-                </Line>
-                {this.renderFilteringCharts()}
+                        <Checkbox
+                            checked={Boolean(background?.enabled)}
+                            onChange={this.handleBackgroundEnabledChanged}
+                        >
+                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
+                        </Checkbox>
+                        {Boolean(background?.enabled) && (
+                            <PaletteBackground
+                                color={background?.color}
+                                onSelect={this.handleBackgroundColorSelected}
+                            />
+                        )}
+                    </Line>
+                )}
+                {enableFilteringSetting && this.renderFilteringCharts()}
                 {this.renderParams()}
             </React.Fragment>
         );

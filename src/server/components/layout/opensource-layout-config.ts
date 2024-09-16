@@ -69,6 +69,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
+        ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {
@@ -88,11 +89,9 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
                 rel: 'stylesheet',
             },
         ],
-        bodyContent: {
-            theme,
-        },
         pluginsOptions: {
             layout: {name: appLayoutSettings.bundleName},
+            ...(theme ? {uikit: {theme}} : {}),
         },
         ...appLayoutSettings.renderConfig,
     };

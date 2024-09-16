@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Ellipsis, NodesRight} from '@gravity-ui/icons';
+import {Ellipsis, Globe} from '@gravity-ui/icons';
 import type {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -11,9 +11,10 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA} from 'shared';
+import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {sdk} from 'ui';
+import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
 import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
@@ -239,6 +240,10 @@ class EntryPanel extends React.Component<Props, State> {
             return;
         }
 
+        if (this.state.entry.scope === EntryScope.Dash) {
+            reachMetricaGoal(CounterName.Main, GoalId.DashboardPublicAccessClick);
+        }
+
         const result = await this.entryDialogsRef.current.open({
             dialog: EntryDialogName.SwitchPublic,
             dialogProps: {
@@ -296,7 +301,7 @@ class EntryPanel extends React.Component<Props, State> {
             items.push({
                 icon: (
                     <Icon
-                        data={NodesRight}
+                        data={Globe}
                         className={ICONS_ENTRY_MENU_DEFAULT_CLASSNAME}
                         width={ICONS_ENTRY_MENU_DEFAULT_SIZE}
                         height={ICONS_ENTRY_MENU_DEFAULT_SIZE}

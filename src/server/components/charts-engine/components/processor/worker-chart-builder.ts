@@ -9,8 +9,8 @@ import type {
 import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {WizardWorker} from '../wizard-worker/types';
+import {getChartApiContext} from '../wizard-worker/utils';
 
-import {getChartApiContext} from './chart-api-context';
 import type {ChartBuilder, ChartBuilderResult} from './types';
 
 const ONE_SECOND = 1000;
@@ -74,7 +74,23 @@ export const getWizardChartBuilder = async (
         buildModules: async () => {
             return {};
         },
-        buildParams: emptyStep('Params'),
+
+        buildParams: async (args) => {
+            if (typeof wizardWorker.buildParams === 'function') {
+                const timeStart = process.hrtime();
+                const execResult = await wizardWorker
+                    .buildParams({shared, userLang})
+                    .timeout(ONE_SECOND);
+
+                return {
+                    executionTiming: process.hrtime(timeStart),
+                    name: 'Params',
+                    ...execResult,
+                };
+            }
+
+            return emptyStep('Params')(args);
+        },
 
         buildUrls: async (options) => {
             const {params, actionParams} = options;

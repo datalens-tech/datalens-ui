@@ -5,9 +5,10 @@ import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
 import {ControlType} from '../../../../shared';
 import {EDITOR_TYPE} from '../../../../shared/constants';
-import type {ResolvedConfig} from '../components/storage/types';
+import type {ProcessorParams} from '../components/processor';
+import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
-import {runChart} from './chart';
+import {runControl} from './control';
 import {runEditor} from './editor';
 import {runWizardChart} from './wizard';
 
@@ -27,10 +28,11 @@ export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;
     req: Request;
     res: Response;
-    config: ResolvedConfig;
+    config: ResolvedConfig | ReducedResolvedConfig;
     configResolving: number;
     workbookId?: WorkbookId;
     isWizard?: boolean;
+    forbiddenFields?: ProcessorParams['forbiddenFields'];
 };
 
 export function getDefaultRunners() {
@@ -67,10 +69,11 @@ export function getDefaultRunners() {
             handler: runWizardChart,
         },
         {
+            // for all types of controls except editor control
             name: 'dashControls',
             trigger: new Set([ControlType.Dash]),
             safeConfig: true,
-            handler: runChart,
+            handler: runControl,
         },
     ];
 

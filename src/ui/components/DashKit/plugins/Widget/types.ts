@@ -20,6 +20,10 @@ export type CurrentTab = {
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
+    background?: {
+        enabled: boolean;
+        color: string;
+    };
 };
 
 export type WidgetPluginData = ConfigItem['data'];

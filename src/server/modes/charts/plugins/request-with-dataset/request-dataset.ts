@@ -57,12 +57,13 @@ export const getDatasetFieldsById = async (
         return response.responseData;
     } catch (err: unknown) {
         if (typeof err === 'object' && err !== null && 'error' in err) {
-            let {error} = err;
+            const {error} = err;
+            let preparedError = error;
             if (isObject(error) && 'message' in error) {
                 const message = error.message as string;
-                error = new Error(message);
+                preparedError = new Error(message);
             }
-            req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', error);
+            req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', preparedError);
             const status = getStatusFromError(error);
             if (isNumber(status) && status < 500) {
                 rejectFetchingSource({

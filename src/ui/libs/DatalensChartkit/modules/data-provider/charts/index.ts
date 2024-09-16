@@ -2,7 +2,7 @@ import {DL} from 'constants/common';
 
 import type {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
 import axios from 'axios';
-import type {Series as HighchartSeries, SeriesOptionsType} from 'highcharts';
+import type {Series as HighchartSeries} from 'highcharts';
 import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
@@ -11,7 +11,7 @@ import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
-import type {StringParams, WizardType} from 'shared';
+import type {ChartsStats, StringParams, WizardType} from 'shared';
 import {
     ControlType,
     DL_COMPONENT_HEADER,
@@ -55,7 +55,6 @@ import processNode from './node';
 import type {
     ChartsData,
     ChartsProps,
-    ChartsStats,
     LogItem,
     Logs,
     ResponseError,
@@ -125,9 +124,15 @@ export interface EntityRequestOptions {
         key?: string;
         path?: string | undefined;
         uiOnly?: boolean;
+        tabId?: string;
         responseOptions?: {
             includeConfig: boolean;
             includeLogs: boolean;
+        };
+        controlData?: {
+            id: string;
+            tabId?: string;
+            groupId?: string;
         };
     };
     headers?: Record<string, any>;
@@ -500,12 +505,12 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 stats.seriesCount = (widget.series as HighchartSeries[]).length || 0 - 1;
             }
 
+            const sortedGraphType = Object.entries(graphType).sort((a, b) => b[1] - a[1])[0][0];
+
             stats.pointsCount = pointsCount;
 
             stats.mixedGraphType = Object.keys(graphType).length > 1 ? 1 : 0;
-            stats.graphType = Object.entries(graphType).sort(
-                (a, b) => b[1] - a[1],
-            )[0][0] as SeriesOptionsType['type'];
+            stats.graphType = JSON.stringify(sortedGraphType);
         }
 
         if (loadedData.type === 'table' && loadedData.data.rows) {
@@ -710,11 +715,20 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             });
         }
 
+        const headers = {...requestOptions.headers};
+
+        if (isEmbeddedEntry()) {
+            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+
+            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
+        }
+
         return axiosInstance(
             this.prepareRequestConfig({
                 url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
                 method: 'post',
                 ...requestOptions,
+                headers,
             }),
         );
     }
@@ -747,10 +761,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const headers: Record<string, string | null> = {
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (isEmbeddedEntry()) {
-            const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
-            headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
-        }
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }
@@ -897,18 +907,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     private async collectStats() {
         try {
             const stats = this.collectStatsBatchQueue.splice(0, this.collectStatsBatchQueue.length);
-            // console.log('CHARTS_DATA_PROVIDER_COLLECT_STATS', stats);
-            await axiosInstance(
-                this.prepareRequestConfig({
-                    url: `${this.requestEndpoint}/api/private/stats`,
-                    method: 'post',
-                    data: stats,
-                    'axios-retry': {
-                        retries: 1,
-                    },
-                }),
+
+            const requestCollectChartkitStats = registry.common.functions.get(
+                'requestCollectChartkitStats',
             );
-            // console.log('CHARTS_DATA_PROVIDER_COLLECT_STATS_SUCCESS');
+            await requestCollectChartkitStats(stats);
         } catch (error) {
             console.error('CHARTKIT_COLLECT_STATS_FAILED', error);
         }

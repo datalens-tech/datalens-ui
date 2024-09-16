@@ -1,10 +1,13 @@
 import type {FilterValue, IntervalPart} from '../../../../shared';
 import {
+    EntryScope,
     URL_ACTION_PARAMS_PREFIX,
     resolveIntervalDate as sharedResolveIntervalDate,
     resolveOperation as sharedResolveOperation,
     resolveRelativeDate as sharedResolveRelativeDate,
 } from '../../../../shared';
+
+import type {DashEntryData, EmbeddingInfo} from './storage/types';
 
 const SENSITIVE_PARAMS_NAMES = ['password', 'pass', 'token'];
 const HIDDEN_SENSITIVE_VALUE = '<hidden>';
@@ -150,3 +153,11 @@ export function hideSensitiveData<T extends Test>(data: T = '' as T): T {
 export function getSourceAuthorizationHeaders() {
     return {};
 }
+
+export const isDashEntry = (entry: EmbeddingInfo['entry']): entry is DashEntryData => {
+    if (entry.scope === EntryScope.Dash) {
+        return true;
+    } else {
+        return false;
+    }
+};

@@ -8,7 +8,7 @@ import type {
     DashKitProps,
     PreparedCopyItemOptions,
 } from '@gravity-ui/dashkit';
-import {extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
+import {DEFAULT_GROUP, extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
@@ -19,6 +19,7 @@ import type {
     DashTabItem,
     DashTabItemBase,
     DashTabLayout,
+    EntryScope,
     StringParams,
     WorkbookId,
 } from 'shared';
@@ -34,6 +35,7 @@ import {PostMessage} from './postMessage';
 
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
+    fromScope: EntryScope;
 };
 
 export type CopiedConfigData = ConfigItem &
@@ -278,21 +280,34 @@ export const sortByOrderIdOrLayoutComparator = (
     return 0;
 };
 
+export const getLayoutParentId = (layout: DashTabLayout) => {
+    return layout.parent || DEFAULT_GROUP;
+};
+
 export const getLayoutMap = (
     layout: Array<DashTabLayout>,
-): [Record<string, DashTabLayout>, number] => {
+): [Record<string, DashTabLayout>, number, Record<string, DashTabLayout[]>] => {
     // forming a grid map for quick access by id
+    let layoutColumns = 0;
+    const layoutByParent: Record<string, DashTabLayout[]> = {};
     const layoutMap = layout.reduce(
         (map, layoutItem) => {
             map[layoutItem.i] = layoutItem;
+
+            layoutColumns = Math.max(layoutItem.x + layoutItem.w, layoutColumns);
+            const parentId = getLayoutParentId(layoutItem);
+
+            if (!layoutByParent[parentId]) {
+                layoutByParent[parentId] = [];
+            }
+            layoutByParent[parentId].push(layoutItem);
+
             return map;
         },
         {} as Record<string, DashTabLayout>,
     );
 
-    const layoutColumns = layout.reduce((col, n) => Math.max(n.x + n.w, col), 0);
-
-    return [layoutMap, layoutColumns];
+    return [layoutMap, layoutColumns, layoutByParent];
 };
 
 export function sendEmbedDashHeight(wrapRef: React.RefObject<HTMLDivElement>) {
@@ -368,7 +383,9 @@ export const getPreparedCopyItemOptions = (
     copyContext?: CopiedConfigContext,
 ) => {
     if (copyContext) {
-        itemToCopy.copyContext = copyContext;
+        itemToCopy.copyContext = {
+            ...copyContext,
+        };
     }
 
     if (!tabData?.items || !itemToCopy || !itemToCopy.data.tabs?.length) {

@@ -109,6 +109,7 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                                     onChange={handleChangeFrozenColumnsNumber}
                                     controlProps={{min: 0}}
                                     className={b('frozen-columns-input')}
+                                    qa={DialogColumnSettingsQa.PinnedColumnsInput}
                                 />
                             }
                         />

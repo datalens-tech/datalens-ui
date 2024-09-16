@@ -13,8 +13,10 @@ import type {
     ServerShapesConfig,
     ServerSort,
     ServerTooltip,
+    WrappedMarkup,
 } from '../../../../../../shared';
 import type {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
+import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
 import type {ChartColorsConfig} from '../types';
 
 export type PrepareFunction = (args: PrepareFunctionArgs) => any;
@@ -90,6 +92,6 @@ export type PiePoint = {
     color?: string;
     colorGuid?: string;
     colorValue?: string | number;
-    label?: string | number | null;
+    label?: string | number | null | WrappedMarkdown | WrappedMarkup;
     custom?: object;
 };
