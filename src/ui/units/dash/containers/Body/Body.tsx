@@ -55,6 +55,7 @@ import {
 } from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -114,6 +115,7 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
+    isPublicMode?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -151,6 +153,8 @@ type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
 type MemoContext = {
     fixedHeaderCollapsed?: boolean;
+    isEmbeddedMode?: boolean;
+    isPublicMode?: boolean;
     workbookId?: string | null;
     getPreparedCopyItemOptions?: (
         itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
@@ -603,7 +607,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
-        const {fixedHeaderCollapsed = false} = params.context;
+        const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
             <FixedHeaderControls
@@ -612,6 +616,8 @@ class Body extends React.PureComponent<BodyProps> {
                 isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
                 controls={this.renderFixedControls(fixedHeaderCollapsed, hasFixedContainerElements)}
+                isEmbedded={isEmbeddedMode}
+                isPublic={isPublicMode}
             >
                 {children}
             </FixedHeaderControls>
@@ -629,7 +635,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
-        const {fixedHeaderCollapsed = false} = params.context;
+        const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
             <FixedHeaderContainer
@@ -637,6 +643,8 @@ class Body extends React.PureComponent<BodyProps> {
                 key={`${id}_${this.props.tabId}`}
                 isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
+                isEmbedded={isEmbeddedMode}
+                isPublic={isPublicMode}
             >
                 {children}
             </FixedHeaderContainer>
@@ -667,6 +675,8 @@ class Body extends React.PureComponent<BodyProps> {
                 getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
                 fixedHeaderCollapsed: isCollapsed,
+                isEmbeddedMode: isEmbeddedMode(),
+                isPublicMode: Boolean(this.props.isPublicMode),
             };
         }
 
