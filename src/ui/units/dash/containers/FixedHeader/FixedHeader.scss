@@ -1,7 +1,8 @@
-@mixin flexReactGridLayout {
+@mixin flexReactGridLayout($minHeight: 44px) {
     & > .react-grid-layout {
         flex: 1;
         transition: none;
+        min-height: $minHeight;
     }
 }
 
