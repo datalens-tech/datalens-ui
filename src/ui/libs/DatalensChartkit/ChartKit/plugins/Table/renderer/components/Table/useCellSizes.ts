@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {waitForContent} from '../../../../../helpers/wait-for-content';
+
 function getTableSizes(rows: HTMLTableRowElement[], tableScale = 1) {
     const colsCount = Array.from(rows[0]?.childNodes ?? []).reduce((sum, c) => {
         const colSpan = Number((c as Element).getAttribute('colSpan') || 1);
@@ -58,8 +60,11 @@ export const useCellSizes = (
     const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
 
     React.useLayoutEffect(() => {
-        if (!cellSizes) {
-            document.fonts.ready.finally(() => {
+        const container = tableContainerRef?.current as Element;
+        const table = container?.getElementsByTagName('table')?.[0];
+
+        if (!cellSizes && table) {
+            waitForContent(table).finally(() => {
                 let sizes: number[] = [];
                 const container = tableContainerRef?.current as Element;
                 const table = container?.getElementsByTagName('table')?.[0];

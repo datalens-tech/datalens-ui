@@ -7,46 +7,13 @@ import PropTypes from 'prop-types';
 import {YfmWrapper} from '../../../../../../../components/YfmWrapper/YfmWrapper';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../helpers/constants';
 import {getRandomCKId} from '../../../../helpers/getRandomCKId';
+import {waitForContent} from '../../../../helpers/wait-for-content';
 import Performance from '../../../../modules/perfomance';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import './Markdown.scss';
 
 const b = block('chartkit-markdown');
-
-async function preloadContent(div) {
-    const imgs = [...div.querySelectorAll('img')];
-
-    if (imgs.length > 0) {
-        return Promise.all([
-            // Waiting for all image files to load
-            ...imgs.map((img) => {
-                return new Promise((resolve) => {
-                    // if image load is alredy complete
-                    if (img.complete) {
-                        resolve();
-                        return;
-                    }
-
-                    const handler = () => {
-                        img.removeEventListener('load', handler);
-                        img.removeEventListener('error', handler);
-                        resolve();
-                    };
-
-                    // handling error as complete result anyway
-                    img.addEventListener('load', handler);
-                    img.addEventListener('error', handler);
-                });
-            }),
-            // Waiting for fonts to load as well
-            document.fonts.ready,
-        ]);
-    }
-
-    // if not img waiting only for fonts
-    return document.fonts.ready;
-}
 
 export function Markdown({data, onLoad, id}) {
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, id]);
@@ -57,7 +24,7 @@ export function Markdown({data, onLoad, id}) {
 
     React.useLayoutEffect(() => {
         if (onLoad) {
-            preloadContent(refLink.current).then(() => {
+            waitForContent(refLink.current).then(() => {
                 onLoad({widgetRendering: Performance.getDuration(generatedId)});
             });
         }
