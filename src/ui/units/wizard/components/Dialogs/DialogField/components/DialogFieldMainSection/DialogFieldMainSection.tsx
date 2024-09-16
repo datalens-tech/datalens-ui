@@ -41,7 +41,7 @@ import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 import {DialogFieldSelect} from '../DialogFieldSelect/DialogFieldSelect';
 
 type Props = {
-    item: Field | undefined;
+    item: Field;
     extra:
         | {
               title?: boolean;
@@ -49,7 +49,7 @@ type Props = {
               hideLabel?: boolean;
           }
         | undefined;
-    options: DatasetOptions | undefined;
+    options: DatasetOptions;
     title: string | undefined;
     originTitle: string | undefined;
     hideLabelMode: 'show' | 'hide' | undefined;
@@ -79,13 +79,9 @@ export class DialogFieldMainSection extends React.Component<Props> {
             item,
             cast,
             data_type,
-            options,
             grouping = '',
             currentPlaceholder,
         } = this.props;
-        if (!item || !options) {
-            return null;
-        }
 
         const commonDataType = getCommonDataType(cast || data_type!);
 
@@ -98,18 +94,18 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 this.isMetricVisualization) &&
             (commonDataType === 'date' || item.grouping);
 
-        return (
-            <React.Fragment>
-                {this.renderOriginTitleInput()}
-                {this.renderTitleInput()}
-                {this.renderModesSelect()}
-                {this.renderFieldTypeSelect()}
-                {(commonDataType === 'date' || grouping) && this.renderDateGroupSelect()}
-                {enableFormat && this.renderDateFormatSelect()}
-                {this.renderAggregationSelect()}
-                {this.renderLabelHide()}
-            </React.Fragment>
-        );
+        const items = [
+            this.renderOriginTitleInput(),
+            this.renderTitleInput(),
+            this.renderModesSelect(),
+            this.renderFieldTypeSelect(),
+            (commonDataType === 'date' || grouping) && this.renderDateGroupSelect(),
+            enableFormat && this.renderDateFormatSelect(),
+            this.renderAggregationSelect(),
+            this.renderLabelHide(),
+        ];
+
+        return <React.Fragment>{items.map((item) => item)}</React.Fragment>;
     }
     renderOriginTitleInput() {
         const {extra, originTitle} = this.props;
