@@ -273,7 +273,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const modalBody = this.renderModalBody();
         if (!modalBody) {
-            // Added onCancel to not add dialogs to redux storage
+            // Added onCancel to remove dialog from redux storage
             this.props.onCancel();
             return null;
         }
