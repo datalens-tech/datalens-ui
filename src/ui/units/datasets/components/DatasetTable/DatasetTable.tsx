@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ArrowDown, ArrowUp} from '@gravity-ui/icons';
 import DataTable from '@gravity-ui/react-data-table';
-import {Icon} from '@gravity-ui/uikit';
+import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {get, intersection} from 'lodash';
@@ -16,6 +16,8 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants';
 
 import type {
     OpenDialogConfirmArguments,
@@ -354,7 +356,23 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         allowedAggregations: DatasetFieldAggregation[],
     ) => {
         this.batchChangeDialog(fields, {
-            warningMessage: i18n('text_batch-aggregation-alert'),
+            warningMessage: (
+                <Interpolate
+                    text={i18n('text_batch-aggregation-alert')}
+                    matches={{
+                        link(match) {
+                            return (
+                                <Link
+                                    target="_blank"
+                                    href={`${DL.ENDPOINTS.datalensDocs}/dataset/data-model#aggregation`}
+                                >
+                                    {match}
+                                </Link>
+                            );
+                        },
+                    }}
+                ></Interpolate>
+            ),
             title: i18n('text_batch-aggregation-header'),
             label: i18n('label_batch-aggregation'),
             aggregations: allowedAggregations,
