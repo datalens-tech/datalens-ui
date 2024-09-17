@@ -12,8 +12,8 @@ import {
 } from 'shared';
 import type {Required} from 'utility-types';
 
-import NumberInput from '../../../../../NumberInput/NumberInput';
-import {DialogFieldRow} from '../../DialogFieldRow/DialogFieldRow';
+import NumberInput from '../../../../NumberInput/NumberInput';
+import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 
 import './Number.scss';
 

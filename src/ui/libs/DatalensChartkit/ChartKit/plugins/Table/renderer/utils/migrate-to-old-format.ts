@@ -1,4 +1,4 @@
-import type {TableHead} from 'shared';
+import type {TableHead, TableValuesRow} from 'shared';
 
 import type {TableData} from '../../../../../types';
 import type {TData} from '../components/Table/types';
@@ -28,6 +28,19 @@ export function mapTableData(data: TableData): Required<TableData> {
         if ('cells' in firstRow && !firstRow.cells.length) {
             const cells = new Array(head.length).fill(null).map(() => ({value: ''}));
             return {head: newHead, rows: [{cells}], footer};
+        }
+
+        // chart as table
+        if ('values' in firstRow) {
+            return {
+                head: newHead,
+                rows: (rows as TableValuesRow[]).map(({values}) => ({
+                    cells: values.map((val) => {
+                        return {value: val};
+                    }),
+                })),
+                footer,
+            };
         }
     }
 
