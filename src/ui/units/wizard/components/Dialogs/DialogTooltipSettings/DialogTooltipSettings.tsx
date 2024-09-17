@@ -3,11 +3,12 @@ import React from 'react';
 import {SquareLetterT} from '@gravity-ui/icons';
 import {Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import type {ServerTooltipConfig} from 'shared';
-import {DialogRadioButtons} from 'ui/units/wizard/components/Dialogs/components/DialogRadioButtons/DialogRadioButtons';
-import {DialogRow} from 'ui/units/wizard/components/Dialogs/components/DialogRow/DialogRow';
+
+import DialogManager from '../../../../../components/DialogManager/DialogManager';
+import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
+import {DialogRow} from '../components/DialogRow/DialogRow';
 
 import './DialogTooltipSettings.scss';
 

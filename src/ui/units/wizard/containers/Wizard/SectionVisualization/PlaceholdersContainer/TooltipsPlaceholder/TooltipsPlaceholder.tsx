@@ -6,11 +6,11 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {applyTooltipSettings, openTooltipSettingsDialog} from 'ui/units/wizard/actions/tooltip';
-import {selectTooltipConfig, selectTooltips} from 'units/wizard/selectors/visualization';
 
 import {updateTooltips} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
+import {applyTooltipSettings, openTooltipSettingsDialog} from '../../../../../actions/tooltip';
+import {selectTooltipConfig, selectTooltips} from '../../../../../selectors/visualization';
 import PlaceholderComponent from '../Placeholder/Placeholder';
 import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 

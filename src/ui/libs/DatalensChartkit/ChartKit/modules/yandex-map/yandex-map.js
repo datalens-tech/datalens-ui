@@ -496,6 +496,9 @@ class YandexMap {
                         collection: {geometry, properties, children},
                     } = item;
 
+                    // using ObjectManager should be more productive,
+                    // but inside the Chips preset methods there is no way to get an instance of map
+                    // const objectManager = new YandexMap._ymaps.ObjectManager();
                     const geoObjectChildren = children.reduce(
                         (result, {feature, options: childOptions}) => {
                             result.push(new YandexMap._ymaps.GeoObject(feature, childOptions));

@@ -2,8 +2,10 @@ import {createSelector} from 'reselect';
 import type {Field, Shared} from 'shared';
 import {isVisualizationWithLayers} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {selectDimensionsByDataset} from 'units/wizard/selectors/dataset';
-import {getSelectedLayer, getVisualization} from 'units/wizard/utils/helpers';
+
+import {getSelectedLayer, getVisualization} from '../utils/helpers';
+
+import {selectDimensionsByDataset} from './dataset';
 
 export const selectHierarchies = (state: DatalensGlobalState) =>
     state.wizard.visualization.hierarchies;
