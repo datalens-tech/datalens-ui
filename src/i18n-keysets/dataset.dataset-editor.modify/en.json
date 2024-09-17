@@ -62,7 +62,7 @@
   "label_preview-not-supported": "Preview is not available for this type of source",
   "label_request-dataset-preview-error": "Error: failed to upload data for preview",
   "section_preview": "Preview",
-  "text_batch-aggregation-alert": "The <link>aggregations</link> available depend on the selected field type",
+  "text_batch-aggregation-alert": "<link>The aggregations available</link> depend on the selected field type",
   "text_batch-aggregation-header": "Changing the field aggregation",
   "text_batch-hide-header": "Hide fields",
   "text_batch-hide-message": "Are you sure want to hide the selected fields?",
