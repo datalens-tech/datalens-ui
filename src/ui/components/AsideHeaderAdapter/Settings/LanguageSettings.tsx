@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {Lang} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {Language} from 'shared';
@@ -31,7 +32,7 @@ export function LanguageSettings({isMobile}: {isMobile: boolean}) {
     const lang = language && allowedLanguages.includes(language) ? language : allowedLanguages[0];
 
     function handleLanguageChange(selected: string) {
-        dispatch(updateUserSettings({newSettings: {language: selected as Language}}));
+        dispatch(updateUserSettings({newSettings: {language: selected as Lang}}));
         window.location.reload();
     }
 
