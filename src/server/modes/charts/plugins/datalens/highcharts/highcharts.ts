@@ -388,9 +388,14 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
                 stacking: 'percent',
             };
             break;
-
+        case 'pie':
+            plotOptions.pie = {
+                allowPointSelect: false,
+            };
+            break;
         case 'donut':
             plotOptions.pie = {
+                allowPointSelect: false,
                 innerSize: '50%',
             };
             break;
