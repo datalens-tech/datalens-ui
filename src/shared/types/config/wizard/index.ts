@@ -1,4 +1,4 @@
-import type {Shared, SharedData, V11PlaceholderSettings} from '../../index';
+import type {Shared, SharedData, V11PlaceholderSettings, V11TooltipConfig} from '../../index';
 
 import type {V10ChartsConfig} from './v10';
 import type {
@@ -94,3 +94,5 @@ export type ServerHierarchy = V11HierarchyField;
 export type ServerCommonSharedExtraSettings = V11CommonSharedExtraSettings;
 
 export type ServerPlaceholderSettings = V11PlaceholderSettings;
+
+export type ServerTooltipConfig = V11TooltipConfig;

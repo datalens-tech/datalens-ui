@@ -7,6 +7,7 @@ import type {
     HierarchyField,
     Link,
     ServerDatasetField,
+    ServerTooltipConfig,
 } from '../';
 import type {
     ColorMode,
@@ -352,6 +353,7 @@ export interface VisualizationLayerShared extends CommonSharedLayer {
             colorsConfig?: ColorsConfig;
             geopointsConfig?: PointSizeConfig;
             shapesConfig?: ShapesConfig;
+            tooltipConfig?: ServerTooltipConfig;
         };
         name: string;
         iconProps: VisualizationIconProps;

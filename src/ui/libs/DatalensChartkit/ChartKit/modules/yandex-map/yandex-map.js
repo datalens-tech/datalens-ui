@@ -127,12 +127,15 @@ export const TOOLTIP_TWIG_TEMPLATE = `<div
                 <wbr>
             {% endif %}
             {% for part in properties.data %}
-                <div class="${b('row')}">
-                    <div class="${b('cell')}">
-                        <span class="${b(
-                            'color',
-                        )}" style="background-color: {{part.color}};"></span>
-                    </div>
+                <div class="${b('row')}
+                ">
+                    {% if (properties.data.0.color) %}
+                        <div class="${b('cell')}">
+                            <span class="${b(
+                                'color',
+                            )}" style="background-color: {{part.color}};"></span>
+                        </div>
+                    {% endif %}
                     <div class="${b('cell', {'yandex-map': true})}">{{part.weight|number}}</div>
                     <div class="${b('cell', {'yandex-map': true})}">
                         {% if (properties.rawText) %}
@@ -492,10 +495,6 @@ class YandexMap {
                     const {
                         collection: {geometry, properties, children},
                     } = item;
-
-                    // using ObjectManager should be more productive,
-                    // but inside the Chips preset methods there is no way to get an instance of map
-                    // const objectManager = new YandexMap._ymaps.ObjectManager();
 
                     const geoObjectChildren = children.reduce(
                         (result, {feature, options: childOptions}) => {
