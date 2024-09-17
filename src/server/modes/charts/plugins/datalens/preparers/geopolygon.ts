@@ -7,6 +7,7 @@ import type {
     ServerTooltip,
     StringParams,
     VisualizationLayerShared,
+    WrappedMarkdown,
 } from '../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
@@ -36,6 +37,13 @@ import {
 import {addActionParamValue} from './helpers/action-params';
 import type {PrepareFunctionArgs} from './types';
 
+type GeoPolygonTooltipData = {
+    text?: string;
+    color?: string;
+    key?: string;
+    value?: MarkupItem;
+} & Partial<WrappedMarkdown>;
+
 type GeopolygonConfig = {
     geometry: {
         type: 'Polygon';
@@ -57,12 +65,7 @@ type GeopolygonConfig = {
     properties: {
         rawText?: boolean;
         colorIndex?: number | null;
-        data?: {
-            text?: string;
-            color?: string;
-            key?: string;
-            value?: MarkupItem;
-        }[];
+        data?: GeoPolygonTooltipData[];
     };
 };
 
