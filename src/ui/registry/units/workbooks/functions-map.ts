@@ -45,4 +45,8 @@ export const workbooksFunctionsMap = {
         }
     >(),
     checkWbCreateEntryButtonVisibility: makeFunctionTemplate<CheckWbCreateEntryButtonVisibility>(),
+    getWorkbookEmptyStateTexts:
+        makeFunctionTemplate<
+            (scope: EntryScope | undefined) => {title: string; description: string}
+        >(),
 } as const;
