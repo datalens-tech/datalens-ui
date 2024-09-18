@@ -26,3 +26,4 @@ export * from './ui-sandbox';
 export * from './themes';
 export * from './markdown';
 export * from './markup';
+export * from './print';
