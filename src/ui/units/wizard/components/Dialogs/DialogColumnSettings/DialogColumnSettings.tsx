@@ -67,7 +67,9 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
     const dialogTitle = isPivotTableDialog
         ? i18n('wizard', 'label_pivot-table-title-dialog-column-settings')
         : i18n('wizard', 'label_title-dialog-column-settings');
-    const canPinColumns = !isPivotTableDialog && Utils.isEnabledFeature(Feature.PinnedColumns);
+    const canPinColumns =
+        (!isPivotTableDialog && Utils.isEnabledFeature(Feature.PinnedColumns)) ||
+        (isPivotTableDialog && Utils.isEnabledFeature(Feature.PinnedColumnsForPivotTables));
 
     return (
         <Dialog
@@ -81,11 +83,6 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 caption={
                     <div className={b('title')}>
                         <span className={b('dialog-title')}>{dialogTitle}</span>
-                        {isPivotTableDialog && (
-                            <span className={b('subtitle')}>
-                                {i18n('wizard', 'label_dialog-column-info-text')}
-                            </span>
-                        )}
                     </div>
                 }
             />
@@ -117,17 +114,15 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 )}
                 {!isEmpty(fields.columns) && (
                     <React.Fragment>
-                        {!isPivotTableDialog && (
-                            <DialogRow
-                                title={
-                                    <Subheader
-                                        title={i18n('wizard', 'label_column-width')}
-                                        tooltip={i18n('wizard', 'label_dialog-column-info-text')}
-                                    />
-                                }
-                                setting={''}
-                            />
-                        )}
+                        <DialogRow
+                            title={
+                                <Subheader
+                                    title={i18n('wizard', 'label_column-width')}
+                                    tooltip={i18n('wizard', 'label_dialog-column-info-text')}
+                                />
+                            }
+                            setting={''}
+                        />
                         <ColumnWidthSettingsSection
                             fields={fields.columns}
                             onError={(fieldId, error) => {
