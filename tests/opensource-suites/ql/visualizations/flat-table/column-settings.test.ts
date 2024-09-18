@@ -44,9 +44,9 @@ datalensTest.describe('QL', () => {
             await qlPage.columnSettings.apply();
 
             await expect(previewLoader).not.toBeVisible();
-            const {width} = (await tableCellContent.first().boundingBox()) || {};
+            const width: number = (await tableCellContent.first().boundingBox())?.width ?? 0;
             expect(width).not.toEqual(prevWidth);
-            // We allow inaccuracy in the form of fractions (or so) for the column width
+            // Allow inaccuracy in the form of fractions (or so) for the column width
             expect(Math.round(width)).toEqual(columnWidth);
 
             await qlPage.saveQlEntry(qlPage.getUniqueEntryName(chartNamePattern));
