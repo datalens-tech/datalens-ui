@@ -72,8 +72,6 @@ export enum Feature {
     PinnedColumns = 'PinnedColumns',
     PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
-    /** Chart runner for the execution of trusted code in wizard. */
-    WorkerChartBuilder = 'WorkerChartBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
@@ -90,8 +88,6 @@ export enum Feature {
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
     SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
-    /** Chart runner for the execution of trusted code in ql. */
-    QlChartRunner = 'QlChartRunner',
     /** Allow markdown in chart fields. */
     WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',

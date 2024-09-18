@@ -55,6 +55,7 @@ type GraphConfig = BaseConfig &
         events?: {
             click?: WidgetEvent<GraphWidgetEventScope> | WidgetEvent<GraphWidgetEventScope>[];
         };
+        preventDefaultForPointClick?: boolean;
     };
 
 export type TableConfig = BaseConfig & {

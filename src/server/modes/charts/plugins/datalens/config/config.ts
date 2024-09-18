@@ -102,6 +102,7 @@ export const buildChartsConfigPrivate = (
         hideHolidaysBands,
         linesLimit: DEFAULT_CHART_LINES_LIMIT,
         tooltip: {pin: {altKey: true}, sort: {enabled: true}},
+        preventDefaultForPointClick: false,
     };
 
     if (shared.extraSettings) {
