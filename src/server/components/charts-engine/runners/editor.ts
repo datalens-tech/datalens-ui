@@ -3,33 +3,11 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, getServerFeatures, isEnabledServerFeature} from '../../../../shared';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
-import {getSandboxChartBuilder} from '../components/processor/sandbox-chart-builder';
 
 import {commonRunner} from './common';
 import {runServerlessEditor} from './serverlessEditor';
 
 import type {RunnerHandlerProps} from '.';
-
-const NEW_SANDBOX_PERCENT = {
-    [Feature.NewSandbox_1p]: 0.01,
-    [Feature.NewSandbox_10p]: 0.1,
-    [Feature.NewSandbox_33p]: 0.33,
-    [Feature.NewSandbox_50p]: 0.5,
-    [Feature.NewSandbox_75p]: 0.75,
-};
-
-function isEnabledNewSandboxByDefault(ctx: AppContext) {
-    if (isEnabledServerFeature(ctx, Feature.NewSandbox_100p)) {
-        return true;
-    }
-    const features = Object.keys(NEW_SANDBOX_PERCENT);
-    const feature = features.find((feat) => isEnabledServerFeature(ctx, feat as Feature));
-    if (!feature) {
-        return false;
-    }
-    const percent = NEW_SANDBOX_PERCENT[feature as keyof typeof NEW_SANDBOX_PERCENT];
-    return Math.random() <= percent;
-}
 
 async function getChartBuilder({
     parentContext,
@@ -39,7 +17,6 @@ async function getChartBuilder({
     config,
     isScreenshoter,
     chartsEngine,
-    isWizard,
 }: {
     parentContext: AppContext;
     userLang: string;
@@ -50,42 +27,18 @@ async function getChartBuilder({
     isScreenshoter: boolean;
     isWizard: boolean;
 }) {
-    const canUserChangeSandboxVersionManually = isEnabledServerFeature(
-        parentContext,
-        Feature.SandboxEngineSelectSwitch,
-    );
-    let sandboxVersion =
-        (canUserChangeSandboxVersionManually && config.meta.sandbox_version) || '0';
-
-    if (sandboxVersion === '0') {
-        sandboxVersion = isEnabledNewSandboxByDefault(parentContext) ? '2' : '1';
-    }
-    const enableIsolatedSandbox =
-        Boolean(isEnabledServerFeature(parentContext, Feature.EnableIsolatedSandbox)) &&
-        sandboxVersion === '2';
-
     const serverFeatures = getServerFeatures(parentContext);
-    const chartBuilder =
-        enableIsolatedSandbox && !isWizard
-            ? await getIsolatedSandboxChartBuilder({
-                  userLang,
-                  userLogin,
-                  widgetConfig,
-                  config,
-                  isScreenshoter,
-                  chartsEngine,
-                  serverFeatures,
-              })
-            : await getSandboxChartBuilder({
-                  userLang,
-                  userLogin,
-                  widgetConfig,
-                  config,
-                  isScreenshoter,
-                  chartsEngine,
-              });
+    const chartBuilder = await getIsolatedSandboxChartBuilder({
+        userLang,
+        userLogin,
+        widgetConfig,
+        config,
+        isScreenshoter,
+        chartsEngine,
+        serverFeatures,
+    });
 
-    return {chartBuilder, sandboxVersion: enableIsolatedSandbox ? 2 : 1};
+    return {chartBuilder, sandboxVersion: 2};
 }
 
 export const runEditor = async (
