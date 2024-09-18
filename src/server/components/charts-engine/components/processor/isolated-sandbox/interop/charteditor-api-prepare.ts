@@ -9,13 +9,11 @@ import type {UISandboxWrappedFunction} from '../../../../../../../shared/types/u
 import type {
     ChartEditorAttachFormatter,
     ChartEditorAttachHandler,
-    ChartEditorCurrentPage,
     ChartEditorGetActionParams,
     ChartEditorGetLoadedData,
     ChartEditorGetLoadedDataStats,
     ChartEditorGetSecrets,
     ChartEditorGetSharedData,
-    ChartEditorGetSortParams,
     ChartEditorGetTranslation,
     ChartEditorGetWidgetConfig,
     ChartEditorResolveInterval,
@@ -31,7 +29,6 @@ import type {
     ChartEditorUpdateActionParams,
     ChartEditorUpdateConfig,
     ChartEditorUpdateHighchartsConfig,
-    ChartEditorUpdateParams,
     ChartEditorUserLang,
     ChartEditorUserLogin,
     ChartEditorWrapFnWrappedFnKey,
@@ -58,9 +55,6 @@ declare const _ChartEditor_getWidgetConfig: ChartEditorGetWidgetConfig;
 declare const _ChartEditor_getActionParams: ChartEditorGetActionParams;
 declare const _ChartEditor_wrapFn_WRAPPED_FN_KEY: ChartEditorWrapFnWrappedFnKey;
 declare const _ChartEditor_wrapHtml_WRAPPED_HTML_KEY: ChartEditorWrapHtmlWrappedHtmlKey;
-declare const _ChartEditor_getSortParams: ChartEditorGetSortParams;
-declare const _ChartEditor_currentPage: ChartEditorCurrentPage;
-declare const _ChartEditor_updateParams: ChartEditorUpdateParams;
 declare const _ChartEditor_updateActionParams: ChartEditorUpdateActionParams;
 declare const _ChartEditor_getLoadedData: ChartEditorGetLoadedData;
 declare const _ChartEditor_getLoadedDataStats: ChartEditorGetLoadedDataStats;

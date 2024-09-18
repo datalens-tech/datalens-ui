@@ -36,6 +36,7 @@
     p:has(+ template:last-child),
     p:has(+ dfn:last-child),
     .yfm-cut-content table:last-child,
+    .yfm-note-content:last-child p:last-child,
     .mermaid p:last-child {
         margin-bottom: 0;
     }
@@ -157,6 +158,7 @@
 // fix for reassign style by weight
 
 .g-root .editor-page div.yfm * img,
+.g-root .dash-app div.yfm * img,
 .g-root .app div.yfm * img {
     background: transparent;
 }

@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants/common';
+import {registry} from 'ui/registry';
 
 import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import type {WorkbookEntriesFilters} from '../../types';
@@ -24,6 +25,7 @@ type Props = {
 };
 
 export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props) => {
+    const {checkWbCreateEntryButtonVisibility} = registry.workbooks.functions.getAll();
     const isFiltersChanged = Boolean(filters.filterString);
 
     const handleClearFilters = () => onChangeFilters({filterString: undefined});
@@ -39,7 +41,7 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
     };
 
     const renderCreateEntryAction = () => {
-        if (workbook.permissions.update && !DL.IS_MOBILE) {
+        if (checkWbCreateEntryButtonVisibility(workbook, scope)) {
             return <CreateEntry className={b('controls')} scope={scope || EntryScope.Connection} />;
         }
         return null;
