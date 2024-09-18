@@ -1,0 +1,11 @@
+{
+    "role": "Role",
+    "read": "Read",
+    "add": "Add",
+    "update": "Update",
+    "delete": "Delete",
+    "assign_claims": "Assign claims",
+    "cancel": "Cancel",
+    "save": "Save"
+  }
+  
