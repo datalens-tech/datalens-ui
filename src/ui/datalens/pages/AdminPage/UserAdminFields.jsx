@@ -12,7 +12,38 @@ const b = block('base-admin-form');
 export const UserAdminFields = ({ values, stores, onChange }) => {
     const controlSize = 'l';
     const [showPassword, setShowPassword] = useState(false);
-    
+    if (values.b_base) {
+        return <>
+            <TextInput
+                value={values.id || ''}
+                size={controlSize}
+                onChange={onChange}
+                label={i18n('id')}
+                name={'id'}
+                disabled
+                hasClear
+            />
+            <TextInput
+                value={values.c_login || ''}
+                size={controlSize}
+                onChange={onChange}
+                label={i18n('login')}
+                name={'c_login'}
+                disabled={Boolean(values?.id)}
+                hasClear
+            />
+            {values.c_claims?.indexOf('oidc') >= 0 ? null : <TextInput
+                value={values.c_password || ''}
+                size={controlSize}
+                onChange={onChange}
+                endContent={<div className={b('eye-icon-wrapper')} onClick={()=>setShowPassword(!showPassword)}><Icon data={Eye} className={b('eye-icon')} /></div>}
+                type={showPassword ? 'text' : 'password'}
+                label={i18n('password')}
+                name={'c_password'}
+                hasClear
+            />}
+        </>
+    }
     return <>
         <TextInput
             value={values.id || ''}

@@ -27,7 +27,7 @@ const UsersTables = () => {
     { id: 'c_claims', name: i18n('roles') },
     { id: 'c_project_name', name: i18n('project'), },
     {
-      id: 'action', name: i18n('action'), template: (item: any) => item.b_base ? null : <Button onClick={onEdit(item)} size="m">{i18n("change")}</Button>
+      id: 'action', name: i18n('action'), template: (item: any) => <Button onClick={onEdit(item)} size="m">{i18n("change")}</Button>
     },
   ];
 
