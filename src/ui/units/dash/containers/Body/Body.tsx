@@ -43,6 +43,7 @@ import {
     ControlQA,
     DashEntryQa,
     DashKitOverlayMenuQa,
+    DashTabItemType,
     Feature,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
@@ -923,6 +924,7 @@ class Body extends React.PureComponent<BodyProps> {
                                     copiedData: this.state.hasCopyInBuffer,
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
+                                    filterItem: (item) => item.id === DashTabItemType.Image,
                                 })}
                                 className={b('edit-panel', {
                                     'aside-opened': isSidebarOpened,

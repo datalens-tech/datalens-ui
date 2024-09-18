@@ -117,6 +117,7 @@ export enum DialogDraftWarningQA {
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
     Title = 'dialog_widget-title',
+    Image = 'dialog_widget-image',
 }
 
 export enum DialogDashTitleQA {
