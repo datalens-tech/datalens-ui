@@ -25,7 +25,6 @@ async function getChartBuilder({
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
-    isWizard: boolean;
 }) {
     const serverFeatures = getServerFeatures(parentContext);
     const chartBuilder = await getIsolatedSandboxChartBuilder({
@@ -38,7 +37,7 @@ async function getChartBuilder({
         serverFeatures,
     });
 
-    return {chartBuilder, sandboxVersion: 2};
+    return {chartBuilder};
 }
 
 export const runEditor = async (
@@ -61,7 +60,7 @@ export const runEditor = async (
 
     const {widgetConfig} = req.body;
 
-    const {chartBuilder, sandboxVersion} = await getChartBuilder({
+    const {chartBuilder} = await getChartBuilder({
         parentContext,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -69,10 +68,7 @@ export const runEditor = async (
         config,
         isScreenshoter: Boolean(req.headers['x-charts-scr']),
         chartsEngine,
-        isWizard: runnerHandlerProps.isWizard || false,
     });
-
-    ctx.log(`EditorRunner::Sandbox version: ${sandboxVersion}`);
 
     commonRunner({
         res,
