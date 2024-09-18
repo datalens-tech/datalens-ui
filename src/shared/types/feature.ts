@@ -80,6 +80,7 @@ export enum Feature {
     EnableDashFixedHeader = 'EnableDashFixedHeader',
     /** Use BI handles for getting oauth applications tokens */
     EnableBIOAuth = 'EnableBIOAuth',
+    NewSandbox_100p = 'NewSandbox_100p',
     SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     /** Allow markdown in chart fields. */
     WizardMarkdownFields = 'WizardMarkdownFields',
