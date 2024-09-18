@@ -87,12 +87,8 @@ export enum Feature {
     NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
     SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
-    /** Allow markdown in chart fields. */
-    WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
-    /** Render markup in chart dataLabels. */
-    MarkupInLabels = 'MarkupInLabels',
 }
 
 export type FeatureConfig = Record<string, boolean>;
