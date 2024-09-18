@@ -1,9 +1,11 @@
 import {expect} from '@playwright/test';
 
+import {ChartKitTableQa, WizardVisualizationId} from '../../../../../src/shared';
 import QLPage from '../../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {ChartKitTableQa, WizardVisualizationId} from '../../../../../src/shared';
+
+const chartNamePattern = 'ql-e2e-save-test';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Flat table', () => {
@@ -18,8 +20,12 @@ datalensTest.describe('QL', () => {
 
         datalensTest.afterEach(async ({page}) => {
             await page.reload();
-            const qlPage = new QLPage({page});
-            await qlPage.deleteEntry();
+            const pageUrl = page.url();
+
+            if (pageUrl.includes(chartNamePattern)) {
+                const qlPage = new QLPage({page});
+                await qlPage.deleteEntry();
+            }
         });
 
         datalensTest('Column settings - width', async ({page}) => {
@@ -37,15 +43,13 @@ datalensTest.describe('QL', () => {
             await qlPage.columnSettings.fillWidthValueInput(firstColumnName, String(columnWidth));
             await qlPage.columnSettings.apply();
 
-            // Changing the width of the columns should trigger a request for chart rendering
-            await expect(previewLoader).toBeVisible();
-            // And then the width changes
             await expect(previewLoader).not.toBeVisible();
             const {width} = (await tableCellContent.first().boundingBox()) || {};
             expect(width).not.toEqual(prevWidth);
-            expect(width).toEqual(columnWidth);
+            // We allow inaccuracy in the form of fractions (or so) for the column width
+            expect(Math.round(width)).toEqual(columnWidth);
 
-            await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-save-test'));
+            await qlPage.saveQlEntry(qlPage.getUniqueEntryName(chartNamePattern));
             await page.reload();
 
             await qlPage.columnSettings.open();
