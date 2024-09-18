@@ -150,7 +150,9 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
 
     const pivotTotals = getPivotTableSubTotals({rowsFields, columnsFields});
     const sortSettings: PivotTableSortSettings = {
-        isSortByRowAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row'),
+        isSortByRowAllowed:
+            isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row') &&
+            args.shared.extraSettings?.pivotInlineSort === 'on',
         isSortByColumnAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_column'),
         ...backendSortMeta,
     };
