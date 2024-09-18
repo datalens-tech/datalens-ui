@@ -364,6 +364,7 @@
   "tooltip_tree-pagination_unavailable": "Pagination is not available in a tree table",
   "tooltip_tree-total_unavailable": "Total is not available in a tree table",
   "tooltip_zero-to-max-scale": "A logarithmic scale cannot contain values of 0 or negative values",
+  "tooltip_table-preview": "Data preview",
   "value_geotype-select-geopoint": "Points (Geopoints)",
   "value_geotype-select-geopoint-with-cluster": "Points with clusters (Geopoints)",
   "value_geotype-select-geopolygon": "Polygons (Geopolygons)",
