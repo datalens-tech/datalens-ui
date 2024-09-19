@@ -71,7 +71,9 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     }, [entry, currentDirection]);
 
     const showDirectionControl =
-        entry.scope !== EntryScope.Dash && entry.scope !== EntryScope.Connection;
+        entry.scope !== EntryScope.Dash &&
+        entry.scope !== EntryScope.Connection &&
+        entry.scope !== EntryScope.Report;
 
     const handleDirectionParentdate = (value: Direction) => {
         setCurrentDirection(value);
