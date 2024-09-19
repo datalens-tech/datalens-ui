@@ -48,28 +48,6 @@ export const getUISandbox = async () => {
     return uiSandbox;
 };
 
-// function definedChartsApi(args: {
-//     vm: QuickJSContext;
-//     chartEditorHandle: QuickJSHandle;
-//     disposables: QuickJSHandle[];
-// }) {
-//     const {vm, chartEditorHandle, disposables} = args;
-//     const getCurrentChartHandle = vm.newFunction('getCurrentChart', (chartIndex) => {
-//         const chartHandle = vm.newObject();
-//         const chart = window.Highcharts.charts[vm.dump(chartIndex)];
-//
-//         const updateSeriesHandle = vm.newFunction('updateSeries', (seriesIndex, data) => {
-//             chart?.series?.[vm.dump(seriesIndex)]?.update(vm.dump(data));
-//         });
-//         vm.setProp(chartHandle, 'updateSeries', updateSeriesHandle);
-//         updateSeriesHandle.dispose();
-//
-//         return chartHandle;
-//     });
-//     vm.setProp(chartEditorHandle, 'getCurrentChart', getCurrentChartHandle);
-//     disposables.push(getCurrentChartHandle);
-// }
-
 const HC_FORBIDDEN_ATTRS = [
     'chart',
     'this',
