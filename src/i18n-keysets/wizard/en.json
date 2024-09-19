@@ -363,6 +363,7 @@
   "tooltip_no-available-fields": "No suitable fields to add",
   "tooltip_pagination_unavailable": "Pagination is not available for multidataset charts",
   "tooltip_parameter-changed-icon": "Parameter value changed",
+  "tooltip_table-preview": "Data preview",
   "tooltip_tree-pagination_unavailable": "Pagination is not available in a tree table",
   "tooltip_tree-total_unavailable": "Total is not available in a tree table",
   "tooltip_zero-to-max-scale": "A logarithmic scale cannot contain values of 0 or negative values",
