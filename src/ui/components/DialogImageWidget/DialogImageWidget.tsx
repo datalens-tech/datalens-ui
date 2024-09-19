@@ -4,6 +4,7 @@ import {FormRow, HelpPopover} from '@gravity-ui/components';
 import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import type {DashTabItemImage, RecursivePartial} from 'shared';
@@ -59,7 +60,7 @@ export function DialogImageWidget(props: Props) {
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
     const {DialogImageWidgetLinkHint} = registry.common.components.getAll();
     const updateData = (updates: RecursivePartial<DashTabItemImage['data']>) => {
-        const resultData = merge({...data}, updates);
+        const resultData = merge(cloneDeep(data), updates);
         setData(resultData);
     };
 
@@ -87,7 +88,7 @@ export function DialogImageWidget(props: Props) {
         <Dialog
             open={dialogIsVisible}
             onClose={onClose}
-            onEnterKeyDown={onClose}
+            onEnterKeyDown={handleApply}
             qa={DialogDashWidgetItemQA.Image}
         >
             <Dialog.Header caption={i18n('dash.image-dialog.edit', 'label_title')} />
@@ -109,6 +110,7 @@ export function DialogImageWidget(props: Props) {
                         controlProps={{required: true}}
                         validationState={validationErrors[INPUT_SRC_ID] ? 'invalid' : undefined}
                         errorMessage={validationErrors[INPUT_SRC_ID] || ''}
+                        autoFocus={true}
                     />
                 </FormRow>
                 <FormRow

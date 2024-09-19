@@ -3,5 +3,9 @@
 
     &__row {
         align-items: center;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
