@@ -8,6 +8,7 @@ import MarkdownProvider from '../../modules/markdownProvider';
 import {getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
+import {pluginImage} from './plugins/Image/Image';
 import textPlugin from './plugins/Text/Text';
 import pluginTitle from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
@@ -47,6 +48,7 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
                 widgetPlugin,
+                pluginImage,
             ],
             pluginDefaultsGetter,
         );

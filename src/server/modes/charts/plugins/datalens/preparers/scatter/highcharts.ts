@@ -14,7 +14,7 @@ import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import type {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
-import {prepareScatter} from './prepareScatter';
+import {prepareScatter} from './prepare-scatter';
 
 // eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {

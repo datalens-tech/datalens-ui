@@ -23,6 +23,7 @@ import type {
     DashSettings,
     DashTab,
     DashTabItem,
+    DashTabItemImage,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
@@ -360,10 +361,11 @@ type SetItemDataBase = {
 };
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle;
+    data: SetItemDataText | SetItemDataTitle | SetItemDataImage;
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
