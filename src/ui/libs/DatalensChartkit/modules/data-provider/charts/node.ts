@@ -326,9 +326,14 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
-                unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
+                const unwrapFnArgs = {
+                    entryId: result.entryId,
+                    sandbox: uiSandbox,
+                    options: uiSandboxOptions,
+                };
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
