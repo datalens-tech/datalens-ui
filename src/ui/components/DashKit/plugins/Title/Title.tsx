@@ -91,6 +91,8 @@ const titlePlugin = {
             currentLayout.h,
             currentLayout.w,
             classMod,
+            data.background?.color,
+            data.background?.enabled,
             data.size,
             data.text,
         ]);
