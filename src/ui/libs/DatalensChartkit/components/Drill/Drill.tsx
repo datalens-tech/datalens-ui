@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {IS_NULL_FILTER_TEMPLATE} from 'shared';
+import {IS_NULL_FILTER_TEMPLATE, PRINT_HIDDEN_ATTR} from 'shared';
 
 import type {OnChangeData} from '../../types';
 import ChartKitIcon from '../ChartKitIcon/ChartKitIcon';
@@ -46,25 +46,27 @@ class Drill extends React.Component<Props> {
 
         return (
             <div className={b()}>
-                <ChartKitIcon
-                    className={b('drill-action', {
-                        disabled: level === 0,
-                        left: true,
-                    })}
-                    onClick={this.onDrillUp}
-                    viewBoxSize="16"
-                    data={iconArrowRight}
-                />
-                <ChartKitIcon
-                    className={b('drill-action', {
-                        disabled: level === breadcrumbs.length - 1,
-                        right: true,
-                    })}
-                    onClick={this.onDrillDown}
-                    viewBoxSize="16"
-                    data={iconArrowRight}
-                />
-                <div className={b('separator')} />
+                <div className={b('controls')} {...{[PRINT_HIDDEN_ATTR]: true}}>
+                    <ChartKitIcon
+                        className={b('drill-action', {
+                            disabled: level === 0,
+                            left: true,
+                        })}
+                        onClick={this.onDrillUp}
+                        viewBoxSize="16"
+                        data={iconArrowRight}
+                    />
+                    <ChartKitIcon
+                        className={b('drill-action', {
+                            disabled: level === breadcrumbs.length - 1,
+                            right: true,
+                        })}
+                        onClick={this.onDrillDown}
+                        viewBoxSize="16"
+                        data={iconArrowRight}
+                    />
+                </div>
+                <div className={b('separator')} {...{[PRINT_HIDDEN_ATTR]: true}} />
                 <Breadcrumbs
                     className={b('breadcrumbs')}
                     firstDisplayedItemsCount={FirstDisplayedItemsCount.Zero}
