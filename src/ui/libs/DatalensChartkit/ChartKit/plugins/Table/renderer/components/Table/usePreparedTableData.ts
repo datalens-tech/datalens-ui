@@ -349,6 +349,12 @@ export const usePreparedTableData = (props: {
                     contentStyle.width = originalHeadData.width;
                 }
 
+                if (enableRowGrouping) {
+                    // this fixes problems with changing the row height when scrolling
+                    // (when virtualizing rows in pivot tables)
+                    contentStyle.height = 0;
+                }
+
                 const renderCell =
                     typeof cell.column.columnDef.cell === 'function'
                         ? cell.column.columnDef.cell
