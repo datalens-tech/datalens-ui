@@ -28,11 +28,6 @@ export function getText(scope: EntryScope | undefined) {
 
             break;
         }
-        case EntryScope.Report: {
-            title = i18n('section_empty-scope-report');
-
-            break;
-        }
         default: {
             title = i18n('section_empty-scope-all');
             description = i18n('label_empty-scope-all-description');
