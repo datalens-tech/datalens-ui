@@ -4,6 +4,7 @@ export const enum DashboardAddWidgetQa {
     AddGroupControl = 'add-group-control',
     AddText = 'add-text-button',
     AddTitle = 'add-title-button',
+    AddImage = 'add-image-button',
 }
 
 export const enum DashKitOverlayMenuQa {

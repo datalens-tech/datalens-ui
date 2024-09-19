@@ -38,6 +38,9 @@ export const getWidgetRowText = (item: DashTabItem) => {
                 widgetTabs.push(controlItem.title);
             });
             break;
+        case DashTabItemType.Image:
+            text = `Image-${item.id}`;
+            break;
         case DashTabItemType.Control:
         default:
             text = item.data.title;
