@@ -208,18 +208,27 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
+    const rowMeasures = React.useRef<Record<string, number>>({});
+    React.useEffect(() => {
+        rowMeasures.current = {};
+    }, [data]);
+
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
-            const cells = Array.from(el?.getElementsByTagName('td') || []);
-            const simpleCell = cells.find((c) => {
-                const rowSpan = Number(c.getAttribute('rowspan')) || 0;
-                return rowSpan <= 1;
-            });
-            const height = simpleCell?.getBoundingClientRect()?.height;
-            return height ?? 0;
+            const rowIndex = el.getAttribute('data-index') ?? '';
+            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+                const cells = Array.from(el?.getElementsByTagName('td') || []);
+                const simpleCell = cells.find((c) => {
+                    const rowSpan = Number(c.getAttribute('rowspan')) || 0;
+                    return rowSpan <= 1;
+                });
+                rowMeasures.current[rowIndex] = simpleCell?.getBoundingClientRect()?.height ?? 0;
+            }
+
+            return rowMeasures.current[rowIndex];
         },
         overscan: 100,
     });
@@ -347,12 +356,6 @@ export const usePreparedTableData = (props: {
                 const contentStyle: React.CSSProperties = {};
                 if (typeof originalHeadData?.width !== 'undefined') {
                     contentStyle.width = originalHeadData.width;
-                }
-
-                if (enableRowGrouping) {
-                    // this fixes problems with changing the row height when scrolling
-                    // (when virtualizing rows in pivot tables)
-                    contentStyle.height = 0;
                 }
 
                 const renderCell =
