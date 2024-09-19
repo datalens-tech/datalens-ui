@@ -1,0 +1,11 @@
+.dialog-image {
+    width: 700px;
+
+    &__row {
+        align-items: center;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

@@ -14,20 +14,13 @@ import type {
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
-import {
-    Feature,
-    PlaceholderId,
-    WizardVisualizationId,
-    getDefaultFormatting,
-    isPseudoField,
-} from 'shared';
+import {PlaceholderId, WizardVisualizationId, getDefaultFormatting, isPseudoField} from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
-import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -468,7 +461,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
     private renderMarkdownSettings() {
         const {item, placeholderId, visualization} = this.props;
         const canTransformToMarkdown =
-            Utils.isEnabledFeature(Feature.WizardMarkdownFields) &&
             item?.data_type === DATASET_FIELD_TYPES.STRING &&
             canUseStringAsMarkdown(visualization.id as WizardVisualizationId, placeholderId);
 

@@ -199,6 +199,7 @@ class Header extends React.PureComponent<HeaderProps, HeaderState> {
         return [
             {
                 key: 'toggle-table-preview-button',
+                title: i18n('wizard', 'tooltip_table-preview'),
                 action: () => this.onClickButtonToggleTablePreview(),
                 className: b('toggle-preview-btn'),
                 icon: {

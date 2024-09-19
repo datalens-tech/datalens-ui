@@ -70,6 +70,7 @@ export enum Feature {
     NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
+    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
@@ -80,19 +81,10 @@ export enum Feature {
     EnableDashFixedHeader = 'EnableDashFixedHeader',
     /** Use BI handles for getting oauth applications tokens */
     EnableBIOAuth = 'EnableBIOAuth',
-    NewSandbox_1p = 'NewSandbox_1p',
-    NewSandbox_10p = 'NewSandbox_10p',
-    NewSandbox_33p = 'NewSandbox_33p',
-    NewSandbox_50p = 'NewSandbox_50p',
-    NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
     SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
-    /** Allow markdown in chart fields. */
-    WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
-    /** Render markup in chart dataLabels. */
-    MarkupInLabels = 'MarkupInLabels',
 }
 
 export type FeatureConfig = Record<string, boolean>;

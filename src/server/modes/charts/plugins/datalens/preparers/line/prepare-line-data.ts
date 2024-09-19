@@ -4,7 +4,6 @@ import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../sha
 import {
     AxisMode,
     AxisNullsMode,
-    Feature,
     PlaceholderId,
     WizardVisualizationId,
     getActualAxisModeForField,
@@ -62,12 +61,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
-        features,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
-    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
-    const isMarkupLabelsEnabled = features[Feature.MarkupInLabels];
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField = xPlaceholder?.items[0];
@@ -116,8 +112,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
-    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
-    const isMarkupLabel = isMarkupLabelsEnabled && isMarkupField(labelItem);
+    const isMarkdownLabel = isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -263,7 +259,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
                 colorMode,
-                convertMarkupToString: !isMarkupLabelsEnabled,
+                convertMarkupToString: false,
             });
         });
 

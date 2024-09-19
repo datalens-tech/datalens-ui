@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
+import type {ColumnDef, Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -177,7 +177,26 @@ export const usePreparedTableData = (props: {
             const updates = typeof updater === 'function' ? updater(sorting) : updater;
             const {id, desc} = updates[0] || {};
 
-            const headCellData = columns.find((c) => c.id === id)?.meta?.head as TableHead;
+            const findCell = (cols: ColumnDef<TData>[]): TableHead | undefined => {
+                for (let i = 0; i < cols.length; i++) {
+                    const col = cols[i];
+                    if (col.id === id) {
+                        return col.meta?.head as TableHead;
+                    }
+
+                    const subColumns = get(col, 'columns', []);
+                    if (subColumns.length) {
+                        const subCol = findCell(subColumns);
+                        if (subCol) {
+                            return subCol;
+                        }
+                    }
+                }
+
+                return undefined;
+            };
+
+            const headCellData = findCell(columns);
             const sortOrder = desc ? 'desc' : 'asc';
 
             if (onSortingChange) {

@@ -1,5 +1,5 @@
 import type {ServerPlaceholder, StringParams} from '../../../../../../../shared';
-import {PlaceholderId} from '../../../../../../../shared';
+import {Feature, PlaceholderId} from '../../../../../../../shared';
 import {getPivotTableSubTotals} from '../../utils/pivot-table/totals';
 import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
@@ -35,9 +35,14 @@ type BackendPivotTablePreparerResult = {
 };
 
 const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTablePreparerResult => {
+    const {shared, features} = args;
     const rawPivotData: PivotData | PivotDataWithInfo = (args.resultData as any).pivot_data as
         | PivotData
         | PivotDataWithInfo;
+
+    const pinnedColumns = features[Feature.PinnedColumnsForPivotTables]
+        ? shared.extraSettings?.pinnedColumns || 0
+        : 0;
 
     let pivotData: PivotData;
 
@@ -201,6 +206,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         loadedColorPalettes: args.colorsConfig.loadedColorPalettes,
         availablePalettes: args.colorsConfig.availablePalettes,
         sortSettings,
+        pinnedColumns,
     });
 
     let footer = [];

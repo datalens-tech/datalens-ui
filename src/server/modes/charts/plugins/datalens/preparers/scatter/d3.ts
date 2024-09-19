@@ -13,8 +13,8 @@ import {getAxisType} from '../helpers/axis';
 import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
-import type {ScatterGraph} from './prepareScatter';
-import {prepareScatter} from './prepareScatter';
+import type {ScatterGraph} from './prepare-scatter';
+import {prepareScatter} from './prepare-scatter';
 
 type MapScatterSeriesArgs = {
     xAxisType?: string;
