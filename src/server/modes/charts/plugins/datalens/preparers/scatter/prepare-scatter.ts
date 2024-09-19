@@ -1,7 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import escape from 'lodash/escape';
 
-import type {PointSizeConfig, ServerField} from '../../../../../../../shared';
+import type {PointSizeConfig, ServerField, WrappedMarkup} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
@@ -9,7 +9,9 @@ import {
     getFormatOptions,
     isDateField,
     isMarkdownField,
+    isMarkupField,
     isStringField,
+    wrapMarkupValue,
 } from '../../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
@@ -261,7 +263,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             const zTitle = idToTitle[z.guid];
             const zi = findIndexInOrder(order, z, zTitle);
             zValueRaw = values[zi];
-            let formattedZValue: string | null | WrappedMarkdown = zValueRaw;
+            let formattedZValue: string | null | WrappedMarkdown | WrappedMarkup = zValueRaw;
 
             if (isNumericalDataType(z.data_type) && z.formatting) {
                 formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
@@ -276,6 +278,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 } else if (shouldEscapeUserValue) {
                     formattedZValue = escape(formattedZValue as string);
                 }
+            }
+
+            if (isMarkupField(z)) {
+                formattedZValue = wrapMarkupValue(zValueRaw);
             }
 
             point.name = formattedZValue || '';
@@ -428,6 +434,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const hasMarkdown = [x, y, z, size, color, shape].some((field) => isMarkdownField(field));
     if (hasMarkdown) {
         ChartEditor.updateConfig({useMarkdown: true});
+    }
+
+    if (isMarkupField(z)) {
+        ChartEditor.updateConfig({useMarkup: true});
     }
 
     graphs.forEach((graph) => {
