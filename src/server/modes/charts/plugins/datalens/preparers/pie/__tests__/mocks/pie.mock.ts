@@ -357,7 +357,7 @@ export const piePrepareForQLResult = {
             name: 'iznos',
             pointConflict: true,
             tooltip: {chartKitFormatting: true, chartKitPrecision: 2},
-            dataLabels: {chartKitFormatting: true, chartKitPrecision: 0},
+            dataLabels: {chartKitFormatting: true, chartKitPrecision: 0, useHTML: false},
             data: [
                 {
                     name: 'Кирпич',
