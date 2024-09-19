@@ -16,6 +16,7 @@ import {
     formChangedSelector,
     gsheetUpdatingSelector,
     newConnectionSelector,
+    submitLoadingSelector,
     updateS3BasedConnection,
 } from '../../../store';
 import {getSubmitButtonText} from '../../../utils';
@@ -97,7 +98,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         connType: connectionTypeSelector(state),
         newConnection: newConnectionSelector(state),
         disabled: !formChangedSelector(state),
-        loading: state.connections.ui.submitLoading,
+        loading: submitLoadingSelector(state),
         gsheetUpdating: gsheetUpdatingSelector(state),
     };
 };
