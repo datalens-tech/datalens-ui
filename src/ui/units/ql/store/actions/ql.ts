@@ -16,7 +16,6 @@ import type {
     CommonSharedExtraSettings,
     ConnectorType,
     Dataset,
-    EntryUpdateMode,
     Field,
     QlConfigPreviewTableData,
     Shared,
@@ -24,6 +23,7 @@ import type {
 } from '../../../../../shared';
 import {
     ENTRY_TYPES,
+    EntryUpdateMode,
     Feature,
     QLChartType,
     resolveIntervalDate,
@@ -1182,6 +1182,14 @@ export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
                 onSuccess: (responseData) => dispatch(onSuccessQlWidgetUpdate(responseData)),
             }),
         );
+    };
+};
+
+export const updateChartAndDoAction = (preparedChartData: QlConfig, action: () => void) => {
+    return async function (dispatch: AppDispatch<QLAction>) {
+        await dispatch(updateChart(preparedChartData, EntryUpdateMode.Publish));
+
+        action();
     };
 };
 
