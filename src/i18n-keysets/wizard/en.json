@@ -142,7 +142,7 @@
   "label_field-name": "Field name",
   "label_field-not-exist": "Field not found in dataset",
   "label_field-not-exist-in-query": "Field not found in query",
-  "label_field-title": "Field title",
+  "label_field-title": "Field name",
   "label_fields-overflow": "The maximum number of fields is set",
   "label_fill-color-type": "Fill type",
   "label_filter-all-values": "All",
