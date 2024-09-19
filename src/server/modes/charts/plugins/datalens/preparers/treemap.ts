@@ -45,11 +45,10 @@ function prepareTreemap({
     features,
     ChartEditor,
 }: PrepareFunctionArgs) {
-    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
     // Dimensions
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
-    const useMarkdown = isMarkdownFieldsEnabled && d?.some(isMarkdownField);
+    const useMarkdown = d?.some(isMarkdownField);
 
     // Measures
     const m = placeholders[1].items;
@@ -141,10 +140,7 @@ function prepareTreemap({
             const treemapId =
                 dPath.length >= 1 ? `id_${dPath[0]}/${value}` : `id_${dPath.join()}${value}`;
 
-            const name =
-                isMarkdownField(item) && isMarkdownFieldsEnabled
-                    ? wrapMarkdownValue(value as string)
-                    : value;
+            const name = isMarkdownField(item) ? wrapMarkdownValue(value as string) : value;
 
             const treemapItem: TreemapItem = {
                 id: treemapId,
