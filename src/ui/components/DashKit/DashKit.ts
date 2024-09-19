@@ -1,3 +1,4 @@
+import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import {registry} from 'ui/registry';
 
@@ -19,26 +20,51 @@ const getDistinctsAction = () => {
     return fetchDistinctsByApi;
 };
 
-export const getConfiguredDashKit = () => {
-    if (isConfigured) {
-        return DashKit;
-    }
+let currentDefaultsGetter: ((plugin: Plugin) => PluginDefaultLayout) | null = null;
+const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDefaultsGetter) => {
+    return plugins.map((plugin) => {
+        return {
+            ...plugin,
+            defaultLayout: pluginDefaultsGetter
+                ? pluginDefaultsGetter(plugin)
+                : plugin.defaultLayout,
+        };
+    });
+};
 
+export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null) => {
     const controlSettings = {
         getDistincts: getDistinctsAction(),
     };
 
-    isConfigured = true;
+    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const plugins = wrapPlugins(
+            [
+                pluginTitle,
+                textPlugin.setSettings({
+                    apiHandler: MarkdownProvider.getMarkdown,
+                }),
+                pluginControl.setSettings(controlSettings),
+                pluginGroupControl.setSettings(controlSettings),
+                widgetPlugin,
+            ],
+            pluginDefaultsGetter,
+        );
 
-    DashKit.registerPlugins(
-        pluginTitle,
-        textPlugin.setSettings({
-            apiHandler: MarkdownProvider.getMarkdown,
-        }),
-        pluginControl.setSettings(controlSettings),
-        pluginGroupControl.setSettings(controlSettings),
-        widgetPlugin,
-    );
+        if (isConfigured) {
+            DashKit.reloadPlugins(...plugins);
+        } else {
+            DashKit.registerPlugins(...plugins);
+        }
+
+        currentDefaultsGetter = pluginDefaultsGetter;
+    }
+
+    if (isConfigured) {
+        return DashKit;
+    }
+
+    isConfigured = true;
 
     DashKit.setSettings({
         gridLayout: {margin: [8, 8]},
