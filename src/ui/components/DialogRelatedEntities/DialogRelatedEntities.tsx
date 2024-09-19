@@ -34,7 +34,9 @@ const CONCURRENT_ID = 'list-related-entities';
 
 export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEntitiesProps) => {
     const [currentDirection, setCurrentDirection] = React.useState<Direction>(
-        entry.scope === EntryScope.Dash ? Direction.Parent : Direction.Child,
+        entry.scope === EntryScope.Dash || entry.scope === EntryScope.Report
+            ? Direction.Parent
+            : Direction.Child,
     );
     const [isLoading, setIsLoading] = React.useState(true);
     const [isError, setIsError] = React.useState(false);
