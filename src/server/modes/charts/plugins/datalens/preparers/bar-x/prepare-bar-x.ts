@@ -10,7 +10,6 @@ import type {
 import {
     AxisMode,
     AxisNullsMode,
-    Feature,
     PlaceholderId,
     getActualAxisModeForField,
     getFakeTitleOrTitle,
@@ -68,13 +67,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         usedColors,
         ChartEditor,
         disableDefaultSorting = false,
-        features,
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
-    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
-    const isMarkupLabelsEnabled = features[Feature.MarkupInLabels];
 
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const x: ServerField | undefined = xPlaceholder?.items[0];
@@ -124,8 +120,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
-    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
-    const isMarkupLabel = isMarkupLabelsEnabled && isMarkupField(labelItem);
+    const isMarkdownLabel = isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -257,7 +253,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
                 colorMode,
-                convertMarkupToString: !isMarkupLabelsEnabled,
+                convertMarkupToString: false,
             });
         });
 
