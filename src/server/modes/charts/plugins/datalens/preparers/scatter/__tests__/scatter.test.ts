@@ -3,7 +3,7 @@ import merge from 'lodash/merge';
 
 import type {PrepareFunctionArgs} from '../../types';
 import {prepareHighchartsScatter} from '../highcharts';
-import {prepareScatter} from '../prepareScatter';
+import {prepareScatter} from '../prepare-scatter';
 
 import {
     colorField,
