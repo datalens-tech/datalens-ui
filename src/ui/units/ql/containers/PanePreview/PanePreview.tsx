@@ -5,20 +5,33 @@ import {i18n} from 'i18n';
 import _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
+import type {QlConfig} from 'shared';
+import {MenuItemsIds} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import type {ChartProviderPropsWithRefProps} from 'ui/components/Widgets/Chart/types';
+import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
+import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import {VisualizationStatus} from '../../constants';
+import {prepareChartDataBeforeSave} from '../../modules/helpers';
 import type {SetQueryMetadataProps} from '../../store/actions/ql';
 import {
     setQueryMetadata,
     setTablePreviewData,
     setVisualizationStatus,
+    updateChartAndDoAction,
 } from '../../store/actions/ql';
-import {getChart, getConnection, getEntry} from '../../store/reducers/ql';
+import {
+    getChart,
+    getConnection,
+    getEntry,
+    getEntryCanBeSaved,
+    getPreviewData,
+} from '../../store/reducers/ql';
 import type {
     QLChart,
     QLChartConfig,
@@ -44,10 +57,14 @@ interface PreviewProps {
     mode: 'preview' | 'chart';
     entry: QLEntry | null;
     connection: QLConnectionEntry | null;
+    entryCanBeSaved: boolean;
+    previewData: QlConfig | null;
 
     setQueryMetadata: typeof setQueryMetadata;
     setTablePreviewData: typeof setTablePreviewData;
     setVisualizationStatus: typeof setVisualizationStatus;
+    openDialogSaveChartConfirm: typeof openDialogSaveChartConfirm;
+    updateChartAndDoAction: typeof updateChartAndDoAction;
 }
 
 interface PreviewState {
@@ -122,10 +139,53 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                     menuType={this.getMenuType()}
                     forwardedRef={this.chartKitRef}
                     workbookId={entry?.workbookId}
+                    customMenuOptions={this.getCustomMenuOptions()}
                 />
             </div>
         );
     }
+
+    getCustomMenuOptions() {
+        return {
+            [MenuItemsIds.EXPORT]: {
+                actionWrapper: this.wrapChartKitMenuSaveChartAction.bind(
+                    null,
+                    i18n('wizard', 'confirm_chart-save_message'),
+                ),
+            },
+        } as unknown as ChartProviderPropsWithRefProps['customMenuOptions'];
+    }
+
+    wrapChartKitMenuSaveChartAction = (
+        confirmText: string,
+        originalAction: MenuItemConfig['action'],
+    ) => {
+        return (...originalActionArgs: any) => {
+            const {entryCanBeSaved} = this.props;
+            return new Promise((resolve) => {
+                if (entryCanBeSaved) {
+                    const onApply = async () => {
+                        const {previewData} = this.props;
+
+                        if (!previewData) {
+                            return;
+                        }
+
+                        const preparedChartData = prepareChartDataBeforeSave(previewData);
+                        this.props.updateChartAndDoAction(preparedChartData, () =>
+                            resolve(originalAction.apply(this, originalActionArgs)),
+                        );
+                    };
+                    this.props.openDialogSaveChartConfirm({
+                        onApply,
+                        message: confirmText,
+                    });
+                } else {
+                    resolve(originalAction.apply(this, originalActionArgs));
+                }
+            });
+        };
+    };
 
     onChartLoad = ({data}: ChartKitWrapperOnLoadProps) => {
         if (data.loadedData && data.loadedData.data && !_.isEmpty(data.loadedData.data)) {
@@ -245,6 +305,8 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         chartData: getChart(state),
         connection: getConnection(state),
         entry: getEntry(state),
+        entryCanBeSaved: getEntryCanBeSaved(state),
+        previewData: getPreviewData(state),
     };
 };
 
@@ -252,6 +314,8 @@ const mapDispatchToProps = {
     setQueryMetadata,
     setTablePreviewData,
     setVisualizationStatus,
+    openDialogSaveChartConfirm,
+    updateChartAndDoAction,
 };
 
 export default connect(
