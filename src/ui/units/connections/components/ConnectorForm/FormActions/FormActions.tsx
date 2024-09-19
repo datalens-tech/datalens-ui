@@ -21,6 +21,7 @@ import {
     innerFormSelector,
     readonlySelector,
     setValidationErrors,
+    submitLoadingSelector,
     updateConnection,
 } from '../../../store';
 import {validateFormBeforeAction} from '../../../store/utils';
@@ -179,7 +180,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         showSubmitButton: showSubmitButtonSelector(state),
         showCheckButton: showCheckButtonSelector(state),
         checkLoading: state.connections.ui.checkLoading,
-        submitLoading: state.connections.ui.submitLoading,
+        submitLoading: submitLoadingSelector(state),
         formChanged: formChangedSelector(state),
         readonly: readonlySelector(state),
     };
