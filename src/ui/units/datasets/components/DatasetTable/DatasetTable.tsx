@@ -5,7 +5,8 @@ import DataTable from '@gravity-ui/react-data-table';
 import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {get, intersection} from 'lodash';
+import get from 'lodash/get';
+import intersection from 'lodash/intersection';
 import type {
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -269,10 +270,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             'open' | 'onClose' | 'fieldsGuids' | 'batchUpdateFields' | 'onApply'
         >,
     ) => {
-        const handleOnApply = () => {
-            this.resetSelection();
-        };
-
         this.props.openDialog({
             id: DIALOG_CHANGE_DATASET_FIELDS,
             props: {
@@ -280,7 +277,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 onClose: this.props.closeDialog,
                 fieldsGuids: fields.map(({guid}) => guid),
                 batchUpdateFields: this.props.batchUpdateFields,
-                onApply: handleOnApply,
+                onApply: this.resetSelection,
                 ...props,
             },
         });

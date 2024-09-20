@@ -28,7 +28,7 @@ export interface DialogChangeDatasetFieldsProps {
     open: boolean;
     onClose: () => void;
     label: string;
-    warningMessage: React.ReactElement | string;
+    warningMessage: React.ReactNode;
     title: string;
     fieldsGuids: string[];
     batchUpdateFields: BatchUpdateFields;
@@ -63,7 +63,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
         aggregationsItems.length ? aggregationsItems[0].value : '',
     );
 
-    const handleOnApply = () => {
+    const handleApply = () => {
         batchUpdateFields({
             validateEnabled: false,
             updatePreview: true,
@@ -121,7 +121,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
             <Dialog.Footer
                 textButtonCancel={i18n('button_batch-cancel')}
                 textButtonApply={i18n('button_batch-apply')}
-                onClickButtonApply={handleOnApply}
+                onClickButtonApply={handleApply}
                 onClickButtonCancel={onClose}
             />
         </Dialog>
