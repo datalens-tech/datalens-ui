@@ -10,7 +10,7 @@ const b = block('dl-table');
 type Props = {
     rows: BodyRowViewData[];
     style?: React.CSSProperties;
-    onCellClick?: (event: React.MouseEvent, cell: unknown, rowIndex: number) => void;
+    onCellClick?: (event: React.MouseEvent, cell: unknown, rowId: string) => void;
 };
 
 export const TableBody = React.memo<Props>((props: Props) => {
@@ -42,7 +42,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                     }}
                                     onClick={(event) => {
                                         if (onCellClick) {
-                                            onCellClick(event, cell.data, row.index);
+                                            onCellClick(event, cell.data, row.id);
                                         }
                                     }}
                                     rowSpan={cell.rowSpan}

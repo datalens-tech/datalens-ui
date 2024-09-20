@@ -120,7 +120,7 @@ export const usePreparedTableData = (props: {
     data: Required<TableData>;
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
-    getCellAdditionStyles?: (cell: TableCell, rowIndex: number) => React.CSSProperties;
+    getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
 }): TableViewData => {
     const {
         widgetData: {config},
@@ -338,7 +338,7 @@ export const usePreparedTableData = (props: {
                 }
 
                 const additionalStyles = getCellAdditionStyles
-                    ? getCellAdditionStyles(originalCellData as TableCell, virtualRow.index)
+                    ? getCellAdditionStyles(originalCellData as TableCell, row.original)
                     : {};
                 const cellStyle: React.CSSProperties = {
                     left: pinned ? originalHeadData?.left : undefined,
