@@ -37,7 +37,7 @@ export interface DialogChangeDatasetFieldsProps {
     aggregations?: DatasetFieldAggregation[];
 }
 
-export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps> = ({
+export const DialogChangeDatasetFields = ({
     open,
     onClose,
     warningMessage,
@@ -48,7 +48,7 @@ export const DialogChangeDatasetFields: React.FC<DialogChangeDatasetFieldsProps>
     onApply,
     types = [],
     aggregations = [],
-}) => {
+}: DialogChangeDatasetFieldsProps) => {
     const typeItems = getTypeSelectOptions(types);
     const aggregationsItems: SelectOption[] = aggregations.map((aggr) => ({
         value: aggr,
