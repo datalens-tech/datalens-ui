@@ -226,6 +226,7 @@
   "label_percent": "В процентах",
   "label_pink-gray-green": "Сиреневый-Серый-Салатовый",
   "label_pivot-fallback": "Cтарые сводные таблицы",
+  "label_pivot-inline-sort": "Сортировка по строкам",
   "label_pivot-measure-sort": "Сортировка по показателю влияет только на запрос в источник, но не на сводную таблицу.",
   "label_pivot-table-title-dialog-column-settings": "Настройка столбцов и строк",
   "label_pixels-shortname": "px",
