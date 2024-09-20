@@ -59,7 +59,7 @@ export const getIsolatedSandboxChartBuilder = async (
     const getQLConnectionTypeMap = registry.getQLConnectionTypeMap();
     context.evalSync(
         `
-         // I do not know why, but this is not exist in V8 Isolate.
+         // I do not know why, but this is not exists in V8 Isolate.
          Math.E = ${Math.E};
          const __modules = {};
          let __params;
