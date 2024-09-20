@@ -9,7 +9,7 @@ import {MenuItemsIds, WizardPageQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
-import {getCustomExportActionWrapperWithSave} from 'ui/utils/customExportMenuItem';
+import {getCustomExportActionWrapperWithSave} from 'ui/utils/custom-export-menu-item';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
 import {selectDatasetError} from 'units/wizard/selectors/dataset';
 import {

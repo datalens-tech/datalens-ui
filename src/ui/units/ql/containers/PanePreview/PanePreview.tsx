@@ -12,7 +12,7 @@ import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import type {ChartProviderPropsWithRefProps} from 'ui/components/Widgets/Chart/types';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
-import {getCustomExportActionWrapperWithSave} from 'ui/utils/customExportMenuItem';
+import {getCustomExportActionWrapperWithSave} from 'ui/utils/custom-export-menu-item';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
