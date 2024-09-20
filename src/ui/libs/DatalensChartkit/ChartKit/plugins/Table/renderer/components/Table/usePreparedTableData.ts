@@ -230,7 +230,7 @@ export const usePreparedTableData = (props: {
 
             return rowMeasures.current[rowIndex];
         },
-        overscan: 10,
+        overscan: 100,
     });
 
     const virtualItems = prerender
