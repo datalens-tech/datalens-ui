@@ -285,6 +285,7 @@ class DialogChartWidget extends React.PureComponent<
         name: string;
         params: StringParams;
     }) => {
+        const {enableAutoheight} = this.props;
         const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
 
         const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
@@ -334,7 +335,11 @@ class DialogChartWidget extends React.PureComponent<
                 data: update(this.state.data, {
                     tabs: {
                         [tabIndex]: {
-                            autoHeight: {$set: selectedWidgetType === DASH_WIDGET_TYPES.METRIC},
+                            autoHeight: {
+                                $set:
+                                    enableAutoheight &&
+                                    selectedWidgetType === DASH_WIDGET_TYPES.METRIC,
+                            },
                         },
                     },
                 }),

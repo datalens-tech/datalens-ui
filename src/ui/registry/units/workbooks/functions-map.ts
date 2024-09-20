@@ -8,6 +8,8 @@ import type {WorkbookEntry} from 'units/workbooks/types';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 
+import type {CheckWbCreateEntryButtonVisibility} from './types/functions/checkWbCreateEntryButtonVisibility';
+
 export const workbooksFunctionsMap = {
     getWorkbookTabs: makeFunctionTemplate<(workbook: WorkbookWithPermissions) => Item[]>(),
     getWorkbookEntryUrl:
@@ -42,4 +44,9 @@ export const workbooksFunctionsMap = {
             hasMenu: boolean;
         }
     >(),
+    checkWbCreateEntryButtonVisibility: makeFunctionTemplate<CheckWbCreateEntryButtonVisibility>(),
+    getWorkbookEmptyStateTexts:
+        makeFunctionTemplate<
+            (scope: EntryScope | undefined) => {title: string; description: string}
+        >(),
 } as const;

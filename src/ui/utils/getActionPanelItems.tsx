@@ -1,7 +1,15 @@
 import React from 'react';
 
 import type {ActionPanelItem as DashkitActionPanelItem, ItemDropProps} from '@gravity-ui/dashkit';
-import {ChartColumn, Code, CopyPlus, Heading, Sliders, TextAlignLeft} from '@gravity-ui/icons';
+import {
+    ChartColumn,
+    Code,
+    CopyPlus,
+    Heading,
+    Picture,
+    Sliders,
+    TextAlignLeft,
+} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -19,6 +27,7 @@ export const TYPES_TO_DIALOGS_MAP = {
     [DashTabItemType.Control]: DIALOG_TYPE.CONTROL,
     [DashTabItemType.Text]: DIALOG_TYPE.TEXT,
     [DashTabItemType.Title]: DIALOG_TYPE.TITLE,
+    [DashTabItemType.Image]: DIALOG_TYPE.IMAGE,
 };
 
 export const getActionPanelItems = ({
@@ -76,6 +85,16 @@ export const getActionPanelItems = ({
             qa: DashboardAddWidgetQa.AddTitle,
             dragProps: {
                 type: DashTabItemType.Title,
+            },
+        },
+        {
+            id: DashTabItemType.Image,
+            icon: <Icon data={Picture} />,
+            title: i18n('dash.main.view', 'button_edit-panel-image'),
+            className: b(),
+            qa: DashboardAddWidgetQa.AddImage,
+            dragProps: {
+                type: DashTabItemType.Image,
             },
         },
     ];

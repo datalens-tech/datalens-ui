@@ -57,4 +57,5 @@ export const commonComponentsMap = {
     AclSubject: makeDefaultEmpty<AclSubjectProps>(),
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
+    DialogImageWidgetLinkHint: makeDefaultEmpty<{}>(),
 } as const;

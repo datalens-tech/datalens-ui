@@ -1,10 +1,6 @@
 import {updateParams} from '../paramsUtils';
 
 import {getPrepareApiAdapter} from './interop/charteditor-api';
-import {libsControlV1Interop} from './interop/libs/control-v1';
-import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
-import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
-import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
 import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
 
@@ -52,11 +48,6 @@ function __resolveParams(params) {
         });
     });
 }
-
-${libsControlV1Interop.prepareAdapter};
-${libsDatalensV3Interop.prepareAdapter};
-${libsQlChartV1Interop.prepareAdapter}
-${libsDatasetV2Interop.prepareAdapter}
 
 const require = ${requireShim.toString()};
 

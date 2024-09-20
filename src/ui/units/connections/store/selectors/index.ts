@@ -38,3 +38,7 @@ export const readonlySelector = (state: DatalensGlobalState) => {
 export const schemaLoadingSelector = (state: DatalensGlobalState) => {
     return state.connections.ui.schemaLoading;
 };
+
+export const submitLoadingSelector = (state: DatalensGlobalState) => {
+    return state.connections.ui.submitLoading;
+};

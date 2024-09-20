@@ -7,7 +7,7 @@ import type {MarkupItem} from '../wizard';
 import type {ChartKitCss} from './common';
 
 type TableCellValue = MarkupItem | WrappedHTML | string | number | [number, number] | null;
-type TableValuesRow = {
+export type TableValuesRow = {
     values: TableCellValue[];
 };
 export type OnClickSetParams = {

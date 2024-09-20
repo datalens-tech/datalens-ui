@@ -4,6 +4,7 @@
     width: 100%;
     min-height: 36px;
     padding-left: 5px;
+    gap: 28px;
     background-color: var(--data-table-color-base);
     overflow: auto;
 
@@ -14,7 +15,6 @@
     }
 
     &__range {
-        margin-left: 28px;
         font-style: italic;
         color: var(--g-color-text-secondary);
         white-space: nowrap;
