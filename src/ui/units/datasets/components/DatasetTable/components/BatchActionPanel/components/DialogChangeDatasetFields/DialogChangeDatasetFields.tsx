@@ -65,7 +65,6 @@ export const DialogChangeDatasetFields = ({
 
     const handleApply = () => {
         batchUpdateFields({
-            validateEnabled: false,
             updatePreview: true,
             fields: fieldsGuids.map((guid) => ({
                 guid,
@@ -98,7 +97,6 @@ export const DialogChangeDatasetFields = ({
                     <span>{label}</span>
                     {Boolean(typeItems.length) && (
                         <Select
-                            size="m"
                             options={typeItems}
                             className={b('select')}
                             onUpdate={handleTypeSelect}
@@ -109,7 +107,6 @@ export const DialogChangeDatasetFields = ({
                     )}
                     {isAggregationsDialog && (
                         <Select
-                            size="m"
                             options={aggregationsItems}
                             className={b('select')}
                             onUpdate={handleAggregationSelect}
