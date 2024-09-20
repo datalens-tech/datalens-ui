@@ -23,6 +23,11 @@ $actionPanelDefaultBottom: 20px;
         font-weight: 500;
     }
 
+    &__export-button {
+        position: fixed;
+        right: 24px;
+    }
+
     &__content {
         width: 100%;
         transition: width 0.1s;
