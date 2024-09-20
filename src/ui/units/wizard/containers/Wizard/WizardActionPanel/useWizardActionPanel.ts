@@ -10,13 +10,12 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 
-import {Feature, WizardPageQa} from '../../../../../../shared';
+import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import {REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
-import Utils from '../../../../../utils';
 import {toggleFullscreen} from '../../../actions/settings';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
@@ -46,19 +45,17 @@ export const useWizardActionPanel = (
         canGoForward,
     } = args;
 
-    const enableEditHistory = Utils.isEnabledFeature(Feature.EnableEditHistory);
-
     const onClickGoBack = React.useCallback(() => {
-        if (canGoBack && enableEditHistory) {
+        if (canGoBack) {
             dispatch(goBack({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoBack, dispatch, enableEditHistory]);
+    }, [canGoBack, dispatch]);
 
     const onClickGoForward = React.useCallback(() => {
-        if (canGoForward && enableEditHistory) {
+        if (canGoForward) {
             dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoForward, dispatch, enableEditHistory]);
+    }, [canGoForward, dispatch]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,
@@ -80,34 +77,30 @@ export const useWizardActionPanel = (
             size: 16,
         };
 
-        let items: AdditionalButtonTemplate[] = [];
-
-        if (enableEditHistory) {
-            items = [
-                {
-                    key: 'undo',
-                    action: onClickGoBack,
-                    className: b('undo-btn'),
-                    icon: {data: ArrowUturnCcwLeft, size: 16},
-                    view: 'flat',
-                    disabled: !canGoBack,
-                    qa: WizardPageQa.UndoButton,
-                    title: i18n('component.action-panel.view', 'button_undo'),
-                    hotkey: UNDO_HOTKEY.join('+'),
-                },
-                {
-                    key: 'redo',
-                    action: onClickGoForward,
-                    className: b('redo-btn'),
-                    icon: {data: ArrowUturnCwRight, size: 16},
-                    view: 'flat',
-                    disabled: !canGoForward,
-                    qa: WizardPageQa.RedoButton,
-                    title: i18n('component.action-panel.view', 'button_redo'),
-                    hotkey: REDO_HOTKEY.join('+'),
-                },
-            ];
-        }
+        const items: AdditionalButtonTemplate[] = [
+            {
+                key: 'undo',
+                action: onClickGoBack,
+                className: b('undo-btn'),
+                icon: {data: ArrowUturnCcwLeft, size: 16},
+                view: 'flat',
+                disabled: !canGoBack,
+                qa: WizardPageQa.UndoButton,
+                title: i18n('component.action-panel.view', 'button_undo'),
+                hotkey: UNDO_HOTKEY.join('+'),
+            },
+            {
+                key: 'redo',
+                action: onClickGoForward,
+                className: b('redo-btn'),
+                icon: {data: ArrowUturnCwRight, size: 16},
+                view: 'flat',
+                disabled: !canGoForward,
+                qa: WizardPageQa.RedoButton,
+                title: i18n('component.action-panel.view', 'button_redo'),
+                hotkey: REDO_HOTKEY.join('+'),
+            },
+        ];
 
         return [
             ...items,
@@ -123,15 +116,7 @@ export const useWizardActionPanel = (
                 view: 'flat',
             },
         ];
-    }, [
-        isFullscreen,
-        enableEditHistory,
-        onClickGoBack,
-        canGoBack,
-        onClickGoForward,
-        canGoForward,
-        dispatch,
-    ]);
+    }, [isFullscreen, onClickGoBack, canGoBack, onClickGoForward, canGoForward, dispatch]);
 
     const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
         return [

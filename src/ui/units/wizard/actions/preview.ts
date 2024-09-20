@@ -20,9 +20,8 @@ import type {
     Update,
     VisualizationWithLayersShared,
 } from '../../../../shared';
-import {Feature, isVisualizationWithLayers} from '../../../../shared';
+import {isVisualizationWithLayers} from '../../../../shared';
 import {addEditHistoryPoint} from '../../../store/actions/editHistory';
-import Utils from '../../../utils';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../constants';
 import type {WizardDispatch} from '../reducers';
 import type {DatasetState} from '../reducers/dataset';
@@ -207,14 +206,12 @@ export function updatePreviewAndClientChartsConfig(
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
-                if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-                    dispatch(
-                        addEditHistoryPoint({
-                            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                            newState: getState().wizard,
-                        }),
-                    );
-                }
+                dispatch(
+                    addEditHistoryPoint({
+                        unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                        newState: getState().wizard,
+                    }),
+                );
             }
         });
     };
