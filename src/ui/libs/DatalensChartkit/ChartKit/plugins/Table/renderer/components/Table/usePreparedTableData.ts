@@ -208,6 +208,11 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
+    const enableRowGrouping = React.useMemo(
+        () => data.head?.some((cell) => get(cell, 'group', false)),
+        [data.head],
+    );
+
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
@@ -218,14 +223,22 @@ export const usePreparedTableData = (props: {
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
-            const rowIndex = el.getAttribute('data-index') ?? '';
-            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+            const getRowHeight = () => {
                 const cells = Array.from(el?.getElementsByTagName('td') || []);
                 const simpleCell = cells.find((c) => {
                     const rowSpan = Number(c.getAttribute('rowspan')) || 0;
                     return rowSpan <= 1;
                 });
-                rowMeasures.current[rowIndex] = simpleCell?.getBoundingClientRect()?.height ?? 0;
+                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+            };
+
+            if (!enableRowGrouping) {
+                return getRowHeight();
+            }
+
+            const rowIndex = el.getAttribute('data-index') ?? '';
+            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+                rowMeasures.current[rowIndex] = getRowHeight();
             }
 
             return rowMeasures.current[rowIndex];
@@ -236,7 +249,7 @@ export const usePreparedTableData = (props: {
     const virtualItems = prerender
         ? new Array(Math.min(tableRows.length, PRERENDER_ROW_COUNT))
               .fill(null)
-              .map((_, index) => ({index, start: 0}))
+              .map((_, index) => ({index, start: 0, size: undefined}))
         : rowVirtualizer.getVirtualItems();
 
     const headerRows = headers
@@ -333,6 +346,10 @@ export const usePreparedTableData = (props: {
                         )
                     ) {
                         prevCell.rowSpan += 1;
+                        if (prevCell.maxHeight && virtualRow.size) {
+                            prevCell.maxHeight += virtualRow.size;
+                        }
+
                         return acc;
                     }
                 }
@@ -378,6 +395,7 @@ export const usePreparedTableData = (props: {
                             : originalCellData?.className,
                     rowSpan: 1,
                     data: originalCellData,
+                    maxHeight: enableRowGrouping ? virtualRow.size : undefined,
                 };
 
                 prevCells[index] = rowsAcc.length;
