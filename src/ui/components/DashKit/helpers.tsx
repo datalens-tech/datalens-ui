@@ -122,17 +122,10 @@ export const DashkitContainer: React.FC<
         return {
             config: props.config,
             defaultGlobalParams: props.defaultGlobalParams,
-            itemsStateAndParams: props.itemsStateAndParams,
             skipReload,
             isNewRelations,
         };
-    }, [
-        props.config,
-        props.defaultGlobalParams,
-        props.itemsStateAndParams,
-        skipReload,
-        isNewRelations,
-    ]);
+    }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
 
     return (
         <DashControlsConfigContext.Provider value={contextValue}>

@@ -63,7 +63,7 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
     }
 
     if (isConfigured) {
-        return DashKit;
+        return DashkitContainer;
     }
 
     isConfigured = true;
