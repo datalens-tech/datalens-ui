@@ -121,6 +121,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const [scrollOffset, setScrollOffset] = React.useState<number | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
     const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
+    const [isRendered, setIsRendered] = React.useState(false);
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
@@ -166,6 +167,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     : false;
 
             adjustLayout(!newAutoHeight);
+            setIsRendered(true);
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -352,15 +354,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     /**
      * debounced call of chartkit reflow
      */
+    const isReadyToReflowRef = React.useRef(false);
+    isReadyToReflowRef.current = isInit && !isLoading && isRendered;
     const debouncedChartReflow = React.useCallback(
         debounce(() => {
             handleChartkitReflow();
             // Triggering update after chart changed it size
-            if (handleUpdate) {
+            if (isReadyToReflowRef.current && handleUpdate) {
                 requestAnimationFrame(() => handleUpdate());
             }
         }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        [handleChartkitReflow],
+        [handleChartkitReflow, isReadyToReflowRef],
     );
 
     /**
@@ -395,11 +399,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
     React.useEffect(() => {
-        if (isInit && !isLoading) {
+        if (isInit && !isLoading && isRendered) {
             handleUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, handleUpdate]);
+    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, isRendered, handleUpdate]);
 
     /**
      * updating widget description by markdown

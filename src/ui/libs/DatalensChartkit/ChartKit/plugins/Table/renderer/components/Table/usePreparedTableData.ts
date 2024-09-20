@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
+import type {ColumnDef, Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -120,7 +120,7 @@ export const usePreparedTableData = (props: {
     data: Required<TableData>;
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
-    getCellAdditionStyles?: (cell: TableCell, rowIndex: number) => React.CSSProperties;
+    getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
 }): TableViewData => {
     const {
         widgetData: {config},
@@ -177,7 +177,26 @@ export const usePreparedTableData = (props: {
             const updates = typeof updater === 'function' ? updater(sorting) : updater;
             const {id, desc} = updates[0] || {};
 
-            const headCellData = columns.find((c) => c.id === id)?.meta?.head as TableHead;
+            const findCell = (cols: ColumnDef<TData>[]): TableHead | undefined => {
+                for (let i = 0; i < cols.length; i++) {
+                    const col = cols[i];
+                    if (col.id === id) {
+                        return col.meta?.head as TableHead;
+                    }
+
+                    const subColumns = get(col, 'columns', []);
+                    if (subColumns.length) {
+                        const subCol = findCell(subColumns);
+                        if (subCol) {
+                            return subCol;
+                        }
+                    }
+                }
+
+                return undefined;
+            };
+
+            const headCellData = findCell(columns);
             const sortOrder = desc ? 'desc' : 'asc';
 
             if (onSortingChange) {
@@ -189,18 +208,27 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
+    const rowMeasures = React.useRef<Record<string, number>>({});
+    React.useEffect(() => {
+        rowMeasures.current = {};
+    }, [data]);
+
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
-            const cells = Array.from(el?.getElementsByTagName('td') || []);
-            const simpleCell = cells.find((c) => {
-                const rowSpan = Number(c.getAttribute('rowspan')) || 0;
-                return rowSpan <= 1;
-            });
-            const height = simpleCell?.getBoundingClientRect()?.height;
-            return height ?? 0;
+            const rowIndex = el.getAttribute('data-index') ?? '';
+            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+                const cells = Array.from(el?.getElementsByTagName('td') || []);
+                const simpleCell = cells.find((c) => {
+                    const rowSpan = Number(c.getAttribute('rowspan')) || 0;
+                    return rowSpan <= 1;
+                });
+                rowMeasures.current[rowIndex] = simpleCell?.getBoundingClientRect()?.height ?? 0;
+            }
+
+            return rowMeasures.current[rowIndex];
         },
         overscan: 100,
     });
@@ -310,7 +338,7 @@ export const usePreparedTableData = (props: {
                 }
 
                 const additionalStyles = getCellAdditionStyles
-                    ? getCellAdditionStyles(originalCellData as TableCell, virtualRow.index)
+                    ? getCellAdditionStyles(originalCellData as TableCell, row.original)
                     : {};
                 const cellStyle: React.CSSProperties = {
                     left: pinned ? originalHeadData?.left : undefined,
