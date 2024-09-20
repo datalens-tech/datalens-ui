@@ -1,16 +1,12 @@
-import React from 'react';
-
 import type {SelectOption} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
-import type {DatasetField, WithRequired} from 'shared';
+import type {DatasetField} from 'shared';
 import {
     AVAILABLE_FIELD_TYPES,
     DATASET_FIELD_TYPES,
     DatasetFieldAggregation,
     DatasetFieldType,
 } from 'shared';
-import {DataTypeIcon} from 'ui';
+import {getTypeSelectOptions} from 'ui/utils/getTypeSelectOptions';
 
 import type {ParameterFormState} from './useParameterForm';
 
@@ -24,26 +20,10 @@ const NEW_PARAMETER_FIELD = {
     hidden: false,
 };
 
-const b = block('dialog-parameter');
-
 export const getTypesList = (): SelectOption[] => {
-    return AVAILABLE_FIELD_TYPES.map((type): WithRequired<SelectOption, 'text'> => {
-        const text = i18n('dataset.dataset-editor.modify', `value_${type}`);
-        return {
-            qa: `dialog-parameter-${type}`,
-            data: {
-                icon: <DataTypeIcon className={b('icon')} dataType={type as DATASET_FIELD_TYPES} />,
-            },
-            value: type,
-            content: text,
-            text,
-        };
-    }).sort((current, next) => {
-        const currentText = current.text;
-        const nextText = next.text;
+    const items = getTypeSelectOptions([...AVAILABLE_FIELD_TYPES]);
 
-        return currentText.localeCompare(nextText, undefined, {numeric: true});
-    });
+    return items.map((item) => ({...item, qa: `dialog-parameter-${item.value}`}));
 };
 
 export const createParameterField = (
