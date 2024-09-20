@@ -2,13 +2,14 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {type ConfigItem, DashKit, type ItemState} from '@gravity-ui/dashkit';
+import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DashSettingsGlobalParams, StringParams} from 'shared';
+import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
@@ -108,24 +109,20 @@ export function getDashKitMenu() {
     ];
 }
 
-type DashkitProps = React.ComponentProps<typeof DashKit>;
+interface DashkitWrapperProps extends DashKitProps {
+    ref?: React.LegacyRef<DashKit>;
+    // Make noOverlay partial
+    noOverlay?: boolean;
+}
 
 export const DashkitContainer: React.FC<
-    // DashKit properties
-    Omit<DashkitProps, 'globalParams' | 'defaultGlobalParams' | 'onItemEdit' | 'noOverlay'> & {
-        // Fix legacy ref
-        ref?: React.LegacyRef<DashKit>;
-    } & {
-        // Fix partial global params
-        globalParams?: DashSettingsGlobalParams;
-        defaultGlobalParams?: DashSettingsGlobalParams;
-    } & {
+    Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & {
         // Extended Controls props
         skipReload?: boolean;
         isNewRelations?: boolean;
     } & ( // Making edit props optional when editMode === false
-            | {editMode: true; onItemEdit: DashkitProps['onItemEdit']; noOverlay: boolean}
-            | {editMode: false; onItemEdit?: DashkitProps['onItemEdit']; noOverlay?: boolean}
+            | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
+            | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
         )
 > = ({skipReload = false, isNewRelations = false, ...props}) => {
     const contextValue = React.useMemo(() => {
