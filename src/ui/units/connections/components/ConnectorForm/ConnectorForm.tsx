@@ -1,8 +1,9 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import type {ConnectorType} from 'shared';
+import {registry} from 'ui/registry';
 
 import {
     formSchemaSelector,
@@ -39,7 +40,13 @@ export const ConnectorForm = ({type}: Props) => {
 
     React.useEffect(() => {
         return () => {
-            dispatch(setInitialState());
+            const beforeConnectorFormUnmount = registry.connections.functions.get(
+                'beforeConnectorFormUnmount',
+            );
+            batch(() => {
+                beforeConnectorFormUnmount(dispatch);
+                dispatch(setInitialState());
+            });
         };
     }, [dispatch]);
 

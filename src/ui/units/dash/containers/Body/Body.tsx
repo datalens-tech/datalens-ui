@@ -169,8 +169,6 @@ const GROUPS_WEIGHT = {
     [DEFAULT_GROUP]: 0,
 } as const;
 
-const DashKit = getConfiguredDashKit();
-
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     dashKitRef = React.createRef<DashKitComponent>();
@@ -821,6 +819,7 @@ class Body extends React.PureComponent<BodyProps> {
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
+        const DashKit = getConfiguredDashKit();
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
