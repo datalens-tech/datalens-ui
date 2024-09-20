@@ -382,7 +382,7 @@ export const usePreparedTableData = (props: {
                             : originalCellData?.className,
                     rowSpan: 1,
                     data: originalCellData,
-                    maxHeight: virtualRow.size,
+                    maxHeight: enableRowGrouping ? virtualRow.size : undefined,
                 };
 
                 prevCells[index] = rowsAcc.length;
