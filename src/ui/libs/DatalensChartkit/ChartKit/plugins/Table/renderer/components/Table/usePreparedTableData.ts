@@ -208,6 +208,11 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
+    const enableRowGrouping = React.useMemo(
+        () => data.head?.some((cell) => get(cell, 'group', false)),
+        [data.head],
+    );
+
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
@@ -218,14 +223,22 @@ export const usePreparedTableData = (props: {
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
-            const rowIndex = el.getAttribute('data-index') ?? '';
-            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+            const getRowHeight = () => {
                 const cells = Array.from(el?.getElementsByTagName('td') || []);
                 const simpleCell = cells.find((c) => {
                     const rowSpan = Number(c.getAttribute('rowspan')) || 0;
                     return rowSpan <= 1;
                 });
-                rowMeasures.current[rowIndex] = simpleCell?.getBoundingClientRect()?.height ?? 0;
+                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+            };
+
+            if (!enableRowGrouping) {
+                return getRowHeight();
+            }
+
+            const rowIndex = el.getAttribute('data-index') ?? '';
+            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+                rowMeasures.current[rowIndex] = getRowHeight();
             }
 
             return rowMeasures.current[rowIndex];
