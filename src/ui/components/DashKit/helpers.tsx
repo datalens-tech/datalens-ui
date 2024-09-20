@@ -8,7 +8,7 @@ import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {StringParams} from 'shared';
+import type {DashSettingsGlobalParams, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
@@ -108,15 +108,25 @@ export function getDashKitMenu() {
     ];
 }
 
+type DashkitProps = React.ComponentProps<typeof DashKit>;
+
 export const DashkitContainer: React.FC<
     // DashKit properties
-    React.ComponentProps<typeof DashKit> & {
+    Omit<DashkitProps, 'globalParams' | 'defaultGlobalParams' | 'onItemEdit' | 'noOverlay'> & {
+        // Fix legacy ref
         ref?: React.LegacyRef<DashKit>;
+    } & {
+        // Fix partial global params
+        globalParams?: DashSettingsGlobalParams;
+        defaultGlobalParams?: DashSettingsGlobalParams;
     } & {
         // Extended Controls props
         skipReload?: boolean;
         isNewRelations?: boolean;
-    }
+    } & ( // Making edit props optional when editMode === false
+            | {editMode: true; onItemEdit: DashkitProps['onItemEdit']; noOverlay: boolean}
+            | {editMode: false; onItemEdit?: DashkitProps['onItemEdit']; noOverlay?: boolean}
+        )
 > = ({skipReload = false, isNewRelations = false, ...props}) => {
     const contextValue = React.useMemo(() => {
         return {
