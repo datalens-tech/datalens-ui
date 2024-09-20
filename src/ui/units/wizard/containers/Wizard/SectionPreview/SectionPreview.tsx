@@ -9,6 +9,7 @@ import {MenuItemsIds, WizardPageQa} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {getCustomExportActionWrapperWithSave} from 'ui/utils/customExportMenuItem';
 import {setDrillDownLevel} from 'units/wizard/actions/visualization';
 import {selectDatasetError} from 'units/wizard/selectors/dataset';
 import {
@@ -31,13 +32,12 @@ import type {
     ChartKitWrapperLoadSuccess,
     ChartKitWrapperOnLoadProps,
 } from '../../../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {MenuItemConfig} from '../../../../../libs/DatalensChartkit/menu/Menu';
 import type {ConfigNode} from '../../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import {openDialogSaveChartConfirm} from '../../../../../store/actions/dialog';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
 import type {HighchartsWidget} from '../../../actions/preview';
 import {setHighchartsWidget} from '../../../actions/preview';
-import {updateWizardWidgetAndDoAction} from '../../../actions/widget';
+import {updateWizardWidgetAndUpdateConfig} from '../../../actions/widget';
 import {selectWizardWorkbookId} from '../../../selectors/settings';
 import {selectWidget} from '../../../selectors/widget';
 import {shouldComponentUpdateWithDeepComparison} from '../../../utils/helpers';
@@ -67,55 +67,37 @@ class SectionPreview extends Component<Props> {
     }
 
     getCustomMenuOptions() {
+        const {isChartSaved, widget, configForSaving} = this.props;
+
+        const args = {
+            canBeSaved: !isChartSaved,
+            onApply: async () => {
+                if (configForSaving) {
+                    await this.props.updateWizardWidgetAndUpdateConfig({
+                        config: configForSaving,
+                        entry: widget,
+                    });
+
+                    this.props.reloadRevisionsOnSave();
+                }
+            },
+        };
+
         return {
             [MenuItemsIds.EXPORT]: {
-                actionWrapper: this.wrapChartKitMenuSaveChartAction.bind(
-                    null,
-                    i18n('wizard', 'confirm_chart-save_message'),
-                ),
+                actionWrapper: getCustomExportActionWrapperWithSave.bind(this, {
+                    message: i18n('wizard', 'confirm_chart-save_message'),
+                    ...args,
+                }),
             },
             [MenuItemsIds.ALERTS]: {
-                actionWrapper: this.wrapChartKitMenuSaveChartAction.bind(
-                    null,
-                    i18n('wizard', 'confirm_chart-save_message_alerts'),
-                ),
+                actionWrapper: getCustomExportActionWrapperWithSave.bind(this, {
+                    message: i18n('wizard', 'confirm_chart-save_message_alerts'),
+                    ...args,
+                }),
             },
         } as unknown as ChartProviderPropsWithRefProps['customMenuOptions'];
     }
-
-    wrapChartKitMenuSaveChartAction = (
-        confirmText: string,
-        originalAction: MenuItemConfig['action'],
-    ) => {
-        return (...originalActionArgs: any) => {
-            const {widget, isChartSaved, configForSaving} = this.props;
-
-            return new Promise((resolve) => {
-                if (isChartSaved) {
-                    resolve(originalAction.apply(this, originalActionArgs));
-                } else {
-                    const onApply = () => {
-                        if (configForSaving) {
-                            this.props.updateWizardWidgetAndDoAction({
-                                updateWizardWidgetArguments: {
-                                    config: configForSaving,
-                                    entry: widget,
-                                },
-                                actionAfterReceiveWidgetUpdate: () => {
-                                    resolve(originalAction.apply(this, originalActionArgs));
-                                    this.props.reloadRevisionsOnSave();
-                                },
-                            });
-                        }
-                    };
-                    this.props.openDialogSaveChartConfirm({
-                        onApply,
-                        message: confirmText,
-                    });
-                }
-            });
-        };
-    };
 
     handleLoad = (
         result:
@@ -227,7 +209,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
         {
             setHighchartsWidget,
             openDialogSaveChartConfirm,
-            updateWizardWidgetAndDoAction,
+            updateWizardWidgetAndUpdateConfig,
             reloadRevisionsOnSave,
             setDrillDownLevel,
         },

@@ -6,13 +6,13 @@ import _ from 'lodash';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import type {QlConfig} from 'shared';
-import {MenuItemsIds} from 'shared';
+import {EntryUpdateMode, MenuItemsIds} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import type {ChartProviderPropsWithRefProps} from 'ui/components/Widgets/Chart/types';
-import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
+import {getCustomExportActionWrapperWithSave} from 'ui/utils/customExportMenuItem';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
@@ -23,7 +23,7 @@ import {
     setQueryMetadata,
     setTablePreviewData,
     setVisualizationStatus,
-    updateChartAndDoAction,
+    updateChart,
 } from '../../store/actions/ql';
 import {
     getChart,
@@ -64,7 +64,7 @@ interface PreviewProps {
     setTablePreviewData: typeof setTablePreviewData;
     setVisualizationStatus: typeof setVisualizationStatus;
     openDialogSaveChartConfirm: typeof openDialogSaveChartConfirm;
-    updateChartAndDoAction: typeof updateChartAndDoAction;
+    updateChart: typeof updateChart;
 }
 
 interface PreviewState {
@@ -148,23 +148,10 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
     getCustomMenuOptions() {
         return {
             [MenuItemsIds.EXPORT]: {
-                actionWrapper: this.wrapChartKitMenuSaveChartAction.bind(
-                    null,
-                    i18n('wizard', 'confirm_chart-save_message'),
-                ),
-            },
-        } as unknown as ChartProviderPropsWithRefProps['customMenuOptions'];
-    }
-
-    wrapChartKitMenuSaveChartAction = (
-        confirmText: string,
-        originalAction: MenuItemConfig['action'],
-    ) => {
-        return (...originalActionArgs: any) => {
-            const {entryCanBeSaved} = this.props;
-            return new Promise((resolve) => {
-                if (entryCanBeSaved) {
-                    const onApply = async () => {
+                actionWrapper: getCustomExportActionWrapperWithSave.bind(this, {
+                    message: i18n('wizard', 'confirm_chart-save_message'),
+                    canBeSaved: this.props.entryCanBeSaved,
+                    onApply: async () => {
                         const {previewData} = this.props;
 
                         if (!previewData) {
@@ -172,20 +159,12 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                         }
 
                         const preparedChartData = prepareChartDataBeforeSave(previewData);
-                        this.props.updateChartAndDoAction(preparedChartData, () =>
-                            resolve(originalAction.apply(this, originalActionArgs)),
-                        );
-                    };
-                    this.props.openDialogSaveChartConfirm({
-                        onApply,
-                        message: confirmText,
-                    });
-                } else {
-                    resolve(originalAction.apply(this, originalActionArgs));
-                }
-            });
-        };
-    };
+                        await this.props.updateChart(preparedChartData, EntryUpdateMode.Publish);
+                    },
+                }),
+            },
+        } as unknown as ChartProviderPropsWithRefProps['customMenuOptions'];
+    }
 
     onChartLoad = ({data}: ChartKitWrapperOnLoadProps) => {
         if (data.loadedData && data.loadedData.data && !_.isEmpty(data.loadedData.data)) {
@@ -315,7 +294,7 @@ const mapDispatchToProps = {
     setTablePreviewData,
     setVisualizationStatus,
     openDialogSaveChartConfirm,
-    updateChartAndDoAction,
+    updateChart,
 };
 
 export default connect(
