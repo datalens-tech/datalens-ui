@@ -230,13 +230,13 @@ export const usePreparedTableData = (props: {
 
             return rowMeasures.current[rowIndex];
         },
-        overscan: 100,
+        overscan: 10,
     });
 
     const virtualItems = prerender
         ? new Array(Math.min(tableRows.length, PRERENDER_ROW_COUNT))
               .fill(null)
-              .map((_, index) => ({index, start: 0}))
+              .map((_, index) => ({index, start: 0, size: undefined}))
         : rowVirtualizer.getVirtualItems();
 
     const headerRows = headers
@@ -333,6 +333,10 @@ export const usePreparedTableData = (props: {
                         )
                     ) {
                         prevCell.rowSpan += 1;
+                        if (prevCell.maxHeight && virtualRow.size) {
+                            prevCell.maxHeight += virtualRow.size;
+                        }
+
                         return acc;
                     }
                 }
@@ -378,6 +382,7 @@ export const usePreparedTableData = (props: {
                             : originalCellData?.className,
                     rowSpan: 1,
                     data: originalCellData,
+                    maxHeight: virtualRow.size,
                 };
 
                 prevCells[index] = rowsAcc.length;
