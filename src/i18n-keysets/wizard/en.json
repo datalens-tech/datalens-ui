@@ -226,6 +226,7 @@
   "label_percent": "Percentage",
   "label_pink-gray-green": "Lilac-Gray-Green",
   "label_pivot-fallback": "Old pivot tables",
+  "label_pivot-inline-sort": "Sort by lines",
   "label_pivot-measure-sort": "Sorting by indicator affects only the query to the source, but not the pivot table.",
   "label_pivot-table-title-dialog-column-settings": "Column and row settings",
   "label_pixels-shortname": "px",

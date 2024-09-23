@@ -106,6 +106,7 @@ export type BodyCellViewData = {
     index: number;
     /* Original cell data */
     data: unknown;
+    maxHeight?: number;
 };
 
 export type BodyRowViewData = {
