@@ -20,8 +20,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.FlatTable);
         });
 
-        // unSkip after enabling the PinnedColumns feature
-        datalensTest.skip('Pinned columns @screenshot', async ({page}) => {
+        datalensTest('Pinned columns @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.sectionVisualization.addFieldByClick(

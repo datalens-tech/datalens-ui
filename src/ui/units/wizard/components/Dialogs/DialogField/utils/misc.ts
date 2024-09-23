@@ -61,7 +61,9 @@ export function canUseStringAsMarkdown(
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Dimensions];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
-        case WizardVisualizationId.Geopoint: {
+        case WizardVisualizationId.Geopoint:
+        case WizardVisualizationId.GeopointWithCluster:
+        case WizardVisualizationId.Geopolygon: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Tooltips];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }

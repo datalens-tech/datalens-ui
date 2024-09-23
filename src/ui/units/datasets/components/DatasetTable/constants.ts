@@ -19,6 +19,8 @@ export enum BatchFieldAction {
     Remove = 'remove',
     Hide = 'hide',
     Show = 'show',
+    Type = 'type',
+    Aggregation = 'aggregation',
 }
 
 const DUPLICATE: MenuItem = {action: FieldAction.Duplicate, label: 'button_duplicate'};

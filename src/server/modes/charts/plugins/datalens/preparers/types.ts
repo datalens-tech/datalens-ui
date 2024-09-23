@@ -13,6 +13,7 @@ import type {
     ServerShapesConfig,
     ServerSort,
     ServerTooltip,
+    ServerTooltipConfig,
     WrappedMarkup,
 } from '../../../../../../shared';
 import type {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
@@ -34,6 +35,7 @@ export type PrepareFunctionArgs = {
     colorsConfig: ChartColorsConfig;
     geopointsConfig?: ServerPointSizeConfig;
     tooltips: ServerTooltip[];
+    tooltipConfig?: ServerTooltipConfig;
     labels: ServerLabel[];
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
 

@@ -6,6 +6,7 @@ import {
     ITEM_TYPES,
     PRIMITIVE_DATA_TYPES,
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
+    PRIMITIVE_DATA_TYPES_AND_MARKUP,
 } from '../../constants/misc';
 import {prepareFieldToMeasureTransformation} from '../../units/wizard/utils/visualization';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
@@ -92,7 +93,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
         },
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS,
-            allowedDataTypes: PRIMITIVE_DATA_TYPES,
+            allowedDataTypes: PRIMITIVE_DATA_TYPES_AND_MARKUP,
             id: 'points',
             type: 'points',
             title: 'section_points',
@@ -112,7 +113,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
             capacity: 1,
             transform: prepareFieldToMeasureTransformation,
         },
-    ],
+    ] as Placeholder[],
 };
 
 export const SCATTER_D3_VISUALIZATION: GraphShared['visualization'] = {
