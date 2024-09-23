@@ -168,7 +168,7 @@ export class Row extends React.Component<RowProps> {
                     <Checkbox
                         size="l"
                         checked={this.isCheckedEntry()}
-                        disabled={this.isDisabledCheckbox()}
+                        disabled={this.isLockedEntry()}
                         onUpdate={this.onChangeCheckBox}
                     />
                 )}
@@ -330,10 +330,6 @@ export class Row extends React.Component<RowProps> {
 
     private isWorkbookEntry() {
         return Boolean(this.props.entry.workbookId);
-    }
-
-    private isDisabledCheckbox() {
-        return this.isLockedEntry();
     }
 
     private isCheckedEntry() {
