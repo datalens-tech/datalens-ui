@@ -372,12 +372,12 @@ function dash(state = initialState, action) {
                 state.entry.entryId === originalEntryId &&
                 originalIds?.length
             ) {
-                const newItem = tabData.items[tabData.items.length - 1];
+                const copiedItem = tabData.items[tabData.items.length - 1];
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
                     originalIds,
-                    item: newItem,
+                    item: copiedItem,
                 });
 
                 tabData.connections = updatedConnections;

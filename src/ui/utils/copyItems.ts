@@ -42,13 +42,13 @@ export const getUpdatedConnections = ({
     });
 
     connections.forEach((connection) => {
-        const newFromId = idsDictionary[connection.from];
-        const newToId = idsDictionary[connection.to];
+        const replacedFromId = idsDictionary[connection.from];
+        const replacedToId = idsDictionary[connection.to];
 
-        if (newFromId || newToId) {
+        if (replacedFromId || replacedToId) {
             copiedConnections.push({
-                to: newToId || connection.to,
-                from: newFromId || connection.from,
+                to: replacedToId || connection.to,
+                from: replacedFromId || connection.from,
                 kind: connection.kind,
             });
         }
