@@ -71,6 +71,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'feed',
     'pivotFallback',
     'navigatorSettings',
+    'pivotInlineSort',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -162,6 +163,8 @@ interface State {
     navigatorSeries: string[];
     d3Fallback: string;
     qlAutoExecuteChart?: string;
+    isPivotTable: boolean;
+    pivotInlineSort: string;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -208,6 +211,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             feed = '',
             pivotFallback = 'off',
             qlAutoExecuteChart,
+            pivotInlineSort = CHART_SETTINGS.PIVOT_INLINE_SORT.ON,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -249,7 +253,8 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         this.state = {
             valid: true,
-
+            isPivotTable,
+            pivotInlineSort,
             titleMode,
             indicatorTitleMode,
             qlAutoExecuteChart: getQlAutoExecuteChartValue(qlAutoExecuteChart, props.chartType),
@@ -478,6 +483,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     handleQlAutoExecuteChartUpdate = (value: string) => {
         this.setState({
             qlAutoExecuteChart: value,
+        });
+    };
+
+    handlePivotInlineSortUpdate = (value: string) => {
+        this.setState({
+            pivotInlineSort: value,
         });
     };
 
@@ -863,6 +874,24 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderInlineSortSwitch() {
+        const {isPivotTable, pivotInlineSort, pivotFallback} = this.state;
+
+        if (!isPivotTable || pivotFallback === 'on') {
+            return null;
+        }
+
+        return (
+            <SettingSwitcher
+                currentValue={pivotInlineSort}
+                checkedValue={CHART_SETTINGS.PIVOT_INLINE_SORT.ON}
+                uncheckedValue={CHART_SETTINGS.PIVOT_INLINE_SORT.OFF}
+                onChange={this.handlePivotInlineSortUpdate}
+                title={i18n('wizard', 'label_pivot-inline-sort')}
+            />
+        );
+    }
+
     renderModalBody() {
         const {navigatorSettings} = this.state;
         const {isPreviewLoading} = this.props;
@@ -887,6 +916,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderNavigator()}
                 {this.renderD3Switch()}
                 {this.renderQlAutoExecutionChart()}
+                {this.renderInlineSortSwitch()}
             </div>
         );
     }
