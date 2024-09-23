@@ -60,7 +60,7 @@ export const ShareButton = ({
     }
 
     const getContent = () => {
-        if (enablePopover && (!DL.IS_MOBILE || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
+        if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
                     useWebShareApi={!DL.IS_MOBILE}
