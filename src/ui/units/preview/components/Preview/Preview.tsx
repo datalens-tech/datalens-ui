@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import type {WorkbookId} from 'shared';
-import {Feature, PreviewQa} from 'shared';
+import {PreviewQa} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -233,7 +233,6 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         isFullscreen={true}
                         editMode={false}
                         hideTabs={true}
-                        withShareWidget={Utils.isEnabledFeature(Feature.EnableShareWidget)}
                         widgetId={possibleEntryId || ''}
                         hideDebugTool={true}
                         onFullscreenClick={() => {
