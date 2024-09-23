@@ -18,6 +18,7 @@ artifacts
 export/*.csv
 export/*.xlsx
 export/*.ods
+export/*.pdf
 
 build/
 
