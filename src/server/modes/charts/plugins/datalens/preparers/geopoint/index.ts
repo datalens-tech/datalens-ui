@@ -114,6 +114,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         colors,
         colorsConfig,
         tooltips,
+        tooltipConfig,
         labels,
         placeholders,
         resultData: {data, order},
@@ -318,7 +319,8 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                 // which in turn can lead to an incorrect order of displaying fields in the tooltip.
                 // Therefore, before installing the tooltip, we remember its correct index
                 const index = updatedTooltips.findIndex((t) => t.title === dataTitle);
-                const itemTitle = getFakeTitleOrTitle(tooltipField);
+                const shouldUseFieldTitle = tooltipConfig?.fieldTitle !== 'off';
+                const itemTitle = shouldUseFieldTitle ? getFakeTitleOrTitle(tooltipField) : '';
 
                 const pointData: Record<string, unknown> = {};
 
@@ -331,7 +333,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                         tooltipField.data_type,
                         tooltipField.formatting,
                     );
-                    const text = `${itemTitle}: ${value}`;
+                    const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
                     if (tooltipField?.isMarkdown) {
                         pointData[WRAPPED_MARKDOWN_KEY] = text;
@@ -349,7 +351,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                         point.feature.properties.data = [];
                     }
 
-                    if (index === 0) {
+                    if (index === 0 && tooltipConfig?.color !== 'off') {
                         pointData.color = point.options.iconColor;
                     }
 

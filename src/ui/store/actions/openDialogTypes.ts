@@ -52,6 +52,7 @@ import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStr
 import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
+import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 
 export type OpenDialogArgs<T = unknown> =
@@ -107,4 +108,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogAddDemoWorkbookArgs
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
+    | OpenDialogTooltipSettingsArgs
     | OpenDialogChangeDatasetFieldsArgs;
