@@ -110,19 +110,18 @@ export function getDashKitMenu() {
 }
 
 interface DashkitWrapperProps extends DashKitProps {
-    ref?: React.LegacyRef<DashKit>;
+    // ref object
+    ref?: React.ForwardedRef<DashKit>;
     // Make noOverlay partial
     noOverlay?: boolean;
+    // Extended Controls props
+    skipReload?: boolean;
+    isNewRelations?: boolean;
 }
 
 export const DashkitContainer: React.FC<
-    Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & {
-        // ref object
-        ref: React.ForwardedRef<DashKit>;
-        // Extended Controls props
-        skipReload?: boolean;
-        isNewRelations?: boolean;
-    } & ( // Making edit props optional when editMode === false
+    Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & // Making edit props optional when editMode === false
+        (
             | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
             | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
         )
