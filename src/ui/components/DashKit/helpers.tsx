@@ -145,4 +145,4 @@ export const DashkitContainer: React.FC<
     },
 );
 
-DashkitContainer.displayName = 'DashkitContainer[forwarded]';
+DashkitContainer.displayName = 'DashkitContainer';
