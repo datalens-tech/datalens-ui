@@ -124,7 +124,6 @@ export const copyControlToStorage = (controlIndex: number) => {
             defaults: copiedItem.defaults,
             namespace: copiedItem.namespace,
             layout: DEFAULT_CONTROL_LAYOUT,
-            targetId: selectorToCopy.id || '',
         };
 
         const preparedOptions = getPreparedCopyItemOptions(options, null, {
