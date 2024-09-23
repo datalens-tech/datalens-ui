@@ -1,16 +1,14 @@
 import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
-import {ArrowLeft, ArrowShapeTurnUpRight} from '@gravity-ui/icons';
+import {ArrowLeft} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
-import {i18n} from 'i18n';
-import {ChartkitMenuDialogsQA, ControlQA, PREVIEW_ROUTE} from 'shared';
+import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
-import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
@@ -31,7 +29,6 @@ type HeaderProps = {
     onFullscreenClick: () => void;
     editMode: boolean;
     hideTabs: boolean;
-    withShareWidget: boolean;
     tabsItems?: Array<TabItem>;
     currentTab?: CurrentTab;
     onSelectTab?: (param: string) => void;
@@ -51,7 +48,6 @@ export const WidgetHeader = (props: HeaderProps) => {
         onFullscreenClick,
         editMode,
         hideTabs,
-        withShareWidget,
         tabsItems,
         currentTab,
         onSelectTab,
@@ -117,7 +113,6 @@ export const WidgetHeader = (props: HeaderProps) => {
                 className={b({
                     mobile: DL.IS_MOBILE,
                     fullscreen: isFullscreen,
-                    'with-shares': withShareWidget,
                 })}
             >
                 {isFullscreen && (
@@ -130,24 +125,6 @@ export const WidgetHeader = (props: HeaderProps) => {
                     </span>
                 )}
                 {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
-                {withShareWidget && (
-                    <div className={b('share-widget')}>
-                        <ShareButton
-                            enablePopover={true}
-                            popoverText={widgetTitle}
-                            popoverTitle={widgetTitle}
-                            copyText={i18n('chartkit.menu', 'get-code')}
-                            copyIcon={ArrowShapeTurnUpRight}
-                            iconSize={16}
-                            dialogShareProps={{
-                                propsData: {
-                                    id: widgetId,
-                                },
-                                urlIdPrefix: `/${PREVIEW_ROUTE}/`,
-                            }}
-                        />
-                    </div>
-                )}
                 {showFiltersClear && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>

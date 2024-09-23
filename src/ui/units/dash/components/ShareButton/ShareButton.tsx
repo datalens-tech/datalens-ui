@@ -3,7 +3,6 @@ import React from 'react';
 import {SharePopover} from '@gravity-ui/components';
 import {ArrowShapeTurnUpRight, Code} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
@@ -25,16 +24,12 @@ export const ShareButton = ({
     enablePopover,
     popoverText,
     popoverTitle,
-    copyText,
-    copyIcon,
     iconSize = 18,
     popoverClassName,
     dialogShareProps,
 }: {
     enablePopover?: boolean;
     popoverText?: string;
-    copyText?: string;
-    copyIcon?: SVGIconData;
     popoverTitle?: string;
     iconSize?: number;
     popoverClassName?: string;
@@ -65,7 +60,7 @@ export const ShareButton = ({
     }
 
     const getContent = () => {
-        if (enablePopover && (!DL.IS_MOBILE || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
+        if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
                     useWebShareApi={!DL.IS_MOBILE}
@@ -73,7 +68,7 @@ export const ShareButton = ({
                     title={popoverTitle}
                     text={popoverText}
                     shareOptions={socialNets}
-                    copyIcon={copyIcon || Code}
+                    copyIcon={Code}
                     customIcon={ArrowShapeTurnUpRight}
                     iconSize={iconSize}
                     withCopyLink={Boolean(dialogShareProps?.propsData.id)}
@@ -86,7 +81,7 @@ export const ShareButton = ({
                             onClick={handleShareButtonClick}
                         >
                             <Icon data={icon} size={16} />
-                            {copyText || i18n('embedded')}
+                            {i18n('embedded')}
                         </Button>
                     )}
                 />
