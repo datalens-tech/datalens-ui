@@ -575,7 +575,7 @@ export function extractFieldsFromDatasets(datasets: Dataset[]) {
 export function getKeysWithoutConfigs(
     key: CommonPlaceholdersKeys,
 ): key is CommonPlaceholdersKeysWithoutConfigs {
-    return key !== 'colorsConfig' && key !== 'geopointsConfig' && key !== 'shapesConfig';
+    return !['colorsConfig', 'geopointsConfig', 'shapesConfig', 'tooltipConfig'].includes(key);
 }
 
 export function getAllCommonPlaceholdersFields(commonPlaceholders: CommonPlaceholders[]): Field[] {

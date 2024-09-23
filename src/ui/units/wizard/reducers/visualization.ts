@@ -9,6 +9,7 @@ import type {
     Placeholder,
     PlaceholderSettings,
     PointSizeConfig,
+    ServerTooltipConfig,
     ShapesConfig,
     Shared,
     Sort,
@@ -49,6 +50,7 @@ import {
     SET_SHAPES_CONFIG,
     SET_SORT,
     SET_TOOLTIPS,
+    SET_TOOLTIP_CONFIG,
     SET_VISUALIZATION,
     SET_VISUALIZATION_PLACEHOLDER_ITEMS,
     SET_Y_AXIS_CONFLICT,
@@ -83,6 +85,7 @@ export interface VisualizationState {
     distincts?: Record<string, string[]>;
     drillDownLevel: number;
     pointConflict?: boolean;
+    tooltipConfig?: ServerTooltipConfig;
 }
 
 const initialState: VisualizationState = {
@@ -999,6 +1002,16 @@ export function visualization(
                 drillDownLevel,
             };
         }
+        case SET_TOOLTIP_CONFIG: {
+            const {tooltipConfig} = action;
+
+            const visualization = updateCommonPlaceholders(state.visualization, {tooltipConfig});
+            const layers =
+                (visualization as VisualizationWithLayersShared['visualization'] | undefined)
+                    ?.layers || state.layers;
+
+            return {...state, tooltipConfig: {...tooltipConfig}, visualization, layers};
+        }
         default:
             return state;
     }
@@ -1080,6 +1093,7 @@ function updateCommonPlaceholders(
         geopointsConfig?: object;
         colorsConfig?: TableShared['colorsConfig'];
         shapesConfig?: ShapesConfig;
+        tooltipConfig?: ServerTooltipConfig;
     },
     options?: {updateAllLayers?: boolean},
 ) {
