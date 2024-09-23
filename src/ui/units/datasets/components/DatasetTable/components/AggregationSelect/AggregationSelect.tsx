@@ -7,10 +7,9 @@ import {connect} from 'react-redux';
 import type {DatasetField, DatasetFieldAggregation} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
-import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
+import {getDatasetLabelValue, getSelectedValueForSelect} from '../../../../../../utils/helpers';
 import {AGGREGATION_AUTO, AGGREGATION_NONE} from '../../../../constants';
 import {datasetValidationSelector} from '../../../../store/selectors/dataset';
-import {getLabelValue} from '../../utils';
 
 import './AggregationSelect.scss';
 
@@ -65,7 +64,7 @@ class AggregationSelectComponent extends React.Component<Props> {
 
                 return {
                     value: aggregation,
-                    content: getLabelValue(aggregationTitle),
+                    content: getDatasetLabelValue(aggregationTitle),
                     disabled: validation.isLoading,
                 };
             })
@@ -139,7 +138,9 @@ class AggregationSelectComponent extends React.Component<Props> {
                 view="flat"
                 className={b('select-control', {[this.type]: true})}
             >
-                <span className={b('selected-value')}>{getLabelValue(aggregationTitle)}</span>
+                <span className={b('selected-value')}>
+                    {getDatasetLabelValue(aggregationTitle)}
+                </span>
             </Button>
         );
     };

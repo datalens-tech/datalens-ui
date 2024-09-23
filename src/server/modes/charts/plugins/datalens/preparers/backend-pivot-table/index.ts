@@ -152,10 +152,12 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
     });
 
     const isPaginatorEnabled = args.shared.extraSettings?.pagination === 'on';
+    const isInlineSortEnabled = !(args.shared.extraSettings?.pivotInlineSort === 'off');
 
     const pivotTotals = getPivotTableSubTotals({rowsFields, columnsFields});
     const sortSettings: PivotTableSortSettings = {
-        isSortByRowAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row'),
+        isSortByRowAllowed:
+            isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row') && isInlineSortEnabled,
         isSortByColumnAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_column'),
         ...backendSortMeta,
     };

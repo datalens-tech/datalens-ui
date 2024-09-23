@@ -39,6 +39,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                         gridColumn: cell.colSpan
                                             ? `span ${cell.colSpan}`
                                             : undefined,
+                                        maxHeight: cell.maxHeight,
                                     }}
                                     onClick={(event) => {
                                         if (onCellClick) {

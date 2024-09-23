@@ -60,6 +60,7 @@ export interface V11CommonSharedExtraSettings {
     navigatorSeriesName?: string;
     totals?: 'on' | 'off';
     pivotFallback?: 'on' | 'off';
+    pivotInlineSort?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
     navigatorSettings?: V11NavigatorSettings;

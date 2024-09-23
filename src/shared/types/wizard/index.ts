@@ -101,6 +101,7 @@ export interface CommonSharedExtraSettings {
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
+    pivotInlineSort?: 'on' | 'off';
     // For old charts, navigatorMode was specified in the body of extraSettings
     navigatorMode?: string;
     navigatorSeriesName?: string;
