@@ -117,6 +117,8 @@ interface DashkitWrapperProps extends DashKitProps {
 
 export const DashkitContainer: React.FC<
     Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & {
+        // ref object
+        ref: React.ForwardedRef<DashKit>;
         // Extended Controls props
         skipReload?: boolean;
         isNewRelations?: boolean;
@@ -124,19 +126,23 @@ export const DashkitContainer: React.FC<
             | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
             | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
         )
-> = ({skipReload = false, isNewRelations = false, ...props}) => {
-    const contextValue = React.useMemo(() => {
-        return {
-            config: props.config,
-            defaultGlobalParams: props.defaultGlobalParams,
-            skipReload,
-            isNewRelations,
-        };
-    }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
+> = React.forwardRef(
+    ({skipReload = false, isNewRelations = false, ...props}, ref: React.ForwardedRef<DashKit>) => {
+        const contextValue = React.useMemo(() => {
+            return {
+                config: props.config,
+                defaultGlobalParams: props.defaultGlobalParams,
+                skipReload,
+                isNewRelations,
+            };
+        }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
 
-    return (
-        <DashControlsConfigContext.Provider value={contextValue}>
-            <DashKit {...props} />
-        </DashControlsConfigContext.Provider>
-    );
-};
+        return (
+            <DashControlsConfigContext.Provider value={contextValue}>
+                <DashKit {...props} ref={ref} />
+            </DashControlsConfigContext.Provider>
+        );
+    },
+);
+
+DashkitContainer.displayName = 'DashkitContainer[forwarded]';
