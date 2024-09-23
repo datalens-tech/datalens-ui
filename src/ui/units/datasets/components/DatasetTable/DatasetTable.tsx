@@ -2,10 +2,11 @@ import React from 'react';
 
 import {ArrowDown, ArrowUp} from '@gravity-ui/icons';
 import DataTable from '@gravity-ui/react-data-table';
-import {Icon} from '@gravity-ui/uikit';
+import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {get} from 'lodash';
+import get from 'lodash/get';
+import intersection from 'lodash/intersection';
 import type {
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -16,6 +17,8 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import type {Permissions} from 'shared/types/dls';
+import {Interpolate} from 'ui/components/Interpolate';
+import {DL} from 'ui/constants';
 
 import type {
     OpenDialogConfirmArguments,
@@ -28,8 +31,11 @@ import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
 import {BatchActionPanel} from './components/BatchActionPanel/BatchActionPanel';
+import type {DialogChangeDatasetFieldsProps} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
+import {DIALOG_CHANGE_DATASET_FIELDS} from './components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import {ObservedTableResizer} from './components/ObservedDataTable';
 import {BatchFieldAction, FieldAction} from './constants';
+import type {BatchUpdateFields, UpdatePayload} from './types';
 import {getAggregationSwitchTo, getColumns, isHiddenSupported} from './utils';
 
 import './DatasetTable.scss';
@@ -42,12 +48,6 @@ DataTable.setCustomIcons({
     ICON_DESC: <Icon className={b('sort-icon')} data={ArrowUp} />,
 });
 
-type UpdatePayload = {
-    debounce?: boolean;
-    validateEnabled?: boolean;
-    updatePreview?: boolean;
-};
-
 type DatasetTableProps = {
     options: DatasetOptions;
     fields: DatasetField[];
@@ -59,11 +59,7 @@ type DatasetTableProps = {
             field: Partial<DatasetField> & {new_id?: string};
         },
     ) => void;
-    batchUpdateFields: (
-        data: UpdatePayload & {
-            fields: Partial<DatasetField>[] & {new_id?: string}[];
-        },
-    ) => void;
+    batchUpdateFields: BatchUpdateFields;
     duplicateField: (data: {field: DatasetField}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
@@ -117,6 +113,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             map: selectedRows,
             canBeHidden,
             canBeShown,
+            allowedTypes,
+            allowedAggregations,
         } = this.getFilteredSelectedRows();
 
         return (
@@ -160,6 +158,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         disableActions={[
                             ...(canBeHidden.count > 0 ? [] : (['hide'] as const)),
                             ...(canBeShown.count > 0 ? [] : (['show'] as const)),
+                            ...(allowedTypes.length > 0 ? [] : (['type'] as const)),
+                            ...(allowedAggregations.length > 0 ? [] : (['aggregation'] as const)),
                         ]}
                     />
                 )}
@@ -169,7 +169,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private getFilteredSelectedRows() {
         const {selectedRows} = this.state;
-        const {fields} = this.props;
+        const {fields, options} = this.props;
 
         let count = 0;
         const canBeHidden: {count: number; fields: DatasetField[]} = {count: 0, fields: []};
@@ -200,7 +200,22 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             return memo;
         }, {});
 
-        return {count, map, fields: filteredFields, canBeHidden, canBeShown};
+        const selectedItems = options.fields.items.filter(
+            (item) => this.state.selectedRows[item.guid],
+        );
+
+        const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
+        const allowedAggregations = intersection(...selectedItems.map((item) => item.aggregations));
+
+        return {
+            count,
+            map,
+            fields: filteredFields,
+            canBeHidden,
+            canBeShown,
+            allowedTypes,
+            allowedAggregations,
+        };
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
@@ -247,6 +262,26 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
+
+    private batchChangeDialog = (
+        fields: DatasetField[],
+        props: Omit<
+            DialogChangeDatasetFieldsProps,
+            'open' | 'onClose' | 'fieldsGuids' | 'batchUpdateFields' | 'onApply'
+        >,
+    ) => {
+        this.props.openDialog({
+            id: DIALOG_CHANGE_DATASET_FIELDS,
+            props: {
+                open: true,
+                onClose: this.props.closeDialog,
+                fieldsGuids: fields.map(({guid}) => guid),
+                batchUpdateFields: this.props.batchUpdateFields,
+                onApply: this.resetSelection,
+                ...props,
+            },
+        });
+    };
 
     private batchConfirmDialog = (
         options: Partial<OpenDialogConfirmArguments> &
@@ -301,8 +336,49 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         });
     };
 
+    private openBatchUpdateTypesDialog = (
+        fields: DatasetField[],
+        allowedTypes: DATASET_FIELD_TYPES[],
+    ) => {
+        this.batchChangeDialog(fields, {
+            warningMessage: i18n('text_batch-type-alert'),
+            title: i18n('text_batch-type-header'),
+            label: i18n('label_batch-type'),
+            types: allowedTypes,
+        });
+    };
+
+    private openBatchUpdateAggregationsDialog = (
+        fields: DatasetField[],
+        allowedAggregations: DatasetFieldAggregation[],
+    ) => {
+        this.batchChangeDialog(fields, {
+            warningMessage: (
+                <Interpolate
+                    text={i18n('text_batch-aggregation-alert')}
+                    matches={{
+                        link(match) {
+                            return (
+                                <Link
+                                    target="_blank"
+                                    href={`${DL.ENDPOINTS.datalensDocs}/dataset/data-model#aggregation`}
+                                >
+                                    {match}
+                                </Link>
+                            );
+                        },
+                    }}
+                ></Interpolate>
+            ),
+            title: i18n('text_batch-aggregation-header'),
+            label: i18n('label_batch-aggregation'),
+            aggregations: allowedAggregations,
+        });
+    };
+
     private handleBatchUpdate = (action: BatchFieldAction) => {
-        const {fields, canBeShown, canBeHidden} = this.getFilteredSelectedRows();
+        const {fields, canBeShown, canBeHidden, allowedTypes, allowedAggregations} =
+            this.getFilteredSelectedRows();
 
         switch (action) {
             case BatchFieldAction.Remove: {
@@ -317,6 +393,16 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
             case BatchFieldAction.Show: {
                 this.openBatchToggleVisibilityDialog(canBeShown.fields, false);
+                return;
+            }
+
+            case BatchFieldAction.Type: {
+                this.openBatchUpdateTypesDialog(fields, allowedTypes);
+                return;
+            }
+
+            case BatchFieldAction.Aggregation: {
+                this.openBatchUpdateAggregationsDialog(fields, allowedAggregations);
                 return;
             }
 

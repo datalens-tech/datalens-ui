@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import type {DashTabItemType} from 'shared';
 
 import {useWidgetContext} from '../../context/WidgetContext';
 
@@ -10,10 +11,10 @@ const b = block('dashkit-plugin-container');
 
 type RendererProps = {
     id: string;
-    type: 'widget' | 'text' | 'title';
+    type: 'widget' | 'text' | 'title' | `${DashTabItemType.Image}`;
     nodeRef?: React.RefObject<HTMLDivElement>;
     classMod?: string;
-    style?: React.StyleHTMLAttributes<HTMLDivElement>;
+    style?: React.CSSProperties;
 };
 
 export const RendererWrapper: React.FC<RendererProps> = React.memo(

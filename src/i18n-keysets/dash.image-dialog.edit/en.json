@@ -1,0 +1,11 @@
+{
+  "button_add": "Add",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "label_alt-text": "Alternative text",
+  "label_alt-text-description": "The alternative text is displayed on the page if the image can't be loaded for some reason, e.g., network errors, content blocking, or linkrot.",
+  "label_aspect-ratio": "Keep the aspect ratio",
+  "label_link": "Link",
+  "label_required-field": "This field cannot be empty",
+  "label_title": "Image"
+}

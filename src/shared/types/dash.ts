@@ -14,6 +14,7 @@ export enum DashTabItemType {
     Widget = 'widget',
     Control = 'control',
     GroupControl = 'group_control',
+    Image = 'image',
 }
 
 export enum DashTabItemTitleSize {
@@ -113,7 +114,13 @@ export type DashTabItem =
     | DashTabItemTitle
     | DashTabItemWidget
     | DashTabItemControl
-    | DashTabItemGroupControl;
+    | DashTabItemGroupControl
+    | DashTabItemImage;
+
+type BackgroundSettings = {
+    color: string;
+    enabled: boolean;
+};
 
 export interface DashTabItemBase {
     id: string;
@@ -129,10 +136,7 @@ export interface DashTabItemText extends DashTabItemBase {
     data: {
         text: string;
         autoHeight?: boolean;
-        background?: {
-            enabled: boolean;
-            color: string;
-        };
+        background?: BackgroundSettings;
     };
 }
 
@@ -143,10 +147,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         size: DashTabItemTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
-        background?: {
-            enabled: boolean;
-            color: string;
-        };
+        background?: BackgroundSettings;
     };
 }
 
@@ -164,10 +165,7 @@ export interface DashTabItemWidgetTab {
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
-    background?: {
-        enabled: boolean;
-        color: string;
-    };
+    background?: BackgroundSettings;
 }
 
 export interface DashTabItemControl extends DashTabItemBase {
@@ -322,4 +320,14 @@ export interface DashStats {
     userId: string;
     tenantId: string;
     traceId?: string;
+}
+
+export interface DashTabItemImage extends DashTabItemBase {
+    type: DashTabItemType.Image;
+    data: {
+        src: string;
+        alt?: string;
+        background?: BackgroundSettings;
+        preserveAspectRatio?: boolean;
+    };
 }
