@@ -2,20 +2,16 @@ import React from 'react';
 
 import type {AxiosResponse} from 'axios';
 import debounce from 'lodash/debounce';
-import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
 
 import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
-import {
-    selectCurrentTab,
-    selectIsNewRelations,
-} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
 import {
     getPreparedConstants,
@@ -92,7 +88,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
-    const isNewRelations = useSelector(selectIsNewRelations);
+    const controlsContext = React.useContext(DashControlsConfigContext);
+    const isNewRelations = controlsContext?.isNewRelations || false;
 
     const history = useHistory();
 
@@ -233,17 +230,15 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         ],
     );
 
-    const currentDashTab = useSelector(selectCurrentTab);
-
     /**
      * get defaults widget params: need to detect relations for external selectors
      */
     const widgetParamsDefaults = React.useMemo(() => {
-        const item = currentDashTab?.items.find(
+        const item = controlsContext?.config?.items.find(
             ({id}: {id: String}) => id === widgetId,
         ) as DashTabItemControl;
         return item.defaults;
-    }, [currentDashTab, widgetId]);
+    }, [controlsContext?.config, widgetId]);
 
     /**
      * debounced call of chartkit reflow
