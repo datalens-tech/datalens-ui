@@ -85,13 +85,13 @@ class SectionPreview extends Component<Props> {
 
         return {
             [MenuItemsIds.EXPORT]: {
-                actionWrapper: getCustomExportActionWrapperWithSave.bind(this, {
+                actionWrapper: getCustomExportActionWrapperWithSave.bind(null, {
                     message: i18n('wizard', 'confirm_chart-save_message'),
                     ...args,
                 }),
             },
             [MenuItemsIds.ALERTS]: {
-                actionWrapper: getCustomExportActionWrapperWithSave.bind(this, {
+                actionWrapper: getCustomExportActionWrapperWithSave.bind(null, {
                     message: i18n('wizard', 'confirm_chart-save_message_alerts'),
                     ...args,
                 }),

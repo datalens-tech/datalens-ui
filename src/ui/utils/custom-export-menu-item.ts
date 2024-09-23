@@ -3,7 +3,6 @@ import {getStore} from 'ui/store';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 
 export function getCustomExportActionWrapperWithSave(
-    this: any,
     {
         message,
         onApply,
@@ -21,12 +20,12 @@ export function getCustomExportActionWrapperWithSave(
                 openDialogSaveChartConfirm({
                     onApply: async () => {
                         await onApply();
-                        resolve(originalAction.apply(this, originalActionArgs));
+                        resolve(originalAction(originalActionArgs[0]));
                     },
                     message,
                 })(getStore().dispatch);
             } else {
-                resolve(originalAction.apply(this, originalActionArgs));
+                resolve(originalAction(originalActionArgs[0]));
             }
         });
     };
