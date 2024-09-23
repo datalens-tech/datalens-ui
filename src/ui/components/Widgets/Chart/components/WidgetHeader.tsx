@@ -1,12 +1,13 @@
 import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
-import {ArrowLeft} from '@gravity-ui/icons';
+import {ArrowLeft, ArrowShapeTurnUpRight} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
-import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
+import {i18n} from 'i18n';
+import {ChartkitMenuDialogsQA, ControlQA, PREVIEW_ROUTE} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
@@ -135,11 +136,14 @@ export const WidgetHeader = (props: HeaderProps) => {
                             enablePopover={true}
                             popoverText={widgetTitle}
                             popoverTitle={widgetTitle}
+                            copyText={i18n('chartkit.menu', 'get-code')}
+                            copyIcon={ArrowShapeTurnUpRight}
                             iconSize={16}
                             dialogShareProps={{
                                 propsData: {
                                     id: widgetId,
                                 },
+                                urlIdPrefix: `/${PREVIEW_ROUTE}/`,
                             }}
                         />
                     </div>
