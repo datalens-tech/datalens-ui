@@ -390,16 +390,15 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             toScope: this.props.entry.scope,
         }) as CopiedConfigData;
 
-        const data = migratedItemData.data;
-
         this.props.setCopiedItemData({
             item: {
-                data,
+                data: migratedItemData.data,
                 type: migratedItemData.type,
                 defaults: migratedItemData.defaults,
                 namespace: migratedItemData.namespace,
                 layout: migratedItemData?.layout,
             },
+            context: itemData.copyContext,
             options: {
                 updateLayout,
             },

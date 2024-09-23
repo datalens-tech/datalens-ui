@@ -26,6 +26,7 @@ import type {
 import {DashTabItemType, Feature, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {registry} from 'ui/registry';
+import {collectWidgetItemIds} from 'ui/utils/copyItems';
 
 import {ITEM_TYPE} from '../../../constants/dialogs';
 import type {TabsHashStates} from '../store/actions/dashTyped';
@@ -36,6 +37,9 @@ import {PostMessage} from './postMessage';
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
     fromScope: EntryScope;
+    originalIds?: string[];
+    originalEntryId?: string | null;
+    originalDashTabId?: string | null;
 };
 
 export type CopiedConfigData = ConfigItem &
@@ -385,6 +389,7 @@ export const getPreparedCopyItemOptions = (
     if (copyContext) {
         itemToCopy.copyContext = {
             ...copyContext,
+            originalIds: collectWidgetItemIds(itemToCopy),
         };
     }
 
