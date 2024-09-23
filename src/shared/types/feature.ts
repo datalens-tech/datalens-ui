@@ -13,7 +13,6 @@ export enum Feature {
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
-    EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
     RevisionsListNoLimit = 'RevisionsListNoLimit',
