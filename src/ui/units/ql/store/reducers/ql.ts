@@ -417,7 +417,7 @@ export const getPreviewData = createSelector(
         params,
         placeholdersContent,
         order,
-    ): QlConfig | null => {
+    ): any | null => {
         if (chartType && connection && visualization) {
             const result: QlConfig = {
                 type: 'ql',
