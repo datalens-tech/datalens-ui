@@ -24,7 +24,7 @@ import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
-import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -90,9 +90,9 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
-    static contextType = DashControlsConfigContext;
+    static contextType = ExtendedDashKitContext;
 
-    declare context: React.ContextType<typeof DashControlsConfigContext>;
+    declare context: React.ContextType<typeof ExtendedDashKitContext>;
 
     chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();

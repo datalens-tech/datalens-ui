@@ -13,7 +13,7 @@ import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
-import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
 import URI from '../../libs/DatalensChartkit/modules/uri/uri';
@@ -119,7 +119,7 @@ interface DashkitWrapperProps extends DashKitProps {
     isNewRelations?: boolean;
 }
 
-export const DashkitContainer: React.FC<
+export const DashkitWrapper: React.FC<
     Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & // Making edit props optional when editMode === false
         (
             | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
@@ -137,11 +137,11 @@ export const DashkitContainer: React.FC<
         }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
 
         return (
-            <DashControlsConfigContext.Provider value={contextValue}>
+            <ExtendedDashKitContext.Provider value={contextValue}>
                 <DashKit {...props} ref={ref} />
-            </DashControlsConfigContext.Provider>
+            </ExtendedDashKitContext.Provider>
         );
     },
 );
 
-DashkitContainer.displayName = 'DashkitContainer';
+DashkitWrapper.displayName = 'DashkitContainer';

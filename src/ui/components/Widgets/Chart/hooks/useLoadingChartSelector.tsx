@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import {useHistory} from 'react-router-dom';
 import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {
     ChartKitWrapperLoadStatusUnknown,
@@ -88,7 +88,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
-    const controlsContext = React.useContext(DashControlsConfigContext);
+    const controlsContext = React.useContext(ExtendedDashKitContext);
     const isNewRelations = controlsContext?.isNewRelations || false;
 
     const history = useHistory();

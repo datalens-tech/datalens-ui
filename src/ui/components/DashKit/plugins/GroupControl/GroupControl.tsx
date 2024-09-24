@@ -26,7 +26,7 @@ import {
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
-import {DashControlsConfigContext} from '../../../../units/dash/utils/context';
+import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
@@ -68,9 +68,9 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const LOCAL_META_VERSION = 2;
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
-    static contextType = DashControlsConfigContext;
+    static contextType = ExtendedDashKitContext;
 
-    declare context: React.ContextType<typeof DashControlsConfigContext>;
+    declare context: React.ContextType<typeof ExtendedDashKitContext>;
 
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 

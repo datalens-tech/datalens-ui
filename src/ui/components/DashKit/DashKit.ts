@@ -5,7 +5,7 @@ import {registry} from 'ui/registry';
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
-import {DashkitContainer, getDashKitMenu} from './helpers';
+import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import {pluginImage} from './plugins/Image/Image';
@@ -63,7 +63,7 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
     }
 
     if (isConfigured) {
-        return DashkitContainer;
+        return DashkitWrapper;
     }
 
     isConfigured = true;
@@ -75,5 +75,5 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
         menu: getDashKitMenu(),
     });
 
-    return DashkitContainer;
+    return DashkitWrapper;
 };

@@ -7,7 +7,7 @@ import {useHistory} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
-import {DashControlsConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import type {
@@ -126,7 +126,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
-    const controlsContext = React.useContext(DashControlsConfigContext);
+    const controlsContext = React.useContext(ExtendedDashKitContext);
     const isNewRelations = controlsContext?.isNewRelations || false;
 
     const history = useHistory();
