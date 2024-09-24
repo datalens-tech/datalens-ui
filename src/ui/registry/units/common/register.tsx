@@ -23,6 +23,7 @@ import {UserAvatarById} from '../../../components/UserAvatar/UserAvatarById';
 import {YfmWrapperContent} from '../../../components/YfmWrapper/YfmWrapperContent';
 import {DatepickerControl} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {getUpdatedUserSettings} from '../../../store/utils/user';
+import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
 import {getIconDataById} from '../../../utils/icons';
 import {migrateItemDataOnPaste} from '../../../utils/migrateItemDataOnPaste';
 import {
@@ -80,5 +81,6 @@ export const registerCommonPlugins = () => {
         requestCollectChartkitStats,
         migrateItemDataOnPaste,
         checkCreateEntryButtonVisibility: () => true,
+        getBasicActionPanelItems,
     });
 };
