@@ -26,7 +26,8 @@ import Inspector from '../components/ChartKitBase/components/Header/components/M
 import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
 import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import type {LoadedWidget, Widget as TWidget, WidgetData} from '../types';
+import type {LoadedWidget, Widget as TWidget} from '../types';
+import type {AlertsActionArgs} from '../types/menu';
 
 import type {MenuItemConfig, MenuItemModalProps, MenuLoadedData} from './Menu';
 
@@ -94,8 +95,8 @@ export const getAlertsMenuItem = ({
                 (loadedData.isNewWizard || loadedData.type === CHARTKIT_WIDGET_TYPE.GRAPH)
             );
         },
-        action: ({loadedData}: {loadedData: WidgetData}) => {
-            const menuAction = (options: {loadedData: WidgetData}) => {
+        action: ({loadedData}: AlertsActionArgs) => {
+            const menuAction = (options: AlertsActionArgs) => {
                 const {AlertDialog} = registry.chart.components.getAll();
 
                 return (props: MenuItemModalProps) => (
