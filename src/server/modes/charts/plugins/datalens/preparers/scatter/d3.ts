@@ -4,13 +4,13 @@ import type {
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import {getFakeTitleOrTitle} from '../../../../../../../shared';
+import {PlaceholderId, getFakeTitleOrTitle, getXAxisMode} from '../../../../../../../shared';
 import type {
     PointCustomData,
     ScatterSeriesCustomData,
 } from '../../../../../../../shared/types/chartkit';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getAxisType} from '../helpers/axis';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -71,7 +71,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 }
 
 export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<PointCustomData> {
-    const {shared, sort} = args;
+    const {shared, idToDataType, placeholders} = args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
     const seriesCustomData: ScatterSeriesCustomData = {
@@ -82,16 +82,18 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
         sizeTitle: getFakeTitleOrTitle(size),
     };
 
-    const visualizationIds = getAllVisualizationsIds(shared);
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
+    const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xAxisType = getAxisType({
         field: x,
-        visualizationIds,
-        sort,
+        settings: xPlaceholder?.settings,
+        axisMode: xAxisMode,
     });
+    const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yAxisType = getAxisType({
         field: y,
-        visualizationIds,
-        sort,
+        settings: yPlaceholder?.settings,
     });
     const config: ChartKitWidgetData = {
         series: {

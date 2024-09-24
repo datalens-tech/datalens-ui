@@ -34,7 +34,6 @@ import {
     selectDashboardParameters,
     selectDrillDownLevel,
     selectFilters,
-    selectSort,
     selectSubVisualization,
     selectVisualization,
 } from '../selectors/visualization';
@@ -104,7 +103,7 @@ export const updatePlaceholderSettingsAction = (
             updatedPlaceholderSettings.axisFormatMode = SETTINGS.AXIS_FORMAT_MODE.AUTO;
         }
 
-        const chartConfig = getState().wizard.visualization as ServerChartsConfig;
+        const chartConfig = getState().wizard.visualization as Partial<ServerChartsConfig>;
         const axisModeSettings = getAxisModePlaceholderSettings({
             placeholder,
             chartConfig,
@@ -528,7 +527,6 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
 
         const state = getState();
         const visualization = selectSubVisualization(state) as Shared['visualization'];
-        const sort = selectSort(state);
 
         const currentPlaceholder = visualization?.placeholders.find((p) => p.id === placeholderId);
 
@@ -540,7 +538,6 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
             updatePlaceholderSettingsAction(items, options?.item, {
                 placeholder: currentPlaceholder,
                 visualization,
-                sort,
             }),
         );
 

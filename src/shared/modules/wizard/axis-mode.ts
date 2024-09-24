@@ -18,7 +18,7 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
         const {id, placeholders, colors, shapes} = visualization;
         const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
         const xField = xPlaceholder?.items[0];
-        const axisSettings = xPlaceholder?.settings?.axisModeMap?.[xField?.guid];
+        const axisSettings = xPlaceholder?.settings;
         let sort: ServerSort[] = [];
 
         // There is a grouping of data - continuous axis can be used
@@ -44,7 +44,7 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
             return AxisMode.Discrete;
         }
 
-        return axisSettings ?? AxisMode.Continuous;
+        return axisSettings?.axisModeMap?.[xField.guid] ?? AxisMode.Continuous;
     };
 
     if (layers.length) {

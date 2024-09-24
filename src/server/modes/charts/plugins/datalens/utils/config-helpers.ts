@@ -30,7 +30,7 @@ export const mapChartsConfigToServerConfig = (
 };
 
 function isField(value: unknown): value is ServerField {
-    return typeof value === 'object' && 'guid' in value;
+    return Boolean(value && typeof value === 'object' && 'guid' in value);
 }
 
 export function getConfigWithActualFieldTypes(args: {
@@ -39,11 +39,13 @@ export function getConfigWithActualFieldTypes(args: {
 }) {
     const {config, idToDataType} = args;
 
-    return cloneDeepWith(config, function (value: undefined) {
+    return cloneDeepWith(config, function (value: unknown) {
         if (isField(value)) {
             const dataType = idToDataType[value.guid] ?? value.data_type;
             const field: ServerField = {...value, data_type: dataType};
             return field;
         }
+
+        return undefined;
     });
 }

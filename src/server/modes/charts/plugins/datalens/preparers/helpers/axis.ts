@@ -3,10 +3,14 @@ import {AxisMode, isDateField, isNumberField} from '../../../../../../../shared'
 
 export function getAxisType(args: {
     field?: {guid: string; data_type: string};
-    axisMode?: AxisMode;
     settings?: ServerPlaceholderSettings;
+    axisMode?: AxisMode;
 }) {
-    const {field, axisMode, settings} = args;
+    const {field, settings} = args;
+    let axisMode = args.axisMode;
+    if (!axisMode && field?.guid) {
+        axisMode = settings?.axisModeMap?.[field.guid];
+    }
 
     if (axisMode !== AxisMode.Discrete) {
         if (isDateField(field)) {

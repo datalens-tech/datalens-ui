@@ -1,11 +1,6 @@
 import _isEmpty from 'lodash/isEmpty';
 
-import type {
-    Field,
-    ServerChartsConfig,
-    ServerField,
-    WizardVisualizationId,
-} from '../../../../../../../shared';
+import type {Field, ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     AxisMode,
@@ -21,6 +16,7 @@ import {
     isMeasureNameOrValue,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -67,7 +63,8 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const segmentsMap = getSegmentMap(args);
 
     const xField = x ? ({guid: x.guid, data_type: idToDataType[x.guid]} as Field) : x;
-    const xAxisMode = getXAxisMode({config: shared as ServerChartsConfig});
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
     const xAxisType = getAxisType({
         field: xField,
         settings: xPlaceholder?.settings,

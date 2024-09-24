@@ -675,7 +675,7 @@ export function visualization(
                         colors,
                         shapes,
                         sort,
-                    } as ServerChartsConfig;
+                    } as Partial<ServerChartsConfig>;
                     const axisModeMap = getPlaceholderAxisModeMap({
                         placeholder,
                         axisMode: getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete,
