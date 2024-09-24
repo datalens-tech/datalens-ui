@@ -78,7 +78,6 @@ class NavigationInline extends React.Component {
     }
     render() {
         const {linkWrapper, quickItems, onSidebarItemClick, ...props} = this.props;
-
         return (
             <div className={b({inline: true})}>
                 {!this.props.hideSidebar && (
@@ -100,7 +99,6 @@ class NavigationInline extends React.Component {
                         {...props}
                         linkWrapper={linkWrapper}
                         getPlaceParameters={this.props.getPlaceParameters}
-                        isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
                         setBreadCrumbs={this.setBreadCrumbs}
                         onItemSelect={this.onItemSelect}
                     />
