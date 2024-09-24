@@ -31,7 +31,7 @@ class DatasetSelector {
 
     async openActionMenu(dataset?: string) {
         const datasetSelectItem = dataset
-            ? this.page.locator(slct('dataset-select-item'), {hasText: dataset})
+            ? this.page.locator(slct('dataset-select-item'), {hasText: dataset}).first()
             : this.page.locator(slct('dataset-select-item')).first();
         await datasetSelectItem.hover();
         await datasetSelectItem.locator(slct(SectionDatasetQA.DatasetSelectMore)).click();
