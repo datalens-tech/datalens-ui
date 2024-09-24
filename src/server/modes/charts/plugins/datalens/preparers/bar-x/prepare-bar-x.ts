@@ -77,11 +77,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const xIsNumber = Boolean(xDataType && isNumericalDataType(xDataType));
     const xIsPseudo = Boolean(x && x.type === 'PSEUDO');
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
-    let xAxisMode = AxisMode.Discrete;
-    if (x && xDataType) {
-        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
-        xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
-    }
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
 
     const x2 = placeholders[0].items[1];
     const x2DataType = x2 ? idToDataType[x2.guid] : null;

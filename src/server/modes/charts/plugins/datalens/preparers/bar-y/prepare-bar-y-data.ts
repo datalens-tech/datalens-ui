@@ -65,12 +65,8 @@ export function prepareBarYData({
     const xIsNumber = isNumberField(x);
     const xIsPseudo = isPseudoField(x);
     const xIsDate = isDateField(x);
-
-    let xAxisMode = AxisMode.Discrete;
-    if (x && xDataType) {
-        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
-        xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
-    }
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? placeholders[0].items[1]

@@ -1,13 +1,8 @@
-import {dateTime} from '@gravity-ui/date-utils';
-
 import {AxisMode} from '../../../../../../../../../shared';
 import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 
 export const expectedResult = {
-    timeline: [
-        dateTime({input: '2023-03-01T00:00:00', timeZone: 'UTC'}).valueOf() / 1000,
-        dateTime({input: '2023-03-02T00:00:00', timeZone: 'UTC'}).valueOf() / 1000,
-    ],
+    timeline: [1677628800, 1677715200],
     timeZone: 'UTC',
     graphs: [
         {

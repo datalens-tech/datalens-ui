@@ -534,13 +534,6 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
             return;
         }
 
-        dispatch(
-            updatePlaceholderSettingsAction(items, options?.item, {
-                placeholder: currentPlaceholder,
-                visualization,
-            }),
-        );
-
         const updatedState = getState();
         const updatedVisualization = selectSubVisualization(updatedState)!;
         const updatedPlaceholder = updatedVisualization?.placeholders.find(
@@ -556,6 +549,13 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
                 visualization: updatedVisualization,
                 placeholder: updatedPlaceholder,
                 items,
+            }),
+        );
+
+        dispatch(
+            updatePlaceholderSettingsAction(items, options?.item, {
+                placeholder: currentPlaceholder,
+                visualization,
             }),
         );
     };

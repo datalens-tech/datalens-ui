@@ -1,5 +1,5 @@
-import type {Field, Placeholder, PlaceholderSettings, ServerChartsConfig} from 'shared';
-import {AxisMode, getXAxisMode, isFieldHierarchy} from 'shared';
+import type {AxisMode, Field, Placeholder, PlaceholderSettings, ServerChartsConfig} from 'shared';
+import {getXAxisMode, isFieldHierarchy} from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {
@@ -26,8 +26,7 @@ export const getAxisModePlaceholderSettings = ({
 
     if (currentField) {
         fields.forEach((field) => {
-            settings.axisModeMap[field.guid] =
-                getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
+            settings.axisModeMap[field.guid] = getXAxisMode({config: chartConfig});
         });
 
         const currentAxisMode = settings.axisModeMap[currentField.guid];
