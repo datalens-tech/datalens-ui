@@ -1,25 +1,16 @@
 import React from 'react';
 
 import type {ActionPanelItem as DashkitActionPanelItem, ItemDropProps} from '@gravity-ui/dashkit';
-import {
-    ChartColumn,
-    Code,
-    CopyPlus,
-    Heading,
-    Picture,
-    Sliders,
-    TextAlignLeft,
-} from '@gravity-ui/icons';
+import {CopyPlus} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {DashTabItemType, DashboardAddWidgetQa, Feature} from 'shared';
-import Utils from 'ui/utils';
+import {DashTabItemType} from 'shared';
 
 import {DIALOG_TYPE} from '../constants/dialogs';
+import {registry} from '../registry';
 import type {CopiedConfigData} from '../units/dash/modules/helpers';
 
-const b = block('edit-panel-item');
+import {bEditPanelItem} from './getBasicActionPanelItems';
 
 export const TYPES_TO_DIALOGS_MAP = {
     [DashTabItemType.Widget]: DIALOG_TYPE.WIDGET,
@@ -44,67 +35,15 @@ export const getActionPanelItems = ({
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
 }) => {
-    const items: DashkitActionPanelItem[] = [
-        {
-            id: 'chart',
-            icon: <Icon data={ChartColumn} />,
-            title: i18n('dash.main.view', 'button_edit-panel-chart'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddWidget,
-            dragProps: {
-                type: DashTabItemType.Widget,
-            },
-        },
-        {
-            id: 'selector',
-            icon: <Icon data={Utils.isEnabledFeature(Feature.GroupControls) ? Code : Sliders} />,
-            title: Utils.isEnabledFeature(Feature.GroupControls)
-                ? i18n('dash.main.view', 'button_edit-panel-editor-selector')
-                : i18n('dash.main.view', 'button_edit-panel-selector'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddControl,
-            dragProps: {
-                type: DashTabItemType.Control,
-            },
-        },
-        {
-            id: 'text',
-            icon: <Icon data={TextAlignLeft} />,
-            title: i18n('dash.main.view', 'button_edit-panel-text'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddText,
-            dragProps: {
-                type: DashTabItemType.Text,
-            },
-        },
-        {
-            id: 'header',
-            icon: <Icon data={Heading} />,
-            title: i18n('dash.main.view', 'button_edit-panel-title'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddTitle,
-            dragProps: {
-                type: DashTabItemType.Title,
-            },
-        },
-        {
-            id: DashTabItemType.Image,
-            icon: <Icon data={Picture} />,
-            title: i18n('dash.main.view', 'button_edit-panel-image'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddImage,
-            dragProps: {
-                type: DashTabItemType.Image,
-            },
-        },
-    ];
+    const {getBasicActionPanelItems} = registry.common.functions.getAll();
+    const items = getBasicActionPanelItems();
 
     if (copiedData) {
         items.push({
             id: 'paste',
             icon: <Icon data={CopyPlus} />,
             title: i18n('dash.main.view', 'button_edit-panel-paste'),
-            className: b(),
+            className: bEditPanelItem(),
             onClick: () => {
                 onPasteItem(copiedData);
             },
@@ -116,26 +55,12 @@ export const getActionPanelItems = ({
         });
     }
 
-    if (Utils.isEnabledFeature(Feature.GroupControls)) {
-        // if EnableChartEditor is false we need to remove button_edit-panel-editor-selector
-        const deleteCount = Utils.isEnabledFeature(Feature.EnableChartEditor) ? 0 : 1;
-        items.splice(1, deleteCount, {
-            id: 'group-selector',
-            icon: <Icon data={Sliders} />,
-            title: i18n('dash.main.view', 'button_edit-panel-selector'),
-            className: b(),
-            qa: DashboardAddWidgetQa.AddGroupControl,
-            dragProps: {
-                type: DashTabItemType.GroupControl,
-            },
-        });
-    }
-
     return items.reduce((result, item) => {
         if (filterItem && filterItem(item)) {
             return result;
         } else {
             if (item.dragProps?.type && !item.onClick) {
+                // eslint-disable-next-line no-param-reassign
                 item.onClick = () =>
                     openDialog(
                         TYPES_TO_DIALOGS_MAP[

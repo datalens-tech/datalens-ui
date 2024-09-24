@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {getParentByQARole, slct} from '../../utils';
+import {slct} from '../../utils';
 import {RobotChartsDatasets} from '../../utils/constants';
 import {SectionDatasetQA} from '../../../src/shared';
 
@@ -29,22 +29,16 @@ class DatasetSelector {
         await this.page.click(slct(SectionDatasetQA.AddDatasetButton));
     }
 
-    async openActionMenu(dataset: string) {
-        await this.page.waitForSelector(slct('dataset-select-item', dataset));
-
-        const datasetSelectorNode = (await this.page.$(slct('dataset-select-item', dataset)))!;
-
-        await datasetSelectorNode.hover();
-
-        const parent = (await getParentByQARole(datasetSelectorNode, 'dataset-select-item'))!;
-
-        const button = (await parent.$(slct(SectionDatasetQA.DatasetSelectMore)))!;
-
-        await button.click();
+    async openActionMenu(dataset?: string) {
+        const datasetSelectItem = dataset
+            ? this.page.locator(slct('dataset-select-item'), {hasText: dataset}).first()
+            : this.page.locator(slct('dataset-select-item')).first();
+        await datasetSelectItem.hover();
+        await datasetSelectItem.locator(slct(SectionDatasetQA.DatasetSelectMore)).click();
     }
 
     async clickToDatasetAction(
-        dataset: RobotChartsDatasets,
+        dataset: RobotChartsDatasets | undefined,
         action:
             | SectionDatasetQA.RemoveDatasetButton
             | SectionDatasetQA.GoToDatasetButton
