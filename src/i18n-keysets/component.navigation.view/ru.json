@@ -47,7 +47,7 @@
   "switch_widgets": "Чарты",
   "toast_failed-add-favorite": "Не удалось добавить в избранное",
   "toast_failed-remove-favorite": "Не удалось удалить из избранного",
-  "tooltip_table-move-denied": "Можно перемещать только объекты в папках",
+  "tooltip_table-move-denied": "Перемещение доступно только для объектов из папок",
   "value_create-connection": "Подключение",
   "value_create-dashboard": "Дашборд",
   "value_create-dashboard-new": "Дашборд (new)",
