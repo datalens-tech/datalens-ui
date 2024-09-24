@@ -1,7 +1,6 @@
 import _isEmpty from 'lodash/isEmpty';
 
 import type {
-    Field,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
@@ -11,8 +10,8 @@ import {
     AxisMode,
     AxisNullsMode,
     PlaceholderId,
-    getActualAxisModeForField,
     getFakeTitleOrTitle,
+    getXAxisMode,
     isDateField,
     isDimensionField,
     isMarkdownField,
@@ -22,6 +21,7 @@ import {
     isPercentVisualization,
 } from '../../../../../../../shared';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
@@ -35,7 +35,6 @@ import {
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {
     getSegmentsIndexInOrder,
     getSortedCategories,
@@ -80,12 +79,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     let xAxisMode = AxisMode.Discrete;
     if (x && xDataType) {
-        xAxisMode = getActualAxisModeForField({
-            field: {guid: x.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
-        }) as AxisMode;
+        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+        xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     }
 
     const x2 = placeholders[0].items[1];

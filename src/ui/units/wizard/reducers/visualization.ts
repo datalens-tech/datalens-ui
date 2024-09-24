@@ -1,4 +1,5 @@
 import update from 'immutability-helper';
+
 import type {
     ColorsConfig,
     CommonNumberFormattingOptions,
@@ -9,6 +10,7 @@ import type {
     Placeholder,
     PlaceholderSettings,
     PointSizeConfig,
+    ServerChartsConfig,
     ServerTooltipConfig,
     ShapesConfig,
     Shared,
@@ -18,9 +20,11 @@ import type {
     VisualizationWithLayersShared,
 } from 'shared';
 import {
+    AxisMode,
     DATASET_FIELD_TYPES,
     PlaceholderId,
     WizardVisualizationId,
+    getXAxisMode,
     isDimensionField,
     isFieldHierarchy,
     isMeasureField,
@@ -667,10 +671,15 @@ export function visualization(
                 }
 
                 if (isPlaceholderWithAxisMode(placeholder)) {
+                    const chartConfig = {
+                        visualization,
+                        colors,
+                        shapes,
+                        sort,
+                    } as ServerChartsConfig;
                     const axisModeMap = getPlaceholderAxisModeMap({
                         placeholder,
-                        visualizationId: visualization.id as WizardVisualizationId,
-                        sort,
+                        axisMode: getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete,
                     });
                     placeholder.settings = Object.assign({}, placeholder.settings, {
                         axisModeMap,

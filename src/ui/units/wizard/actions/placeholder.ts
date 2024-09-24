@@ -4,7 +4,7 @@ import type {
     GraphShared,
     Placeholder,
     PlaceholderSettings,
-    ServerSort,
+    ServerChartsConfig,
     Shared,
     VisualizationLayerShared,
 } from 'shared';
@@ -82,11 +82,10 @@ export const updatePlaceholderSettingsAction = (
     options: {
         placeholder: Placeholder;
         visualization: Shared['visualization'];
-        sort: ServerSort[];
     },
 ) => {
-    return function (dispatch: AppDispatch) {
-        const {placeholder, visualization, sort} = options;
+    return function (dispatch: AppDispatch, getState: () => DatalensGlobalState) {
+        const {placeholder, visualization} = options;
         const updatedPlaceholderSettings: PlaceholderSettings = {};
         const firstFieldInSection = sectionFields[0];
 
@@ -105,10 +104,10 @@ export const updatePlaceholderSettingsAction = (
             updatedPlaceholderSettings.axisFormatMode = SETTINGS.AXIS_FORMAT_MODE.AUTO;
         }
 
+        const chartConfig = getState().wizard.visualization as ServerChartsConfig;
         const axisModeSettings = getAxisModePlaceholderSettings({
             placeholder,
-            visualization,
-            sort,
+            chartConfig,
             firstField: firstFieldInSection,
         });
 

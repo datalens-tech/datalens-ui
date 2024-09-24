@@ -1,6 +1,11 @@
 import _isEmpty from 'lodash/isEmpty';
 
-import type {Field, ServerField, WizardVisualizationId} from '../../../../../../../shared';
+import type {
+    Field,
+    ServerChartsConfig,
+    ServerField,
+    WizardVisualizationId,
+} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     AxisMode,
@@ -10,6 +15,7 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getXAxisMode,
     isDateField,
     isFloatField,
     isMeasureNameOrValue,
@@ -25,7 +31,6 @@ import {
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsYAxis} from './helpers';
@@ -62,12 +67,13 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const segmentsMap = getSegmentMap(args);
 
     const xField = x ? ({guid: x.guid, data_type: idToDataType[x.guid]} as Field) : x;
+    const xAxisMode = getXAxisMode({config: shared as ServerChartsConfig});
     const xAxisType = getAxisType({
         field: xField,
         settings: xPlaceholder?.settings,
-        sort,
-        visualizationIds: getAllVisualizationsIds(shared),
+        axisMode: xAxisMode,
     });
+
     const customConfig: any = {
         xAxis: {
             type: xAxisType,
