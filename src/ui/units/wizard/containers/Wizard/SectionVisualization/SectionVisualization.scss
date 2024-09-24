@@ -85,7 +85,7 @@
         min-height: 90px;
 
         .subheader {
-            margin-bottom: var(--g-spacing-2);
+            margin-bottom: 11px;
             display: flex;
             align-items: center;
             color: var(--g-color-text-complementary);
@@ -128,7 +128,7 @@
         .dnd-container {
             margin: 2px;
             border-radius: 4px;
-            padding: var(--g-spacing-4) 17px var(--g-spacing-3);
+            padding: 13px 17px var(--g-spacing-3);
             min-height: 90px;
             border: solid 1px transparent;
 
