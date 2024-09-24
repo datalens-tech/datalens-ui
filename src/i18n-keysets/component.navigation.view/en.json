@@ -47,6 +47,7 @@
   "switch_widgets": "Charts",
   "toast_failed-add-favorite": "Failed to add to favorites",
   "toast_failed-remove-favorite": "Failed to delete from favorites",
+  "tooltip_table-move-denied": "Only objects in folders can be moved",
   "value_create-connection": "Connection",
   "value_create-dashboard": "Dashboard",
   "value_create-dashboard-new": "Dashboard (new)",
