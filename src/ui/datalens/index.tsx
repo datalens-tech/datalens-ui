@@ -1,7 +1,6 @@
 import React from 'react';
 import {Route, Switch, Redirect} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import coreReducers from 'store/reducers';
 import {getIsAsideHeaderEnabled} from 'components/AsideHeaderAdapter';
 import LocationChange from '../components/LocationChange/LocationChange';
@@ -12,7 +11,6 @@ import DashAndWizardQLPages, {
 } from './pages/DashAndWizardQLPages/DashAndWizardQLPages';
 import {locationChangeHandler} from './helpers';
 import {isEmbeddedMode, isTvMode} from '../utils/embedded';
-import Utils from '../utils';
 import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
@@ -21,7 +19,6 @@ import {DL} from 'ui/constants';
 reducerRegistry.register(coreReducers);
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
-const EditorPage = React.lazy(() => import('./pages/EditorPage/EditorPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));
 const ConnectionsPage = React.lazy(
     () =>
@@ -55,12 +52,6 @@ const DatalensPageView = () => {
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
-                {Utils.isEnabledFeature(Feature.EnableChartEditor) && (
-                    <Route
-                        path={['/editor', '/workbooks/:workbookId/editor']}
-                        component={EditorPage}
-                    />
-                )}
                 <Route path="/preview" component={PreviewPage} />
                 <Route
                     path={[
