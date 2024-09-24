@@ -32,7 +32,6 @@ export const RowHeader = ({
                 mode,
                 header: true,
                 withParentFolder: displayParentFolder,
-                'collections-mode-only': isOnlyCollectionsMode,
             })}
         >
             {!isOnlyCollectionsMode && (
