@@ -38,12 +38,6 @@
             }
         }
 
-        &_collections-mode-only {
-            #{$class}__createdBy {
-                padding: 0 12px;
-            }
-        }
-
         &_inactive {
             cursor: default;
             pointer-events: none;
