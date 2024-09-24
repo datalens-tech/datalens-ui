@@ -295,7 +295,8 @@ export class YandexMapComponent extends React.Component {
                 data: data.map((geoObject) => {
                     const geoObjectState =
                         geoObject.options && this.geoObjectsStates[geoObject.options.geoObjectId];
-                    const children = get(geoObject, 'collection.children', []);
+                    const children =
+                        get(geoObject, 'collection.children') || get(geoObject, 'clusterer') || [];
                     const polygons = get(geoObject, 'polygonmap.polygons.features', []);
 
                     if (children.length) {
