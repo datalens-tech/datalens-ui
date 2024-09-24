@@ -1,0 +1,12 @@
+.dialog-export {
+    $class: &;
+    width: 500px;
+
+    &__body {
+        display: flex;
+        gap: 24px;
+        padding-bottom: 22px;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+}

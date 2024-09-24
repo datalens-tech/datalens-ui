@@ -54,6 +54,7 @@ import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/Collect
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogAssignClaimsArgs} from '../../components/OpenDialogAssignClaims/OpenDialogAssignClaims';
 import { OpenDialogShareArgs } from 'ui/components/OpenDialogShare/OpenDialogShare';
+import { OpenDialogExportPdfArgs } from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Export/ExportDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs
@@ -109,4 +110,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogAssignClaimsArgs
-    | OpenDialogShareArgs;
+    | OpenDialogShareArgs
+    | OpenDialogExportPdfArgs;

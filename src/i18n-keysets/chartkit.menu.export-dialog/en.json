@@ -1,0 +1,11 @@
+{
+    "export_title": "Export to PDF",
+    "page_format": "Page format",
+    "export_submit": "Submit",
+    "page_orientation": "Page orientation",
+    "orientation_portrait": "Portrait",
+    "orientation_landscape": "Landscape",
+    "error": "Error",
+    "toast_error": "Export to PDF failed"
+}
+  
