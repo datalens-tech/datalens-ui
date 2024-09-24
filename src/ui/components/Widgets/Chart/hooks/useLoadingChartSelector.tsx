@@ -88,8 +88,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
-    const controlsContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = controlsContext?.isNewRelations || false;
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const isNewRelations = extDashkitContext?.isNewRelations || false;
 
     const history = useHistory();
 
@@ -234,11 +234,11 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
      * get defaults widget params: need to detect relations for external selectors
      */
     const widgetParamsDefaults = React.useMemo(() => {
-        const item = controlsContext?.config?.items.find(
+        const item = extDashkitContext?.config?.items.find(
             ({id}: {id: String}) => id === widgetId,
         ) as DashTabItemControl;
         return item?.defaults || {};
-    }, [controlsContext?.config, widgetId]);
+    }, [extDashkitContext?.config, widgetId]);
 
     /**
      * debounced call of chartkit reflow

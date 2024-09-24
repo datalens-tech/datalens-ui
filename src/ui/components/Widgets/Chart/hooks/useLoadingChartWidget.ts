@@ -126,8 +126,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
-    const controlsContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = controlsContext?.isNewRelations || false;
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const isNewRelations = extDashkitContext?.isNewRelations || false;
 
     const history = useHistory();
 
