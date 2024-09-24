@@ -237,7 +237,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         const item = controlsContext?.config?.items.find(
             ({id}: {id: String}) => id === widgetId,
         ) as DashTabItemControl;
-        return item.defaults;
+        return item?.defaults || {};
     }, [controlsContext?.config, widgetId]);
 
     /**
