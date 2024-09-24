@@ -1,7 +1,7 @@
 import uuid from 'uuid/v1';
 import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
 
-import {slct} from '../../utils';
+import {deleteEntity, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
@@ -60,6 +60,10 @@ class DatasetPage extends BasePage {
         } catch {
             throw new Error("Dataset wasn't created");
         }
+    }
+
+    async deleteEntry() {
+        await deleteEntity(this.page);
     }
 }
 
