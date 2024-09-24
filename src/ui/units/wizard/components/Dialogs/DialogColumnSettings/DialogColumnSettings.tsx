@@ -5,10 +5,9 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import type {Field} from 'shared';
-import {DialogColumnSettingsQa, Feature, WizardVisualizationId} from 'shared';
+import {DialogColumnSettingsQa, WizardVisualizationId} from 'shared';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
-import Utils from '../../../../../utils';
 import {DialogRow} from '../components/DialogRow/DialogRow';
 
 import {ColumnWidthSettingsSection} from './components/ColumnWidthSettingsSection/ColumnWidthSettingsSection';
@@ -67,9 +66,6 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
     const dialogTitle = isPivotTableDialog
         ? i18n('wizard', 'label_pivot-table-title-dialog-column-settings')
         : i18n('wizard', 'label_title-dialog-column-settings');
-    const canPinColumns =
-        (!isPivotTableDialog && Utils.isEnabledFeature(Feature.PinnedColumns)) ||
-        (isPivotTableDialog && Utils.isEnabledFeature(Feature.PinnedColumnsForPivotTables));
 
     return (
         <Dialog
@@ -87,31 +83,29 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
                 }
             />
             <Dialog.Body className={b('content')}>
-                {canPinColumns && (
-                    <div className={b('freeze-settings')}>
-                        <DialogRow
-                            title={
-                                <Subheader
-                                    title={i18n('wizard', 'label_column-freeze')}
-                                    tooltip={i18n('wizard', 'label_column-freeze-tooltip')}
-                                />
-                            }
-                            customGapBetweenTitleAndSetting="16px"
-                            titleCustomWidth="178px"
-                            setting={
-                                <TextInput
-                                    type={'number'}
-                                    hasClear={Boolean(pinnedColumns)}
-                                    value={String(pinnedColumns)}
-                                    onChange={handleChangeFrozenColumnsNumber}
-                                    controlProps={{min: 0}}
-                                    className={b('frozen-columns-input')}
-                                    qa={DialogColumnSettingsQa.PinnedColumnsInput}
-                                />
-                            }
-                        />
-                    </div>
-                )}
+                <div className={b('freeze-settings')}>
+                    <DialogRow
+                        title={
+                            <Subheader
+                                title={i18n('wizard', 'label_column-freeze')}
+                                tooltip={i18n('wizard', 'label_column-freeze-tooltip')}
+                            />
+                        }
+                        customGapBetweenTitleAndSetting="16px"
+                        titleCustomWidth="178px"
+                        setting={
+                            <TextInput
+                                type={'number'}
+                                hasClear={Boolean(pinnedColumns)}
+                                value={String(pinnedColumns)}
+                                onChange={handleChangeFrozenColumnsNumber}
+                                controlProps={{min: 0}}
+                                className={b('frozen-columns-input')}
+                                qa={DialogColumnSettingsQa.PinnedColumnsInput}
+                            />
+                        }
+                    />
+                </div>
                 {!isEmpty(fields.columns) && (
                     <React.Fragment>
                         <DialogRow
