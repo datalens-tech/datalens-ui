@@ -72,6 +72,7 @@ class NavigationEntries extends React.Component {
         getPlaceParameters: PropTypes.func.isRequired,
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
         isMobileNavigation: PropTypes.bool,
+        isOnlyCollectionsMode: PropTypes.bool,
         ignoreWorkbookEntries: PropTypes.bool,
         onChangeLocation: PropTypes.func,
 
@@ -608,6 +609,7 @@ class NavigationEntries extends React.Component {
                     hasNextPage={this.state.hasNextPage}
                     onLoadMore={this.onLoadMore}
                     isMobileNavigation={this.props.isMobileNavigation}
+                    isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
                     refreshNavigation={this.refresh}
                     onChangeLocation={this.props.onChangeLocation}
                     onMenuClick={this.props.onContextMenuClick}

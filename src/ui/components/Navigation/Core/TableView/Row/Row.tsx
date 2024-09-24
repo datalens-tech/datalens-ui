@@ -64,6 +64,7 @@ type RowProps = Pick<
     | 'onEntryParentClick'
     | 'linkWrapper'
     | 'onMenuClick'
+    | 'isOnlyCollectionsMode'
 > &
     Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
@@ -80,6 +81,7 @@ export class Row extends React.Component<RowProps> {
             mode,
             place,
             isBatchEnabled,
+            isOnlyCollectionsMode,
             onMenuClick,
         } = this.props;
         const {name, displayAlias, entryId, hidden = false} = entry;
@@ -141,11 +143,11 @@ export class Row extends React.Component<RowProps> {
                     inactive,
                     checked,
                     withParentFolder: displayParentFolder,
-                    withCheckbox: isBatchEnabled,
+                    withCheckbox: isBatchEnabled && !isOnlyCollectionsMode,
                 })}
                 data-qa={DlNavigationQA.Row}
             >
-                {isBatchEnabled && this.renderCheckBox()}
+                {!isOnlyCollectionsMode && isBatchEnabled && this.renderCheckBox()}
                 {linkWrapper ? (
                     linkWrapper({entry, className: b('link'), children: node})
                 ) : (

@@ -21,7 +21,10 @@ export type ListProps = Omit<HookBatchSelectResult, 'resetSelected'> &
         showBatchPanel: boolean;
     };
 
-type InnerElementTypeContextStore = Pick<TableViewProps, 'mode' | 'displayParentFolder'> &
+type InnerElementTypeContextStore = Pick<
+    TableViewProps,
+    'mode' | 'displayParentFolder' | 'isOnlyCollectionsMode'
+> &
     Pick<
         HookBatchSelectResult,
         'isAllCheckBoxChecked' | 'onAllCheckBoxSelect' | 'isBatchEnabled'
@@ -36,6 +39,7 @@ const InnerElementTypeContext = React.createContext<InnerElementTypeContextStore
     displayParentFolder: false,
     isAllCheckBoxChecked: false,
     onAllCheckBoxSelect: () => {},
+    isOnlyCollectionsMode: false,
 });
 
 const InnerElementType = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<'div'>>(
@@ -44,6 +48,7 @@ const InnerElementType = React.forwardRef<HTMLDivElement, React.ComponentPropsWi
             showBatchPanel,
             mode,
             isBatchEnabled,
+            isOnlyCollectionsMode,
             displayParentFolder,
             isAllCheckBoxChecked,
             onAllCheckBoxSelect,
@@ -56,6 +61,7 @@ const InnerElementType = React.forwardRef<HTMLDivElement, React.ComponentPropsWi
                         displayParentFolder={displayParentFolder}
                         isAllCheckBoxChecked={isAllCheckBoxChecked}
                         onAllCheckBoxSelect={onAllCheckBoxSelect}
+                        isOnlyCollectionsMode={isOnlyCollectionsMode}
                     />
                 )}
                 {children}
@@ -89,6 +95,7 @@ export class List extends React.PureComponent<ListProps> {
             isAllCheckBoxChecked,
             onAllCheckBoxSelect,
             isBatchEnabled,
+            isOnlyCollectionsMode,
         } = this.props;
         const entriesLength = entries.length;
         const itemCount =
@@ -103,6 +110,7 @@ export class List extends React.PureComponent<ListProps> {
                     isAllCheckBoxChecked,
                     onAllCheckBoxSelect,
                     isBatchEnabled,
+                    isOnlyCollectionsMode,
                 }}
             >
                 <AutoSizer>
@@ -167,6 +175,7 @@ export class List extends React.PureComponent<ListProps> {
                         isBatchEnabled={this.props.isBatchEnabled}
                         entry={entry}
                         onMenuClick={this.props.onMenuClick}
+                        isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
                     />
                 )}
             </div>
