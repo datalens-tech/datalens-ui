@@ -3,6 +3,9 @@ import {Page, Request} from '@playwright/test';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../utils';
 import {RobotChartsDatasetUrls} from '../../utils/constants';
+import WizardPage from '../../page-objects/wizard/WizardPage';
+import {SectionDatasetQA} from '../../../src/shared';
+import DatasetPage from '../../page-objects/dataset/DatasetPage';
 
 const CURRENT_PATH = 'Users%2Frobot-charts%2FE2E_DS%2F';
 const DECODED_CURRENT_PATH = decodeURIComponent(CURRENT_PATH);
@@ -43,6 +46,30 @@ const waitForBiValidateDatasetResponses = (page: Page, timeout: number): Promise
 };
 
 datalensTest.describe('Datasets - automatic creation from YT', () => {
+    datalensTest.afterEach(async ({page}) => {
+        const pageUrl = page.url();
+        const datasetId = new URL(pageUrl).searchParams.get('__datasetId');
+
+        if (datasetId) {
+            const wizardPage = new WizardPage({page});
+            const [childPage] = await Promise.all([
+                page.waitForEvent('popup'),
+                wizardPage.datasetSelector.clickToDatasetAction(
+                    undefined, // If not specify a name, the first and only dataset will be selected
+                    SectionDatasetQA.GoToDatasetButton,
+                ),
+            ]);
+
+            if (!childPage) {
+                return;
+            }
+
+            await childPage.waitForEvent('load');
+            const datasetPage = new DatasetPage({page: childPage});
+            await datasetPage.deleteEntry();
+        }
+    });
+
     datalensTest('Base Script', async ({page}: {page: Page}) => {
         await openTestPage(page, RobotChartsDatasetUrls.NewDataset, {
             id: 'CHYT_HAHN',
