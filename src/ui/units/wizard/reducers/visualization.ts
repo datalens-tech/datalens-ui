@@ -1,5 +1,4 @@
 import update from 'immutability-helper';
-
 import type {
     ColorsConfig,
     CommonNumberFormattingOptions,
