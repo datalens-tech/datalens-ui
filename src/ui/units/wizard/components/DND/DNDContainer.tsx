@@ -36,6 +36,7 @@ export interface DNDContainerProps {
     disabled?: boolean;
     onAfterUpdate?: () => void;
     onRemoveItemClick?: (removeIndex: number) => Promise<void>;
+    title?: JSX.Element;
 }
 
 export interface DNDContainerState {
@@ -51,13 +52,14 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
 
         this.state = {
             items,
+            dropPlace: 0,
         };
     }
 
     // eslint-disable-next-line
     componentWillReceiveProps(nextProps: DNDContainerProps) {
         if (this.state.items !== nextProps.items) {
-            this.setState({items: nextProps.items});
+            this.setState({items: nextProps.items, dropPlace: 0});
         }
     }
     setDropPlace = (dropPlace: number | null) => {
@@ -122,6 +124,7 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                     'cannot-drop': !canDrop && isOver,
                 })}
             >
+                {this.props.title}
                 {
                     <div
                         className="drop-place"
