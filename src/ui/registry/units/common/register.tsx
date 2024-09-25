@@ -48,7 +48,6 @@ export const registerCommonPlugins = () => {
         YfmWrapperContent,
         DatepickerControl,
         MarkdownControl,
-        DialogImageWidgetLinkHint: () => null,
     });
 
     registry.common.functions.register({
