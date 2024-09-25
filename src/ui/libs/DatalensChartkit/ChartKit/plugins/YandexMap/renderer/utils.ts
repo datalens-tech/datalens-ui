@@ -12,10 +12,11 @@ export const renderPossibleMarkupItems = (
     data: (DataItem | null)[],
 ) => {
     data.forEach((d) => {
-        if (d?.key && d?.value) {
+        if (typeof d?.key === 'string' && d?.value) {
+            const markup = renderMarkupToString(d.value);
             // We do not need an original data, than it more convenient to have mutation here instead of cloneDeep
             // eslint-disable-next-line no-param-reassign
-            d.text = `${escape(d.key)}: ${renderMarkupToString(d.value)}`;
+            d.text = d.key ? `${escape(d.key)}: ${markup}` : markup;
         }
 
         if (d && d?.[WRAPPED_MARKDOWN_KEY] && renderMarkdownToString) {

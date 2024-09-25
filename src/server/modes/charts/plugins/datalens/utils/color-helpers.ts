@@ -5,6 +5,7 @@ import type {
     RGBColor,
     RGBGradient,
     TableCellsRow,
+    WrappedMarkup,
 } from '../../../../../../shared';
 import {
     GradientType,
@@ -29,7 +30,7 @@ export type ExtendedPointOptionsObject = Omit<
     colorValue?: string | null;
     colorGuid?: string;
     shapeValue?: string | null;
-    name?: string | WrappedMarkdown;
+    name?: string | WrappedMarkdown | WrappedMarkup;
 };
 
 export type ExtendedSeriesScatterOptions = Omit<

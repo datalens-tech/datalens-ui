@@ -13,12 +13,6 @@ import type {LogItem} from '../console';
 import type {ProcessorHooks} from '../hooks';
 import type {RuntimeMetadata} from '../types';
 
-import {
-    libsControlV1Interop,
-    libsDatalensV3Interop,
-    libsDatasetV2Interop,
-    libsQlChartV1Interop,
-} from './interop';
 import {prepareChartEditorApi} from './interop/charteditor-api';
 import {getPrepare} from './prepare';
 
@@ -167,11 +161,6 @@ const execute = async ({
             chartEditorApi,
             userLogin,
         });
-
-        libsDatalensV3Interop.setPrivateApi({jail, chartEditorApi});
-        libsControlV1Interop.setPrivateApi({jail, chartEditorApi});
-        libsQlChartV1Interop.setPrivateApi({jail, chartEditorApi});
-        libsDatasetV2Interop.setPrivateApi({jail, chartEditorApi});
 
         const after = `
             ${

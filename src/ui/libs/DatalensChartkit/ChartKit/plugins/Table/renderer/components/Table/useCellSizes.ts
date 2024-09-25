@@ -1,6 +1,8 @@
 import React from 'react';
 
-function getTableSizes(rows: HTMLTableRowElement[]) {
+import {waitForContent} from '../../../../../helpers/wait-for-content';
+
+function getTableSizes(rows: HTMLTableRowElement[], tableScale = 1) {
     const colsCount = Array.from(rows[0]?.childNodes ?? []).reduce((sum, c) => {
         const colSpan = Number((c as Element).getAttribute('colSpan') || 1);
         return sum + colSpan;
@@ -14,7 +16,7 @@ function getTableSizes(rows: HTMLTableRowElement[]) {
             const cell = c as Element;
             let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
             let colSpan = Number(cell.getAttribute('colSpan') || 1);
-            const cellWidth = cell.getBoundingClientRect()?.width;
+            const cellWidth = cell.getBoundingClientRect()?.width / tableScale;
 
             if (result[rowIndex][cellIndex] !== null) {
                 cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);
@@ -58,23 +60,26 @@ export const useCellSizes = (
     const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
 
     React.useLayoutEffect(() => {
+        const container = tableContainerRef?.current as Element;
+        const table = container?.getElementsByTagName('table')?.[0];
+
         if (!cellSizes) {
-            document.fonts.ready.finally(() => {
+            waitForContent(container).finally(() => {
                 let sizes: number[] = [];
-                const container = tableContainerRef?.current as Element;
-                const table = container?.getElementsByTagName('table')?.[0];
                 const tHeadRows = Array.from(
                     table?.getElementsByTagName('thead')?.[0]?.childNodes ?? [],
                 );
 
+                const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
+
                 if (tHeadRows.length) {
-                    sizes = getTableSizes(tHeadRows as HTMLTableRowElement[]);
+                    sizes = getTableSizes(tHeadRows as HTMLTableRowElement[], tableScale);
                 } else {
                     const tBodyRows = Array.from(
                         table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? [],
                     );
                     if (tBodyRows.length) {
-                        sizes = getTableSizes([tBodyRows[0] as HTMLTableRowElement]);
+                        sizes = getTableSizes([tBodyRows[0] as HTMLTableRowElement], tableScale);
                     }
                 }
 

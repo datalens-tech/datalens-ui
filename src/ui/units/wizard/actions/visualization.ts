@@ -5,6 +5,7 @@ import type {
     Placeholder,
     PlaceholderSettings,
     PointSizeConfig,
+    ServerTooltipConfig,
     ShapesConfig,
     Shared,
     Sort,
@@ -489,6 +490,24 @@ export function setDrillDownLevel({
     };
 }
 
+export const SET_TOOLTIP_CONFIG = Symbol('wizard/visualization/SET_TOOLTIP_CONFIG');
+
+interface SetTooltipConfigAction {
+    type: typeof SET_TOOLTIP_CONFIG;
+    tooltipConfig: ServerTooltipConfig;
+}
+
+export function setTooltipConfig({
+    tooltipConfig,
+}: {
+    tooltipConfig: ServerTooltipConfig;
+}): SetTooltipConfigAction {
+    return {
+        type: SET_TOOLTIP_CONFIG,
+        tooltipConfig,
+    };
+}
+
 export type VisualizationAction =
     | SetLayerFiltersAction
     | SetSelectedLayerIdAction
@@ -511,4 +530,5 @@ export type VisualizationAction =
     | SetDashboardParametersAction
     | SetSegmentsAction
     | UpdatePlaceholderSettingsAction
-    | SetDrillDownLevelAction;
+    | SetDrillDownLevelAction
+    | SetTooltipConfigAction;

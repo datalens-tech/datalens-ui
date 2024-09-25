@@ -90,7 +90,12 @@ export const StructureItemSelect = React.memo<Props>(
         }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize]);
 
         return (
-            <div className={b({disabled})}>
+            <div
+                className={b({
+                    disabled,
+                    'denied-and-empty': !isSelectionAllowed && !items.length,
+                })}
+            >
                 {contentIsLoading && items.length === 0 ? (
                     <div className={b('main-loader')}>
                         <SmartLoader size="m" showAfter={0} />

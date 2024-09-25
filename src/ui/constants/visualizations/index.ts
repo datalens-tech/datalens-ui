@@ -157,6 +157,10 @@ export const CHART_SETTINGS = {
         ON: 'on',
         OFF: 'off',
     },
+    PIVOT_INLINE_SORT: {
+        ON: 'on',
+        OFF: 'off',
+    },
 };
 
 export const VISUALIZATION_IDS = {

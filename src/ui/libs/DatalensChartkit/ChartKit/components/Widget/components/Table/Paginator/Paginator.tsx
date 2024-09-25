@@ -4,7 +4,7 @@ import {ChevronRight} from '@gravity-ui/icons';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
-import {ChartKitTableQa} from '../../../../../../../../../shared';
+import {ChartKitTableQa, PRINT_HIDDEN_ATTR} from '../../../../../../../../../shared';
 import {i18n} from '../../../../../modules/i18n/i18n';
 
 import './Paginator.scss';
@@ -91,26 +91,28 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange, 
 
     return (
         <div className={b(null, className)} data-qa={ChartKitTableQa.Paginator}>
-            <ArrowButton
-                page={currentPage}
-                qa={ChartKitTableQa.PaginatorPrevPageButton}
-                reversed={true}
-                onChange={onChange}
-            />
-            <TextInput
-                className={b('page-input')}
-                type="number"
-                value={inputValue}
-                onBlur={onInputBlur}
-                onUpdate={setInputValue}
-                onKeyPress={onInputPressEnter}
-                qa={ChartKitTableQa.PaginatorPageInput}
-            />
-            <ArrowButton
-                page={currentPage}
-                qa={ChartKitTableQa.PaginatorNextPageButton}
-                onChange={onChange}
-            />
+            <div {...{[PRINT_HIDDEN_ATTR]: true}}>
+                <ArrowButton
+                    page={currentPage}
+                    qa={ChartKitTableQa.PaginatorPrevPageButton}
+                    reversed={true}
+                    onChange={onChange}
+                />
+                <TextInput
+                    className={b('page-input')}
+                    type="number"
+                    value={inputValue}
+                    onBlur={onInputBlur}
+                    onUpdate={setInputValue}
+                    onKeyPress={onInputPressEnter}
+                    qa={ChartKitTableQa.PaginatorPageInput}
+                />
+                <ArrowButton
+                    page={currentPage}
+                    qa={ChartKitTableQa.PaginatorNextPageButton}
+                    onChange={onChange}
+                />
+            </div>
             {Boolean(limit && rowsCount) && (
                 <span className={b('range')} data-qa={ChartKitTableQa.PaginatorRange}>
                     {getRange(currentPage, limit as number, rowsCount as number)}

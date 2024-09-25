@@ -6,7 +6,7 @@ import type {MenuItemsIds, StringParams} from 'shared';
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import type DatalensChartkitCustomError from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
-import type {Widget as TWidget} from './widget';
+import type {Widget as TWidget, WidgetData} from './widget';
 
 export interface MenuItem<TProviderData, TProviderProps> {
     id: MenuItemsIds;
@@ -45,3 +45,7 @@ export type MenuItems<TProviderData = unknown, TProviderProps = unknown> = MenuI
     TProviderData,
     TProviderProps
 >[];
+
+export type AlertsActionArgs = {
+    loadedData: WidgetData;
+};

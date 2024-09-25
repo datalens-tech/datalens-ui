@@ -22,6 +22,8 @@ export enum WizardVisualizationId {
     PivotTable = 'pivotTable',
     Geolayer = 'geolayer',
     Geopoint = 'geopoint',
+    Geopolygon = 'geopolygon',
+    GeopointWithCluster = 'geopoint-with-cluster',
     CombinedChart = 'combined-chart',
 }
 

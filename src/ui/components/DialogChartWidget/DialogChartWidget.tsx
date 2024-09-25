@@ -96,6 +96,7 @@ export interface DialogChartWidgetProps {
 
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
+    enableFilteringSetting?: boolean;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
@@ -128,6 +129,7 @@ class DialogChartWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableBackgroundColor: false,
+        enableFilteringSetting: true,
         openedItemData: {
             hideTitle: false,
             tabs: [
@@ -283,6 +285,7 @@ class DialogChartWidget extends React.PureComponent<
         name: string;
         params: StringParams;
     }) => {
+        const {enableAutoheight} = this.props;
         const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
 
         const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
@@ -332,7 +335,11 @@ class DialogChartWidget extends React.PureComponent<
                 data: update(this.state.data, {
                     tabs: {
                         [tabIndex]: {
-                            autoHeight: {$set: selectedWidgetType === DASH_WIDGET_TYPES.METRIC},
+                            autoHeight: {
+                                $set:
+                                    enableAutoheight &&
+                                    selectedWidgetType === DASH_WIDGET_TYPES.METRIC,
+                            },
                         },
                     },
                 }),
@@ -579,6 +586,7 @@ class DialogChartWidget extends React.PureComponent<
             navigationPath,
             enableAutoheight,
             enableBackgroundColor,
+            enableFilteringSetting,
             changeNavigationPath,
         } = this.props;
 
@@ -723,7 +731,7 @@ class DialogChartWidget extends React.PureComponent<
                         )}
                     </Line>
                 )}
-                {this.renderFilteringCharts()}
+                {enableFilteringSetting && this.renderFilteringCharts()}
                 {this.renderParams()}
             </React.Fragment>
         );

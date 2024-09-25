@@ -56,6 +56,7 @@ type GenerateTableHeadArgs = {
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
     sortSettings: PivotTableSortSettings;
+    pinnedColumns: number;
 };
 
 type GetHeaderCellMetadataArgs = {
@@ -246,6 +247,7 @@ export const generateTableHead = ({
     availablePalettes,
     sortSettings,
     pivotStructure,
+    pinnedColumns,
 }: GenerateTableHeadArgs): CharkitTableHead => {
     const {columnsMeta, isSortByRowAllowed, isSortByColumnAllowed} = sortSettings;
     const mappedHeadCellData = mapColumnsToHeadCellData(pivotData.columns, columnsMeta);
@@ -316,6 +318,10 @@ export const generateTableHead = ({
 
         head[index].name = fieldName;
         head[index].header = true;
+
+        if (index < pinnedColumns) {
+            head[index].pinned = true;
+        }
     });
 
     return head;
