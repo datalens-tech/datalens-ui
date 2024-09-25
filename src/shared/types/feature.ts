@@ -7,7 +7,6 @@ export enum Feature {
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
-    EnableChartEditor = 'EnableChartEditor',
     EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
