@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
+import type {ColumnDef, Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -76,15 +76,19 @@ function getFooterRows(table: Table<TData>) {
             const columnDef = cell.column.columnDef;
             const originalHeadData = columnDef.meta?.head;
             const originalFooterData = columnDef?.meta?.footer;
-            const style = originalFooterData?.css;
             const pinned = Boolean(originalHeadData?.pinned);
             const content = cell.isPlaceholder
                 ? null
                 : flexRender(columnDef.footer, cell.getContext());
 
+            const cellStyle: React.CSSProperties = {
+                left: pinned ? originalHeadData?.left : undefined,
+            };
+
             return {
                 id: cell.id,
-                style,
+                style: cellStyle,
+                contentStyle: originalFooterData?.css ?? {},
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
@@ -116,7 +120,7 @@ export const usePreparedTableData = (props: {
     data: Required<TableData>;
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
-    getCellAdditionStyles?: (cell: TableCell, rowIndex: number) => React.CSSProperties;
+    getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
 }): TableViewData => {
     const {
         widgetData: {config},
@@ -173,7 +177,26 @@ export const usePreparedTableData = (props: {
             const updates = typeof updater === 'function' ? updater(sorting) : updater;
             const {id, desc} = updates[0] || {};
 
-            const headCellData = columns.find((c) => c.id === id)?.meta?.head as TableHead;
+            const findCell = (cols: ColumnDef<TData>[]): TableHead | undefined => {
+                for (let i = 0; i < cols.length; i++) {
+                    const col = cols[i];
+                    if (col.id === id) {
+                        return col.meta?.head as TableHead;
+                    }
+
+                    const subColumns = get(col, 'columns', []);
+                    if (subColumns.length) {
+                        const subCol = findCell(subColumns);
+                        if (subCol) {
+                            return subCol;
+                        }
+                    }
+                }
+
+                return undefined;
+            };
+
+            const headCellData = findCell(columns);
             const sortOrder = desc ? 'desc' : 'asc';
 
             if (onSortingChange) {
@@ -185,18 +208,40 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
+    const enableRowGrouping = React.useMemo(
+        () => data.head?.some((cell) => get(cell, 'group', false)),
+        [data.head],
+    );
+
+    const rowMeasures = React.useRef<Record<string, number>>({});
+    React.useEffect(() => {
+        rowMeasures.current = {};
+    }, [data]);
+
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
         estimateSize: () => 30,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
-            const cells = Array.from(el?.getElementsByTagName('td') || []);
-            const simpleCell = cells.find((c) => {
-                const rowSpan = Number(c.getAttribute('rowspan')) || 0;
-                return rowSpan <= 1;
-            });
-            const height = simpleCell?.getBoundingClientRect()?.height;
-            return height ?? 0;
+            const getRowHeight = () => {
+                const cells = Array.from(el?.getElementsByTagName('td') || []);
+                const simpleCell = cells.find((c) => {
+                    const rowSpan = Number(c.getAttribute('rowspan')) || 0;
+                    return rowSpan <= 1;
+                });
+                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+            };
+
+            if (!enableRowGrouping) {
+                return getRowHeight();
+            }
+
+            const rowIndex = el.getAttribute('data-index') ?? '';
+            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
+                rowMeasures.current[rowIndex] = getRowHeight();
+            }
+
+            return rowMeasures.current[rowIndex];
         },
         overscan: 100,
     });
@@ -204,7 +249,7 @@ export const usePreparedTableData = (props: {
     const virtualItems = prerender
         ? new Array(Math.min(tableRows.length, PRERENDER_ROW_COUNT))
               .fill(null)
-              .map((_, index) => ({index, start: 0}))
+              .map((_, index) => ({index, start: 0, size: undefined}))
         : rowVirtualizer.getVirtualItems();
 
     const headerRows = headers
@@ -301,12 +346,16 @@ export const usePreparedTableData = (props: {
                         )
                     ) {
                         prevCell.rowSpan += 1;
+                        if (prevCell.maxHeight && virtualRow.size) {
+                            prevCell.maxHeight += virtualRow.size;
+                        }
+
                         return acc;
                     }
                 }
 
                 const additionalStyles = getCellAdditionStyles
-                    ? getCellAdditionStyles(originalCellData as TableCell, virtualRow.index)
+                    ? getCellAdditionStyles(originalCellData as TableCell, row.original)
                     : {};
                 const cellStyle: React.CSSProperties = {
                     left: pinned ? originalHeadData?.left : undefined,
@@ -346,6 +395,7 @@ export const usePreparedTableData = (props: {
                             : originalCellData?.className,
                     rowSpan: 1,
                     data: originalCellData,
+                    maxHeight: enableRowGrouping ? virtualRow.size : undefined,
                 };
 
                 prevCells[index] = rowsAcc.length;
@@ -365,17 +415,19 @@ export const usePreparedTableData = (props: {
         }, []);
     }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
 
-    const hasFooter = columns.some((column) => column.footer);
+    const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
+    const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
+    const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
         rows: hasFooter ? getFooterRows(table) : [],
-        style: {gridTemplateColumns},
+        style: {gridTemplateColumns, transform},
     };
 
     return {
         header,
         body: {
             rows,
-            style: {gridTemplateColumns},
+            style: {gridTemplateColumns, transform},
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),

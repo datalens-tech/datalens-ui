@@ -151,4 +151,86 @@ datalensTest.describe('Wizard', () => {
             expect(rowCells).toEqual(initialRowContent);
         });
     });
+
+    datalensTest.describe('Pivot table', () => {
+        datalensTest.beforeEach(async ({page, config}) => {
+            await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+            const wizardPage = new WizardPage({page});
+
+            await wizardPage.setVisualization(WizardVisualizationId.PivotTable);
+        });
+
+        datalensTest('Sorting columns from the "Rows" section', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+
+            await expect(previewLoader).not.toBeVisible();
+            const initialOrder = [
+                ['Furniture', ''],
+                ['Office Supplies', ''],
+                ['Technology', ''],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(initialOrder);
+
+            // Sort values by clicking on header
+            await chartContainer.locator('thead', {hasText: 'Category'}).first().click();
+            await expect(previewLoader).not.toBeVisible();
+            const expectedOrder = [
+                ['Technology', ''],
+                ['Office Supplies', ''],
+                ['Furniture', ''],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
+        });
+
+        datalensTest('Sorting columns from the "Columns" section', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            // Setup filters
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Filters,
+                'region',
+            );
+            await wizardPage.filterEditor.selectValues(['Central']);
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.PivotTableColumns,
+                'country',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.PivotTableColumns,
+                'region',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Category');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'Sales',
+            );
+
+            await expect(previewLoader).toBeVisible();
+            await expect(previewLoader).not.toBeVisible();
+            const initialOrder = [
+                ['Furniture', '160 317,46'],
+                ['Office Supplies', '163 590,24'],
+                ['Technology', '168 739,21'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(initialOrder);
+
+            // Sort values by clicking on the second level column header
+            await chartContainer.locator('thead', {hasText: 'Central'}).first().click();
+            await expect(previewLoader).not.toBeVisible();
+            const expectedOrder = [
+                ['Technology', '168 739,21'],
+                ['Office Supplies', '163 590,24'],
+                ['Furniture', '160 317,46'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
+        });
+    });
 });

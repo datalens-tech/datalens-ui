@@ -4,12 +4,10 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {Pool, Proxy} from 'workerpool';
 import workerpool from 'workerpool';
 
-import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {getWizardChartBuilder} from '../components/processor/worker-chart-builder';
 import type {ResolvedConfig} from '../components/storage/types';
 import type {WizardWorker} from '../components/wizard-worker/types';
 
-import {runChart} from './chart';
 import {runWorkerChart} from './worker';
 
 import type {RunnerHandler, RunnerHandlerProps} from '.';
@@ -25,10 +23,6 @@ async function getWizardWorker(): Promise<Proxy<WizardWorker>> {
 }
 
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    if (!isEnabledServerFeature(cx, Feature.WorkerChartBuilder)) {
-        return runChart(cx, props);
-    }
-
     const {req, res, config} = props;
     const {widgetConfig} = req.body;
     const chartBuilder = await getWizardChartBuilder({

@@ -184,8 +184,9 @@ const textPlugin = {
             currentLayout.y,
             currentLayout.h,
             currentLayout.w,
-            // classMod is accumulator of data.background.['enabled' | 'color'] object
             classMod,
+            data.background?.color,
+            data.background?.enabled,
         ]);
 
         /**

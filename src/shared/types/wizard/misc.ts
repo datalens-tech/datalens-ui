@@ -4,7 +4,7 @@ export type CommonPlaceholdersKeys = keyof CommonPlaceholders;
 
 export type CommonPlaceholdersKeysWithoutConfigs = Exclude<
     CommonPlaceholdersKeys,
-    'colorsConfig' | 'geopointsConfig' | 'shapesConfig'
+    'colorsConfig' | 'geopointsConfig' | 'shapesConfig' | 'tooltipConfig'
 >;
 
 export const MarkupItemTypes = {

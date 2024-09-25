@@ -7,6 +7,7 @@ import type {
     HierarchyField,
     Link,
     ServerDatasetField,
+    ServerTooltipConfig,
 } from '../';
 import type {
     ColorMode,
@@ -101,6 +102,7 @@ export interface CommonSharedExtraSettings {
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
+    pivotInlineSort?: 'on' | 'off';
     // For old charts, navigatorMode was specified in the body of extraSettings
     navigatorMode?: string;
     navigatorSeriesName?: string;
@@ -352,6 +354,7 @@ export interface VisualizationLayerShared extends CommonSharedLayer {
             colorsConfig?: ColorsConfig;
             geopointsConfig?: PointSizeConfig;
             shapesConfig?: ShapesConfig;
+            tooltipConfig?: ServerTooltipConfig;
         };
         name: string;
         iconProps: VisualizationIconProps;

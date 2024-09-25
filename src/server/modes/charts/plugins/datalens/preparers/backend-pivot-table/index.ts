@@ -35,10 +35,12 @@ type BackendPivotTablePreparerResult = {
 };
 
 const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTablePreparerResult => {
+    const {shared} = args;
     const rawPivotData: PivotData | PivotDataWithInfo = (args.resultData as any).pivot_data as
         | PivotData
         | PivotDataWithInfo;
 
+    const pinnedColumns = shared.extraSettings?.pinnedColumns || 0;
     let pivotData: PivotData;
 
     const backendSortMeta: PivotTableHeaderSortMeta = {
@@ -147,10 +149,12 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
     });
 
     const isPaginatorEnabled = args.shared.extraSettings?.pagination === 'on';
+    const isInlineSortEnabled = !(args.shared.extraSettings?.pivotInlineSort === 'off');
 
     const pivotTotals = getPivotTableSubTotals({rowsFields, columnsFields});
     const sortSettings: PivotTableSortSettings = {
-        isSortByRowAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row'),
+        isSortByRowAllowed:
+            isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_row') && isInlineSortEnabled,
         isSortByColumnAllowed: isSortByRoleAllowed(pivotStructure, pivotTotals, 'pivot_column'),
         ...backendSortMeta,
     };
@@ -199,6 +203,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         loadedColorPalettes: args.colorsConfig.loadedColorPalettes,
         availablePalettes: args.colorsConfig.availablePalettes,
         sortSettings,
+        pinnedColumns,
     });
 
     let footer = [];

@@ -177,11 +177,12 @@
 
     &__footer {
         border-left: 1px solid var(--dl-table-border-color);
+        position: relative;
+        z-index: 0;
     }
 
     &__footer &__td {
         min-height: var(--dl-table-row-height);
-        overflow: hidden;
         padding: 0;
     }
 
@@ -195,7 +196,6 @@
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
-        background-color: var(--dl-table-footer-bg-color);
     }
 
     &__footer .chartkit-table-bar {
@@ -208,17 +208,12 @@
         left: 0;
         background: var(--dl-table-body-bg-color);
         position: sticky;
+        z-index: 1;
 
         @include stickyCellBg();
         &:before {
             border-bottom: 1px solid var(--dl-table-border-color);
             border-left: 1px solid var(--dl-table-border-color);
-        }
-    }
-
-    &__header &__th {
-        &_pinned {
-            z-index: 1;
         }
     }
 
