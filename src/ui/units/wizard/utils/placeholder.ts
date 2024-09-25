@@ -26,7 +26,7 @@ export const getAxisModePlaceholderSettings = ({
 
     if (currentField) {
         fields.forEach((field) => {
-            settings.axisModeMap[field.guid] = getXAxisMode({config: chartConfig});
+            settings.axisModeMap[field.guid] = getXAxisMode({config: chartConfig, xField: field});
         });
 
         const currentAxisMode = settings.axisModeMap[currentField.guid];

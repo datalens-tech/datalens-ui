@@ -1,5 +1,12 @@
 import {PlaceholderId, WizardVisualizationId} from '../../constants';
-import type {ServerChartsConfig, ServerSort, V11Color, V11Placeholder, V11Shape} from '../../types';
+import type {
+    ServerChartsConfig,
+    ServerField,
+    ServerSort,
+    V11Color,
+    V11Placeholder,
+    V11Shape,
+} from '../../types';
 import {AxisMode} from '../../types';
 import {isMeasureField} from '../helpers';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
@@ -9,8 +16,14 @@ const Y_AS_MAIN_AXIS: WizardVisualizationId[] = [
     WizardVisualizationId.Bar100p,
 ];
 
-export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisMode {
-    const {config} = args;
+type GetXAxisModeArgs = {
+    config: Partial<ServerChartsConfig>;
+    /* new field in the placeholder (not yet in the config) */
+    xField?: ServerField;
+};
+
+export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
+    const {config, xField: newXField} = args;
     const layers = config.visualization?.layers ?? [];
 
     const getVisualizationAxisMode = (visualization: {
@@ -18,8 +31,9 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
         placeholders: V11Placeholder[];
         id: WizardVisualizationId;
         colors: V11Color[];
+        newField?: ServerField;
     }) => {
-        const {placeholders, colors, shapes} = visualization;
+        const {placeholders, colors, shapes, newField} = visualization;
         const visualizationId = visualization.id as WizardVisualizationId;
         // Historically, x for a bar chart is y
         const xPlaceholder = placeholders.find((p) => {
@@ -27,7 +41,7 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
                 ? p.id === PlaceholderId.Y
                 : p.id === PlaceholderId.X;
         });
-        const xField = xPlaceholder?.items[0];
+        const xField = newField ?? xPlaceholder?.items[0];
         const axisSettings = xPlaceholder?.settings;
         let sort: ServerSort[] = [];
 
@@ -58,6 +72,7 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
     };
 
     if (layers.length) {
+        const selectedLayerId = config.visualization?.selectedLayerId;
         return (
             layers.reduce<AxisMode | undefined>((res, layer) => {
                 if (res !== AxisMode.Discrete) {
@@ -66,6 +81,7 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
                         shapes: layer.commonPlaceholders.shapes ?? [],
                         colors: layer.commonPlaceholders.colors ?? [],
                         placeholders: layer.placeholders,
+                        newField: layer.id === selectedLayerId ? newXField : undefined,
                     });
 
                     return layerAxisMode ?? res;
@@ -82,5 +98,6 @@ export function getXAxisMode(args: {config: Partial<ServerChartsConfig>}): AxisM
         shapes: config.shapes ?? [],
         colors: config.colors ?? [],
         placeholders: visualization?.placeholders ?? [],
+        newField: newXField,
     });
 }
