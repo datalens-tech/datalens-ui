@@ -1,7 +1,7 @@
 {
-  "label_error-access-message": "No view rights",
-  "label_error-invalid-format-token-message": "Invalid token",
-  "label_error-invalid-token-message": "Invalid format token",
-  "label_error-outdated-message": "Embed settings are not relevant",
-  "label_error-token-not-found-message": "The token was not found"
+  "label_error-access-message": "This token cannot be used with the specified parameters",
+  "label_error-invalid-format-token-message": "Invalid token format",
+  "label_error-invalid-token-message": "This token is not suitable for this embed",
+  "label_error-outdated-message": "Embed settings expired",
+  "label_error-token-not-found-message": "The embed has no token"
 }
