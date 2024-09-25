@@ -9,7 +9,6 @@ import {
     DL_EMBED_TOKEN_HEADER,
     EntryScope,
     ErrorCode,
-    Feature,
     isEnabledServerFeature,
 } from '../../../../shared';
 import {resolveConfig} from '../components/storage';
@@ -223,7 +222,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 }
 
                 if (
-                    !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                    !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
                     runnerFound.name === 'editor'
                 ) {
                     ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
