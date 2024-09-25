@@ -36,7 +36,7 @@ type Props = {
     dialogIsVisible: boolean;
     onClose: () => void;
     onApply: (newItemData: SetItemDataArgs) => void;
-    scope?: EntryScope;
+    scope: EntryScope;
 };
 
 const getValidationErrors = (data: DashTabItemImage['data']) => {
@@ -56,6 +56,7 @@ export function DialogImageWidget(props: Props) {
         openedItemData = DEFAULT_ITEM_DATA,
         onClose,
         onApply,
+        scope,
     } = props;
     const [data, setData] = React.useState(openedItemData);
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
@@ -100,7 +101,7 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_link')}
-                            <DialogImageWidgetLinkHint />
+                            <DialogImageWidgetLinkHint scope={scope} />
                         </Flex>
                     }
                 >
