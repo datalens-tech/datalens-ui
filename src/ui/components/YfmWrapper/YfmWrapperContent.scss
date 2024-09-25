@@ -33,8 +33,8 @@
         }
     }
 
-    p:has(+ template:last-child),
-    p:has(+ dfn:last-child),
+    p:last-of-type:has(~ template:last-of-type),
+    p:last-of-type:has(~ dfn:last-of-type),
     .yfm-cut-content table:last-child,
     .yfm-note-content:last-child p:last-child,
     .mermaid p:last-child {

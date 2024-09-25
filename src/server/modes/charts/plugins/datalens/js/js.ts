@@ -658,6 +658,7 @@ function prepareSingleResult({
         colorsConfig,
         labels = [],
         tooltips = [],
+        tooltipConfig,
         geopointsConfig,
         sort = [],
     } = shared;
@@ -672,6 +673,7 @@ function prepareSingleResult({
             sort,
             shapes = [],
             shapesConfig = {},
+            tooltipConfig,
         } = (visualization as ServerVisualizationLayer).commonPlaceholders);
     }
 
@@ -691,6 +693,7 @@ function prepareSingleResult({
         layerSettings: (visualization as ServerVisualizationLayer).layerSettings,
         labels,
         tooltips,
+        tooltipConfig,
         datasets: datasetsIds,
 
         resultData,

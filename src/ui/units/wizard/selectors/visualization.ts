@@ -1,8 +1,11 @@
 import {createSelector} from 'reselect';
 import type {Field, Shared} from 'shared';
+import {isVisualizationWithLayers} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {selectDimensionsByDataset} from 'units/wizard/selectors/dataset';
-import {getVisualization} from 'units/wizard/utils/helpers';
+
+import {getSelectedLayer, getVisualization} from '../utils/helpers';
+
+import {selectDimensionsByDataset} from './dataset';
 
 export const selectHierarchies = (state: DatalensGlobalState) =>
     state.wizard.visualization.hierarchies;
@@ -23,6 +26,16 @@ export const selectSort = (state: DatalensGlobalState) => state.wizard.visualiza
 export const selectLabels = (state: DatalensGlobalState) => state.wizard.visualization.labels;
 
 export const selectTooltips = (state: DatalensGlobalState) => state.wizard.visualization.tooltips;
+export const selectTooltipConfig = (state: DatalensGlobalState) => {
+    const globalVisualization = selectVisualization(state);
+
+    if (isVisualizationWithLayers(globalVisualization)) {
+        const layer = getSelectedLayer(globalVisualization);
+        return layer?.commonPlaceholders?.tooltipConfig;
+    }
+
+    return undefined;
+};
 
 export const selectSegments = (state: DatalensGlobalState) => state.wizard.visualization.segments;
 
