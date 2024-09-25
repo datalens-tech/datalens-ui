@@ -1,9 +1,10 @@
 import React from 'react';
 
 import {Folder, Lock, Star, StarFill} from '@gravity-ui/icons';
-import {Checkbox, Icon, Loader} from '@gravity-ui/uikit';
+import {Checkbox, Icon, Loader, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
+import {I18n} from 'i18n';
 import moment from 'moment';
 import {useHistory} from 'react-router-dom';
 import {DlNavigationQA, PLACE} from 'shared';
@@ -21,6 +22,8 @@ import type {HookBatchSelectResult, ParentFolderEntry, TableViewProps} from '../
 import workbookIcon from '../../../../../assets/icons/collections/workbook.svg';
 
 const b = block('dl-core-navigation-table-view');
+
+const i18n = I18n.keyset('component.navigation.view');
 
 const WorkbookItem: React.FC<{workbookId: string; workbookTitle?: string | null}> = ({
     workbookId,
@@ -61,6 +64,7 @@ type RowProps = Pick<
     | 'onEntryParentClick'
     | 'linkWrapper'
     | 'onMenuClick'
+    | 'isOnlyCollectionsMode'
 > &
     Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
@@ -77,6 +81,7 @@ export class Row extends React.Component<RowProps> {
             mode,
             place,
             isBatchEnabled,
+            isOnlyCollectionsMode,
             onMenuClick,
         } = this.props;
         const {name, displayAlias, entryId, hidden = false} = entry;
@@ -138,11 +143,11 @@ export class Row extends React.Component<RowProps> {
                     inactive,
                     checked,
                     withParentFolder: displayParentFolder,
-                    withCheckbox: isBatchEnabled,
+                    withCheckbox: isBatchEnabled && !isOnlyCollectionsMode,
                 })}
                 data-qa={DlNavigationQA.Row}
             >
-                {isBatchEnabled && this.renderCheckBox()}
+                {!isOnlyCollectionsMode && isBatchEnabled && this.renderCheckBox()}
                 {linkWrapper ? (
                     linkWrapper({entry, className: b('link'), children: node})
                 ) : (
@@ -155,12 +160,20 @@ export class Row extends React.Component<RowProps> {
     private renderCheckBox() {
         return (
             <div className={b('selection-checkbox')} onClick={this.onClickCheckBox}>
-                <Checkbox
-                    size="l"
-                    checked={this.isCheckedEntry()}
-                    disabled={this.isLockedEntry()}
-                    onUpdate={this.onChangeCheckBox}
-                />
+                {this.isWorkbookEntry() ? (
+                    <Tooltip content={i18n('tooltip_table-move-denied')}>
+                        <div>
+                            <Checkbox size="l" disabled />
+                        </div>
+                    </Tooltip>
+                ) : (
+                    <Checkbox
+                        size="l"
+                        checked={this.isCheckedEntry()}
+                        disabled={this.isLockedEntry()}
+                        onUpdate={this.onChangeCheckBox}
+                    />
+                )}
             </div>
         );
     }
@@ -315,6 +328,10 @@ export class Row extends React.Component<RowProps> {
 
     private isLockedEntry() {
         return Boolean(this.props.entry.isLocked);
+    }
+
+    private isWorkbookEntry() {
+        return Boolean(this.props.entry.workbookId);
     }
 
     private isCheckedEntry() {
