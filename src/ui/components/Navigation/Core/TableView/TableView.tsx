@@ -31,7 +31,7 @@ export const TableView = (props: TableViewProps) => {
         isMobileNavigation,
         onItemSelect,
         mode: props.mode,
-        entries: props.entries,
+        entries: props.entries.filter((entry) => !entry.workbookId),
     });
 
     const countSelectedIds = selectedIds.size;
