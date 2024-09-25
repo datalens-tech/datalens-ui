@@ -200,9 +200,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             return memo;
         }, {});
 
-        const selectedItems = options.fields.items.filter(
-            (item) => this.state.selectedRows[item.guid],
-        );
+        const selectedItems =
+            options.fields?.items.filter((item) => this.state.selectedRows[item.guid]) || [];
 
         const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
         const allowedAggregations = intersection(...selectedItems.map((item) => item.aggregations));
