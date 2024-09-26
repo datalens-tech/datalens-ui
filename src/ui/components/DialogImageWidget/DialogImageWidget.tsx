@@ -7,7 +7,7 @@ import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import type {DashTabItemImage, RecursivePartial} from 'shared';
+import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
@@ -36,6 +36,7 @@ type Props = {
     dialogIsVisible: boolean;
     onClose: () => void;
     onApply: (newItemData: SetItemDataArgs) => void;
+    scope: EntryScope;
 };
 
 const getValidationErrors = (data: DashTabItemImage['data']) => {
@@ -55,6 +56,7 @@ export function DialogImageWidget(props: Props) {
         openedItemData = DEFAULT_ITEM_DATA,
         onClose,
         onApply,
+        scope,
     } = props;
     const [data, setData] = React.useState(openedItemData);
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
@@ -99,7 +101,7 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_link')}
-                            <DialogImageWidgetLinkHint />
+                            <DialogImageWidgetLinkHint scope={scope} />
                         </Flex>
                     }
                 >
