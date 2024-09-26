@@ -61,13 +61,7 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    /** New Table plugin for wizard and QL(flat tables only). */
-    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
-    /** New Table plugin for wizard and QL(pivot tables). */
-    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
-    PinnedColumns = 'PinnedColumns',
-    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
