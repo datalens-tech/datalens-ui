@@ -61,7 +61,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
         [subjects, onUpdateSubjects],
     );
 
-    const availableSubjectGroups = React.useMemo(() => {
+    const tabsWhiteList = React.useMemo(() => {
         const result = [
             {
                 id: ClaimsSubjectType.UserAccount,
@@ -90,6 +90,44 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
         result: [],
     });
 
+    const newFetchSubjects = React.useCallback(
+        async (
+            search,
+            tabId: ClaimsSubjectType,
+            pageToken?: string,
+        ): Promise<{
+            subjects: SubjectClaims[];
+            nextPageToken?: string;
+        }> => {
+            const currentCall = fetchSubjectsCalls.current.call + 1;
+            fetchSubjectsCalls.current.call = currentCall;
+
+            const suggestMembers = await dispatch(
+                suggestBatchListMembers({id, search, tabId, pageToken}),
+            );
+            const filteredSuggestMembers = suggestMembers
+                ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
+                : [];
+
+            if (
+                fetchSubjectsCalls.current.call > currentCall &&
+                fetchSubjectsCalls.current.result
+            ) {
+                return {
+                    subjects: fetchSubjectsCalls.current.result,
+                    nextPageToken: suggestMembers?.nextPageToken,
+                };
+            } else {
+                fetchSubjectsCalls.current.result = filteredSuggestMembers;
+                return {
+                    subjects: filteredSuggestMembers,
+                    nextPageToken: suggestMembers?.nextPageToken,
+                };
+            }
+        },
+        [dispatch, membersIds, id],
+    );
+
     const fetchSubjects = React.useCallback(
         async (
             search,
@@ -103,7 +141,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             fetchSubjectsCalls.current.call = currentCall;
 
             const suggestMembers = await dispatch(
-                suggestBatchListMembers({id, search, subType, pageToken}),
+                suggestBatchListMembers({id, search, tabId: subType, pageToken}),
             );
             const filteredSuggestMembers = suggestMembers
                 ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
@@ -147,8 +185,10 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 contentClassName={b('acl-popup-content')}
             >
                 <AclSubjectSuggest
-                    availableGroups={availableSubjectGroups}
+                    availableGroups={tabsWhiteList}
+                    tabsWhiteList={tabsWhiteList}
                     fetchSubjects={fetchSubjects}
+                    newFetchSubjects={newFetchSubjects}
                     onSubjectChange={(subject) => {
                         handleAddSubject(subject);
                         setSuggestOpen(false);
