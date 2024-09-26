@@ -70,11 +70,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const xDataType = xField ? idToDataType[xField.guid] : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
-    let xAxisMode: AxisMode | undefined = AxisMode.Discrete;
-    if (xField && xDataType) {
-        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
-        xAxisMode = getXAxisMode({config: chartConfig});
-    }
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
@@ -92,9 +89,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const isSortItemExists = sort.length > 0;
     const isSortingXAxis = sort?.some((s) => s.guid === xField?.guid);
     const isSortingYAxis = mergedYSections.some((item) => item.guid === sortItem?.guid);
-    const isSortCategoriesAvailable = layerChartMeta
-        ? Boolean(layerChartMeta.isCategoriesSortAvailable)
-        : true;
+    const isSortCategoriesAvailable =
+        xAxisMode === AxisMode.Discrete &&
+        (layerChartMeta ? Boolean(layerChartMeta.isCategoriesSortAvailable) : true);
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;

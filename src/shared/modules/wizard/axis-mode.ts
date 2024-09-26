@@ -1,12 +1,5 @@
 import {PlaceholderId, WizardVisualizationId} from '../../constants';
-import type {
-    ServerChartsConfig,
-    ServerField,
-    ServerSort,
-    V11Color,
-    V11Placeholder,
-    V11Shape,
-} from '../../types';
+import type {ServerChartsConfig, ServerField, ServerSort, V11Placeholder} from '../../types';
 import {AxisMode} from '../../types';
 import {isMeasureField} from '../helpers';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
@@ -27,13 +20,12 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     const layers = config.visualization?.layers ?? [];
 
     const getVisualizationAxisMode = (visualization: {
-        shapes: V11Shape[];
         placeholders: V11Placeholder[];
         id: WizardVisualizationId;
-        colors: V11Color[];
         newField?: ServerField;
+        sort?: ServerSort[];
     }) => {
-        const {placeholders, colors, shapes, newField} = visualization;
+        const {placeholders, newField, sort = []} = visualization;
         const visualizationId = visualization.id as WizardVisualizationId;
         // Historically, x for a bar chart is y
         const xPlaceholder = placeholders.find((p) => {
@@ -43,15 +35,6 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
         });
         const xField = newField ?? xPlaceholder?.items[0];
         const axisSettings = xPlaceholder?.settings;
-        let sort: ServerSort[] = [];
-
-        // There is a grouping of data - continuous axis can be used
-        // (sorting will be applied to all other dimensions except x)
-        if (colors?.some(isMeasureField) || shapes?.some(isMeasureField)) {
-            sort = [];
-        } else {
-            sort = config.sort ?? [];
-        }
 
         if (!xField) {
             return AxisMode.Discrete;
@@ -78,10 +61,11 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
                 if (res !== AxisMode.Discrete) {
                     const layerAxisMode = getVisualizationAxisMode({
                         id: layer.id as WizardVisualizationId,
-                        shapes: layer.commonPlaceholders.shapes ?? [],
-                        colors: layer.commonPlaceholders.colors ?? [],
                         placeholders: layer.placeholders,
                         newField: layer.id === selectedLayerId ? newXField : undefined,
+                        sort: hasSortThanAffectAxisMode(config)
+                            ? layer.commonPlaceholders.sort
+                            : [],
                     });
 
                     return layerAxisMode ?? res;
@@ -95,9 +79,22 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     const visualization = config.visualization;
     return getVisualizationAxisMode({
         id: visualization?.id as WizardVisualizationId,
-        shapes: config.shapes ?? [],
-        colors: config.colors ?? [],
         placeholders: visualization?.placeholders ?? [],
         newField: newXField,
+        sort: hasSortThanAffectAxisMode(config) ? config.sort : [],
     });
+}
+
+export function hasSortThanAffectAxisMode(config: Partial<ServerChartsConfig>) {
+    if (config.visualization?.layers) {
+        return config.visualization.layers.some((layer) => {
+            const {colors = [], shapes = [], sort = []} = layer.commonPlaceholders || {};
+            return sort.length && ![...colors, ...shapes].some((field) => !isMeasureField(field));
+        });
+    }
+
+    const {colors = [], shapes = [], sort = []} = config || {};
+    // There is a grouping of data - continuous axis can be used
+    // (sorting will be applied to all other dimensions except x)
+    return sort.length && ![...colors, ...shapes].some((field) => !isMeasureField(field));
 }
