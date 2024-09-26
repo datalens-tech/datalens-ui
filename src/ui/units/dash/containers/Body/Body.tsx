@@ -852,6 +852,7 @@ class Body extends React.PureComponent<BodyProps> {
                 overlayMenuItems={this.getOverlayMenu()}
                 skipReload={this.props.skipReload}
                 isNewRelations={this.props.isNewRelations}
+                hideErrorDetails={this.props.hideErrorDetails}
             />
         );
     };

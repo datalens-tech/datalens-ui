@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -25,16 +25,11 @@ type ErrorProps = {
 export function Error({onClickRetry, errorData}: ErrorProps) {
     const dispatch = useDispatch();
     const errorTitle = errorData?.data?.title;
+    const disableErrorDetails = errorData?.extra?.disableErrorDetails;
 
-    const disableActions = errorData?.extra?.disableActions;
-
-    const errorText = disableActions ? errorTitle : i18n('label_error');
+    const errorText = errorTitle || i18n('label_error');
 
     const handleClick = () => {
-        if (disableActions) {
-            return;
-        }
-
         if (errorData) {
             dispatch(
                 openDialogErrorWithTabs({
@@ -52,14 +47,24 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
         }
     };
 
+    const renderErrorContent = () => {
+        return (
+            <div className={b({mobile: DL.IS_MOBILE, 'no-action': disableErrorDetails})}>
+                <span className={b('label')}>{errorText}</span>
+                <Icon data={TriangleExclamationFill} className={b('icon')} />
+            </div>
+        );
+    };
+
     return (
-        <div
-            className={b({mobile: DL.IS_MOBILE, 'with-hover': !disableActions})}
-            onClick={handleClick}
-            title={errorText}
-        >
-            <span className={b('label')}>{errorText}</span>
-            <Icon data={TriangleExclamationFill} className={b('icon')} />
-        </div>
+        <React.Fragment>
+            {disableErrorDetails ? (
+                <div title={errorText}>{renderErrorContent()}</div>
+            ) : (
+                <Button onClick={handleClick} title={errorText} view="flat">
+                    {renderErrorContent()}
+                </Button>
+            )}
+        </React.Fragment>
     );
 }

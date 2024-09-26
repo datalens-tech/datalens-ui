@@ -71,7 +71,7 @@ export const getErrorTitle = (errorInfo: SelectorError) => {
     const datasetsStatus =
         errorInfo?.details && 'sources' in errorInfo.details && errorInfo.details.sources
             ? Object.keys(errorInfo.details.sources)[0]
-            : '';
+            : null;
     // TODO: use specific code instead of status
     if (
         errorInfo?.code === CHARTS_ERROR_CODE.DATA_FETCHING_ERROR &&
@@ -81,5 +81,5 @@ export const getErrorTitle = (errorInfo: SelectorError) => {
         return i18n('label_error-outdated-message');
     }
 
-    return '';
+    return null;
 };

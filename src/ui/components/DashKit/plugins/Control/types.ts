@@ -17,12 +17,12 @@ export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed
 export type ErrorData = {
     data: {
         error?: SelectorError;
-        title?: string;
+        title?: string | null;
         message?: string;
         status?: number;
     };
     requestId?: string;
-    extra?: {disableActions: boolean};
+    extra?: {disableErrorDetails: boolean};
 };
 
 export type SelectorError = {

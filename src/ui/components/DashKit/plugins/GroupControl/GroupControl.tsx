@@ -114,6 +114,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             needReload: false,
             localUpdateLoader: false,
             quickActionLoader: false,
+            disableButtons: true,
         };
     }
 
@@ -664,6 +665,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this.adjustWidgetLayout(false);
             }
 
+            const disableButtons = Object.values(this.controlsStatus).every(
+                (status) => status === LOAD_STATUS.FAIL,
+            );
+
             this.resolveMetaInControl();
             this.setState({
                 needReload: false,
@@ -671,6 +676,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 silentLoading: false,
                 isInit: true,
                 localUpdateLoader: false,
+                disableButtons,
             });
         }
     };
@@ -767,10 +773,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
 
-        const disableButtons =
-            this.state.status === LOAD_STATUS.SUCCESS &&
-            Object.values(this.controlsStatus).every((status) => status === LOAD_STATUS.FAIL);
-
         return (
             <React.Fragment>
                 {controlData.buttonApply && (
@@ -782,7 +784,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
-                        disabled={disableButtons}
+                        disabled={this.state.disableButtons}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -793,7 +795,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         onClick={resetAction}
                         onChange={this.handleResetChange}
                         qa={ControlQA.controlButtonReset}
-                        disabled={disableButtons}
+                        disabled={this.state.disableButtons}
                     />
                 )}
             </React.Fragment>

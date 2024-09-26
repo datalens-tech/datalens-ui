@@ -128,7 +128,7 @@ export const Control = ({
     dependentSelectors,
     groupId,
 }: ControlProps) => {
-    const currentTab = React.useContext(ExtendedDashKitContext)?.config;
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
 
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
@@ -218,7 +218,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        tabId: (currentTab as DashTab)?.id,
+                        tabId: (extDashkitContext?.config as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
@@ -275,8 +275,11 @@ export const Control = ({
                         title: getErrorTitle(errorInfo),
                     },
                     requestId: error.response.headers['x-request-id'],
-                    // TODO: move value to context
-                    extra: {disableActions: isEmbeddedEntry()},
+                    extra: {
+                        // TODO: clean isEmbeddedEntry
+                        disableErrorDetails:
+                            extDashkitContext?.disableErrorDetails || isEmbeddedEntry(),
+                    },
                 };
             } else {
                 errorData = {data: {message: error.message}};
