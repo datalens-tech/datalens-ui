@@ -38,8 +38,8 @@ export const getUpdatedConnections = ({
     const copiedItemIds = collectWidgetItemIds(item);
 
     const idsDictionary = targetIds.reduce<Record<string, string>>(
-        (dictionary, originalId, index) => {
-            dictionary[originalId] = copiedItemIds[index];
+        (dictionary, targetId, index) => {
+            dictionary[targetId] = copiedItemIds[index];
             return dictionary;
         },
         {},

@@ -366,7 +366,7 @@ function dash(state = initialState, action) {
 
             const {targetDashTabId, targetEntryId, targetIds} = action.payload.context;
 
-            // Duplicate connections only if it's the same tab as originalItem
+            // Duplicate connections only if it's the same tab as targetItem
             if (
                 tabId === targetDashTabId &&
                 state.entry.entryId === targetEntryId &&
