@@ -22,7 +22,7 @@ export type ErrorData = {
         status?: number;
     };
     requestId?: string;
-    extra?: {disableErrorDetails: boolean};
+    extra?: {hideErrorDetails: boolean};
 };
 
 export type SelectorError = {

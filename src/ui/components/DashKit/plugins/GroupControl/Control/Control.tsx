@@ -277,8 +277,7 @@ export const Control = ({
                     requestId: error.response.headers['x-request-id'],
                     extra: {
                         // TODO: clean isEmbeddedEntry
-                        disableErrorDetails:
-                            extDashkitContext?.disableErrorDetails || isEmbeddedEntry(),
+                        hideErrorDetails: extDashkitContext?.hideErrorDetails || isEmbeddedEntry(),
                     },
                 };
             } else {

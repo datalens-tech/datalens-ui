@@ -25,7 +25,7 @@ type ErrorProps = {
 export function Error({onClickRetry, errorData}: ErrorProps) {
     const dispatch = useDispatch();
     const errorTitle = errorData?.data?.title;
-    const disableErrorDetails = errorData?.extra?.disableErrorDetails;
+    const hideErrorDetails = errorData?.extra?.hideErrorDetails;
 
     const errorText = errorTitle || i18n('label_error');
 
@@ -49,7 +49,7 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
 
     const renderErrorContent = () => {
         return (
-            <div className={b({mobile: DL.IS_MOBILE, 'no-action': disableErrorDetails})}>
+            <div className={b({mobile: DL.IS_MOBILE, 'no-action': hideErrorDetails})}>
                 <span className={b('label')}>{errorText}</span>
                 <Icon data={TriangleExclamationFill} className={b('icon')} />
             </div>
@@ -58,7 +58,7 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
 
     return (
         <React.Fragment>
-            {disableErrorDetails ? (
+            {hideErrorDetails ? (
                 <div title={errorText}>{renderErrorContent()}</div>
             ) : (
                 <Button onClick={handleClick} title={errorText} view="flat">

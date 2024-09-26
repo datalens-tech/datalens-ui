@@ -255,7 +255,7 @@ export const ControlItemSelect = ({
         const errorTitle = data?.title;
         const errorMessage = errorTitle || errorText;
 
-        const showButtons = !errorData?.extra?.disableErrorDetails;
+        const showButtons = !errorData?.extra?.hideErrorDetails;
 
         const buttonsSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
         const buttonsWidth = DL.IS_MOBILE ? 'max' : 'auto';

@@ -8,5 +8,5 @@ export const ExtendedDashKitContext = createContext<{
     skipReload: boolean;
     isNewRelations: boolean;
     defaultGlobalParams?: DashSettingsGlobalParams;
-    disableErrorDetails?: boolean;
+    hideErrorDetails?: boolean;
 } | null>(null);
