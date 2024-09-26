@@ -3,11 +3,11 @@ import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm'
 import React from 'react';
 
 import debounce from 'lodash/debounce';
-import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import type {
@@ -17,7 +17,6 @@ import type {
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
-import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
@@ -127,7 +126,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
-    const isNewRelations = useSelector(selectIsNewRelations);
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const isNewRelations = extDashkitContext?.isNewRelations || false;
 
     const history = useHistory();
 
