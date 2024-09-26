@@ -11,7 +11,7 @@ type UiSandboxRuntimeProps = {
     fn: string;
     fnArgs: unknown[];
     fnContext: unknown;
-    globalApi?: unknown;
+    globalApi: object;
 };
 
 export class UiSandboxRuntime {
@@ -89,15 +89,15 @@ export class UiSandboxRuntime {
         vmArgs.dispose();
     }
 
-    private defineVmApi(api: unknown) {
+    private defineVmApi(api: object) {
         if (!api) {
             return;
         }
 
         const items: QuickJSHandle[] = [];
 
-        const setItem = (item: unknown, parent: QuickJSHandle) => {
-            Object.entries(item as object).forEach(([key, value]) => {
+        const setItem = (item: object, parent: QuickJSHandle) => {
+            Object.entries(item).forEach(([key, value]) => {
                 if (typeof value === 'object') {
                     const objHandle = this.vm.newObject();
                     this.vm.setProp(parent, String(key), objHandle);
@@ -116,9 +116,7 @@ export class UiSandboxRuntime {
 
                                 return (...args: unknown[]) => {
                                     const fnContext = this.vm.newObject();
-                                    const mappedArgs = args.map(
-                                        (a) => this.toHandle(a) as QuickJSHandle,
-                                    );
+                                    const mappedArgs = args.map((a) => this.toHandle(a));
                                     const fnResult = this.vm.callFunction(
                                         longLivedCallbackHandle,
                                         fnContext,
@@ -171,7 +169,7 @@ export class UiSandboxRuntime {
         return value;
     }
 
-    private toHandle(value: unknown) {
+    private toHandle(value: unknown): QuickJSHandle {
         if (typeof value === 'number') {
             return this.vm.newNumber(value);
         }

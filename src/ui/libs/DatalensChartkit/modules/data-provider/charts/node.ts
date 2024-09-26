@@ -10,6 +10,7 @@ import partial from 'lodash/partial';
 import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
+import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -269,7 +270,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             type: loadedType.match(/^[^_]*/)![0],
             params: omit(params, 'name'),
             defaultParams,
-            entryId: id,
+            entryId: id ?? `fake_${getRandomCKId()}`,
             key,
             usedParams,
             sources,
@@ -328,6 +329,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
                 const unwrapFnArgs = {
                     entryId: result.entryId,
+                    entryType: loadedType,
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
                 };

@@ -1,5 +1,6 @@
 import escape from 'lodash/escape';
 import get from 'lodash/get';
+import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 
@@ -147,8 +148,9 @@ const getUnwrappedFunction = (args: {
     wrappedFn: UISandboxWrappedFunction;
     options?: UiSandboxRuntimeOptions;
     entryId: string;
+    entryType: string;
 }) => {
-    const {sandbox, wrappedFn, options, entryId} = args;
+    const {sandbox, wrappedFn, options, entryId, entryType} = args;
     return function (this: unknown, ...args: unknown[]) {
         if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
@@ -170,11 +172,6 @@ const getUnwrappedFunction = (args: {
         const fnContext = clearVmProp(this);
 
         // set global api
-        const getCurrentChart = () => {
-            return window.Highcharts.charts?.find(
-                (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
-            );
-        };
         const globalApi = {
             console: {
                 // Pretty legal usage of console.log due to it invocation explicitly by user
@@ -188,33 +185,59 @@ const getUnwrappedFunction = (args: {
             },
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
-                updateSeries: (seriesIndex: number, data: any) => {
-                    processHtmlFields(data);
-                    getCurrentChart()?.series?.[seriesIndex]?.update(data);
-                },
-                updateTitle: (data: any) => {
-                    processHtmlFields(data);
-                    getCurrentChart()?.title?.update(data);
-                },
-                appendElement: (value: WrappedHTML) => {
-                    const container = getCurrentChart()?.container;
-                    container?.insertAdjacentHTML('beforeend', unwrapHtml(value) as string);
-                },
-                findPoint: (fn: (point: unknown) => boolean) => {
-                    const chartSeries = getCurrentChart()?.series ?? [];
-                    for (let i = 0; i < chartSeries.length; i++) {
-                        const points = chartSeries[i].data;
-                        for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
-                            const cleanPoint = clearVmProp(points[pointIndex]);
-                            if (fn(cleanPoint)) {
-                                return cleanPoint;
-                            }
-                        }
-                    }
-                    return null;
-                },
             },
         };
+
+        // extend API for Highcharts charts
+        if (entryType === 'graph_node') {
+            const getCurrentChart = () => {
+                const chart = window.Highcharts.charts?.find(
+                    (c: unknown) => get(c, 'userOptions._config.entryId') === entryId,
+                );
+
+                if (!chart) {
+                    throw Error("Couldn't find a chart associated with this function");
+                }
+                return chart;
+            };
+
+            merge(globalApi, {
+                Highcharts: {
+                    numberFormat: window.Highcharts.numberFormat,
+                    dateFormat: window.Highcharts.dateFormat,
+                },
+                ChartEditor: {
+                    getChartClientRect: () => {
+                        return getCurrentChart()?.container.getBoundingClientRect();
+                    },
+                    updateSeries: (seriesIndex: number, data: any) => {
+                        processHtmlFields(data);
+                        getCurrentChart()?.series?.[seriesIndex]?.update(data);
+                    },
+                    updateTitle: (data: any) => {
+                        processHtmlFields(data);
+                        getCurrentChart()?.title?.update(data);
+                    },
+                    appendElement: (value: WrappedHTML) => {
+                        const container = getCurrentChart()?.container;
+                        container?.insertAdjacentHTML('beforeend', unwrapHtml(value) as string);
+                    },
+                    findPoint: (fn: (point: unknown) => boolean) => {
+                        const chartSeries = getCurrentChart()?.series ?? [];
+                        for (let i = 0; i < chartSeries.length; i++) {
+                            const points = chartSeries[i].data;
+                            for (let pointIndex = 0; pointIndex < points.length; pointIndex++) {
+                                const cleanPoint = clearVmProp(points[pointIndex]);
+                                if (fn(cleanPoint)) {
+                                    return cleanPoint;
+                                }
+                            }
+                        }
+                        return null;
+                    },
+                },
+            });
+        }
 
         const execTimeout = Math.min(UI_SANDBOX_FN_TIME_LIMIT, options?.totalTimeLimit ?? Infinity);
         const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
@@ -237,11 +260,12 @@ const getUnwrappedFunction = (args: {
 
 export const unwrapPossibleFunctions = (args: {
     entryId: string;
+    entryType: string;
     sandbox: QuickJSWASMModule;
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
 }) => {
-    const {sandbox, target, options, entryId} = args;
+    const {sandbox, target, options, entryId, entryType} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
@@ -255,13 +279,13 @@ export const unwrapPossibleFunctions = (args: {
             wrappedFn.fn = String(wrappedFn.fn);
             // Do argument mutation on purpose
             // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction({sandbox, wrappedFn, options, entryId});
+            target[key] = getUnwrappedFunction({sandbox, wrappedFn, options, entryId, entryType});
         } else if (Array.isArray(value)) {
             value.forEach((item) =>
-                unwrapPossibleFunctions({entryId, sandbox, options, target: item}),
+                unwrapPossibleFunctions({entryId, sandbox, options, target: item, entryType}),
             );
         } else if (value && typeof value === 'object') {
-            unwrapPossibleFunctions({entryId, sandbox, options, target: value});
+            unwrapPossibleFunctions({entryId, sandbox, options, target: value, entryType});
         }
     });
 };
