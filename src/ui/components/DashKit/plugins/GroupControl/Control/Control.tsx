@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {
+    DashTab,
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
@@ -36,7 +37,7 @@ import {
     unwrapFromArray,
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
-import {DashConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -120,7 +121,7 @@ export const Control = ({
     dependentSelectors,
     groupId,
 }: ControlProps) => {
-    const currentTab = React.useContext(DashConfigContext);
+    const currentTab = React.useContext(ExtendedDashKitContext)?.config;
 
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
@@ -210,7 +211,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        tabId: currentTab?.id,
+                        tabId: (currentTab as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,

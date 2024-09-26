@@ -7,7 +7,6 @@ import type {
 } from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
-    Feature,
     IS_NULL_FILTER_TEMPLATE,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
@@ -53,16 +52,12 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
-    features,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
     const treeSet = new Set(getTreeState(ChartEditor.getParams()));
-
-    const pinnedColumns = features[Feature.PinnedColumns]
-        ? shared.extraSettings?.pinnedColumns || 0
-        : 0;
+    const pinnedColumns = shared.extraSettings?.pinnedColumns || 0;
 
     const currentActiveDrillDownField: Field | undefined =
         drillDownData && drillDownData.fields[drillDownData.level];
