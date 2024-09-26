@@ -1,5 +1,11 @@
 import {createContext} from 'react';
 
-import type {DashTab} from 'shared/types';
+import type {Config} from '@gravity-ui/dashkit';
+import type {DashSettingsGlobalParams, DashTab} from 'shared/types';
 
-export const DashConfigContext = createContext<DashTab | null>(null);
+export const ExtendedDashKitContext = createContext<{
+    config?: Config | DashTab;
+    skipReload: boolean;
+    isNewRelations: boolean;
+    defaultGlobalParams?: DashSettingsGlobalParams;
+} | null>(null);
