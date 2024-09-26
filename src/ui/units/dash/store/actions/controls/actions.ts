@@ -136,8 +136,8 @@ export const copyControlToStorage = (controlIndex: number) => {
         const preparedOptions = getPreparedCopyItemOptions(options, null, {
             workbookId: workbookId ?? null,
             fromScope: scope,
-            originalDashTabId: tabId,
-            originalEntryId: entryId,
+            targetDashTabId: tabId,
+            targetEntryId: entryId,
         });
 
         localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));

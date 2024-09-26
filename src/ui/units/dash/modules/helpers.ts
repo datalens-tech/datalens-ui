@@ -37,9 +37,9 @@ import {PostMessage} from './postMessage';
 export type CopiedConfigContext = {
     workbookId: WorkbookId;
     fromScope: EntryScope;
-    originalIds?: string[];
-    originalEntryId?: string | null;
-    originalDashTabId?: string | null;
+    targetIds?: string[];
+    targetEntryId?: string | null;
+    targetDashTabId?: string | null;
 };
 
 export type CopiedConfigData = ConfigItem &
@@ -389,7 +389,7 @@ export const getPreparedCopyItemOptions = (
     if (copyContext) {
         itemToCopy.copyContext = {
             ...copyContext,
-            originalIds: collectWidgetItemIds(itemToCopy),
+            targetIds: collectWidgetItemIds(itemToCopy),
         };
     }
 

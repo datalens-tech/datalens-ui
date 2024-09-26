@@ -364,19 +364,19 @@ function dash(state = initialState, action) {
                 },
             });
 
-            const {originalDashTabId, originalEntryId, originalIds} = action.payload.context;
+            const {targetDashTabId, targetEntryId, targetIds} = action.payload.context;
 
             // Duplicate connections only if it's the same tab as originalItem
             if (
-                tabId === originalDashTabId &&
-                state.entry.entryId === originalEntryId &&
-                originalIds?.length
+                tabId === targetDashTabId &&
+                state.entry.entryId === targetEntryId &&
+                targetIds?.length
             ) {
                 const copiedItem = tabData.items[tabData.items.length - 1];
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
-                    originalIds,
+                    targetIds,
                     item: copiedItem,
                 });
 

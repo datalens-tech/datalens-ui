@@ -2,12 +2,16 @@ import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
 import {DashTabItemType} from 'shared/types';
 import type {ConnectionsData} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
 
-export const collectWidgetItemIds = (item: {
-    type: ConfigItem['type'];
-    data: ConfigItemData;
-    targetId?: string;
-    id?: string;
-}) => {
+// targetId - item is copied data from localStorage
+// id - item is already created via DashKit.setItem
+type TargetWidgetId = {id: string} | {targetId?: string};
+
+export const collectWidgetItemIds = (
+    item: {
+        type: ConfigItem['type'];
+        data: ConfigItemData;
+    } & TargetWidgetId,
+) => {
     if (item.type === DashTabItemType.GroupControl && item.data.group) {
         return item.data.group.map((groupItem) => groupItem.id);
     }
@@ -17,8 +21,7 @@ export const collectWidgetItemIds = (item: {
     }
 
     // old selectors doesn't have tabs or group. widgetId is the only identifier
-    // dashkit save item.targetId in localStorage on copy and item.id is taken from Dashkit.setItem
-    const itemId = item.targetId || item.id;
+    const itemId = 'id' in item ? item.id : item.targetId;
 
     return itemId ? [itemId] : [];
 };
@@ -26,20 +29,22 @@ export const collectWidgetItemIds = (item: {
 export const getUpdatedConnections = ({
     item,
     connections,
-    originalIds,
+    targetIds,
 }: {
     item: ConfigItem;
     connections: ConnectionsData;
-    originalIds: string[];
+    targetIds: string[];
 }) => {
     const copiedItemIds = collectWidgetItemIds(item);
 
-    const idsDictionary: Record<string, string> = {};
+    const idsDictionary = targetIds.reduce<Record<string, string>>(
+        (dictionary, originalId, index) => {
+            dictionary[originalId] = copiedItemIds[index];
+            return dictionary;
+        },
+        {},
+    );
     const copiedConnections: ConnectionsData = [];
-
-    originalIds.forEach((originalId, index) => {
-        idsDictionary[originalId] = copiedItemIds[index];
-    });
 
     connections.forEach((connection) => {
         const replacedFromId = idsDictionary[connection.from];
