@@ -6,6 +6,7 @@ import pick from 'lodash/pick';
 import {DashTabItemControlSourceType, DashTabItemType, Feature, TitlePlacementOption} from 'shared';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
+import {getUpdatedConnections} from 'ui/utils/copyItems';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
@@ -362,6 +363,25 @@ function dash(state = initialState, action) {
                     excludeIds: getUniqIdsFromDashData(data),
                 },
             });
+
+            const {targetDashTabId, targetEntryId, targetIds} = action.payload.context;
+
+            // Duplicate connections only if it's the same tab as targetItem
+            if (
+                tabId === targetDashTabId &&
+                state.entry.entryId === targetEntryId &&
+                targetIds?.length
+            ) {
+                const copiedItem = tabData.items[tabData.items.length - 1];
+
+                const updatedConnections = getUpdatedConnections({
+                    connections: tabData.connections,
+                    targetIds,
+                    item: copiedItem,
+                });
+
+                tabData.connections = updatedConnections;
+            }
 
             return {
                 ...state,
