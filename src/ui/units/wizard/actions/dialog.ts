@@ -9,6 +9,7 @@ import type {
     Link,
     Placeholder,
     PointSizeConfig,
+    ServerChartsConfig,
     ShapesConfig,
     Shared,
 } from '../../../../shared';
@@ -67,12 +68,14 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
         const segments = selectSegments(state);
         const sort = selectSort(state);
         const drillDownLevel = selectDrillDownLevel(state);
+        const chartConfig = state.wizard.visualization as Partial<ServerChartsConfig>;
 
         if (visualization) {
             dispatch(
                 openDialog({
                     id: DIALOG_PLACEHOLDER,
                     props: {
+                        chartConfig,
                         visualizationId: visualization.id as WizardVisualizationId,
                         drillDownLevel,
                         segments,

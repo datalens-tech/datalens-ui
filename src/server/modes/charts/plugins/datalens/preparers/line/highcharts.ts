@@ -10,11 +10,13 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getXAxisMode,
     isDateField,
     isFloatField,
     isMeasureNameOrValue,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -25,7 +27,6 @@ import {
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsYAxis} from './helpers';
@@ -62,12 +63,14 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const segmentsMap = getSegmentMap(args);
 
     const xField = x ? ({guid: x.guid, data_type: idToDataType[x.guid]} as Field) : x;
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
     const xAxisType = getAxisType({
         field: xField,
         settings: xPlaceholder?.settings,
-        sort,
-        visualizationIds: getAllVisualizationsIds(shared),
+        axisMode: xAxisMode,
     });
+
     const customConfig: any = {
         xAxis: {
             type: xAxisType,
