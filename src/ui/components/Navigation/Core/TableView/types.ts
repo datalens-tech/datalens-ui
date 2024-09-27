@@ -46,6 +46,7 @@ export type TableViewProps = {
     loading?: boolean;
     hasNextPage?: boolean;
     isMobileNavigation?: boolean;
+    isOnlyCollectionsMode?: boolean;
     onMenuClick?: (args: MenuClickArgs) => void;
     onItemSelect?: (args: ItemSelectArgs) => void;
 };

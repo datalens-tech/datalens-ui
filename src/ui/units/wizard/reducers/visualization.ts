@@ -22,7 +22,6 @@ import {
     PlaceholderId,
     WizardVisualizationId,
     isDimensionField,
-    isFieldHierarchy,
     isMeasureField,
     isMeasureValue,
     isVisualizationWithLayers,
@@ -61,6 +60,7 @@ import {getSelectedLayer, getSelectedLayerId} from '../utils/helpers';
 import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
+import {isTableColorValid} from './utils/checkTableColor';
 import {updateColorsHierarchies} from './utils/updateColorHierarchies';
 
 export interface VisualizationState {
@@ -403,7 +403,7 @@ export function visualization(
                         ].filter((item) => {
                             return item.type !== 'PSEUDO';
                         });
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     // From the scatter similarly, only there are 3 sections
@@ -413,7 +413,7 @@ export function visualization(
                             ...oldPlaceholders[1].items,
                             ...oldPlaceholders[2].items,
                         ];
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     // When switching to PivotTable, only one of the dimensions and indicators is filled in
@@ -432,7 +432,7 @@ export function visualization(
                             (item) => item.type !== 'PSEUDO',
                         );
                         placeholders[2].items = oldPlaceholders[1].items;
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     case 'scatter-pivotTable': {
@@ -453,7 +453,7 @@ export function visualization(
                             placeholders[2].items = [measures[0]];
                         }
 
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
 
                         break;
                     }
