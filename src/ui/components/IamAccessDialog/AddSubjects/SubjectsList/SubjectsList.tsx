@@ -119,12 +119,27 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
 
             const suggestMembers = await dispatch(suggestBatchListMembers(batchListArgs));
 
-            return {
-                subjects: suggestMembers?.subjects || [],
-                nextPageToken: suggestMembers?.nextPageToken,
-            };
+            const filteredSuggestMembers = suggestMembers
+                ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
+                : [];
+
+            if (
+                fetchSubjectsCalls.current.call > currentCall &&
+                fetchSubjectsCalls.current.result
+            ) {
+                return {
+                    subjects: fetchSubjectsCalls.current.result,
+                    nextPageToken: suggestMembers?.nextPageToken,
+                };
+            } else {
+                fetchSubjectsCalls.current.result = filteredSuggestMembers;
+                return {
+                    subjects: filteredSuggestMembers,
+                    nextPageToken: suggestMembers?.nextPageToken,
+                };
+            }
         },
-        [dispatch, id],
+        [dispatch, id, membersIds],
     );
 
     const fetchSubjects = React.useCallback(
