@@ -5,6 +5,7 @@ import {Button, Icon, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {SuggestBatchListMembersArgs} from 'ui/store/typings/iamAccessDialog';
 
 import {ACL_TABS_WHITE_LIST} from '../../../../../shared/schema/extensions/constants';
 import type {SubjectClaims} from '../../../../../shared/schema/extensions/types';
@@ -110,12 +111,16 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 tabId,
             });
 
-            const suggestMembers = await dispatch(
-                suggestBatchListMembers({id, search, pageToken, filter: filter || undefined}),
-            );
+            const batchListArgs: SuggestBatchListMembersArgs = {id, search, pageToken};
+
+            if (filter) {
+                batchListArgs.filter = filter;
+            }
+
+            const suggestMembers = await dispatch(suggestBatchListMembers(batchListArgs));
 
             return {
-                subjects: suggestMembers.subjects,
+                subjects: suggestMembers?.subjects || [],
                 nextPageToken: suggestMembers?.nextPageToken,
             };
         },

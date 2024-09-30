@@ -36,6 +36,7 @@ import type {
     GetCollectionBreadcrumbsResponse,
 } from '../../../shared/schema';
 import {getSdk} from 'libs/schematic-sdk';
+import type {SuggestBatchListMembersArgs} from '../typings/iamAccessDialog';
 
 export enum ResourceType {
     Collection = 'collection',
@@ -380,13 +381,7 @@ export const suggestBatchListMembers = ({
     subType,
     pageToken,
     filter,
-}: {
-    id: string | undefined;
-    search: string;
-    subType?: string;
-    pageToken?: string;
-    filter?: string;
-}) => {
+}: SuggestBatchListMembersArgs) => {
     return (dispatch: IamAccessDialogDispatch) => {
         dispatch({
             type: SUGGEST_BATCH_LIST_MEMBERS_LOADING,
