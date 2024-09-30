@@ -40,4 +40,4 @@ with pd.ExcelWriter(params["OUTPUT_NAME"]) as writer:
         file_name = os.path.basename(csvfilename)
         sheet_name = os.path.splitext(file_name)[0]
         # Excel worksheet name must be <= 31 chars.
-        df.to_excel(writer,sheet_name=sheet_name.split(sep='-')[0][:32], index=False)
+        df.to_excel(writer,sheet_name=sheet_name.split(sep='-')[0][:31], index=False)

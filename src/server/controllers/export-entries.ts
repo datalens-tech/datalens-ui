@@ -233,7 +233,7 @@ export async function exportEntries(req: Request, res: Response) {
         for(let i = 0; i < filteredLinks.length; i++) {
             if(chartData[filteredLinks[i]].extra.datasets) {
                 let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
-                const publicOutputCSVPath = path.join(exportPath, `${sheetName}.${r.body['formSettings'].format}`);
+                const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(/[\[\]\:\*\?\/\\]/g, '_')}.${r.body['formSettings'].format}`);
                 files.push(publicOutputCSVPath);
 
                 const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
