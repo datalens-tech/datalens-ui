@@ -63,7 +63,7 @@ export default class AddField extends React.Component<AddFieldProps> {
                     disabled={disabled}
                     renderOption={(option) => {
                         return (
-                            <div className={b('option')}>
+                            <div className={b('option')} data-qa={AddFieldQA.Option}>
                                 <span className={b('option-icon')}>{option.data?.icon}</span>{' '}
                                 <span className={b('option-text')}>{option.content}</span>
                             </div>
@@ -82,27 +82,33 @@ export default class AddField extends React.Component<AddFieldProps> {
                     }}
                     filterable={true}
                     popupClassName={b('popup')}
-                    options={items.map((el) => ({
-                        value: el.value,
-                        content: el.title,
-                        data: {
-                            icon: (
-                                <Icon
-                                    className={
-                                        el.iconType === DatasetFieldType.Dimension
-                                            ? b('dimension-icon')
-                                            : b('measure-icon')
-                                    }
-                                    data={el.icon}
-                                    width="16"
-                                    height="16"
-                                />
-                            ),
-                            description: el.description,
-                            guid: el.guid,
-                            title: el.title,
-                        },
-                    }))}
+                    options={items.map((el) => {
+                        const isDimension = el.iconType === DatasetFieldType.Dimension;
+                        return {
+                            value: el.value,
+                            content: el.title,
+                            data: {
+                                icon: (
+                                    <Icon
+                                        className={
+                                            isDimension ? b('dimension-icon') : b('measure-icon')
+                                        }
+                                        data={el.icon}
+                                        width="16"
+                                        height="16"
+                                        qa={
+                                            isDimension
+                                                ? AddFieldQA.DimensionsFieldIcon
+                                                : AddFieldQA.MeasureFieldIcon
+                                        }
+                                    />
+                                ),
+                                description: el.description,
+                                guid: el.guid,
+                                title: el.title,
+                            },
+                        };
+                    })}
                     renderControl={({onClick, ref}) => {
                         const actionIcon = <PlaceholderActionIcon icon={Plus} />;
 

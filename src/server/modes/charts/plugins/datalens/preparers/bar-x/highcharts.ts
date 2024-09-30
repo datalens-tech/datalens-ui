@@ -1,18 +1,19 @@
 import _isEmpty from 'lodash/isEmpty';
 
-import type {Field, ServerPlaceholder, WizardVisualizationId} from '../../../../../../../shared';
+import type {ServerPlaceholder, WizardVisualizationId} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
-    getActualAxisModeForField,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getXAxisMode,
     isDateField,
     isMeasureNameOrValue,
 } from '../../../../../../../shared';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled, isNumericalDataType} from '../../utils/misc-helpers';
 import {
@@ -22,7 +23,6 @@ import {
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSegmentsYAxis} from '../line/helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import type {PrepareFunctionArgs} from '../types';
@@ -53,12 +53,8 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const xPlaceholderSettings = xPlaceholder?.settings;
     let xAxisMode = AxisMode.Discrete;
     if (x && xDataType) {
-        xAxisMode = getActualAxisModeForField({
-            field: {guid: x.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
-        }) as AxisMode;
+        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+        xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     }
 
     const isXDiscrete = xAxisMode === AxisMode.Discrete;

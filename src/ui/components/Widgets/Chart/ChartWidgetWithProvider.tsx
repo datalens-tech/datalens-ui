@@ -44,12 +44,19 @@ export class ChartWrapper extends React.Component<ChartWrapperWithProviderProps>
                     {...this.props}
                     dataProvider={this.dataProvider}
                     ignoreUsedParams={true}
+                    key="chart"
                 />
             );
         }
 
         if (isSelectorType(this.props)) {
-            return <ChartSelectorComponent {...this.props} dataProvider={this.dataProvider} />;
+            return (
+                <ChartSelectorComponent
+                    {...this.props}
+                    dataProvider={this.dataProvider}
+                    key="selector"
+                />
+            );
         }
 
         const props = this.props as ChartWidgetProviderPropsWithRefProps;
@@ -58,6 +65,7 @@ export class ChartWrapper extends React.Component<ChartWrapperWithProviderProps>
                 {...props}
                 dataProvider={this.dataProvider}
                 compactLoader={true}
+                key="widget"
             />
         );
     }

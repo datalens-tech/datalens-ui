@@ -3,6 +3,8 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import type {QlConfig} from 'shared';
@@ -140,6 +142,19 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                     forwardedRef={this.chartKitRef}
                     workbookId={entry?.workbookId}
                     customMenuOptions={this.getCustomMenuOptions()}
+                    transformLoadedData={(loadedData: any) => {
+                        if (
+                            loadedData?.data &&
+                            isEmpty(omit(loadedData.data, 'metadata', 'tablePreviewData'))
+                        ) {
+                            return {
+                                ...loadedData,
+                                data: undefined,
+                            };
+                        }
+
+                        return loadedData;
+                    }}
                 />
             </div>
         );

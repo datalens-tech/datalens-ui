@@ -14,7 +14,11 @@ export const getConnectorListItemUrl = (args: {connector: ConnectorItem; workboo
 };
 
 export const getVisibleConnectors = (connectors: ConnectorItem[]) => {
-    return connectors.filter(({hidden}) => !hidden);
+    return connectors.filter(({hidden, visibility_mode}) => {
+        return visibility_mode
+            ? visibility_mode === 'free'
+            : typeof hidden === 'boolean' && !hidden;
+    });
 };
 
 // TODO: add unit test [CHARTS-5033]

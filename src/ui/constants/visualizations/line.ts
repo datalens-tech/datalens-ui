@@ -88,7 +88,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
         segments?: Field[],
     ) => {
         if (item.type === 'MEASURE') {
-            return false;
+            return true;
         }
 
         const selectedItems = visualization.placeholders
@@ -132,7 +132,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
             },
             transform: prepareFieldToMeasureTransformation,
         },
-    ],
+    ] as Placeholder[],
 };
 
 export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {

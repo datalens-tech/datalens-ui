@@ -29,6 +29,7 @@ export type SelectorsGroupDialogState = {
     group: SelectorDialogState[];
     id?: string;
     namespace?: string;
+    pastedIdsDictionary: Record<string, string>;
 };
 
 export type SelectorSourceType =

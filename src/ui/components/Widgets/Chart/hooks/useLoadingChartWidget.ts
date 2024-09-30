@@ -117,7 +117,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const [loadedDescription, setLoadedDescription] = React.useState<string | null>(null);
     const [description, setDescription] = React.useState<string | null>(null);
-    const [scrollOffset, setScrollOffset] = React.useState<number | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
     const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
     const [isRendered, setIsRendered] = React.useState(false);
@@ -301,10 +300,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const handleToggleFullscreenMode = React.useCallback(() => {
         const searchParams = new URLSearchParams(history.location.search);
         const isFullscreenNewMode = !searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
-        const scrollHeight = isFullscreenNewMode ? window.scrollY : null;
 
         if (isFullscreenNewMode) {
-            setScrollOffset(scrollHeight);
             searchParams.set(FOCUSED_WIDGET_PARAM_NAME, widgetId);
         } else {
             searchParams.delete(FOCUSED_WIDGET_PARAM_NAME);
@@ -414,16 +411,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         setDescription(loadedDescription);
         handleChartkitReflow();
     }, [loadedDescription, description, handleChartkitReflow]);
-
-    /**
-     * updating window position on change fullscreen mode (for mob version)
-     */
-    React.useLayoutEffect(() => {
-        if (!isFullscreen && scrollOffset !== null) {
-            window.scrollTo(0, scrollOffset || 0);
-            setScrollOffset(null);
-        }
-    }, [scrollOffset, isFullscreen]);
 
     /**
      * handle changed chart tab

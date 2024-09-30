@@ -668,6 +668,8 @@ class Body extends React.PureComponent<BodyProps> {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
                     workbookId: this.props.workbookId ?? null,
                     fromScope: this.props.entry.scope,
+                    targetEntryId: this.props.entryId,
+                    targetDashTabId: this.props.tabId,
                 });
             };
 
