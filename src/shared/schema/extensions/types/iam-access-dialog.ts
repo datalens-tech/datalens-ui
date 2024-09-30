@@ -22,6 +22,7 @@ export enum ClaimsSubjectType {
     Group = 'GROUP',
     Invitee = 'INVITEE',
     ServiceAccount = 'SERVICE_ACCOUNT',
+    SystemGroup = '_system',
 }
 
 type Subject = {
@@ -118,6 +119,7 @@ export type BatchListMembersArgs = {
     subType?: string;
     pageToken?: string;
     pageSize: number;
+    filter?: string;
 };
 
 export type BatchListMembersResponse = {

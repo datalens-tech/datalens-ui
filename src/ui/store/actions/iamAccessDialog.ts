@@ -377,13 +377,15 @@ type SuggestBatchListMembersAction =
 export const suggestBatchListMembers = ({
     id,
     search,
-    tabId,
+    subType,
     pageToken,
+    filter,
 }: {
     id: string | undefined;
     search: string;
-    tabId?: string;
+    subType?: string;
     pageToken?: string;
+    filter?: string;
 }) => {
     return (dispatch: IamAccessDialogDispatch) => {
         dispatch({
@@ -394,9 +396,10 @@ export const suggestBatchListMembers = ({
             .extensions.batchListMembers({
                 id,
                 search: search.toLowerCase(),
-                subType: tabId,
+                subType,
                 pageSize: BATCH_LIST_MEMBERS_PAGE_SIZE,
                 pageToken,
+                filter,
             })
             .then((res) => {
                 const {members, nextPageToken} = res;

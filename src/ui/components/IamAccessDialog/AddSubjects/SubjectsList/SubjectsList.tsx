@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
+import {ACL_TABS_WHITE_LIST} from '../../../../../shared/schema/extensions/constants';
 import type {SubjectClaims} from '../../../../../shared/schema/extensions/types';
 import {ClaimsSubjectType} from '../../../../../shared/schema/extensions/types';
 import {registry} from '../../../../registry';
@@ -61,7 +62,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
         [subjects, onUpdateSubjects],
     );
 
-    const tabsWhiteList = React.useMemo(() => {
+    const availableSubjectGroups = React.useMemo(() => {
         const result = [
             {
                 id: ClaimsSubjectType.UserAccount,
@@ -102,30 +103,23 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             const currentCall = fetchSubjectsCalls.current.call + 1;
             fetchSubjectsCalls.current.call = currentCall;
 
-            const suggestMembers = await dispatch(
-                suggestBatchListMembers({id, search, tabId, pageToken}),
-            );
-            const filteredSuggestMembers = suggestMembers
-                ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
-                : [];
+            const getListMembersFilter = registry.common.functions.get('getListMembersFilter');
 
-            if (
-                fetchSubjectsCalls.current.call > currentCall &&
-                fetchSubjectsCalls.current.result
-            ) {
-                return {
-                    subjects: fetchSubjectsCalls.current.result,
-                    nextPageToken: suggestMembers?.nextPageToken,
-                };
-            } else {
-                fetchSubjectsCalls.current.result = filteredSuggestMembers;
-                return {
-                    subjects: filteredSuggestMembers,
-                    nextPageToken: suggestMembers?.nextPageToken,
-                };
-            }
+            const filter = getListMembersFilter({
+                search,
+                tabId,
+            });
+
+            const suggestMembers = await dispatch(
+                suggestBatchListMembers({id, search, pageToken, filter: filter || undefined}),
+            );
+
+            return {
+                subjects: suggestMembers.subjects,
+                nextPageToken: suggestMembers?.nextPageToken,
+            };
         },
-        [dispatch, membersIds, id],
+        [dispatch, id],
     );
 
     const fetchSubjects = React.useCallback(
@@ -141,7 +135,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             fetchSubjectsCalls.current.call = currentCall;
 
             const suggestMembers = await dispatch(
-                suggestBatchListMembers({id, search, tabId: subType, pageToken}),
+                suggestBatchListMembers({id, search, subType, pageToken}),
             );
             const filteredSuggestMembers = suggestMembers
                 ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
@@ -185,8 +179,8 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 contentClassName={b('acl-popup-content')}
             >
                 <AclSubjectSuggest
-                    availableGroups={tabsWhiteList}
-                    tabsWhiteList={tabsWhiteList}
+                    availableGroups={availableSubjectGroups}
+                    tabsWhiteList={ACL_TABS_WHITE_LIST}
                     fetchSubjects={fetchSubjects}
                     newFetchSubjects={newFetchSubjects}
                     onSubjectChange={(subject) => {

@@ -12,10 +12,7 @@ export type AclSubjectSuggestProps = {
         id: ClaimsSubjectType;
         name: string;
     }[];
-    tabsWhiteList?: {
-        id: ClaimsSubjectType;
-        name: string;
-    }[];
+    tabsWhiteList?: ClaimsSubjectType[];
     fetchSubjects?: (
         search: string,
         type?: ClaimsSubjectType,
