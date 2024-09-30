@@ -7,7 +7,6 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {SuggestBatchListMembersArgs} from 'ui/store/typings/iamAccessDialog';
 
-import {ACL_TABS_WHITE_LIST} from '../../../../../shared/schema/extensions/constants';
 import type {SubjectClaims} from '../../../../../shared/schema/extensions/types';
 import {ClaimsSubjectType} from '../../../../../shared/schema/extensions/types';
 import {registry} from '../../../../registry';
@@ -200,8 +199,8 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             >
                 <AclSubjectSuggest
                     availableGroups={availableSubjectGroups}
-                    tabsWhiteList={ACL_TABS_WHITE_LIST}
                     fetchSubjects={fetchSubjects}
+                    // TODO: temp field, will be removed later
                     newFetchSubjects={newFetchSubjects}
                     onSubjectChange={(subject) => {
                         handleAddSubject(subject);
