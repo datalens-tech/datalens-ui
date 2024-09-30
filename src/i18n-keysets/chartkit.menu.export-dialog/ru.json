@@ -1,0 +1,10 @@
+{
+    "export_title": "Экспортировать в PDF",
+    "page_format": "Формат страницы",
+    "export_submit": "Подтвердить",
+    "page_orientation": "Ориентация страницы",
+    "orientation_portrait": "Книжная",
+    "orientation_landscape": "Альбомная",
+    "error": "Ошибка",
+    "toast_error": "Ошибка экспорта в PDF"
+}

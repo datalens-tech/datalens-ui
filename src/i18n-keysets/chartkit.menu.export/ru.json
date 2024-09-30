@@ -9,5 +9,6 @@
   "format_wiki": "Wiki",
   "format_xlsx": "XLSX",
   "menu-export": "Сохранить как",
+  "menu-export-pdf": "Сохранить как PDF",
   "menu-screenshot": "Сохранить как изображение"
 }

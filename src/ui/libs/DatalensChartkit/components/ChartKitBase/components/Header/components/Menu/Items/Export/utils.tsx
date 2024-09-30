@@ -118,6 +118,24 @@ export const setSuccessToast = () => {
     });
 };
 
+export const isExportPdfVisible = ({
+    loadedData,
+    error,
+}: {
+    loadedData: MenuLoadedData;
+    error?: DatalensChartkitCustomError;
+}) => {
+    if (!loadedData || error || DL.IS_MOBILE) {
+        return false;
+    }
+
+    const data = loadedData?.data;
+    const type = loadedData?.type;
+    return (
+        !isEmpty(data) && [CHARTKIT_WIDGET_TYPE.D3].includes(type)
+    );
+};
+
 export const isExportVisible = ({
     loadedData,
     error,

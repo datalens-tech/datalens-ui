@@ -214,7 +214,7 @@ const stringifyData = async (host: string, chartData: any, token: string, settin
 
 export async function exportEntries(req: Request, res: Response) {
     var r: any = req;
-    var host = r.body['host'];
+    var host = r.body['host'] || 'http://localhost:8080';
 
     const context:any = req.ctx;
 

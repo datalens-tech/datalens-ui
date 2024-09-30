@@ -9,6 +9,7 @@ import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
 import {exportEntries} from '../../controllers/export-entries';
+import {printEntry} from '../../controllers/print-entry';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -39,6 +40,12 @@ export function getRoutes({
             afterAuth: afterAuth,
             route: 'POST /export-entries',
             handler: exportEntries
+        },
+        printEntry: {
+            beforeAuth: beforeAuth,
+            afterAuth: afterAuth,
+            route: 'POST /print-entry',
+            handler: printEntry
         },
     };
 
