@@ -220,7 +220,9 @@ export const usePreparedTableData = (props: {
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
-        estimateSize: () => 30,
+        estimateSize: () => {
+            return 30;
+        },
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
             const getRowHeight = () => {
@@ -327,6 +329,7 @@ export const usePreparedTableData = (props: {
         const prevCells = new Array(tableRows[0]?.getVisibleCells()?.length);
         return virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
             const row = tableRows[virtualRow.index] as Row<TData>;
+            const rowMeasuredHeight = rowMeasures.current[virtualRow.index];
             const visibleCells = row.getVisibleCells();
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
@@ -346,8 +349,8 @@ export const usePreparedTableData = (props: {
                         )
                     ) {
                         prevCell.rowSpan += 1;
-                        if (prevCell.maxHeight && virtualRow.size) {
-                            prevCell.maxHeight += virtualRow.size;
+                        if (prevCell.maxHeight && rowMeasuredHeight) {
+                            prevCell.maxHeight += rowMeasuredHeight;
                         }
 
                         return acc;
@@ -395,7 +398,8 @@ export const usePreparedTableData = (props: {
                             : originalCellData?.className,
                     rowSpan: 1,
                     data: originalCellData,
-                    maxHeight: enableRowGrouping ? virtualRow.size : undefined,
+                    maxHeight:
+                        enableRowGrouping && rowMeasuredHeight ? rowMeasuredHeight : undefined,
                 };
 
                 prevCells[index] = rowsAcc.length;
