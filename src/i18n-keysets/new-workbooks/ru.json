@@ -7,6 +7,7 @@
   "action_create-connection": "Создать подключение",
   "action_create-dashboard": "Создать дашборд",
   "action_create-dataset": "Создать датасет",
+  "action_create-report": "Создать отчёт",
   "action_delete": "Удалить",
   "action_duplicate": "Дублировать",
   "action_edit": "Редактировать",
@@ -34,6 +35,7 @@
   "menu_dataset": "Датасет",
   "menu_editor-chart": "Чарт в Editor",
   "menu_ql-chart": "QL-чарт",
+  "menu_report": "Отчёт",
   "menu_wizard-chart": "Чарт в Wizard",
   "no_objects": "Пока нет объектов",
   "section_delete-entry": "Вы действительно хотите удалить \"{{entryName}}\"?",
@@ -41,5 +43,6 @@
   "title_connections": "Подключения",
   "title_dashboards": "Дашборды",
   "title_datasets": "Датасеты",
+  "title_reports": "Отчёты",
   "toast_duplicate-failed": "При дублировании произошла ошибка"
 }

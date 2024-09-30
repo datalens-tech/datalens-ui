@@ -162,7 +162,7 @@ export const runController = (
             }
 
             if (
-                !isEnabledServerFeature(ctx, Feature.EnableChartEditor) &&
+                !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
                 runnerFound.name === 'editor'
             ) {
                 ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
@@ -179,6 +179,7 @@ export const runController = (
                     });
                 }
 
+                // TODO: remove this condition and corresponded code block after ChartEditor unit migrating
                 if (
                     isEnabledServerFeature(app.nodekit.ctx, Feature.ShouldCheckEditorAccess) &&
                     runnerFound.name === 'editor'

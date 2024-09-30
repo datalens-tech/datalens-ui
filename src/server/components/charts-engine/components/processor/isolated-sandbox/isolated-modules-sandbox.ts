@@ -1,8 +1,14 @@
 import type IsolatedVM from 'isolated-vm';
+import {isString} from 'lodash';
 
+import type {IChartEditor} from '../../../../../../shared';
+import {getTranslationFn} from '../../../../../../shared/modules/language';
+import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
+import type {ChartEditorGetTranslation} from './interop/charteditor-api';
+import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
 
 const {
@@ -51,11 +57,11 @@ export class SandboxError extends Error {
 
 type ExecuteParams = {
     code: string;
-    userLang: string | null;
     isScreenshoter: boolean;
     name: string;
     timeout: number;
     context: IsolatedVM.Context;
+    chartEditorApi: IChartEditor;
 };
 
 export type ModulesSandboxExecuteResult = {
@@ -67,11 +73,11 @@ export type ModulesSandboxExecuteResult = {
 
 const execute = async ({
     code,
-    userLang = DEFAULT_USER_LANG,
     name,
     isScreenshoter,
     timeout,
     context,
+    chartEditorApi,
 }: ExecuteParams): Promise<ModulesSandboxExecuteResult> => {
     if (!context) {
         throw new Error('Sandbox context is not initialized');
@@ -90,6 +96,10 @@ const execute = async ({
         isolatedConsole.log(...args);
     });
 
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, params) => {
+        return chartEditorApi.getTranslation(keyset, key, params);
+    }) satisfies ChartEditorGetTranslation);
+
     try {
         const prepare = `
            const __safeStringify = ${safeStringify.toString()};
@@ -103,17 +113,12 @@ const execute = async ({
            var module = {exports: {}};
            var exports = module.exports;
            const ChartEditor = {
-                getUserLang: () => "${userLang}"
+                getUserLang: () => "${chartEditorApi.getUserLang()}",
+                getUserLogin: () => "${chartEditorApi.getUserLogin()}",
+                getTranslation: (keyset, key, params) => _ChartEditor_getTranslation(keyset, key, params),
            };
-           
-           function require(name) {
-               const lowerName = name.toLowerCase();
-               if (__modules[lowerName]) {
-                   return __modules[lowerName];
-               } else {
-                   throw new Error(\`Module "\${lowerName}" is not resolved\`);
-               }
-           };
+
+           const require = ${requireShim.toString()};
            `;
 
         const after = `
@@ -123,8 +128,10 @@ const execute = async ({
         context.evalClosureSync(`${prepare}\n ${codeWrapper} \n ${after}`, [], {timeout});
     } catch (e) {
         if (typeof e === 'object' && e !== null) {
-            errorStackTrace = 'message' in e && (e.message as string);
-
+            errorStackTrace = 'stack' in e && (e.stack as string);
+            errorStackTrace =
+                isString(errorStackTrace) &&
+                errorStackTrace.split('at (<isolated-vm boundary>)')[0].split('at execute')[0];
             if ('code' in e && e.code === 'ERR_SCRIPT_EXECUTION_TIMEOUT') {
                 errorCode = RUNTIME_TIMEOUT_ERROR;
             }
@@ -163,15 +170,23 @@ export const processModule = async ({
     name,
     code,
     userLang,
+    userLogin,
     isScreenshoter,
     context,
 }: ProcessModuleParams) => {
+    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
+    const chartEditorApi = {
+        getTranslation: getTranslationFn(i18n.getI18nServer()),
+        getUserLang: () => userLang || DEFAULT_USER_LANG,
+        getUserLogin: () => userLogin || '',
+    };
+
     return execute({
         code,
-        userLang,
         isScreenshoter,
         name,
         timeout: MODULE_PROCESSING_TIMEOUT,
         context,
+        chartEditorApi: chartEditorApi as IChartEditor,
     });
 };

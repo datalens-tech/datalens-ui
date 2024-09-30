@@ -5,9 +5,9 @@ import getGatewayControllers from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
-import {convertConnectionType} from '../modes/charts/plugins/ql/utils/connection';
+import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
+import {getConnectorToQlConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import type {GetLayoutConfig} from '../types/app-layout';
-import type {ConvertConnectorTypeToQLConnectionType} from '../types/connections';
 import type {XlsxConverterFn} from '../types/xlsxConverter';
 
 import commonRegistry from './units/common';
@@ -24,7 +24,7 @@ let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
-let convertConnectorTypeToQLConnectionType: ConvertConnectorTypeToQLConnectionType | undefined;
+let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -109,15 +109,12 @@ export const registry = {
     getXlsxConverter() {
         return getXlsxConverter;
     },
-    registerConvertConnectorTypeToQLConnectionType(fn: ConvertConnectorTypeToQLConnectionType) {
-        if (!convertConnectorTypeToQLConnectionType) {
-            convertConnectorTypeToQLConnectionType = fn;
+    setupQLConnectionTypeMap(map: QLConnectionTypeMap) {
+        if (!qLConnectionTypeMap) {
+            qLConnectionTypeMap = map;
         }
     },
-    getConvertConnectorTypeToQLConnectionType() {
-        if (!convertConnectorTypeToQLConnectionType) {
-            return convertConnectionType;
-        }
-        return convertConnectorTypeToQLConnectionType;
+    getQLConnectionTypeMap() {
+        return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
     },
 };

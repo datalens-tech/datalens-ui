@@ -1,16 +1,16 @@
 import _isEmpty from 'lodash/isEmpty';
 
-import type {Field, HighchartsSeriesCustomObject} from '../../../../../../../shared';
+import type {HighchartsSeriesCustomObject} from '../../../../../../../shared';
 import {
     AxisMode,
     AxisNullsMode,
-    Feature,
     PlaceholderId,
     WizardVisualizationId,
-    getActualAxisModeForField,
     getFakeTitleOrTitle,
+    getXAxisMode,
     isDateField,
     isMarkdownField,
+    isMarkupField,
     isMeasureField,
     isMeasureValue,
     isNumberField,
@@ -19,6 +19,7 @@ import {
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
@@ -32,7 +33,6 @@ import {
 import {mapAndShapeGraph} from '../../utils/shape-helpers';
 import {addActionParamValue} from '../helpers/action-params';
 import {getSegmentMap} from '../helpers/segments';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsIndexInOrder, getSortedCategories, getXAxisValue, prepareLines} from './helpers';
@@ -61,25 +61,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
-        features,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
-    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
+
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField = xPlaceholder?.items[0];
     const xDataType = xField ? idToDataType[xField.guid] : null;
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
-    let xAxisMode = AxisMode.Discrete;
-    if (xField && xDataType) {
-        xAxisMode = getActualAxisModeForField({
-            field: {guid: xField.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
-        }) as AxisMode;
-    }
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
@@ -97,9 +89,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const isSortItemExists = sort.length > 0;
     const isSortingXAxis = sort?.some((s) => s.guid === xField?.guid);
     const isSortingYAxis = mergedYSections.some((item) => item.guid === sortItem?.guid);
-    const isSortCategoriesAvailable = layerChartMeta
-        ? Boolean(layerChartMeta.isCategoriesSortAvailable)
-        : true;
+    const isSortCategoriesAvailable =
+        xAxisMode === AxisMode.Discrete &&
+        (layerChartMeta ? Boolean(layerChartMeta.isCategoriesSortAvailable) : true);
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
@@ -113,7 +105,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
-    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
+    const isMarkdownLabel = isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -259,6 +252,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 segmentIndexInOrder,
                 layers: shared.visualization?.layers,
                 colorMode,
+                convertMarkupToString: false,
             });
         });
 
@@ -351,7 +345,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     id: line.id,
                     title: line.title || 'Null',
                     tooltip: line.tooltip,
-                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel},
+                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel || isMarkupLabel},
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -410,7 +404,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                                 }
                             }
 
-                            point.label = getLabelValue(innerLabels?.[category], isMarkdownLabel);
+                            point.label = getLabelValue(innerLabels?.[category], {
+                                isMarkdownLabel,
+                                isMarkupLabel,
+                            });
 
                             if (isActionParamsEnable) {
                                 const [yField] = ySectionItems || [];
@@ -521,6 +518,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
         if (isMarkdownLabel) {
             ChartEditor.updateConfig({useMarkdown: true});
+        }
+
+        if (isMarkupLabel) {
+            ChartEditor.updateConfig({useMarkup: true});
         }
 
         if (isXCategoryAxis) {

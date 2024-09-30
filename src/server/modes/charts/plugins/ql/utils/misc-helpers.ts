@@ -28,9 +28,17 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
-import {registry} from '../../../../../registry';
 
+import type {QLConnectionTypeMap} from './connection';
+import {convertConnectionType} from './connection';
 import {LINEAR_VISUALIZATIONS, LOG_INFO, LOG_TIMING, QUERY_TITLE} from './constants';
+
+export {
+    formatUnknownTypeValue,
+    renderValue,
+    parseNumberValue,
+    parseNumberValueForTable,
+} from './value-helpers';
 
 let currentConsole: {log: Function} = console;
 
@@ -44,42 +52,6 @@ export function log(...data: unknown[]) {
 
 export function logTiming(...data: unknown[]) {
     return LOG_TIMING && currentConsole.log(...data);
-}
-
-export function parseNumberValue(value: number | string | null) {
-    let result;
-
-    if (value === null) {
-        result = null;
-    } else if (value === '-inf') {
-        result = -Infinity;
-    } else if (value === 'inf') {
-        result = Infinity;
-    } else if (value === 'nan') {
-        result = NaN;
-    } else {
-        result = Number(value);
-    }
-
-    return result;
-}
-
-export function parseNumberValueForTable(value: number | string | null) {
-    let result;
-
-    if (value === null) {
-        result = null;
-    } else if (value === '-inf') {
-        result = '-Infinity';
-    } else if (value === 'inf') {
-        result = 'Infinity';
-    } else if (value === 'nan') {
-        result = 'NaN';
-    } else {
-        result = Number(value);
-    }
-
-    return result;
 }
 
 export interface QLResultEntryMetadata {
@@ -418,17 +390,18 @@ export function buildSource({
     query,
     params,
     paramsDescription,
+    qlConnectionTypeMap,
 }: {
     id: string;
     connectionType: string;
     query: string;
     params: StringParams;
     paramsDescription: QlConfigParam[];
+    qlConnectionTypeMap: QLConnectionTypeMap;
 }) {
-    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
     let sqlQuery = query;
 
-    const datalensQLConnectionType = convertConnectionType(connectionType);
+    const datalensQLConnectionType = convertConnectionType(qlConnectionTypeMap, connectionType);
 
     const QLRequestParams: Record<string, QlConfigRequestParam | QlConfigRequestParam[]> = {};
     if (
@@ -535,16 +508,16 @@ export function getRows(data: QLResult, field = 'sql'): string[][] {
     return rows;
 }
 
-export function getColumns(
-    data: QLResult,
-    connectionType: string,
-    field = 'sql',
-): QlConfigResultEntryMetadataDataColumn[] | null {
+export function getColumns(args: {
+    data: QLResult;
+    connectionType: string;
+    field?: string;
+    qlConnectionTypeMap: QLConnectionTypeMap;
+}): QlConfigResultEntryMetadataDataColumn[] | null {
+    const {data, connectionType, field = 'sql', qlConnectionTypeMap} = args;
     const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
 
-    const convertConnectionType = registry.getConvertConnectorTypeToQLConnectionType();
-
-    const datalensQLConnectionType = convertConnectionType(connectionType);
+    const datalensQLConnectionType = convertConnectionType(qlConnectionTypeMap, connectionType);
 
     if (row) {
         const metadataRow = row as QLResultEntryMetadata;
@@ -582,12 +555,14 @@ export function getColumnsAndRows({
     queries,
     connectionType,
     data,
+    qlConnectionTypeMap,
 }: {
     chartType: QLChartType;
     ChartEditor: IChartEditor;
     queries: QLConfigQuery[];
     connectionType: string;
     data: {[key: string]: any};
+    qlConnectionTypeMap: QLConnectionTypeMap;
 }) {
     let columns: QlConfigResultEntryMetadataDataColumn[] | null = [];
 
@@ -601,7 +576,12 @@ export function getColumnsAndRows({
             let localColumns: QlConfigResultEntryMetadataDataColumn[] = [];
 
             try {
-                const parsedColumns = getColumns(data, connectionType, `ql_${i}`);
+                const parsedColumns = getColumns({
+                    data,
+                    connectionType,
+                    field: `ql_${i}`,
+                    qlConnectionTypeMap,
+                });
 
                 if (parsedColumns === null) {
                     return;
@@ -690,7 +670,11 @@ export function getColumnsAndRows({
         }
     } else {
         try {
-            columns = getColumns(data, connectionType || ConnectorType.Clickhouse);
+            columns = getColumns({
+                data,
+                connectionType: connectionType || ConnectorType.Clickhouse,
+                qlConnectionTypeMap,
+            });
 
             if (columns !== null) {
                 rows = getRows(data);
@@ -707,22 +691,6 @@ export function getColumnsAndRows({
     }
 
     return {columns, rows};
-}
-
-export function formatUnknownTypeValue(value: string | number | null) {
-    if (value === null) {
-        return null;
-    }
-
-    return JSON.stringify(value);
-}
-
-export function renderValue(value: QLValue) {
-    if (value === null) {
-        return 'null';
-    }
-
-    return value;
 }
 
 export function isGroup(

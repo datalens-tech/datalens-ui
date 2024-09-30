@@ -68,5 +68,9 @@ $entityIconClassName: '.entity-icon';
         &_type_connection {
             background-color: var(--dl-color-entity-connection);
         }
+
+        &_type_broken {
+            background-color: var(--g-color-base-misc-heavy);
+        }
     }
 }

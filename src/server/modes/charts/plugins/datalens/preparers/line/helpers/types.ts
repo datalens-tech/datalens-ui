@@ -18,7 +18,7 @@ export interface GetXAxisValueArgs {
     xIsNumber: boolean;
     xDataType: string;
     xIsPseudo: boolean;
-    categoriesMap: Map<string | number, boolean>;
+    categoriesMap?: Map<string | number, boolean>;
 }
 
 export interface GetSortedCategoriesArgs {

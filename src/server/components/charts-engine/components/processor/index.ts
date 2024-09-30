@@ -1,6 +1,7 @@
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
+import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
 import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
@@ -37,7 +38,7 @@ import {DataFetcher} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
-import type {SandboxError} from './sandbox';
+import {SandboxError} from './sandbox';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
@@ -152,6 +153,7 @@ export type ProcessorParams = {
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
     builder: ChartBuilder;
+    forbiddenFields?: (keyof ProcessorSuccessResponse)[];
 };
 
 export class Processor {
@@ -174,6 +176,7 @@ export class Processor {
         ctx,
         workbookId,
         builder,
+        forbiddenFields,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -236,6 +239,8 @@ export class Processor {
             if (actionParams) {
                 target.actionParams = actionParams;
             }
+
+            return target;
         }
 
         function stringifyLogs(localLogs: ProcessorLogs, localHooks: ProcessorHooks) {
@@ -356,7 +361,7 @@ export class Processor {
                     };
                 }
 
-                let reason = 'internal error';
+                let reason = ('stackTrace' in error && error.stackTrace) || 'internal error';
 
                 if ('status' in error) {
                     if (error.status === 403) {
@@ -366,16 +371,25 @@ export class Processor {
                     }
                 }
 
-                const target =
-                    'description' in error && error.description
-                        ? `module (${error.description})`
-                        : 'required modules';
+                const sandboxErrorFilename =
+                    error instanceof SandboxError ? error.executionResult?.filename : null;
+                const axiosErrorFileName =
+                    error instanceof AxiosError && 'description' in error
+                        ? error.description
+                        : null;
+
+                const filename = sandboxErrorFilename || axiosErrorFileName || 'required modules';
+
+                const stackTraceText =
+                    error instanceof DepsResolveError
+                        ? error.description
+                        : `module (${filename}): ${reason}`;
 
                 return {
                     error: {
                         code: DEPS_RESOLVE_ERROR,
                         details: {
-                            stackTrace: `Error resolving ${target}: ${reason}`,
+                            stackTrace: `Error resolving ${stackTraceText}`,
                         },
                         statusCode:
                             'status' in error && isNumber(error.status) ? error.status : undefined,
@@ -804,7 +818,7 @@ export class Processor {
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;
                 result.highchartsConfig = stringify(resultLibraryConfig);
-                result.extra = jsTabResults.runtimeMetadata.extra;
+                result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
@@ -871,6 +885,14 @@ export class Processor {
             }
 
             injectConfigAndParams({target: result});
+
+            if (forbiddenFields) {
+                forbiddenFields.forEach((field) => {
+                    if (result[field]) {
+                        delete result[field];
+                    }
+                });
+            }
 
             return result;
         } catch (error) {
@@ -1044,7 +1066,7 @@ export class Processor {
                 module.key = module.key.toLowerCase();
                 const name = module.key;
                 if (module.meta.stype !== 'module') {
-                    const errorText = `required script "${name}" is not a module`;
+                    const errorText = `required script "${name}": is not a module`;
                     const moduleTypeError = new DepsResolveError(errorText);
                     moduleTypeError.description = errorText;
 

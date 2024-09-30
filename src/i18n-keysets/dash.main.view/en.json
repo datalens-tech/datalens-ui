@@ -1,6 +1,7 @@
 {
   "button_edit-panel-chart": "Chart",
   "button_edit-panel-editor-selector": "Selector (JS)",
+  "button_edit-panel-image": "Image",
   "button_edit-panel-paste": "Paste",
   "button_edit-panel-selector": "Selector",
   "button_edit-panel-text": "Text",
@@ -8,7 +9,6 @@
   "button_links": "Links",
   "label_details": "Details",
   "label_fixed-collapsed-default": "Collapse by default",
-  "label_fixed-show-default": "Show by default",
   "label_loading": "Uploading",
   "label_pin": "Pin",
   "label_unpin": "Unpin",

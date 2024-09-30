@@ -17,5 +17,10 @@ export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
 };
 
 export const showCheckButtonSelector = (state: DatalensGlobalState) => {
+    // Remove after BI backend has supported params checking in case of anonymous connection
+    if (state.connections.innerForm.mdb_fill_mode === 'conn-manager') {
+        return false;
+    }
+
     return Boolean(state.connections.schema?.apiSchema?.check);
 };

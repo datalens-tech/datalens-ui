@@ -4,7 +4,7 @@ import type {
     GraphShared,
     Placeholder,
     PlaceholderSettings,
-    ServerSort,
+    ServerChartsConfig,
     Shared,
     VisualizationLayerShared,
 } from 'shared';
@@ -34,7 +34,6 @@ import {
     selectDashboardParameters,
     selectDrillDownLevel,
     selectFilters,
-    selectSort,
     selectSubVisualization,
     selectVisualization,
 } from '../selectors/visualization';
@@ -82,11 +81,10 @@ export const updatePlaceholderSettingsAction = (
     options: {
         placeholder: Placeholder;
         visualization: Shared['visualization'];
-        sort: ServerSort[];
     },
 ) => {
-    return function (dispatch: AppDispatch) {
-        const {placeholder, visualization, sort} = options;
+    return function (dispatch: AppDispatch, getState: () => DatalensGlobalState) {
+        const {placeholder, visualization} = options;
         const updatedPlaceholderSettings: PlaceholderSettings = {};
         const firstFieldInSection = sectionFields[0];
 
@@ -105,10 +103,10 @@ export const updatePlaceholderSettingsAction = (
             updatedPlaceholderSettings.axisFormatMode = SETTINGS.AXIS_FORMAT_MODE.AUTO;
         }
 
+        const chartConfig = getState().wizard.visualization as Partial<ServerChartsConfig>;
         const axisModeSettings = getAxisModePlaceholderSettings({
             placeholder,
-            visualization,
-            sort,
+            chartConfig,
             firstField: firstFieldInSection,
         });
 
@@ -529,21 +527,12 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
 
         const state = getState();
         const visualization = selectSubVisualization(state) as Shared['visualization'];
-        const sort = selectSort(state);
 
         const currentPlaceholder = visualization?.placeholders.find((p) => p.id === placeholderId);
 
         if (!currentPlaceholder) {
             return;
         }
-
-        dispatch(
-            updatePlaceholderSettingsAction(items, options?.item, {
-                placeholder: currentPlaceholder,
-                visualization,
-                sort,
-            }),
-        );
 
         const updatedState = getState();
         const updatedVisualization = selectSubVisualization(updatedState)!;
@@ -560,6 +549,13 @@ export function updateVisualizationPlaceholderItems(args: CommonUpdatePlaceholde
                 visualization: updatedVisualization,
                 placeholder: updatedPlaceholder,
                 items,
+            }),
+        );
+
+        dispatch(
+            updatePlaceholderSettingsAction(items, options?.item, {
+                placeholder: currentPlaceholder,
+                visualization,
             }),
         );
     };

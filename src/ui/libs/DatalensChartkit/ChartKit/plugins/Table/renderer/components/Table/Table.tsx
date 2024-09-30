@@ -79,7 +79,7 @@ export const Table = React.memo<Props>((props: Props) => {
             };
 
             if (column) {
-                const columnId = get(column, 'fieldId', column.id);
+                const columnId = column.id;
                 sortParams._columnId = `_id=${columnId}_name=${column.name}`;
                 sortParams._sortOrder = String(sortOrder === 'desc' ? -1 : 1);
             }
@@ -98,7 +98,7 @@ export const Table = React.memo<Props>((props: Props) => {
         config: config?.drillDown,
     });
 
-    const getCellAdditionStyles = (cell: TableCell, rowIndex: number) => {
+    const getCellAdditionStyles = (cell: TableCell, row: TData) => {
         const commonCell = cell as TableCommonCell;
         const isCellClickable =
             Boolean(canDrillDown && commonCell.drillDownFilterValue) ||
@@ -108,7 +108,7 @@ export const Table = React.memo<Props>((props: Props) => {
         const cursor = isCellClickable ? 'pointer' : undefined;
         const actionParamsCss = getCellCss({
             actionParamsData: actionParams,
-            row: data.rows[rowIndex] as TableCellsRow,
+            row: {cells: row} as TableCellsRow,
             cell,
             head: data.head,
             rows: data.rows || [],
@@ -122,13 +122,13 @@ export const Table = React.memo<Props>((props: Props) => {
         data,
         dimensions: widgetDimensions,
         tableContainerRef,
-        manualSorting: isPaginationEnabled,
+        manualSorting: isPaginationEnabled || Boolean(config?.settings?.externalSort),
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
     });
 
     React.useEffect(() => {
-        if (onReady && prerender) {
+        if (onReady && !prerender) {
             setTimeout(onReady, 0);
         }
     }, [onReady, prerender]);
@@ -138,7 +138,7 @@ export const Table = React.memo<Props>((props: Props) => {
     const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
-        (event: React.MouseEvent, cellData: unknown, rowIndex: number) => {
+        (event: React.MouseEvent, cellData: unknown, rowId: string) => {
             const tableCommonCell = cellData as TableCommonCell;
             if (tableCommonCell?.onClick?.action === 'setParams') {
                 changeParams(tableCommonCell.onClick.args);
@@ -171,11 +171,14 @@ export const Table = React.memo<Props>((props: Props) => {
 
             if (actionParams?.scope) {
                 const metaKey = isMacintosh() ? event.metaKey : event.ctrlKey;
+                const row = body.rows
+                    .find((r) => r.id === rowId)
+                    ?.cells?.map((c) => c.data) as TData;
                 const args: GetCellActionParamsArgs = {
                     actionParamsData: actionParams,
                     rows: data.rows,
                     head: data.head,
-                    row: (data.rows[rowIndex] as TableCellsRow)?.cells as TData,
+                    row,
                     cell: tableCommonCell,
                     metaKey,
                 };
@@ -244,7 +247,7 @@ export const Table = React.memo<Props>((props: Props) => {
                                 style={body.style}
                                 onCellClick={handleCellClick}
                             />
-                            <TableFooter rows={footer.rows} style={body.style} />
+                            <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
                     )}
                 </div>

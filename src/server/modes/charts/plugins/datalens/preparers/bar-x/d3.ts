@@ -5,10 +5,16 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import type {ServerField} from '../../../../../../../shared';
-import {LabelsPositions, PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
+import {
+    AxisMode,
+    LabelsPositions,
+    PlaceholderId,
+    getFakeTitleOrTitle,
+    getXAxisMode,
+} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getAxisType} from '../helpers/axis';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -21,20 +27,21 @@ type OldBarXDataItem = {
 } | null;
 
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {shared, labels, placeholders, disableDefaultSorting = false, sort} = args;
+    const {shared, labels, placeholders, disableDefaultSorting = false, idToDataType} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     const isCategoriesXAxis =
         !xField ||
         getAxisType({
             field: xField,
             settings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
+            axisMode: xAxisMode,
         }) === 'category' ||
         disableDefaultSorting;
 

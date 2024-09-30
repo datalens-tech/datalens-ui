@@ -1,15 +1,16 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import type {ConnectorType} from 'shared';
+import {registry} from 'ui/registry';
 
 import {
     formSchemaSelector,
     getConnectorSchema,
     newConnectionSelector,
     schemaLoadingSelector,
-    setSchema,
+    setInitialState,
 } from '../../store';
 import {FormTitle} from '../FormTitle/FormTitle';
 import {WrappedLoader} from '../WrappedLoader/WrappedLoader';
@@ -39,7 +40,13 @@ export const ConnectorForm = ({type}: Props) => {
 
     React.useEffect(() => {
         return () => {
-            dispatch(setSchema({schema: undefined}));
+            const beforeConnectorFormUnmount = registry.connections.functions.get(
+                'beforeConnectorFormUnmount',
+            );
+            batch(() => {
+                beforeConnectorFormUnmount(dispatch);
+                dispatch(setInitialState());
+            });
         };
     }, [dispatch]);
 

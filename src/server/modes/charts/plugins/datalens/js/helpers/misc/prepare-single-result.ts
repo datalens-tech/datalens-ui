@@ -283,6 +283,7 @@ export default ({
         colorsConfig,
         labels = [],
         tooltips = [],
+        tooltipConfig,
         geopointsConfig,
         sort = [],
     } = shared;
@@ -297,6 +298,7 @@ export default ({
             sort,
             shapes = [],
             shapesConfig = {},
+            tooltipConfig = {},
         } = (visualization as ServerVisualizationLayer).commonPlaceholders);
     }
 
@@ -317,6 +319,7 @@ export default ({
         layerSettings: (visualization as ServerVisualizationLayer).layerSettings,
         labels,
         tooltips,
+        tooltipConfig,
         datasets: datasetsIds,
 
         resultData,

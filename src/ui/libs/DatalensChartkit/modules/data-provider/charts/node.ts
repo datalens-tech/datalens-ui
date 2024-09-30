@@ -10,6 +10,7 @@ import partial from 'lodash/partial';
 import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
+import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -20,10 +21,12 @@ import {
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
     WRAPPED_MARKDOWN_KEY,
+    WRAPPED_MARKUP_KEY,
+    isMarkupItem,
 } from '../../../../../../shared';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import Utils from '../../../../../utils';
+import Utils, {getRenderMarkupToStringFn} from '../../../../../utils';
 import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
@@ -267,7 +270,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             type: loadedType.match(/^[^_]*/)![0],
             params: omit(params, 'name'),
             defaultParams,
-            entryId: id,
+            entryId: id ?? `fake_${getRandomCKId()}`,
             key,
             usedParams,
             sources,
@@ -324,9 +327,15 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
-                unwrapPossibleFunctions(uiSandbox, result.config, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.libraryConfig, uiSandboxOptions);
-                unwrapPossibleFunctions(uiSandbox, result.data, uiSandboxOptions);
+                const unwrapFnArgs = {
+                    entryId: result.entryId,
+                    entryType: loadedType,
+                    sandbox: uiSandbox,
+                    options: uiSandboxOptions,
+                };
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
+                unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
@@ -336,6 +345,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});
+            await unwrapMarkup({config: result.config, data: result.data});
 
             applyChartkitHandlers({
                 config: result.config,
@@ -427,6 +437,49 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
                         const md = value[WRAPPED_MARKDOWN_KEY];
                         if (typeof md === 'string') {
                             set(item, key, renderMarkdown(md));
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            }
+        };
+
+        try {
+            unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'categories', []));
+        } catch (e) {
+            console.error(e);
+        }
+    }
+}
+
+async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data']}) {
+    const {config, data} = args;
+    if (config?.useMarkup) {
+        const renderMarkup = await getRenderMarkupToStringFn();
+        const unwrapItem = (item: unknown) => {
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+
+            if (Array.isArray(item)) {
+                item.forEach((value, index, list) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
+                        const markupItem = value[WRAPPED_MARKUP_KEY];
+                        if (isMarkupItem(markupItem)) {
+                            list[index] = renderMarkup(markupItem);
+                        }
+                    } else {
+                        unwrapItem(value);
+                    }
+                });
+            } else {
+                Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
+                    if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
+                        const markupItem = value[WRAPPED_MARKUP_KEY];
+                        if (isMarkupItem(markupItem)) {
+                            set(item, key, renderMarkup(markupItem));
                         }
                     } else {
                         unwrapItem(value);

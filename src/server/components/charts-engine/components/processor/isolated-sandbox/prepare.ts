@@ -1,10 +1,7 @@
 import {updateParams} from '../paramsUtils';
 
 import {getPrepareApiAdapter} from './interop/charteditor-api';
-import {libsControlV1Interop} from './interop/libs/control-v1';
-import {libsDatalensV3Interop} from './interop/libs/datalens-v3';
-import {libsDatasetV2Interop} from './interop/libs/dataset-v2';
-import {libsQlChartV1Interop} from './interop/libs/ql-chart-v1';
+import {requireShim} from './require-shim';
 import {safeStringify} from './utils';
 
 export const getPrepare = ({noJsonFn, name}: {noJsonFn: boolean; name: string}) => {
@@ -52,35 +49,7 @@ function __resolveParams(params) {
     });
 }
 
-${libsControlV1Interop.prepareAdapter};
-${libsDatalensV3Interop.prepareAdapter};
-${libsQlChartV1Interop.prepareAdapter}
-${libsDatasetV2Interop.prepareAdapter}
-
-function require(name) {
-    const lowerName = name.toLowerCase();
-    if (lowerName === 'libs/datalens/v3') {
-        return datalensV3prepareAdapter;
-    } else if (lowerName === 'libs/control/v1') {
-        if (__modules['bundledLibraries']) {
-            return __modules['bundledLibraries']['dist'].controlModule;
-        } else {
-            return controlV1prepareAdapter;
-        }
-    } else if (lowerName === 'libs/qlchart/v1') {
-        return qlChartV1prepareAdapter;
-    } else if (lowerName === 'libs/dataset/v2') {
-        if (__modules['bundledLibraries']) {
-            return __modules['bundledLibraries']['dist'].datasetModule;
-        } else {
-            return datasetV2prepareAdapter;
-        }
-    } else if (__modules[lowerName]) {
-        return __modules[lowerName];
-    } else {
-        throw new Error(\`Module "\${lowerName}" is not resolved\`);
-    }
-}
+const require = ${requireShim.toString()};
 
 ${getPrepareApiAdapter({noJsonFn})}`;
 };

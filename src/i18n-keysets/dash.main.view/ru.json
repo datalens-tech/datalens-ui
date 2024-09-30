@@ -1,6 +1,7 @@
 {
   "button_edit-panel-chart": "Чарт",
   "button_edit-panel-editor-selector": "Селектор (JS)",
+  "button_edit-panel-image": "Изображение",
   "button_edit-panel-paste": "Вставка",
   "button_edit-panel-selector": "Селектор",
   "button_edit-panel-text": "Текст",
@@ -8,7 +9,6 @@
   "button_links": "Связи",
   "label_details": "Подробнее",
   "label_fixed-collapsed-default": "Скрывать по умолчанию",
-  "label_fixed-show-default": "Показывать по умолчанию",
   "label_loading": "Загрузка",
   "label_pin": "Закрепить",
   "label_unpin": "Открепить",

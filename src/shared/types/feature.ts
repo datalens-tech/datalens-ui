@@ -7,14 +7,11 @@ export enum Feature {
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
-    EnableChartEditor = 'EnableChartEditor',
     EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
-    EnableEditHistory = 'EnableEditHistory',
-    EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
     RevisionsListNoLimit = 'RevisionsListNoLimit',
@@ -61,18 +58,17 @@ export enum Feature {
     UseChartsEngineLogin = 'UseChartsEngineLogin',
     CopyEntriesToWorkbook = 'CopyEntriesToWorkbook',
     QlAutoExecuteMonitoringChart = 'QlAutoExecuteMonitoringChart',
-    EnableFavoritesNameAliases = 'EnableFavoritesNameAliases',
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
+    /** New Table plugin for wizard and QL(flat tables only). */
     NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
+    /** New Table plugin for wizard and QL(pivot tables). */
+    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
     PinnedColumns = 'PinnedColumns',
+    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
-    /** Chart runner for the execution of trusted code in wizard. */
-    WorkerChartBuilder = 'WorkerChartBuilder',
-    /** Dash controls separate runner for the execution of trusted code. */
-    ControlBuilder = 'ControlBuilder',
     /** Enable Isolated VM Sandbox */
     EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
@@ -82,16 +78,8 @@ export enum Feature {
     EnableDashFixedHeader = 'EnableDashFixedHeader',
     /** Use BI handles for getting oauth applications tokens */
     EnableBIOAuth = 'EnableBIOAuth',
-    NewSandbox_1p = 'NewSandbox_1p',
-    NewSandbox_10p = 'NewSandbox_10p',
-    NewSandbox_33p = 'NewSandbox_33p',
-    NewSandbox_50p = 'NewSandbox_50p',
-    NewSandbox_75p = 'NewSandbox_75p',
     NewSandbox_100p = 'NewSandbox_100p',
-    /** Chart runner for the execution of trusted code in ql. */
-    QlChartRunner = 'QlChartRunner',
-    /** Allow markdown in chart fields. */
-    WizardMarkdownFields = 'WizardMarkdownFields',
+    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
 }

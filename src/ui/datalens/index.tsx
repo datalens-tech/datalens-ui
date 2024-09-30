@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import {Route, Switch, Redirect, useLocation} from 'react-router-dom';
 import {useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import coreReducers from 'store/reducers';
 import {getIsAsideHeaderEnabled} from 'components/AsideHeaderAdapter';
 import LocationChange from '../components/LocationChange/LocationChange';
@@ -12,7 +11,6 @@ import DashAndWizardQLPages, {
 } from './pages/DashAndWizardQLPages/DashAndWizardQLPages';
 import {locationChangeHandler} from './helpers';
 import {isEmbeddedMode, isTvMode} from '../utils/embedded';
-import Utils from '../utils';
 import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
@@ -24,11 +22,11 @@ import {
 } from '../../shared';
 
 import AuthPage from './pages/AuthPage/AuthPage';
+import Utils from 'ui/utils';
 
 reducerRegistry.register(coreReducers);
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
-const EditorPage = React.lazy(() => import('./pages/EditorPage/EditorPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));
 const ConnectionsPage = React.lazy(
     () =>
@@ -103,21 +101,12 @@ const DatalensPageView = (props: any) => {
                         path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                         component={DatasetPage}
                     />
-                    {Utils.isEnabledFeature(Feature.EnableChartEditor) && (
+                    {/* {Utils.isEnabledFeature(Feature.EnableChartEditor) && (
                         <Route
                             path={['/editor', '/workbooks/:workbookId/editor']}
                             component={EditorPage}
                         />
-                    )}
-                    <Route path="/preview" component={PreviewPage} />
-                    <Route
-                        path={[
-                            '/connections/:id',
-                            '/workbooks/:workbookId/connections/new/:type',
-                            '/workbooks/:workbookId/connections/new',
-                        ]}
-                        component={ConnectionsPage}
-                    />
+                    )} */}
 
                     <Route path="/preview" component={PreviewPage} />
                     <Route

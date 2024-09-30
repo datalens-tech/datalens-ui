@@ -7,6 +7,7 @@
   "action_create-connection": "Create connection",
   "action_create-dashboard": "Create dashboard",
   "action_create-dataset": "Create dataset",
+  "action_create-report": "Create report",
   "action_delete": "Delete",
   "action_duplicate": "Duplicate",
   "action_edit": "Edit",
@@ -35,6 +36,7 @@
   "menu_dataset": "Dataset",
   "menu_editor-chart": "Editor chart",
   "menu_ql-chart": "QL Chart",
+  "menu_report": "Report",
   "menu_wizard-chart": "Wizard chart",
   "no_objects": "Empty",
   "section_delete-entry": "Are you sure you want to delete \"{{entryName}}\"?",
@@ -42,5 +44,6 @@
   "title_connections": "Connections",
   "title_dashboards": "Dashboards",
   "title_datasets": "Datasets",
+  "title_reports": "Reports",
   "toast_duplicate-failed": "An error occurred while duplicating"
 }

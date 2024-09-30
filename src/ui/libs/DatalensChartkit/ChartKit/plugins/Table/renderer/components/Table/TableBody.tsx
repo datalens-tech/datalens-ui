@@ -10,20 +10,14 @@ const b = block('dl-table');
 type Props = {
     rows: BodyRowViewData[];
     style?: React.CSSProperties;
-    onCellClick?: (event: React.MouseEvent, cell: unknown, rowIndex: number) => void;
+    onCellClick?: (event: React.MouseEvent, cell: unknown, rowId: string) => void;
 };
 
 export const TableBody = React.memo<Props>((props: Props) => {
     const {rows, style, onCellClick} = props;
 
     return (
-        <tbody
-            className={b('body')}
-            style={{
-                ...style,
-                transform: `translateY(${rows[0]?.y}px)`,
-            }}
-        >
+        <tbody className={b('body')} style={style}>
             {rows.map((row) => {
                 return (
                     <tr data-index={row.index} key={row.id} className={b('tr')} ref={row.ref}>
@@ -45,10 +39,11 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                         gridColumn: cell.colSpan
                                             ? `span ${cell.colSpan}`
                                             : undefined,
+                                        maxHeight: cell.maxHeight,
                                     }}
                                     onClick={(event) => {
                                         if (onCellClick) {
-                                            onCellClick(event, cell.data, row.index);
+                                            onCellClick(event, cell.data, row.id);
                                         }
                                     }}
                                     rowSpan={cell.rowSpan}

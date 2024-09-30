@@ -14,6 +14,8 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
             EntryScope.Widget,
             EntryScope.Dataset,
             EntryScope.Connection,
+
+            EntryScope.Report,
         ]);
 
         const workbookEntries = entries
@@ -33,6 +35,7 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
             const connChunk: ChunkItem[] = [];
             const datasetChunk: ChunkItem[] = [];
             const widgetChunk: ChunkItem[] = [];
+            const reportChunk: ChunkItem[] = [];
 
             workbookEntries.forEach((chunkItem) => {
                 const item = {
@@ -54,10 +57,13 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
                     case EntryScope.Widget:
                         widgetChunk.push(item);
                         break;
+                    case EntryScope.Report:
+                        reportChunk.push(item);
+                        break;
                 }
             });
 
-            return [dashChunk, connChunk, datasetChunk, widgetChunk];
+            return [dashChunk, connChunk, datasetChunk, widgetChunk, reportChunk];
         }
     }, [entries]);
 

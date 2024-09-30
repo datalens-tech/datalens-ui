@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useDispatch} from 'react-redux';
-import {Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch} from 'react-router-dom';
 
 import type {AppDispatch} from '../../../../store';
 import {CollectionPage} from '../../../collections/components/CollectionPage';
@@ -84,6 +84,12 @@ export const CollectionsNavigationApp = () => {
                         component={CollectionPage}
                     />
                     <Route exact path={`${WORKBOOKS_PATH}/:workbookId`} component={WorkbookPage} />
+                    <Route
+                        path="*"
+                        component={() => {
+                            return <Redirect to="/" />;
+                        }}
+                    />
                 </Switch>
             </CollectionsNavigationLayout>
         </LayoutContext.Provider>

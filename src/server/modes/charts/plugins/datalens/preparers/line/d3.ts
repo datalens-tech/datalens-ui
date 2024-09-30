@@ -5,29 +5,30 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import type {ServerField} from '../../../../../../../shared';
-import {PlaceholderId} from '../../../../../../../shared';
+import {AxisMode, PlaceholderId, getXAxisMode} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getAxisType} from '../helpers/axis';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareLineData} from './prepare-line-data';
 
 export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {labels, placeholders, disableDefaultSorting = false, shared, sort} = args;
+    const {labels, placeholders, disableDefaultSorting = false, shared, idToDataType} = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yFields = yPlaceholder?.items || [];
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     const isCategoriesXAxis =
         !xField ||
         getAxisType({
             field: xField,
             settings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
+            axisMode: xAxisMode,
         }) === 'category' ||
         disableDefaultSorting;
 

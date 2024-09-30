@@ -1,7 +1,6 @@
 import type {Field, Placeholder, Shared} from 'shared';
 import {
     DATASET_FIELD_TYPES,
-    isMarkupField,
     isMeasureField,
     isMeasureName,
     isMeasureNameOrValue,
@@ -130,8 +129,5 @@ export function onLineChartDesignItemsChange({
 }
 
 export function linearCheckLabels(item: Field) {
-    return (
-        (ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item)) &&
-        !isMarkupField(item)
-    );
+    return ITEM_TYPES.DIMENSIONS_AND_MEASURES.has(item.type) || isMeasureValue(item);
 }

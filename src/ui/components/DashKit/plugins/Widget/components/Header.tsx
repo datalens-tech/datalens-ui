@@ -8,7 +8,6 @@ import block from 'bem-cn-lite';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from 'ui/components/Widgets/Chart/helpers/helpers';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
-import {ShareButton} from 'ui/units/dash/components/ShareButton/ShareButton';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
@@ -24,7 +23,6 @@ type HeaderProps = {
     onFullscreenClick: () => void;
     editMode: boolean;
     hideTabs: boolean;
-    withShareWidget: boolean;
     tabsItems: Array<TabItem<{}>>;
     currentTab: CurrentTab;
     onSelectTab: (param: string) => void;
@@ -40,7 +38,6 @@ export const Header = (props: HeaderProps) => {
         onFullscreenClick,
         editMode,
         hideTabs,
-        withShareWidget,
         tabsItems,
         currentTab,
         onSelectTab,
@@ -95,17 +92,6 @@ export const Header = (props: HeaderProps) => {
                     </span>
                 )}
                 {isFullscreen ? <div className={b('title')}>{currentTab.title}</div> : renderTabs()}
-                {withShareWidget && (
-                    <div className={b('share-widget')}>
-                        <ShareButton
-                            enablePopover={true}
-                            entityId={widgetId}
-                            popoverText={currentTab.title}
-                            popoverTitle={currentTab.title}
-                            iconSize={16}
-                        />
-                    </div>
-                )}
             </div>
         </React.Fragment>
     );

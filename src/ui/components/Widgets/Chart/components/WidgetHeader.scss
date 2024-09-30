@@ -11,12 +11,6 @@
         left: 14px;
     }
 
-    &__share-widget {
-        position: absolute;
-        top: 18px;
-        right: 50px;
-    }
-
     &__icons {
         position: absolute;
         display: flex;
@@ -62,6 +56,10 @@
         display: flex;
         padding: 0 65px 0 16px;
         font-size: 15px;
+
+        &_no-controls {
+            padding: 0 35px 0 16px;
+        }
 
         &_edit-mode.dl-draggable-handle-element {
             cursor: move;
@@ -111,12 +109,6 @@
         #{$class}__tabs {
             padding-left: 45px;
             padding-right: 50px;
-        }
-    }
-
-    &_with-shares {
-        #{$class}__title {
-            padding-right: 80px;
         }
     }
 

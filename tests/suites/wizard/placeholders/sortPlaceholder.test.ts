@@ -1,12 +1,12 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {SectionVisualizationAddItemQa} from '../../../../src/shared';
+import {AddFieldQA} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - section "Sorting"', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
@@ -18,20 +18,6 @@ datalensTest.describe('Wizard - section "Sorting"', () => {
     });
 
     datalensTest(
-        'It is not possible to add a field from the dataset while there is no set field in the "X" section',
-        async ({page}: {page: Page}) => {
-            const wizardPage = new WizardPage({page});
-            await waitForCondition(async () => {
-                const text =
-                    await wizardPage.sectionVisualization.getPlaceholderAddItemTooltipValue(
-                        PlaceholderName.Sort,
-                    );
-                return text === SectionVisualizationAddItemQa.NoFieldsErrorTooltip;
-            });
-        },
-    );
-
-    datalensTest(
         'From the available values, the placeholder contains the same value as it lies in the "X" section',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
@@ -39,11 +25,14 @@ datalensTest.describe('Wizard - section "Sorting"', () => {
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, xAxisValue);
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'Profit');
 
-            const itemsList = await wizardPage.sectionVisualization.getAddFieldItemsList(
-                PlaceholderName.Sort,
-            );
+            const placeholder = wizardPage.page.locator(slct(PlaceholderName.Sort));
+            await placeholder.hover();
+            await placeholder.locator(slct(AddFieldQA.AddFieldButton)).click();
 
-            expect(itemsList.join()).toEqual(xAxisValue);
+            const fieldItems = wizardPage.page.locator(slct(AddFieldQA.Option), {
+                hasNot: wizardPage.page.locator(slct(AddFieldQA.MeasureFieldIcon)),
+            });
+            await expect(fieldItems).toHaveText([xAxisValue]);
         },
     );
 });

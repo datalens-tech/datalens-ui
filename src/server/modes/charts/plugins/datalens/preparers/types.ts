@@ -13,6 +13,8 @@ import type {
     ServerShapesConfig,
     ServerSort,
     ServerTooltip,
+    ServerTooltipConfig,
+    WrappedMarkup,
 } from '../../../../../../shared';
 import type {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
 import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
@@ -33,6 +35,7 @@ export type PrepareFunctionArgs = {
     colorsConfig: ChartColorsConfig;
     geopointsConfig?: ServerPointSizeConfig;
     tooltips: ServerTooltip[];
+    tooltipConfig?: ServerTooltipConfig;
     labels: ServerLabel[];
     idToDataType: Record<string, DATASET_FIELD_TYPES>;
 
@@ -91,6 +94,6 @@ export type PiePoint = {
     color?: string;
     colorGuid?: string;
     colorValue?: string | number;
-    label?: string | number | null | WrappedMarkdown;
+    label?: string | number | null | WrappedMarkdown | WrappedMarkup;
     custom?: object;
 };

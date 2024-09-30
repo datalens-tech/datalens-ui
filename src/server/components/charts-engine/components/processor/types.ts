@@ -76,6 +76,10 @@ export type ProcessorSuccessResponse = {
     highchartsConfig?: string;
     comments?: CommentsFetcherFetchResult;
     publicAuthor?: EntryPublicAuthor;
+    id?: string;
+    _confStorageConfig?: object;
+    key?: string;
+    type?: string;
 };
 
 export type ProcessorFiles =
@@ -117,7 +121,7 @@ export type RuntimeMetadata = {
     exportFilename?: string;
     dataSourcesInfos?: unknown;
     sideMarkdown?: string;
-    extra: {
+    extra?: {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;
         exportFilename?: string;

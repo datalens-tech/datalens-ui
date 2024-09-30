@@ -7,8 +7,15 @@ import type {
     ServerTooltip,
     StringParams,
     VisualizationLayerShared,
+    WrappedMarkdown,
 } from '../../../../../../shared';
-import {DATASET_FIELD_TYPES, MINIMUM_FRACTION_DIGITS} from '../../../../../../shared';
+import {
+    DATASET_FIELD_TYPES,
+    MINIMUM_FRACTION_DIGITS,
+    WRAPPED_MARKDOWN_KEY,
+    getFakeTitleOrTitle,
+    isMarkdownField,
+} from '../../../../../../shared';
 import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import type {Coordinate} from '../utils/geo-helpers';
@@ -29,6 +36,13 @@ import {
 
 import {addActionParamValue} from './helpers/action-params';
 import type {PrepareFunctionArgs} from './types';
+
+type GeoPolygonTooltipData = {
+    text?: string;
+    color?: string;
+    key?: string;
+    value?: MarkupItem;
+} & Partial<WrappedMarkdown>;
 
 type GeopolygonConfig = {
     geometry: {
@@ -51,12 +65,7 @@ type GeopolygonConfig = {
     properties: {
         rawText?: boolean;
         colorIndex?: number | null;
-        data?: {
-            text?: string;
-            color?: string;
-            key?: string;
-            value?: MarkupItem;
-        }[];
+        data?: GeoPolygonTooltipData[];
     };
 };
 
@@ -127,6 +136,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         colors,
         colorsConfig,
         tooltips,
+        tooltipConfig,
         placeholders,
         resultData: {data, order},
         idToTitle,
@@ -227,12 +237,22 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             formatting: tooltip.formatting,
             value: text,
         });
-        const tooltipText = `${tooltip.fakeTitle || tooltip.title}: ${formattedText}`;
-        let markupData: {key: string; value: MarkupItem} | undefined;
+        const shouldUseFieldTitle = tooltipConfig?.fieldTitle !== 'off';
+        const itemTitle = shouldUseFieldTitle ? getFakeTitleOrTitle(tooltip as ServerField) : '';
+        const tooltipText = itemTitle ? `${itemTitle}: ${formattedText}` : formattedText;
+        const isMarkupField = tooltip?.data_type === DATASET_FIELD_TYPES.MARKUP;
 
-        if (tooltip?.data_type === DATASET_FIELD_TYPES.MARKUP) {
+        if (isMarkupField || isMarkdownField(tooltip)) {
             polygon.properties.rawText = true;
-            markupData = {key: tooltip.fakeTitle || tooltip.title, value: formattedText};
+        }
+
+        let tooltipData;
+        if (isMarkupField) {
+            tooltipData = {key: itemTitle, value: formattedText};
+        } else if (tooltip?.isMarkdown) {
+            tooltipData = {[WRAPPED_MARKDOWN_KEY]: tooltipText};
+        } else {
+            tooltipData = {text: tooltipText};
         }
 
         if (gradientMode) {
@@ -246,7 +266,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                 )
             ) {
                 polygon.properties.data[tooltipIndex] = {
-                    ...(markupData ? {...markupData} : {text: tooltipText}),
+                    ...tooltipData,
                 };
             }
         } else {
@@ -255,7 +275,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
             }
 
             polygon.properties.data[tooltipIndex] = {
-                ...(markupData ? {...markupData} : {text: tooltipText}),
+                ...tooltipData,
             };
         }
     };
@@ -354,7 +374,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
                     });
                 });
 
-                if (tooltipIndex === 0) {
+                if (tooltipIndex === 0 && tooltipConfig?.color !== 'off') {
                     polygons[0]!.properties!.data![0].color =
                         polygons[0].options.iconColor || DEFAULT_COLOR;
                 }

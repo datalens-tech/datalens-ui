@@ -8,6 +8,7 @@ export const ITEM_TYPE = {
     WIDGET: DashTabItemType.Widget,
     CONTROL: DashTabItemType.Control,
     GROUP_CONTROL: DashTabItemType.GroupControl,
+    IMAGE: DashTabItemType.Image,
 };
 
 export const DIALOG_TYPE = Object.assign(

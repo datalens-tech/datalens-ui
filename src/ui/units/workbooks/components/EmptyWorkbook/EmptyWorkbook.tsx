@@ -5,7 +5,9 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {DL} from 'ui/constants/common';
+import {registry} from 'ui/registry';
 
 import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import type {WorkbookEntriesFilters} from '../../types';
@@ -24,11 +26,13 @@ type Props = {
 };
 
 export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props) => {
+    const {checkWbCreateEntryButtonVisibility, getWorkbookEmptyStateTexts} =
+        registry.workbooks.functions.getAll();
     const isFiltersChanged = Boolean(filters.filterString);
 
     const handleClearFilters = () => onChangeFilters({filterString: undefined});
 
-    const {title, description} = getText(scope);
+    const {title, description} = getWorkbookEmptyStateTexts(scope);
 
     const renderClearFiltersAction = () => {
         return (
@@ -39,7 +43,7 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
     };
 
     const renderCreateEntryAction = () => {
-        if (workbook.permissions.update && !DL.IS_MOBILE) {
+        if (checkWbCreateEntryButtonVisibility(workbook, scope)) {
             return <CreateEntry className={b('controls')} scope={scope || EntryScope.Connection} />;
         }
         return null;
@@ -50,7 +54,12 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
                 <PlaceholderIllustration
                     name="notFound"
                     title={i18n('section_not-found')}
-                    description={i18n('label_not-found-description')}
+                    description={
+                        <YfmWrapper
+                            content={i18n('label_not-found-description')}
+                            setByInnerHtml={true}
+                        />
+                    }
                     renderAction={renderClearFiltersAction}
                 />
             </div>
@@ -62,43 +71,13 @@ export const EmptyWorkbook = ({workbook, filters, onChangeFilters, scope}: Props
             <PlaceholderIllustration
                 name="template"
                 title={title}
-                description={workbook.permissions.update ? description : undefined}
+                description={
+                    workbook.permissions.update ? (
+                        <YfmWrapper content={description} setByInnerHtml={true} />
+                    ) : undefined
+                }
                 renderAction={renderCreateEntryAction}
             />
         </div>
     );
 };
-
-function getText(scope: EntryScope | undefined) {
-    let title: string;
-    let description = '';
-
-    switch (scope) {
-        case EntryScope.Dash: {
-            title = i18n('section_empty-scope-dashboard');
-
-            break;
-        }
-        case EntryScope.Widget: {
-            title = i18n('section_empty-scope-widget');
-
-            break;
-        }
-        case EntryScope.Dataset: {
-            title = i18n('section_empty-scope-dataset');
-
-            break;
-        }
-        case EntryScope.Connection: {
-            title = i18n('section_empty-scope-connection');
-
-            break;
-        }
-        default: {
-            title = i18n('section_empty-scope-all');
-            description = i18n('label_empty-scope-all-description');
-        }
-    }
-
-    return {title, description};
-}

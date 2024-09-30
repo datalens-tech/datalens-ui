@@ -43,13 +43,20 @@ import {
     ControlQA,
     DashEntryQa,
     DashKitOverlayMenuQa,
+    DashTabItemType,
     Feature,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
+import {
+    FIXED_GROUP_CONTAINER_ID,
+    FIXED_GROUP_HEADER_ID,
+    FIXED_HEADER_GROUP_COLS,
+    FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+} from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -90,8 +97,10 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
+    selectIsNewRelations,
     selectSettings,
     selectShowTableOfContent,
+    selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
@@ -109,6 +118,7 @@ const b = block('dash-body');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type OwnProps = {
+    isPublicMode?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -147,6 +157,8 @@ type OverlayControlItem = OverlayControls[keyof OverlayControls][0];
 
 type MemoContext = {
     fixedHeaderCollapsed?: boolean;
+    isEmbeddedMode?: boolean;
+    isPublicMode?: boolean;
     workbookId?: string | null;
     getPreparedCopyItemOptions?: (
         itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
@@ -154,16 +166,11 @@ type MemoContext = {
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
-const FIXED_HEADER_GROUP_COLS = 35;
-const FIXED_HEADER_GROUP_LINE_MAX_ROWS = 2;
-
 const GROUPS_WEIGHT = {
     [FIXED_GROUP_HEADER_ID]: 2,
     [FIXED_GROUP_CONTAINER_ID]: 1,
     [DEFAULT_GROUP]: 0,
 } as const;
-
-const DashKit = getConfiguredDashKit();
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
@@ -456,7 +463,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (movedItem) {
             this.props.setCurrentTabData({
                 ...tabDataConfig,
-                layout: GravityDashkit.reflowLayout(movedItem, newLayout, this.groups),
+                layout: GravityDashkit.reflowLayout({
+                    newLayoutItem: movedItem,
+                    layout: newLayout,
+                    groups: this.groups,
+                }),
             });
         }
     };
@@ -548,19 +559,20 @@ class Body extends React.PureComponent<BodyProps> {
                         </Button>
                     )}
                     items={[
-                        config.settings?.fixedHeaderCollapsedDefault
-                            ? {
-                                  action: this.toggleDefaultCollapsedState,
-                                  text: i18n('dash.main.view', 'label_fixed-show-default'),
-                                  iconStart: <Icon data={Square} />,
-                                  theme: 'normal',
-                              }
-                            : {
-                                  action: this.toggleDefaultCollapsedState,
-                                  text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
-                                  iconStart: <Icon data={SquareCheck} />,
-                                  theme: 'normal',
-                              },
+                        {
+                            action: this.toggleDefaultCollapsedState,
+                            text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
+                            iconStart: (
+                                <Icon
+                                    data={
+                                        config.settings?.fixedHeaderCollapsedDefault
+                                            ? SquareCheck
+                                            : Square
+                                    }
+                                />
+                            ),
+                            theme: 'normal',
+                        },
                         {
                             action: this.unpinAllElements,
                             text: i18n('dash.main.view', 'label_unpin-all'),
@@ -598,7 +610,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
-        const {fixedHeaderCollapsed = false} = params.context;
+        const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
             <FixedHeaderControls
@@ -607,6 +619,8 @@ class Body extends React.PureComponent<BodyProps> {
                 isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
                 controls={this.renderFixedControls(fixedHeaderCollapsed, hasFixedContainerElements)}
+                isEmbedded={isEmbeddedMode}
+                isPublic={isPublicMode}
             >
                 {children}
             </FixedHeaderControls>
@@ -624,7 +638,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
-        const {fixedHeaderCollapsed = false} = params.context;
+        const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
             <FixedHeaderContainer
@@ -632,6 +646,8 @@ class Body extends React.PureComponent<BodyProps> {
                 key={`${id}_${this.props.tabId}`}
                 isCollapsed={fixedHeaderCollapsed}
                 editMode={params.editMode}
+                isEmbedded={isEmbeddedMode}
+                isPublic={isPublicMode}
             >
                 {children}
             </FixedHeaderContainer>
@@ -653,6 +669,9 @@ class Body extends React.PureComponent<BodyProps> {
             const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
                     workbookId: this.props.workbookId ?? null,
+                    fromScope: this.props.entry.scope,
+                    targetEntryId: this.props.entryId,
+                    targetDashTabId: this.props.tabId,
                 });
             };
 
@@ -661,6 +680,8 @@ class Body extends React.PureComponent<BodyProps> {
                 getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
                 fixedHeaderCollapsed: isCollapsed,
+                isEmbeddedMode: isEmbeddedMode(),
+                isPublicMode: Boolean(this.props.isPublicMode),
             };
         }
 
@@ -804,6 +825,7 @@ class Body extends React.PureComponent<BodyProps> {
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
+        const DashKit = getConfiguredDashKit();
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
@@ -832,6 +854,8 @@ class Body extends React.PureComponent<BodyProps> {
                 globalParams={globalParams}
                 overlayControls={this.getOverlayControls()}
                 overlayMenuItems={this.getOverlayMenu()}
+                skipReload={this.props.skipReload}
+                isNewRelations={this.props.isNewRelations}
             />
         );
     };
@@ -932,9 +956,10 @@ class Body extends React.PureComponent<BodyProps> {
         const showEditActionPanel = mode === Mode.Edit;
 
         const content = (
-            <div className={b('content-wrapper')}>
+            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE})}>
                 <div
                     className={b('content-container', {
+                        mobile: DL.IS_MOBILE,
                         'no-title':
                             settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
                         'no-title-with-tabs':
@@ -975,6 +1000,7 @@ class Body extends React.PureComponent<BodyProps> {
                                     copiedData: this.state.hasCopyInBuffer,
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
+                                    filterItem: (item) => item.id === DashTabItemType.Image,
                                 })}
                                 className={b('edit-panel', {
                                     'aside-opened': isSidebarOpened,
@@ -1009,6 +1035,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
+    skipReload: selectSkipReload(state),
+    isNewRelations: selectIsNewRelations(state),
 });
 
 const mapDispatchToProps = {

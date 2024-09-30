@@ -1,6 +1,7 @@
 :root {
     --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
+    --dl-table-header-row-height: 28px;
     --dl-table-row-height: 30px;
     --dl-table-cell-horizontal-padding: 10px;
     --dl-table-cell-vertical-padding: 5px;
@@ -84,6 +85,7 @@
         &_sortable {
             position: relative;
             padding-right: var(--dl-table-sort-icon-space);
+            height: fit-content;
         }
     }
 
@@ -131,6 +133,7 @@
     &__header &__tr:first-child {
         th {
             border-top: 1px solid var(--dl-table-border-color);
+            min-height: var(--dl-table-header-row-height);
         }
     }
 
@@ -156,7 +159,7 @@
     }
 
     &__body &__tr {
-        min-height: var(--dl-table-row-height);
+        height: var(--dl-table-row-height);
         td {
             min-height: var(--dl-table-row-height);
         }
@@ -174,11 +177,12 @@
 
     &__footer {
         border-left: 1px solid var(--dl-table-border-color);
+        position: relative;
+        z-index: 0;
     }
 
     &__footer &__td {
         min-height: var(--dl-table-row-height);
-        overflow: hidden;
         padding: 0;
     }
 
@@ -192,7 +196,6 @@
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
-        background-color: var(--dl-table-footer-bg-color);
     }
 
     &__footer .chartkit-table-bar {
@@ -205,16 +208,12 @@
         left: 0;
         background: var(--dl-table-body-bg-color);
         position: sticky;
+        z-index: 1;
 
         @include stickyCellBg();
         &:before {
             border-bottom: 1px solid var(--dl-table-border-color);
-        }
-    }
-
-    &__header &__th {
-        &_pinned {
-            z-index: 1;
+            border-left: 1px solid var(--dl-table-border-color);
         }
     }
 

@@ -3,14 +3,15 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
-import type {EntryRowProps} from 'ui/components/EntryRow/EntryRow';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 import {Switch} from '@gravity-ui/uikit';
+
+import type {RowEntryData} from '../EntryRow/EntryRow';
 
 import './EntitiesList.scss';
 
 type EntitiesListProps = {
-    entities: EntryRowProps['entry'][];
+    entities: RowEntryData[];
     hideTitle?: boolean;
     updatedEntities?: Record<string, boolean>;
     setUpdatedEntities?: any;

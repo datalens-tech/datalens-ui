@@ -140,17 +140,9 @@ export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
     };
 }
 
-type UpdateWizardWidgetAndDoActionArgs = {
-    updateWizardWidgetArguments: UpdateWizardWidgetArgs;
-    actionAfterReceiveWidgetUpdate: () => void;
-};
-
-export function updateWizardWidgetAndDoAction({
-    updateWizardWidgetArguments,
-    actionAfterReceiveWidgetUpdate,
-}: UpdateWizardWidgetAndDoActionArgs) {
+export function updateWizardWidgetAndUpdateConfig(args: UpdateWizardWidgetArgs) {
     return async function (dispatch: WizardDispatch) {
-        await dispatch(updateWizardWidget(updateWizardWidgetArguments));
+        await dispatch(updateWizardWidget(args));
 
         dispatch(
             updateClientChartsConfig({
@@ -158,8 +150,6 @@ export function updateWizardWidgetAndDoAction({
                 withoutRerender: true,
             }),
         );
-
-        actionAfterReceiveWidgetUpdate();
     };
 }
 

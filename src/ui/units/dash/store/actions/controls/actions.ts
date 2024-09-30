@@ -13,7 +13,11 @@ import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../constants/dialogs';
 import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
-import {selectOpenedItem, selectOpenedItemData} from '../../selectors/dashTypedSelectors';
+import {
+    selectCurrentTabId,
+    selectOpenedItem,
+    selectOpenedItemData,
+} from '../../selectors/dashTypedSelectors';
 import type {SetSelectorDialogItemArgs} from '../dashTyped';
 import {setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
@@ -74,9 +78,10 @@ export const copyControlToStorage = (controlIndex: number) => {
         const {
             selectorsGroup,
             activeSelectorIndex,
-            entry: {workbookId},
+            entry: {workbookId, scope, entryId},
         } = state.dash;
         const openedItem = selectOpenedItem(state);
+        const tabId = selectCurrentTabId(state);
 
         const validation = getControlValidation(selectorsGroup.group[controlIndex]);
 
@@ -105,6 +110,7 @@ export const copyControlToStorage = (controlIndex: number) => {
         const selectorToCopy = selectorsGroup.group[controlIndex];
 
         const copiedItem = {
+            id: selectorToCopy.id,
             title: selectorToCopy.title,
             sourceType: selectorToCopy.sourceType,
             source: getItemDataSource(selectorToCopy) as DashTabItemControlData['source'],
@@ -124,10 +130,14 @@ export const copyControlToStorage = (controlIndex: number) => {
             defaults: copiedItem.defaults,
             namespace: copiedItem.namespace,
             layout: DEFAULT_CONTROL_LAYOUT,
+            targetId: selectorToCopy.id,
         };
 
         const preparedOptions = getPreparedCopyItemOptions(options, null, {
             workbookId: workbookId ?? null,
+            fromScope: scope,
+            targetDashTabId: tabId,
+            targetEntryId: entryId,
         });
 
         localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));

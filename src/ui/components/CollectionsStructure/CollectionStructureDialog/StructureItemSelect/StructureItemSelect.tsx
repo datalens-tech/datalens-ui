@@ -90,7 +90,12 @@ export const StructureItemSelect = React.memo<Props>(
         }, [collectionId, getStructureItemsRecursively, nextPageToken, pageSize]);
 
         return (
-            <div className={b({disabled})}>
+            <div
+                className={b({
+                    disabled,
+                    'denied-and-empty': !isSelectionAllowed && !items.length,
+                })}
+            >
                 {contentIsLoading && items.length === 0 ? (
                     <div className={b('main-loader')}>
                         <SmartLoader size="m" showAfter={0} />
@@ -104,13 +109,13 @@ export const StructureItemSelect = React.memo<Props>(
                             />
                         </div>
                         {!isSelectionAllowed && (
-                            <div className={b('move-denied-wrapper')}>
+                            <div className={b('denied-message-wrapper')}>
                                 <Card theme="info" type="container" view="filled">
-                                    <div className={b('move-denied')}>
-                                        <div className={b('move-denied-icon')}>
+                                    <div className={b('denied-message')}>
+                                        <div className={b('denied-message-icon')}>
                                             <Icon data={infoIcon} size={15} />
                                         </div>
-                                        <div className={b('move-denied-text')}>
+                                        <div className={b('denied-message-text')}>
                                             {operationDeniedMessage}
                                         </div>
                                     </div>

@@ -6,10 +6,11 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {selectTooltips} from 'units/wizard/selectors/visualization';
 
 import {updateTooltips} from '../../../../../actions/placeholder';
 import {updatePreviewAndClientChartsConfig} from '../../../../../actions/preview';
+import {applyTooltipSettings, openTooltipSettingsDialog} from '../../../../../actions/tooltip';
+import {selectTooltipConfig, selectTooltips} from '../../../../../selectors/visualization';
 import PlaceholderComponent from '../Placeholder/Placeholder';
 import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 
@@ -21,6 +22,8 @@ type Props = CommonPlaceholderProps & StateProps & DispatchProps;
 class TooltipsPlaceholder extends React.Component<Props> {
     render() {
         const {addFieldItems, tooltips, wrapTo, onBeforeRemoveItem, datasetError} = this.props;
+        const hasSettings = tooltips?.length > 0;
+
         return (
             <PlaceholderComponent
                 key="tooltips"
@@ -31,7 +34,8 @@ class TooltipsPlaceholder extends React.Component<Props> {
                 checkAllowed={this.checkAllowedTooltips}
                 onUpdate={this.onUpdate}
                 title="section_tooltips"
-                hasSettings={false}
+                hasSettings={hasSettings}
+                onActionIconClick={this.handleActionIconClick}
                 wrapTo={wrapTo}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 disabled={Boolean(datasetError)}
@@ -40,6 +44,20 @@ class TooltipsPlaceholder extends React.Component<Props> {
             />
         );
     }
+
+    private handleActionIconClick = () => {
+        const tooltipConfig = this.props.tooltipConfig;
+        this.props.openTooltipSettingsDialog({
+            tooltipConfig,
+            onApply: (config) => {
+                this.props.applyTooltipSettings(config);
+
+                if (this.props.onUpdate) {
+                    this.props.onUpdate();
+                }
+            },
+        });
+    };
 
     private onUpdate = (items: Field[]) => {
         this.props.updateTooltips({items});
@@ -64,6 +82,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
         {
             updateTooltips,
             updatePreviewAndClientChartsConfig,
+            openTooltipSettingsDialog,
+            applyTooltipSettings,
         },
         dispatch,
     );
@@ -72,6 +92,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         tooltips: selectTooltips(state),
+        tooltipConfig: selectTooltipConfig(state),
     };
 };
 

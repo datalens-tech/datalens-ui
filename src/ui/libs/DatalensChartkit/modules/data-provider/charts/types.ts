@@ -1,6 +1,6 @@
 import type {IncomingHttpHeaders} from 'http';
 
-import type {Highcharts, HighchartsComment} from '@gravity-ui/chartkit/highcharts';
+import type {HighchartsComment} from '@gravity-ui/chartkit/highcharts';
 import type {AxiosRequestConfig} from 'axios';
 import type {
     ChartsInsightsItem,
@@ -10,6 +10,7 @@ import type {
     DatasetFieldType,
     EntryPublicAuthor,
     StringParams,
+    Timings,
     WorkbookId,
 } from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -21,7 +22,6 @@ import type {
     MarkdownWidget,
     MarkupWidget,
     TableWidgetData,
-    Widget,
     WithControls,
 } from '../../../types';
 
@@ -39,28 +39,6 @@ export interface Settings {
     includeUnresolvedParams?: boolean;
 }
 
-export interface ChartsStats extends Timings {
-    url: string;
-    requestId: string;
-    groupId: string | null;
-    scope: 'dash' | 'preview' | 'snapter' | null;
-    entryId: string;
-    query: string;
-    type: Widget['type'];
-    // type: 'graph' | 'table
-    widgetRendering: number | null;
-    yandexMapAPIWaiting?: number | null;
-    sourcesCount: number;
-    // type: 'graph'
-    graphType: Highcharts.SeriesOptionsType['type'] | null;
-    mixedGraphType: 0 | 1 | null;
-    pointsCount: number | null;
-    seriesCount: number | null;
-    // type: 'table
-    columnsCount: number | null;
-    rowsCount: number | null;
-}
-
 export type SourcesConfig = Record<
     string,
     {
@@ -68,12 +46,6 @@ export type SourcesConfig = Record<
         description: {title: string};
     }
 >;
-
-export interface Timings {
-    configResolving: number | null;
-    dataFetching: number | null;
-    jsExecution: number | null;
-}
 
 interface ConfigNodeBase {
     type: string;

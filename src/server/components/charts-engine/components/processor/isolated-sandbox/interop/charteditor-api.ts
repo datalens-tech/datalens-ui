@@ -13,7 +13,7 @@ import {
 export type ChartEditorGetTranslation = (
     keyset: string,
     key: string,
-    getTranslationParams?: string,
+    params?: Record<string, string | number | string[]>,
 ) => string;
 export type ChartEditorGetSharedData = () => {
     [key: string]: object;
@@ -32,9 +32,6 @@ export type ChartEditorGetWidgetConfig = () => string;
 export type ChartEditorGetActionParams = () => string;
 export type ChartEditorWrapFnWrappedFnKey = string;
 export type ChartEditorWrapHtmlWrappedHtmlKey = string;
-export type ChartEditorGetSortParams = string;
-export type ChartEditorCurrentPage = number;
-export type ChartEditorUpdateParams = (params: string) => undefined;
 export type ChartEditorUpdateActionParams = (params: string) => undefined;
 export type ChartEditorGetLoadedData = () => string;
 export type ChartEditorGetLoadedDataStats = () => string;
@@ -68,11 +65,8 @@ export function prepareChartEditorApi({
     chartEditorApi: IChartEditor;
     userLogin: string | null;
 }) {
-    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, getTranslationParams?: string) => {
-        const parsedgetTranslationParams = getTranslationParams
-            ? JSON.parse(getTranslationParams)
-            : undefined;
-        return chartEditorApi.getTranslation(keyset, key, parsedgetTranslationParams);
+    jail.setSync('_ChartEditor_getTranslation', ((keyset, key, params) => {
+        return chartEditorApi.getTranslation(keyset, key, params);
     }) satisfies ChartEditorGetTranslation);
 
     jail.setSync('_ChartEditor_getSharedData', (() => {
@@ -154,6 +148,7 @@ export function prepareChartEditorApi({
 
     if (name === 'UI' || name === 'JavaScript') {
         jail.setSync('_ChartEditor_getLoadedData', (() => {
+            // There may be objects inside the uploaded data that cannot be transferred
             const loadedData = chartEditorApi.getLoadedData();
             return JSON.stringify(loadedData);
         }) satisfies ChartEditorGetLoadedData);

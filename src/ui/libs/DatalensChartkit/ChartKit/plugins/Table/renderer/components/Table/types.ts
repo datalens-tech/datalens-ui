@@ -106,6 +106,7 @@ export type BodyCellViewData = {
     index: number;
     /* Original cell data */
     data: unknown;
+    maxHeight?: number;
 };
 
 export type BodyRowViewData = {
@@ -120,6 +121,7 @@ export type FooterCellViewData = {
     id: string;
     content: JSX.Element | React.ReactNode;
     style?: React.CSSProperties;
+    contentStyle?: React.CSSProperties;
     pinned?: boolean;
     type?: 'number';
 };

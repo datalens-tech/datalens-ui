@@ -2,12 +2,15 @@ import React from 'react';
 
 import {useBodyScrollLock} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 
 import './FixedHeader.scss';
 
 type FixedHeaderContainerProps = {
     isEmpty: boolean;
     isCollapsed: boolean;
+    isEmbedded?: boolean;
+    isPublic?: boolean;
     editMode: boolean;
 };
 
@@ -16,11 +19,47 @@ type FixedHeaderControlsProps = FixedHeaderContainerProps & {
 };
 
 const b = block('dash-fixed-header');
+const i18n = I18n.keyset('dash.empty-state.view');
 
-const CONTROLS_TOP_OFFSET = 40;
-const CONTAINER_TOP_OFFSET = CONTROLS_TOP_OFFSET + 60;
+const CONTROLS_TOP_EMBEDDED_OFFSET = 0;
+const CONTROLS_TOP_PUBLIC_OFFSET = 70;
+const CONTROLS_TOP_DEFAULT_NAV_OFFSET = 40;
+const CONTAINER_TOP_OFFSET = 60;
 
 const CONTAINER_PADDING_OFFSET = 48;
+
+const calculateOffset = (
+    pageOptions: {isEmbedded?: boolean; isPublic?: boolean},
+    blockType: 'controls' | 'content' = 'controls',
+) => {
+    let globalOffset = CONTROLS_TOP_DEFAULT_NAV_OFFSET;
+    if (pageOptions.isEmbedded) {
+        globalOffset = CONTROLS_TOP_EMBEDDED_OFFSET;
+    } else if (pageOptions.isPublic) {
+        globalOffset = CONTROLS_TOP_PUBLIC_OFFSET;
+    }
+
+    if (blockType === 'content') {
+        return globalOffset + CONTAINER_TOP_OFFSET;
+    }
+
+    return globalOffset;
+};
+
+const EmptyPlaceholder = ({
+    content,
+    text,
+    mod,
+}: {
+    content: React.ReactNode;
+    text: string;
+    mod?: string;
+}) => (
+    <React.Fragment>
+        {content}
+        <div className={b('empty', mod)}>{text}</div>
+    </React.Fragment>
+);
 
 const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
     const [isFixed, setIsFixed] = React.useState(false);
@@ -62,10 +101,18 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
 export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) => {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const {editMode, isEmpty} = props;
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTROLS_TOP_OFFSET);
+    const topOffset = calculateOffset({isEmbedded: props.isEmbedded, isPublic: props.isPublic});
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
 
     const children = !editMode && isEmpty ? null : props.children;
-    const style = isFixed && !editMode ? {left: leftOffset, width} : {};
+    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+
+    const content =
+        isEmpty && editMode ? (
+            <EmptyPlaceholder content={children} text={i18n('label_empty-fixed-header')} />
+        ) : (
+            children
+        );
 
     return (
         <div ref={rootRef} className={b('controls-placeholder')}>
@@ -76,7 +123,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('controls-grid')}>{children}</div>
+                <div className={b('controls-grid')}>{content}</div>
                 <div className={b('controls-settings')}>
                     <div className={b('controls-settings-wrapper')}>{props.controls}</div>
                 </div>
@@ -89,6 +136,10 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
     const {editMode, isEmpty} = props;
     const rootRef = React.useRef<HTMLDivElement>(null);
     const containerRef = React.useRef<HTMLDivElement>(null);
+    const topOffset = calculateOffset(
+        {isEmbedded: props.isEmbedded, isPublic: props.isPublic},
+        'content',
+    );
     const [isScrollLocked, setScrollLock] = React.useState(false);
 
     const [containerHeight, setContainerHeight] = React.useState(0);
@@ -105,7 +156,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
             if (el) {
                 const {height} = el.contentRect;
                 setContainerHeight(height);
-                setScrollLock(el.target.scrollHeight + CONTAINER_TOP_OFFSET >= window.innerHeight);
+                setScrollLock(el.target.scrollHeight + topOffset >= window.innerHeight);
             }
         });
 
@@ -118,12 +169,23 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
             observer.disconnect();
         };
     }, [containerRef, isRenderEmpty]);
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, CONTAINER_TOP_OFFSET);
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
     const isScrollCaptured = isFixed && !editMode && !props.isCollapsed && isScrollLocked;
 
     useBodyScrollLock({enabled: isScrollCaptured});
 
-    const style = isFixed && !editMode ? {left: leftOffset, width} : {};
+    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+
+    const content =
+        isEmpty && editMode ? (
+            <EmptyPlaceholder
+                content={props.children}
+                text={i18n('label_empty-fixed-content')}
+                mod="with-offset"
+            />
+        ) : (
+            props.children
+        );
 
     return (
         <div
@@ -140,7 +202,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('container-wrapper')}>{props.children}</div>
+                <div className={b('container-wrapper')}>{content}</div>
             </div>
         </div>
     );

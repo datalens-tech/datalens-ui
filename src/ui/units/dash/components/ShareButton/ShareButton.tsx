@@ -6,8 +6,9 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types';
-import {DialogShare} from 'ui/components/DialogShare/DialogShare';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
+import {registry} from 'ui/registry';
+import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 import Utils from 'ui/utils';
 
 import {socialNets} from '../../modules/constants';
@@ -17,21 +18,25 @@ import './ShareButton.scss';
 const b = block('entity-share-button');
 const i18n = I18n.keyset('chartkit.menu');
 
+interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose'> {}
+
 export const ShareButton = ({
     enablePopover,
-    entityId,
     popoverText,
     popoverTitle,
     iconSize = 18,
     popoverClassName,
+    dialogShareProps,
 }: {
     enablePopover?: boolean;
-    entityId?: string;
     popoverText?: string;
     popoverTitle?: string;
     iconSize?: number;
     popoverClassName?: string;
+    dialogShareProps?: DialogSharePropsForShareButton;
 }) => {
+    const {DialogShare} = registry.common.components.getAll();
+
     const [showDialogShare, setShowDialogShare] = React.useState(false);
 
     const handleShareButtonClick = () => {
@@ -42,8 +47,20 @@ export const ShareButton = ({
         setShowDialogShare(false);
     };
 
+    const initDialogShareProps: DialogShareProps = {propsData: {}, onClose: handleCloseDialogShare};
+
+    if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+        initDialogShareProps.initialParams = {
+            [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
+        };
+    }
+
+    if (DL.USER.isFederationUser) {
+        initDialogShareProps.withFederation = true;
+    }
+
     const getContent = () => {
-        if (enablePopover && (!DL.IS_MOBILE || Utils.isEnabledFeature(Feature.EnableShareWidget))) {
+        if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
                     useWebShareApi={!DL.IS_MOBILE}
@@ -54,7 +71,7 @@ export const ShareButton = ({
                     copyIcon={Code}
                     customIcon={ArrowShapeTurnUpRight}
                     iconSize={iconSize}
-                    withCopyLink={Boolean(entityId)}
+                    withCopyLink={Boolean(dialogShareProps?.propsData.id)}
                     className={popoverClassName}
                     renderCopy={({icon}) => (
                         <Button
@@ -89,15 +106,8 @@ export const ShareButton = ({
     return (
         <React.Fragment>
             {getContent()}
-            {entityId && showDialogShare && (
-                <DialogShare
-                    onClose={handleCloseDialogShare}
-                    propsData={{id: entityId}}
-                    initialParams={{
-                        [COMMON_URL_OPTIONS.EMBEDDED]: 1,
-                        [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
-                    }}
-                />
+            {dialogShareProps?.propsData.id && showDialogShare && (
+                <DialogShare {...initDialogShareProps} {...dialogShareProps} />
             )}
         </React.Fragment>
     );

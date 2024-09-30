@@ -24,6 +24,7 @@ import {
     moveEntry,
     renameEntry,
     showRelatedEntities,
+    showShareDialog,
 } from './helpers';
 import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 
@@ -148,6 +149,10 @@ class EntryContextMenu extends React.PureComponent<Props> {
             }
             case ENTRY_CONTEXT_MENU_ACTION.COPY_LINK: {
                 // do nothing
+                break;
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.SHARE: {
+                showShareDialog(this.entryDialoguesRef, entry);
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK: {

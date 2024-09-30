@@ -8,6 +8,8 @@ export type Embed = {
     privateParams: string[];
     createdBy: string;
     createdAt: string;
+    updatedAt: string;
+    updatedBy: string;
     publicParamsMode: boolean;
 };
 
