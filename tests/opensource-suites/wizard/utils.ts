@@ -1,4 +1,4 @@
-import {expect} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 import isArray from 'lodash/isArray';
 
 import {PlaceholderName} from '../../page-objects/wizard/SectionVisualization';
@@ -33,5 +33,25 @@ export async function checkIfFieldCantBeDragged(
         const field = fields[i];
         await wizardPage.sectionVisualization.addFieldByDragAndDrop(placeholder, field);
         await expect(wizardPage.page.locator(slct(placeholder)).getByText(field)).not.toBeVisible();
+    }
+}
+
+/* Emulate the user's scroll chunks a little bit at a time */
+export async function emulateUserScrolling(page: Page, scrollY: number) {
+    let currentScroll = 0;
+    const chunk = 1000;
+    const chunkTimeoutMs = 10;
+
+    const wait = () => new Promise((resolve) => setTimeout(resolve, chunkTimeoutMs));
+
+    const scrollLittleBit = async () => {
+        await page.mouse.wheel(0, chunk);
+        currentScroll += chunk;
+    };
+
+    // eslint-disable-next-line no-unmodified-loop-condition
+    while (currentScroll < scrollY) {
+        await scrollLittleBit();
+        await wait();
     }
 }
