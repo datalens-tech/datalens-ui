@@ -167,6 +167,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
             adjustLayout(!newAutoHeight);
             setIsRendered(true);
+
+            // Triggering update after chart render
+            if (isReadyToReflowRef.current && handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -355,6 +360,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const debouncedChartReflow = React.useCallback(
         debounce(() => {
             handleChartkitReflow();
+
             // Triggering update after chart changed it size
             if (isReadyToReflowRef.current && handleUpdate) {
                 requestAnimationFrame(() => handleUpdate());
