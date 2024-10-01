@@ -16,12 +16,7 @@ import './Markdown.scss';
 const b = block('chartkit-markdown');
 
 type MarkdownProps = Omit<WidgetProps, 'data'> & {
-    data: MarkdownWidget & {
-        data: {
-            markdown?: string;
-            meta?: object;
-        };
-    };
+    data: MarkdownWidget;
 };
 
 export function Markdown({data, onLoad, id}: MarkdownProps) {
