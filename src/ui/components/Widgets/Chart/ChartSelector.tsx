@@ -99,20 +99,17 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     const usedParamsRef = React.useRef<DataProps['params'] | null>(null);
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
 
-    const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
-
-    const prevSavedProps = usePrevious(savedForFetchProps);
-
+    const hasInfluencingPropsChanged = useChangedValue(
+        omit(pick(props, influencingProps), 'params'),
+    );
+    const hasParamsChanged = useChangedValue(props.params);
     const hasInnerParamsChanged = useChangedValue(innerParamsRef?.current);
     const hasChartIdChanged = useChangedValue(chartId);
 
-    const hasChangedOuterProps =
-        !prevSavedProps ||
-        !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
-        hasChartIdChanged;
+    const hasChangedOuterProps = hasInfluencingPropsChanged || hasChartIdChanged;
 
     const hasChangedOuterParams = React.useMemo(() => {
-        let changedParams = !prevSavedProps || !isEqual(prevSavedProps.params, props.params);
+        let changedParams = hasParamsChanged;
 
         /* to do after usedParams has fixed CHARTS-6619
         const prevActionedParams = getParamsNamesFromActionParams(prevSavedProps?.params || {});
@@ -187,7 +184,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         }
 
         return changedParams;
-    }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
+    }, [hasParamsChanged, props.params, usedParamsRef, innerParamsRef]);
 
     /**
      * for correct cancellation on rerender & changed request params & data props
