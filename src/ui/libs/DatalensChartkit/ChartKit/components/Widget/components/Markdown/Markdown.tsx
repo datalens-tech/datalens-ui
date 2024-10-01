@@ -25,7 +25,7 @@ type MarkdownProps = Omit<WidgetProps, 'data'> & {
 };
 
 export function Markdown({data, onLoad, id}: MarkdownProps) {
-    const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
+    const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, id]);
     Performance.mark(generatedId);
     const refLink = React.useRef(null);
     const {html = '', markdown = '', meta} = data.data;
