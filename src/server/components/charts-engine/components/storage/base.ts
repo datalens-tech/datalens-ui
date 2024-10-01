@@ -88,29 +88,36 @@ export class BaseStorage {
 
         ctx.log('STORAGE_REFRESHING_PRELOADED');
         const preloadList = parentCtx.config.preloadList || [];
-
-        for (const key of preloadList) {
-            await this.resolveConfig(ctx, {
-                key,
-                headers: {
-                    authorization: `OAuth ${this.oauthToken}`,
-                },
-                noCache: true,
-                requestId,
-            })
-                .then((config) => {
-                    this.cachedConfigs[key] = config as unknown as ResolvedConfig;
+        try {
+            for (const key of preloadList) {
+                await this.resolveConfig(ctx, {
+                    key,
+                    headers: {
+                        authorization: `OAuth ${this.oauthToken}`,
+                    },
+                    noCache: true,
+                    requestId,
                 })
-                .catch((error) => {
-                    ctx.logError('Error preloading config', error, {
-                        key,
+                    .then((config) => {
+                        this.cachedConfigs[key] = config as unknown as ResolvedConfig;
+                    })
+                    .catch((error) => {
+                        ctx.logError('Error preloading config', error, {
+                            key,
+                        });
                     });
-                });
-        }
+            }
 
-        setTimeout(() => this.refreshPreloaded(parentCtx, callback), this.preloadFetchingInterval);
-        callback(this.cachedConfigs);
-        ctx.end();
+            setTimeout(
+                () => this.refreshPreloaded(parentCtx, callback),
+                this.preloadFetchingInterval,
+            );
+            callback(this.cachedConfigs);
+        } catch (error) {
+            ctx.logError('Error preloading configs', error);
+        } finally {
+            ctx.end();
+        }
     }
 
     initPreloading(ctx: AppContext, callback: (configs: Record<string, ResolvedConfig>) => void) {
@@ -213,7 +220,6 @@ export class BaseStorage {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
             return Promise.resolve(this.cachedConfigs[key]);
         }
-
         return this.fetchConfig(ctx, {...props, unreleased, noCache});
     }
 
