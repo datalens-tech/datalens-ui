@@ -26,8 +26,7 @@ interface MarkdownProps {
     onLoad?: WidgetProps['onLoad'];
 }
 
-export function Markdown(props: MarkdownProps) {
-    const {data, onLoad, id} = props;
+export function Markdown({data, onLoad, id}: MarkdownProps) {
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);
     const refLink = React.useRef(null);
