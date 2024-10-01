@@ -15,16 +15,14 @@ import './Markdown.scss';
 
 const b = block('chartkit-markdown');
 
-interface MarkdownProps {
+type MarkdownProps = Omit<WidgetProps, 'data'> & {
     data: MarkdownWidget & {
         data: {
             markdown?: string;
             meta?: object;
         };
     };
-    id?: string;
-    onLoad?: WidgetProps['onLoad'];
-}
+};
 
 export function Markdown({data, onLoad, id}: MarkdownProps) {
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
