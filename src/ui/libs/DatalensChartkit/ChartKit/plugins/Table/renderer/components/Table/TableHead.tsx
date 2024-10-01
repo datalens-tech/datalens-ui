@@ -9,7 +9,7 @@ import type {HeadRowViewData} from './types';
 const b = block('dl-table');
 
 type Props = {
-    sticky: boolean;
+    sticky?: boolean;
     rows: HeadRowViewData[];
     style?: React.CSSProperties;
     tableHeight?: number;

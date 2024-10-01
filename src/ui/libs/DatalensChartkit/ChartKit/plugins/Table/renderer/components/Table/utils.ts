@@ -158,10 +158,14 @@ export function getTableSizes(table: HTMLTableElement) {
     const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
     let rows: HTMLTableRowElement[] = [];
 
-    rows = Array.from(table?.getElementsByTagName('thead')?.[0]?.childNodes ?? []);
+    rows = Array.from(
+        table?.getElementsByTagName('thead')?.[0]?.childNodes ?? [],
+    ) as HTMLTableRowElement[];
 
     if (!rows.length) {
-        const tBodyRows = Array.from(table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? []);
+        const tBodyRows = Array.from(
+            table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? [],
+        ) as HTMLTableRowElement[];
         rows = tBodyRows.length ? [tBodyRows[0]] : [];
     }
 

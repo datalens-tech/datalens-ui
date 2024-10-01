@@ -93,7 +93,7 @@ datalensTest.describe('Wizard', () => {
             await expect(chartContainer).toHaveScreenshot();
         });
 
-        datalensTest.only(
+        datalensTest(
             'Dynamic column width during row virtualization @screenshot',
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
