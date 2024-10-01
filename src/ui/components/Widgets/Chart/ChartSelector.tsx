@@ -12,6 +12,7 @@ import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType} from 'shared';
+import {useChangedValue} from 'ui/hooks/useChangedProp';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -101,13 +102,14 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
 
     const prevSavedProps = usePrevious(savedForFetchProps);
-    const prevSavedChartId = usePrevious(chartId);
-    const prevInnerParams = usePrevious(innerParamsRef?.current);
+
+    const hasInnerParamsChanged = useChangedValue(innerParamsRef?.current);
+    const hasChartIdChanged = useChangedValue(chartId);
 
     const hasChangedOuterProps =
         !prevSavedProps ||
         !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
-        Boolean(prevSavedChartId && prevSavedChartId !== chartId);
+        hasChartIdChanged;
 
     const hasChangedOuterParams = React.useMemo(() => {
         let changedParams = !prevSavedProps || !isEqual(prevSavedProps.params, props.params);
@@ -187,16 +189,12 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         return changedParams;
     }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
 
-    const hasChangedInnerParamsFromInside = React.useMemo(() => {
-        return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
-    }, [prevInnerParams, innerParamsRef?.current]);
-
     /**
      * for correct cancellation on rerender & changed request params & data props
      */
     const requestId = React.useMemo(
         () => settings.requestIdGenerator(DL.REQUEST_ID_PREFIX),
-        [hasChangedOuterParams, hasChangedOuterProps, hasChangedInnerParamsFromInside],
+        [hasChangedOuterParams, hasChangedOuterProps, hasInnerParamsChanged],
     );
 
     /**
