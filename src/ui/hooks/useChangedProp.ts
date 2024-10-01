@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {isEqual} from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 export function useChangedValue<T>(value: T, comparator: (a: T, b: T) => boolean = isEqual) {
     const prevValueRef = React.useRef<T>(value);
