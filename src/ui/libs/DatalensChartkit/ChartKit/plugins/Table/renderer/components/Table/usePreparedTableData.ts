@@ -26,30 +26,11 @@ import type {
     FooterRowViewData,
     HeadRowViewData,
     TData,
+    TableViewData,
 } from './types';
-import {useCellSizes} from './useCellSizes';
 import {createTableColumns} from './utils';
 
 const PRERENDER_ROW_COUNT = 500;
-
-type TableViewData = {
-    colgroup?: {width: string}[];
-    header: {
-        rows: HeadRowViewData[];
-        style?: React.CSSProperties;
-    };
-    body: {
-        rows: BodyRowViewData[];
-        style?: React.CSSProperties;
-    };
-    footer: {
-        rows: FooterRowViewData[];
-        style?: React.CSSProperties;
-    };
-    totalSize: number | undefined;
-    /* rendering table without most options - only to calculate cells size */
-    prerender: boolean;
-};
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -121,23 +102,19 @@ export const usePreparedTableData = (props: {
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
     getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
+    cellSizes: number[] | null;
 }): TableViewData => {
     const {
-        widgetData: {config},
+        // widgetData: {config},
         dimensions,
         tableContainerRef,
         manualSorting,
         onSortingChange,
         data,
         getCellAdditionStyles,
+        cellSizes,
     } = props;
 
-    const cellSizes = useCellSizes(
-        {
-            tableContainerRef,
-        },
-        [dimensions.width, config],
-    );
     const prerender = !cellSizes;
 
     const columns = React.useMemo(() => {
@@ -411,7 +388,6 @@ export const usePreparedTableData = (props: {
                 id: row.id,
                 index: virtualRow.index,
                 cells,
-                ref: (node) => rowVirtualizer.measureElement(node),
                 y: virtualRow.start,
             });
 
@@ -432,6 +408,9 @@ export const usePreparedTableData = (props: {
         body: {
             rows,
             style: {gridTemplateColumns, transform},
+            rowRef: (node) => {
+                rowVirtualizer.measureElement(node);
+            },
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),

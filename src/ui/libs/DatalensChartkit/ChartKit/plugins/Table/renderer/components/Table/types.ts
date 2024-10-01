@@ -113,7 +113,6 @@ export type BodyRowViewData = {
     id: string;
     index: number;
     cells: BodyCellViewData[];
-    ref?: (node: HTMLTableRowElement) => void;
     y?: number;
 };
 
@@ -129,4 +128,26 @@ export type FooterCellViewData = {
 export type FooterRowViewData = {
     id: string;
     cells: FooterCellViewData[];
+};
+
+export type RowRef = (node: HTMLTableRowElement) => void;
+
+export type TableViewData = {
+    colgroup?: {width: string}[];
+    header: {
+        rows: HeadRowViewData[];
+        style?: React.CSSProperties;
+    };
+    body: {
+        rows: BodyRowViewData[];
+        style?: React.CSSProperties;
+        rowRef?: RowRef;
+    };
+    footer: {
+        rows: FooterRowViewData[];
+        style?: React.CSSProperties;
+    };
+    totalSize: number | undefined;
+    /* rendering table without most options - only to calculate cells size */
+    prerender: boolean;
 };

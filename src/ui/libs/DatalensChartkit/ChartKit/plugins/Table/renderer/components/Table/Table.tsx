@@ -1,8 +1,10 @@
 import React from 'react';
 
+import {Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
+import {waitForContent} from 'ui/libs/DatalensChartkit/ChartKit/helpers/wait-for-content';
 
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
@@ -29,6 +31,7 @@ import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
 import {useTableHeight} from './useTableHeight';
+import {getTableSizes} from './utils';
 
 import './Table.scss';
 
@@ -46,6 +49,8 @@ export const Table = React.memo<Props>((props: Props) => {
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = typeof config?.title === 'string' ? config.title : config?.title?.text;
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
+
+    const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
 
     const data = React.useMemo(() => mapTableData(originalData), [originalData]);
     const pagination = {
@@ -125,6 +130,7 @@ export const Table = React.memo<Props>((props: Props) => {
         manualSorting: isPaginationEnabled || Boolean(config?.settings?.externalSort),
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
+        cellSizes,
     });
 
     React.useEffect(() => {
@@ -246,6 +252,7 @@ export const Table = React.memo<Props>((props: Props) => {
                                 rows={body.rows}
                                 style={body.style}
                                 onCellClick={handleCellClick}
+                                rowRef={body.rowRef}
                             />
                             <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
@@ -261,6 +268,36 @@ export const Table = React.memo<Props>((props: Props) => {
                     onChange={handlePaginationChange}
                 />
             )}
+            {/*background table for dynamic calculation of column widths during virtualization*/}
+            <Portal>
+                <div
+                    className={b('background-table')}
+                    style={{height: widgetDimensions?.height, width: widgetDimensions?.width}}
+                >
+                    <table
+                        className={b({prepared: false})}
+                        ref={async (el) => {
+                            if (!el) {
+                                return;
+                            }
+
+                            await waitForContent(el);
+                            const tableColSizes = getTableSizes(el);
+                            const shouldApplyNewSizes =
+                                !cellSizes ||
+                                tableColSizes.some((colSize, index) => colSize > cellSizes[index]);
+
+                            if (shouldApplyNewSizes) {
+                                setCellSizes(tableColSizes);
+                            }
+                        }}
+                    >
+                        <TableHead rows={header.rows} />
+                        <TableBody rows={body.rows} />
+                        <TableFooter rows={footer.rows} />
+                    </table>
+                </div>
+            </Portal>
         </React.Fragment>
     );
 });
