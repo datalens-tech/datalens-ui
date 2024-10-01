@@ -220,6 +220,7 @@ export class BaseStorage {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
             return Promise.resolve(this.cachedConfigs[key]);
         }
+
         return this.fetchConfig(ctx, {...props, unreleased, noCache});
     }
 
