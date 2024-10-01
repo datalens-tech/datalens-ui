@@ -15,6 +15,7 @@ import {renderDatalens} from '../datalens/render';
 import {getStore} from '../store/configure';
 import {selectTheme, selectThemeSettings} from '../store/selectors/user';
 import history from '../utils/history';
+import {getOverridedTheme} from 'ui/utils/getOverridedTheme';
 
 import {HOTKEYS_SCOPES} from '../constants/misc';
 
@@ -27,7 +28,8 @@ import 'ui/styles/split-pane-resizer.scss';
 import 'ui/styles/theme.scss';
 
 const Content = () => {
-    const theme = useSelector(selectTheme);
+    const userTheme = useSelector(selectTheme);
+    const theme = getOverridedTheme(userTheme);
     const themeSettings = useSelector(selectThemeSettings);
 
     return (
