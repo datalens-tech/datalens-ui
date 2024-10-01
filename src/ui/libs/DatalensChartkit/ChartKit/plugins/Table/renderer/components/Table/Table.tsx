@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 
+import {COMPONENT_CLASSNAME} from '../../../../../../../../components/Widgets/Chart/helpers/helpers';
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
 import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
@@ -276,7 +277,7 @@ export const Table = React.memo<Props>((props: Props) => {
             {/*background table for dynamic calculation of column widths during virtualization*/}
             <Portal>
                 <div
-                    className={b('background-table')}
+                    className={b('background-table', COMPONENT_CLASSNAME)}
                     style={{height: widgetDimensions?.height, width: widgetDimensions?.width}}
                 >
                     <table
@@ -297,7 +298,7 @@ export const Table = React.memo<Props>((props: Props) => {
                             }
                         }}
                     >
-                        <TableHead rows={header.rows} />
+                        <TableHead rows={header.rows} useInheritedWidth={false} />
                         <TableBody rows={body.rows} />
                         <TableFooter rows={footer.rows} />
                     </table>

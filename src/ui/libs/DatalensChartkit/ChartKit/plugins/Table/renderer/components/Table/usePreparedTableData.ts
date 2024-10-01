@@ -191,7 +191,7 @@ export const usePreparedTableData = (props: {
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
-    }, [data]);
+    }, [data, cellSizes]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
@@ -254,7 +254,7 @@ export const usePreparedTableData = (props: {
                     };
 
                     const cellWidth = header.getSize();
-                    if (prerender && cellWidth) {
+                    if (cellWidth) {
                         cellStyle.width = cellWidth;
                     }
 
