@@ -14,7 +14,7 @@ import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
-import type {TableData, TableWidgetData} from '../../../../../../types';
+import type {TableData} from '../../../../../../types';
 import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import type {WidgetDimensions} from '../../types';
 import {mapHeadCell} from '../../utils/renderer';
@@ -96,7 +96,6 @@ function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
 
 export const usePreparedTableData = (props: {
     tableContainerRef: React.MutableRefObject<HTMLDivElement | null>;
-    widgetData: TableWidgetData;
     dimensions: WidgetDimensions;
     data: Required<TableData>;
     manualSorting: boolean;
@@ -105,7 +104,6 @@ export const usePreparedTableData = (props: {
     cellSizes: number[] | null;
 }): TableViewData => {
     const {
-        // widgetData: {config},
         dimensions,
         tableContainerRef,
         manualSorting,

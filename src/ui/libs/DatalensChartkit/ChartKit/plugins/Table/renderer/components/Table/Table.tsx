@@ -4,7 +4,6 @@ import {Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
-import {waitForContent} from 'ui/libs/DatalensChartkit/ChartKit/helpers/wait-for-content';
 
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
@@ -12,6 +11,7 @@ import Paginator from '../../../../../components/Widget/components/Table/Paginat
 import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
+import {waitForContent} from '../../../../../helpers/wait-for-content';
 import {i18n} from '../../../../../modules/i18n/i18n';
 import type {WidgetDimensions} from '../../types';
 import {
@@ -123,7 +123,6 @@ export const Table = React.memo<Props>((props: Props) => {
     };
 
     const {colgroup, header, body, footer, prerender, totalSize} = usePreparedTableData({
-        widgetData,
         data,
         dimensions: widgetDimensions,
         tableContainerRef,
