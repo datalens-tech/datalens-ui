@@ -133,6 +133,12 @@ export const Table = React.memo<Props>((props: Props) => {
     });
 
     React.useEffect(() => {
+        if (cellSizes) {
+            setCellSizes(null);
+        }
+    }, [widgetData.data, widgetDimensions.width]);
+
+    React.useEffect(() => {
         if (onReady && !prerender) {
             setTimeout(onReady, 0);
         }
