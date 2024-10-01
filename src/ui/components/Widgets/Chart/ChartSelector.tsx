@@ -95,13 +95,14 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         [chartId, chartkitParams, config, workbookId],
     );
 
-    const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
-    const prevSavedProps = usePrevious(savedForFetchProps);
-
-    const prevSavedChartId = usePrevious(chartId);
-
     const usedParamsRef = React.useRef<DataProps['params'] | null>(null);
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
+
+    const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
+
+    const prevSavedProps = usePrevious(savedForFetchProps);
+    const prevSavedChartId = usePrevious(chartId);
+    const prevInnerParams = usePrevious(innerParamsRef?.current);
 
     const hasChangedOuterProps =
         !prevSavedProps ||
@@ -186,12 +187,16 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         return changedParams;
     }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
 
+    const hasChangedInnerParamsFromInside = React.useMemo(() => {
+        return prevInnerParams && !isEqual(innerParamsRef?.current, prevInnerParams);
+    }, [prevInnerParams, innerParamsRef?.current]);
+
     /**
      * for correct cancellation on rerender & changed request params & data props
      */
     const requestId = React.useMemo(
         () => settings.requestIdGenerator(DL.REQUEST_ID_PREFIX),
-        [hasChangedOuterParams, hasChangedOuterProps],
+        [hasChangedOuterParams, hasChangedOuterProps, hasChangedInnerParamsFromInside],
     );
 
     /**
