@@ -285,6 +285,7 @@ class DialogChartWidget extends React.PureComponent<
         name: string;
         params: StringParams;
     }) => {
+        const {enableAutoheight} = this.props;
         const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
 
         const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
@@ -334,7 +335,11 @@ class DialogChartWidget extends React.PureComponent<
                 data: update(this.state.data, {
                     tabs: {
                         [tabIndex]: {
-                            autoHeight: {$set: selectedWidgetType === DASH_WIDGET_TYPES.METRIC},
+                            autoHeight: {
+                                $set:
+                                    enableAutoheight &&
+                                    selectedWidgetType === DASH_WIDGET_TYPES.METRIC,
+                            },
                         },
                     },
                 }),
@@ -715,6 +720,7 @@ class DialogChartWidget extends React.PureComponent<
                         <Checkbox
                             checked={Boolean(background?.enabled)}
                             onChange={this.handleBackgroundEnabledChanged}
+                            qa={DashCommonQa.WidgetEnableBackgroundCheckbox}
                         >
                             {i18n('dash.widget-dialog.edit', 'field_background-enable')}
                         </Checkbox>

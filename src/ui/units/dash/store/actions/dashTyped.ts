@@ -23,6 +23,7 @@ import type {
     DashSettings,
     DashTab,
     DashTabItem,
+    DashTabItemImage,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
@@ -46,6 +47,7 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
 import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
+import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
@@ -360,10 +362,11 @@ type SetItemDataBase = {
 };
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle;
+    data: SetItemDataText | SetItemDataTitle | SetItemDataImage;
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
@@ -934,7 +937,11 @@ export const setSettings = (settings: DashSettings): SetSettingsAction => ({
     payload: settings,
 });
 
-export const setCopiedItemData = (payload: {item: AddConfigItem; options: AddNewItemOptions}) => ({
+export const setCopiedItemData = (payload: {
+    item: AddConfigItem;
+    context?: CopiedConfigContext;
+    options: AddNewItemOptions;
+}) => ({
     type: actionTypes.SET_COPIED_ITEM_DATA,
     payload,
 });

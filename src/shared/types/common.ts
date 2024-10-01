@@ -28,7 +28,6 @@ export interface LandingLayoutPageError {
     description?: string;
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
-    useCrawlerContent?: boolean;
     pageLinks?: RenderParams<{DL: DLGlobalData}>['links'];
 }
 

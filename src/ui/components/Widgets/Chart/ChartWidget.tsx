@@ -348,7 +348,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isAutoHeightEnabled,
         description,
         hideTabs,
-        withShareWidget,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -535,7 +534,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 onFullscreenClick={handleToggleFullscreenMode}
                 editMode={editMode}
                 hideTabs={hideTabs}
-                withShareWidget={withShareWidget}
                 tabsItems={adaptiveTabsItems}
                 currentTab={currentTab}
                 onSelectTab={handleSelectTab}

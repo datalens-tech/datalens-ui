@@ -1,3 +1,4 @@
+import type {ServerTooltipConfig} from '../../../../../../../shared';
 import type {Coordinate} from '../../utils/geo-helpers';
 
 export type GeopointPointConfig = {
@@ -31,4 +32,5 @@ export type GeopointMapOptions = {
     sizeMaxValue?: number;
     mode?: string;
     sizeTitle?: string;
+    tooltipConfig?: ServerTooltipConfig;
 };

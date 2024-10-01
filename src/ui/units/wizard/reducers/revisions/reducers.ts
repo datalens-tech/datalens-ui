@@ -1,9 +1,7 @@
 import type {AxiosError} from 'axios';
 import {batch} from 'react-redux';
 import type {ClientChartsConfig} from 'shared';
-import {Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {Utils} from 'ui';
 
 import {setActualChart} from '../../../../store/actions/chartWidget';
 import {resetEditHistoryUnit} from '../../../../store/actions/editHistory';
@@ -69,9 +67,7 @@ export function reloadWizardEntryByRevision(params: SetDefaultsArgs) {
             dispatch(resetWizardStore());
             dispatch(setDefaults(params));
 
-            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-                dispatch(resetEditHistoryUnit({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
-            }
+            dispatch(resetEditHistoryUnit({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         });
     };
 }

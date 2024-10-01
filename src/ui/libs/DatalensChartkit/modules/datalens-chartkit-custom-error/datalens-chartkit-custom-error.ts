@@ -129,6 +129,7 @@ class DatalensChartkitCustomError extends Error implements CustomErrorArgs {
 
         // @ts-ignore
         this.extra = extra;
+        this.stack = undefined;
     }
 
     extend(args: CustomErrorArgs) {
@@ -192,12 +193,10 @@ function formatError({
                 });
                 break;
             case ERROR_CODE.UNKNOWN_ERROR:
-                message =
-                    debug.status === 504
-                        ? i18n('chartkit.custom-error', 'error-timeout')
-                        : i18n('chartkit.custom-error', 'error');
+                if (debug.status === 504) {
+                    message = i18n('chartkit.custom-error', 'error-timeout');
+                }
 
-                Object.assign(details, {message: originalError.message});
                 break;
         }
 
@@ -212,12 +211,15 @@ function formatError({
         });
     }
 
-    return new DatalensChartkitCustomError(i18n('chartkit.custom-error', 'error'), {
+    const customError = new DatalensChartkitCustomError(i18n('chartkit.custom-error', 'error'), {
         code: ERROR_CODE.UNKNOWN,
         details: {message: originalError.message},
         debug: {requestId, traceId},
         extra,
     });
+    customError.stack = originalError.stack;
+
+    return customError;
 }
 
 export default DatalensChartkitCustomError;

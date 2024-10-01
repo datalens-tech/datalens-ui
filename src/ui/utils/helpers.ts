@@ -1,4 +1,6 @@
+import {i18n} from 'i18n';
 import {cloneDeep, unset} from 'lodash';
+import type {AvailableFieldType} from 'shared';
 import type {GetRelationsEntry} from 'shared/schema';
 
 /**
@@ -55,4 +57,8 @@ export const matchDatasetFieldFilter = (
             description?.toLowerCase().includes(filterValue) ||
             (dlDebugMode && guid?.includes(filterValue)),
     );
+};
+
+export const getDatasetLabelValue = (key: string) => {
+    return i18n('dataset.dataset-editor.modify', `value_${key as AvailableFieldType}`);
 };

@@ -1,0 +1,17 @@
+.dl-dataset-dialog-change-fields {
+    &__content {
+        margin-top: var(--g-spacing-4);
+        display: flex;
+        gap: var(--g-spacing-6);
+        align-items: center;
+        justify-content: space-between;
+
+        & .dl-data-type-icon {
+            color: var(--g-color-text-secondary);
+        }
+    }
+
+    &__select {
+        flex: 1;
+    }
+}

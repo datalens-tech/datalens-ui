@@ -10,7 +10,10 @@ import type {HookBatchSelectResult, TableViewProps} from '../types';
 const b = block('dl-core-navigation-table-view');
 const i18n = I18n.keyset('component.navigation.view');
 
-type RowHeaderProps = Pick<TableViewProps, 'mode' | 'displayParentFolder'> &
+type RowHeaderProps = Pick<
+    TableViewProps,
+    'mode' | 'displayParentFolder' | 'isOnlyCollectionsMode'
+> &
     Pick<HookBatchSelectResult, 'isAllCheckBoxChecked' | 'onAllCheckBoxSelect'>;
 
 export const RowHeader = ({
@@ -18,20 +21,29 @@ export const RowHeader = ({
     displayParentFolder,
     isAllCheckBoxChecked,
     onAllCheckBoxSelect,
+    isOnlyCollectionsMode,
 }: RowHeaderProps) => {
     const {getLoginById} = registry.common.functions.getAll();
     const isLoginByIdExist = Boolean(getLoginById());
 
     return (
-        <div className={b('row', {mode, header: true, withParentFolder: displayParentFolder})}>
-            <div className={b('selection-checkbox')}>
-                <Checkbox
-                    size="l"
-                    checked={isAllCheckBoxChecked}
-                    disabled={false}
-                    onUpdate={onAllCheckBoxSelect}
-                />
-            </div>
+        <div
+            className={b('row', {
+                mode,
+                header: true,
+                withParentFolder: displayParentFolder,
+            })}
+        >
+            {!isOnlyCollectionsMode && (
+                <div className={b('selection-checkbox')}>
+                    <Checkbox
+                        size="l"
+                        checked={isAllCheckBoxChecked}
+                        disabled={false}
+                        onUpdate={onAllCheckBoxSelect}
+                    />
+                </div>
+            )}
             <div className={b('row-link-wrap')}>
                 <div className={b('link')}>
                     <div className={b('info')}>

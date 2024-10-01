@@ -18,7 +18,9 @@ export function useBatchSelect({
     const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
 
     const allActiveIds = React.useMemo(() => {
-        const ids = entries.filter((entry) => !entry.isLocked).map((entry) => entry.entryId);
+        const ids = entries
+            .filter((entry) => !entry.isLocked && !entry.workbookId)
+            .map((entry) => entry.entryId);
         return new Set(ids);
     }, [entries]);
 

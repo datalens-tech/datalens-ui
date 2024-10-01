@@ -5,6 +5,10 @@
     overflow-y: auto;
     transition: opacity 0.2s;
 
+    &_denied-and-empty {
+        height: 450px;
+    }
+
     &_disabled {
         opacity: 0.7;
         pointer-events: none;

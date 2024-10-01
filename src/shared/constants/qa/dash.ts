@@ -4,6 +4,7 @@ export const enum DashboardAddWidgetQa {
     AddGroupControl = 'add-group-control',
     AddText = 'add-text-button',
     AddTitle = 'add-title-button',
+    AddImage = 'add-image-button',
 }
 
 export const enum DashKitOverlayMenuQa {
@@ -71,6 +72,9 @@ export enum DashCommonQa {
     RelationsCancelBtn = 'relations-cancel-btn',
     WidgetShowTitleCheckbox = 'dialog-widget-settings-show-title',
     WidgetEnableAutoHeightCheckbox = 'dialog-widget-settings-enable-autoheight',
+    WidgetEnableBackgroundCheckbox = 'dialog-widget-settings-enable-background',
+    WidgetSelectBackgroundButton = 'dialog-widget-settings-select-background-button',
+    WidgetSelectBackgroundPalleteContainer = 'dialog-widget-settings-select-background-pallete-container',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
     RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
     RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',

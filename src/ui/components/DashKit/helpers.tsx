@@ -2,7 +2,8 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import type {ConfigItem, ItemState} from '@gravity-ui/dashkit';
+import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
@@ -12,6 +13,7 @@ import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
 import URI from '../../libs/DatalensChartkit/modules/uri/uri';
@@ -106,3 +108,40 @@ export function getDashKitMenu() {
         },
     ];
 }
+
+interface DashkitWrapperProps extends DashKitProps {
+    // ref object
+    ref?: React.ForwardedRef<DashKit>;
+    // Make noOverlay partial
+    noOverlay?: boolean;
+    // Extended Controls props
+    skipReload?: boolean;
+    isNewRelations?: boolean;
+}
+
+export const DashkitWrapper: React.FC<
+    Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & // Making edit props optional when editMode === false
+        (
+            | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
+            | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
+        )
+> = React.forwardRef(
+    ({skipReload = false, isNewRelations = false, ...props}, ref: React.ForwardedRef<DashKit>) => {
+        const contextValue = React.useMemo(() => {
+            return {
+                config: props.config,
+                defaultGlobalParams: props.defaultGlobalParams,
+                skipReload,
+                isNewRelations,
+            };
+        }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
+
+        return (
+            <ExtendedDashKitContext.Provider value={contextValue}>
+                <DashKit {...props} ref={ref} />
+            </ExtendedDashKitContext.Provider>
+        );
+    },
+);
+
+DashkitWrapper.displayName = 'DashkitContainer';

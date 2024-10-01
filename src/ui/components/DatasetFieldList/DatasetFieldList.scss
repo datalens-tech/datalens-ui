@@ -7,8 +7,7 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        padding-left: var(--dl-dataset-field-list-item-padding-left);
-        padding-right: var(--dl-dataset-field-list-item-padding-right);
+        padding-inline: var(--dl-dataset-field-list-item-padding-inline);
         cursor: pointer;
     }
 
@@ -39,7 +38,6 @@
 }
 
 :root {
-    --dl-dataset-field-list-item-padding-left: 10px;
-    --dl-dataset-field-list-item-padding-right: 10px;
+    --dl-dataset-field-list-item-padding-inline: 32px;
     --dl-dataset-field-filter-padding: unset;
 }

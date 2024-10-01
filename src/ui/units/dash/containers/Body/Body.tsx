@@ -43,6 +43,7 @@ import {
     ControlQA,
     DashEntryQa,
     DashKitOverlayMenuQa,
+    DashTabItemType,
     Feature,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
@@ -96,8 +97,10 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
+    selectIsNewRelations,
     selectSettings,
     selectShowTableOfContent,
+    selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
@@ -167,8 +170,6 @@ const GROUPS_WEIGHT = {
     [FIXED_GROUP_CONTAINER_ID]: 1,
     [DEFAULT_GROUP]: 0,
 } as const;
-
-const DashKit = getConfiguredDashKit();
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
@@ -667,6 +668,8 @@ class Body extends React.PureComponent<BodyProps> {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
                     workbookId: this.props.workbookId ?? null,
                     fromScope: this.props.entry.scope,
+                    targetEntryId: this.props.entryId,
+                    targetDashTabId: this.props.tabId,
                 });
             };
 
@@ -820,6 +823,7 @@ class Body extends React.PureComponent<BodyProps> {
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
+        const DashKit = getConfiguredDashKit();
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
@@ -848,6 +852,8 @@ class Body extends React.PureComponent<BodyProps> {
                 globalParams={globalParams}
                 overlayControls={this.getOverlayControls()}
                 overlayMenuItems={this.getOverlayMenu()}
+                skipReload={this.props.skipReload}
+                isNewRelations={this.props.isNewRelations}
             />
         );
     };
@@ -923,6 +929,7 @@ class Body extends React.PureComponent<BodyProps> {
                                     copiedData: this.state.hasCopyInBuffer,
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
+                                    filterItem: (item) => item.id === DashTabItemType.Image,
                                 })}
                                 className={b('edit-panel', {
                                     'aside-opened': isSidebarOpened,
@@ -957,6 +964,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
+    skipReload: selectSkipReload(state),
+    isNewRelations: selectIsNewRelations(state),
 });
 
 const mapDispatchToProps = {

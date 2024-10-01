@@ -12,6 +12,7 @@ import type {
     Field,
     Placeholder,
     PlaceholderSettings,
+    ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
     WizardVisualizationId,
@@ -21,6 +22,7 @@ import {
     Feature,
     PlaceholderId,
     getAxisMode,
+    hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
     isFieldHierarchy,
     isNumberField,
@@ -71,6 +73,7 @@ interface Props {
     onApply: (placeholderSettings: PlaceholderSettings) => void;
     sort: Field[];
     drillDownLevel: number;
+    chartConfig: Partial<ServerChartsConfig>;
 }
 
 interface State {
@@ -379,7 +382,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderAxisModeSettings() {
-        const {sort, visualizationId} = this.props;
+        const {visualizationId, chartConfig} = this.props;
         const {settings, firstField} = this.state;
         const {axisModeMap} = settings;
 
@@ -391,12 +394,15 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const radioButtons = AXIS_MODE_RADIO_BUTTONS.map((option) => {
             if (option.value === SETTINGS.AXIS_MODE.CONTINUOUS) {
+                const sort = (
+                    hasSortThanAffectAxisMode(chartConfig) ? this.props.sort : []
+                ) as ServerSort[];
                 const reasonForDisabling = isContinuousAxisModeDisabled({
                     // Axis mode always depends on first item in placeholder
                     field: firstField,
                     axisSettings: settings,
                     visualizationId,
-                    sort: sort as ServerSort[],
+                    sort: sort,
                 });
 
                 if (reasonForDisabling) {

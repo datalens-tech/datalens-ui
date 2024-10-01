@@ -21,6 +21,14 @@ type BaseConnectorItem = {
     backend_driven_form: boolean;
     hidden: boolean;
     title: string;
+    /**
+     * Controls the behavior of connector's list item in the list.
+     *
+     * 1. `free` - connector **is** shown in the list and **is** available for creation
+     * 2. `hidden` - connector **is not** shown in the list and **is** available for creation
+     * 3. `uncreatable` - connector **is not** shown in the list and **is not** available for creation
+     */
+    visibility_mode: 'free' | 'hidden' | 'uncreatable';
     alias?: string;
 };
 

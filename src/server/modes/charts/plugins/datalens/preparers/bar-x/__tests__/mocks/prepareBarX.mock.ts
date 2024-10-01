@@ -118,8 +118,7 @@ const measureValuesField = {
     id: 'inserted-1705501045437',
 };
 
-export const prepareBarXWithMeasureValuesArgs = {
-    ChartEditor,
+const prepareBarXWithMeasureValuesConfig = {
     placeholders: [
         {
             id: 'x',
@@ -159,10 +158,24 @@ export const prepareBarXWithMeasureValuesArgs = {
     },
     geopointsConfig: {},
     sort: [],
-    visualizationId: 'column',
     labels: [],
     tooltips: [],
-    datasets: [datasetId],
+    shapes: [],
+    segments: [],
+};
+
+export const prepareBarXWithMeasureValuesArgs = {
+    ChartEditor,
+    idToTitle: {
+        [monthField.guid]: monthField.title,
+        [profitField.guid]: profitField.title,
+    },
+    idToDataType: {
+        [monthField.guid]: monthField.data_type,
+        [profitField.guid]: profitField.data_type,
+    },
+    features: {},
+    fields: [monthField, profitField],
     resultData: {
         data: [
             ['1', '8970'],
@@ -180,19 +193,16 @@ export const prepareBarXWithMeasureValuesArgs = {
         ],
         totals: [],
     },
-    fields: [monthField, profitField],
-    idToTitle: {
-        [monthField.guid]: monthField.title,
-        [profitField.guid]: profitField.title,
+    datasets: [datasetId],
+    visualizationId: 'column',
+    ...prepareBarXWithMeasureValuesConfig,
+    shared: {
+        ...prepareBarXWithMeasureValuesConfig,
+        visualization: {
+            id: 'column',
+            placeholders: prepareBarXWithMeasureValuesConfig.placeholders,
+        },
     },
-    idToDataType: {
-        [monthField.guid]: monthField.data_type,
-        [profitField.guid]: profitField.data_type,
-    },
-    shared: {visualization: {id: 'column'}},
-    shapes: [],
-    segments: [],
-    features: {},
 } as unknown as PrepareFunctionArgs;
 
 export const prepareBarXWithMeasureValuesResult = {

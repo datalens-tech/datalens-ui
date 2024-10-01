@@ -1,4 +1,5 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {ActionPanelItem} from '@gravity-ui/dashkit';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
@@ -138,4 +139,7 @@ export const commonFunctionsMap = {
             }) => CopiedConfigData
         >(),
     checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
+    getBasicActionPanelItems: makeFunctionTemplate<() => ActionPanelItem[]>(),
+    getListMembersFilter:
+        makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
 } as const;

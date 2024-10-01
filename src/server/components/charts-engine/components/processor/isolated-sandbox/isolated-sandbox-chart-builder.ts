@@ -58,7 +58,10 @@ export const getIsolatedSandboxChartBuilder = async (
     const context = isolate.createContextSync();
     const getQLConnectionTypeMap = registry.getQLConnectionTypeMap();
     context.evalSync(
-        `const __modules = {};
+        `
+         // I do not know why, but this is not exists in V8 Isolate.
+         Math.E = ${Math.E};
+         const __modules = {};
          let __params;
          let __usedParams;
          let __runtimeMetadata = {userParamsOverride: undefined};

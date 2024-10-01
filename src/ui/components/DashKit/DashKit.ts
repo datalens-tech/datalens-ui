@@ -1,12 +1,14 @@
+import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
-import {getDashKitMenu} from './helpers';
+import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
+import {pluginImage} from './plugins/Image/Image';
 import textPlugin from './plugins/Text/Text';
 import pluginTitle from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
@@ -19,26 +21,52 @@ const getDistinctsAction = () => {
     return fetchDistinctsByApi;
 };
 
-export const getConfiguredDashKit = () => {
-    if (isConfigured) {
-        return DashKit;
-    }
+let currentDefaultsGetter: ((plugin: Plugin) => PluginDefaultLayout) | null = null;
+const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDefaultsGetter) => {
+    return plugins.map((plugin) => {
+        return {
+            ...plugin,
+            defaultLayout: pluginDefaultsGetter
+                ? pluginDefaultsGetter(plugin)
+                : plugin.defaultLayout,
+        };
+    });
+};
 
+export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null) => {
     const controlSettings = {
         getDistincts: getDistinctsAction(),
     };
 
-    isConfigured = true;
+    if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const plugins = wrapPlugins(
+            [
+                pluginTitle,
+                textPlugin.setSettings({
+                    apiHandler: MarkdownProvider.getMarkdown,
+                }),
+                pluginControl.setSettings(controlSettings),
+                pluginGroupControl.setSettings(controlSettings),
+                widgetPlugin,
+                pluginImage,
+            ],
+            pluginDefaultsGetter,
+        );
 
-    DashKit.registerPlugins(
-        pluginTitle,
-        textPlugin.setSettings({
-            apiHandler: MarkdownProvider.getMarkdown,
-        }),
-        pluginControl.setSettings(controlSettings),
-        pluginGroupControl.setSettings(controlSettings),
-        widgetPlugin,
-    );
+        if (isConfigured) {
+            DashKit.reloadPlugins(...plugins);
+        } else {
+            DashKit.registerPlugins(...plugins);
+        }
+
+        currentDefaultsGetter = pluginDefaultsGetter;
+    }
+
+    if (isConfigured) {
+        return DashkitWrapper;
+    }
+
+    isConfigured = true;
 
     DashKit.setSettings({
         gridLayout: {margin: [8, 8]},
@@ -47,5 +75,5 @@ export const getConfiguredDashKit = () => {
         menu: getDashKitMenu(),
     });
 
-    return DashKit;
+    return DashkitWrapper;
 };

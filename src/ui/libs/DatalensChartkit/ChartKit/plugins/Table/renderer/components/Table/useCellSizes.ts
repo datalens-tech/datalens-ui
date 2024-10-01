@@ -63,11 +63,9 @@ export const useCellSizes = (
         const container = tableContainerRef?.current as Element;
         const table = container?.getElementsByTagName('table')?.[0];
 
-        if (!cellSizes && table) {
-            waitForContent(table).finally(() => {
+        if (!cellSizes) {
+            waitForContent(container).finally(() => {
                 let sizes: number[] = [];
-                const container = tableContainerRef?.current as Element;
-                const table = container?.getElementsByTagName('table')?.[0];
                 const tHeadRows = Array.from(
                     table?.getElementsByTagName('thead')?.[0]?.childNodes ?? [],
                 );

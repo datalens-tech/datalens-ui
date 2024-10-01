@@ -35,7 +35,10 @@ export enum ConnectionsDialogQA {
 }
 
 export enum AddFieldQA {
+    Option = 'add-field-option',
     AddFieldButton = 'add-field-button',
+    MeasureFieldIcon = 'add-measure-field-icon',
+    DimensionsFieldIcon = 'add-dimension-field-icon',
 }
 
 export enum DialogTabsQA {
@@ -117,6 +120,7 @@ export enum DialogDraftWarningQA {
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
     Title = 'dialog_widget-title',
+    Image = 'dialog_widget-image',
 }
 
 export enum DialogDashTitleQA {
