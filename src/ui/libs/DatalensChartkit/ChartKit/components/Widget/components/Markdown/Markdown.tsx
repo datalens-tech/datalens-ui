@@ -27,8 +27,6 @@ interface MarkdownProps {
 }
 
 export function Markdown(props: MarkdownProps) {
-    console.log('new');
-
     const {data, onLoad, id} = props;
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);
