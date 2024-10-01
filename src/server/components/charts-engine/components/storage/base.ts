@@ -1,5 +1,6 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import uuid from 'uuid';
 
 import type {WorkbookId} from '../../../../../shared';
 import type {TelemetryCallbacks} from '../../types';
@@ -77,32 +78,46 @@ export class BaseStorage {
     }
 
     async refreshPreloaded(
-        ctx: AppContext & {config: Config},
+        parentCtx: AppContext & {config: Config},
         callback: (configs: Record<string, ResolvedConfig>) => void,
     ) {
+        const requestId = uuid.v4();
+        const ctx = parentCtx.create('Configs preloading', {loggerPostfix: requestId});
+        ctx.set('requestId', requestId);
+        ctx.setTag('request_id', requestId);
+
         ctx.log('STORAGE_REFRESHING_PRELOADED');
-        const preloadList = ctx.config.preloadList || [];
-
-        for (const key of preloadList) {
-            await this.resolveConfig(ctx, {
-                key,
-                headers: {
-                    authorization: `OAuth ${this.oauthToken}`,
-                },
-                noCache: true,
-            })
-                .then((config) => {
-                    this.cachedConfigs[key] = config as unknown as ResolvedConfig;
+        const preloadList = parentCtx.config.preloadList || [];
+        try {
+            for (const key of preloadList) {
+                await this.resolveConfig(ctx, {
+                    key,
+                    headers: {
+                        authorization: `OAuth ${this.oauthToken}`,
+                    },
+                    noCache: true,
+                    requestId,
                 })
-                .catch((error) => {
-                    ctx.logError('Error preloading config', error, {
-                        key,
+                    .then((config) => {
+                        this.cachedConfigs[key] = config as unknown as ResolvedConfig;
+                    })
+                    .catch((error) => {
+                        ctx.logError('Error preloading config', error, {
+                            key,
+                        });
                     });
-                });
-        }
+            }
 
-        setTimeout(() => this.refreshPreloaded(ctx, callback), this.preloadFetchingInterval);
-        callback(this.cachedConfigs);
+            setTimeout(
+                () => this.refreshPreloaded(parentCtx, callback),
+                this.preloadFetchingInterval,
+            );
+            callback(this.cachedConfigs);
+        } catch (error) {
+            ctx.logError('Error preloading configs', error);
+        } finally {
+            ctx.end();
+        }
     }
 
     initPreloading(ctx: AppContext, callback: (configs: Record<string, ResolvedConfig>) => void) {
