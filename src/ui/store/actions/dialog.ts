@@ -77,7 +77,7 @@ export function setDialogConfirmLoadingStatus(
 
 type OpenDialogErrorWithTabsArguments = {
     error: DataLensApiError;
-    title?: string;
+    title?: string | null;
     withReport?: boolean;
     onRetry?: () => void;
 };

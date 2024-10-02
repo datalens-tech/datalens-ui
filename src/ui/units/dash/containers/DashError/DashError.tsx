@@ -16,25 +16,12 @@ export const DashError = ({
     onRetry: () => void;
     hideDetails?: boolean;
 }) => {
-    let customErrorMessage = '';
-
-    if (error && 'code' in error) {
-        switch (error.code) {
-            case DashErrorCode.NOT_FOUND:
-                customErrorMessage = i18n('label_error-404-message');
-                break;
-            case DashErrorCode.SECRET_ACCESS_DENIED:
-                customErrorMessage = i18n('label_error-access-message');
-                break;
-        }
-    }
+    const message =
+        error && 'code' in error && error.code === DashErrorCode.NOT_FOUND
+            ? i18n('label_error-404-message')
+            : '';
 
     return (
-        <ViewError
-            description={customErrorMessage}
-            error={error}
-            retry={onRetry}
-            hideDetails={hideDetails}
-        />
+        <ViewError description={message} error={error} retry={onRetry} hideDetails={hideDetails} />
     );
 };

@@ -2,7 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
-import {DL_EMBED_TOKEN_HEADER} from '../../../../shared';
+import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
@@ -16,9 +16,9 @@ export const embeddedEntryController = (req: Request, res: Response) => {
     if (!embedToken) {
         ctx.log('CHARTS_ENGINE_NO_TOKEN');
         res.status(400).send({
-            error: 'You must provide embedToken',
+            code: ErrorCode.InvalidTokenFormat,
+            extra: {message: 'You must provide embedToken', hideRetry: true},
         });
-
         return;
     }
 
@@ -27,10 +27,9 @@ export const embeddedEntryController = (req: Request, res: Response) => {
     if (!payload || typeof payload === 'string' || !('embedId' in payload)) {
         ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
         res.status(400).send({
-            code: 'ERR.CHARTS.WRONG_EMBED_TOKEN',
+            code: ErrorCode.InvalidTokenFormat,
             extra: {message: 'Wrong token format', hideRetry: true},
         });
-
         return;
     }
 
@@ -85,16 +84,26 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         })
         .then(async (response) => {
             if (response && 'entry' in response) {
-                const {
-                    entry: {entryId, scope, data},
-                } = response;
+                if (response.entry.scope === EntryScope.Dash) {
+                    const {
+                        entry: {entryId, scope, data},
+                    } = response;
 
-                // Add only necessary fields without personal info like createdBy
-                res.status(200).send({
-                    entryId,
-                    scope,
-                    data,
-                });
+                    // Add only necessary fields without personal info like createdBy
+                    res.status(200).send({
+                        entryId,
+                        scope,
+                        data,
+                    });
+                } else {
+                    res.status(400).send({
+                        code: ErrorCode.InvalidToken,
+                        extra: {
+                            message: 'Invalid token',
+                            hideRetry: true,
+                        },
+                    });
+                }
             }
         })
         .catch((error) => {
