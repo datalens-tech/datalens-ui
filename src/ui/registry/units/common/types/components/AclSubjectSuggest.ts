@@ -23,16 +23,5 @@ export type AclSubjectSuggestProps = {
           }
         | AclSubject[]
     >;
-    newFetchSubjects?: (
-        search: string,
-        tabId: ClaimsSubjectType,
-        pageToken?: string,
-    ) => Promise<
-        | {
-              subjects: AclSubject[];
-              nextPageToken?: string;
-          }
-        | AclSubject[]
-    >;
     onSubjectChange: (subject: AclSubject) => void;
 };
