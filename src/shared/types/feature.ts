@@ -61,13 +61,7 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    /** New Table plugin for wizard and QL(flat tables only). */
-    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
-    /** New Table plugin for wizard and QL(pivot tables). */
-    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
-    PinnedColumns = 'PinnedColumns',
-    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
     /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
