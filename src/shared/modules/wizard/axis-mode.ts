@@ -15,6 +15,14 @@ type GetXAxisModeArgs = {
     xField?: ServerField;
 };
 
+function getXPlaceholder(args: {id: WizardVisualizationId; placeholders: V11Placeholder[]}) {
+    const {id, placeholders} = args;
+    // Historically, x for a bar chart is y
+    return placeholders.find((p) => {
+        return Y_AS_MAIN_AXIS.includes(id) ? p.id === PlaceholderId.Y : p.id === PlaceholderId.X;
+    });
+}
+
 export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     const {config, xField: newXField} = args;
     const layers = config.visualization?.layers ?? [];
@@ -22,26 +30,21 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     const getVisualizationAxisMode = (visualization: {
         placeholders: V11Placeholder[];
         id: WizardVisualizationId;
-        newField?: ServerField;
+        xField?: ServerField;
         sort?: ServerSort[];
     }) => {
-        const {placeholders, newField, sort = []} = visualization;
+        const {placeholders, xField, sort = []} = visualization;
         const visualizationId = visualization.id as WizardVisualizationId;
-        // Historically, x for a bar chart is y
-        const xPlaceholder = placeholders.find((p) => {
-            return Y_AS_MAIN_AXIS.includes(visualizationId)
-                ? p.id === PlaceholderId.Y
-                : p.id === PlaceholderId.X;
-        });
-        const xField = newField ?? xPlaceholder?.items[0];
+        const xPlaceholder = getXPlaceholder({placeholders, id: visualizationId});
+        const field = xField ?? xPlaceholder?.items[0];
         const axisSettings = xPlaceholder?.settings;
 
-        if (!xField) {
+        if (!field) {
             return AxisMode.Discrete;
         }
 
         const isContinuousModeRestricted = isContinuousAxisModeDisabled({
-            field: xField,
+            field,
             axisSettings,
             visualizationId,
             sort,
@@ -51,18 +54,29 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
             return AxisMode.Discrete;
         }
 
-        return axisSettings?.axisModeMap?.[xField.guid] ?? AxisMode.Continuous;
+        return axisSettings?.axisModeMap?.[field.guid] ?? AxisMode.Continuous;
     };
 
     if (layers.length) {
         const selectedLayerId = config.visualization?.selectedLayerId;
+        let xField: ServerField | undefined = newXField;
+
+        if (!xField) {
+            const selectedLayer = layers.find((l) => l.id === selectedLayerId) ?? layers[0];
+            const xPlaceholder = getXPlaceholder({
+                placeholders: selectedLayer.placeholders ?? [],
+                id: selectedLayer.id as WizardVisualizationId,
+            });
+            xField = xPlaceholder?.items[0];
+        }
+
         return (
             layers.reduce<AxisMode | undefined>((res, layer) => {
                 if (res !== AxisMode.Discrete) {
                     const layerAxisMode = getVisualizationAxisMode({
                         id: layer.id as WizardVisualizationId,
                         placeholders: layer.placeholders,
-                        newField: layer.id === selectedLayerId ? newXField : undefined,
+                        xField,
                         sort: hasSortThanAffectAxisMode(config)
                             ? layer.commonPlaceholders.sort
                             : [],
@@ -72,7 +86,7 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
                 }
 
                 return res;
-            }, undefined) ?? AxisMode.Discrete
+            }, undefined) ?? AxisMode.Continuous
         );
     }
 
@@ -80,7 +94,7 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     return getVisualizationAxisMode({
         id: visualization?.id as WizardVisualizationId,
         placeholders: visualization?.placeholders ?? [],
-        newField: newXField,
+        xField: newXField,
         sort: hasSortThanAffectAxisMode(config) ? config.sort : [],
     });
 }
