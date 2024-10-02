@@ -1,5 +1,8 @@
 import type {IconData} from '@gravity-ui/uikit';
-import {ConnectorType} from 'shared';
+import {ConnectorType, Feature} from 'shared';
+import type {ConnectorIconData} from 'shared/schema/types';
+import {DL} from 'ui/constants';
+import Utils from 'ui/utils';
 
 import {ConnectorAlias} from '../../constants';
 
@@ -143,6 +146,19 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
     }
 };
 
-export const getConnectorIconData = (type: string): IconData => {
-    return getConnectorIconDataWithoutDefault(type) || iconUndefined;
+const getBIConnectorIconData = (type: string): ConnectorIconData | IconData => {
+    const connectorIcon = DL.CONNECTOR_ICONS.find((icon) => icon.conn_type === type);
+    return connectorIcon || iconUndefined;
+};
+
+export const getConnectorIconData = (type: string): ConnectorIconData | IconData => {
+    let iconData: ConnectorIconData | IconData | undefined;
+
+    if (Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)) {
+        iconData = getBIConnectorIconData(type);
+    } else {
+        iconData = getConnectorIconDataWithoutDefault(type);
+    }
+
+    return iconData || iconUndefined;
 };
