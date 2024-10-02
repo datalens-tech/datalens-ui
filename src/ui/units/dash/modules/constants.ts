@@ -4,6 +4,7 @@ import {ITEM_TYPE} from '../../../constants/dialogs';
 
 export enum DashErrorCode {
     NOT_FOUND = 'ERR.DASH.NOT_FOUND_ERROR',
+    // TODO: Remove after cleaning usage
     SECRET_ACCESS_DENIED = 'ERR.DASH.SECRET_ACCESS_DENIED',
 }
 

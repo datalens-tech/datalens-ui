@@ -12,6 +12,7 @@ import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType} from 'shared';
+import {useChangedValue} from 'ui/hooks/useChangedProp';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -95,21 +96,20 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         [chartId, chartkitParams, config, workbookId],
     );
 
-    const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
-    const prevSavedProps = usePrevious(savedForFetchProps);
-
-    const prevSavedChartId = usePrevious(chartId);
-
     const usedParamsRef = React.useRef<DataProps['params'] | null>(null);
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
 
-    const hasChangedOuterProps =
-        !prevSavedProps ||
-        !isEqual(omit(prevSavedProps, 'params'), omit(pick(props, influencingProps), 'params')) ||
-        Boolean(prevSavedChartId && prevSavedChartId !== chartId);
+    const hasInfluencingPropsChanged = useChangedValue(
+        omit(pick(props, influencingProps), 'params'),
+    );
+    const hasParamsChanged = useChangedValue(props.params);
+    const hasInnerParamsChanged = useChangedValue(innerParamsRef?.current);
+    const hasChartIdChanged = useChangedValue(chartId);
+
+    const hasChangedOuterProps = hasInfluencingPropsChanged || hasChartIdChanged;
 
     const hasChangedOuterParams = React.useMemo(() => {
-        let changedParams = !prevSavedProps || !isEqual(prevSavedProps.params, props.params);
+        let changedParams = hasParamsChanged;
 
         /* to do after usedParams has fixed CHARTS-6619
         const prevActionedParams = getParamsNamesFromActionParams(prevSavedProps?.params || {});
@@ -184,14 +184,14 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         }
 
         return changedParams;
-    }, [prevSavedProps?.params, props.params, usedParamsRef, innerParamsRef]);
+    }, [hasParamsChanged, props.params, usedParamsRef, innerParamsRef]);
 
     /**
      * for correct cancellation on rerender & changed request params & data props
      */
     const requestId = React.useMemo(
         () => settings.requestIdGenerator(DL.REQUEST_ID_PREFIX),
-        [hasChangedOuterParams, hasChangedOuterProps],
+        [hasChangedOuterParams, hasChangedOuterProps, hasInnerParamsChanged],
     );
 
     /**

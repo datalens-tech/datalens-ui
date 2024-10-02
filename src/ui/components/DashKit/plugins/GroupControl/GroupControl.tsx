@@ -114,6 +114,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             needReload: false,
             localUpdateLoader: false,
             quickActionLoader: false,
+            disableButtons: true,
         };
     }
 
@@ -656,11 +657,17 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        this.controlsStatus[controlId] = status;
+
         if (!this.controlsProgressCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
                 this.adjustWidgetLayout(false);
             }
+
+            const disableButtons = Object.values(this.controlsStatus).every(
+                (status) => status === LOAD_STATUS.FAIL,
+            );
 
             this.resolveMetaInControl();
             this.setState({
@@ -669,10 +676,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 silentLoading: false,
                 isInit: true,
                 localUpdateLoader: false,
+                disableButtons,
             });
         }
-
-        this.controlsStatus[controlId] = status;
     };
 
     private renderControl(item: DashTabItemControlSingle) {
@@ -778,6 +784,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
+                        disabled={this.state.disableButtons}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -788,6 +795,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         onClick={resetAction}
                         onChange={this.handleResetChange}
                         qa={ControlQA.controlButtonReset}
+                        disabled={this.state.disableButtons}
                     />
                 )}
             </React.Fragment>
