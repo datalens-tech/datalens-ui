@@ -1,3 +1,4 @@
+import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
@@ -23,17 +24,17 @@ function getSortingFunction(args: {
     const columnType: TableCommonCell['type'] = get(th, 'type');
     if (columnType === 'date') {
         return function (row1, row2) {
-            const cell1Value = String(row1.original[columnIndex].value);
-            const cell2Value = String(row2.original[columnIndex].value);
+            const cell1Value = row1.original[columnIndex].value as DateTimeInput;
+            const cell2Value = row2.original[columnIndex].value as DateTimeInput;
 
             const date1 = dateTimeUtc({input: cell1Value});
             const date2 = dateTimeUtc({input: cell2Value});
 
-            if (date1.isValid() && date1.isAfter(date2)) {
+            if (date1 > date2 || (date1.isValid() && !date2.isValid())) {
                 return 1;
             }
 
-            if (date2.isValid() && date2.isAfter(date1)) {
+            if (date2 > date1 || (date2.isValid() && !date1.isValid())) {
                 return -1;
             }
 
