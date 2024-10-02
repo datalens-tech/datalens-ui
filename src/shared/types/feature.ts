@@ -64,7 +64,7 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
+    /** Disable setting min-height: unset for all embedded dashes by default. Enable min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
     RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
@@ -72,6 +72,7 @@ export enum Feature {
     EnableBIOAuth = 'EnableBIOAuth',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
+    NewTableWidgetForCE = 'NewTableWidgetForCE',
 }
 
 export type FeatureConfig = Record<string, boolean>;
