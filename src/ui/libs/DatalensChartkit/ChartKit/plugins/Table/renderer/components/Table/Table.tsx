@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
+import type {StringParams, TableCell, TableCellsRow, TableCommonCell, TableTitle} from 'shared';
 
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
@@ -21,7 +21,7 @@ import {
     mapTableData,
 } from '../../utils';
 import type {GetCellActionParamsArgs} from '../../utils';
-import {TableTitle} from '../Title/TableTitle';
+import {TableTitleView} from '../Title/TableTitle';
 
 import {TableBody} from './TableBody';
 import {TableFooter} from './TableFooter';
@@ -44,7 +44,14 @@ type Props = {
 export const Table = React.memo<Props>((props: Props) => {
     const {dimensions: widgetDimensions, widgetData, onChangeParams, onReady} = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
-    const title = typeof config?.title === 'string' ? config.title : config?.title?.text;
+
+    const title = React.useMemo<TableTitle | undefined>(() => {
+        if (typeof config?.title === 'string') {
+            return {text: config.title};
+        }
+
+        return config?.title;
+    }, [config?.title]);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
 
     const data = React.useMemo(() => mapTableData(originalData), [originalData]);
@@ -216,7 +223,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 )}
                 ref={tableContainerRef}
             >
-                <TableTitle title={title} />
+                <TableTitleView title={title} />
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
                     {noData && (
                         <div className={b('no-data')}>
