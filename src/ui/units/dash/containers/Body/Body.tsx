@@ -860,6 +860,7 @@ class Body extends React.PureComponent<BodyProps> {
                 isNewRelations={this.props.isNewRelations}
                 onItemMountChange={this.handleItemMountChange}
                 onItemRender={this.handleItemRender}
+                hideErrorDetails={this.props.hideErrorDetails}
             />
         );
     };

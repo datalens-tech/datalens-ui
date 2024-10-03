@@ -54,7 +54,7 @@ type DatabaseErrorDetails = {
 
 type Props = {
     onCancel: () => void;
-    title: string;
+    title: string | null;
     error: DataLensApiError;
     withReport?: boolean;
     onRetry?: () => void;
@@ -130,7 +130,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     }
 
     render() {
-        const {title = i18n('label_error')} = this.props;
+        const {title} = this.props;
         const {loading} = this.state;
 
         return (
@@ -141,7 +141,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogBodyClassName={b('content')}
                 renderSheetFooter={() => this.renderFooterButtons()}
                 renderDialogFooter={() => this.renderFooterButtons()}
-                title={title}
+                title={title || i18n('label_error')}
                 dialogProps={{
                     disableEscapeKeyDown: true,
                     disableOutsideClick: true,
@@ -274,7 +274,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
     }
 
     private renderFooterButtons() {
-        const {title = i18n('label_error'), error, withReport = true, onRetry} = this.props;
+        const {title, error, withReport = true, onRetry} = this.props;
         const {requestId, errorWithoutDocumentation} = this.state;
 
         const {ReportButton} = registry.common.components.getAll();
@@ -286,7 +286,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 {withReport && (
                     <ReportButton
                         error={error}
-                        message={title}
+                        message={title || i18n('label_error')}
                         requestId={requestId}
                         errorWithoutDocumentation={errorWithoutDocumentation}
                         className={b('button')}
