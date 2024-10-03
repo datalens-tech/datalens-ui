@@ -7,7 +7,6 @@ import {isObject} from 'lodash';
 import type {ChartsEngine} from '..';
 import {isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
-import {registry} from '../../../registry';
 import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
