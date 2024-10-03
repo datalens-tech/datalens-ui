@@ -11,8 +11,8 @@ export function getRowAsMap(args: {row?: TData; head?: TableHead[]}) {
     );
 }
 
-export function mapTableData(data: TableData): Required<TableData> {
-    const {head = [], rows = [], footer = []} = data;
+export function mapTableData(data: TableData | undefined): Required<TableData> {
+    const {head = [], rows = [], footer = []} = data || {};
 
     const newHead = head.map((col, index) => {
         if (!col?.id) {
