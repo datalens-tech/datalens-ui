@@ -22,6 +22,7 @@ export interface PluginGroupControlState {
     needReload: boolean;
     localUpdateLoader: boolean;
     quickActionLoader: boolean;
+    disableButtons?: boolean;
 }
 
 export type ResolveMetaResult = {

@@ -14,17 +14,6 @@ export type AclSubjectSuggestProps = {
     }[];
     fetchSubjects?: (
         search: string,
-        type?: ClaimsSubjectType,
-        pageToken?: string,
-    ) => Promise<
-        | {
-              subjects: AclSubject[];
-              nextPageToken?: string;
-          }
-        | AclSubject[]
-    >;
-    newFetchSubjects?: (
-        search: string,
         tabId: ClaimsSubjectType,
         pageToken?: string,
     ) => Promise<

@@ -720,6 +720,7 @@ class DialogChartWidget extends React.PureComponent<
                         <Checkbox
                             checked={Boolean(background?.enabled)}
                             onChange={this.handleBackgroundEnabledChanged}
+                            qa={DashCommonQa.WidgetEnableBackgroundCheckbox}
                         >
                             {i18n('dash.widget-dialog.edit', 'field_background-enable')}
                         </Checkbox>

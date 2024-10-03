@@ -79,6 +79,10 @@
         display: inline-flex;
         vertical-align: middle;
         justify-content: center;
+
+        &_error {
+            max-width: unset;
+        }
     }
 
     &__item-label {
@@ -97,6 +101,7 @@
 
         #{$class}__controls {
             flex-direction: column;
+            align-items: center;
         }
 
         #{$class}__item {
