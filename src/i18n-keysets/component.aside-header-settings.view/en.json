@@ -4,6 +4,7 @@
   "field_language": "Language",
   "label_language-en": "English",
   "label_language-ru": "Русский",
+  "label_language-zh-cn": "中文",
   "label_not-found": "No results",
   "label_placeholder-search": "Search settings",
   "label_title": "Settings",
