@@ -4,7 +4,7 @@ import {
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
 } from '../../../src/shared/constants';
-import {v1 as uuid} from 'uuid';
+import {v1 as uuidv1} from 'uuid';
 
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';
@@ -28,7 +28,7 @@ class ConnectionsPage extends BasePage {
         await this.page.click(this.createQlChartButtonSelector);
     }
 
-    async createConnectionInFolder({name = uuid()}: {name?: string} = {}) {
+    async createConnectionInFolder({name = uuidv1()}: {name?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(
             slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
         );
@@ -47,7 +47,7 @@ class ConnectionsPage extends BasePage {
         }
     }
 
-    async createConnectionInWorkbook({name = uuid()}: {name?: string} = {}) {
+    async createConnectionInWorkbook({name = uuidv1()}: {name?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(
             slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
         );

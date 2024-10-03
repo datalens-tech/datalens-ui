@@ -1,4 +1,4 @@
-import {v1 as uuid} from 'uuid';
+import {v1 as uuidv1} from 'uuid';
 import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
 
 import {deleteEntity, slct} from '../../utils';
@@ -45,7 +45,7 @@ class DatasetPage extends BasePage {
         await this.page.click('.dataset-panel input[value=sources]');
     }
 
-    async createDatasetInFolder({name = uuid()}: {name?: string} = {}) {
+    async createDatasetInFolder({name = uuidv1()}: {name?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(slct(DatasetActionQA.CreateButton));
         // open creation dialog
         await formSubmit.click();

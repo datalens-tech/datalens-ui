@@ -1,4 +1,4 @@
-import {v1 as uuid} from 'uuid';
+import {v1 as uuidv1} from 'uuid';
 
 import {
     DUPLICATE_TITLE,
@@ -42,7 +42,7 @@ const isInvalidId = (field: ModifiedDatasetField) => {
 };
 
 export const createInitialField = () => {
-    const guid = uuid();
+    const guid = uuidv1();
 
     return {
         ...NEW_FIELD_PROPERTIES,

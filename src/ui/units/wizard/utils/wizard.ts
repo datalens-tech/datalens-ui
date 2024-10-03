@@ -39,7 +39,7 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from 'shared';
-import {v1 as uuid} from 'uuid';
+import {v1 as uuidv1} from 'uuid';
 
 import history from '../../../utils/history';
 import Utils from '../../../utils/utils';
@@ -136,7 +136,7 @@ const getDefaultGeolayerSettings = (
     return {
         layerSettings: {
             type,
-            id: uuid(),
+            id: uuidv1(),
             name,
             alpha: 80,
             valid: false,

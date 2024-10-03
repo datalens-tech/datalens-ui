@@ -81,7 +81,7 @@ import {
 } from 'units/wizard/selectors/visualization';
 import {getIconForDataType, prepareFieldForUpdate} from 'units/wizard/utils/helpers';
 import Utils from 'utils';
-import {v1 as uuid} from 'uuid';
+import {v1 as uuidv1} from 'uuid';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {updateVisualizationPlaceholderItems} from '../../../../actions/placeholder';
@@ -564,7 +564,7 @@ class VisualizationItem extends React.Component<Props, State> {
                 field = {
                     ...item,
                     title: '',
-                    guid: uuid(),
+                    guid: uuidv1(),
                     fakeTitle: undefined,
                     calc_mode: 'formula' as DatasetFieldCalcMode,
                     formula,
@@ -574,14 +574,14 @@ class VisualizationItem extends React.Component<Props, State> {
             field = {
                 ...item,
                 title: '',
-                guid: uuid(),
+                guid: uuidv1(),
                 fakeTitle: undefined,
             };
         } else {
             field = {
                 ...item,
                 title: '',
-                guid: uuid(),
+                guid: uuidv1(),
                 fakeTitle: undefined,
                 calc_mode: 'formula' as DatasetFieldCalcMode,
                 formula: `[${item.originalTitle || item.title}]`,
