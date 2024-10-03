@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import type {StringParams, TableCell, TableCellsRow, TableCommonCell, TableTitle} from 'shared';
+import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
@@ -21,7 +21,7 @@ import {
     mapTableData,
 } from '../../utils';
 import type {GetCellActionParamsArgs} from '../../utils';
-import {TableTitleView} from '../Title/TableTitle';
+import {TableTitleView} from '../TableTitleView/TableTitleView';
 
 import {TableBody} from './TableBody';
 import {TableFooter} from './TableFooter';
@@ -29,6 +29,7 @@ import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
 import {useTableHeight} from './useTableHeight';
+import {getTableTitle} from './utils';
 
 import './Table.scss';
 
@@ -44,14 +45,7 @@ type Props = {
 export const Table = React.memo<Props>((props: Props) => {
     const {dimensions: widgetDimensions, widgetData, onChangeParams, onReady} = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
-
-    const title = React.useMemo<TableTitle | undefined>(() => {
-        if (typeof config?.title === 'string') {
-            return {text: config.title};
-        }
-
-        return config?.title;
-    }, [config?.title]);
+    const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
 
     const data = React.useMemo(() => mapTableData(originalData), [originalData]);
