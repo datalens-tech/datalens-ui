@@ -892,7 +892,7 @@ class Body extends React.PureComponent<BodyProps> {
         this.loadedItemsSet.set(item.id, true);
 
         this.setState({
-            loaded: this.loadedItemsSet.values().every(Boolean),
+            loaded: Array.from(this.loadedItemsSet.values()).every(Boolean),
         });
     };
 
