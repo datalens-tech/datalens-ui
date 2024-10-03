@@ -167,6 +167,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
             adjustLayout(!newAutoHeight);
             setIsRendered(true);
+
+            // Triggering update after chart render
+            if (isReadyToReflowRef.current && handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );

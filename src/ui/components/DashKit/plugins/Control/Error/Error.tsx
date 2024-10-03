@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -25,6 +25,9 @@ type ErrorProps = {
 export function Error({onClickRetry, errorData}: ErrorProps) {
     const dispatch = useDispatch();
     const errorTitle = errorData?.data?.title;
+    const hideErrorDetails = errorData?.extra?.hideErrorDetails;
+
+    const errorText = errorTitle || i18n('label_error');
 
     const handleClick = () => {
         if (errorData) {
@@ -44,10 +47,24 @@ export function Error({onClickRetry, errorData}: ErrorProps) {
         }
     };
 
+    const renderErrorContent = () => {
+        return (
+            <div className={b({mobile: DL.IS_MOBILE, 'no-action': hideErrorDetails})}>
+                <span className={b('label')}>{errorText}</span>
+                <Icon data={TriangleExclamationFill} className={b('icon')} />
+            </div>
+        );
+    };
+
     return (
-        <div className={b({mobile: DL.IS_MOBILE})} onClick={handleClick}>
-            <span className={b('label')}>{i18n('label_error')}</span>
-            <Icon data={TriangleExclamationFill} className={b('icon')} />
-        </div>
+        <React.Fragment>
+            {hideErrorDetails ? (
+                <div title={errorText}>{renderErrorContent()}</div>
+            ) : (
+                <Button onClick={handleClick} title={errorText} view="flat">
+                    {renderErrorContent()}
+                </Button>
+            )}
+        </React.Fragment>
     );
 }

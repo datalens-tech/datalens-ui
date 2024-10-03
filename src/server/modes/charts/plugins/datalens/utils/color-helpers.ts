@@ -127,7 +127,8 @@ function mapAndColorizeTableCells(rows: TableCellsRow[], colorsConfig: ChartColo
             if (typeof cell === 'object') {
                 const colorValue =
                     typeof cell.color !== 'number' || Number.isNaN(cell.color) ? null : cell.color;
-                const backgroundColor = colorValue ? gradientColors[colorValue] : undefined;
+                const backgroundColor =
+                    colorValue === null ? undefined : gradientColors[colorValue];
 
                 if (backgroundColor && !cell.css) {
                     cell.css = {

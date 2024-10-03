@@ -5,6 +5,7 @@ import type {PaletteOption} from '@gravity-ui/uikit';
 import {ActionTooltip, Icon, Palette, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {DashCommonQa} from 'shared';
 
 import './PaletteBackground.scss';
 
@@ -25,11 +26,13 @@ const ColorItem = ({
     isSelected,
     classNameMod,
     isPreview,
+    qa,
 }: {
     color: string;
     classNameMod?: string;
     isSelected?: boolean;
     isPreview?: boolean;
+    qa?: string;
 }) => {
     const isTransparent = color === CustomPaletteColors.NONE;
     const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
@@ -44,6 +47,7 @@ const ColorItem = ({
                 'widget-bg': isLikeChartBg,
                 ...mod,
             })}
+            data-qa={qa}
         >
             {isLikeChartBg && <Icon data={ChartColumn} className={b('color-icon')} />}
             {!isPreview && color in PALETTE_HINTS && (
@@ -103,6 +107,7 @@ const PaletteList = (props: {onSelect: (val: string[]) => void; selectedColor: s
             onUpdate={props.onSelect}
             multiple={false}
             optionClassName={b('palette-list-btn')}
+            qa={DashCommonQa.WidgetSelectBackgroundPalleteContainer}
         />
     );
 };
@@ -135,6 +140,7 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
                 isSelected={true}
                 classNameMod={'small'}
                 isPreview={true}
+                qa={DashCommonQa.WidgetSelectBackgroundButton}
             />
         </Popover>
     );

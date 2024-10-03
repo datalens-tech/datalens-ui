@@ -8,6 +8,8 @@ import {Switch} from '@gravity-ui/uikit';
 
 import type {RowEntryData} from '../EntryRow/EntryRow';
 
+import type {RowEntryData} from '../EntryRow/EntryRow';
+
 import './EntitiesList.scss';
 
 type EntitiesListProps = {

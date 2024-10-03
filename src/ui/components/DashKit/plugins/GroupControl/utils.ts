@@ -1,11 +1,19 @@
 import type {CSSProperties} from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit/helpers';
+import {I18N} from 'i18n';
 import pick from 'lodash/pick';
 import type {DashTabItemControlData} from 'shared';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import {
+    CHARTS_ERROR_CODE,
+    type ResponseSuccessControls,
+} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+
+import type {SelectorError} from '../Control/types';
 
 import type {ExtendedLoadedData, GroupControlLocalMeta} from './types';
+
+const i18n = I18N.keyset('common.errors');
 
 export const getControlWidthStyle = (
     placementMode: DashTabItemControlData['placementMode'],
@@ -57,4 +65,21 @@ export const filterSignificantParams = ({
     }
 
     return dependentSelectors || !defaults ? params : pick(params, Object.keys(defaults));
+};
+
+export const getErrorTitle = (errorInfo: SelectorError) => {
+    const datasetsStatus =
+        errorInfo?.details && 'sources' in errorInfo.details && errorInfo.details.sources
+            ? Object.keys(errorInfo.details.sources)[0]
+            : null;
+    // TODO: use specific code instead of status
+    if (
+        errorInfo?.code === CHARTS_ERROR_CODE.DATA_FETCHING_ERROR &&
+        datasetsStatus &&
+        errorInfo?.details?.sources?.[datasetsStatus]?.status === 409
+    ) {
+        return i18n('label_error-outdated-message');
+    }
+
+    return null;
 };

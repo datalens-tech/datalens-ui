@@ -22,6 +22,7 @@ import {
     RPC_AUTHORIZATION,
     WORKBOOK_ID_HEADER,
 } from '../../../../../../shared';
+import {ErrorCode} from '../../../../../../shared/constants';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
 import { unitedStorageConfigLoadedTimeout } from '../../../../../app-env';
@@ -43,7 +44,6 @@ axiosRetry(axios, {
 });
 
 const ENTRY_NOT_FOUND = 'ENTRY_NOT_FOUND';
-const ENTRY_FORBIDDEN = 'ENTRY_FORBIDDEN';
 const TEN_SECONDS = unitedStorageConfigLoadedTimeout;
 const PASSED_PROPERTIES: (keyof Entry)[] = [
     'entryId',
@@ -312,7 +312,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = id;
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -386,7 +386,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = key;
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -442,7 +442,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = 'embedToken';
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -500,7 +500,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = 'embedToken and id';
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -585,7 +585,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -670,7 +670,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -710,7 +710,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {

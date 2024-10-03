@@ -140,4 +140,6 @@ export const commonFunctionsMap = {
         >(),
     checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
     getBasicActionPanelItems: makeFunctionTemplate<() => ActionPanelItem[]>(),
+    getListMembersFilter:
+        makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
 } as const;

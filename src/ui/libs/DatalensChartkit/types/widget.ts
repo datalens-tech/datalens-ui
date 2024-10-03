@@ -277,7 +277,9 @@ export interface ControlWidget extends WidgetBaseWithData, WithControls {
 export type MarkdownWidget = WidgetBaseWithData & {
     type: 'markdown';
     data: {
-        html: string;
+        html?: string;
+        markdown?: string;
+        meta?: object;
     };
 };
 

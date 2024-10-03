@@ -5,6 +5,7 @@ import {Button, Icon, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {SuggestBatchListMembersArgs} from 'ui/store/typings/iamAccessDialog';
 
 import type {SubjectClaims} from '../../../../../shared/schema/extensions/types';
 import {ClaimsSubjectType} from '../../../../../shared/schema/extensions/types';
@@ -93,7 +94,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
     const fetchSubjects = React.useCallback(
         async (
             search,
-            subType?: ClaimsSubjectType,
+            tabId: ClaimsSubjectType,
             pageToken?: string,
         ): Promise<{
             subjects: SubjectClaims[];
@@ -102,9 +103,21 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             const currentCall = fetchSubjectsCalls.current.call + 1;
             fetchSubjectsCalls.current.call = currentCall;
 
-            const suggestMembers = await dispatch(
-                suggestBatchListMembers({id, search, subType, pageToken}),
-            );
+            const getListMembersFilter = registry.common.functions.get('getListMembersFilter');
+
+            const filter = getListMembersFilter({
+                search,
+                tabId,
+            });
+
+            const batchListArgs: SuggestBatchListMembersArgs = {id, search, pageToken};
+
+            if (filter) {
+                batchListArgs.filter = filter;
+            }
+
+            const suggestMembers = await dispatch(suggestBatchListMembers(batchListArgs));
+
             const filteredSuggestMembers = suggestMembers
                 ? suggestMembers.subjects.filter((item) => !membersIds.includes(item.sub))
                 : [];
@@ -125,7 +138,7 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 };
             }
         },
-        [dispatch, membersIds, id],
+        [dispatch, id, membersIds],
     );
 
     return (

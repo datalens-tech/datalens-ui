@@ -61,27 +61,18 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    /** New Table plugin for wizard and QL(flat tables only). */
-    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
-    /** New Table plugin for wizard and QL(pivot tables). */
-    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
-    PinnedColumns = 'PinnedColumns',
-    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
-    /** Enable Isolated VM Sandbox */
-    EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
+    /** Disable setting min-height: unset for all embedded dashes by default. Enable min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
     RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
     /** Use BI handles for getting oauth applications tokens */
     EnableBIOAuth = 'EnableBIOAuth',
-    NewSandbox_100p = 'NewSandbox_100p',
-    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
+    NewTableWidgetForCE = 'NewTableWidgetForCE',
 }
 
 export type FeatureConfig = Record<string, boolean>;

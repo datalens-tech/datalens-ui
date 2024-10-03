@@ -100,5 +100,71 @@ datalensTest.describe('Wizard', () => {
             ];
             expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
         });
+<<<<<<< HEAD
+=======
+
+        datalensTest('Sorting dates with null values', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.createNewFieldWithFormula('year', 'year([Order_date])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'year');
+            await wizardPage.filterEditor.selectFilterOperation(Operations.EQ);
+            await wizardPage.filterEditor.setInputValue('2015');
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.createNewFieldWithFormula('month', 'datetrunc([Order_date], "month")');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'month',
+            );
+
+            await wizardPage.createNewFieldWithFormula(
+                'with_null',
+                'if(month([Order_date]) = 2) then null else datetrunc([month], "month") end',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'with_null',
+            );
+
+            await expect(previewLoader).not.toBeVisible();
+
+            const initialOrder = [
+                ['01.01.2015', '01.01.2015'],
+                ['01.02.2015', 'null'],
+                ['01.03.2015', '01.03.2015'],
+                ['01.04.2015', '01.04.2015'],
+                ['01.05.2015', '01.05.2015'],
+                ['01.06.2015', '01.06.2015'],
+                ['01.07.2015', '01.07.2015'],
+                ['01.08.2015', '01.08.2015'],
+                ['01.09.2015', '01.09.2015'],
+                ['01.10.2015', '01.10.2015'],
+                ['01.11.2015', '01.11.2015'],
+                ['01.12.2015', '01.12.2015'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(initialOrder);
+
+            // Sort values by clicking on header
+            await chartContainer.locator('thead', {hasText: 'with_null'}).first().click();
+            const expectedOrder = [
+                ['01.12.2015', '01.12.2015'],
+                ['01.11.2015', '01.11.2015'],
+                ['01.10.2015', '01.10.2015'],
+                ['01.09.2015', '01.09.2015'],
+                ['01.08.2015', '01.08.2015'],
+                ['01.07.2015', '01.07.2015'],
+                ['01.06.2015', '01.06.2015'],
+                ['01.05.2015', '01.05.2015'],
+                ['01.04.2015', '01.04.2015'],
+                ['01.03.2015', '01.03.2015'],
+                ['01.01.2015', '01.01.2015'],
+                ['01.02.2015', 'null'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
+        });
+>>>>>>> e4aa64a13ed2304ce485b3f36644bfc318fcdb52
     });
 });

@@ -2,14 +2,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
-import {useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {registry} from '../../../../registry';
-import {selectSandboxDebugMode} from '../../../../store/selectors/user';
-import SandboxEngineSelect from '../../components/SandboxEngineSelect/SandboxEngineSelect';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
 import ButtonDrawPreview from '../ButtonDrawPreview/ButtonDrawPreview';
@@ -31,7 +27,6 @@ function ActionPanelService({
     history,
 }) {
     usePageTitle({entry});
-    const sandboxDebugMode = useSelector(selectSandboxDebugMode);
 
     if (!entry) {
         return null;
@@ -61,9 +56,6 @@ function ActionPanelService({
         <React.Fragment key="additionalEntryItems">
             <ActionPanelButton entry={entry} className={b('custom-button')} />
             <EntryLabel entry={entry} />
-            {Utils.isEnabledFeature(Feature.EnableIsolatedSandbox) &&
-                Utils.isEnabledFeature(Feature.SandboxEngineSelectSwitch) &&
-                sandboxDebugMode && <SandboxEngineSelect entry={entry} />}
         </React.Fragment>,
     ];
 

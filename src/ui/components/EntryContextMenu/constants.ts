@@ -242,6 +242,15 @@ export const getEntryContextMenu = (): ContextMenuItem[] => [
         scopes: ALL_SCOPES,
         isVisible: isVisibleEntryContextShareItem,
     },
+    {
+        id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+        icon: ArrowShapeTurnUpRight,
+        text: 'value_share',
+        enable: () => true,
+        scopes: ALL_SCOPES,
+        isVisible: isVisibleEntryContextShareItem,
+    },
     // {
     //     id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
     //     action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,

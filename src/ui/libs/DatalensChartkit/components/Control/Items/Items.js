@@ -472,7 +472,7 @@ BaseControlRangeDatepicker.propTypes = {
     labelPlacement: PropTypes.string,
 };
 
-function BaseControlButton({label, theme, onChange, qa}) {
+function BaseControlButton({label, theme, onChange, qa, disabled}) {
     const buttonTheme = theme in legoThemeNameMapper ? legoThemeNameMapper[theme] : theme;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 's';
@@ -488,6 +488,7 @@ function BaseControlButton({label, theme, onChange, qa}) {
             width="max"
             // Need setTimeout for common microtask queue: firstly fire onBlur (from Input), then onClick (from Button)
             onClick={handleClick}
+            disabled={disabled}
             qa={qa}
         >
             {label || i18n('chartkit.control.items', 'apply')}

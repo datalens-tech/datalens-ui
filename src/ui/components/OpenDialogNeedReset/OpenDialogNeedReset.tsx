@@ -12,7 +12,7 @@ const b = block('dl-dialog-need-reset');
 
 const i18n = I18n.keyset('component.need-reset-dialog.view');
 
-export const DIALOG_NEED_RESET = Symbol('DIALOG_ERROR_WITH_TABS');
+export const DIALOG_NEED_RESET = Symbol('DIALOG_NEED_RESET');
 
 export type OpenDialogNeedResetArgs = {
     id: typeof DIALOG_NEED_RESET;

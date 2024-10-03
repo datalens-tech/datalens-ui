@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import PropTypes from 'prop-types';
+import type {MarkdownWidget, WidgetProps} from 'ui/libs/DatalensChartkit/types';
 
 import {YfmWrapper} from '../../../../../../../components/YfmWrapper/YfmWrapper';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../helpers/constants';
@@ -15,15 +15,20 @@ import './Markdown.scss';
 
 const b = block('chartkit-markdown');
 
-export function Markdown({data, onLoad, id}) {
+type MarkdownProps = Omit<WidgetProps, 'data'> & {
+    data: MarkdownWidget;
+};
+
+export function Markdown({data, onLoad, id}: MarkdownProps) {
     const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [data, id]);
     Performance.mark(generatedId);
     const refLink = React.useRef(null);
     const {html = '', markdown = '', meta} = data.data;
+
     const metaScripts = get(meta, 'script');
 
     React.useLayoutEffect(() => {
-        if (onLoad) {
+        if (onLoad && refLink.current) {
             waitForContent(refLink.current).then(() => {
                 onLoad({widgetRendering: Performance.getDuration(generatedId)});
             });
@@ -36,7 +41,7 @@ export function Markdown({data, onLoad, id}) {
 
     return html ? (
         <YfmWrapper
-            className={b(false, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
+            className={b({}, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
             setByInnerHtml={true}
             content={html}
             metaScripts={metaScripts}
@@ -44,22 +49,9 @@ export function Markdown({data, onLoad, id}) {
         />
     ) : (
         <YfmWrapper
-            className={b(false, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
+            className={b({}, `${CHARTKIT_SCROLLABLE_NODE_CLASSNAME} ${SNAPTER_HTML_CLASSNAME}`)}
             content={markdown}
             ref={refLink}
         />
     );
 }
-
-Markdown.propTypes = {
-    id: PropTypes.string,
-    data: PropTypes.shape({
-        data: PropTypes.shape({
-            html: PropTypes.string,
-            markdown: PropTypes.string,
-        }),
-    }).isRequired,
-    onLoad: PropTypes.func,
-    onChartLoad: PropTypes.func,
-    onRender: PropTypes.func,
-};

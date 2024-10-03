@@ -117,6 +117,7 @@ interface DashkitWrapperProps extends DashKitProps {
     // Extended Controls props
     skipReload?: boolean;
     isNewRelations?: boolean;
+    hideErrorDetails?: boolean;
 }
 
 export const DashkitWrapper: React.FC<

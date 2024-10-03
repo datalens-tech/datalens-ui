@@ -81,5 +81,6 @@ export const registerCommonPlugins = () => {
         migrateItemDataOnPaste,
         checkCreateEntryButtonVisibility: () => true,
         getBasicActionPanelItems,
+        getListMembersFilter: () => null,
     });
 };

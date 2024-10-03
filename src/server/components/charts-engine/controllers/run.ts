@@ -5,7 +5,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
 import Utils from '../../../utils';
@@ -25,7 +25,7 @@ export const runController = (
 ) => {
     return function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
-        const app = registry.getApp();
+        //const app = registry.getApp();
 
         // We need it because of timeout error after 120 seconds
         // https://forum.nginx.org/read.php?2,214230,214239#msg-214239
@@ -181,7 +181,7 @@ export const runController = (
 
                 // TODO: remove this condition and corresponded code block after ChartEditor unit migrating
                 if (
-                    isEnabledServerFeature(app.nodekit.ctx, Feature.ShouldCheckEditorAccess) &&
+                    !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
                     runnerFound.name === 'editor'
                 ) {
                     const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
