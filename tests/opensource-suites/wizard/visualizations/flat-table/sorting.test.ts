@@ -100,8 +100,6 @@ datalensTest.describe('Wizard', () => {
             ];
             expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
         });
-<<<<<<< HEAD
-=======
 
         datalensTest('Sorting dates with null values', async ({page}) => {
             const wizardPage = new WizardPage({page});
@@ -165,6 +163,5 @@ datalensTest.describe('Wizard', () => {
             ];
             expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
         });
->>>>>>> e4aa64a13ed2304ce485b3f36644bfc318fcdb52
     });
 });
