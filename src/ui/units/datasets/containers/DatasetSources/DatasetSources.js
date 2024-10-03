@@ -28,7 +28,7 @@ import {
     updateRelation,
     updateSource,
 } from 'units/datasets/store/actions/creators';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';

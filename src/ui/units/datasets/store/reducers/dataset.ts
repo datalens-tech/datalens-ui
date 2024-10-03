@@ -2,7 +2,7 @@ import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {DatasetSDK} from 'ui';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {DATASET_UPDATE_ACTIONS} from '../../constants';
 import DatasetUtils from '../../helpers/utils';

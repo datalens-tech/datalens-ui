@@ -4,7 +4,7 @@ import {
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
 } from '../../../src/shared/constants';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';

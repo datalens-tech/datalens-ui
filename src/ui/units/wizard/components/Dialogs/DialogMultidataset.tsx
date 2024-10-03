@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import type {Dataset, DatasetField, Link, LinkField} from 'shared';
 import {DialogMultiDatasetQa, getResultSchemaFromDataset} from 'shared';
 import {selectDatasets, selectLinks} from 'units/wizard/selectors/dataset';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import DialogLink from './DialogLink';
 

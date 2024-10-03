@@ -1,4 +1,4 @@
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
 
 import {deleteEntity, slct} from '../../utils';

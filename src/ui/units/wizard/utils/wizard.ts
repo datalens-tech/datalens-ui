@@ -39,7 +39,7 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from 'shared';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import history from '../../../utils/history';
 import Utils from '../../../utils/utils';

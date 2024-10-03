@@ -55,7 +55,7 @@ import {
 import history from 'ui/utils/history';
 import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
 import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';

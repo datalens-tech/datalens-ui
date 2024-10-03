@@ -3,7 +3,7 @@ import type {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
 import sdkFactory from '@gravity-ui/sdk';
 import type {Lang} from '@gravity-ui/sdk/build/constants';
 import type {AxiosError} from 'axios';
-import uuid from 'uuid/v4';
+import {v4 as uuid} from 'uuid';
 
 import {
     ACCEPT_LANGUAGE_HEADER,

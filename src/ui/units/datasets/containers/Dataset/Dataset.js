@@ -33,7 +33,7 @@ import {
     updateDatasetByValidation,
 } from 'units/datasets/store/actions/creators';
 import CommonUtils from 'utils/utils';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import ActionPanel from '../../../../components/ActionPanel/ActionPanel';

@@ -51,7 +51,7 @@ import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectDefaultPath, selectIsNavigationVisible} from 'units/wizard/selectors/settings';
 import {selectHierarchies, selectVisualization} from 'units/wizard/selectors/visualization';
 import {selectWidget} from 'units/wizard/selectors/widget';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import type {DialogFieldEditorProps} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {DIALOG_FIELD_EDITOR} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';

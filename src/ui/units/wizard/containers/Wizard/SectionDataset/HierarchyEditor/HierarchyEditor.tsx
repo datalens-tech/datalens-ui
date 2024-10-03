@@ -24,7 +24,7 @@ import {
     selectSubVisualization,
 } from 'units/wizard/selectors/visualization';
 import {generateNextTitle} from 'units/wizard/utils/helpers';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {setHierarchies} from '../../../../actions/dataset';
 import {closeHierarchyEditor} from '../../../../actions/hierarchyEditor';

@@ -81,7 +81,7 @@ import {
 } from 'units/wizard/selectors/visualization';
 import {getIconForDataType, prepareFieldForUpdate} from 'units/wizard/utils/helpers';
 import Utils from 'utils';
-import uuid from 'uuid/v1';
+import {v1 as uuid} from 'uuid';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {updateVisualizationPlaceholderItems} from '../../../../actions/placeholder';
