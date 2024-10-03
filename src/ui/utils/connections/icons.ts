@@ -47,7 +47,7 @@ import iconYQ from '../../assets/icons/connections/yq.svg';
 import iconYt from '../../assets/icons/connections/yt.svg';
 
 // eslint-disable-next-line complexity
-export const getConnectorIconDataWithoutDefault = (type?: string): IconData | undefined => {
+const getConnectorIconDataWithoutDefault = (type?: string): IconData | undefined => {
     switch (type) {
         case ConnectorType.Clickhouse:
         case ConnectorType.ChFrozenBumpyRoads:
@@ -146,12 +146,25 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
     }
 };
 
-const getBIConnectorIconData = (type: string): ConnectorIconData | IconData => {
-    const connectorIcon = DL.CONNECTOR_ICONS.find((icon) => icon.conn_type === type);
-    return connectorIcon || iconUndefined;
+const getBIConnectorIconData = (type?: string): ConnectorIconData | IconData | undefined => {
+    return DL.CONNECTOR_ICONS.find((icon) => icon.conn_type === type);
 };
 
-export const getConnectorIconData = (type: string): ConnectorIconData | IconData => {
+export const getConnectorIconDataByAlias = (type?: string): IconData | undefined => {
+    switch (type) {
+        case ConnectorAlias.CHYT: {
+            return iconChOverYt;
+        }
+        default: {
+            return undefined;
+        }
+    }
+};
+
+export const getConnectorIconData = (
+    type?: string,
+    withoutDefault?: boolean,
+): ConnectorIconData | IconData => {
     let iconData: ConnectorIconData | IconData | undefined;
 
     if (Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)) {
@@ -160,5 +173,9 @@ export const getConnectorIconData = (type: string): ConnectorIconData | IconData
         iconData = getConnectorIconDataWithoutDefault(type);
     }
 
-    return iconData || iconUndefined;
+    if (iconData) {
+        return iconData;
+    }
+
+    return withoutDefault ? undefined : iconUndefined;
 };

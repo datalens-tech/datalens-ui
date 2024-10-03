@@ -162,7 +162,7 @@ export const getEntryIconData = ({scope, type}: EntryData) => {
             typeKey = '';
         }
         const icon = Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)
-            ? getConnectorIconData(typeKey)
+            ? getConnectorIconData(typeKey, true)
             : typeToIcon[typeKey];
         if (icon) {
             iconData = icon;
