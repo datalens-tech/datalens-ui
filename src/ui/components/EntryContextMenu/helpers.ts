@@ -3,25 +3,20 @@ import type React from 'react';
 import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
+import {setIsRenameWithoutReload} from 'ui/store/actions/entryContent';
 
 import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
-import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
+import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
 import {getStore} from '../../store';
-import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
+import {renameDash} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
-interface MenuEntry {
-    entryId: string;
-    key: string;
-    scope: string;
-    name?: string;
-    workbookId: EntryFields['workbookId'];
-}
+import type {MenuEntry} from './types';
 
 export type EntryDialoguesRef = React.RefObject<EntryDialogues>;
 
@@ -40,14 +35,14 @@ export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
             if (entryData?.scope === EntryScope.Dash) {
                 // double dispatch is associated with disabling the exit page dialog
                 // DashActionPanel.tsx (NavigationPrompt)
-                store.dispatch(setRenameWithoutReload(true));
+                store.dispatch(setIsRenameWithoutReload(true));
                 // renaming the dashboard without leaving the page
                 store.dispatch(renameDash(entryData.key));
             } else {
                 window.location.reload();
             }
             // turning the exit page dialog back on
-            store.dispatch(setRenameWithoutReload(false));
+            store.dispatch(setIsRenameWithoutReload(false));
         }
     }
 }

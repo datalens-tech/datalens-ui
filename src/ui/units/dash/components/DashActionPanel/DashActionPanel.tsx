@@ -13,6 +13,7 @@ import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {ActionPanel, DL, EntryDialogName, EntryDialogResolveStatus} from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import type {ValuesType} from 'utility-types';
 import Utils from 'utils';
 
@@ -42,7 +43,6 @@ import {
     selectDashAccessDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
-    selectRenameWithoutReload,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
 import type {DashEntry} from '../../typings/entry';
@@ -328,7 +328,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         dashEntry: state.dash,
         isLoadingEditMode: selectLoadingEditMode(state),
-        isRenameWithoutReload: selectRenameWithoutReload(state),
+        isRenameWithoutReload: selectIsRenameWithoutReload(state),
         isSelectStateMode: selectStateMode(state),
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),

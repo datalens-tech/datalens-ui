@@ -92,6 +92,7 @@ export const SET_ERROR = Symbol('ql/SET_ERROR');
 export const SET_SETTINGS = Symbol('ql/SET_SETTINGS');
 export const SET_DEFAULT_PATH = Symbol('ql/SET_DEFAULT_PATH');
 export const SET_ENTRY = Symbol('ql/SET_ENTRY');
+export const SET_ENTRY_KEY = Symbol('ql/SET_ENTRY_KEY');
 export const SET_EXTRA_SETTINGS = Symbol('ql/SET_EXTRA_SETTINGS');
 export const SET_QUERY_METADATA = Symbol('ql/SET_QUERY_METADATA');
 export const SET_TABLE_PREVIEW_DATA = Symbol('ql/SET_TABLE_PREVIEW_DATA');
@@ -454,6 +455,13 @@ export const setChartType = (chartType: QLChartType | null) => {
     return {
         chartType,
         type: SET_CHART_TYPE,
+    };
+};
+
+export const setQlEntryKey = (key: string) => {
+    return {
+        type: SET_ENTRY_KEY,
+        payload: key,
     };
 };
 
