@@ -138,5 +138,9 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         },
     };
 
+    if (config.extraSettings?.tooltip === 'hide') {
+        widgetData.tooltip.show = false;
+    }
+
     return widgetData;
 };

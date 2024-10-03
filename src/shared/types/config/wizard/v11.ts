@@ -54,6 +54,7 @@ export interface V11CommonSharedExtraSettings {
     legendMode?: 'show' | 'hide';
     metricFontSize?: string;
     metricFontColor?: string;
+    tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
