@@ -146,6 +146,7 @@ type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
+    loaded: boolean;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -222,10 +223,13 @@ class Body extends React.PureComponent<BodyProps> {
         columns: 0,
     };
 
+    loadedItemsSet = new Map<string, boolean>();
+
     state: DashBodyState = {
         fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
+        loaded: false,
     };
 
     groups: DashKitGroup[] = [
@@ -854,6 +858,8 @@ class Body extends React.PureComponent<BodyProps> {
                 overlayMenuItems={this.getOverlayMenu()}
                 skipReload={this.props.skipReload}
                 isNewRelations={this.props.isNewRelations}
+                onItemMountChange={this.handleItemMountChange}
+                onItemRender={this.handleItemRender}
             />
         );
     };
@@ -864,6 +870,29 @@ class Body extends React.PureComponent<BodyProps> {
 
     private handleDragEnd = () => {
         this.setState({isGlobalDragging: false});
+    };
+
+    private handleSelectTab = () => {
+        this.loadedItemsSet = new Map();
+        this.setState({loaded: false});
+    };
+
+    private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
+        if (isMounted) {
+            this.loadedItemsSet.set(item.id, false);
+        }
+    };
+
+    private handleItemRender = (item: ConfigItem) => {
+        if (this.state.loaded) {
+            return;
+        }
+
+        this.loadedItemsSet.set(item.id, true);
+
+        this.setState({
+            loaded: this.loadedItemsSet.values().every(Boolean),
+        });
     };
 
     private renderBody() {
@@ -878,6 +907,8 @@ class Body extends React.PureComponent<BodyProps> {
             error,
             disableHashNavigation,
         } = this.props;
+
+        const {loaded, hasCopyInBuffer} = this.state;
 
         switch (mode) {
             case Mode.Loading:
@@ -894,7 +925,7 @@ class Body extends React.PureComponent<BodyProps> {
         const showEditActionPanel = mode === Mode.Edit;
 
         const content = (
-            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE})}>
+            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE, loaded})}>
                 <div
                     className={b('content-container', {
                         mobile: DL.IS_MOBILE,
@@ -919,14 +950,14 @@ class Body extends React.PureComponent<BodyProps> {
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
                         )}
-                        {!settings.hideTabs && <Tabs />}
+                        {!settings.hideTabs && <Tabs onSelectTab={this.handleSelectTab} />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
                             <DashkitActionPanel
                                 toggleAnimation={true}
                                 disable={!showEditActionPanel}
                                 items={getActionPanelItems({
-                                    copiedData: this.state.hasCopyInBuffer,
+                                    copiedData: hasCopyInBuffer,
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
                                     filterItem: (item) => item.id === DashTabItemType.Image,

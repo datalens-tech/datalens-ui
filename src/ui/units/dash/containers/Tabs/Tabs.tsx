@@ -31,6 +31,7 @@ type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 type OwnPops<T> = {
     tabs: TabItem<T>[];
+    onSelectTab?: (tabId: string) => void;
 };
 
 type TabsProps<T> = OwnPops<T> & StateProps & DispatchProps;
@@ -54,6 +55,8 @@ function TabsComponent<T>(props: TabsProps<T>) {
                     if (event && event.metaKey) {
                         return;
                     }
+
+                    props.onSelectTab?.(tabId);
 
                     props.setPageTab(tabId);
 
