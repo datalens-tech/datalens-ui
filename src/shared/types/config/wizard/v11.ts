@@ -179,6 +179,10 @@ export type V11PlaceholderSettings = {
     axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
+    /* Whether axis, including axis title, line, ticks and labels, should be visible
+     * @default 'show'
+     **/
+    axisVisibility?: 'show' | 'hide';
 };
 
 export type V11Placeholder = {
