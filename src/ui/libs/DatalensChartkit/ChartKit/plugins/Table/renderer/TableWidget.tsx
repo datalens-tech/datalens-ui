@@ -1,9 +1,11 @@
 import React from 'react';
 
 import type {ChartKitWidgetRef} from '@gravity-ui/chartkit';
+import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import type {StringParams} from 'shared';
 import {ChartKitTableQa} from 'shared';
 
@@ -26,6 +28,12 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onLoad,
             data: {data: originalData, config},
         } = props;
+
+        if (isEmpty(originalData)) {
+            throw new ChartKitError({
+                code: CHARTKIT_ERROR_CODE.NO_DATA,
+            });
+        }
 
         const generatedId = React.useMemo(
             () => `${id}_${getRandomCKId()}`,
