@@ -18,6 +18,7 @@ import {ChartKitTableQa, isMarkupItem} from 'shared';
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
+import {HtmlCell} from '../components/HtmlCell/HtmlCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import type {THead} from '../components/Table/types';
 import {TreeCell} from '../components/TreeCell/TreeCell';
@@ -139,6 +140,19 @@ export function renderCellContent(args: {
         } else {
             formattedValue = String(cell.value ?? '');
         }
+    }
+
+    if (cell.link?.href) {
+        const {href, newWindow = true} = cell.link;
+        const content = {
+            tag: 'a',
+            attributes: {
+                href,
+                target: newWindow ? '_blank' : '_self',
+            },
+            content: formattedValue,
+        };
+        return <HtmlCell content={content} />;
     }
 
     return formattedValue;

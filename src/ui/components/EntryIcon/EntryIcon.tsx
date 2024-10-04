@@ -1,10 +1,12 @@
 import React from 'react';
 
-import type {IconData, IconProps} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import {ConnectorType, ENTRY_TYPES, EntryScope, Feature} from 'shared';
-import Utils from 'ui/utils';
+import Utils, {getConnectorIconData} from 'ui/utils';
 
+import type {ConnectorIconViewProps} from '../ConnectorIcon/ConnectorIcon';
+import {ConnectorIcon} from '../ConnectorIcon/ConnectorIcon';
 import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
 import {EntityIcon, defaultIconSize} from '../EntityIcon/EntityIcon';
 
@@ -153,13 +155,15 @@ interface EntryData {
 }
 
 export const getEntryIconData = ({scope, type}: EntryData) => {
-    let iconData;
+    let iconData: ConnectorIconViewProps['data'] | undefined;
     if (type) {
         let typeKey = type;
         if (scope === 'widget' && !Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
             typeKey = '';
         }
-        const icon = typeToIcon[typeKey];
+        const icon = Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)
+            ? getConnectorIconData(typeKey, true)
+            : typeToIcon[typeKey];
         if (icon) {
             iconData = icon;
         }
@@ -194,7 +198,7 @@ const getEntityIconType = (
     return null;
 };
 
-interface EntryIconProps extends Partial<IconProps> {
+interface EntryIconProps extends Partial<ConnectorIconViewProps> {
     entry: EntryData;
     entityIconSize?: EntityIconSize;
 }
@@ -203,7 +207,7 @@ export const EntryIcon: React.FC<EntryIconProps> = (props) => {
     const {entry, className, entityIconSize, ...restProps} = props;
     const iconData = getEntryIconData(entry);
     if (iconData) {
-        return <Icon data={iconData} className={className} {...restProps} />;
+        return <ConnectorIcon data={iconData} className={className} view="nav" {...restProps} />;
     }
     return (
         getEntityIconType(entry, className, entityIconSize) || (

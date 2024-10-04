@@ -1,0 +1,21 @@
+name: Pull request labeler
+
+on:
+  pull_request_target:
+    branches-ignore:
+      - 'weblate-**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  labeler:
+    name: set labels
+    permissions:
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/labeler@v5

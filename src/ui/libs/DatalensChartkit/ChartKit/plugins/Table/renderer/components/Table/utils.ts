@@ -4,8 +4,9 @@ import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
 import get from 'lodash/get';
-import type {TableCellsRow, TableCommonCell, TableRow} from 'shared';
+import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
 
+import type {TableWidgetData} from '../../../../../../types';
 import {getTreeCellColumnIndex, getTreeSetColumnSortAscending} from '../../utils';
 
 import type {TData, TFoot, THead} from './types';
@@ -153,6 +154,14 @@ export function createTableColumns(args: {
     };
 
     return createHeadColumns(head);
+}
+
+export function getTableTitle(config: TableWidgetData['config']): TableTitle | undefined {
+    if (typeof config?.title === 'string') {
+        return {text: config.title};
+    }
+
+    return config?.title;
 }
 
 export function getTableSizes(table: HTMLTableElement) {

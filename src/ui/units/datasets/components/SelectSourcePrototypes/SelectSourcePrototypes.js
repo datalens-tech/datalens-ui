@@ -7,10 +7,10 @@ import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
 import {NavigationMinimal} from 'ui';
+import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
-
-import {registry} from '../../../../registry';
-import CommonUtils, {getConnectorIconData} from '../../../../utils';
+import {registry} from 'ui/registry';
+import Utils, {getConnectorIconData} from 'ui/utils';
 
 import {SourcesTable} from './SourcesTable';
 import {ICON_PLUS_SIZE} from './constants';
@@ -32,7 +32,7 @@ function getConnectionName(connection) {
         return '';
     }
 
-    return CommonUtils.getEntryNameFromKey(connection.key);
+    return Utils.getEntryNameFromKey(connection.key);
 }
 
 function checkAccessibilityAddConnectionButton({connections = []}) {
@@ -184,11 +184,11 @@ function ConnectionsList(props) {
                     className={b('connection', {active})}
                     onClick={() => onClickConnection(existedConnectionId, type)}
                 >
-                    <Icon
+                    <ConnectorIcon
                         className={b('icon-connection')}
                         data={getConnectorIconData(getConnectionType(connection))}
-                        width={24}
                         height={24}
+                        width={24}
                     />
                     <span
                         className={b('connection-title', {deleted})}

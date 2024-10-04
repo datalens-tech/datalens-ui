@@ -24,7 +24,7 @@ import {
     mapTableData,
 } from '../../utils';
 import type {GetCellActionParamsArgs} from '../../utils';
-import {TableTitle} from '../Title/TableTitle';
+import {TableTitleView} from '../TableTitleView/TableTitleView';
 
 import {TableBody} from './TableBody';
 import {TableFooter} from './TableFooter';
@@ -32,7 +32,7 @@ import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
 import {useTableHeight} from './useTableHeight';
-import {getTableSizes} from './utils';
+import {getTableSizes, getTableTitle} from './utils';
 
 import './Table.scss';
 
@@ -48,7 +48,7 @@ type Props = {
 export const Table = React.memo<Props>((props: Props) => {
     const {dimensions: widgetDimensions, widgetData, onChangeParams, onReady} = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
-    const title = typeof config?.title === 'string' ? config.title : config?.title?.text;
+    const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
 
     const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
@@ -228,7 +228,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 )}
                 ref={tableContainerRef}
             >
-                <TableTitle title={title} />
+                <TableTitleView title={title} />
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
                     {noData && (
                         <div className={b('no-data')}>

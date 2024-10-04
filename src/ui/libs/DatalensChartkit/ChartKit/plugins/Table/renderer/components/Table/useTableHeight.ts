@@ -2,7 +2,7 @@ import React from 'react';
 
 export const useTableHeight = (args: {
     ref: React.MutableRefObject<HTMLTableElement | null>;
-    prerender: boolean;
+    prerender?: boolean;
 }) => {
     const {ref, prerender} = args;
     const [height, setHeight] = React.useState<number | undefined>();
