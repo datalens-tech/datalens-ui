@@ -66,6 +66,7 @@ const config: ServiceConfig = {
             fs: false,
             'cose-base': false,
             'layout-base': false,
+            'highlight.js': false,
         },
     },
     server: {

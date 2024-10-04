@@ -165,7 +165,7 @@
     "@types/recompose": "^0.30.7",
     "@types/redux-logger": "^3.0.9",
     "@types/request-promise-native": "^1.0.21",
-    "@types/uuid": "^7.0.4",
+    "@types/uuid": "^9.0.8",
     "@types/webpack-env": "^1.16.0",
     "@types/youtube": "0.0.47",
     "@types/yup": "^0.29.13",
@@ -224,7 +224,7 @@
     "typescript": "^5.4.5",
     "url": "^0.11.1",
     "utility-types": "^3.10.0",
-    "uuid": "^3.3.3",
+    "uuid": "^9.0.1",
     "yup": "^0.32.9"
   },
   "overrides": {

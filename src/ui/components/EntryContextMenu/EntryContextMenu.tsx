@@ -22,6 +22,7 @@ import {
     deleteEntry,
     migrateToWorkbookEntry,
     moveEntry,
+    renameEntry,
     showRelatedEntities,
     showShareDialog,
 } from './helpers';
@@ -101,7 +102,6 @@ class EntryContextMenu extends React.PureComponent<Props> {
 
     handlerMenuClick: MenuClickHandler = (params: MenuClickParams) => {
         const {entry, action} = params;
-        const setEntryKey = registry.common.functions.get('setEntryKey');
 
         if (typeof action === 'function') {
             action(entry);
@@ -110,7 +110,7 @@ class EntryContextMenu extends React.PureComponent<Props> {
 
         switch (action) {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
-                setEntryKey(this.entryDialoguesRef, entry);
+                renameEntry(this.entryDialoguesRef, entry);
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.MOVE: {

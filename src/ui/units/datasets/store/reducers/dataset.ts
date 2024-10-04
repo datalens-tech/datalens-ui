@@ -2,7 +2,7 @@ import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
 import {DatasetSDK} from 'ui';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {DATASET_UPDATE_ACTIONS} from '../../constants';
 import DatasetUtils from '../../helpers/utils';
@@ -48,6 +48,7 @@ import {
     RELATION_ADD,
     RELATION_DELETE,
     RELATION_UPDATE,
+    RENAME_DATASET,
     SET_ASIDE_HEADER_WIDTH,
     SET_DATASET_REVISION_MISMATCH,
     SET_FREEFORM_SOURCES,
@@ -601,7 +602,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 replacedSourceId = '';
 
             if (!targetSourceId) {
-                toSourceId = uuid();
+                toSourceId = uuidv1();
 
                 sourceNext = {
                     ...source,
@@ -893,7 +894,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             const {updates} = state;
 
             const obligatoryFilterNext = {
-                id: uuid(),
+                id: uuidv1(),
                 field_guid: fieldGuid,
                 default_filters: [
                     {
@@ -1314,6 +1315,12 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.editor,
                     itemsToDisplay,
                 },
+            };
+        }
+        case RENAME_DATASET: {
+            return {
+                ...state,
+                key: action.payload,
             };
         }
         default: {

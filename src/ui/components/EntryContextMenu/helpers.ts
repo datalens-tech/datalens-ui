@@ -5,8 +5,8 @@ import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
 import type {EntryScope} from '../../../shared';
-import {Feature, MenuItemsIds} from '../../../shared';
-import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
+import {Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
 import Utils from '../../utils';
@@ -14,15 +14,27 @@ import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
-interface MenuEntry {
-    entryId: string;
-    key: string;
-    scope: string;
-    name?: string;
-    workbookId: EntryFields['workbookId'];
-}
+import type {MenuEntry} from './types';
 
 export type EntryDialoguesRef = React.RefObject<EntryDialogues>;
+
+export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: MenuEntry) {
+    if (entryDialoguesRef.current) {
+        const response = await entryDialoguesRef.current.open({
+            dialog: EntryDialogName.Rename,
+            dialogProps: {
+                entryId: entry.entryId,
+                initName: entry.name || getEntryNameByKey({key: entry.key, index: -1}),
+            },
+        });
+
+        if (response.status === EntryDialogResolveStatus.Success) {
+            const setEntryKey = registry.common.functions.get('setEntryKey');
+            const entryData = response.data ? response.data[0] : null;
+            setEntryKey(entryData);
+        }
+    }
+}
 
 export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: MenuEntry) {
     if (entryDialoguesRef.current) {

@@ -1,3 +1,4 @@
+import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
@@ -23,17 +24,17 @@ function getSortingFunction(args: {
     const columnType: TableCommonCell['type'] = get(th, 'type');
     if (columnType === 'date') {
         return function (row1, row2) {
-            const cell1Value = String(row1.original[columnIndex].value);
-            const cell2Value = String(row2.original[columnIndex].value);
+            const cell1Value = row1.original[columnIndex].value as DateTimeInput;
+            const cell2Value = row2.original[columnIndex].value as DateTimeInput;
 
             const date1 = dateTimeUtc({input: cell1Value});
             const date2 = dateTimeUtc({input: cell2Value});
 
-            if (date1.isValid() && date1.isAfter(date2)) {
+            if (date1 > date2 || (date1.isValid() && !date2.isValid())) {
                 return 1;
             }
 
-            if (date2.isValid() && date2.isAfter(date1)) {
+            if (date2 > date1 || (date2.isValid() && !date1.isValid())) {
                 return -1;
             }
 
@@ -152,4 +153,66 @@ export function createTableColumns(args: {
     };
 
     return createHeadColumns(head);
+}
+
+export function getTableSizes(table: HTMLTableElement) {
+    const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
+    let rows: HTMLTableRowElement[] = [];
+
+    rows = Array.from(
+        table?.getElementsByTagName('thead')?.[0]?.childNodes ?? [],
+    ) as HTMLTableRowElement[];
+
+    if (!rows.length) {
+        const tBodyRows = Array.from(
+            table?.getElementsByTagName('tbody')?.[0]?.childNodes ?? [],
+        ) as HTMLTableRowElement[];
+        rows = tBodyRows.length ? [tBodyRows[0]] : [];
+    }
+
+    const colsCount = Array.from(rows[0]?.childNodes ?? []).reduce((sum, c) => {
+        const colSpan = Number((c as Element).getAttribute('colSpan') || 1);
+        return sum + colSpan;
+    }, 0);
+    const result = new Array(rows.length).fill(null).map(() => new Array(colsCount).fill(null));
+
+    result.forEach((_r, rowIndex) => {
+        const row = rows[rowIndex];
+        let cellIndex = 0;
+        Array.from(row.childNodes ?? []).forEach((c) => {
+            const cell = c as Element;
+            let rowSpan = Number(cell.getAttribute('rowSpan') || 1);
+            let colSpan = Number(cell.getAttribute('colSpan') || 1);
+            const cellWidth = cell.getBoundingClientRect()?.width / tableScale;
+
+            if (result[rowIndex][cellIndex] !== null) {
+                cellIndex = result[rowIndex].findIndex((val, i) => i > cellIndex && val === null);
+            }
+
+            while (rowSpan - 1 > 0) {
+                rowSpan -= 1;
+                result[rowIndex + rowSpan][cellIndex] = cellWidth;
+            }
+
+            if (colSpan > 1) {
+                while (colSpan > 1) {
+                    colSpan -= 1;
+                    cellIndex += 1;
+                }
+            } else {
+                result[rowIndex][cellIndex] = cellWidth;
+            }
+
+            cellIndex += 1;
+        });
+    });
+
+    return result.reduce<number[]>((acc, row) => {
+        row.forEach((cellWidth, index) => {
+            if (cellWidth !== null) {
+                acc[index] = acc[index] || cellWidth;
+            }
+        });
+        return acc;
+    }, []);
 }

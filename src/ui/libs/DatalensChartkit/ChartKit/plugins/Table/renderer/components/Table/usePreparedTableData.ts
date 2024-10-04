@@ -14,7 +14,7 @@ import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
-import type {TableData, TableWidgetData} from '../../../../../../types';
+import type {TableData} from '../../../../../../types';
 import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import type {WidgetDimensions} from '../../types';
 import {mapHeadCell} from '../../utils/renderer';
@@ -26,30 +26,11 @@ import type {
     FooterRowViewData,
     HeadRowViewData,
     TData,
+    TableViewData,
 } from './types';
-import {useCellSizes} from './useCellSizes';
 import {createTableColumns} from './utils';
 
 const PRERENDER_ROW_COUNT = 500;
-
-type TableViewData = {
-    colgroup?: {width: string}[];
-    header: {
-        rows: HeadRowViewData[];
-        style?: React.CSSProperties;
-    };
-    body: {
-        rows: BodyRowViewData[];
-        style?: React.CSSProperties;
-    };
-    footer: {
-        rows: FooterRowViewData[];
-        style?: React.CSSProperties;
-    };
-    totalSize: number | undefined;
-    /* rendering table without most options - only to calculate cells size */
-    prerender: boolean;
-};
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -115,29 +96,23 @@ function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
 
 export const usePreparedTableData = (props: {
     tableContainerRef: React.MutableRefObject<HTMLDivElement | null>;
-    widgetData: TableWidgetData;
     dimensions: WidgetDimensions;
     data: Required<TableData>;
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
     getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
+    cellSizes: number[] | null;
 }): TableViewData => {
     const {
-        widgetData: {config},
         dimensions,
         tableContainerRef,
         manualSorting,
         onSortingChange,
         data,
         getCellAdditionStyles,
+        cellSizes,
     } = props;
 
-    const cellSizes = useCellSizes(
-        {
-            tableContainerRef,
-        },
-        [dimensions.width, config],
-    );
     const prerender = !cellSizes;
 
     const columns = React.useMemo(() => {
@@ -216,7 +191,7 @@ export const usePreparedTableData = (props: {
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
-    }, [data]);
+    }, [data, cellSizes]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
@@ -279,7 +254,7 @@ export const usePreparedTableData = (props: {
                     };
 
                     const cellWidth = header.getSize();
-                    if (prerender && cellWidth) {
+                    if (cellWidth) {
                         cellStyle.width = cellWidth;
                     }
 
@@ -411,7 +386,6 @@ export const usePreparedTableData = (props: {
                 id: row.id,
                 index: virtualRow.index,
                 cells,
-                ref: (node) => rowVirtualizer.measureElement(node),
                 y: virtualRow.start,
             });
 
@@ -432,6 +406,9 @@ export const usePreparedTableData = (props: {
         body: {
             rows,
             style: {gridTemplateColumns, transform},
+            rowRef: (node) => {
+                rowVirtualizer.measureElement(node);
+            },
         },
         footer,
         totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
