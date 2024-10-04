@@ -1,6 +1,5 @@
 import {
     ACCEPT_LANGUAGE_HEADER,
-    DASH_INFO_HEADER,
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     ENABLE,
@@ -9,8 +8,7 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../../shared';
-import {DL, Scope} from '../../constants';
-import {getStore} from '../../store';
+import {DL} from '../../constants';
 import Utils from '../../utils';
 
 import Error from './Error/Error';
@@ -64,16 +62,6 @@ ChartKit.setDataProviderSettings({
 
         if (datalensDebugMode === 1) {
             request.data.datalensDebugMode = 1;
-        }
-
-        const {entryContent, dash} = getStore().getState();
-        if (entryContent.scope === Scope.Dash && dash) {
-            const dashInfo = {
-                ...(dash.entry?.entryId ? {dashId: dash?.entry?.entryId} : {}),
-                ...(dash.tabId ? {dashTabId: dash.tabId} : {}),
-            };
-
-            request.headers[DASH_INFO_HEADER] = new URLSearchParams(dashInfo).toString();
         }
 
         return request;
