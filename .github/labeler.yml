@@ -4,7 +4,7 @@ changelog:
           - package.json
           - package-lock.json
 
-component/charts:
+component/general:
   - changed-files:
       - any-glob-to-any-file:
           - package.json
