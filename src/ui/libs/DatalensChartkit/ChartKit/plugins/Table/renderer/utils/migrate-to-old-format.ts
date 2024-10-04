@@ -21,9 +21,9 @@ function mapTableCell(cell: unknown) {
     } as TableCell;
 }
 
-export function mapTableData(data: TableData): Required<TableData> {
-    const {head = [], footer = []} = data;
-    const originalRows: TableRow[] = data.rows ?? [];
+export function mapTableData(data: TableData | undefined): Required<TableData> {
+    const {head = [], footer = []} = data || {};
+    const originalRows: TableRow[] = data?.rows ?? [];
 
     const newHead = head.map((col, index) => {
         if (!col?.id) {
