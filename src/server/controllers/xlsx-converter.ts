@@ -6,7 +6,7 @@ import {dateTime} from '@gravity-ui/date-utils';
 import type {Request, Response} from '@gravity-ui/expresskit';
 import {isObject} from 'lodash';
 import mime from 'mime';
-import uuid from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 import type {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
 
@@ -107,7 +107,7 @@ export function xlsxConverter(
 
     res.setHeader('Content-disposition', `attachment; filename=${downloadConfig.filename}.xlsx`);
     res.setHeader('Content-type', mimeType);
-    const file = `/tmp/${uuid.v4()}.xlsx`;
+    const file = `/tmp/${uuidv4()}.xlsx`;
     try {
         XLSX.writeFileAsync(file, workbook, {}, () => {
             ctx.log('EXPORT_XLS_FILE_IS_WRITTEN');

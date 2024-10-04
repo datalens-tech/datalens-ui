@@ -33,7 +33,7 @@ import {
     updateDatasetByValidation,
 } from 'units/datasets/store/actions/creators';
 import CommonUtils from 'utils/utils';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import ActionPanel from '../../../../components/ActionPanel/ActionPanel';
@@ -192,8 +192,8 @@ class Dataset extends React.Component {
         const {ytPath, isCreationProcess, history} = this.props;
         const {isAuto} = this.state;
 
-        const sourceId = uuid();
-        const avatarId = uuid();
+        const sourceId = uuidv1();
+        const avatarId = uuidv1();
         const source = {
             ...this.props.sourceTemplate,
             id: sourceId,

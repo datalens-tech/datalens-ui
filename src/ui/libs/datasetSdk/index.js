@@ -1,4 +1,4 @@
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 class DatasetSDK {
     requiredPropertiesOnCreate = ['guid', 'title', 'calc_mode', 'type'];
@@ -79,7 +79,7 @@ class DatasetSDK {
                 if (fieldId === duplicatedFieldId) {
                     const fieldNext = {
                         ...fieldCurrent,
-                        guid: uuid(),
+                        guid: uuidv1(),
                         title: this.getNextTitleField({field, fields}),
                     };
 
