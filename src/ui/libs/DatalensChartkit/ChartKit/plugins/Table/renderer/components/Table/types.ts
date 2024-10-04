@@ -147,7 +147,7 @@ export type TableViewData = {
         rows: FooterRowViewData[];
         style?: React.CSSProperties;
     };
-    totalSize: number | undefined;
+    totalSize?: number;
     /* rendering table without most options - only to calculate cells size */
-    prerender: boolean;
+    prerender?: boolean;
 };
