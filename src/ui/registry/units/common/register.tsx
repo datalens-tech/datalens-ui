@@ -3,12 +3,11 @@ import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
+import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
 import {
-    getEntryMenuConfig,
-    getMenuGroupConfig,
+    getAdditionalEntryContextMenuItems,
     setEntryKey,
-} from '../../../components/EntryContextMenu/helpers';
-import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
+} from '../../../components/EntryContextMenu/utils';
 import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues/utils';
 import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
