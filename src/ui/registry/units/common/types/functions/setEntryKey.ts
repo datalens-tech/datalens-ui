@@ -1,4 +1,11 @@
-import type {EntryDialoguesRef} from 'ui/components/EntryContextMenu/helpers';
-import type {MenuEntry} from 'ui/components/EntryContextMenu/types';
+import type {EntryScope} from 'shared';
 
-export type SetEntryKey = (entryDialoguesRef: EntryDialoguesRef, entry: MenuEntry) => void;
+export type SetEntryKey = ({
+    scope,
+    type,
+    key,
+}: {
+    scope: EntryScope;
+    type: string;
+    key: string;
+}) => void;
