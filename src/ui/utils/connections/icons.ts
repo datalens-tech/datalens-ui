@@ -1,5 +1,8 @@
 import type {IconData} from '@gravity-ui/uikit';
-import {ConnectorType} from 'shared';
+import {ConnectorType, Feature} from 'shared';
+import type {ConnectorIconData} from 'shared/schema/types';
+import {DL} from 'ui/constants';
+import Utils from 'ui/utils';
 
 import {ConnectorAlias} from '../../constants';
 
@@ -44,7 +47,7 @@ import iconYQ from '../../assets/icons/connections/yq.svg';
 import iconYt from '../../assets/icons/connections/yt.svg';
 
 // eslint-disable-next-line complexity
-export const getConnectorIconDataWithoutDefault = (type?: string): IconData | undefined => {
+const getConnectorIconDataWithoutDefault = (type?: string): IconData | undefined => {
     switch (type) {
         case ConnectorType.Clickhouse:
         case ConnectorType.ChFrozenBumpyRoads:
@@ -143,6 +146,36 @@ export const getConnectorIconDataWithoutDefault = (type?: string): IconData | un
     }
 };
 
-export const getConnectorIconData = (type: string): IconData => {
-    return getConnectorIconDataWithoutDefault(type) || iconUndefined;
+const getBIConnectorIconData = (type?: string): ConnectorIconData | IconData | undefined => {
+    return DL.CONNECTOR_ICONS.find((icon) => icon.conn_type === type);
+};
+
+export const getConnectorIconDataByAlias = (type?: string): IconData | undefined => {
+    switch (type) {
+        case ConnectorAlias.CHYT: {
+            return iconChOverYt;
+        }
+        default: {
+            return undefined;
+        }
+    }
+};
+
+export const getConnectorIconData = (
+    type?: string,
+    withoutDefault?: boolean,
+): ConnectorIconData | IconData => {
+    let iconData: ConnectorIconData | IconData | undefined;
+
+    if (Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)) {
+        iconData = getBIConnectorIconData(type);
+    } else {
+        iconData = getConnectorIconDataWithoutDefault(type);
+    }
+
+    if (iconData) {
+        return iconData;
+    }
+
+    return withoutDefault ? undefined : iconUndefined;
 };

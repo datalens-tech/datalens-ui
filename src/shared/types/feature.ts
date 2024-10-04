@@ -73,6 +73,8 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
+    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
+    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
 }
 
 export type FeatureConfig = Record<string, boolean>;
