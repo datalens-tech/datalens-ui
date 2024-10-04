@@ -41,6 +41,7 @@ import {compose} from 'recompose';
 import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {
     ControlQA,
+    DASH_INFO_HEADER,
     DashEntryQa,
     DashKitOverlayMenuQa,
     DashTabItemType,
@@ -805,6 +806,19 @@ class Body extends React.PureComponent<BodyProps> {
         };
     }
 
+    dataProviderContextGetter = () => {
+        const {tabId, entryId} = this.props;
+
+        const dashInfo = {
+            dashId: entryId || '',
+            tabId: tabId || '',
+        };
+
+        return {
+            [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
+        };
+    };
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
@@ -855,6 +869,7 @@ class Body extends React.PureComponent<BodyProps> {
                 skipReload={this.props.skipReload}
                 isNewRelations={this.props.isNewRelations}
                 hideErrorDetails={this.props.hideErrorDetails}
+                dataProviderContextGetter={this.dataProviderContextGetter}
             />
         );
     };
