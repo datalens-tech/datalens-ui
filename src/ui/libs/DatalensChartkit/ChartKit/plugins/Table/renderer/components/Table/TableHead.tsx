@@ -9,14 +9,15 @@ import type {HeadRowViewData} from './types';
 const b = block('dl-table');
 
 type Props = {
-    sticky: boolean;
+    sticky?: boolean;
     rows: HeadRowViewData[];
     style?: React.CSSProperties;
     tableHeight?: number;
+    useInheritedWidth?: boolean;
 };
 
 export const TableHead = React.memo<Props>((props: Props) => {
-    const {sticky, rows, style, tableHeight} = props;
+    const {sticky, rows, style, tableHeight, useInheritedWidth = true} = props;
 
     return (
         <thead className={b('header', {sticky})} style={style}>
@@ -26,6 +27,15 @@ export const TableHead = React.memo<Props>((props: Props) => {
                         {row.cells.map((th, index) => {
                             const nextCellData = row.cells[index + 1];
                             const isLastPinnedCell = th.pinned && !nextCellData?.pinned;
+                            const cellStyle = {
+                                ...th.style,
+                                gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
+                                gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
+                            };
+                            if (useInheritedWidth) {
+                                delete cellStyle['width'];
+                            }
+
                             return (
                                 <th
                                     key={th.id}
@@ -34,11 +44,7 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                         pinned: th.pinned,
                                         align: th.colSpan && th.colSpan > 1 ? 'center' : undefined,
                                     })}
-                                    style={{
-                                        ...th.style,
-                                        gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
-                                        gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
-                                    }}
+                                    style={cellStyle}
                                     colSpan={th.colSpan}
                                     rowSpan={th.rowSpan}
                                     onClick={th.onClick}

@@ -1,15 +1,18 @@
 import React from 'react';
 
+import {Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 
+import {COMPONENT_CLASSNAME} from '../../../../../../../../components/Widgets/Chart/helpers/helpers';
 import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
 import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
 import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
+import {waitForContent} from '../../../../../helpers/wait-for-content';
 import {i18n} from '../../../../../modules/i18n/i18n';
 import type {WidgetDimensions} from '../../types';
 import {
@@ -29,7 +32,7 @@ import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
 import {useTableHeight} from './useTableHeight';
-import {getTableTitle} from './utils';
+import {getTableSizes, getTableTitle} from './utils';
 
 import './Table.scss';
 
@@ -47,6 +50,8 @@ export const Table = React.memo<Props>((props: Props) => {
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
+
+    const [cellSizes, setCellSizes] = React.useState<number[] | null>(null);
 
     const data = React.useMemo(() => mapTableData(originalData), [originalData]);
     const pagination = {
@@ -119,14 +124,20 @@ export const Table = React.memo<Props>((props: Props) => {
     };
 
     const {colgroup, header, body, footer, prerender, totalSize} = usePreparedTableData({
-        widgetData,
         data,
         dimensions: widgetDimensions,
         tableContainerRef,
         manualSorting: isPaginationEnabled || Boolean(config?.settings?.externalSort),
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
+        cellSizes,
     });
+
+    React.useEffect(() => {
+        if (cellSizes) {
+            setCellSizes(null);
+        }
+    }, [widgetData.data, widgetDimensions.width]);
 
     React.useEffect(() => {
         if (onReady && !prerender) {
@@ -247,6 +258,7 @@ export const Table = React.memo<Props>((props: Props) => {
                                 rows={body.rows}
                                 style={body.style}
                                 onCellClick={handleCellClick}
+                                rowRef={body.rowRef}
                             />
                             <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
@@ -262,6 +274,36 @@ export const Table = React.memo<Props>((props: Props) => {
                     onChange={handlePaginationChange}
                 />
             )}
+            {/*background table for dynamic calculation of column widths during virtualization*/}
+            <Portal>
+                <div
+                    className={b('background-table', COMPONENT_CLASSNAME)}
+                    style={{height: widgetDimensions?.height, width: widgetDimensions?.width}}
+                >
+                    <table
+                        className={b({prepared: false})}
+                        ref={async (el) => {
+                            if (!el) {
+                                return;
+                            }
+
+                            await waitForContent(el);
+                            const tableColSizes = getTableSizes(el);
+                            const shouldApplyNewSizes =
+                                !cellSizes ||
+                                tableColSizes.some((colSize, index) => colSize > cellSizes[index]);
+
+                            if (shouldApplyNewSizes) {
+                                setCellSizes(tableColSizes);
+                            }
+                        }}
+                    >
+                        <TableHead rows={header.rows} useInheritedWidth={false} />
+                        <TableBody rows={body.rows} />
+                        <TableFooter rows={footer.rows} />
+                    </table>
+                </div>
+            </Portal>
         </React.Fragment>
     );
 });
