@@ -37,6 +37,11 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
             await wizardPage.filterEditor.setInputValue(String(ROWS_COUNT));
             await wizardPage.filterEditor.apply();
+        });
+
+        datalensTest('Correct order of rows when scrolling @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
 
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.FlatTableColumns,
@@ -45,11 +50,6 @@ datalensTest.describe('Wizard', () => {
 
             const previewLoader = page.locator(slct(ChartKitQa.Loader));
             await expect(previewLoader).not.toBeVisible();
-        });
-
-        datalensTest('Correct order of rows when scrolling @screenshot', async ({page}) => {
-            const wizardPage = new WizardPage({page});
-            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
 
             const table = wizardPage.chartkit.getTableLocator();
             await table.hover({position: {x: 10, y: 10}});
@@ -66,6 +66,11 @@ datalensTest.describe('Wizard', () => {
         datalensTest('The correct placement of the totals row @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'Id',
+            );
 
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
             await wizardPage.sectionVisualization.addFieldByClick(
@@ -87,5 +92,48 @@ datalensTest.describe('Wizard', () => {
             await emulateUserScrolling(page, 30000);
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest(
+            'Dynamic column width during row virtualization @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+
+                await wizardPage.createNewFieldWithFormula(
+                    'id2',
+                    "if([id] > 1) then null else 'text_long_enough_to_not_fit_in_a_cell' end",
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'id2',
+                );
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'id',
+                );
+
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Sort, 'id');
+
+                await wizardPage.columnSettings.open();
+                await wizardPage.columnSettings.switchUnit('id', 'percent');
+                await wizardPage.columnSettings.fillWidthValueInput('id', '100');
+                await wizardPage.columnSettings.apply();
+
+                const previewLoader = page.locator(slct(ChartKitQa.Loader));
+                await expect(previewLoader).not.toBeVisible();
+
+                const table = wizardPage.chartkit.getTableLocator();
+                await table.hover({position: {x: 10, y: 10}});
+
+                // The initial width of the column should be enough only to fit a zero value in it.
+                await expect(chartContainer).toHaveScreenshot();
+
+                // Scroll to the end of the table
+                await emulateUserScrolling(page, 20000);
+                // When displaying further rows, the column widths must be recalculated to fit all new values.
+                await expect(chartContainer).toHaveScreenshot();
+            },
+        );
     });
 });

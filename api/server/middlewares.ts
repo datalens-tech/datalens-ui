@@ -2,6 +2,7 @@ export {
     xDlContext,
     scrRequests,
     getCtxMiddleware,
+    getConnectorIconsMiddleware,
     beforeAuthDefaults,
     patchLogger,
     createAppLayoutMiddleware,

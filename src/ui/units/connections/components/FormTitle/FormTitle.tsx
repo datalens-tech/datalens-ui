@@ -4,8 +4,9 @@ import {ArrowLeft} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link} from 'react-router-dom';
+import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 
-import {getConnectorIconData} from '../../../../utils';
+import {getConnectorIconData, getConnectorIconDataByAlias} from '../../../../utils';
 import {getPreviousRalativePathname} from '../../utils';
 
 import './FormTitle.scss';
@@ -46,7 +47,12 @@ export const FormTitle = ({
     return (
         <div className={b(null, className)}>
             {showArrow && <ArrowBack />}
-            <Icon className={b('icon')} data={getConnectorIconData(type)} size={CONN_ICON_SIZE} />
+            <ConnectorIcon
+                className={b('icon')}
+                data={getConnectorIconDataByAlias(type) || getConnectorIconData(type)}
+                height={CONN_ICON_SIZE}
+                width={CONN_ICON_SIZE}
+            />
             <span className={b('title', titleClassName)}>{title}</span>
             {additionalContent}
         </div>

@@ -6,13 +6,12 @@ export default {
     type: EDITOR_TYPE.TABLE_NODE,
     data: {
         js: `const params = ChartEditor.getParams();
-        
+
 const head = [
     {
         id: 'uid',
         name: 'Text',
         type: 'text',
-        isLink: true,
         css: {
             color: '#CC263C',
             'font-weight': 'bold'
@@ -52,23 +51,23 @@ const head = [
         }
     }
 ];
-            
+
 const rows = [];
-        
+
 for (var i = 0; i < params.count; i++) {
     rows.push({
         values: [
-            Math.random().toString(16).substring(2), 
-            Date.now(), 
-            Math.random(), 
-            Math.random() > 0.5 ? -Math.random() : Math.random(), 
+            Math.random().toString(16).substring(2),
+            Date.now(),
+            Math.random(),
+            Math.random() > 0.5 ? -Math.random() : Math.random(),
             [
-                Math.random() > 0.5 ? -Math.random() : Math.random(), 
+                Math.random() > 0.5 ? -Math.random() : Math.random(),
                 Math.random() > 0.5 ? -Math.random() : Math.random()
             ]
         ]
     });
-            
+
     rows.push({
         cells: [
             {
@@ -77,19 +76,19 @@ for (var i = 0; i < params.count; i++) {
             },
             {
                 value: Date.now(),
-                css: { 
+                css: {
                     'color': '#ffffff',
-                    'background-color': 'rgb(' + Math.floor(Math.random() * 255) + ',' 
+                    'background-color': 'rgb(' + Math.floor(Math.random() * 255) + ','
                         + Math.floor(Math.random() * 255) + ','
-                        + Math.floor(Math.random() * 255) + ')' 
+                        + Math.floor(Math.random() * 255) + ')'
                 }
             },
             {
                 value: Math.random(),
-                css: { 
-                    'color': 'rgb(' + Math.floor(Math.random() * 255) + ',' 
+                css: {
+                    'color': 'rgb(' + Math.floor(Math.random() * 255) + ','
                         + Math.floor(Math.random() * 255) + ','
-                        + Math.floor(Math.random() * 255) + ')' 
+                        + Math.floor(Math.random() * 255) + ')'
                 }
             },
             {
@@ -97,14 +96,14 @@ for (var i = 0; i < params.count; i++) {
             },
             {
                 value: [
-                    Math.random() > 0.5 ? -Math.random() : Math.random(), 
+                    Math.random() > 0.5 ? -Math.random() : Math.random(),
                     Math.random() > 0.5 ? -Math.random() : Math.random()
                 ]
             }
         ]
     });
 }
-        
+
 module.exports = {head, rows};
 `,
         ui: '',

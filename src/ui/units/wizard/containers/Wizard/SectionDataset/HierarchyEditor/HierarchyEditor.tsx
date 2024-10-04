@@ -24,7 +24,7 @@ import {
     selectSubVisualization,
 } from 'units/wizard/selectors/visualization';
 import {generateNextTitle} from 'units/wizard/utils/helpers';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {setHierarchies} from '../../../../actions/dataset';
 import {closeHierarchyEditor} from '../../../../actions/hierarchyEditor';
@@ -182,7 +182,7 @@ class HierarchyEditorContainer extends React.Component<Props, State> {
         const {hierarchyName} = this.state;
         const orderedHierarchyFields = this.getOrderedHierarchyFields();
 
-        const guid = uuid();
+        const guid = uuidv1();
 
         const newHierarchy: HierarchyField = {
             guid,
