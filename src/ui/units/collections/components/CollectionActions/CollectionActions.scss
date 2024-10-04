@@ -12,10 +12,20 @@
 
     &__dropdown-item {
         display: flex;
-        align-items: center;
+    }
+
+    &__dropdown-icon {
+        margin-top: 3px;
     }
 
     &__dropdown-text {
         margin-left: 8px;
+    }
+
+    &__dropdown-hint {
+        max-width: 200px;
+        line-height: normal;
+        padding-bottom: 4px;
+        color: var(--g-color-text-hint);
     }
 }
