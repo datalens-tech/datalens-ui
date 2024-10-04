@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {ChartMixed, CircleXmark, Database, Lock} from '@gravity-ui/icons';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
@@ -7,6 +8,7 @@ import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
 import {useDispatch} from 'react-redux';
 import {ChartkitMenuDialogsQA, ErrorCode, Feature} from 'shared';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {DL, Interpolate, Utils} from '../../..';
 import {CHARTKIT_ERROR_NODE_CLASSNAME} from '../../../libs/DatalensChartkit/ChartKit/helpers/constants';
@@ -16,11 +18,6 @@ import {openDialogErrorWithTabs} from '../../../store/actions/dialog';
 import type {ExtraParams} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from '../modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {getEndpointForNavigation} from '../modules/navigation';
-
-import errorCharts from '../../../assets/icons/error-chart.svg';
-import errorClose from '../../../assets/icons/error-close.svg';
-import errorDatabase from '../../../assets/icons/error-database.svg';
-import errorLock from '../../../assets/icons/error-lock.svg';
 
 import './Error.scss';
 
@@ -105,7 +102,9 @@ const ChartKitError: React.FC<any> = (props) => {
     const more = isEmpty(details) ? null : details;
     const showMore = more || extraParams.showMore;
     const showRetry = !hideRetry;
-    const showControls = !noControls && (showMore || showRetry);
+    const showControls = !noControls && !isEmbeddedEntry() && (showMore || showRetry);
+    const hideDebug = hideDebugInfo || isEmbeddedEntry();
+    let showSourceDetails = true;
 
     const expandMore = more && (openedMore || noControls);
 
@@ -125,7 +124,7 @@ const ChartKitError: React.FC<any> = (props) => {
         }
     }
 
-    let iconData = errorClose;
+    let iconData = CircleXmark;
     let detailedTitle = title;
     const sourceErrorDetails: {message?: string; code?: string}[] = [];
 
@@ -157,17 +156,17 @@ const ChartKitError: React.FC<any> = (props) => {
             iconModes['no-data'] = true;
             break;
         case ERROR_CODE.TOO_MANY_LINES:
-            iconData = errorCharts;
+            iconData = ChartMixed;
             break;
         case ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT:
-            iconData = errorCharts;
+            iconData = ChartMixed;
             break;
         case ERROR_CODE.DATA_PROVIDER_ERROR:
-            iconData = errorDatabase;
+            iconData = Database;
             break;
         case CHARTS_ERROR_CODE.CONFIG_LOADING_ERROR:
             if (error?.debug?.code === 403) {
-                iconData = errorLock;
+                iconData = Lock;
                 const entryId = error?.debug?.entryId;
                 if (entryId) {
                     const endpoint = getEndpointForNavigation(
@@ -204,6 +203,7 @@ const ChartKitError: React.FC<any> = (props) => {
                 const source = details[key];
                 const errorCode = source.code || source.status;
 
+                iconData = Database;
                 if (
                     [
                         ErrorCode.UsAccessDenied,
@@ -237,6 +237,12 @@ const ChartKitError: React.FC<any> = (props) => {
                 ) {
                     errorDetails.push(i18n('component.chartkit-error.codes', errorCode));
                     detailsString = source.debug.db_message;
+                }
+                // TODO: Replace with specific code
+                else if (source.status === 409) {
+                    errorDetails.push(i18n('common.errors', 'label_error-outdated-message'));
+                    iconData = CircleXmark;
+                    showSourceDetails = false;
                 } else if (I18n.has('component.chartkit-error.codes', errorCode)) {
                     errorDetails.push(i18n('component.chartkit-error.codes', errorCode));
                     detailsString = '';
@@ -245,21 +251,47 @@ const ChartKitError: React.FC<any> = (props) => {
 
             detailedTitle = errorDetails.length ? errorDetails : detailedTitle;
 
-            iconData = errorDatabase;
             break;
         }
-        case 'ERR.CHARTS.WRONG_EMBED_TOKEN': {
-            if (extraParams.message) {
-                detailedTitle = extraParams.message;
-            }
+        case ErrorCode.EntryForbidden: {
+            detailedTitle = i18n('common.errors', 'label_error-access-message');
+            break;
+        }
+        case ErrorCode.InvalidTokenFormat: {
+            detailedTitle = i18n('common.errors', 'label_error-invalid-format-token-message');
+            break;
+        }
+        case ErrorCode.TokenNotFound: {
+            detailedTitle = i18n('common.errors', 'label_error-token-not-found-message');
+            break;
+        }
+        case ErrorCode.InvalidToken: {
+            detailedTitle = i18n('common.errors', 'label_error-invalid-token-message');
+            break;
+        }
+        case ErrorCode.OutdatedDependencies: {
+            detailedTitle = i18n('common.errors', 'label_error-outdated-message');
             break;
         }
     }
 
+    const renderSourceErrorDetails = () => {
+        return sourceErrorDetails.map((sourceErrorDetail) => (
+            <React.Fragment key={sourceErrorDetail.message}>
+                {showErrorMessage && sourceErrorDetail.message && (
+                    <div className={b('message')}>{sourceErrorDetail.message}</div>
+                )}
+                {!sourceErrorDetail.message && sourceErrorDetail.code && (
+                    <div className={b('code-block')}>{sourceErrorDetail.code}</div>
+                )}
+            </React.Fragment>
+        ));
+    };
+
     return (
         <div className={b()} data-qa={ChartkitMenuDialogsQA.chartError}>
             <div data-qa={code} className={b('title', {mobile: DL.IS_MOBILE})}>
-                <Icon data={iconData} className={b('icon', iconModes)} />
+                <Icon data={iconData} size={20} className={b('icon', iconModes)} />
                 {Array.isArray(detailedTitle) ? (
                     <div>
                         {detailedTitle.map((str) => (
@@ -270,16 +302,7 @@ const ChartKitError: React.FC<any> = (props) => {
                     detailedTitle
                 )}
             </div>
-            {sourceErrorDetails.map((sourceErrorDetail) => (
-                <React.Fragment key={sourceErrorDetail.message}>
-                    {showErrorMessage && sourceErrorDetail.message && (
-                        <div className={b('message')}>{sourceErrorDetail.message}</div>
-                    )}
-                    {!sourceErrorDetail.message && sourceErrorDetail.code && (
-                        <div className={b('code-block')}>{sourceErrorDetail.code}</div>
-                    )}
-                </React.Fragment>
-            ))}
+            {showSourceDetails && renderSourceErrorDetails()}
             {expandMore && detailsString && <div className={b('code-block')}>{detailsString}</div>}
             {showControls && (
                 <div className={b('actions')}>
@@ -305,7 +328,7 @@ const ChartKitError: React.FC<any> = (props) => {
                     )}
                 </div>
             )}
-            {!hideDebugInfo && (
+            {!hideDebug && (
                 <React.Fragment>
                     {requestId && (
                         <div className={b('request-id')}>{`Request-ID: ${requestId}`}</div>
