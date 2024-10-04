@@ -4,12 +4,11 @@ import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
-import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import type {EntryScope} from '../../../shared';
+import {Feature, MenuItemsIds} from '../../../shared';
 import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
-import {getStore} from '../../store';
-import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
@@ -24,33 +23,6 @@ interface MenuEntry {
 }
 
 export type EntryDialoguesRef = React.RefObject<EntryDialogues>;
-
-export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: MenuEntry) {
-    if (entryDialoguesRef.current) {
-        const response = await entryDialoguesRef.current.open({
-            dialog: EntryDialogName.Rename,
-            dialogProps: {
-                entryId: entry.entryId,
-                initName: entry.name || getEntryNameByKey({key: entry.key, index: -1}),
-            },
-        });
-        if (response.status === EntryDialogResolveStatus.Success) {
-            const entryData = response.data ? response.data[0] : null;
-            const store = getStore();
-            if (entryData?.scope === EntryScope.Dash) {
-                // double dispatch is associated with disabling the exit page dialog
-                // DashActionPanel.tsx (NavigationPrompt)
-                store.dispatch(setRenameWithoutReload(true));
-                // renaming the dashboard without leaving the page
-                store.dispatch(renameDash(entryData.key));
-            } else {
-                window.location.reload();
-            }
-            // turning the exit page dialog back on
-            store.dispatch(setRenameWithoutReload(false));
-        }
-    }
-}
 
 export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: MenuEntry) {
     if (entryDialoguesRef.current) {
