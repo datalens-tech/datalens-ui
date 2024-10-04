@@ -3,7 +3,11 @@ import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
-import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
+import {
+    getEntryMenuConfig,
+    getMenuGroupConfig,
+    setEntryKey,
+} from '../../../components/EntryContextMenu/helpers';
 import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
 import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues/utils';
 import {getEntryName} from '../../../components/EntryTitle/utils';
@@ -65,6 +69,7 @@ export const registerCommonPlugins = () => {
         getNavigationQuickItems: getQuickItems,
         getNavigationCreatableEntriesConfig: getCreatableEntriesConfig,
         getNavigationPlacesConfig: getPlacesConfig,
+        setEntryKey,
         getUpdatedUserSettings,
         getUIEntryRoute,
         getFormatNumber: formatNumber,
