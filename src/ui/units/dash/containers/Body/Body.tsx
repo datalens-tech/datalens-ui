@@ -42,10 +42,12 @@ import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {
     ControlQA,
     DASH_INFO_HEADER,
+    DashBodyQa,
     DashEntryQa,
     DashKitOverlayMenuQa,
     DashTabItemType,
     Feature,
+    LOADED_DASH_CLASS,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -271,6 +273,15 @@ class Body extends React.PureComponent<BodyProps> {
         this.storageHandler();
 
         window.addEventListener('storage', this.storageHandler);
+    }
+
+    getSnapshotBeforeUpdate(prevProps: Readonly<BodyProps>) {
+        if (prevProps.entryId !== this.props.entryId || prevProps.tabId !== this.props.tabId) {
+            this.loadedItemsSet = new Map();
+            this.setState({loaded: false});
+        }
+
+        return null;
     }
 
     componentDidUpdate() {
@@ -888,11 +899,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
-    private handleSelectTab = () => {
-        this.loadedItemsSet = new Map();
-        this.setState({loaded: false});
-    };
-
     private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
         if (isMounted) {
             this.loadedItemsSet.set(item.id, false);
@@ -900,15 +906,15 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     private handleItemRender = (item: ConfigItem) => {
-        if (this.state.loaded) {
-            return;
+        const prevLoadedValue = this.loadedItemsSet.get(item.id);
+
+        if (prevLoadedValue !== true) {
+            this.loadedItemsSet.set(item.id, true);
+
+            this.setState({
+                loaded: Array.from(this.loadedItemsSet.values()).every(Boolean),
+            });
         }
-
-        this.loadedItemsSet.set(item.id, true);
-
-        this.setState({
-            loaded: Array.from(this.loadedItemsSet.values()).every(Boolean),
-        });
     };
 
     private renderBody() {
@@ -940,8 +946,13 @@ class Body extends React.PureComponent<BodyProps> {
 
         const showEditActionPanel = mode === Mode.Edit;
 
+        const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
+
         const content = (
-            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE, loaded})}>
+            <div
+                data-qa={DashBodyQa.ContentWrapper}
+                className={b('content-wrapper', {mobile: DL.IS_MOBILE}, loadedMixin)}
+            >
                 <div
                     className={b('content-container', {
                         mobile: DL.IS_MOBILE,
@@ -966,7 +977,7 @@ class Body extends React.PureComponent<BodyProps> {
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
                         )}
-                        {!settings.hideTabs && <Tabs onSelectTab={this.handleSelectTab} />}
+                        {!settings.hideTabs && <Tabs />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
                             <DashkitActionPanel
