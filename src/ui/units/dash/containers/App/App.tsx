@@ -113,7 +113,6 @@ export function App({...routeProps}: RouteComponentProps) {
         >
             <LocationChange onLocationChanged={locationChangeHandler} />
             <div className={b('content')}>
-                {tabs?.toString()}
                 <DashWrapper {...routeProps} />
             </div>
             {showFooter && <Footer />}
