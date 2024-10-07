@@ -19,7 +19,7 @@ import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';
 import {PostMessage, PostMessageCode} from '../../modules/postMessage';
-import {setTabHashState} from '../../store/actions/dashTyped';
+import {setPageTab, setTabHashState} from '../../store/actions/dashTyped';
 import {
     selectDashEntry,
     selectEntryId,
@@ -69,6 +69,14 @@ export function App({...routeProps}: RouteComponentProps) {
         }
     }, [entry, showAsideHeader, dispatch, showMobileHeader]);
 
+    React.useEffect(() => {
+        return () => {
+            if (tabs) {
+                dispatch(setPageTab(tabs[0].id));
+            }
+        };
+    }, [tabs, dispatch]);
+
     const locationChangeHandler = React.useCallback(
         async (data) => {
             const {pathname, search} = data;
@@ -94,15 +102,12 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const {Footer} = registry.common.components.getAll();
     const showFooter = Utils.isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
-    const enableUnsetHeight =
-        isEmbedded && !Utils.isEnabledFeature(Feature.RemoveEmbedUnsetDashHeight);
 
     return (
         <div
             className={b({
                 mobile: DL.IS_MOBILE,
                 embedded: isEmbedded,
-                'unset-height': enableUnsetHeight,
             })}
             ref={wrapRef}
         >
