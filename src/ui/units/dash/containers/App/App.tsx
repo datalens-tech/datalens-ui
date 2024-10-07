@@ -94,15 +94,12 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const {Footer} = registry.common.components.getAll();
     const showFooter = Utils.isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
-    const enableUnsetHeight =
-        isEmbedded && !Utils.isEnabledFeature(Feature.RemoveEmbedUnsetDashHeight);
 
     return (
         <div
             className={b({
                 mobile: DL.IS_MOBILE,
                 embedded: isEmbedded,
-                'unset-height': enableUnsetHeight,
             })}
             ref={wrapRef}
         >

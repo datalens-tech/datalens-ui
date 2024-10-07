@@ -6,7 +6,6 @@ import {EMBEDDED_DASH_MESSAGE_NAME} from 'ui/constants';
 import {isIframe, isNoScrollMode} from 'ui/utils/embedded';
 import Utils from 'ui/utils/utils';
 
-import {Feature} from '../../../../shared/types/feature';
 import {sendEmbedDashHeight} from '../modules/helpers';
 
 const dashBlock = block('dl-dash');
@@ -46,9 +45,7 @@ export const useIframeFeatures = ({wrapRef}: {wrapRef: React.RefObject<HTMLDivEl
                 setIsObserverEnabled(true);
             }
 
-            if (Utils.isEnabledFeature(Feature.RemoveEmbedUnsetDashHeight)) {
-                Utils.addBodyClass(...dashHeightClasses);
-            }
+            Utils.addBodyClass(...dashHeightClasses);
         }
 
         window.addEventListener('message', handleMessageSend);
