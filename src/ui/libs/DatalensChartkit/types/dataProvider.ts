@@ -1,6 +1,6 @@
 import type {URL_OPTIONS} from 'ui/constants/common';
 
-import type {StringParams} from '../../../../shared';
+import type {DashChartRequestContext, StringParams} from '../../../../shared';
 
 import type {ControlsOnlyWidget, Widget} from './widget';
 //import {ChartKitLoadSuccess, ChartKitProps} from '../components/ChartKitBase/ChartKitBase'; // TODO after remove old alternative Chartkit code, cause cycle imports
@@ -14,19 +14,23 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
     isEqualProps: (a: T, b: T) => boolean;
     getWidget: ({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: T;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: K;
     }) => Promise<(Widget & R) | null>;
     getControls?: ({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: T;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: K;
     }) => Promise<(ControlsOnlyWidget & R) | null>;

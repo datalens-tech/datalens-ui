@@ -248,6 +248,18 @@
     colgroup {
         display: none;
     }
+
+    &__background-table {
+        position: absolute;
+        top: -100000px;
+        left: -100000px;
+        z-index: -1;
+        overflow: auto;
+
+        tbody td {
+            white-space: nowrap;
+        }
+    }
 }
 
 table.dl-table_prepared {

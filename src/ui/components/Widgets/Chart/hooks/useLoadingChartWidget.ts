@@ -127,6 +127,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
     const isNewRelations = extDashkitContext?.isNewRelations || false;
+    const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
 
@@ -234,6 +235,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
     } = useLoadingChart({
         dataProvider,
+        dataProviderContextGetter,
         initialData,
         requestId,
         requestCancellationRef,
