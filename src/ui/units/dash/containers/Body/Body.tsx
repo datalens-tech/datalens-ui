@@ -150,6 +150,8 @@ type DashBodyState = {
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
+    prevMeta: {tabId: string | null; entryId: string | null};
+    loadedItemsSet: Map<string, boolean>;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -177,6 +179,21 @@ const GROUPS_WEIGHT = {
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
+    static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
+        const {
+            prevMeta: {entryId, tabId},
+        } = state;
+
+        // reset loaded before new tab/entry items are mounted
+        if (props.entryId !== entryId || props.tabId !== tabId) {
+            state.loadedItemsSet.clear();
+
+            return {prevMeta: {tabId: props.tabId, entryId: props.entryId}, loaded: false};
+        }
+
+        return null;
+    }
+
     dashKitRef = React.createRef<DashKitComponent>();
     entryDialoguesRef = React.createRef<EntryDialogues>();
 
@@ -232,7 +249,9 @@ class Body extends React.PureComponent<BodyProps> {
         fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
+        prevMeta: {tabId: null, entryId: null},
         loaded: false,
+        loadedItemsSet: new Map<string, boolean>(),
     };
 
     groups: DashKitGroup[] = [
@@ -273,15 +292,6 @@ class Body extends React.PureComponent<BodyProps> {
         this.storageHandler();
 
         window.addEventListener('storage', this.storageHandler);
-    }
-
-    getSnapshotBeforeUpdate(prevProps: Readonly<BodyProps>) {
-        if (prevProps.entryId !== this.props.entryId || prevProps.tabId !== this.props.tabId) {
-            this.loadedItemsSet = new Map();
-            this.setState({loaded: false});
-        }
-
-        return null;
     }
 
     componentDidUpdate() {
@@ -901,19 +911,17 @@ class Body extends React.PureComponent<BodyProps> {
 
     private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
         if (isMounted) {
-            this.loadedItemsSet.set(item.id, false);
+            this.state.loadedItemsSet.set(item.id, false);
         }
     };
 
     private handleItemRender = (item: ConfigItem) => {
-        const prevLoadedValue = this.loadedItemsSet.get(item.id);
+        const prevLoadedValue = this.state.loadedItemsSet.get(item.id);
 
         if (prevLoadedValue !== true) {
-            this.loadedItemsSet.set(item.id, true);
+            this.state.loadedItemsSet.set(item.id, true);
 
-            this.setState({
-                loaded: Array.from(this.loadedItemsSet.values()).every(Boolean),
-            });
+            this.setState({loaded: Array.from(this.state.loadedItemsSet.values()).every(Boolean)});
         }
     };
 
