@@ -764,14 +764,22 @@ class DashboardPage extends BasePage {
         return this.page.$(tabSelector);
     }
 
-    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
+    async changeTab({
+        tabName,
+        tabSelector,
+        forceMobile,
+    }: {
+        tabName?: string;
+        tabSelector?: string;
+        forceMobile?: boolean;
+    }) {
         const tabsContainer = await this.page.waitForSelector(
             DashboardPage.selectors.tabsContainer,
         );
 
         // check for desktop tabs
         const desktopTab = await tabsContainer.$(DashboardPage.selectors.tabsList);
-        if (desktopTab) {
+        if (desktopTab && !forceMobile) {
             const selector = tabSelector
                 ? tabSelector
                 : `${DashboardPage.selectors.tabItem} >> text=${tabName}`;

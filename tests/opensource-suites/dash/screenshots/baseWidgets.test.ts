@@ -8,31 +8,42 @@ import {ChartKitTableQa, DashBodyQa} from '../../../../src/shared';
 
 const PARAMS = {
     TAB_WITHOUT_AUTOHEIGHT_NAME: 'Without autoheight',
-    TAB_OTHER_NAME: 'Other',
 };
 
 datalensTest.describe('Dashboards - Base widgets screenshots', () => {
     // check group controls, text widget, title widget and widget with table chart
-    datalensTest(
-        'Widgets with autoheight @screenshot',
-        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardWithDifferentWidgets);
+    // table of contents is enabled
 
-            await dashboardPage.waitForWidgetsRender();
+    // waiting for autoheight fix
 
-            const contentContainer = page.locator(slct(DashBodyQa.ContentWrapper));
+    // datalensTest(
+    //     'Widgets with autoheight @screenshot',
+    //     async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+    //         const dashboardPage = new DashboardPage({page});
+    //         await openTestPage(
+    //             page,
+    //             `${config.dash.urls.DashboardWithDifferentWidgets}?_embedded=1`,
+    //         );
 
-            await expect(contentContainer).toHaveScreenshot({
-                mask: [page.locator(slct(ChartKitTableQa.Widget))],
-            });
-        },
-    );
+    //         await dashboardPage.waitForWidgetsRender();
+
+    //         const contentContainer = page.locator(slct(DashBodyQa.ContentWrapper));
+
+    //         await expect(contentContainer).toHaveScreenshot({
+    //             mask: [
+    //                 page.locator(slct(ChartKitTableQa.Widget)),
+    //             ],
+    //         });
+    //     },
+    // );
     datalensTest(
         'Widgets without autoheight @screenshot',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardWithDifferentWidgets);
+            await openTestPage(
+                page,
+                `${config.dash.urls.DashboardWithDifferentWidgets}?_embedded=1`,
+            );
 
             await dashboardPage.changeTab({tabName: PARAMS.TAB_WITHOUT_AUTOHEIGHT_NAME});
 

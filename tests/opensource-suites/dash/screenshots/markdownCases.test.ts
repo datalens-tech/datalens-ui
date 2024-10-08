@@ -16,7 +16,10 @@ datalensTest.describe('Dashboards - Markdown cases screenshots', () => {
         'Tab with different markdown widgets @screenshot',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
             const dashboardPage = new DashboardPage({page});
-            await openTestPage(page, config.dash.urls.DashboardWithDifferentWidgets);
+            await openTestPage(
+                page,
+                `${config.dash.urls.DashboardWithDifferentWidgets}?_embedded=1`,
+            );
 
             await dashboardPage.changeTab({tabName: PARAMS.TAB_MARKDOWN_NAME});
 
