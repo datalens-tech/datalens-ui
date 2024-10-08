@@ -95,3 +95,7 @@ export enum DashRelationTypes {
 export enum DashkitQa {
     GRID_ITEM = 'dashkit-grid-item',
 }
+
+export enum DashBodyQa {
+    ContentWrapper = 'dash-body-content-wrapper',
+}
