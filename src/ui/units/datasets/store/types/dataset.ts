@@ -52,6 +52,7 @@ import type {
     RELATION_ADD,
     RELATION_DELETE,
     RELATION_UPDATE,
+    RENAME_DATASET,
     RESET_DATASET_STATE,
     SET_ASIDE_HEADER_WIDTH,
     SET_DATASET_REVISION_MISMATCH,
@@ -743,6 +744,11 @@ type EditorSetItemsToDisplay = {
     };
 };
 
+type RenameDataset = {
+    type: typeof RENAME_DATASET;
+    payload: string;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -806,4 +812,5 @@ export type DatasetReduxAction =
     | DatasetFetchFailure
     | FieldTypesFetchSuccess
     | EditorSetFilter
-    | EditorSetItemsToDisplay;
+    | EditorSetItemsToDisplay
+    | RenameDataset;

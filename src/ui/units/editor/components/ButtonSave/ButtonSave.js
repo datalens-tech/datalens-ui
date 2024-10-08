@@ -16,6 +16,7 @@ import {
     navigateHelper,
     sdk,
 } from 'ui';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
 import {
     DIALOG_RESOLVE_STATUS,
@@ -51,6 +52,7 @@ function ButtonSave({
     const history = useHistory();
     const location = useLocation();
     const scriptsValues = useSelector((state) => state.editor.scriptsValues || {});
+    const isRenameWithoutReload = useSelector(selectIsRenameWithoutReload);
     const entryDialoguesRef = React.useRef(null);
     const dialogsRef = React.useRef(null);
 
@@ -160,7 +162,7 @@ function ButtonSave({
 
     return (
         <div className={b()}>
-            <NavigationPrompt when={!disabledSave} />
+            <NavigationPrompt when={!disabledSave && !isRenameWithoutReload} />
             <Button
                 view={getBtnSaveTheme()}
                 size="m"
