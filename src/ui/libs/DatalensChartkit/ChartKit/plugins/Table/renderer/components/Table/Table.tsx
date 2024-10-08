@@ -294,7 +294,12 @@ export const Table = React.memo<Props>((props: Props) => {
                                 tableColSizes.some((colSize, index) => colSize > cellSizes[index]);
 
                             if (shouldApplyNewSizes) {
-                                setCellSizes(tableColSizes);
+                                const newValues = tableColSizes.map((colSize, index) => {
+                                    return !cellSizes || colSize > cellSizes[index]
+                                        ? colSize
+                                        : cellSizes[index];
+                                });
+                                setCellSizes(newValues);
                             }
                         }}
                     >
