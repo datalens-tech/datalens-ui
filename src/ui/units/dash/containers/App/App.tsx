@@ -14,20 +14,20 @@ import Utils from 'ui/utils/utils';
 import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import type {CurrentPageEntry} from '../../../../components/Navigation/types';
-import {DL, URL_QUERY} from '../../../../constants/common';
+import {DL} from '../../../../constants/common';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';
 import {PostMessage, PostMessageCode} from '../../modules/postMessage';
-import {setPageTab, setTabHashState} from '../../store/actions/dashTyped';
+import {setTabHashState} from '../../store/actions/dashTyped';
 import {
-    selectDash,
     selectDashEntry,
     selectEntryId,
     selectIsFullscreenMode,
     selectStateHashId,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getTabId} from '../../utils/getTabId';
 import {DashWrapper} from '../Dash/Dash';
 
 import './App.scss';
@@ -39,7 +39,6 @@ export function App({...routeProps}: RouteComponentProps) {
     const entryId = useSelector(selectEntryId);
     const tabs = useSelector(selectTabs);
     const entry = useSelector(selectDashEntry);
-    const dash = useSelector(selectDash);
     const stateHashId = useSelector(selectStateHashId);
     const isFullscreenMode = useSelector(selectIsFullscreenMode);
 
@@ -59,9 +58,6 @@ export function App({...routeProps}: RouteComponentProps) {
     const showAsideHeader = !isEmbedded && !isFullscreenMode && isAsideHeaderEnabled;
     const showMobileHeader = !isFullscreenMode && DL.IS_MOBILE;
 
-    const getTabId = (searchParams: URLSearchParams) =>
-        searchParams.get(URL_QUERY.TAB_ID) || (tabs && tabs[0].id) || '';
-
     React.useEffect(() => {
         if (!isMounted && (showAsideHeader || showMobileHeader)) {
             dispatch(setCurrentPageEntry(null));
@@ -80,7 +76,7 @@ export function App({...routeProps}: RouteComponentProps) {
             PostMessage.send({code: PostMessageCode.UrlChanged, data: {pathname, search}});
 
             const searchParams = new URLSearchParams(search);
-            const newTabId = getTabId(searchParams);
+            const newTabId = getTabId(searchParams, tabs);
             const newStateHashId = searchParams.get('state') || '';
 
             // update hashStates only when state is not equal (i.e. switched back or between tabs
@@ -92,14 +88,6 @@ export function App({...routeProps}: RouteComponentProps) {
         },
         [entryId, tabs, stateHashId, dispatch],
     );
-
-    React.useEffect(() => {
-        const searchParams = new URLSearchParams(window.location.search);
-        const tabId = getTabId(searchParams);
-        if (tabId && tabId !== dash.tabId) {
-            dispatch(setPageTab(tabId));
-        }
-    }, []);
 
     if (showAsideHeader && prevAsideHeaderSize !== asideHeaderData.size) {
         dispatchResize();
