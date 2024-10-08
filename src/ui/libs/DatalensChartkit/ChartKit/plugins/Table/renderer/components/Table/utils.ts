@@ -101,14 +101,8 @@ function createColumn(args: {
     return options;
 }
 
-export function createTableColumns(args: {
-    head?: THead[];
-    rows?: TableRow[];
-    footer?: TFoot[];
-    cellSizes?: null | number[];
-}) {
+export function createTableColumns(args: {head?: THead[]; rows?: TableRow[]; footer?: TFoot[]}) {
     const {head = [], rows = [], footer = []} = args;
-    const cellSizes = args.cellSizes || [];
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -118,21 +112,15 @@ export function createTableColumns(args: {
             const footerCell = footer?.[cellIndex];
             const columnWidth =
                 typeof headCell.width === 'number' ? Number(headCell.width) : defaultWidth;
-            const size = cellSizes[cellIndex] ?? columnWidth;
-            const left = cellSizes.reduce(
-                (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-                1,
-            );
             const options = createColumn({
                 headCell: {
                     ...headCell,
                     enableSorting: headCell.enableSorting && rows.length > 1,
-                    left,
                     width: columnWidth > 0 ? columnWidth : undefined,
+                    index: cellIndex,
                 },
                 footerCell,
                 index: cellIndex,
-                size,
                 rows,
             });
 

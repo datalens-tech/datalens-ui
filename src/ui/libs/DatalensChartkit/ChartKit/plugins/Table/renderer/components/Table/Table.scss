@@ -256,6 +256,10 @@
         z-index: -1;
         overflow: auto;
 
+        table {
+            min-width: auto;
+        }
+
         tbody td {
             white-space: nowrap;
         }

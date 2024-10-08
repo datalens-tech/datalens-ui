@@ -19,6 +19,7 @@ import {camelCaseCss} from '../../../../../components/Widget/components/Table/ut
 import type {WidgetDimensions} from '../../types';
 import {mapHeadCell} from '../../utils/renderer';
 
+import {getCellsWidth} from './cell-width';
 import type {
     BodyCellViewData,
     BodyRowViewData,
@@ -29,8 +30,6 @@ import type {
     TableViewData,
 } from './types';
 import {createTableColumns} from './utils';
-
-const PRERENDER_ROW_COUNT = 500;
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -51,7 +50,7 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
     };
 }
 
-function getFooterRows(table: Table<TData>) {
+function getFooterRows(table: Table<TData>, leftPositions: number[]) {
     return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
         const cells = f.headers.map<FooterCellViewData>((cell) => {
             const columnDef = cell.column.columnDef;
@@ -62,8 +61,12 @@ function getFooterRows(table: Table<TData>) {
                 ? null
                 : flexRender(columnDef.footer, cell.getContext());
 
+            let left: number | undefined;
+            if (pinned) {
+                left = leftPositions[originalHeadData?.index ?? -1];
+            }
             const cellStyle: React.CSSProperties = {
-                left: pinned ? originalHeadData?.left : undefined,
+                left,
             };
 
             return {
@@ -101,7 +104,7 @@ export const usePreparedTableData = (props: {
     manualSorting: boolean;
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
     getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
-    cellSizes: number[] | null;
+    cellMinSizes: number[] | null;
 }): TableViewData => {
     const {
         dimensions,
@@ -110,10 +113,8 @@ export const usePreparedTableData = (props: {
         onSortingChange,
         data,
         getCellAdditionStyles,
-        cellSizes,
+        cellMinSizes,
     } = props;
-
-    const prerender = !cellSizes;
 
     const columns = React.useMemo(() => {
         const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
@@ -122,8 +123,14 @@ export const usePreparedTableData = (props: {
 
             return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
         });
-        return createTableColumns({head: headData, rows: data.rows, footer: footerData, cellSizes});
-    }, [data, dimensions.width, cellSizes]);
+        return createTableColumns({head: headData, rows: data.rows, footer: footerData});
+    }, [data, dimensions.width]);
+
+    // const size = cellSizes[cellIndex] ?? columnWidth;
+    // const left = cellSizes.reduce(
+    //     (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
+    //     1,
+    // );
 
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -191,12 +198,12 @@ export const usePreparedTableData = (props: {
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
-    }, [data, cellSizes]);
+    }, [data, dimensions]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
         estimateSize: () => {
-            return 30;
+            return 60;
         },
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
@@ -223,11 +230,25 @@ export const usePreparedTableData = (props: {
         overscan: 100,
     });
 
-    const virtualItems = prerender
-        ? new Array(Math.min(tableRows.length, PRERENDER_ROW_COUNT))
-              .fill(null)
-              .map((_, index) => ({index, start: 0, size: undefined}))
-        : rowVirtualizer.getVirtualItems();
+    const virtualItems = rowVirtualizer.getVirtualItems();
+
+    const cols = (headers[headers.length - 1]?.headers ?? []).map<{min: number; fixed?: number}>(
+        (h) => {
+            const min = cellMinSizes?.[h.index] ?? 0;
+            const fixedWidth = h.column.columnDef.meta?.width;
+            return {min, fixed: fixedWidth ? Number(fixedWidth) : undefined};
+        },
+    );
+    const colSizes = getCellsWidth({
+        cols,
+        tableMinWidth: tableContainerRef.current?.clientWidth ?? 0,
+    });
+
+    const leftPositions = (headers[headers.length - 1]?.headers ?? []).map<number>((h) => {
+        const headData = h.column.columnDef.meta?.head;
+        const cellIndex = headData?.index ?? -1;
+        return colSizes.reduce((sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum), 1);
+    });
 
     const headerRows = headers
         .map((headerGroup) => {
@@ -248,15 +269,16 @@ export const usePreparedTableData = (props: {
                     const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
                     const sortable = header.column.getCanSort();
                     const pinned = Boolean(originalCellData?.pinned);
+
+                    let left: number | undefined;
+                    if (pinned) {
+                        left = leftPositions[originalCellData?.index ?? -1];
+                    }
+
                     const cellStyle: React.CSSProperties = {
                         ...get(originalCellData, 'css', {}),
-                        left: pinned ? originalCellData?.left : undefined,
+                        left,
                     };
-
-                    const cellWidth = header.getSize();
-                    if (cellWidth) {
-                        cellStyle.width = cellWidth;
-                    }
 
                     if (typeof originalCellData?.width !== 'undefined') {
                         cellStyle.whiteSpace = 'normal';
@@ -284,16 +306,14 @@ export const usePreparedTableData = (props: {
             };
         })
         .filter(Boolean) as HeadRowViewData[];
-    const colgroup = headers[headers.length - 1]?.headers.map((h) => ({width: `${h.getSize()}px`}));
+    const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
-    const header = prerender
-        ? {rows: headerRows}
-        : {
-              rows: headerRows,
-              style: {
-                  gridTemplateColumns,
-              },
-          };
+    const header = {
+        rows: headerRows,
+        style: {
+            gridTemplateColumns,
+        },
+    };
 
     const rows = React.useMemo(() => {
         if (!virtualItems.length) {
@@ -335,8 +355,12 @@ export const usePreparedTableData = (props: {
                 const additionalStyles = getCellAdditionStyles
                     ? getCellAdditionStyles(originalCellData as TableCell, row.original)
                     : {};
+                let left: number | undefined;
+                if (pinned) {
+                    left = leftPositions[originalHeadData?.index ?? -1];
+                }
                 const cellStyle: React.CSSProperties = {
-                    left: pinned ? originalHeadData?.left : undefined,
+                    left,
                     ...additionalStyles,
                     ...camelCaseCss(originalCellData.css),
                 };
@@ -344,8 +368,6 @@ export const usePreparedTableData = (props: {
                 if (typeof originalHeadData?.width !== 'undefined') {
                     cellStyle.whiteSpace = 'normal';
                     cellStyle.wordBreak = 'break-word';
-                } else if (prerender) {
-                    cellStyle.whiteSpace = 'nowrap';
                 }
 
                 const contentStyle: React.CSSProperties = {};
@@ -391,13 +413,13 @@ export const usePreparedTableData = (props: {
 
             return rowsAcc;
         }, []);
-    }, [tableRows, virtualItems, getCellAdditionStyles, prerender, tableRowsData, rowVirtualizer]);
+    }, [tableRows, virtualItems, getCellAdditionStyles, tableRowsData, rowVirtualizer]);
 
     const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
     const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
     const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
-        rows: hasFooter ? getFooterRows(table) : [],
+        rows: hasFooter ? getFooterRows(table, leftPositions) : [],
         style: {gridTemplateColumns, transform},
     };
 
@@ -411,8 +433,7 @@ export const usePreparedTableData = (props: {
             },
         },
         footer,
-        totalSize: prerender ? undefined : rowVirtualizer.getTotalSize(),
-        prerender,
-        colgroup: prerender ? undefined : colgroup,
+        totalSize: rowVirtualizer.getTotalSize(),
+        colgroup,
     };
 };
