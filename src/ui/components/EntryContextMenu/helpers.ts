@@ -47,7 +47,9 @@ export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: Men
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
-            window.location.reload();
+            const setEntryKey = registry.common.functions.get('setEntryKey');
+            const entryData = response.data ? response.data.result[0] : null;
+            setEntryKey({...entryData, withRouting: false});
         }
     }
 }
