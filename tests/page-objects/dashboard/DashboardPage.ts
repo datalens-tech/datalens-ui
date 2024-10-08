@@ -11,6 +11,7 @@ import {
     DialogGroupControlQa,
     DialogTabsQA,
     EntryDialogQA,
+    LOADED_DASH_CLASS,
     SelectQa,
     YfmQa,
 } from '../../../src/shared/constants';
@@ -43,6 +44,7 @@ import {
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashBodyQa,
     DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashkitQa,
@@ -1015,6 +1017,12 @@ class DashboardPage extends BasePage {
                 );
             }),
         );
+    }
+
+    async waitForWidgetsRender() {
+        // content-wrapper has loaded class when all widgets are rendered
+        const loadedWrapper = this.page.locator(slct(DashBodyQa.ContentWrapper));
+        await expect(loadedWrapper).toHaveClass(new RegExp(LOADED_DASH_CLASS));
     }
 
     async getTableFirstRowTexts(gridItemLocator: Locator) {
