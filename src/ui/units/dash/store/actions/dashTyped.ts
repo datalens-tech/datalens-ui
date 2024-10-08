@@ -168,6 +168,16 @@ export const setPageTab = (tabId: string) => {
     };
 };
 
+export const resetPageTab = () => {
+    return async function (dispatch: DashDispatch, getState: GetState) {
+        const {dash} = getState();
+
+        if (dash?.data?.tabs) {
+            dispatch(setPageTab(dash.data.tabs[0].id));
+        }
+    };
+};
+
 export const SET_INITIAL_PAGE_TABS_ITEMS = Symbol('dash/SET_INITIAL_PAGE_TABS_ITEMS');
 export type SetInitialPageTabsItemsAction = {
     type: typeof SET_INITIAL_PAGE_TABS_ITEMS;

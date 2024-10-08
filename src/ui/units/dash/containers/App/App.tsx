@@ -19,7 +19,7 @@ import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';
 import {PostMessage, PostMessageCode} from '../../modules/postMessage';
-import {setPageTab, setTabHashState} from '../../store/actions/dashTyped';
+import {resetPageTab, setTabHashState} from '../../store/actions/dashTyped';
 import {
     selectDashEntry,
     selectEntryId,
@@ -71,11 +71,9 @@ export function App({...routeProps}: RouteComponentProps) {
 
     React.useEffect(() => {
         return () => {
-            if (tabs) {
-                dispatch(setPageTab(tabs[0].id));
-            }
+            dispatch(resetPageTab());
         };
-    }, [tabs, dispatch]);
+    }, []);
 
     const locationChangeHandler = React.useCallback(
         async (data) => {
