@@ -151,7 +151,7 @@ type DashBodyState = {
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
-    loadedItemsSet: Map<string, boolean>;
+    loadedItemsMap: Map<string, boolean>;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -186,7 +186,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         // reset loaded before new tab/entry items are mounted
         if (props.entryId !== entryId || props.tabId !== tabId) {
-            state.loadedItemsSet.clear();
+            state.loadedItemsMap.clear();
 
             return {prevMeta: {tabId: props.tabId, entryId: props.entryId}, loaded: false};
         }
@@ -243,15 +243,13 @@ class Body extends React.PureComponent<BodyProps> {
         columns: 0,
     };
 
-    loadedItemsSet = new Map<string, boolean>();
-
     state: DashBodyState = {
         fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
         prevMeta: {tabId: null, entryId: null},
         loaded: false,
-        loadedItemsSet: new Map<string, boolean>(),
+        loadedItemsMap: new Map<string, boolean>(),
     };
 
     groups: DashKitGroup[] = [
@@ -911,17 +909,17 @@ class Body extends React.PureComponent<BodyProps> {
 
     private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
         if (isMounted) {
-            this.state.loadedItemsSet.set(item.id, false);
+            this.state.loadedItemsMap.set(item.id, false);
         }
     };
 
     private handleItemRender = (item: ConfigItem) => {
-        const prevLoadedValue = this.state.loadedItemsSet.get(item.id);
+        const {loadedItemsMap} = this.state;
 
-        if (prevLoadedValue !== true) {
-            this.state.loadedItemsSet.set(item.id, true);
+        if (loadedItemsMap.get(item.id) !== true) {
+            loadedItemsMap.set(item.id, true);
 
-            this.setState({loaded: Array.from(this.state.loadedItemsSet.values()).every(Boolean)});
+            this.setState({loaded: Array.from(loadedItemsMap.values()).every(Boolean)});
         }
     };
 
