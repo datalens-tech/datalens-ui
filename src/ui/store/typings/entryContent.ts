@@ -18,4 +18,5 @@ export interface EntryGlobalState extends GetEntryResponse {
     currentRevId?: string;
     hasRevisionsNextPage?: boolean;
     revisionsLoadingStatus?: EntryContentState['revisionsLoadingStatus'];
+    isRenameWithoutReload?: boolean;
 }

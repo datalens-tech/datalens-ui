@@ -12,6 +12,7 @@ import {
     PANE_TAB_SELECT,
     PANE_VIEW_SELECT,
     PREVIEW_DRAW,
+    SET_ENTRY_KEY,
 } from '../../actions';
 import type {AutoExtendCommand} from '../../update';
 import {imm} from '../../update';
@@ -198,6 +199,19 @@ export function editorTypedReducer(state: EditorState, action: EditorActions): E
                     },
                 },
             });
+        }
+
+        case SET_ENTRY_KEY: {
+            if (!state.entry) {
+                return state;
+            }
+            return {
+                ...state,
+                entry: {
+                    ...state.entry,
+                    key: action.payload,
+                },
+            };
         }
 
         default:

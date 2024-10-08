@@ -48,6 +48,7 @@ import {
     RELATION_ADD,
     RELATION_DELETE,
     RELATION_UPDATE,
+    RENAME_DATASET,
     SET_ASIDE_HEADER_WIDTH,
     SET_DATASET_REVISION_MISMATCH,
     SET_FREEFORM_SOURCES,
@@ -1314,6 +1315,12 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.editor,
                     itemsToDisplay,
                 },
+            };
+        }
+        case RENAME_DATASET: {
+            return {
+                ...state,
+                key: action.payload,
             };
         }
         default: {

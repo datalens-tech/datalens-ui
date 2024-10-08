@@ -44,4 +44,14 @@ export const setChartLoadedData = (
     payload,
 });
 
-export type ChartActions = DrawPreviewAction | SetChartLoadedDataAction;
+export const SET_ENTRY_KEY = Symbol('editor/chart/SET_ENTRY_KEY');
+type SetEntryKeyAction = {
+    type: typeof SET_ENTRY_KEY;
+    payload: string;
+};
+export const setEditorEntryKey = (key: SetEntryKeyAction['payload']): SetEntryKeyAction => ({
+    type: SET_ENTRY_KEY,
+    payload: key,
+});
+
+export type ChartActions = DrawPreviewAction | SetChartLoadedDataAction | SetEntryKeyAction;
