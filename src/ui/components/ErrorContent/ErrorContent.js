@@ -44,6 +44,7 @@ class ErrorContent extends React.PureComponent {
             scope: PropTypes.string.isRequired,
             key: PropTypes.string.isRequired,
             type: PropTypes.string,
+            workbookId: PropTypes.string,
         }),
         noControls: PropTypes.bool,
         showDebugInfo: PropTypes.bool,
@@ -201,7 +202,7 @@ class ErrorContent extends React.PureComponent {
     renderUnlock() {
         const {entryMeta, type} = this.props;
 
-        if (type === ErrorContentTypes.NO_ENTRY_ACCESS && entryMeta) {
+        if (type === ErrorContentTypes.NO_ENTRY_ACCESS && entryMeta && !entryMeta.workbookId) {
             return (
                 <React.Fragment>
                     <Button
