@@ -28,8 +28,8 @@ import {
     isNumberField,
     isPercentVisualization,
 } from 'shared';
-import {Utils} from 'ui';
 import {withHiddenUnmount} from 'ui/hoc';
+import Utils from 'ui/utils/utils';
 
 import {SETTINGS} from '../../../constants';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
