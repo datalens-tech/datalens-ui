@@ -36,6 +36,12 @@ jest.mock('../../../registry', () => ({
                         ? () => []
                         : () => undefined;
                 },
+                getAll: () => {
+                    return {
+                        getTopLevelEntryScopes: () => [EntryScope.Dash, EntryScope.Report],
+                        getAllEntryScopes: () => Object.values(EntryScope),
+                    };
+                },
             },
         },
     },

@@ -38,7 +38,7 @@ const isSPAEntry = (entry) => {
         ...getTopLevelEntryScopes(),
     ];
 
-    return spaEntriesScopes.has(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
+    return spaEntriesScopes.includes(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
 };
 
 const getEntryUrl = (entry, navigationUrl) => {

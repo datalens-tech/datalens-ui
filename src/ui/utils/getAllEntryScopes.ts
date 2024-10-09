@@ -1,5 +1,5 @@
 import {EntryScope} from 'shared';
 
-export const getAllScopes = () => {
+export const getAllEntryScopes = () => {
     return Object.values(EntryScope);
 };

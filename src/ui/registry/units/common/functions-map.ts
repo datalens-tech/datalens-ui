@@ -145,5 +145,5 @@ export const commonFunctionsMap = {
     getListMembersFilter:
         makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
     getTopLevelEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
-    getAllScopes: makeFunctionTemplate<() => EntryScope[]>(),
+    getAllEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
 } as const;

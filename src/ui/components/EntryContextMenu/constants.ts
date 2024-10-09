@@ -83,7 +83,7 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
     Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
 export const getEntryContextMenu = (): ContextMenuItem[] => {
-    const {getTopLevelEntryScopes, getAllScopes} = registry.common.functions.getAll();
+    const {getTopLevelEntryScopes, getAllEntryScopes} = registry.common.functions.getAll();
 
     return [
         {
@@ -93,7 +93,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             text: 'value_revisions',
             qa: ActionPanelEntryContextMenuQa.Revisions,
             enable: () => true,
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isSpecific: true,
             isOnEditMode: false,
             isVisible({entry, isLimitedView}: ContextMenuParams) {
@@ -114,7 +114,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
                     ? {admin: true, edit: true, read: false, execute: false}
                     : {admin: true, edit: false, read: false, execute: false};
             },
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
                 return !isUsersFolder(entry?.key);
             },
@@ -126,7 +126,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             text: 'value_add-favorites-alias',
             place: PLACE.FAVORITES,
             enable: () => true,
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
                 return !entry?.displayAlias;
             },
@@ -138,7 +138,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             text: 'value_edit-favorites-alias',
             place: PLACE.FAVORITES,
             enable: () => true,
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
                 return Boolean(entry?.displayAlias);
             },
@@ -155,7 +155,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
                     ? {admin: true, edit: true, read: false, execute: false}
                     : {admin: true, edit: false, read: false, execute: false};
             },
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
                 return !isUsersFolder(entry?.key);
             },
@@ -168,7 +168,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             text: 'value_move',
             enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemMove),
             permissions: {admin: true, edit: false, read: false, execute: false},
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
                 return !isUsersFolder(entry?.key) && !entry?.workbookId;
             },
@@ -212,7 +212,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             icon: Link,
             text: 'value_copy-link',
             enable: () => true,
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible: (params) => !isVisibleEntryContextShareItem(params),
         },
         {
@@ -221,7 +221,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             icon: ArrowShapeTurnUpRight,
             text: 'value_share',
             enable: () => true,
-            scopes: getAllScopes(),
+            scopes: getAllEntryScopes(),
             isVisible: isVisibleEntryContextShareItem,
         },
         {
