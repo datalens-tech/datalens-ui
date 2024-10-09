@@ -24,7 +24,7 @@
 
 .dl-table {
     border-collapse: collapse;
-    min-width: calc(100% - 1px);
+    min-width: 100%;
     width: max-content;
 
     &__table-wrapper {
