@@ -85,3 +85,5 @@ export const SET_DATASET_REVISION_MISMATCH = Symbol('dataset/SET_DATASET_REVISIO
 
 export const EDITOR_SET_FILTER = Symbol('dataset/EDITOR_SET_FILTER');
 export const EDITOR_SET_ITEMS_TO_DISPLAY = Symbol('dataset/EDITOR_SET_ITEMS_TO_DISPLAY');
+
+export const RENAME_DATASET = Symbol('dataset/RENAME_DATASET');

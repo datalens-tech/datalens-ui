@@ -45,6 +45,7 @@ import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
+import type {SetEntryKey} from './types/functions/setEntryKey';
 import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
 
 export const commonFunctionsMap = {
@@ -63,6 +64,7 @@ export const commonFunctionsMap = {
     getIconDataById: makeFunctionTemplate<(arg: IconId) => SVGIconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),
     getAccessEntryMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
+    setEntryKey: makeFunctionTemplate<SetEntryKey>(),
     getMoveToWorkbooksMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
     setOldSdkDefaultHeaders:
         makeFunctionTemplate<(config: ConfigSdk, headers: HeadersSdk) => void>(),

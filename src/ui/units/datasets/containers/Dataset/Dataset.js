@@ -15,6 +15,7 @@ import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
 import {DatasetActionQA, ErrorCode, ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {
     addAvatar,
     addSource,
@@ -447,7 +448,10 @@ class Dataset extends React.Component {
             >
                 {i18n('button_save')}
             </Button>,
-            <NavigationPrompt key="navigation-prompt" when={!saveButtonDisabled} />,
+            <NavigationPrompt
+                key="navigation-prompt"
+                when={!saveButtonDisabled && !this.props.isRenameWithoutReload}
+            />,
         ];
 
         const leftItems = [
@@ -710,6 +714,7 @@ Dataset.propTypes = {
     sourcePrototypes: PropTypes.array,
     datasetPreview: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    isRenameWithoutReload: PropTypes.bool,
     asideHeaderData: PropTypes.shape({
         size: PropTypes.number.isRequired,
     }),
@@ -739,6 +744,7 @@ const mapStateToProps = createStructuredSelector({
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,
+    isRenameWithoutReload: selectIsRenameWithoutReload,
 });
 const mapDispatchToProps = {
     fetchFieldTypes,

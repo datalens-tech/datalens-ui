@@ -8,6 +8,7 @@ import {
     SET_REVISIONS_MODE,
     TOGGLE_REVISIONS_MODE,
     REVISIONS_LOADING_STATUS,
+    SET_IS_RENAME_WITHOUT_RELOAD,
 } from '../actions/entryContent';
 import type {GetRevisionsEntry} from '../../../shared/schema';
 import {RevisionsListMode, RevisionsMode} from '../typings/entryContent';
@@ -19,6 +20,7 @@ export interface EntryContentState {
     currentRevId: string | null;
     hasRevisionsNextPage: boolean;
     revisionsLoadingStatus: 'loading' | 'ready' | 'fail' | '';
+    isRenameWithoutReload: boolean;
 }
 
 const getInitialEntryContentState = (): EntryContentState => ({
@@ -28,6 +30,7 @@ const getInitialEntryContentState = (): EntryContentState => ({
     currentRevId: null,
     hasRevisionsNextPage: false,
     revisionsLoadingStatus: '',
+    isRenameWithoutReload: false,
 });
 
 function entryContent(
@@ -104,6 +107,13 @@ function entryContent(
                 ...state,
                 revisionsLoadingStatus: action.payload,
             };
+
+        case SET_IS_RENAME_WITHOUT_RELOAD: {
+            return {
+                ...state,
+                isRenameWithoutReload: action.isRenameWithoutReload,
+            };
+        }
 
         default:
             return state;
