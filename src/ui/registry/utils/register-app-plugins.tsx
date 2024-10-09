@@ -1,5 +1,3 @@
-import {registerWorkbooksPlugins} from 'shared/constants/colors';
-
 import {registryLibsPlugins} from '../libs/registryLibsPlugins';
 import {registerChartPlugins} from '../units/chart/register';
 import {registerCollectionsPlugins} from '../units/collections/register';
@@ -12,6 +10,7 @@ import {registerMainPlugins} from '../units/main/register';
 import {registerPublicPlugins} from '../units/public/register';
 import {registerQlPlugins} from '../units/ql/register';
 import {registerWizardPlugins} from '../units/wizard/register';
+import {registerWorkbooksPlugins} from '../units/workbooks/register';
 
 export const registerAppPlugins = () => {
     registerChartPlugins();
