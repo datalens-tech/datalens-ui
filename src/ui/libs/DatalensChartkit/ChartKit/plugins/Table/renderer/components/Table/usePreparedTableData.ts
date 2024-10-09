@@ -126,12 +126,6 @@ export const usePreparedTableData = (props: {
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
 
-    // const size = cellSizes[cellIndex] ?? columnWidth;
-    // const left = cellSizes.reduce(
-    //     (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-    //     1,
-    // );
-
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const tableRowsData = React.useMemo(() => {
