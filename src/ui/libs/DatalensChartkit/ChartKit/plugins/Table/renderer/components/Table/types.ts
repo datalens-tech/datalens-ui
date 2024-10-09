@@ -148,6 +148,4 @@ export type TableViewData = {
         style?: React.CSSProperties;
     };
     totalSize?: number;
-    /* rendering table without most options - only to calculate cells size */
-    prerender?: boolean;
 };

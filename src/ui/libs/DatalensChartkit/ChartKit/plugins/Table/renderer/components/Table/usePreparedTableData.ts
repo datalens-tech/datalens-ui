@@ -250,62 +250,69 @@ export const usePreparedTableData = (props: {
         return colSizes.reduce((sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum), 1);
     });
 
-    const headerRows = headers
-        .map((headerGroup) => {
-            if (!headerGroup.headers.length) {
-                return null;
-            }
+    const headerRows = React.useMemo(() => {
+        return headers
+            .map((headerGroup) => {
+                if (!headerGroup.headers.length) {
+                    return null;
+                }
 
-            const cells = headerGroup.headers
-                .map((header, index) => {
-                    if (header.column.depth !== headerGroup.depth) {
-                        return null;
-                    }
+                const cells = headerGroup.headers
+                    .map((header, index) => {
+                        if (header.column.depth !== headerGroup.depth) {
+                            return null;
+                        }
 
-                    const originalCellData = header.column.columnDef.meta?.head;
-                    const rowSpan = header.isPlaceholder
-                        ? headers.length - headerGroup.depth
-                        : undefined;
-                    const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
-                    const sortable = header.column.getCanSort();
-                    const pinned = Boolean(originalCellData?.pinned);
+                        const originalCellData = header.column.columnDef.meta?.head;
+                        const rowSpan = header.isPlaceholder
+                            ? headers.length - headerGroup.depth
+                            : undefined;
+                        const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
+                        const sortable = header.column.getCanSort();
+                        const pinned = Boolean(originalCellData?.pinned);
 
-                    let left: number | undefined;
-                    if (pinned) {
-                        left = leftPositions[originalCellData?.index ?? -1];
-                    }
+                        let left: number | undefined;
+                        if (pinned) {
+                            left = leftPositions[originalCellData?.index ?? -1];
+                        }
 
-                    const cellStyle: React.CSSProperties = {
-                        ...get(originalCellData, 'css', {}),
-                        left,
-                    };
+                        const cellStyle: React.CSSProperties = {
+                            ...get(originalCellData, 'css', {}),
+                            left,
+                        };
 
-                    if (typeof originalCellData?.width !== 'undefined') {
-                        cellStyle.whiteSpace = 'normal';
-                        cellStyle.wordBreak = 'break-word';
-                    }
+                        if (typeof originalCellData?.width !== 'undefined') {
+                            cellStyle.whiteSpace = 'normal';
+                            cellStyle.wordBreak = 'break-word';
+                        }
 
-                    return {
-                        id: header.id,
-                        index,
-                        rowSpan,
-                        colSpan,
-                        sortable,
-                        pinned,
-                        style: cellStyle,
-                        sorting: header.column.getIsSorted(),
-                        content: flexRender(header.column.columnDef.header, header.getContext()),
-                        onClick: header.column.getToggleSortingHandler(),
-                    };
-                })
-                .filter(Boolean);
+                        return {
+                            id: header.id,
+                            index,
+                            rowSpan,
+                            colSpan,
+                            sortable,
+                            pinned,
+                            style: cellStyle,
+                            sorting: header.column.getIsSorted(),
+                            content: flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                            ),
+                            onClick: header.column.getToggleSortingHandler(),
+                        };
+                    })
+                    .filter(Boolean);
 
-            return {
-                id: headerGroup.id,
-                cells,
-            };
-        })
-        .filter(Boolean) as HeadRowViewData[];
+                return {
+                    id: headerGroup.id,
+                    cells,
+                };
+            })
+            .filter(Boolean) as HeadRowViewData[];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [columns]);
+
     const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
     const header = {

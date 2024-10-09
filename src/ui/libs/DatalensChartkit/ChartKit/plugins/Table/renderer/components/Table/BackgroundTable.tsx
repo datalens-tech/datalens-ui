@@ -30,7 +30,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const tableRef = React.useRef<HTMLTableElement | null>(null);
-    const tableMinSizes = React.useRef<number[]>();
+    const tableMinSizes = React.useRef<null | number[]>(null);
 
     const setMinSizes = async () => {
         const tableElement = tableRef.current as HTMLTableElement;
@@ -51,6 +51,12 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
             }
         }
     };
+
+    React.useEffect(() => {
+        if (tableMinSizes.current) {
+            tableMinSizes.current = null;
+        }
+    }, [props.data.header?.rows]);
 
     React.useEffect(() => {
         setMinSizes();
