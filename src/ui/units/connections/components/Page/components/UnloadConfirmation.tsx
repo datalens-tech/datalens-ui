@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Prompt} from 'react-router';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
 import {formChangedSelector} from '../../../store';
 import {isListPageOpened} from '../utils';
@@ -11,6 +12,7 @@ const i18n = I18n.keyset('connections.form');
 
 export const UnloadConfirmation = () => {
     const formChanged = useSelector(formChangedSelector);
+    const isRenameWithoutReload = useSelector(selectIsRenameWithoutReload);
     const listPageOpened = isListPageOpened(location.pathname);
 
     const beforeUnloadHandler = React.useCallback(
@@ -31,5 +33,5 @@ export const UnloadConfirmation = () => {
     }, [beforeUnloadHandler]);
 
     // Used for SPA transitions
-    return <Prompt when={formChanged} message={i18n('toast_unsaved')} />;
+    return <Prompt when={formChanged && !isRenameWithoutReload} message={i18n('toast_unsaved')} />;
 };

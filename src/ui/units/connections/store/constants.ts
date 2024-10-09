@@ -1,4 +1,4 @@
-import {DL} from 'ui';
+import {DL} from 'ui/constants';
 
 import type {ConnectionsReduxState} from './typings';
 

@@ -6,6 +6,7 @@ import {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
+    SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
     SET_FILE_COLUMN_FILTER,
@@ -79,6 +80,15 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                     ...state.apiErrors,
                     entry: error,
                 },
+            };
+        }
+        case SET_CONNECTION_KEY: {
+            if (!state.entry) {
+                return state;
+            }
+            return {
+                ...state,
+                entry: {...state.entry, key: action.payload},
             };
         }
         case SET_FORM: {
