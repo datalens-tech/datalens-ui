@@ -122,24 +122,21 @@ const entityTypeIcons: Record<string, string> = {
 
 const getScopeTypeIcon = (scope: string) => {
     switch (scope) {
-        case EntryScope.Folder:
-            return 'folder';
         case EntryScope.Widget:
         case 'chart':
             return 'chart-wizard';
-        case EntryScope.Dataset:
-            return 'dataset';
         case EntryScope.Dash:
         case 'dashboard':
             return 'dashboard';
         case 'monitoring':
             return 'editor';
-        case EntryScope.Report:
-            return 'report';
         case 'broken':
             return 'broken';
         default:
-            return null;
+            // For all new scopes icon type should match scope:
+            // EntryScope.Dataset -> 'dataset'
+            // EntryScope.Folder -> 'folder'
+            return scope;
     }
 };
 

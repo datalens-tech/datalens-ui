@@ -20,11 +20,8 @@ jest.mock('ui', () => {
         Widget = 'widget',
     }
 
-    const ALL_SCOPES: string[] = Object.values(MockedScope);
-
     return {
         Scope: MockedScope,
-        ALL_SCOPES,
         URL_QUERY: {
             REV_ID: 'revId',
         },

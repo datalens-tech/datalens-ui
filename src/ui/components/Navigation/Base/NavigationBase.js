@@ -23,21 +23,23 @@ import {getPlaceConfig} from './configure';
 
 import './NavigationBase.scss';
 
-const SPA_ENTRIES_SCOPE = new Set([
-    EntryScope.Connection,
-    EntryScope.Dataset,
-    EntryScope.Dash,
-    EntryScope.Report,
-]);
-
 const SPA_ENTRIES_TYPES = new Set([
     ...ENTRY_TYPES.wizard,
     ...ENTRY_TYPES.ql,
     ...ENTRY_TYPES.editor,
 ]);
 
-const isSPAEntry = (entry) =>
-    SPA_ENTRIES_SCOPE.has(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
+const isSPAEntry = (entry) => {
+    const {getTopLevelEntryScopes} = registry.common.functions.getAll();
+
+    const spaEntriesScopes = [
+        EntryScope.Connection,
+        EntryScope.Dataset,
+        ...getTopLevelEntryScopes(),
+    ];
+
+    return spaEntriesScopes.has(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
+};
 
 const getEntryUrl = (entry, navigationUrl) => {
     const link = navigateHelper.redirectUrlSwitcher(entry);

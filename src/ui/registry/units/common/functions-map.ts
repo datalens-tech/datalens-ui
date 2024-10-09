@@ -142,4 +142,6 @@ export const commonFunctionsMap = {
     getBasicActionPanelItems: makeFunctionTemplate<() => ActionPanelItem[]>(),
     getListMembersFilter:
         makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
+    getTopLevelEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
+    getAllScopes: makeFunctionTemplate<() => EntryScope[]>(),
 } as const;
