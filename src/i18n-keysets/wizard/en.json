@@ -63,6 +63,7 @@
   "label_axis-title": "Axis title",
   "label_axis-title-manual-warning": "You are using a split, so the axis title can't be edited",
   "label_axis-type": "Axis type",
+  "label_axis-visibility": "Axis on the chart",
   "label_background-color-field-selector": "By field",
   "label_background-settings": "Column fill color",
   "label_bars-align": "Align",
