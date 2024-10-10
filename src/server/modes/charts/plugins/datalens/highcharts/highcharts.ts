@@ -53,7 +53,7 @@ export const buildHighchartsConfigPrivate = (args: {
         };
     }
 
-    const tooltip = {};
+    const tooltip: Highcharts.Options['tooltip'] = {};
     let legend: ExtendedHighchartsLegendOptions = {};
     let colorAxis: Highcharts.Options['colorAxis'];
 
@@ -175,6 +175,10 @@ export const buildHighchartsConfigPrivate = (args: {
         legend = {
             enabled: false,
         };
+    }
+
+    if (shared.extraSettings?.tooltip === 'hide') {
+        tooltip.enabled = false;
     }
 
     if (

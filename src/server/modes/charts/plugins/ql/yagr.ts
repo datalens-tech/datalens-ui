@@ -1,4 +1,5 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
+import set from 'lodash/set';
 
 import {LegendDisplayMode, QlVisualizationId} from '../../../../../shared';
 import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
@@ -137,6 +138,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             tracking,
         },
     };
+
+    if (config.extraSettings?.tooltip === 'hide') {
+        set(widgetData, 'tooltip.show', false);
+    }
 
     return widgetData;
 };

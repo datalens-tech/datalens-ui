@@ -117,6 +117,10 @@ export const CHART_SETTINGS = {
         SHOW: LegendDisplayMode.Show,
         HIDE: LegendDisplayMode.Hide,
     },
+    TOOLTIP: {
+        SHOW: 'show',
+        HIDE: 'hide',
+    },
     TOOLTIP_SUM: {
         ON: 'on',
         OFF: 'off',

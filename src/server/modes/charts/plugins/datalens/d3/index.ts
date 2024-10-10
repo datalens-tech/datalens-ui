@@ -32,7 +32,7 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
 
     const chartWidgetData: Partial<ChartKitWidgetData> = {
         title: getChartTitle(extraSettings),
-        tooltip: {enabled: true},
+        tooltip: {enabled: extraSettings?.tooltip !== 'hide'},
         legend: {enabled: isLegendEnabled},
         xAxis: {
             type: getAxisType({
