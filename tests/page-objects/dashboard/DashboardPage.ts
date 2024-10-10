@@ -11,6 +11,7 @@ import {
     DialogGroupControlQa,
     DialogTabsQA,
     EntryDialogQA,
+    LOADED_DASH_CLASS,
     SelectQa,
     YfmQa,
 } from '../../../src/shared/constants';
@@ -43,6 +44,7 @@ import {
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashBodyQa,
     DashKitOverlayMenuQa,
     DashboardAddWidgetQa,
     DashkitQa,
@@ -762,14 +764,22 @@ class DashboardPage extends BasePage {
         return this.page.$(tabSelector);
     }
 
-    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
+    async changeTab({
+        tabName,
+        tabSelector,
+        forceMobile,
+    }: {
+        tabName?: string;
+        tabSelector?: string;
+        forceMobile?: boolean;
+    }) {
         const tabsContainer = await this.page.waitForSelector(
             DashboardPage.selectors.tabsContainer,
         );
 
         // check for desktop tabs
         const desktopTab = await tabsContainer.$(DashboardPage.selectors.tabsList);
-        if (desktopTab) {
+        if (desktopTab && !forceMobile) {
             const selector = tabSelector
                 ? tabSelector
                 : `${DashboardPage.selectors.tabItem} >> text=${tabName}`;
@@ -1015,6 +1025,12 @@ class DashboardPage extends BasePage {
                 );
             }),
         );
+    }
+
+    async waitForWidgetsRender() {
+        // content-wrapper has loaded class when all widgets are rendered
+        const loadedWrapper = this.page.locator(slct(DashBodyQa.ContentWrapper));
+        await expect(loadedWrapper).toHaveClass(new RegExp(LOADED_DASH_CLASS));
     }
 
     async getTableFirstRowTexts(gridItemLocator: Locator) {
