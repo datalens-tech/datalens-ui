@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
 import type {EntryScope} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
+import {registry} from 'ui/registry';
 import type {AppDispatch} from 'ui/store';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -21,6 +22,7 @@ import {
 import type {WorkbookEntriesFilters} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
+import {TAB_ALL} from '../WorkbookTabs/constants';
 
 import {useChunkedEntries} from './useChunkedEntries';
 
@@ -42,7 +44,17 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     const workbookEntriesError = useSelector(selectWorkbookEntriesError);
     const nextPageToken = useSelector(selectNextPageToken);
 
-    const chunks = useChunkedEntries(entries);
+    const {getWorkbookTabs} = registry.workbooks.functions.getAll();
+
+    const availableScopes = React.useMemo(() => {
+        return workbook
+            ? getWorkbookTabs(workbook)
+                  .map(({id}) => id as string)
+                  .filter((item) => item !== TAB_ALL)
+            : [];
+    }, [getWorkbookTabs, workbook]) as EntryScope[];
+
+    const chunks = useChunkedEntries({entries, availableScopes});
 
     const dispatch = useDispatch<AppDispatch>();
 

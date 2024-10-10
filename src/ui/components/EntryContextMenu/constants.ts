@@ -14,7 +14,7 @@ import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
-import {ALL_SCOPES, OBJECT_SCOPES, URL_QUERY} from '../../constants';
+import {URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
 import {getAvailableScopes} from '../RevisionsPanel/utils';
@@ -82,150 +82,162 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
     showSpecificItems &&
     Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
-export const getEntryContextMenu = (): ContextMenuItem[] => [
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
-        action: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
-        icon: Clock,
-        text: 'value_revisions',
-        qa: ActionPanelEntryContextMenuQa.Revisions,
-        enable: () => true,
-        scopes: ALL_SCOPES,
-        isSpecific: true,
-        isOnEditMode: false,
-        isVisible({entry, isLimitedView}: ContextMenuParams) {
-            if (!entry || !entry.scope || isLimitedView) return false;
+export const getEntryContextMenu = (): ContextMenuItem[] => {
+    const {getTopLevelEntryScopes, getAllEntryScopes} = registry.common.functions.getAll();
 
-            return getAvailableScopes().includes(entry.scope as EntryScope);
-        },
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.RENAME,
-        action: ENTRY_CONTEXT_MENU_ACTION.RENAME,
-        icon: FontCursor,
-        text: 'value_rename',
-        enable: () => true,
-        permissions: (entry: ContextMenuParams['entry']) => {
-            // allow renaming entries in the workbook with the "edit" permission
-            return entry?.workbookId
-                ? {admin: true, edit: true, read: false, execute: false}
-                : {admin: true, edit: false, read: false, execute: false};
-        },
-        scopes: ALL_SCOPES,
-        isVisible({entry}: ContextMenuParams) {
-            return !isUsersFolder(entry?.key);
-        },
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
-        action: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
-        icon: Tag,
-        text: 'value_add-favorites-alias',
-        place: PLACE.FAVORITES,
-        enable: () => true,
-        scopes: ALL_SCOPES,
-        isVisible({entry}: ContextMenuParams) {
-            return !entry?.displayAlias;
-        },
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
-        action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
-        icon: Tag,
-        text: 'value_edit-favorites-alias',
-        place: PLACE.FAVORITES,
-        enable: () => true,
-        scopes: ALL_SCOPES,
-        isVisible({entry}: ContextMenuParams) {
-            return Boolean(entry?.displayAlias);
-        },
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
-        action: ENTRY_CONTEXT_MENU_ACTION.DELETE,
-        icon: TrashBin,
-        text: 'value_delete',
-        enable: () => true,
-        permissions: (entry: ContextMenuParams['entry']) => {
-            // allow deleting an entry in the workbook with the "edit" permission
-            return entry?.workbookId
-                ? {admin: true, edit: true, read: false, execute: false}
-                : {admin: true, edit: false, read: false, execute: false};
-        },
-        scopes: ALL_SCOPES,
-        isVisible({entry}: ContextMenuParams) {
-            return !isUsersFolder(entry?.key);
-        },
-        qa: ActionPanelEntryContextMenuQa.Remove,
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.MOVE,
-        action: ENTRY_CONTEXT_MENU_ACTION.MOVE,
-        icon: FolderArrowDown,
-        text: 'value_move',
-        enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemMove),
-        permissions: {admin: true, edit: false, read: false, execute: false},
-        scopes: ALL_SCOPES,
-        isVisible({entry}: ContextMenuParams) {
-            return !isUsersFolder(entry?.key) && !entry?.workbookId;
-        },
-    },
-    // different Copy menu for dash/widgets and datasets/configs
-    {
-        ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dash, EntryScope.Widget, EntryScope.Report],
-        // allow to show if there are no permissions
-    },
-    {
-        ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Connection],
-        permissions: {admin: true, edit: true, read: false, execute: false},
-        isStrictPermissions: true, // strict check with disallow when there are no permissions object
-        isVisible(args) {
-            const entry = args.entry;
-            const isS3BasedConnector = S3_BASED_CONNECTORS.includes(entry?.type as ConnectorType);
-            const isFileConnection = entry?.scope === EntryScope.Connection && isS3BasedConnector;
+    return [
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
+            action: ENTRY_CONTEXT_MENU_ACTION.REVISIONS,
+            icon: Clock,
+            text: 'value_revisions',
+            qa: ActionPanelEntryContextMenuQa.Revisions,
+            enable: () => true,
+            scopes: getAllEntryScopes(),
+            isSpecific: true,
+            isOnEditMode: false,
+            isVisible({entry, isLimitedView}: ContextMenuParams) {
+                if (!entry || !entry.scope || isLimitedView) return false;
 
-            if (!args.entry?.workbookId || isFileConnection) {
-                return false;
-            }
-
-            return CONTEXT_MENU_COPY.isVisible(args);
+                return getAvailableScopes().includes(entry.scope as EntryScope);
+            },
         },
-    },
-    {
-        ...CONTEXT_MENU_COPY,
-        scopes: [EntryScope.Dataset],
-        permissions: {admin: true, edit: true, read: false, execute: false},
-        isStrictPermissions: true, // strict check with disallow when there are no permissions object
-    },
-    getContextMenuAccess(),
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-        action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-        icon: Link,
-        text: 'value_copy-link',
-        enable: () => true,
-        scopes: ALL_SCOPES,
-        isVisible: (params) => !isVisibleEntryContextShareItem(params),
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
-        action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
-        icon: ArrowShapeTurnUpRight,
-        text: 'value_share',
-        enable: () => true,
-        scopes: ALL_SCOPES,
-        isVisible: isVisibleEntryContextShareItem,
-    },
-    {
-        id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-        action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
-        icon: CodeTrunk,
-        text: 'value_show-related-entities',
-        enable: () => true,
-        scopes: OBJECT_SCOPES,
-    },
-    ...getAdditionalEntryContextMenuItems(),
-    getContextMenuMoveToWorkbooks(),
-];
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.RENAME,
+            action: ENTRY_CONTEXT_MENU_ACTION.RENAME,
+            icon: FontCursor,
+            text: 'value_rename',
+            enable: () => true,
+            permissions: (entry: ContextMenuParams['entry']) => {
+                // allow renaming entries in the workbook with the "edit" permission
+                return entry?.workbookId
+                    ? {admin: true, edit: true, read: false, execute: false}
+                    : {admin: true, edit: false, read: false, execute: false};
+            },
+            scopes: getAllEntryScopes(),
+            isVisible({entry}: ContextMenuParams) {
+                return !isUsersFolder(entry?.key);
+            },
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+            action: ENTRY_CONTEXT_MENU_ACTION.ADD_FAVORITES_ALIAS,
+            icon: Tag,
+            text: 'value_add-favorites-alias',
+            place: PLACE.FAVORITES,
+            enable: () => true,
+            scopes: getAllEntryScopes(),
+            isVisible({entry}: ContextMenuParams) {
+                return !entry?.displayAlias;
+            },
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+            action: ENTRY_CONTEXT_MENU_ACTION.EDIT_FAVORITES_ALIAS,
+            icon: Tag,
+            text: 'value_edit-favorites-alias',
+            place: PLACE.FAVORITES,
+            enable: () => true,
+            scopes: getAllEntryScopes(),
+            isVisible({entry}: ContextMenuParams) {
+                return Boolean(entry?.displayAlias);
+            },
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+            action: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+            icon: TrashBin,
+            text: 'value_delete',
+            enable: () => true,
+            permissions: (entry: ContextMenuParams['entry']) => {
+                // allow deleting an entry in the workbook with the "edit" permission
+                return entry?.workbookId
+                    ? {admin: true, edit: true, read: false, execute: false}
+                    : {admin: true, edit: false, read: false, execute: false};
+            },
+            scopes: getAllEntryScopes(),
+            isVisible({entry}: ContextMenuParams) {
+                return !isUsersFolder(entry?.key);
+            },
+            qa: ActionPanelEntryContextMenuQa.Remove,
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.MOVE,
+            action: ENTRY_CONTEXT_MENU_ACTION.MOVE,
+            icon: FolderArrowDown,
+            text: 'value_move',
+            enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemMove),
+            permissions: {admin: true, edit: false, read: false, execute: false},
+            scopes: getAllEntryScopes(),
+            isVisible({entry}: ContextMenuParams) {
+                return !isUsersFolder(entry?.key) && !entry?.workbookId;
+            },
+        },
+        // different Copy menu for dash/widgets and datasets/configs
+        {
+            ...CONTEXT_MENU_COPY,
+            scopes: [EntryScope.Widget, ...getTopLevelEntryScopes()],
+            // allow to show if there are no permissions
+        },
+        {
+            ...CONTEXT_MENU_COPY,
+            scopes: [EntryScope.Connection],
+            permissions: {admin: true, edit: true, read: false, execute: false},
+            isStrictPermissions: true, // strict check with disallow when there are no permissions object
+            isVisible(args) {
+                const entry = args.entry;
+                const isS3BasedConnector = S3_BASED_CONNECTORS.includes(
+                    entry?.type as ConnectorType,
+                );
+                const isFileConnection =
+                    entry?.scope === EntryScope.Connection && isS3BasedConnector;
+
+                if (!args.entry?.workbookId || isFileConnection) {
+                    return false;
+                }
+
+                return CONTEXT_MENU_COPY.isVisible(args);
+            },
+        },
+        {
+            ...CONTEXT_MENU_COPY,
+            scopes: [EntryScope.Dataset],
+            permissions: {admin: true, edit: true, read: false, execute: false},
+            isStrictPermissions: true, // strict check with disallow when there are no permissions object
+        },
+        getContextMenuAccess(),
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+            action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+            icon: Link,
+            text: 'value_copy-link',
+            enable: () => true,
+            scopes: getAllEntryScopes(),
+            isVisible: (params) => !isVisibleEntryContextShareItem(params),
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+            action: ENTRY_CONTEXT_MENU_ACTION.SHARE,
+            icon: ArrowShapeTurnUpRight,
+            text: 'value_share',
+            enable: () => true,
+            scopes: getAllEntryScopes(),
+            isVisible: isVisibleEntryContextShareItem,
+        },
+        {
+            id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+            action: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+            icon: CodeTrunk,
+            text: 'value_show-related-entities',
+            enable: () => true,
+            scopes: [
+                EntryScope.Widget,
+                EntryScope.Dataset,
+                EntryScope.Connection,
+                ...getTopLevelEntryScopes(),
+            ],
+        },
+        ...getAdditionalEntryContextMenuItems(),
+        getContextMenuMoveToWorkbooks(),
+    ];
+};

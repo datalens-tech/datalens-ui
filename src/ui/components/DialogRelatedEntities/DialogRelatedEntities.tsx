@@ -30,8 +30,12 @@ type DialogRelatedEntitiesProps = EntryDialogProps & {
 const CONCURRENT_ID = 'list-related-entities';
 
 export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEntitiesProps) => {
+    const {getTopLevelEntryScopes} = registry.common.functions.getAll();
+
+    const topLevelEntryScopes = getTopLevelEntryScopes();
+
     const [currentDirection, setCurrentDirection] = React.useState<DirectionValue>(
-        entry.scope === EntryScope.Dash || entry.scope === EntryScope.Report
+        topLevelEntryScopes.includes(entry.scope as EntryScope)
             ? Direction.PARENT
             : Direction.CHILD,
     );
@@ -71,9 +75,8 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     }, [entry, currentDirection]);
 
     const showDirectionControl =
-        entry.scope !== EntryScope.Dash &&
-        entry.scope !== EntryScope.Connection &&
-        entry.scope !== EntryScope.Report;
+        !topLevelEntryScopes.includes(entry.scope as EntryScope) &&
+        entry.scope !== EntryScope.Connection;
 
     const handleDirectionParentdate = (value: DirectionValue) => {
         setCurrentDirection(value);

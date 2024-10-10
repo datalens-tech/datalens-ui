@@ -1,22 +1,21 @@
 import React from 'react';
 
 import _ from 'lodash';
-import {EntryScope} from 'shared';
+import type {EntryScope} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import Utils from 'utils';
 
 import type {ChunkItem, EntryChunkItem, WorkbookEntry} from '../../types';
 
-export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] => {
+export const useChunkedEntries = ({
+    entries,
+    availableScopes,
+}: {
+    entries: GetEntryResponse[];
+    availableScopes: EntryScope[];
+}): ChunkItem[][] => {
     const chunks = React.useMemo(() => {
-        const allowedScopes = new Set([
-            EntryScope.Dash,
-            EntryScope.Widget,
-            EntryScope.Dataset,
-            EntryScope.Connection,
-
-            EntryScope.Report,
-        ]);
+        const allowedScopes = new Set(availableScopes);
 
         const workbookEntries = entries
             .filter((item) => allowedScopes.has(item.scope as EntryScope))
@@ -31,11 +30,7 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
         if (workbookEntries.length === 0) {
             return [];
         } else {
-            const dashChunk: ChunkItem[] = [];
-            const connChunk: ChunkItem[] = [];
-            const datasetChunk: ChunkItem[] = [];
-            const widgetChunk: ChunkItem[] = [];
-            const reportChunk: ChunkItem[] = [];
+            const chunkArrays = availableScopes.map(() => [] as Array<EntryChunkItem>);
 
             workbookEntries.forEach((chunkItem) => {
                 const item = {
@@ -44,28 +39,16 @@ export const useChunkedEntries = (entries: GetEntryResponse[]): ChunkItem[][] =>
                     key: chunkItem.entryId,
                 } as EntryChunkItem;
 
-                switch (chunkItem.scope) {
-                    case EntryScope.Dash:
-                        dashChunk.push(item);
-                        break;
-                    case EntryScope.Connection:
-                        connChunk.push(item);
-                        break;
-                    case EntryScope.Dataset:
-                        datasetChunk.push(item);
-                        break;
-                    case EntryScope.Widget:
-                        widgetChunk.push(item);
-                        break;
-                    case EntryScope.Report:
-                        reportChunk.push(item);
-                        break;
+                const chunkIndex = availableScopes.findIndex((scope) => scope === chunkItem.scope);
+
+                if (chunkIndex > -1) {
+                    chunkArrays[chunkIndex].push(item);
                 }
             });
 
-            return [dashChunk, connChunk, datasetChunk, widgetChunk, reportChunk];
+            return chunkArrays;
         }
-    }, [entries]);
+    }, [availableScopes, entries]);
 
     return chunks;
 };
