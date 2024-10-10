@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {ChartKitTableQa} from 'shared';
 
-import type {BodyRowViewData} from './types';
+import type {BodyRowViewData, RowRef} from './types';
 
 const b = block('dl-table');
 
@@ -11,16 +11,17 @@ type Props = {
     rows: BodyRowViewData[];
     style?: React.CSSProperties;
     onCellClick?: (event: React.MouseEvent, cell: unknown, rowId: string) => void;
+    rowRef?: RowRef;
 };
 
 export const TableBody = React.memo<Props>((props: Props) => {
-    const {rows, style, onCellClick} = props;
+    const {rows, style, rowRef, onCellClick} = props;
 
     return (
         <tbody className={b('body')} style={style}>
             {rows.map((row) => {
                 return (
-                    <tr data-index={row.index} key={row.id} className={b('tr')} ref={row.ref}>
+                    <tr data-index={row.index} key={row.id} className={b('tr')} ref={rowRef}>
                         {row.cells.map((cell) => {
                             return (
                                 <td

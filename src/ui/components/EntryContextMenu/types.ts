@@ -1,6 +1,6 @@
 import type {IconData} from '@gravity-ui/uikit';
 import type {Permissions} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
+import type {EntryFields, GetEntryResponse} from 'shared/schema';
 
 export type ContextMenuParams = {
     entry?: GetEntryResponse & {fake?: boolean};
@@ -28,3 +28,11 @@ export type ContextMenuItem = {
     isVisible?: (params: ContextMenuParams) => boolean;
     qa?: string;
 };
+
+export interface MenuEntry {
+    entryId: string;
+    key: string;
+    scope: string;
+    name?: string;
+    workbookId: EntryFields['workbookId'];
+}

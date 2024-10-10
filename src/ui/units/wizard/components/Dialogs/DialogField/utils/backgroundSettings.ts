@@ -1,6 +1,6 @@
 import type {ColorsConfig, Field, TableFieldBackgroundSettings} from 'shared';
 import {PlaceholderId, WizardVisualizationId, isMeasureField, isMeasureName} from 'shared';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import type {GradientState, PaletteState} from '../../../../actions/dialogColor';
 import {DEFAULT_GRADIENT_STATE, DEFAULT_PALETTE_STATE} from '../../../../constants/dialogColor';
@@ -47,7 +47,7 @@ export const getDefaultBackgroundSettings = (field: Field): TableFieldBackground
 
     return {
         enabled: false,
-        settingsId: uuid(),
+        settingsId: uuidv1(),
         settings,
         colorFieldGuid: (isMeasureName(field) && field.title) || field.guid,
     };

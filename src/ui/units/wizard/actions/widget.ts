@@ -21,6 +21,7 @@ import {removeUrlParameter} from '../utils/wizard';
 export const RECEIVE_WIDGET = Symbol('wizard/widget/RECEIVE_WIDGET');
 export const SET_EXTRA_SETTINGS = Symbol('wizard/widget/SET_EXTRA_SETTINGS');
 export const SET_WIDGET_LOAD_STATUS = Symbol('wizard/widget/SET_WIDGET_LOAD_STATUS');
+export const SET_WIDGET_KEY = Symbol('wizard/widget/SET_WIDGET_KEY');
 
 export type WidgetData = any;
 
@@ -171,7 +172,11 @@ export function setWidgetLoadStatus({
     };
 }
 
-export type WidgetAction = ReceiveWidgetAction | SetExtraSettingsAction | SetWidgetLoadStatusAction;
+export type WidgetAction =
+    | ReceiveWidgetAction
+    | SetExtraSettingsAction
+    | SetWidgetLoadStatusAction
+    | SetWizardWidgetKeyAction;
 
 // Now this action is called only if we use multi-datasets.
 // The backend pivot tables don't know how to work with them, so we turn ont the old pivot tables.
@@ -210,5 +215,19 @@ export function forceDisableTotalsAndPagination() {
                 pagination: CHART_SETTINGS.PAGINATION.OFF as 'off',
             }),
         );
+    };
+}
+
+export type SetWizardWidgetKeyAction = {
+    type: typeof SET_WIDGET_KEY;
+    payload: string;
+};
+
+export function setWizardWidgetKey(
+    key: SetWizardWidgetKeyAction['payload'],
+): SetWizardWidgetKeyAction {
+    return {
+        type: SET_WIDGET_KEY,
+        payload: key,
     };
 }

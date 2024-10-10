@@ -12,7 +12,7 @@ import {connect} from 'react-redux';
 import type {Dataset, DatasetField, Link, LinkField} from 'shared';
 import {DialogMultiDatasetQa, getResultSchemaFromDataset} from 'shared';
 import {selectDatasets, selectLinks} from 'units/wizard/selectors/dataset';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import DialogLink from './DialogLink';
 
@@ -90,7 +90,7 @@ class DialogMultidataset extends PureComponent<Props, State> {
                             field.title === fieldInInited.title
                         ) {
                             const link = {
-                                id: uuid(),
+                                id: uuidv1(),
                                 fields: {
                                     [initedDataset.id]: createLinkFieldData(
                                         fieldInInited,
@@ -352,7 +352,7 @@ class DialogMultidataset extends PureComponent<Props, State> {
                                 );
                             } else {
                                 link = {
-                                    id: uuid(),
+                                    id: uuidv1(),
                                     fields: formattedFieldsData,
                                 };
 

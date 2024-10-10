@@ -64,8 +64,6 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /** Disable setting min-height: unset for all embedded dashes by default. Enable min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
-    RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
     /** Use BI handles for getting oauth applications tokens */
@@ -73,6 +71,8 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
+    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
+    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
 }
 
 export type FeatureConfig = Record<string, boolean>;

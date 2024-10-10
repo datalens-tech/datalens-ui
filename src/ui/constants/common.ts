@@ -233,6 +233,9 @@ export const DL = {
     get RUN_ENDPOINT() {
         return window.DL.runEndpoint || '/api/run';
     },
+    get CONNECTOR_ICONS() {
+        return window.DL.connectorIcons || [];
+    },
 };
 
 // monaco-editor common themes:
