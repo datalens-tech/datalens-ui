@@ -104,7 +104,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
-        LineXPlaceholder,
+        {...LineXPlaceholder},
         LineYPlaceholder,
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,

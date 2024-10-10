@@ -55,4 +55,5 @@ export const enum AxisNullsMode {
     Ignore = 'ignore',
     Connect = 'connect',
     AsZero = 'as-0',
+    UsePrevious = 'use-previous',
 }
