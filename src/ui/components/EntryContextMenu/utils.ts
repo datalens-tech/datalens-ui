@@ -15,11 +15,13 @@ export const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
     return [];
 };
 
-export const setEntryKey: SetEntryKey = async ({scope, type, key}) => {
+export const setEntryKey: SetEntryKey = async ({scope, type, key, withRouting = true}) => {
     const store = getStore();
 
     // double dispatch is associated with disabling the exit page dialog (NavigationPrompt)
-    store.dispatch(setIsRenameWithoutReload(true));
+    if (withRouting) {
+        store.dispatch(setIsRenameWithoutReload(true));
+    }
     switch (scope) {
         case EntryScope.Dash:
             store.dispatch(renameDash(key));
@@ -46,5 +48,7 @@ export const setEntryKey: SetEntryKey = async ({scope, type, key}) => {
             window.location.reload();
             break;
     }
-    store.dispatch(setIsRenameWithoutReload(false));
+    if (withRouting) {
+        store.dispatch(setIsRenameWithoutReload(false));
+    }
 };
