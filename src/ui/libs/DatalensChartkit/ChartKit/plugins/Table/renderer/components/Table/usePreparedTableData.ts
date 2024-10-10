@@ -11,11 +11,10 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
+import type {TableCell, TableCellsRow, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import type {TableData} from '../../../../../../types';
-import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import type {WidgetDimensions} from '../../types';
 import {mapHeadCell} from '../../utils/renderer';
 
@@ -27,9 +26,10 @@ import type {
     FooterRowViewData,
     HeadRowViewData,
     TData,
+    TFoot,
     TableViewData,
 } from './types';
-import {createTableColumns} from './utils';
+import {createTableColumns, getCellCustomStyle} from './utils';
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -72,7 +72,7 @@ function getFooterRows(table: Table<TData>, leftPositions: number[]) {
             return {
                 id: cell.id,
                 style: cellStyle,
-                contentStyle: originalFooterData?.css ?? {},
+                contentStyle: getCellCustomStyle(originalFooterData),
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
@@ -118,11 +118,7 @@ export const usePreparedTableData = (props: {
 
     const columns = React.useMemo(() => {
         const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
-        const footerData = ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
-            const cell = td as TableCommonCell;
-
-            return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
-        });
+        const footerData = ((data.footer?.[0] as TableCellsRow)?.cells ?? []) as TFoot[];
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
 
@@ -271,7 +267,7 @@ export const usePreparedTableData = (props: {
                         }
 
                         const cellStyle: React.CSSProperties = {
-                            ...get(originalCellData, 'css', {}),
+                            ...getCellCustomStyle(originalCellData),
                             left,
                         };
 
@@ -361,9 +357,9 @@ export const usePreparedTableData = (props: {
                     left = leftPositions[originalHeadData?.index ?? -1];
                 }
                 const cellStyle: React.CSSProperties = {
-                    left,
+                    ...getCellCustomStyle(originalCellData),
                     ...additionalStyles,
-                    ...camelCaseCss(originalCellData.css),
+                    left,
                 };
 
                 if (typeof originalHeadData?.width !== 'undefined') {
