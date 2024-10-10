@@ -29,6 +29,7 @@ import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {WorkbookEntriesTableTabs} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {getAllEntryScopes} from '../../../utils/getAllEntryScopes';
 import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
+import {getScopeTypeIcon} from '../../../utils/getScopeTypeIcon';
 import {getTopLevelEntryScopes} from '../../../utils/getTopLevelEntryScopes';
 import {getIconDataById} from '../../../utils/icons';
 import {migrateItemDataOnPaste} from '../../../utils/migrateItemDataOnPaste';
@@ -92,5 +93,6 @@ export const registerCommonPlugins = () => {
         getListMembersFilter: () => null,
         getAllEntryScopes,
         getTopLevelEntryScopes,
+        getScopeTypeIcon,
     });
 };
