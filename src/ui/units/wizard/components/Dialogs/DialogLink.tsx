@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {Dataset, Field, Link} from 'shared';
 import {DialogLinkQa, getResultSchemaFromDataset} from 'shared';
-import {withHiddenUnmount} from 'ui';
+import {withHiddenUnmount} from 'ui/hoc';
 
 import {isFieldVisible} from '../../utils/wizard';
 

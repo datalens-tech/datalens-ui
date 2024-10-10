@@ -4,24 +4,17 @@ import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
 
-import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
-import type {EntryFields, GetEntryResponse} from '../../../shared/schema';
+import type {EntryScope} from '../../../shared';
+import {Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
-import {getStore} from '../../store';
-import {renameDash, setRenameWithoutReload} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
 
-interface MenuEntry {
-    entryId: string;
-    key: string;
-    scope: string;
-    name?: string;
-    workbookId: EntryFields['workbookId'];
-}
+import type {MenuEntry} from './types';
 
 export type EntryDialoguesRef = React.RefObject<EntryDialogues>;
 
@@ -34,20 +27,15 @@ export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
                 initName: entry.name || getEntryNameByKey({key: entry.key, index: -1}),
             },
         });
+
         if (response.status === EntryDialogResolveStatus.Success) {
+            const setEntryKey = registry.common.functions.get('setEntryKey');
             const entryData = response.data ? response.data[0] : null;
-            const store = getStore();
-            if (entryData?.scope === EntryScope.Dash) {
-                // double dispatch is associated with disabling the exit page dialog
-                // DashActionPanel.tsx (NavigationPrompt)
-                store.dispatch(setRenameWithoutReload(true));
-                // renaming the dashboard without leaving the page
-                store.dispatch(renameDash(entryData.key));
+            if (entryData) {
+                setEntryKey(entryData);
             } else {
                 window.location.reload();
             }
-            // turning the exit page dialog back on
-            store.dispatch(setRenameWithoutReload(false));
         }
     }
 }
@@ -63,7 +51,13 @@ export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: Men
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
-            window.location.reload();
+            const setEntryKey = registry.common.functions.get('setEntryKey');
+            const entryData = response.data ? response.data.result[0] : null;
+            if (entryData) {
+                setEntryKey({...entryData, withRouting: false});
+            } else {
+                window.location.reload();
+            }
         }
     }
 }

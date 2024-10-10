@@ -6,7 +6,12 @@ import {LabelsPositions, getSortedData} from 'shared';
 
 import type {ResetWizardStoreAction} from '../actions';
 import type {WidgetAction, WidgetData} from '../actions/widget';
-import {RECEIVE_WIDGET, SET_EXTRA_SETTINGS, SET_WIDGET_LOAD_STATUS} from '../actions/widget';
+import {
+    RECEIVE_WIDGET,
+    SET_EXTRA_SETTINGS,
+    SET_WIDGET_KEY,
+    SET_WIDGET_LOAD_STATUS,
+} from '../actions/widget';
 import {versionExtractor} from '../utils/helpers';
 
 export interface WidgetState {
@@ -39,6 +44,16 @@ export function widget(
             return {
                 ...state,
                 isLoading,
+            };
+        }
+
+        case SET_WIDGET_KEY: {
+            return {
+                ...state,
+                widget: {
+                    ...state.widget,
+                    key: action.payload,
+                },
             };
         }
 

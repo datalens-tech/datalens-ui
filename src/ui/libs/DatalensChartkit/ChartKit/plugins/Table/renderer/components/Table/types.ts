@@ -36,6 +36,7 @@ export type THead = {
     cell?: RenderCellFn<CellData>;
     columns?: THead[];
     left?: number;
+    index?: number;
 };
 
 export type TData = CellData[];
@@ -80,7 +81,6 @@ export type HeadCellViewData = {
     sortable: boolean;
     pinned: boolean;
     style?: React.CSSProperties;
-    width: number;
     sorting: 'asc' | 'desc' | false;
     content: JSX.Element | React.ReactNode;
     onClick: () => void;
@@ -148,6 +148,4 @@ export type TableViewData = {
         style?: React.CSSProperties;
     };
     totalSize?: number;
-    /* rendering table without most options - only to calculate cells size */
-    prerender?: boolean;
 };

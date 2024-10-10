@@ -6,6 +6,7 @@ import type {
     SetCheckData,
     SetCheckLoading,
     SetConectorData,
+    SetConnectionKey,
     SetEntry,
     SetFileColumnFilter,
     SetFileReplaceSources,
@@ -38,6 +39,7 @@ import type {
 export const SET_GROUPED_CONNECTORS = Symbol('connections/SET_GROUPED_CONNECTORS');
 export const SET_FLATTEN_CONNECTORS = Symbol('connections/SET_FLATTEN_CONNECTORS');
 export const SET_ENTRY = Symbol('connections/SET_ENTRY');
+export const SET_CONNECTION_KEY = Symbol('connections/SET_CONNECTION_KEY');
 export const SET_CONNECTOR_DATA = Symbol('connections/SET_CONNECTOR_DATA');
 export const SET_PAGE_LOADING = Symbol('connections/SET_PAGE_LOADING');
 export const SET_FORM = Symbol('connections/SET_FORM');
@@ -72,6 +74,10 @@ export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FI
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
+}
+
+export function setConnectionKey(key: SetConnectionKey['payload']): SetConnectionKey {
+    return {type: SET_CONNECTION_KEY, payload: key};
 }
 
 export function setGroupedConnectors(

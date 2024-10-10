@@ -35,7 +35,6 @@ import {
     SET_PAGE_DEFAULT_TAB_ITEMS,
     SET_PAGE_TAB,
     SET_PAGE_TABS_ITEMS,
-    SET_RENAME_WITHOUT_RELOAD,
     SET_SELECTOR_DIALOG_ITEM,
     SET_SETTINGS,
     SET_STATE,
@@ -78,7 +77,6 @@ export type DashState = {
     activeSelectorIndex: number;
     isLoadingEditMode: boolean;
     isNewRelationsOpened?: boolean;
-    isRenameWithoutReload?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
     // contains widgetId: currentTabId to open widget dialog with current tab
@@ -457,13 +455,6 @@ export function dashTypedReducer(
                     ...state.entry,
                     key: action.payload,
                 },
-            };
-        }
-
-        case SET_RENAME_WITHOUT_RELOAD: {
-            return {
-                ...state,
-                isRenameWithoutReload: action.payload || false,
             };
         }
 

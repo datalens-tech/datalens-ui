@@ -28,8 +28,10 @@ function getSortingFunction(args: {
             const cell1Value = row1.original[columnIndex].value as DateTimeInput;
             const cell2Value = row2.original[columnIndex].value as DateTimeInput;
 
-            const date1 = dateTimeUtc({input: cell1Value});
-            const date2 = dateTimeUtc({input: cell2Value});
+            // Intentionally set incorrect input for null cell values, because `new Date(null)`
+            // gives the correct date, but we do not want this to preserve the old sorting behavior.
+            const date1 = dateTimeUtc({input: cell1Value === null ? 'invalid' : cell1Value});
+            const date2 = dateTimeUtc({input: cell2Value === null ? 'invalid' : cell2Value});
 
             if (date1 > date2 || (date1.isValid() && !date2.isValid())) {
                 return 1;
@@ -99,14 +101,8 @@ function createColumn(args: {
     return options;
 }
 
-export function createTableColumns(args: {
-    head?: THead[];
-    rows?: TableRow[];
-    footer?: TFoot[];
-    cellSizes?: null | number[];
-}) {
+export function createTableColumns(args: {head?: THead[]; rows?: TableRow[]; footer?: TFoot[]}) {
     const {head = [], rows = [], footer = []} = args;
-    const cellSizes = args.cellSizes || [];
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -116,21 +112,15 @@ export function createTableColumns(args: {
             const footerCell = footer?.[cellIndex];
             const columnWidth =
                 typeof headCell.width === 'number' ? Number(headCell.width) : defaultWidth;
-            const size = cellSizes[cellIndex] ?? columnWidth;
-            const left = cellSizes.reduce(
-                (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-                1,
-            );
             const options = createColumn({
                 headCell: {
                     ...headCell,
                     enableSorting: headCell.enableSorting && rows.length > 1,
-                    left,
                     width: columnWidth > 0 ? columnWidth : undefined,
+                    index: cellIndex,
                 },
                 footerCell,
                 index: cellIndex,
-                size,
                 rows,
             });
 

@@ -28,7 +28,6 @@ import type {
     SetPageDefaultTabItemsAction,
     SetPageTabAction,
     SetPageTabsItemsAction,
-    SetRenameWithoutReloadAction,
     SetSelectorDialogItemAction,
     SetSettingsAction,
     SetSkipReloadAction,
@@ -72,7 +71,6 @@ export type DashAction<T = unknown> =
     | SetNewRelationsAction
     | SetItemDataAction
     | SetDashKeyAction
-    | SetRenameWithoutReloadAction
     | SetActiveSelectorIndexAction
     | SetSkipReloadAction
     | SetWidgetCurrentTabAction

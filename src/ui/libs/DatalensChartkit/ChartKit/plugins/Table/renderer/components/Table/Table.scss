@@ -24,7 +24,7 @@
 
 .dl-table {
     border-collapse: collapse;
-    min-width: calc(100% - 1px);
+    min-width: 100%;
     width: max-content;
 
     &__table-wrapper {
@@ -255,6 +255,14 @@
         left: -100000px;
         z-index: -1;
         overflow: auto;
+
+        table {
+            min-width: auto;
+        }
+
+        tbody td {
+            white-space: nowrap;
+        }
     }
 }
 
