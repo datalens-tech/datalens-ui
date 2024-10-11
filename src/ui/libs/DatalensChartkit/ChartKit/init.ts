@@ -1,9 +1,8 @@
 import type {AxiosRequestConfig} from 'axios';
-import {DL, Scope} from 'ui';
+import {DL} from 'ui';
 
 import {
     ACCEPT_LANGUAGE_HEADER,
-    DASH_INFO_HEADER,
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     ENABLE,
@@ -16,7 +15,6 @@ import {
     DATALENS_DEBUG_MODE_KEY,
     X_CSRF_TOKEN_HEADER,
 } from '../../../components/Widgets/Chart/helpers/helpers';
-import {getStore} from '../../../store';
 import Utils from '../../../utils';
 import ChartKit from '../DatalensChartKitOld';
 import Error from '../Error/Error';
@@ -73,16 +71,6 @@ export const initChartKitSettings = () => {
 
             if (datalensDebugMode === 1) {
                 request.data.datalensDebugMode = 1;
-            }
-
-            const {entryContent, dash} = getStore().getState();
-            if (entryContent.scope === Scope.Dash && dash) {
-                const dashInfo = {
-                    ...(dash.entry?.entryId ? {dashId: dash?.entry?.entryId} : {}),
-                    ...(dash.tabId ? {dashTabId: dash.tabId} : {}),
-                };
-
-                request.headers[DASH_INFO_HEADER] = new URLSearchParams(dashInfo).toString();
             }
 
             return request;

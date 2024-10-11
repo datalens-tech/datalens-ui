@@ -76,6 +76,13 @@ export function resetDatasetState() {
     };
 }
 
+export function renameDataset(key: string) {
+    return {
+        type: DATASET_ACTION_TYPES.RENAME_DATASET,
+        payload: key,
+    };
+}
+
 export function enableSaveDataset(): DatasetReduxAction {
     return {
         type: DATASET_ACTION_TYPES.TOGGLE_ALLOWANCE_SAVE,

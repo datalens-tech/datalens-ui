@@ -11,7 +11,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import type {StringParams} from 'shared';
+import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -62,6 +62,7 @@ import {useMemoCallback} from './useMemoCallback';
 
 export type LoadingChartHookProps = {
     dataProvider: ChartWithProviderProps['dataProvider'];
+    dataProviderContextGetter?: () => DashChartRequestContext;
     initialData: DataProps;
     requestId: string;
     requestCancellationRef: React.MutableRefObject<CurrentRequestState>;
@@ -121,6 +122,7 @@ const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingS
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
         dataProvider,
+        dataProviderContextGetter,
         initialData,
         requestId,
         requestCancellationRef,
@@ -353,6 +355,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     /**
      * loading widget chart data
      */
+    // eslint-disable-next-line complexity
     const loadChartData = React.useCallback(async () => {
         if (!requestDataProps) {
             return;
@@ -420,6 +423,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 requestCancellation:
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
+                ...(dataProviderContextGetter ? {contextHeaders: dataProviderContextGetter()} : {}),
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';
@@ -482,6 +486,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             resolveMetaDataRef?.current?.(resolveWidgetDataRef?.current?.(null));
         }
     }, [
+        dataProviderContextGetter,
         dispatch,
         changedInnerFlag,
         usedParamsRef,
@@ -760,6 +765,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     requestCancellation:
                         requestCancellationRef.current[requestId]?.requestCancellation ||
                         dataProvider.getRequestCancellation(),
+                    ...(dataProviderContextGetter
+                        ? {contextHeaders: dataProviderContextGetter()}
+                        : {}),
                 });
                 if (!rootNodeRef.current) {
                     return null;

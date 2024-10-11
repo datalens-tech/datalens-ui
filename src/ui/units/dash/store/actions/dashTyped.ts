@@ -975,18 +975,6 @@ export const updateDashOpenedDesc = (
     payload,
 });
 
-export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');
-export type SetRenameWithoutReloadAction = {
-    type: typeof SET_RENAME_WITHOUT_RELOAD;
-    payload: boolean;
-};
-export const setRenameWithoutReload = (
-    isRenameWithoutReload: boolean,
-): SetRenameWithoutReloadAction => ({
-    type: SET_RENAME_WITHOUT_RELOAD,
-    payload: isRenameWithoutReload,
-});
-
 export const SET_SKIP_RELOAD = Symbol('dash/SET_SKIP_RELOAD');
 export type SetSkipReloadAction = {
     type: typeof SET_SKIP_RELOAD;

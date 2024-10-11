@@ -233,6 +233,9 @@ export const DL = {
     get RUN_ENDPOINT() {
         return window.DL.runEndpoint || '/api/run';
     },
+    get CONNECTOR_ICONS() {
+        return window.DL.connectorIcons || [];
+    },
 };
 
 // monaco-editor common themes:
@@ -283,17 +286,10 @@ export enum Scope {
     Config = 'config',
 }
 
+// TODO: delete after update
 export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Report];
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
-
-export const OBJECT_SCOPES = [
-    EntryScope.Widget,
-    EntryScope.Dataset,
-    EntryScope.Dash,
-    EntryScope.Connection,
-    EntryScope.Report,
-];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
 

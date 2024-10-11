@@ -387,7 +387,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
     const handleDisconnectAll = React.useCallback(
         (disconnectType: 'all' | 'charts' | 'selectors') => {
-            const newChangedWidgets: WidgetsTypes = {[currentWidgetId]: {}};
+            const newChangedWidgets = {...changedWidgets};
+            if (!newChangedWidgets[currentWidgetId]) {
+                newChangedWidgets[currentWidgetId] = {};
+            }
             const filteredIds = filteredRelations.reduce((res: Record<string, string>, item) => {
                 const widgetId = item.itemId || item.widgetId;
 
@@ -405,9 +408,11 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     (disconnectType === 'charts' && !isControl)
                 ) {
                     res[widgetId] = widgetId;
-                }
 
-                newChangedWidgets[widgetId] = {};
+                    if (!newChangedWidgets[widgetId]) {
+                        newChangedWidgets[widgetId] = {};
+                    }
+                }
 
                 return res;
             }, {});

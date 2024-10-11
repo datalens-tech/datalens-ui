@@ -1,7 +1,7 @@
 import type {ChartType, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 import set from 'lodash/set';
 
-import {LegendDisplayMode, QlVisualizationId} from '../../../../../shared';
+import {LegendDisplayMode, PlaceholderId, QlVisualizationId} from '../../../../../shared';
 import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
 
@@ -141,6 +141,20 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     if (config.extraSettings?.tooltip === 'hide') {
         set(widgetData, 'tooltip.show', false);
+    }
+  
+    const xAxisSettings = visualization?.placeholders?.find(
+        (p) => p.id === PlaceholderId.X,
+    )?.settings;
+    if (xAxisSettings?.axisVisibility === 'hide') {
+        set(widgetData, 'axes.x.show', false);
+    }
+
+    const yAxisSettings = visualization?.placeholders?.find(
+        (p) => p.id === PlaceholderId.Y,
+    )?.settings;
+    if (yAxisSettings?.axisVisibility === 'hide') {
+        set(widgetData, 'axes.y.show', false);
     }
 
     return widgetData;

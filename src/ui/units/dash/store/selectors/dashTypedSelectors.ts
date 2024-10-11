@@ -245,9 +245,6 @@ export const selectDashSupportDescription = (state: DatalensGlobalState) => {
 export const selectIsNewRelations = (state: DatalensGlobalState) =>
     state.dash?.isNewRelationsOpened || false;
 
-export const selectRenameWithoutReload = (state: DatalensGlobalState) =>
-    state.dash.isRenameWithoutReload;
-
 export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash.isFullscreenMode;
 
 export const selectDashWorkbookId = (state: DatalensGlobalState) =>

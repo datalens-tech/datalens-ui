@@ -1,0 +1,17 @@
+changelog:
+  - changed-files:
+      - any-glob-to-any-file:
+          - package.json
+          - package-lock.json
+
+component/general:
+  - changed-files:
+      - any-glob-to-any-file:
+          - package.json
+          - package-lock.json
+
+type/chore:
+  - changed-files:
+      - any-glob-to-any-file:
+          - package.json
+          - package-lock.json

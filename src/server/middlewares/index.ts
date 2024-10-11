@@ -1,5 +1,6 @@
 import {createAppLayoutMiddleware} from './app-layout';
 import beforeAuthDefaults from './before-auth-defaults';
+import {getConnectorIconsMiddleware} from './connector-icons';
 import getCtxMiddleware from './ctx';
 import patchLogger from './patch-logger';
 import scrRequests from './scr-requests';
@@ -12,4 +13,5 @@ export {
     beforeAuthDefaults,
     patchLogger,
     createAppLayoutMiddleware,
+    getConnectorIconsMiddleware,
 };

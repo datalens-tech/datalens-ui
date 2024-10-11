@@ -1,6 +1,6 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
-import uuid from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 import type {WorkbookId} from '../../../../../shared';
 import type {TelemetryCallbacks} from '../../types';
@@ -81,7 +81,7 @@ export class BaseStorage {
         parentCtx: AppContext & {config: Config},
         callback: (configs: Record<string, ResolvedConfig>) => void,
     ) {
-        const requestId = uuid.v4();
+        const requestId = uuidv4();
         const ctx = parentCtx.create('Configs preloading', {loggerPostfix: requestId});
         ctx.set('requestId', requestId);
         ctx.setTag('request_id', requestId);

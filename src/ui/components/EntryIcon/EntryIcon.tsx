@@ -1,10 +1,14 @@
 import React from 'react';
 
-import type {IconData, IconProps} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
-import {ConnectorType, ENTRY_TYPES, EntryScope, Feature} from 'shared';
-import Utils from 'ui/utils';
+import type {EntryScope} from 'shared';
+import {ConnectorType, ENTRY_TYPES, Feature} from 'shared';
+import Utils, {getConnectorIconData} from 'ui/utils';
 
+import {registry} from '../../registry';
+import type {ConnectorIconViewProps} from '../ConnectorIcon/ConnectorIcon';
+import {ConnectorIcon} from '../ConnectorIcon/ConnectorIcon';
 import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
 import {EntityIcon, defaultIconSize} from '../EntityIcon/EntityIcon';
 
@@ -118,29 +122,6 @@ const entityTypeIcons: Record<string, string> = {
     }, {}),
 };
 
-const getScopeTypeIcon = (scope: string) => {
-    switch (scope) {
-        case EntryScope.Folder:
-            return 'folder';
-        case EntryScope.Widget:
-        case 'chart':
-            return 'chart-wizard';
-        case EntryScope.Dataset:
-            return 'dataset';
-        case EntryScope.Dash:
-        case 'dashboard':
-            return 'dashboard';
-        case 'monitoring':
-            return 'editor';
-        case EntryScope.Report:
-            return 'report';
-        case 'broken':
-            return 'broken';
-        default:
-            return null;
-    }
-};
-
 const folderIconSize = {
     s: 18,
     l: 22,
@@ -153,13 +134,15 @@ interface EntryData {
 }
 
 export const getEntryIconData = ({scope, type}: EntryData) => {
-    let iconData;
+    let iconData: ConnectorIconViewProps['data'] | undefined;
     if (type) {
         let typeKey = type;
         if (scope === 'widget' && !Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
             typeKey = '';
         }
-        const icon = typeToIcon[typeKey];
+        const icon = Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)
+            ? getConnectorIconData(typeKey, true)
+            : typeToIcon[typeKey];
         if (icon) {
             iconData = icon;
         }
@@ -173,10 +156,14 @@ const getEntityIconType = (
     entityIconSize?: EntityIconSize,
 ) => {
     let iconType;
+
     if (type) {
         iconType = entityTypeIcons[type];
     }
-    const entityIconType = iconType || getScopeTypeIcon(scope);
+
+    const {getScopeTypeIcon} = registry.common.functions.getAll();
+
+    const entityIconType = iconType || getScopeTypeIcon(scope as EntryScope);
     if (entityIconType) {
         const iconSize =
             entityIconType === 'folder'
@@ -194,7 +181,7 @@ const getEntityIconType = (
     return null;
 };
 
-interface EntryIconProps extends Partial<IconProps> {
+interface EntryIconProps extends Partial<ConnectorIconViewProps> {
     entry: EntryData;
     entityIconSize?: EntityIconSize;
 }
@@ -203,7 +190,7 @@ export const EntryIcon: React.FC<EntryIconProps> = (props) => {
     const {entry, className, entityIconSize, ...restProps} = props;
     const iconData = getEntryIconData(entry);
     if (iconData) {
-        return <Icon data={iconData} className={className} {...restProps} />;
+        return <ConnectorIcon data={iconData} className={className} view="nav" {...restProps} />;
     }
     return (
         getEntityIconType(entry, className, entityIconSize) || (

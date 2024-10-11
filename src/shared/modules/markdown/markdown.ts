@@ -13,7 +13,7 @@ import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import type MarkdownIt from 'markdown-it';
 import MarkdownItColor from 'markdown-it-color';
 import Mila from 'markdown-it-link-attributes';
-import uuid from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
 import {YFM_COLORIFY_MARKDOWN_CLASSNAME, YfmMetaScripts} from '../../constants';
 
@@ -33,7 +33,7 @@ export type RenderHtmlOutput = {
 export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
     const {text = '', lang, plugins: additionalPlugins = []} = args;
 
-    const uniqPrefix = uuid.v4();
+    const uniqPrefix = uuidv4();
 
     const plugins = [
         deflist,

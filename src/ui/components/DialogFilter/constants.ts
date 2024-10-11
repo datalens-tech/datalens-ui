@@ -39,6 +39,7 @@ export const STRING_OPERATIONS: Operation[] = [
     ...BASE_EQUALITY_OPERATIONS,
     ...BASE_STRING_OPERATIONS,
     ...BASE_NULL_OPERATIONS,
+    ...BASE_COMPARSION_OPERATIONS,
 ];
 
 export const BOOLEAN_OPERATIONS: Operation[] = [
