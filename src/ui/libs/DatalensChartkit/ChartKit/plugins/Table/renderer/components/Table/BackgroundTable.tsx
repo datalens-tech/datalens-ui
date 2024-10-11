@@ -41,7 +41,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
         if (!prev || tableColSizes.some((s, index) => s > prev[index])) {
             tableMinSizes.current = tableColSizes.map((s, index) => {
                 if (!prev || s > prev[index]) {
-                    return Math.ceil(s);
+                    return s;
                 }
                 return prev[index];
             });
