@@ -15,17 +15,17 @@ import type {QlConfig} from 'shared/types/config/ql';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {ActionPanel, DialogNoRights, EntryDialogName, EntryDialogResolveStatus, Utils} from 'ui';
 
-import type {GetEntryResponse} from '../../../../../shared/schema';
-import {ChartSaveControls} from '../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
-import type {AdditionalButtonTemplate} from '../../../../components/ActionPanel/components/ChartSaveControls/types';
-import type {EntryContextMenuItems} from '../../../../components/EntryContextMenu/helpers';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
-import {registry} from '../../../../registry';
-import {openNavigation} from '../../../../store/actions/asideHeader';
-import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
-import {reloadRevisionsOnSave} from '../../../../store/actions/entryContent';
-import DialogSettings from '../../components/Dialogs/Settings/Settings';
-import {prepareChartDataBeforeSave} from '../../modules/helpers';
+import type {GetEntryResponse} from '../../../../../../shared/schema';
+import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
+import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import type {EntryContextMenuItems} from '../../../../../components/EntryContextMenu/helpers';
+import {isDraftVersion} from '../../../../../components/Revisions/helpers';
+import {registry} from '../../../../../registry';
+import {openNavigation} from '../../../../../store/actions/asideHeader';
+import {openDialogSaveDraftChartAsActualConfirm} from '../../../../../store/actions/dialog';
+import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
+import DialogSettings from '../../../components/Dialogs/Settings/Settings';
+import {prepareChartDataBeforeSave} from '../../../modules/helpers';
 import {
     drawPreview,
     setEntry,
@@ -33,7 +33,7 @@ import {
     setQlChartActualRevision,
     toggleTablePreview,
     updateChart,
-} from '../../store/actions/ql';
+} from '../../../store/actions/ql';
 import {
     getConnection,
     getCurrentSchemeId,
@@ -44,8 +44,8 @@ import {
     getPreviewData,
     getRedirectUrl,
     getValid,
-} from '../../store/reducers/ql';
-import type {QLEntry} from '../../store/typings/ql';
+} from '../../../store/reducers/ql';
+import type {QLEntry} from '../../../store/typings/ql';
 
 import iconMonitoring from 'ui/assets/icons/monitoring.svg';
 

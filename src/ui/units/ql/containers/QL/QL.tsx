@@ -14,7 +14,6 @@ import type {DatalensGlobalState} from 'ui';
 import {EntryDialogues, URL_QUERY} from 'ui';
 import Grid from 'units/ql/components/Grid/Grid';
 import {AppStatus} from 'units/ql/constants';
-import Header from 'units/ql/containers/Header/Header';
 import {initializeApplication, resetQLStore} from 'units/ql/store/actions/ql';
 import {getAppError, getAppStatus, getConnection, getEntry} from 'units/ql/store/reducers/ql';
 import type {QLConnectionEntry, QLEntry} from 'units/ql/store/typings/ql';
@@ -22,6 +21,8 @@ import {resetWizardStore} from 'units/wizard/actions';
 import {getUrlParamFromStr} from 'utils';
 
 import {registry} from '../../../../registry';
+
+import {QLActionPanel} from './QLActionPanel/QLActionPanel';
 
 import './QL.scss';
 
@@ -111,7 +112,11 @@ class QL extends React.PureComponent<QLInnerProps> {
         return (
             <React.Fragment>
                 <PageTitle entry={entry} />
-                <Header {...routeProps} entry={entry} entryDialoguesRef={this.entryDialoguesRef} />
+                <QLActionPanel
+                    {...routeProps}
+                    entry={entry}
+                    entryDialoguesRef={this.entryDialoguesRef}
+                />
                 {this.renderContent()}
             </React.Fragment>
         );

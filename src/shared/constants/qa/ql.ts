@@ -1,3 +1,8 @@
+export const enum QLPageQA {
+    UndoButton = 'undo-btn',
+    RedoButton = 'redo-btn',
+}
+
 export const enum ViewSetupQA {
     ViewSetupCreate = 'view-setup-create',
     SelectConnection = 'select-connection',
