@@ -31,7 +31,11 @@ export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
         if (response.status === EntryDialogResolveStatus.Success) {
             const setEntryKey = registry.common.functions.get('setEntryKey');
             const entryData = response.data ? response.data[0] : null;
-            setEntryKey(entryData);
+            if (entryData) {
+                setEntryKey(entryData);
+            } else {
+                window.location.reload();
+            }
         }
     }
 }
@@ -47,7 +51,13 @@ export async function moveEntry(entryDialoguesRef: EntryDialoguesRef, entry: Men
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
-            window.location.reload();
+            const setEntryKey = registry.common.functions.get('setEntryKey');
+            const entryData = response.data ? response.data.result[0] : null;
+            if (entryData) {
+                setEntryKey({...entryData, withRouting: false});
+            } else {
+                window.location.reload();
+            }
         }
     }
 }

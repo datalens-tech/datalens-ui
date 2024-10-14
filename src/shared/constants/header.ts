@@ -33,3 +33,5 @@ export const TENANT_ID_HEADER = 'x-dl-tenantid';
 export const WORKBOOK_ID_HEADER = 'x-dl-workbookid';
 export const PROJECT_ID_HEADER = 'x-dc-projectid';
 export const SERVICE_USER_ACCESS_TOKEN_HEADER = 'x-dl-service-user-access-token';
+export const CSP_HEADER = 'content-security-policy';
+export const CSP_REPORT_TO_HEADER = 'report-to';

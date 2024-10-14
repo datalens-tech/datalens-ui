@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
@@ -7,6 +9,7 @@ import get from 'lodash/get';
 import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
 
 import type {TableWidgetData} from '../../../../../../types';
+import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import {getTreeCellColumnIndex, getTreeSetColumnSortAscending} from '../../utils';
 
 import type {TData, TFoot, THead} from './types';
@@ -101,14 +104,8 @@ function createColumn(args: {
     return options;
 }
 
-export function createTableColumns(args: {
-    head?: THead[];
-    rows?: TableRow[];
-    footer?: TFoot[];
-    cellSizes?: null | number[];
-}) {
+export function createTableColumns(args: {head?: THead[]; rows?: TableRow[]; footer?: TFoot[]}) {
     const {head = [], rows = [], footer = []} = args;
-    const cellSizes = args.cellSizes || [];
     const columnHelper = createColumnHelper<TData>();
 
     let lastColumnIndex = 0;
@@ -118,21 +115,15 @@ export function createTableColumns(args: {
             const footerCell = footer?.[cellIndex];
             const columnWidth =
                 typeof headCell.width === 'number' ? Number(headCell.width) : defaultWidth;
-            const size = cellSizes[cellIndex] ?? columnWidth;
-            const left = cellSizes.reduce(
-                (sum, _s, index) => (index < cellIndex ? sum + cellSizes[index] : sum),
-                1,
-            );
             const options = createColumn({
                 headCell: {
                     ...headCell,
                     enableSorting: headCell.enableSorting && rows.length > 1,
-                    left,
                     width: columnWidth > 0 ? columnWidth : undefined,
+                    index: cellIndex,
                 },
                 footerCell,
                 index: cellIndex,
-                size,
                 rows,
             });
 
@@ -226,4 +217,25 @@ export function getTableSizes(table: HTMLTableElement) {
         });
         return acc;
     }, []);
+}
+
+export function getCellCustomStyle(cellData: unknown): React.CSSProperties {
+    const css = camelCaseCss(get(cellData, 'css', {}));
+
+    // Since the table is created with flex/grid instead of standard table layout,
+    // some of styles will not work as expected - we replace them here
+    if (css.verticalAlign && !css.alignItems) {
+        switch (css.verticalAlign) {
+            case 'middle': {
+                css.alignItems = 'center';
+                break;
+            }
+            case 'bottom': {
+                css.alignItems = 'end';
+                break;
+            }
+        }
+    }
+
+    return css;
 }

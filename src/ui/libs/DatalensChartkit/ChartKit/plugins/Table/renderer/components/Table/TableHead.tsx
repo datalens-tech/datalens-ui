@@ -13,11 +13,10 @@ type Props = {
     rows: HeadRowViewData[];
     style?: React.CSSProperties;
     tableHeight?: number;
-    useInheritedWidth?: boolean;
 };
 
 export const TableHead = React.memo<Props>((props: Props) => {
-    const {sticky, rows, style, tableHeight, useInheritedWidth = true} = props;
+    const {sticky, rows, style, tableHeight} = props;
 
     return (
         <thead className={b('header', {sticky})} style={style}>
@@ -32,9 +31,6 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                 gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
                                 gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
                             };
-                            if (useInheritedWidth) {
-                                delete cellStyle['width'];
-                            }
 
                             return (
                                 <th
