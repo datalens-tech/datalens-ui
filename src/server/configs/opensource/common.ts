@@ -38,6 +38,7 @@ export default {
     regionalEnvConfig: {
         defaultLang: Language.En,
         allowLanguages: [Language.En, Language.Ru],
+        langQueryParamName: '_lang',
     },
 
     csp: 'disabled',
