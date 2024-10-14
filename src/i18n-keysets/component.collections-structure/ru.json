@@ -27,6 +27,7 @@
   "label_move": "Куда переместить",
   "label_move-denied-title": "Недостаточно прав для перемещения",
   "label_ql": "QL-чарта",
+  "label_report": "отчёта",
   "label_title": "Название",
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",

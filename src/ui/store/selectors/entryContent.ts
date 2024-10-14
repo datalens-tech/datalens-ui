@@ -45,3 +45,6 @@ export const selectRevisionsItems = createSelector(selectRevisions, (items: Arra
 
 export const selectLockToken = (state: DatalensGlobalState): string | null =>
     state.dash?.lockToken || null;
+
+export const selectIsRenameWithoutReload = (state: DatalensGlobalState) =>
+    state.entryContent.isRenameWithoutReload;

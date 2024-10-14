@@ -85,9 +85,7 @@ const Row: React.FC<RowProps> = ({
             >
                 <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                     <div className={b('title-col')}>
-                        <div className={b('icon')}>
-                            <EntryIcon entry={item} entityIconSize="xl" />
-                        </div>
+                        <EntryIcon entry={item} entityIconSize="xl" />
                         <div className={b('title-col-text')} title={item.name}>
                             {item.name}
                         </div>
@@ -106,9 +104,7 @@ const Row: React.FC<RowProps> = ({
         <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
-                    <div className={b('icon')}>
-                        <EntryIcon entry={item} width={24} height={24} />
-                    </div>
+                    <EntryIcon entry={item} width={24} height={24} />
                     <div className={b('title-col-text')} title={item.name}>
                         {item.name}
                     </div>

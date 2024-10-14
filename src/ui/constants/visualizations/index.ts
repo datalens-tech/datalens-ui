@@ -71,6 +71,10 @@ export const SETTINGS = {
         LINEAR: 'linear',
         LOGARITHMIC: 'logarithmic',
     },
+    AXIS_VISIBILITY: {
+        SHOW: 'show',
+        HIDE: 'hide',
+    },
     GRID: {
         ON: 'on',
         OFF: 'off',

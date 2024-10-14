@@ -23,21 +23,23 @@ import {getPlaceConfig} from './configure';
 
 import './NavigationBase.scss';
 
-const SPA_ENTRIES_SCOPE = new Set([
-    EntryScope.Connection,
-    EntryScope.Dataset,
-    EntryScope.Dash,
-    EntryScope.Report,
-]);
-
 const SPA_ENTRIES_TYPES = new Set([
     ...ENTRY_TYPES.wizard,
     ...ENTRY_TYPES.ql,
     ...ENTRY_TYPES.editor,
 ]);
 
-const isSPAEntry = (entry) =>
-    SPA_ENTRIES_SCOPE.has(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
+const isSPAEntry = (entry) => {
+    const {getTopLevelEntryScopes} = registry.common.functions.getAll();
+
+    const spaEntriesScopes = [
+        EntryScope.Connection,
+        EntryScope.Dataset,
+        ...getTopLevelEntryScopes(),
+    ];
+
+    return spaEntriesScopes.includes(entry.scope) || SPA_ENTRIES_TYPES.has(entry.type);
+};
 
 const getEntryUrl = (entry, navigationUrl) => {
     const link = navigateHelper.redirectUrlSwitcher(entry);
@@ -280,6 +282,23 @@ class NavigationBase extends React.Component {
         return getInitDestination(path);
     }
 
+    openOnlyCollectionsDialog = (entryType) => {
+        this.props.openDialog({
+            id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
+            props: {
+                entryType,
+                initialCollectionId: null,
+                onApply: () => {
+                    this.closeNavigation();
+                },
+                onClose: () => {
+                    this.props.closeDialog();
+                },
+            },
+        });
+    };
+
+    // eslint-disable-next-line complexity
     onCreateMenuClick = (type) => {
         const {path, history} = this.props;
         const searchParams = new URLSearchParams();
@@ -300,21 +319,18 @@ class NavigationBase extends React.Component {
             }
             case CreateMenuValue.Dashboard: {
                 if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'dashboard',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
+                    this.openOnlyCollectionsDialog('dashboard');
                 } else {
                     history.push(`/dashboards/new${query}`);
+                    this.closeNavigation();
+                }
+                break;
+            }
+            case CreateMenuValue.Report: {
+                if (this.props.isOnlyCollectionsMode) {
+                    this.openOnlyCollectionsDialog('report');
+                } else {
+                    history.push(`/reports/new${query}`);
                     this.closeNavigation();
                 }
                 break;
@@ -326,19 +342,7 @@ class NavigationBase extends React.Component {
             }
             case CreateMenuValue.Dataset: {
                 if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'dataset',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
+                    this.openOnlyCollectionsDialog('dataset');
                 } else {
                     history.push(`/datasets/new${query}`);
                     this.closeNavigation();
@@ -347,19 +351,7 @@ class NavigationBase extends React.Component {
             }
             case CreateMenuValue.Widget: {
                 if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'wizard',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
+                    this.openOnlyCollectionsDialog('wizard');
                 } else {
                     history.push(`/wizard${query}`);
                     this.closeNavigation();
@@ -368,19 +360,7 @@ class NavigationBase extends React.Component {
             }
             case CreateMenuValue.QL: {
                 if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'ql',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
+                    this.openOnlyCollectionsDialog('ql');
                 } else {
                     history.push(`/ql${query}`);
                     this.closeNavigation();
@@ -389,19 +369,7 @@ class NavigationBase extends React.Component {
             }
             case CreateMenuValue.SQL: {
                 if (this.props.isOnlyCollectionsMode) {
-                    this.props.openDialog({
-                        id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
-                        props: {
-                            initialCollectionId: null,
-                            entryType: 'ql',
-                            onApply: () => {
-                                this.closeNavigation();
-                            },
-                            onClose: () => {
-                                this.props.closeDialog();
-                            },
-                        },
-                    });
+                    this.openOnlyCollectionsDialog('ql');
                 } else {
                     history.push(`/ql/new/sql${query}`);
                     this.closeNavigation();

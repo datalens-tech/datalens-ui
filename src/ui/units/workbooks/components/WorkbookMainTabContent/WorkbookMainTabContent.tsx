@@ -39,8 +39,6 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const entries = useSelector(selectWorkbookItems);
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
 
-    const chunks = useChunkedEntries(entries);
-
     const {getWorkbookTabs} = registry.workbooks.functions.getAll();
 
     const availableScopes = React.useMemo(() => {
@@ -50,6 +48,11 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                   .filter((item) => item !== TAB_ALL)
             : [];
     }, [getWorkbookTabs, workbook]) as EntryScope[];
+
+    const chunks = useChunkedEntries({
+        entries,
+        availableScopes,
+    });
 
     React.useEffect(() => {
         if (workbook?.workbookId === workbookId) {

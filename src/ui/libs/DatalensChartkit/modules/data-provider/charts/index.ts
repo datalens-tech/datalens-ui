@@ -11,7 +11,7 @@ import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
-import type {ChartsStats, StringParams, WizardType} from 'shared';
+import type {ChartsStats, DashChartRequestContext, StringParams, WizardType} from 'shared';
 import {
     ControlType,
     DL_COMPONENT_HEADER,
@@ -584,15 +584,18 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     async getWidget({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
         const loaded = await this.load<ResponseSuccess>({
             data: props,
+            contextHeaders,
             requestId,
             requestCancellation,
         });
@@ -622,15 +625,18 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     async getControls({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
         const loaded = await this.load<ResponseSuccessControls>({
             data: props,
+            contextHeaders,
             requestId,
             requestCancellation,
             onlyControls: true,
@@ -757,8 +763,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
-    private getLoadHeaders(requestId: string) {
+    private getLoadHeaders(requestId: string, contextHeaders?: DashChartRequestContext) {
         const headers: Record<string, string | null> = {
+            ...(contextHeaders ?? {}),
             [REQUEST_ID_HEADER]: requestId,
         };
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
@@ -770,11 +777,13 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     private async load<T extends ResponseSuccess | ResponseSuccessControls>({
         data,
+        contextHeaders,
         requestId,
         requestCancellation,
         onlyControls = false,
     }: {
         data: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
@@ -815,7 +824,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 uiOnly: onlyControls || undefined,
                 workbookId,
             },
-            headers: this.getLoadHeaders(requestId),
+            headers: this.getLoadHeaders(requestId, contextHeaders),
             'axios-retry': {
                 retries: isEditMode || this.settings.noRetry ? 0 : 1,
             },

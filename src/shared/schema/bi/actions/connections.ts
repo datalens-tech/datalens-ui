@@ -22,6 +22,7 @@ import type {
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,
+    ListConnectorIconsResponse,
     UpdateConnectionArgs,
     UpdateConnectionResponse,
     VerifyConnectionArgs,
@@ -129,5 +130,10 @@ export const actions = {
             body: {...body},
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
+    }),
+    listConnectorIcons: createAction<ListConnectorIconsResponse>({
+        method: 'GET',
+        path: () => `${PATH_PREFIX}/info/connectors/icons`,
+        params: (_, headers) => ({headers}),
     }),
 };

@@ -3,6 +3,7 @@ import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
+import type {WorkbookEntriesTableTabsProps} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import {Example} from './components/Example/Example';
@@ -61,4 +62,5 @@ export const commonComponentsMap = {
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
+    WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
 } as const;

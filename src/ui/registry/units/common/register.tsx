@@ -4,7 +4,10 @@ import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
 import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
-import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
+import {
+    getAdditionalEntryContextMenuItems,
+    setEntryKey,
+} from '../../../components/EntryContextMenu/utils';
 import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues/utils';
 import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
@@ -23,7 +26,11 @@ import {UserAvatarById} from '../../../components/UserAvatar/UserAvatarById';
 import {YfmWrapperContent} from '../../../components/YfmWrapper/YfmWrapperContent';
 import {DatepickerControl} from '../../../components/common/DatepickerControl/DatepickerControl';
 import {getUpdatedUserSettings} from '../../../store/utils/user';
+import {WorkbookEntriesTableTabs} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
+import {getAllEntryScopes} from '../../../utils/getAllEntryScopes';
 import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
+import {getScopeTypeIcon} from '../../../utils/getScopeTypeIcon';
+import {getTopLevelEntryScopes} from '../../../utils/getTopLevelEntryScopes';
 import {getIconDataById} from '../../../utils/icons';
 import {migrateItemDataOnPaste} from '../../../utils/migrateItemDataOnPaste';
 import {
@@ -48,6 +55,7 @@ export const registerCommonPlugins = () => {
         YfmWrapperContent,
         DatepickerControl,
         MarkdownControl,
+        WorkbookEntriesTableTabs,
     });
 
     registry.common.functions.register({
@@ -65,6 +73,7 @@ export const registerCommonPlugins = () => {
         getNavigationQuickItems: getQuickItems,
         getNavigationCreatableEntriesConfig: getCreatableEntriesConfig,
         getNavigationPlacesConfig: getPlacesConfig,
+        setEntryKey,
         getUpdatedUserSettings,
         getUIEntryRoute,
         getFormatNumber: formatNumber,
@@ -82,5 +91,8 @@ export const registerCommonPlugins = () => {
         checkCreateEntryButtonVisibility: () => true,
         getBasicActionPanelItems,
         getListMembersFilter: () => null,
+        getAllEntryScopes,
+        getTopLevelEntryScopes,
+        getScopeTypeIcon,
     });
 };
