@@ -45,7 +45,6 @@ export const WorkbookEntriesTableTabs = ({
     mapErrors,
     mapLoaders,
     chunks,
-    availableScopes,
     onRenameEntry,
     onDeleteEntry,
     onDuplicateEntry,
@@ -56,16 +55,13 @@ export const WorkbookEntriesTableTabs = ({
         return null;
     }
 
-    const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = [], reportChunk = []] =
-        chunks;
+    const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = []] = chunks;
 
     const isWidgetEmpty = widgetChunk.length === 0;
     const isDashEmpty = dashChunk.length === 0;
-    const isReportEmpty = reportChunk.length === 0;
 
     const clearViewDash = DL.IS_MOBILE && isWidgetEmpty;
     const clearViewWidget = DL.IS_MOBILE && isDashEmpty;
-    const clearViewReport = DL.IS_MOBILE && isReportEmpty;
 
     const showDataEntities = workbook.permissions.view && !DL.IS_MOBILE;
 
@@ -154,29 +150,6 @@ export const WorkbookEntriesTableTabs = ({
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
                     onShowRelatedClick={onShowRelated}
-                />
-            )}
-            {/* todo: move to other place everything below after update */}
-            {availableScopes?.includes(EntryScope.Report) && (
-                <MainTabContent
-                    chunk={reportChunk}
-                    actionCreateText={i18n('action_create-report')}
-                    title={i18n('title_reports')}
-                    actionType={CreateEntryActionType.Report}
-                    isShowMoreBtn={Boolean(
-                        reportChunk?.length > 0 && mapTokens?.[EntryScope.Report],
-                    )}
-                    loadMoreEntries={() => loadMoreEntries?.(EntryScope.Report)}
-                    retryLoadEntries={() => retryLoadEntries?.(EntryScope.Report)}
-                    isErrorMessage={mapErrors?.[EntryScope.Report]}
-                    isLoading={mapLoaders?.[EntryScope.Report]}
-                    workbook={workbook}
-                    onRenameEntry={onRenameEntry}
-                    onDeleteEntry={onDeleteEntry}
-                    onDuplicateEntry={onDuplicateEntry}
-                    onCopyEntry={onCopyEntry}
-                    onShowRelatedClick={onShowRelated}
-                    clearView={clearViewReport}
                 />
             )}
         </React.Fragment>
