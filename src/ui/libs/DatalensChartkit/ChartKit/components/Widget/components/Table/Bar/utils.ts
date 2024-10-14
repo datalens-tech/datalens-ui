@@ -55,35 +55,52 @@ const getMinMaxBarStyle = (args: GetMinMaxBarStyleArgs): React.CSSProperties => 
     const rangeValue = getRangeValue(min, max);
     const separatorPart = getRangeValuePart(rangeValue, min);
     const valuePart = getRangeValuePart(rangeValue, value);
-    let background: string | undefined;
 
+    let left: number;
     if (value < 0) {
-        const minColorStop = separatorPart - valuePart;
-        background = `linear-gradient(to right, transparent 0% ${minColorStop}%, ${color} ${minColorStop}% ${separatorPart}%, transparent ${separatorPart}% 100%)`;
+        left = separatorPart - valuePart;
     } else {
-        const valueColorStop = separatorPart + valuePart;
-        background = `linear-gradient(to right, transparent 0% ${separatorPart}%, ${color} ${separatorPart}% ${valueColorStop}%, transparent ${valueColorStop}% 100%)`;
+        left = separatorPart;
     }
 
-    return {background};
+    return {background: color, left: `${left}%`, width: `${valuePart}%`};
+};
+
+const getLeftPosition = (align: string, width: number) => {
+    switch (align) {
+        case 'right': {
+            return `${100 - width}%`;
+        }
+        case 'center': {
+            return `${(100 - width) / 2}%`;
+        }
+        case 'left':
+        default: {
+            return 0;
+        }
+    }
 };
 
 const getMinBarStyle = (args: GetMinBarStyleArgs): React.CSSProperties => {
     const {value, min, color, align = 'right'} = args;
     const valuePart = getRangeValuePart(min, value);
-    const valueColorStop = 100 - valuePart;
-    const background = `linear-gradient(to ${align}, transparent 0% ${valueColorStop}%, ${color} ${valueColorStop}% 100%)`;
 
-    return {background};
+    return {
+        background: color,
+        width: `${valuePart}%`,
+        left: getLeftPosition(align, valuePart),
+    };
 };
 
 const getMaxBarStyle = (args: GetMaxBarStyleArgs): React.CSSProperties => {
     const {value, max, color, align = 'left'} = args;
     const valuePart = getRangeValuePart(max, value);
-    const valueColorStop = 100 - valuePart;
-    const background = `linear-gradient(to ${align}, transparent 0% ${valueColorStop}%, ${color} ${valueColorStop}% 100%)`;
 
-    return {background};
+    return {
+        background: color,
+        width: `${valuePart}%`,
+        left: getLeftPosition(align, valuePart),
+    };
 };
 
 export const getBarStyle = (args: GetBarStyleArgs): React.CSSProperties => {

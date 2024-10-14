@@ -42,33 +42,27 @@ describe('chartkit/Table/utils/bars-utils', () => {
         [{value: 5}, {}],
         [
             {value: 5, max: 10, color: 'red'},
-            {background: 'linear-gradient(to left, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', left: 0, width: '50%'},
         ],
         [
             {value: 5, max: 10, align: 'right', color: 'red'},
-            {background: 'linear-gradient(to right, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', left: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, color: 'red'},
-            {background: 'linear-gradient(to right, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', left: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, align: 'left', color: 'red'},
-            {background: 'linear-gradient(to left, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', left: 0, width: '50%'},
         ],
         [
             {value: 5, min: -10, max: 10, color: 'red'},
-            {
-                background:
-                    'linear-gradient(to right, transparent 0% 50%, red 50% 75%, transparent 75% 100%)',
-            },
+            {background: 'red', left: '50%', width: '25%'},
         ],
         [
             {value: -5, min: -10, max: 10, color: 'red'},
-            {
-                background:
-                    'linear-gradient(to right, transparent 0% 25%, red 25% 50%, transparent 50% 100%)',
-            },
+            {background: 'red', left: '25%', width: '25%'},
         ],
     ])('getBarStyle (args: %j)', (args, expected) => {
         const result = getBarStyle(args);
