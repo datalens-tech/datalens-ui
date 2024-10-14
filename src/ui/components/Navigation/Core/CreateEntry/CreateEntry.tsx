@@ -34,6 +34,7 @@ export enum CreateMenuValue {
     Dashboard = 'dashboard',
     Connection = 'connection',
     Dataset = 'dataset',
+    Report = 'report',
 }
 
 export interface CreateEntryProps {
