@@ -231,10 +231,11 @@ export const usePreparedTableData = (props: {
     );
 
     const colSizeRef = React.useRef<number[]>();
+    const tableMinWidth = tableContainerRef.current?.clientWidth ?? 0;
     const colSizes = React.useMemo(() => {
         const result = getCellsWidth({
             cols,
-            tableMinWidth: tableContainerRef.current?.clientWidth ?? 0,
+            tableMinWidth,
         });
 
         if (!isEqual(result, colSizeRef.current)) {
@@ -242,7 +243,7 @@ export const usePreparedTableData = (props: {
         }
 
         return colSizeRef.current ?? [];
-    }, [cols, tableContainerRef]);
+    }, [cols, tableMinWidth]);
 
     const leftPositions = React.useMemo(() => {
         return (headers[headers.length - 1]?.headers ?? []).map<number>((h) => {
