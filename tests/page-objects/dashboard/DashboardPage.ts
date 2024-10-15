@@ -46,6 +46,7 @@ import {
 import {
     DashBodyQa,
     DashKitOverlayMenuQa,
+    DashTabsQA,
     DashboardAddWidgetQa,
     DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
@@ -91,6 +92,7 @@ class DashboardPage extends BasePage {
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
+        tabSwitcher: '.gc-adaptive-tabs__switcher-tab-content',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
         tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
 
@@ -764,36 +766,29 @@ class DashboardPage extends BasePage {
         return this.page.$(tabSelector);
     }
 
-    async changeTab({
-        tabName,
-        tabSelector,
-        forceMobile,
-    }: {
-        tabName?: string;
-        tabSelector?: string;
-        forceMobile?: boolean;
-    }) {
+    async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
         const tabsContainer = await this.page.waitForSelector(
             DashboardPage.selectors.tabsContainer,
         );
 
         // check for desktop tabs
-        const desktopTab = await tabsContainer.$(DashboardPage.selectors.tabsList);
-        if (desktopTab && !forceMobile) {
+        const desktopTab = await tabsContainer.$(slct(DashTabsQA.Item));
+        if (desktopTab) {
             const selector = tabSelector
                 ? tabSelector
-                : `${DashboardPage.selectors.tabItem} >> text=${tabName}`;
+                : `${slct(DashTabsQA.Item)} >> text=${tabName}`;
             const tab = await desktopTab.waitForSelector(selector);
             await tab.click();
             return;
         }
 
         // check for mobile tabs
-        const mobileTab = await tabsContainer.$(
-            `${DashboardPage.selectors.tabItem}${DashboardPage.selectors.tabItemActive}`,
+        const mobileTab = await tabsContainer.waitForSelector(
+            `${DashboardPage.selectors.tabSwitcher}`,
         );
         if (mobileTab) {
             await mobileTab.click();
+            await expect(this.page.locator('.g-sheet__sheet-content')).toBeVisible();
             const selector = tabSelector
                 ? tabSelector
                 : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;

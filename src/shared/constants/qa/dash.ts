@@ -97,5 +97,12 @@ export enum DashkitQa {
 }
 
 export enum DashBodyQa {
+    App = 'dash-app',
     ContentWrapper = 'dash-body-content-wrapper',
+}
+
+export enum DashTabsQA {
+    Root = 'dash-tabs',
+    MobileItem = 'dash-mobile-tab-item',
+    Item = 'dash-tab-item',
 }

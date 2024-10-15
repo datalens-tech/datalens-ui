@@ -164,10 +164,6 @@ export const enum CreateEntityButton {
     Popup = 'create-entry-button-popup',
 }
 
-export enum DashTabsQA {
-    Root = 'dash-tabs',
-}
-
 export enum DocSectionQa {
     Group = 'doc-section-group',
     Item = 'doc-section-item',

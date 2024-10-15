@@ -3,6 +3,7 @@ import React from 'react';
 import type {AdaptiveTabsProps, TabsSize} from '@gravity-ui/components';
 import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {DashTabsQA} from 'shared';
 import {DL} from 'ui/constants/common';
 
 import './Tabs.scss';
@@ -49,6 +50,8 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                     wrapTo={(item, node) => {
                         const isActive = item?.id === restProps.activeTab;
 
+                        const qa = DL.IS_MOBILE ? DashTabsQA.MobileItem : DashTabsQA.Item;
+
                         return item?.id ? (
                             <Link
                                 onClick={handleTabLinkClick}
@@ -56,11 +59,14 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                                     active: isActive,
                                 })}
                                 href={`${window.location.pathname}?tab=${item.id}`}
+                                qa={qa}
                             >
                                 {node}
                             </Link>
                         ) : (
-                            <div className={b('tab', {active: isActive})}>{node}</div>
+                            <div data-qa={qa} className={b('tab', {active: isActive})}>
+                                {node}
+                            </div>
                         );
                     }}
                 />
