@@ -92,7 +92,6 @@ class DashboardPage extends BasePage {
         tabsContainer: '.gc-adaptive-tabs',
         tabsList: '.gc-adaptive-tabs__tabs-list',
         tabItem: '.gc-adaptive-tabs__tab',
-        tabSwitcher: '.gc-adaptive-tabs__switcher-tab-content',
         tabItemActive: '.gc-adaptive-tabs__tab_active',
         tabItemDisabled: '.gc-adaptive-tabs__tab_disabled',
 
@@ -767,33 +766,42 @@ class DashboardPage extends BasePage {
     }
 
     async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
-        const tabsContainer = await this.page.waitForSelector(
-            DashboardPage.selectors.tabsContainer,
-        );
+        const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
+
+        await expect(tabsContainerLocator).toBeVisible();
 
         // check for desktop tabs
-        const desktopTab = await tabsContainer.$(slct(DashTabsQA.Item));
-        if (desktopTab) {
-            const selector = tabSelector
-                ? tabSelector
-                : `${slct(DashTabsQA.Item)} >> text=${tabName}`;
-            const tab = await desktopTab.waitForSelector(selector);
-            await tab.click();
+        const isDesktopTabs = await tabsContainerLocator
+            .locator(slct(DashTabsQA.Item))
+            .first()
+            .isVisible();
+
+        if (isDesktopTabs) {
+            let locator;
+            if (tabName) {
+                locator = tabsContainerLocator.getByText(tabName);
+            } else if (tabSelector) {
+                locator = tabsContainerLocator.locator(tabSelector);
+            } else {
+                throw new Error('Tabs selector not found');
+            }
+
+            await locator.click();
             return;
         }
 
         // check for mobile tabs
-        const mobileTab = await tabsContainer.waitForSelector(
-            `${DashboardPage.selectors.tabSwitcher}`,
-        );
-        if (mobileTab) {
-            await mobileTab.click();
-            await expect(this.page.locator('.g-sheet__sheet-content')).toBeVisible();
+        const mobileTabLocator = tabsContainerLocator.locator(slct(DashTabsQA.MobileItem)).first();
+        const isMobileTabVisible = await mobileTabLocator.isVisible();
+
+        if (isMobileTabVisible) {
+            await mobileTabLocator.click();
+            await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
+
             const selector = tabSelector
                 ? tabSelector
                 : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-            const tab = await this.page.waitForSelector(selector);
-            await tab.click();
+            await this.page.locator(selector).click();
             return;
         }
 
