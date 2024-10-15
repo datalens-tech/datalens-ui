@@ -267,6 +267,7 @@
   "label_time-interval": "Временной интервал",
   "label_title": "Название",
   "label_title-dialog-column-settings": "Настройка столбцов",
+  "label_tooltip": "Тултип",
   "label_tooltip-sum": "Сумма в тултипах",
   "label_tooltip-thresholds": "Вы можете вручную установить пороговые числовые значения, которые будут соответствовать каждому цвету",
   "label_totals": "Итоги",

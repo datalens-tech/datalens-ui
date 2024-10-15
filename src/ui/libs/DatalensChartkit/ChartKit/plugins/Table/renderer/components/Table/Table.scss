@@ -255,6 +255,7 @@
         left: -100000px;
         z-index: -1;
         overflow: auto;
+        font-size: var(--g-text-body-1-font-size);
 
         table {
             min-width: auto;

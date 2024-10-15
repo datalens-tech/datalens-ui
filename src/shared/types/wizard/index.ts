@@ -6,6 +6,7 @@ import type {
     FilterField,
     HierarchyField,
     Link,
+    ServerCommonSharedExtraSettings,
     ServerDatasetField,
     ServerTooltipConfig,
 } from '../';
@@ -99,6 +100,7 @@ export interface CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';

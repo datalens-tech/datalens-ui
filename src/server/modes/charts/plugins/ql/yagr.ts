@@ -139,6 +139,10 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         },
     };
 
+    if (config.extraSettings?.tooltip === 'hide') {
+        set(widgetData, 'tooltip.show', false);
+    }
+
     const xAxisSettings = visualization?.placeholders?.find(
         (p) => p.id === PlaceholderId.X,
     )?.settings;
