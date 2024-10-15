@@ -770,42 +770,48 @@ class DashboardPage extends BasePage {
 
         await expect(tabsContainerLocator).toBeVisible();
 
-        // check for desktop tabs
-        const isDesktopTabs = await tabsContainerLocator
-            .locator(slct(DashTabsQA.Item))
-            .first()
-            .isVisible();
+        let tabLocator;
+        if (tabName) {
+            tabLocator = tabsContainerLocator.getByText(tabName);
+        } else if (tabSelector) {
+            tabLocator = tabsContainerLocator.locator(tabSelector);
+        } else {
+            throw new Error('Tabs selector not found');
+        }
 
-        if (isDesktopTabs) {
-            let locator;
-            if (tabName) {
-                locator = tabsContainerLocator.getByText(tabName);
-            } else if (tabSelector) {
-                locator = tabsContainerLocator.locator(tabSelector);
-            } else {
-                throw new Error('Tabs selector not found');
-            }
+        const isTabLocatorVisible = await tabLocator.isVisible();
 
-            await locator.click();
+        if (isTabLocatorVisible) {
+            await tabLocator.click();
             return;
         }
 
-        // check for mobile tabs
-        const mobileTabLocator = tabsContainerLocator.locator(slct(DashTabsQA.MobileItem)).first();
-        const isMobileTabVisible = await mobileTabLocator.isVisible();
+        // it can be single switcher with tab name or some tabs and "more" switcher
+        const switcherLocator = tabsContainerLocator.locator(slct(DashTabsQA.SwitcherItem));
+        const switcherTabLocator = tabsContainerLocator
+            .locator(slct(DashTabsQA.MobileItem))
+            .first();
 
-        if (isMobileTabVisible) {
-            await mobileTabLocator.click();
-            await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
+        const isSwitcherVisible = await switcherLocator.isVisible();
+        const isSwitcherTabVisible = await switcherTabLocator.isVisible();
+        let mobileTabLocator;
 
-            const selector = tabSelector
-                ? tabSelector
-                : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-            await this.page.locator(selector).click();
-            return;
+        if (isSwitcherVisible) {
+            mobileTabLocator = switcherLocator;
+        } else if (isSwitcherTabVisible) {
+            mobileTabLocator = switcherTabLocator;
+        } else {
+            throw new Error('Tabs selector not found');
         }
 
-        throw new Error('Tabs selector not found');
+        await mobileTabLocator.click();
+        await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
+
+        const selector = tabSelector
+            ? tabSelector
+            : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
+        await this.page.locator(selector).click();
+        return;
     }
 
     async changeTabAndGetState({tabName, timeout}: {tabName: string; timeout: number}) {

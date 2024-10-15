@@ -50,7 +50,12 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                     wrapTo={(item, node) => {
                         const isActive = item?.id === restProps.activeTab;
 
-                        const qa = DL.IS_MOBILE ? DashTabsQA.MobileItem : DashTabsQA.Item;
+                        let qa;
+                        if (item) {
+                            qa = DL.IS_MOBILE ? DashTabsQA.MobileItem : DashTabsQA.Item;
+                        } else {
+                            qa = DashTabsQA.SwitcherItem;
+                        }
 
                         return item?.id ? (
                             <Link

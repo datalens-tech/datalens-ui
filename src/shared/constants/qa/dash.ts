@@ -105,4 +105,5 @@ export enum DashTabsQA {
     Root = 'dash-tabs',
     MobileItem = 'dash-mobile-tab-item',
     Item = 'dash-tab-item',
+    SwitcherItem = 'dash-tab-switcher-item',
 }
