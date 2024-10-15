@@ -229,16 +229,29 @@ export const usePreparedTableData = (props: {
             return {min, fixed: fixedWidth ? Number(fixedWidth) : undefined};
         },
     );
-    const colSizes = getCellsWidth({
-        cols,
-        tableMinWidth: tableContainerRef.current?.clientWidth ?? 0,
-    });
 
-    const leftPositions = (headers[headers.length - 1]?.headers ?? []).map<number>((h) => {
-        const headData = h.column.columnDef.meta?.head;
-        const cellIndex = headData?.index ?? -1;
-        return colSizes.reduce((sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum), 1);
-    });
+    const colSizeRef = React.useRef<number[]>();
+    const colSizes = React.useMemo(() => {
+        const result = getCellsWidth({
+            cols,
+            tableMinWidth: tableContainerRef.current?.clientWidth ?? 0,
+        });
+
+        if (!isEqual(result, colSizeRef.current)) {
+            colSizeRef.current = result;
+        }
+
+        return colSizeRef.current ?? [];
+    }, [cols, tableContainerRef]);
+
+    const leftPositions = React.useMemo(() => {
+        return (headers[headers.length - 1]?.headers ?? []).map<number>((h) => {
+            const headData = h.column.columnDef.meta?.head;
+            const cellIndex = headData?.index ?? -1;
+            return colSizes.reduce((sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum), 1);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [colSizes]);
 
     const headerRows = React.useMemo(() => {
         return headers
@@ -301,7 +314,7 @@ export const usePreparedTableData = (props: {
             })
             .filter(Boolean) as HeadRowViewData[];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [columns]);
+    }, [columns, leftPositions]);
 
     const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
