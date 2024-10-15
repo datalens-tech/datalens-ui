@@ -173,3 +173,9 @@ export enum DocSectionQa {
 export enum PreviewQa {
     ChartWrapper = 'preview-chart-wrapper',
 }
+
+export enum DatalensTabs {
+    MobileItem = 'dash-mobile-tab-item',
+    Item = 'dash-tab-item',
+    SwitcherItem = 'dash-tab-switcher-item',
+}

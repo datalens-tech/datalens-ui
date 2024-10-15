@@ -6,6 +6,7 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
+    DatalensTabs,
     DialogConfirmQA,
     DialogDashWidgetQA,
     DialogGroupControlQa,
@@ -787,9 +788,9 @@ class DashboardPage extends BasePage {
         }
 
         // it can be single switcher with tab name or some tabs and "more" switcher
-        const switcherLocator = tabsContainerLocator.locator(slct(DashTabsQA.SwitcherItem));
+        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabs.SwitcherItem));
         const switcherTabLocator = tabsContainerLocator
-            .locator(slct(DashTabsQA.MobileItem))
+            .locator(slct(DatalensTabs.MobileItem))
             .first();
 
         const isSwitcherVisible = await switcherLocator.isVisible();
