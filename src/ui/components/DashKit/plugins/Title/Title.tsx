@@ -13,6 +13,8 @@ import {
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
+import DashAnchorLink from './DashAnchorLink/DashAnchorLink';
+
 import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
@@ -21,7 +23,7 @@ type Props = PluginTitleProps;
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
-const titlePlugin = {
+const getTitlePlugin = (disableHashNavigation?: boolean) => ({
     ...pluginTitle,
     renderer: function Wrapper(
         props: Props,
@@ -97,10 +99,16 @@ const titlePlugin = {
             data.text,
         ]);
 
+        const anchor =
+            disableHashNavigation || props.editMode ? null : (
+                <DashAnchorLink size={data.size} x={currentLayout.x || 0} to={data.text} />
+            );
+
         return (
             <RendererWrapper
                 id={props.id}
                 type="title"
+                childContent={anchor}
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
@@ -116,6 +124,6 @@ const titlePlugin = {
             </RendererWrapper>
         );
     },
-};
+});
 
-export default titlePlugin;
+export default getTitlePlugin;
