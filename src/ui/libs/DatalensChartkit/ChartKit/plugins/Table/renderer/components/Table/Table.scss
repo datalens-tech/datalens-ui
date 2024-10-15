@@ -256,6 +256,7 @@
         z-index: -1;
         overflow: auto;
         font-size: var(--g-text-body-1-font-size);
+        user-select: none;
 
         table {
             min-width: auto;
