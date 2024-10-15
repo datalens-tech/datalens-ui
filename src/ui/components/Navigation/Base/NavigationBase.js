@@ -146,18 +146,27 @@ class NavigationBase extends React.Component {
         const {currentPageEntry} = this.props;
         if (response.status === EntryDialogResolveStatus.Success) {
             this.refNavigation.current.refresh();
+            const setEntryKey = registry.common.functions.get('setEntryKey');
             if (this.props.onUpdate) {
                 this.props.onUpdate(response);
             } else if (currentPageEntry) {
                 switch (entryDialog) {
                     case EntryDialogName.Rename:
                         if (currentPageEntry.entryId === entry.entryId) {
-                            window.location.reload();
+                            const entryData = response.data ? response.data[0] : null;
+                            if (!entryData) {
+                                window.location.reload();
+                            }
+                            setEntryKey(entryData);
                         }
                         break;
                     case EntryDialogName.Move:
                         if ((currentPageEntry.key || '').startsWith(entry.key)) {
-                            window.location.reload();
+                            const entryData = response.data ? response.data.result[0] : null;
+                            if (!entryData) {
+                                window.location.reload();
+                            }
+                            setEntryKey({...entryData, withRouting: false});
                         }
                         break;
                     case EntryDialogName.Delete:

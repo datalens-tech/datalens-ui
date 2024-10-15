@@ -10,6 +10,7 @@ import type {EntryDialogues} from 'components/EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
+import {registry} from 'ui/registry';
 import Utils from 'utils';
 
 import type {
@@ -63,6 +64,7 @@ export const BreadcrumbMenu = ({
         };
     }, [breadCrumbs]);
 
+    // eslint-disable-next-line complexity
     const handleMenuClick = async ({entry, action}: {entry: BreadCrumbEntry; action: string}) => {
         if (!entryDialoguesRef.current) {
             return;
@@ -70,6 +72,8 @@ export const BreadcrumbMenu = ({
         const isCurrentPageEntryInside = currentPageEntry?.key
             .toLowerCase()
             .startsWith(entry.key.toLowerCase());
+
+        const setEntryKey = registry.common.functions.get('setEntryKey');
 
         switch (action) {
             case ENTRY_CONTEXT_MENU_ACTION.RENAME: {
@@ -88,7 +92,11 @@ export const BreadcrumbMenu = ({
                         onChangeLocation?.(PLACE.ROOT, renamedEntry.key);
                     }
                     if (isCurrentPageEntryInside) {
-                        window.location.reload();
+                        const entryData = response.data ? response.data[0] : null;
+                        if (!entryData) {
+                            window.location.reload();
+                        }
+                        setEntryKey(entryData);
                     }
                 }
                 break;
@@ -106,7 +114,11 @@ export const BreadcrumbMenu = ({
                     const destination = response.data?.destination;
                     onChangeLocation?.(PLACE.ROOT, destination ? destination : DL.USER_FOLDER);
                     if (isCurrentPageEntryInside) {
-                        window.location.reload();
+                        const entryData = response.data ? response.data.result[0] : null;
+                        if (!entryData) {
+                            window.location.reload();
+                        }
+                        setEntryKey({...entryData, withRouting: false});
                     }
                 }
                 break;
