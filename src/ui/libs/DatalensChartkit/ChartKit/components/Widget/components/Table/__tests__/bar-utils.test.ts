@@ -1,18 +1,11 @@
 import type React from 'react';
 
-import type {
-    BarProps,
-    GetBarStyleArgs,
-    GetMinMaxWithOffsetArgs,
-    GetSeparatorStyleArgs,
-    GetStylesArgs,
-} from '../Bar/types';
+import type {BarProps, GetBarStyleArgs, GetMinMaxWithOffsetArgs, GetStylesArgs} from '../Bar/types';
 import {
     getBarStyle,
     getMinMaxWithOffset,
     getRangeValue,
     getRangeValuePart,
-    getSeparatorStyle,
     getStyles,
     isPropsValid,
 } from '../Bar/utils';
@@ -66,17 +59,6 @@ describe('chartkit/Table/utils/bars-utils', () => {
         ],
     ])('getBarStyle (args: %j)', (args, expected) => {
         const result = getBarStyle(args);
-        expect(result).toEqual(expected);
-    });
-
-    test.each<[GetSeparatorStyleArgs, React.CSSProperties | undefined] /* [args, expected] */>([
-        [{min: undefined, max: 60}, undefined],
-        [{min: 0, max: undefined}, undefined],
-        [{min: -20, max: 0}, {left: '100%'}],
-        [{min: 0, max: 20}, {left: '0%'}],
-        [{min: -20, max: 60}, {left: '25%'}],
-    ])('getSeparatorStyle (args: %j)', (args, expected) => {
-        const result = getSeparatorStyle(args);
         expect(result).toEqual(expected);
     });
 

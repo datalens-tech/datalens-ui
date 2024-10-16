@@ -9,7 +9,6 @@ import type {
     GetMinBarStyleArgs,
     GetMinMaxBarStyleArgs,
     GetMinMaxWithOffsetArgs,
-    GetSeparatorStyleArgs,
     GetStylesArgs,
 } from './types';
 
@@ -64,7 +63,7 @@ const getMinMaxBarStyle = (args: GetMinMaxBarStyleArgs): React.CSSProperties => 
         left = separatorPart;
     }
 
-    return {background: color, left: `${left}%`, width: `${valuePart}%`};
+    return {background: color, marginLeft: `${left}%`, width: `${valuePart}%`};
 };
 
 const getLeftPosition = (align: string, width: number) => {
@@ -122,19 +121,6 @@ export const getBarStyle = (args: GetBarStyleArgs): React.CSSProperties => {
     return {};
 };
 
-export const getSeparatorStyle = (args: GetSeparatorStyleArgs): React.CSSProperties | undefined => {
-    const {min, max} = args;
-
-    if (isUndefined(min) || isUndefined(max)) {
-        return undefined;
-    }
-
-    const rangeValue = getRangeValue(min, max);
-    const separatorPart = getRangeValuePart(rangeValue, min);
-
-    return {left: `${separatorPart}%`};
-};
-
 export const getStyles = (
     args: GetStylesArgs,
 ): {barStyle?: React.CSSProperties; separatorStyle?: React.CSSProperties} => {
@@ -165,8 +151,16 @@ export const getStyles = (
         };
     }
 
-    if (isValid && showBar && showSeparator) {
-        separatorStyle = getSeparatorStyle({...getMinMaxWithOffset({min, max, offset})});
+    const shouldShowSeperator =
+        isValid && showBar && showSeparator && !(isUndefined(min) || isUndefined(max)) && barHeight;
+    if (shouldShowSeperator) {
+        separatorStyle = {
+            marginTop: -barHeight * 0.15,
+        };
+
+        if (value < 0) {
+            separatorStyle.width = `100%`;
+        }
     }
 
     return {barStyle, separatorStyle};
