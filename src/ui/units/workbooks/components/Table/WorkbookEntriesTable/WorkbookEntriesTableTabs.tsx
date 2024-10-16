@@ -56,7 +56,7 @@ export const WorkbookEntriesTableTabs = ({
         return null;
     }
 
-    const [dashChunk = [], connChunk = [], datasetChunk = [], widgetChunk = [], reportChunk = []] =
+    const [dashChunk = [], widgetChunk = [], datasetChunk = [], connChunk = [], reportChunk = []] =
         chunks;
 
     const isWidgetEmpty = widgetChunk.length === 0;

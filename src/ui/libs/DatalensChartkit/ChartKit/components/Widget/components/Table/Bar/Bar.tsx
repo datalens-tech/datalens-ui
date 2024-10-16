@@ -42,7 +42,8 @@ export const Bar = (props: BarProps) => {
     const displayedValue = typeof formattedValue === 'string' ? formattedValue : value;
 
     return (
-        <div className={b()} style={barStyle}>
+        <div className={b()}>
+            <div className={b('block')} style={barStyle} />
             {Boolean(separatorStyle) && <div className={b('separator')} style={separatorStyle} />}
             {/* Cast is using to avoid artifacts in case of using user`s input like {showLabel: 0} */}
             {Boolean(showLabel && isValid) && displayedValue}
