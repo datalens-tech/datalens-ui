@@ -8,6 +8,7 @@ import get from 'lodash/get';
 import type {
     BarTableCell,
     BarViewOptions,
+    DiffTableColumn,
     NumberViewOptions,
     TableCommonCell,
     TableHead,
@@ -18,6 +19,7 @@ import {ChartKitTableQa, isMarkupItem} from 'shared';
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
+import {DiffCell} from '../components/DiffCell/DiffCell';
 import {HtmlCell} from '../components/HtmlCell/HtmlCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import type {THead} from '../components/Table/types';
@@ -113,16 +115,33 @@ export function renderCellContent(args: {
     const cellView = get(cell, 'view', get(column, 'view'));
     const cellType = cell.type ?? get(column, 'type');
 
-    if (cellView === 'bar' && !header) {
-        return <BarCell cell={cell as BarTableCell} column={column as BarViewOptions} />;
-    }
-
     if (cellType === 'markup' || isMarkupItem(cell.value)) {
         return <MarkupCell cell={cell} />;
     }
 
-    if (cell?.treeNodeState && !header) {
-        return <TreeCell cell={cell} />;
+    if (!header) {
+        if (cellView === 'bar') {
+            return <BarCell cell={cell as BarTableCell} column={column as BarViewOptions} />;
+        }
+
+        if (cellType === 'diff') {
+            const [value, diff] = (cell.value ?? []) as [number, number];
+            return <DiffCell value={value} diff={diff} column={column as DiffTableColumn} />;
+        }
+
+        if (cellType === 'diff_only') {
+            return (
+                <DiffCell
+                    diff={cell.value as number}
+                    column={column as DiffTableColumn}
+                    diffOnly={true}
+                />
+            );
+        }
+
+        if (cell?.treeNodeState) {
+            return <TreeCell cell={cell} />;
+        }
     }
 
     let formattedValue: string | undefined = cell.formattedValue;

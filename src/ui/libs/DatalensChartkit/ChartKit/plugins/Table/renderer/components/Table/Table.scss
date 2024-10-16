@@ -266,6 +266,31 @@
             white-space: nowrap;
         }
     }
+
+    &__diff-cell {
+        display: flex;
+        gap: 4px;
+    }
+
+    &__diff-cell-icon {
+        font-size: 11px;
+
+        &_inc {
+            color: #008000;
+
+            &:before {
+                content: '▲';
+            }
+        }
+
+        &_dec {
+            color: #ff0000;
+
+            &:before {
+                content: '▼';
+            }
+        }
+    }
 }
 
 table.dl-table_prepared {
