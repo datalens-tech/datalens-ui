@@ -35,27 +35,27 @@ describe('chartkit/Table/utils/bars-utils', () => {
         [{value: 5}, {}],
         [
             {value: 5, max: 10, color: 'red'},
-            {background: 'red', left: 0, width: '50%'},
+            {background: 'red', marginLeft: 0, width: '50%'},
         ],
         [
             {value: 5, max: 10, align: 'right', color: 'red'},
-            {background: 'red', left: '50%', width: '50%'},
+            {background: 'red', marginLeft: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, color: 'red'},
-            {background: 'red', left: '50%', width: '50%'},
+            {background: 'red', marginLeft: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, align: 'left', color: 'red'},
-            {background: 'red', left: 0, width: '50%'},
+            {background: 'red', marginLeft: 0, width: '50%'},
         ],
         [
             {value: 5, min: -10, max: 10, color: 'red'},
-            {background: 'red', left: '50%', width: '25%'},
+            {background: 'red', marginLeft: '50%', width: '25%'},
         ],
         [
             {value: -5, min: -10, max: 10, color: 'red'},
-            {background: 'red', left: '25%', width: '25%'},
+            {background: 'red', marginLeft: '25%', width: '25%'},
         ],
     ])('getBarStyle (args: %j)', (args, expected) => {
         const result = getBarStyle(args);

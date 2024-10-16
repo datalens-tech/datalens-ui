@@ -88,7 +88,7 @@ const getMinBarStyle = (args: GetMinBarStyleArgs): React.CSSProperties => {
     return {
         background: color,
         width: `${valuePart}%`,
-        left: getLeftPosition(align, valuePart),
+        marginLeft: getLeftPosition(align, valuePart),
     };
 };
 
@@ -99,7 +99,7 @@ const getMaxBarStyle = (args: GetMaxBarStyleArgs): React.CSSProperties => {
     return {
         background: color,
         width: `${valuePart}%`,
-        left: getLeftPosition(align, valuePart),
+        marginLeft: getLeftPosition(align, valuePart),
     };
 };
 
