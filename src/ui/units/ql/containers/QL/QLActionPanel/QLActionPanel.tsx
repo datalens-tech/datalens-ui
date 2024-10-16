@@ -1,6 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
 
-import {LayoutHeader} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -21,7 +20,6 @@ import {
 
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
-import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import type {EntryContextMenuItems} from '../../../../../components/EntryContextMenu/helpers';
 import {isDraftVersion} from '../../../../../components/Revisions/helpers';
 import {registry} from '../../../../../registry';
@@ -49,6 +47,8 @@ import {
     getValid,
 } from '../../../store/reducers/ql';
 import type {QLEntry} from '../../../store/typings/ql';
+
+import {useQLActionPanel} from './useQLActionPanel';
 
 import iconMonitoring from 'ui/assets/icons/monitoring.svg';
 
@@ -219,22 +219,6 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         dispatch(toggleTablePreview());
     }, [dispatch]);
 
-    const getAdditionalRightControlButtons = useCallback((): AdditionalButtonTemplate[] => {
-        return [
-            {
-                key: 'toggle-table-preview-button',
-                title: i18n('wizard', 'tooltip_table-preview'),
-                action: () => onClickButtonToggleTablePreview(),
-                className: b('toggle-preview-btn'),
-                icon: {
-                    data: LayoutHeader,
-                    size: 16,
-                    className: b('toggle-preview-icon'),
-                },
-            },
-        ];
-    }, [onClickButtonToggleTablePreview]);
-
     const saveAsDraftClick = useCallback(() => {
         onClickButtonSave(EntryUpdateMode.Save);
     }, [onClickButtonSave]);
@@ -265,6 +249,10 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         }
     }, [entry, entryDialoguesRef]);
 
+    const additionalButtons = useQLActionPanel({
+        onClickButtonToggleTablePreview,
+    });
+
     return (
         <React.Fragment>
             <ActionPanel
@@ -285,7 +273,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                         isCurrentRevisionActual={Boolean(isCurrentRevisionActual)}
                         isNewChart={isNewChart}
                         needSplitMainAndAdditionalButtons={true}
-                        additionalControls={getAdditionalRightControlButtons()}
+                        additionalControls={additionalButtons}
                         onSaveAndPublishClick={saveAsPublishedClick}
                         onSaveAsDraftClick={saveAsDraftClick}
                         onSaveAsNewClick={saveAsAction}

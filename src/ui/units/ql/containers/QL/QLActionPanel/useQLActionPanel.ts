@@ -3,26 +3,34 @@ import React from 'react';
 import {ArrowUturnCcwLeft, ArrowUturnCwRight, LayoutHeader} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {QLPageQA} from 'shared';
 import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
 import {REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
 import {useBindHotkey} from 'ui/hooks/useBindHotkey';
+import type {DatalensGlobalState} from 'ui/index';
 import {goBack, goForward} from 'ui/store/actions/editHistory';
+import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
 import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 
 const b = block('wizard-action-panel');
 
 export type UseQlActionPanelArgs = {
     onClickButtonToggleTablePreview: () => void;
-    canGoBack: boolean | null;
-    canGoForward: boolean | null;
 };
 
 export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {onClickButtonToggleTablePreview, canGoBack, canGoForward} = args;
+    const {onClickButtonToggleTablePreview} = args;
+
+    const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
+        (state) => selectCanGoBack(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
+    );
+
+    const canGoForward = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoForward>>(
+        (state) => selectCanGoForward(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
+    );
 
     const onClickGoBack = React.useCallback(() => {
         if (canGoBack) {

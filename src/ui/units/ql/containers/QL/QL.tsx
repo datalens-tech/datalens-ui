@@ -12,11 +12,12 @@ import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import type {DatalensGlobalState} from 'ui';
 import {EntryDialogues, URL_QUERY} from 'ui';
+import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
 import Grid from 'units/ql/components/Grid/Grid';
-import {AppStatus} from 'units/ql/constants';
-import {initializeApplication, resetQLStore} from 'units/ql/store/actions/ql';
+import {AppStatus, QL_EDIT_HISTORY_UNIT_ID} from 'units/ql/constants';
+import {initializeApplication, resetQLStore, setQLStore} from 'units/ql/store/actions/ql';
 import {getAppError, getAppStatus, getConnection, getEntry} from 'units/ql/store/reducers/ql';
-import type {QLConnectionEntry, QLEntry} from 'units/ql/store/typings/ql';
+import type {QLConnectionEntry, QLEntry, QLState} from 'units/ql/store/typings/ql';
 import {resetWizardStore} from 'units/wizard/actions';
 import {getUrlParamFromStr} from 'utils';
 
@@ -49,6 +50,22 @@ class QL extends React.PureComponent<QLInnerProps> {
         super(props);
 
         this.entryDialoguesRef = React.createRef();
+
+        this.props.initEditHistoryUnit({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+            setState: ({state}) => {
+                return this.props.setQLStore({
+                    store: state as unknown as QLState,
+                });
+            },
+            options: {
+                pathIgnoreList: [
+                    '/preview/highchartsWidget',
+                    '/preview/filters',
+                    '/visualization/layers',
+                ],
+            },
+        });
     }
 
     componentDidMount() {
@@ -174,8 +191,10 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
 };
 
 const mapDispatchToProps = {
+    initEditHistoryUnit,
     initializeApplication,
     resetQLStore,
+    setQLStore,
     resetWizardStore,
     cleanRevisions,
     setRevisionsMode,

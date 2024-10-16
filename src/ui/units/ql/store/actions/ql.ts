@@ -74,13 +74,14 @@ import {
     selectInitalQlChartConfig,
 } from '../reducers/ql';
 import type {
-    QLAction,
     QLChart,
     QLConnectionEntry,
+    QLDispatch,
     QLEntry,
     QLGrid,
     QLPanes,
     QLSettings,
+    QLState,
     QLTabs,
 } from '../typings/ql';
 import {Helper} from '../utils/grid';
@@ -120,14 +121,22 @@ export const REMOVE_PARAM_IN_QUERY = Symbol('ql/REMOVE_PARAM_IN_QUERY');
 export const TOGGLE_TABLE_PREVIEW = Symbol('ql/TOGGLE_TABLE_PREVIEW');
 export const DRAW_PREVIEW = Symbol('ql/DRAW_PREVIEW');
 export const RESET_QL_STORE = Symbol('ql/RESET_QL_STORE');
+export const SET_QL_STORE = Symbol('ql/SET_QL_STORE');
 
 // Action functions and interfaces
 
-export const resetQLStore = () => {
+export function resetQLStore() {
     return {
         type: RESET_QL_STORE,
     };
-};
+}
+
+export function setQLStore({store}: {store: QLState}) {
+    return {
+        type: SET_QL_STORE,
+        store,
+    };
+}
 
 export const setStatus = (appStatus: AppStatus) => {
     return {
@@ -313,7 +322,7 @@ export interface SetQueryMetadataProps {
 }
 
 export const setQueryMetadata = ({metadata}: SetQueryMetadataProps) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
+    return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
         const {
             wizard: {
                 visualization: {visualization},
@@ -466,7 +475,7 @@ export const setQlEntryKey = (key: string) => {
 };
 
 export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
-    return (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) => {
+    return (dispatch: QLDispatch, getState: () => DatalensGlobalState) => {
         const previewData = getPreviewData(getState());
 
         dispatch({
@@ -557,7 +566,7 @@ type FetchConnectionSourcesArgs = {
 };
 
 export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSourcesArgs) => {
-    return async function (dispatch: AppDispatch<QLAction>) {
+    return async function (dispatch: QLDispatch) {
         // Requesting information about connection sources
         const {sources: connectionSources, freeform_sources: connectionFreeformSources} =
             await getSdk().bi.getConnectionSources({
@@ -583,7 +592,7 @@ type FetchConnectionSourceSchemaArgs = {
 };
 
 export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSchemaArgs) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
+    return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
         const splittedTableName = tableName.split('.');
 
         const splittedTableNameLength = splittedTableName.length;
@@ -637,7 +646,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
 
 export const initializeApplication = (args: InitializeApplicationArgs) => {
     // eslint-disable-next-line complexity
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
+    return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
         dispatch(setStatus(AppStatus.Loading));
 
         dispatch(resetWizardStore());
@@ -1120,7 +1129,7 @@ export const performManualConfiguration = ({
     chartType,
 }: PerformManualConfigurationArgs) => {
     // eslint-disable-next-line consistent-return
-    return async function (dispatch: AppDispatch<QLAction>) {
+    return async function (dispatch: QLDispatch) {
         dispatch(
             fetchConnectionSources({
                 entryId: connection.entryId,
@@ -1142,7 +1151,7 @@ export const performManualConfiguration = ({
 };
 
 export const onSuccessQlWidgetUpdate = (entry: Entry) => {
-    return (dispatch: AppDispatch<QLAction>) => {
+    return (dispatch: QLDispatch) => {
         if (!entry.data) {
             throw new Error(i18n('sql', 'error_failed-to-save-chart'));
         }
@@ -1160,20 +1169,20 @@ export const onSuccessQlWidgetUpdate = (entry: Entry) => {
 };
 
 export const onErrorQlWidgetUpdate = (error: AxiosError) => {
-    return (dispatch: AppDispatch<QLAction>) => {
+    return (dispatch: QLDispatch) => {
         dispatch(setError({error}));
     };
 };
 
 export const onErrorSetActualChartRevision = (error: AxiosError) => {
-    return (dispatch: AppDispatch<QLAction>) => {
+    return (dispatch: QLDispatch) => {
         dispatch(setEntry({entry: null}));
         dispatch(setError({error}));
     };
 };
 
 export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
+    return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
         const {entry} = getState().ql;
 
         if (!entry) {
@@ -1194,7 +1203,7 @@ export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
 };
 
 export const setQlChartActualRevision = (isDraft?: boolean) => {
-    return async function (dispatch: AppDispatch<QLAction>, getState: () => DatalensGlobalState) {
+    return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
         const state = getState();
 
         const initialData = selectInitalQlChartConfig(state);
