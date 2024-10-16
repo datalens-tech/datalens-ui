@@ -22,7 +22,8 @@ export const getRangeValue = (min: number, max: number) => {
 };
 
 export const getRangeValuePart = (rangeValue: number, value: number) => {
-    return round((Math.abs(value) * 100) / Math.abs(rangeValue), ROUND_PRESISION);
+    const result = (Math.abs(value) * 100) / Math.abs(rangeValue);
+    return round(Math.max(0, Math.min(result, 100)), ROUND_PRESISION);
 };
 
 export const getMinMaxWithOffset = (args: GetMinMaxWithOffsetArgs) => {
