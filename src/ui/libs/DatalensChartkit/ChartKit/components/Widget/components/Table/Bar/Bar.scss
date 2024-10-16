@@ -8,6 +8,11 @@
     width: calc(100% + var(--chartkit-bg-bar-offset-width));
     padding-right: 5px;
 
+    &__block {
+        position: absolute;
+        z-index: -1;
+    }
+
     &__separator {
         position: absolute;
         transform: translateX(-50%);

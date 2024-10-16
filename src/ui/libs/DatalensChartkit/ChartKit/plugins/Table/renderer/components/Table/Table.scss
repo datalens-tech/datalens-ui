@@ -255,6 +255,8 @@
         left: -100000px;
         z-index: -1;
         overflow: auto;
+        font-size: var(--g-text-body-1-font-size);
+        user-select: none;
 
         table {
             min-width: auto;
@@ -262,6 +264,31 @@
 
         tbody td {
             white-space: nowrap;
+        }
+    }
+
+    &__diff-cell {
+        display: flex;
+        gap: 4px;
+    }
+
+    &__diff-cell-icon {
+        font-size: 11px;
+
+        &_inc {
+            color: #008000;
+
+            &:before {
+                content: '▲';
+            }
+        }
+
+        &_dec {
+            color: #ff0000;
+
+            &:before {
+                content: '▼';
+            }
         }
     }
 }
