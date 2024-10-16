@@ -1,33 +1,30 @@
 import type {ChartKitWidgetAxisType} from '@gravity-ui/chartkit';
 import type {ChartKitWidgetData} from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {
-    ServerChartsConfig,
-    ServerCommonSharedExtraSettings,
-    ServerSort,
-    ServerVisualization,
+import type {QlExtendedConfig, ServerChartsConfig} from '../../../../../../shared';
+import {
+    AxisMode,
+    PlaceholderId,
+    WizardVisualizationId,
+    getXAxisMode,
+    isDateField,
 } from '../../../../../../shared';
-import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../shared';
 import {getAxisType} from '../preparers/helpers/axis';
-import {getAllVisualizationsIds} from '../preparers/helpers/visualizations';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 
 import {getChartTitle} from './utils';
 
-type BuildD3ConfigArgs = {
-    extraSettings?: ServerCommonSharedExtraSettings;
-    visualization: ServerVisualization;
-    sort?: ServerSort[];
-};
+type BuildD3ConfigArgs = ServerChartsConfig | QlExtendedConfig;
 
 export function buildD3Config(args: BuildD3ConfigArgs) {
-    const {extraSettings, visualization, sort = []} = args;
+    const {extraSettings, visualization} = args;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
 
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
     const xPlaceholderSettings = xPlaceholder?.settings || {};
+    const xAxisMode = getXAxisMode({config: args as ServerChartsConfig}) ?? AxisMode.Discrete;
 
     const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
     const yPlaceholderSettings = yPlaceholder?.settings || {};
@@ -35,14 +32,13 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
 
     const chartWidgetData: Partial<ChartKitWidgetData> = {
         title: getChartTitle(extraSettings),
-        tooltip: {enabled: true},
+        tooltip: {enabled: extraSettings?.tooltip !== 'hide'},
         legend: {enabled: isLegendEnabled},
         xAxis: {
             type: getAxisType({
                 field: xItem,
                 settings: xPlaceholderSettings,
-                visualizationIds: getAllVisualizationsIds(args),
-                sort,
+                axisMode: xAxisMode,
             }) as ChartKitWidgetAxisType | undefined,
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',

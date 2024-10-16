@@ -63,6 +63,17 @@ export const AXIS_TYPE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
+export const AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+    {
+        value: SETTINGS.AXIS_VISIBILITY.SHOW,
+        content: i18n('wizard', 'label_show'),
+    },
+    {
+        value: SETTINGS.AXIS_VISIBILITY.HIDE,
+        content: i18n('wizard', 'label_hide'),
+    },
+];
+
 export const GRID_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     {
         value: SETTINGS.GRID.ON,

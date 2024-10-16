@@ -1,4 +1,11 @@
-import type {ExtendedChartsConfig, ServerChartsConfig} from '../../../../../../shared';
+import cloneDeepWith from 'lodash/cloneDeepWith';
+
+import type {
+    DATASET_FIELD_TYPES,
+    ExtendedChartsConfig,
+    ServerChartsConfig,
+    ServerField,
+} from '../../../../../../shared';
 import {mapChartsConfigToLatestVersion} from '../../../../../../shared';
 
 export type MapChartsConfigToServerConfigArgs = ExtendedChartsConfig & {
@@ -21,3 +28,24 @@ export const mapChartsConfigToServerConfig = (
 
     return serverConfig;
 };
+
+function isField(value: unknown): value is ServerField {
+    return Boolean(value && typeof value === 'object' && 'guid' in value);
+}
+
+export function getConfigWithActualFieldTypes(args: {
+    config: ServerChartsConfig;
+    idToDataType: Record<string, DATASET_FIELD_TYPES>;
+}) {
+    const {config, idToDataType} = args;
+
+    return cloneDeepWith(config, function (value: unknown) {
+        if (isField(value)) {
+            const dataType = idToDataType[value.guid] ?? value.data_type;
+            const field: ServerField = {...value, data_type: dataType};
+            return field;
+        }
+
+        return undefined;
+    });
+}

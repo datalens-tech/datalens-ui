@@ -70,6 +70,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
+        connectorIcons: res.locals.connectorIcons,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

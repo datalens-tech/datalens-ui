@@ -15,10 +15,6 @@
         }
     }
 
-    &_unset-height {
-        min-height: unset;
-    }
-
     &__content {
         flex-grow: 1;
         display: flex;

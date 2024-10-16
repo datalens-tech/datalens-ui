@@ -33,11 +33,6 @@ export const selectUserThemeSettings = createSelector(
     (userSettings) => userSettings.themeSettings,
 );
 
-export const selectSandboxDebugMode = createSelector(
-    selectUserSettings,
-    (userSettings) => userSettings.dlSanboxDebugMode || false,
-);
-
 export const selectDateFormat = createSelector(
     [selectUserSettings],
     (userSettings) => userSettings.dateFormat,

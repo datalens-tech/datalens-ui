@@ -277,7 +277,9 @@ function prepareFlatTable({
 
             if (colors.length) {
                 const valueColor = values[iColor];
-                cell.color = Number(valueColor);
+                if (valueColor !== null) {
+                    cell.color = Number(valueColor);
+                }
             }
 
             if (item.isTableFieldBackgroundSettingsEnabled) {

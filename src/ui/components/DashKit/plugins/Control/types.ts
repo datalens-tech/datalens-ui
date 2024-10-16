@@ -17,19 +17,21 @@ export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed
 export type ErrorData = {
     data: {
         error?: SelectorError;
-        title?: string;
+        title?: string | null;
         message?: string;
         status?: number;
     };
     requestId?: string;
+    extra?: {hideErrorDetails: boolean};
 };
 
 export type SelectorError = {
     code: string;
     debug: string | {requestId?: string};
     details?: {
-        sources?: {
-            distincts?: {
+        sources?: Record<
+            string,
+            {
                 body?: {
                     debug: Record<string, string>;
                     message: string;
@@ -46,8 +48,8 @@ export type SelectorError = {
                 status?: number;
                 uiUrl?: string;
                 url?: string;
-            };
-        };
+            }
+        >;
     };
 };
 

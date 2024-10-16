@@ -2,9 +2,15 @@ import React from 'react';
 
 import {i18n} from 'i18n';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {Field, HierarchyField, PlaceholderId, WizardVisualizationId} from 'shared';
+import type {Dispatch} from 'redux';
+import type {
+    Field,
+    HierarchyField,
+    PlaceholderId,
+    ServerChartsConfig,
+    WizardVisualizationId,
+} from 'shared';
 import {DATASET_FIELD_TYPES, DatasetFieldType, isPlaceholderSupportsAxisMode} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {withHiddenUnmount} from 'ui';
@@ -18,7 +24,7 @@ import {
     selectSubVisualization,
 } from 'units/wizard/selectors/visualization';
 import {generateNextTitle} from 'units/wizard/utils/helpers';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {setHierarchies} from '../../../../actions/dataset';
 import {closeHierarchyEditor} from '../../../../actions/hierarchyEditor';
@@ -114,7 +120,7 @@ class HierarchyEditorContainer extends React.Component<Props, State> {
     }
 
     updateHierarchy() {
-        const {hierarchies, hierarchy, visualization, sort} = this.props;
+        const {hierarchies, hierarchy, visualization, chartConfig} = this.props;
         const {hierarchyName} = this.state;
         const orderedHierarchyFields = this.getOrderedHierarchyFields();
 
@@ -145,13 +151,12 @@ class HierarchyEditorContainer extends React.Component<Props, State> {
                         placeholderId,
                         getAxisModePlaceholderSettings({
                             placeholder,
-                            visualization,
-                            sort,
                             firstField: {
                                 ...currentHierarchy,
                                 fields: orderedHierarchyFields,
                                 title: hierarchyName,
                             },
+                            chartConfig,
                         }),
                     );
                 }
@@ -177,7 +182,7 @@ class HierarchyEditorContainer extends React.Component<Props, State> {
         const {hierarchyName} = this.state;
         const orderedHierarchyFields = this.getOrderedHierarchyFields();
 
-        const guid = uuid();
+        const guid = uuidv1();
 
         const newHierarchy: HierarchyField = {
             guid,
@@ -224,6 +229,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     const hierarchies: HierarchyField[] = selectHierarchies(state);
     const visualization = selectSubVisualization(state);
     const sort = selectSort(state);
+    const chartConfig = state.wizard.visualization as Partial<ServerChartsConfig>;
 
     return {
         fields,
@@ -232,6 +238,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         visible,
         visualization,
         sort,
+        chartConfig,
     };
 };
 

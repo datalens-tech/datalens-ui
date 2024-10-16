@@ -54,6 +54,7 @@ export interface V11CommonSharedExtraSettings {
     legendMode?: 'show' | 'hide';
     metricFontSize?: string;
     metricFontColor?: string;
+    tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
@@ -179,6 +180,10 @@ export type V11PlaceholderSettings = {
     axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
+    /* Whether axis, including axis title, line, ticks and labels, should be visible
+     * @default 'show'
+     **/
+    axisVisibility?: 'show' | 'hide';
 };
 
 export type V11Placeholder = {

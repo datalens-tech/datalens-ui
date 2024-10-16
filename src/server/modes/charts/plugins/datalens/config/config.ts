@@ -88,7 +88,7 @@ export const buildChartsConfigPrivate = (
     let hideHolidaysBands = !features[Feature.HolidaysOnChart];
     if (!hideHolidaysBands) {
         hideHolidaysBands = [visualization].concat(visualization.layers || []).some((layer) => {
-            return layer.placeholders.some((placeholder) => {
+            return layer.placeholders?.some((placeholder) => {
                 return (
                     placeholder.id === PlaceholderId.X &&
                     (placeholder.settings?.holidays || 'off') === 'off'

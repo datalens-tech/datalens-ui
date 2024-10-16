@@ -71,6 +71,10 @@ export const SETTINGS = {
         LINEAR: 'linear',
         LOGARITHMIC: 'logarithmic',
     },
+    AXIS_VISIBILITY: {
+        SHOW: 'show',
+        HIDE: 'hide',
+    },
     GRID: {
         ON: 'on',
         OFF: 'off',
@@ -116,6 +120,10 @@ export const CHART_SETTINGS = {
     LEGEND: {
         SHOW: LegendDisplayMode.Show,
         HIDE: LegendDisplayMode.Hide,
+    },
+    TOOLTIP: {
+        SHOW: 'show',
+        HIDE: 'hide',
     },
     TOOLTIP_SUM: {
         ON: 'on',

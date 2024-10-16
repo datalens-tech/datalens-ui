@@ -28,12 +28,18 @@ export enum ErrorCode {
     NeedReset = 'NEED_RESET',
     MigrationOrgExists = 'MIGRATION_ORG_EXISTS',
     MigrationDenied = 'MIGRATION_DENIED',
-    AccessServicePermissionDenied = 'ACCESS_SERVICE_PERMISSION_DENIED',
-    AccessServiceUnauthenticated = 'ACCESS_SERVICE_UNAUTHENTICATED',
     EntryIsLocked = 'ERR.US.ENTRY_IS_LOCKED',
     EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',
     ReadOnlyMode = 'READ_ONLY_MODE_ENABLED',
+    InvalidTokenFormat = 'ERR.CHARTS.INVALID_TOKEN_FORMAT',
+    TokenNotFound = 'ERR.CHARTS.TOKEN_NOT_FOUND',
+    InvalidToken = 'ERR.CHARTS.INVALID_TOKEN',
+    OutdatedDependencies = 'ERR.CHARTS.OUTDATED_DEPENDENCIES',
+    EntryForbidden = 'ERR.US.ENTRY_FORBIDDEN',
+
+    IncorrectEntry = 'INCORRECT_ENTRY_ID_FOR_EMBED',
+    IncorrectDepsIds = 'INCORRECT_DEPS_IDS_FOR_EMBED',
 }
 
 export const ErrorContentTypes = {

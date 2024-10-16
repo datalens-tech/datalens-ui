@@ -3,6 +3,7 @@ import {expect} from '@playwright/test';
 import {
     ChartKitQa,
     GradientType,
+    Operations,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -66,6 +67,59 @@ datalensTest.describe('Wizard', () => {
 
             await expect(previewLoader).not.toBeVisible();
             await expect(chart).toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Gradient coloring for zero values @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'id');
+            await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
+            await wizardPage.filterEditor.setInputValue('2');
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'id',
+            );
+
+            await wizardPage.createNewFieldWithFormula('evenOrOdd', 'max([id]) % 2');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'evenOrOdd',
+            );
+
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Gradient coloring for null values @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'id');
+            await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
+            await wizardPage.filterEditor.setInputValue('2');
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'id',
+            );
+
+            await wizardPage.createNewFieldWithFormula(
+                'id_null',
+                'max(if ([id] = 1) then null else [id] end)',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'id_null',
+            );
+
+            await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
     });

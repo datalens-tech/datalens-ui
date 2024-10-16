@@ -1,9 +1,8 @@
 import React from 'react';
 
-import type {ActionsPanelProps} from '@gravity-ui/components';
-import {ActionsPanel} from '@gravity-ui/components';
 import {ArrowRight, TrashBin} from '@gravity-ui/icons';
-import {Icon} from '@gravity-ui/uikit';
+import type {ActionsPanelProps} from '@gravity-ui/uikit';
+import {ActionsPanel, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types/feature';
 import Utils from 'ui/utils';

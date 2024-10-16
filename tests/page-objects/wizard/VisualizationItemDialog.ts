@@ -27,9 +27,10 @@ export default class VisualizationItemDialog {
     }
 
     async open(placeholder: PlaceholderName, fieldName: string) {
-        const container = slct(placeholder);
-        const field = slct(fieldName);
-        await this.page.click(`${container} ${field} .item-icon`);
+        const placeholderContainer = this.page.locator(slct(placeholder));
+        const field = placeholderContainer.locator(slct(fieldName));
+
+        await field.locator('.item-icon').click();
     }
 
     async changeTitle(title: string) {

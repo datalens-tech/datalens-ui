@@ -107,6 +107,11 @@ export interface QLActionSetEntry {
     entry: QLEntry | null;
 }
 
+export interface QLActionSetEntryKey {
+    type: symbol;
+    payload: string;
+}
+
 export interface QLActionSetExtraSettings {
     type: symbol;
     extraSettings: CommonSharedExtraSettings;
@@ -234,7 +239,8 @@ export type QLAction =
     | QLActionDrawPreview
     | VisualizationAction
     | DatasetAction
-    | ResetWizardStoreAction;
+    | ResetWizardStoreAction
+    | QLActionSetEntryKey;
 
 export type QLChartConfig = ConfigNode & {
     data: {

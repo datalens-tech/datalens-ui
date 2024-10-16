@@ -9,7 +9,7 @@ import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {StringParams} from 'shared';
+import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
@@ -117,6 +117,9 @@ interface DashkitWrapperProps extends DashKitProps {
     // Extended Controls props
     skipReload?: boolean;
     isNewRelations?: boolean;
+    hideErrorDetails?: boolean;
+    // Extended headers context for widgets
+    dataProviderContextGetter?: () => DashChartRequestContext;
 }
 
 export const DashkitWrapper: React.FC<
@@ -126,15 +129,25 @@ export const DashkitWrapper: React.FC<
             | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
         )
 > = React.forwardRef(
-    ({skipReload = false, isNewRelations = false, ...props}, ref: React.ForwardedRef<DashKit>) => {
+    (
+        {skipReload = false, isNewRelations = false, dataProviderContextGetter, ...props},
+        ref: React.ForwardedRef<DashKit>,
+    ) => {
         const contextValue = React.useMemo(() => {
             return {
                 config: props.config,
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
                 isNewRelations,
+                dataProviderContextGetter,
             };
-        }, [props.config, props.defaultGlobalParams, skipReload, isNewRelations]);
+        }, [
+            props.config,
+            props.defaultGlobalParams,
+            skipReload,
+            isNewRelations,
+            dataProviderContextGetter,
+        ]);
 
         return (
             <ExtendedDashKitContext.Provider value={contextValue}>

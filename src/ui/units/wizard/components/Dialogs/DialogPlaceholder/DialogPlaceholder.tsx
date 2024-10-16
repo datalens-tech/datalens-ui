@@ -12,6 +12,7 @@ import type {
     Field,
     Placeholder,
     PlaceholderSettings,
+    ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
     WizardVisualizationId,
@@ -21,12 +22,14 @@ import {
     Feature,
     PlaceholderId,
     getAxisMode,
+    hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
     isFieldHierarchy,
     isNumberField,
     isPercentVisualization,
 } from 'shared';
-import {Utils, withHiddenUnmount} from 'ui';
+import {withHiddenUnmount} from 'ui/hoc';
+import Utils from 'ui/utils/utils';
 
 import {SETTINGS} from '../../../constants';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
@@ -37,6 +40,7 @@ import {
     AXIS_MODE_RADIO_BUTTONS,
     AXIS_TITLE_RADIO_BUTTON_OPTIONS,
     AXIS_TYPE_RADIO_BUTTON_OPTIONS,
+    AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS,
     DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS,
     GRID_RADIO_BUTTON_OPTIONS,
     GRID_STEP_RADIO_BUTTON_OPTIONS,
@@ -62,6 +66,12 @@ const b = block('dialog-placeholder');
 
 export const DIALOG_PLACEHOLDER = Symbol('DIALOG_PLACEHOLDER');
 
+const PLACEHOLDERS_WITH_AXIS_SETTINGS: string[] = [
+    PlaceholderId.X,
+    PlaceholderId.Y,
+    PlaceholderId.Y2,
+];
+
 interface Props {
     item: Placeholder;
     visible: boolean;
@@ -71,6 +81,7 @@ interface Props {
     onApply: (placeholderSettings: PlaceholderSettings) => void;
     sort: Field[];
     drillDownLevel: number;
+    chartConfig: Partial<ServerChartsConfig>;
 }
 
 interface State {
@@ -279,6 +290,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                 items={radioButtonOptions}
                                 value={title}
                                 onUpdate={this.handleAxisTitleModeUpdate}
+                                disabled={this.isAxisHidden()}
                             />
                         </div>
                         {shouldDisabledManualButton && (
@@ -372,6 +384,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         value={axisFormatMode}
                         onUpdate={this.handleAxisFormatModeRadioButtonUpdate}
                         qa={DialogPlaceholderQa.AxisFormatMode}
+                        disabled={this.isAxisHidden()}
                     />
                 }
             />
@@ -379,7 +392,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderAxisModeSettings() {
-        const {sort, visualizationId} = this.props;
+        const {visualizationId, chartConfig} = this.props;
         const {settings, firstField} = this.state;
         const {axisModeMap} = settings;
 
@@ -391,12 +404,15 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const radioButtons = AXIS_MODE_RADIO_BUTTONS.map((option) => {
             if (option.value === SETTINGS.AXIS_MODE.CONTINUOUS) {
+                const sort = (
+                    hasSortThanAffectAxisMode(chartConfig) ? this.props.sort : []
+                ) as ServerSort[];
                 const reasonForDisabling = isContinuousAxisModeDisabled({
                     // Axis mode always depends on first item in placeholder
                     field: firstField,
                     axisSettings: settings,
                     visualizationId,
-                    sort: sort as ServerSort[],
+                    sort: sort,
                 });
 
                 if (reasonForDisabling) {
@@ -437,6 +453,37 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         );
     }
 
+    isAxisHidden() {
+        const {item: placeholder} = this.props;
+        const {axisVisibility = 'show'} = this.state.settings;
+
+        return (
+            PLACEHOLDERS_WITH_AXIS_SETTINGS.includes(placeholder.id) && axisVisibility === 'hide'
+        );
+    }
+
+    renderAxisVisibilitySettings() {
+        const {item: placeholder} = this.props;
+        const {axisVisibility = 'show'} = this.state.settings;
+
+        if (!PLACEHOLDERS_WITH_AXIS_SETTINGS.includes(placeholder.id)) {
+            return null;
+        }
+
+        return (
+            <DialogPlaceholderRow
+                title={i18n('wizard', 'label_axis-visibility')}
+                setting={
+                    <DialogRadioButtons
+                        items={AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS}
+                        value={axisVisibility}
+                        onUpdate={this.handleAxisVisibilityRadioButtonUpdate}
+                    />
+                }
+            />
+        );
+    }
+
     renderGridSettings() {
         const {grid} = this.state.settings;
 
@@ -453,6 +500,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         value={grid}
                         onUpdate={this.handleGridRadioButtonUpdate}
                         qa="grid-radio-buttons"
+                        disabled={this.isAxisHidden()}
                     />
                 }
             />
@@ -470,7 +518,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const axisMode =
             firstField && axisModeMap ? axisModeMap[firstField.guid] : SETTINGS.AXIS_MODE.DISCRETE;
 
-        const disabled = grid === SETTINGS.GRID.OFF;
+        const disabled = grid === SETTINGS.GRID.OFF || this.isAxisHidden();
         const items = GRID_STEP_RADIO_BUTTON_OPTIONS.map((option) => {
             if (option.value === SETTINGS.GRID_STEP.MANUAL) {
                 return {
@@ -531,6 +579,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         items={HIDE_LABELS_RADIO_BUTTON_OPTIONS}
                         value={hideLabels}
                         onUpdate={this.handleHideLabelsRadioButtonsUpdate}
+                        disabled={this.isAxisHidden()}
                     />
                 }
             />
@@ -545,6 +594,8 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             return null;
         }
 
+        const disabled = this.isAxisHidden() || hideLabels === SETTINGS.HIDE_LABELS.YES;
+
         return (
             <DialogPlaceholderRow
                 settingCustomWidth="500px"
@@ -555,7 +606,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         items={LABELS_VIEW_RADIO_BUTTON_OPTIONS}
                         value={labelsView}
                         onUpdate={this.handleLabelsViewRadioButtonUpdate}
-                        disabled={hideLabels === SETTINGS.HIDE_LABELS.YES}
+                        disabled={disabled}
                     />
                 }
             />
@@ -690,9 +741,10 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         return (
             <div>
                 {this.renderScaleSettings()}
-                {this.renderAxisTitleSettings()}
                 {this.renderAxisTypeSettings()}
                 {this.renderAxisModeSettings()}
+                {this.renderAxisVisibilitySettings()}
+                {this.renderAxisTitleSettings()}
                 {this.renderAxisFormatSettings()}
                 {this.renderGridSettings()}
                 {this.renderGridStepSettings()}
@@ -914,6 +966,10 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             (prevState: State) => ({...prevState, ...updatedState}),
             () => this.tooltipRef.current && this.tooltipRef.current.openTooltip(),
         );
+    };
+
+    handleAxisVisibilityRadioButtonUpdate = (axisVisibility: string) => {
+        this.setState({settings: {...this.state.settings, axisVisibility}});
     };
 }
 

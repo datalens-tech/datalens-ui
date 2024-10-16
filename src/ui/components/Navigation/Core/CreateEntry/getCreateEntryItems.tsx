@@ -26,6 +26,7 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
 
     const menuItems: DropdownMenuItemMixed<() => void>[] = [];
     const menuChartItems: DropdownMenuItem<() => void>[] = [];
+    const menuBoardItems: DropdownMenuItem<() => void>[] = [];
     const menuOtherItems: DropdownMenuItem<() => void>[] = [];
 
     creatableEntriesConfig.forEach((entryConfig) => {
@@ -36,6 +37,8 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
         let targetMenu;
         if (entryConfig.submenu === 'charts') {
             targetMenu = menuChartItems;
+        } else if (entryConfig.submenu === 'boards') {
+            targetMenu = menuBoardItems;
         } else if (entryConfig.submenu === 'other') {
             targetMenu = menuOtherItems;
         } else {
@@ -62,7 +65,13 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
         });
     }
 
-    menuItems.push(menuChartItems, menuOtherItems);
+    menuItems.push(menuChartItems);
+
+    if (menuBoardItems.length > 0) {
+        menuItems.push(menuBoardItems);
+    }
+
+    menuItems.push(menuOtherItems);
 
     return menuItems;
 };
