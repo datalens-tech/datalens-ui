@@ -1,3 +1,4 @@
+import {EntryUpdateMode} from '../../..';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import type {
@@ -23,6 +24,7 @@ export const editorActions = {
                     data,
                     name,
                     workbookId,
+                    mode: EntryUpdateMode.Publish,
                 },
                 headers,
             };
