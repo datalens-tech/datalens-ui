@@ -36,6 +36,7 @@ export const scrollToHash = ({
 }) => {
     setTimeout(
         () => {
+            // if the user scrolls the page by himself, disable scrolling
             if (!checkUserScroll || window.scrollY === 0) {
                 scrollIntoView(hash.replace('#', ''));
             }
