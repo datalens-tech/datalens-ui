@@ -8,8 +8,6 @@ export const scrollIntoView = (
         return;
     }
 
-    console.log(element);
-
     const offsets = [
         document.querySelector('.action-panel')?.clientHeight,
         document.querySelector('.dash-fixed-header__controls')?.clientHeight,
