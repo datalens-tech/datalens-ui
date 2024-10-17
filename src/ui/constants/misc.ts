@@ -136,6 +136,7 @@ export const REDO_HOTKEY = [MOD_KEY, 'shift', 'z'];
 export const HOTKEYS_SCOPES = {
     GLOBAL: 'global',
     WIZARD: 'wizard',
+    QL: 'ql',
 };
 
 export {

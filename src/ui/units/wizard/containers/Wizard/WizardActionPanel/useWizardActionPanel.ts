@@ -12,7 +12,7 @@ import {useDispatch} from 'react-redux';
 
 import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
-import {REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
+import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
@@ -60,13 +60,13 @@ export const useWizardActionPanel = (
     useBindHotkey({
         key: UNDO_HOTKEY,
         handler: onClickGoBack,
-        options: {scopes: 'wizard'},
+        options: {scopes: HOTKEYS_SCOPES.WIZARD},
     });
 
     useBindHotkey({
         key: REDO_HOTKEY,
         handler: onClickGoForward,
-        options: {scopes: 'wizard'},
+        options: {scopes: HOTKEYS_SCOPES.WIZARD},
     });
 
     const defaultButtons: AdditionalButtonTemplate[] = React.useMemo<

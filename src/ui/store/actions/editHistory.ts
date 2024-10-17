@@ -173,7 +173,7 @@ export function goBack({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            dispatch(setState({state: targetState}));
+            setState({state: targetState});
         });
     };
 }
@@ -212,7 +212,7 @@ export function goForward({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            dispatch(setState({state: targetState}));
+            setState({state: targetState});
         });
     };
 }

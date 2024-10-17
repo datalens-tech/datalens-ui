@@ -42,7 +42,7 @@ class App extends React.PureComponent<Props> {
             dispatchResize();
         }
 
-        if (prevProps.entry !== this.props.entry) {
+        if (prevProps.entry?.entryId !== this.props.entry?.entryId) {
             this.updatePageEntry();
             this.forceUpdate();
         }
