@@ -204,7 +204,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
             | WizardVisualizationId.ScatterD3
-            | WizardVisualizationId.Treemap;
+            | WizardVisualizationId.Treemap
+            | WizardVisualizationId.TreemapD3;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;
