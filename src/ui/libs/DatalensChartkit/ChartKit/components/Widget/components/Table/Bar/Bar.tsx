@@ -43,8 +43,11 @@ export const Bar = (props: BarProps) => {
 
     return (
         <div className={b()}>
-            <div className={b('block')} style={barStyle} />
-            {Boolean(separatorStyle) && <div className={b('separator')} style={separatorStyle} />}
+            <div className={b('block')} style={barStyle}>
+                {Boolean(separatorStyle) && (
+                    <span className={b('separator')} style={separatorStyle} />
+                )}
+            </div>
             {/* Cast is using to avoid artifacts in case of using user`s input like {showLabel: 0} */}
             {Boolean(showLabel && isValid) && displayedValue}
         </div>
