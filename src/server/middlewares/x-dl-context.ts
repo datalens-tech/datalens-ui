@@ -2,6 +2,7 @@ import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 
 import {
     DASH_INFO_HEADER,
+    DISPLAY_MODE_HEADER,
     DL_CONTEXT_HEADER,
     REQUEST_ID_HEADER,
     TENANT_ID_HEADER,
@@ -39,6 +40,12 @@ export default function xDlContext() {
             if (dashTabId) {
                 context.dashTabId = dashTabId;
             }
+        }
+
+        const dispayMode = req.headers[DISPLAY_MODE_HEADER];
+
+        if (dispayMode) {
+            context.displayMode = dispayMode;
         }
 
         req.headers[DL_CONTEXT_HEADER] = JSON.stringify(context);
