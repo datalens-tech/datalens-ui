@@ -17,6 +17,8 @@ export type ChartKitTooltipRef = {
 type ChartKitTooltipAnchor = {
     ref: {current: HTMLElement};
     content: string;
+    hideDelay: number;
+    openDelay: number;
     placement?: PopupPlacement;
 };
 
@@ -45,14 +47,45 @@ const getTooltipPlacement = (value = '') => {
     return result ? (result as PopupPlacement) : undefined;
 };
 
+const createAnchor = (node: HTMLElement): ChartKitTooltipAnchor => {
+    return {
+        ref: {current: node},
+        content: getTooltipContent(node.dataset['tooltipContent']),
+        openDelay: Number(node.dataset['tooltipOpenDelay']) || 0,
+        hideDelay: Number(node.dataset['tooltipHideDelay']) || 0,
+        placement: getTooltipPlacement(node.dataset['tooltipPlacement']),
+    };
+};
+
 const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined, {}>(
     function ChartKitTooltip(_props, ref) {
         const [anchor, setAnchor] = React.useState<ChartKitTooltipAnchor | null>(null);
+        const [hover, setHover] = React.useState(false);
+        const [open, setOpen] = React.useState(false);
+        const timeoutIdRef = React.useRef<number | null>(null);
+
+        const setOpenAsync = React.useCallback((nextOpen: boolean, delay: number) => {
+            if (timeoutIdRef.current) {
+                window.clearTimeout(timeoutIdRef.current);
+            }
+
+            timeoutIdRef.current = window.setTimeout(() => {
+                setOpen(nextOpen);
+
+                if (!nextOpen) {
+                    setHover(false);
+                }
+            }, delay);
+        }, []);
 
         React.useImperativeHandle(
             ref,
             () => ({
                 checkForTooltipNode(e) {
+                    if (hover) {
+                        return;
+                    }
+
                     let node = e.target as HTMLElement | null;
 
                     if (!node) {
@@ -66,21 +99,19 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                     }
 
                     const id = node.id;
-                    const rawContent = node.dataset['tooltipContent'];
+                    const hasRawContent = Boolean(node.dataset['tooltipContent']);
                     const currentId = anchor?.ref.current.id;
 
-                    if (id && rawContent && currentId !== id) {
-                        setAnchor({
-                            ref: {current: node},
-                            content: getTooltipContent(rawContent),
-                            placement: getTooltipPlacement(node.dataset['tooltipPlacement']),
-                        });
+                    if (id && hasRawContent && currentId !== id) {
+                        const nextAnchor = createAnchor(node);
+                        setAnchor(nextAnchor);
+                        setOpenAsync(true, nextAnchor.openDelay);
                     } else if (anchor !== null && currentId !== id) {
-                        setAnchor(null);
+                        setOpenAsync(false, anchor.hideDelay);
                     }
                 },
             }),
-            [anchor],
+            [anchor, hover, setAnchor, setOpenAsync],
         );
 
         React.useEffect(() => {
@@ -88,19 +119,23 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
             window.dispatchEvent(new CustomEvent('scroll'));
         });
 
-        if (!anchor) {
-            return null;
-        }
-
         return (
             <Popup
-                key={anchor.ref.current.id}
-                anchorRef={anchor.ref}
-                placement={anchor.placement}
-                open={true}
+                key={anchor?.ref.current.id}
+                anchorRef={anchor?.ref}
+                placement={anchor?.placement}
+                open={open}
                 hasArrow={true}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => {
+                    setHover(false);
+                    if (anchor) {
+                        setOpenAsync(false, anchor.hideDelay);
+                    }
+                }}
+                onTransitionExited={() => setAnchor(null)}
             >
-                <div className={b()} dangerouslySetInnerHTML={{__html: anchor.content}} />
+                <div className={b()} dangerouslySetInnerHTML={{__html: anchor?.content || ''}} />
             </Popup>
         );
     },
