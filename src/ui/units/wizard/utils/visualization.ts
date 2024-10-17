@@ -31,7 +31,7 @@ import {
     PIVOT_TABLE_VISUALIZATION,
     POLYLINE_VISUALIZATION,
     SCATTER_D3_VISUALIZATION,
-    SCATTER_VISUALIZATION,
+    SCATTER_VISUALIZATION, TREEMAP_D3_VISUALIZATION,
     TREEMAP_VISUALIZATION,
 } from '../../../../ui/constants/visualizations';
 import {ITEM_TYPES} from '../constants';
@@ -138,6 +138,10 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
         {
             value: TREEMAP_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...TREEMAP_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: FLAT_TABLE_VISUALIZATION,

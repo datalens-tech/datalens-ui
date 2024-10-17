@@ -5,22 +5,21 @@ import {
     MINIMUM_FRACTION_DIGITS,
     isDateField,
     isMarkdownField,
-} from '../../../../../../shared';
-import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
-import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
+} from '../../../../../../../shared';
+import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
+import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
-} from '../utils/color-helpers';
+} from '../../utils/color-helpers';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
     isGradientMode,
     isNumericalDataType,
-} from '../utils/misc-helpers';
-
-import type {PrepareFunctionArgs} from './types';
+} from '../../utils/misc-helpers';
+import type {PrepareFunctionArgs} from '../types';
 
 type TreemapItemName = string | null | WrappedMarkdown;
 
@@ -35,7 +34,7 @@ type TreemapItem = {
     custom?: object;
 };
 
-function prepareTreemap({
+export function prepareHighchartsTreemap({
     placeholders,
     resultData,
     colors,
@@ -303,5 +302,3 @@ function prepareTreemap({
 
     return {graphs};
 }
-
-export default prepareTreemap;
