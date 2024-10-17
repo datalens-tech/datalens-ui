@@ -11,6 +11,8 @@ import {compose} from 'recompose';
 import type {QlConfig} from 'shared/types/config/ql';
 import type {DatalensGlobalState, EntryDialogues, MonacoProps, MonacoTypes} from 'ui';
 import {EntryDialogName, EntryDialogResolveStatus, Monaco} from 'ui';
+import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 import {prepareChartDataBeforeSave} from 'units/ql/modules/helpers';
 import {
     drawPreview,
@@ -219,6 +221,10 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
         };
 
         this.props.setEntry({entry: result.data as QLEntry});
+
+        this.props.resetEditHistoryUnit({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     private onSaveCommand = () => {
@@ -237,6 +243,11 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
         } else {
             // Updating an existing one
             this.props.updateChart(preparedChartData);
+
+            this.props.addEditHistoryPoint({
+                newState: this.props.qlState,
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+            });
         }
     };
 
@@ -265,6 +276,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         connectionSources: getConnectionSources(state),
         connectionSourcesSchemas: getConnectionSourcesSchemas(state),
         previewData: getPreviewData(state),
+        qlState: state.ql,
     };
 };
 
@@ -274,6 +286,8 @@ const mapDispatchToProps = {
     updateChart,
     setEntry,
     fetchConnectionSourceSchema,
+    resetEditHistoryUnit,
+    addEditHistoryPoint,
 };
 
 export default connect(

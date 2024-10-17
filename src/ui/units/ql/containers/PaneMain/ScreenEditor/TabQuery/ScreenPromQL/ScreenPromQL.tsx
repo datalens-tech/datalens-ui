@@ -15,6 +15,8 @@ import type {QLConfigQuery, QlConfig, QlConfigParam} from 'shared/types/config/q
 import type {DatalensGlobalState, EntryDialogues, MonacoTypes} from 'ui';
 import {EntryDialogName, EntryDialogResolveStatus, Monaco} from 'ui';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 
 import {TabQueryQA} from '../../../../../../../../shared';
 import {EditableText} from '../../../../../../../components/EditableText/EditableText';
@@ -492,6 +494,10 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         };
 
         this.props.setEntry({entry: result.data as QLEntry});
+
+        this.props.resetEditHistoryUnit({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     private onSaveCommand = () => {
@@ -510,6 +516,15 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         } else {
             // Updating an existing one
             this.props.updateChart(preparedChartData);
+
+            this.props.resetEditHistoryUnit({
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+            });
+
+            this.props.addEditHistoryPoint({
+                newState: this.props.qlState,
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+            });
         }
     };
 
@@ -548,6 +563,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         extraSettings: getExtraSettings(state),
         valid: getValid(state),
         chartType: getChartType(state),
+        qlState: state.ql,
     };
 };
 
@@ -564,6 +580,8 @@ const mapDispatchToProps = {
     removeParamInQuery,
     updateQueryAndRedraw,
     removeQueryAndRedraw,
+    resetEditHistoryUnit,
+    addEditHistoryPoint,
 };
 
 export default connect(

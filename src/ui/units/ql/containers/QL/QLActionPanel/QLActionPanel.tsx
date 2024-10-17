@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
-import type {EntryDialogues} from 'ui';
+import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {
     ActionPanel,
     DialogNoRights,
@@ -17,6 +17,8 @@ import {
     Utils,
     useEffectOnce,
 } from 'ui';
+import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
@@ -96,6 +98,8 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
 
     const [dialogNoRightsVisible, setDialogNoRightsVisible] = useState(false);
     const [dialogSettingsVisible, setDialogSettingsVisible] = useState(false);
+
+    const qlState = useSelector((state: DatalensGlobalState) => state.ql);
 
     useEffectOnce(() => {
         window.addEventListener('beforeunload', (event) => {
@@ -186,6 +190,12 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
             };
 
             dispatch(setEntry({entry: result.data as QLEntry}));
+
+            dispatch(
+                resetEditHistoryUnit({
+                    unitId: QL_EDIT_HISTORY_UNIT_ID,
+                }),
+            );
         },
         [connection, defaultPath, dispatch, entry, entryDialoguesRef, getDefaultChartName],
     );
@@ -206,9 +216,16 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                 // Updating an existing one
                 dispatch(updateChart(preparedChartData, mode));
                 dispatch(reloadRevisionsOnSave(true));
+
+                dispatch(
+                    addEditHistoryPoint({
+                        newState: qlState,
+                        unitId: QL_EDIT_HISTORY_UNIT_ID,
+                    }),
+                );
             }
         },
-        [dispatch, entry, openSaveAsWidgetDialog, previewData],
+        [dispatch, entry, openSaveAsWidgetDialog, previewData, qlState],
     );
 
     const openNoRightsDialog = useCallback(() => {

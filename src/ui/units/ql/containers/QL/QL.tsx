@@ -12,7 +12,7 @@ import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import type {DatalensGlobalState} from 'ui';
 import {EntryDialogues, URL_QUERY} from 'ui';
-import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {initEditHistoryUnit, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import Grid from 'units/ql/components/Grid/Grid';
 import {AppStatus, QL_EDIT_HISTORY_UNIT_ID} from 'units/ql/constants';
 import {initializeApplication, resetQLStore, setQLStore} from 'units/ql/store/actions/ql';
@@ -59,11 +59,7 @@ class QL extends React.PureComponent<QLInnerProps> {
                 });
             },
             options: {
-                pathIgnoreList: [
-                    '/preview/highchartsWidget',
-                    '/preview/filters',
-                    '/visualization/layers',
-                ],
+                pathIgnoreList: ['/preview/highchartsWidget', '/preview/filters'],
             },
         });
     }
@@ -89,6 +85,7 @@ class QL extends React.PureComponent<QLInnerProps> {
 
         if (hasRevisionChanged && !hasQlEntryChanged) {
             this.props.resetQLStore();
+
             this.props.initializeApplication({
                 location,
                 history,
@@ -99,6 +96,10 @@ class QL extends React.PureComponent<QLInnerProps> {
         if (hasQlEntryChanged) {
             this.props.cleanRevisions();
             this.props.setRevisionsMode(RevisionsMode.Closed);
+
+            this.props.resetEditHistoryUnit({
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+            });
 
             if (currentRevId) {
                 const searchParams = new URLSearchParams(location.search);
@@ -121,6 +122,9 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentWillUnmount() {
         this.props.resetQLStore();
         this.props.resetWizardStore();
+        this.props.resetEditHistoryUnit({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
     }
 
     render() {
@@ -192,6 +196,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
 
 const mapDispatchToProps = {
     initEditHistoryUnit,
+    resetEditHistoryUnit,
     initializeApplication,
     resetQLStore,
     setQLStore,

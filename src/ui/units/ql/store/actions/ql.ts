@@ -11,6 +11,7 @@ import type {
     QlConfigParam,
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
+import {addEditHistoryPoint} from 'ui/store/actions/editHistory';
 
 import type {
     CommonSharedExtraSettings,
@@ -62,6 +63,7 @@ import {
     AVAILABLE_CHART_TYPES,
     AppStatus,
     ConnectionStatus,
+    QL_EDIT_HISTORY_UNIT_ID,
     QL_MOCKED_DATASET_ID,
 } from '../../constants';
 import {prepareChartDataBeforeSave} from '../../modules/helpers';
@@ -483,6 +485,13 @@ export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
             withoutTable: withoutTable || false,
             previewData,
         });
+
+        dispatch(
+            addEditHistoryPoint({
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+                newState: getState().ql,
+            }),
+        );
     };
 };
 
@@ -875,6 +884,8 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     );
                 }
 
+                dispatch(setStatus(AppStatus.Ready));
+
                 datalensGlobalState = getState();
 
                 dispatch(
@@ -882,8 +893,6 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                         withoutTable: false,
                     }),
                 );
-
-                dispatch(setStatus(AppStatus.Ready));
             } catch (error) {
                 logger.logError('ql: initializeApplication failed', error);
 
