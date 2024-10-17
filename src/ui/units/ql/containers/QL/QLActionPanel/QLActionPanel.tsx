@@ -100,6 +100,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     const [dialogSettingsVisible, setDialogSettingsVisible] = useState(false);
 
     const qlState = useSelector((state: DatalensGlobalState) => state.ql);
+    const wizardState = useSelector((state: DatalensGlobalState) => state.wizard);
 
     useEffectOnce(() => {
         window.addEventListener('beforeunload', (event) => {
@@ -219,13 +220,13 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
 
                 dispatch(
                     addEditHistoryPoint({
-                        newState: qlState,
+                        newState: {ql: qlState, wizard: wizardState},
                         unitId: QL_EDIT_HISTORY_UNIT_ID,
                     }),
                 );
             }
         },
-        [dispatch, entry, openSaveAsWidgetDialog, previewData, qlState],
+        [dispatch, entry, openSaveAsWidgetDialog, previewData, qlState, wizardState],
     );
 
     const openNoRightsDialog = useCallback(() => {

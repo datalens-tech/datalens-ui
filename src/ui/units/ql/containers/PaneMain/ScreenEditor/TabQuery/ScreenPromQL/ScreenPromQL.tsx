@@ -522,7 +522,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
             });
 
             this.props.addEditHistoryPoint({
-                newState: this.props.qlState,
+                newState: {ql: this.props.qlState, wizard: this.props.wizardState},
                 unitId: QL_EDIT_HISTORY_UNIT_ID,
             });
         }
@@ -564,6 +564,7 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         valid: getValid(state),
         chartType: getChartType(state),
         qlState: state.ql,
+        wizardState: state.wizard,
     };
 };
 

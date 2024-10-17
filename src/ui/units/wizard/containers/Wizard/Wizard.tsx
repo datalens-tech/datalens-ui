@@ -171,7 +171,7 @@ class Wizard extends React.Component<Props, State> {
         this.props.initEditHistoryUnit({
             unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
             setState: ({state}) => {
-                return this.props.setWizardStore({
+                this.props.setWizardStore({
                     store: state as unknown as WizardGlobalState,
                 });
             },

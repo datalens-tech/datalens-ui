@@ -489,7 +489,10 @@ export const drawPreview = ({withoutTable}: {withoutTable?: boolean} = {}) => {
         dispatch(
             addEditHistoryPoint({
                 unitId: QL_EDIT_HISTORY_UNIT_ID,
-                newState: getState().ql,
+                newState: {
+                    ql: getState().ql,
+                    wizard: getState().wizard,
+                },
             }),
         );
     };

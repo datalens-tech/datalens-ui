@@ -6,7 +6,7 @@ import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Feature, QLPageQA} from 'shared';
 import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
-import {REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
+import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
 import {useBindHotkey} from 'ui/hooks/useBindHotkey';
 import {type DatalensGlobalState, Utils} from 'ui/index';
 import {goBack, goForward} from 'ui/store/actions/editHistory';
@@ -49,19 +49,20 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
     useBindHotkey({
         key: UNDO_HOTKEY,
         handler: onClickGoBack,
-        options: {scopes: 'wizard'},
+        options: {scopes: HOTKEYS_SCOPES.QL},
     });
 
     useBindHotkey({
         key: REDO_HOTKEY,
         handler: onClickGoForward,
-        options: {scopes: 'wizard'},
+        options: {scopes: HOTKEYS_SCOPES.QL},
     });
 
     return React.useMemo<AdditionalButtonTemplate[]>(() => {
         let items: AdditionalButtonTemplate[] = [
             {
                 key: 'toggle-table-preview-button',
+                // TODO move key from wizard
                 title: i18n('wizard', 'tooltip_table-preview'),
                 action: () => onClickButtonToggleTablePreview(),
                 className: b('toggle-preview-btn'),
