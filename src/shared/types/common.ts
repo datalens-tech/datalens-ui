@@ -1,5 +1,5 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
-import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
+import type {Lang as GravityLang, TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
@@ -51,7 +51,7 @@ export interface DLUserSettings {
     phone?: string;
     cloudId?: string;
     folderId?: string;
-    language?: Language;
+    language?: GravityLang | Language;
     isDefaultLanguage?: boolean;
     theme?: Theme;
     themeSettings?: ThemeSettings;
