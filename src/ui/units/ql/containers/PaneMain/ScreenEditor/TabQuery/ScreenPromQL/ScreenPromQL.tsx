@@ -498,6 +498,11 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
         this.props.resetEditHistoryUnit({
             unitId: QL_EDIT_HISTORY_UNIT_ID,
         });
+
+        this.props.addEditHistoryPoint({
+            newState: {ql: this.props.qlState, wizard: this.props.wizardState},
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     private onSaveCommand = () => {

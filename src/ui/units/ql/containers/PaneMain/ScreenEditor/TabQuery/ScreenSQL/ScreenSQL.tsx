@@ -225,6 +225,11 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
         this.props.resetEditHistoryUnit({
             unitId: QL_EDIT_HISTORY_UNIT_ID,
         });
+
+        this.props.addEditHistoryPoint({
+            newState: this.props.qlState,
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     private onSaveCommand = () => {

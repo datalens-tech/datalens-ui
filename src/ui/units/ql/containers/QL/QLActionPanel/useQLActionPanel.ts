@@ -16,13 +16,13 @@ import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
 const b = block('wizard-action-panel');
 
 export type UseQlActionPanelArgs = {
-    onClickButtonToggleTablePreview: () => void;
+    handleClickButtonToggleTablePreview: () => void;
 };
 
 export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {onClickButtonToggleTablePreview} = args;
+    const {handleClickButtonToggleTablePreview} = args;
 
     const enableEditHistoryQL = Utils.isEnabledFeature(Feature.EnableEditHistoryQL);
 
@@ -34,13 +34,13 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
         (state) => selectCanGoForward(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
     );
 
-    const onClickGoBack = React.useCallback(() => {
+    const handleClickGoBack = React.useCallback(() => {
         if (canGoBack && enableEditHistoryQL) {
             dispatch(goBack({unitId: QL_EDIT_HISTORY_UNIT_ID}));
         }
     }, [canGoBack, dispatch, enableEditHistoryQL]);
 
-    const onClickGoForward = React.useCallback(() => {
+    const handleClickGoForward = React.useCallback(() => {
         if (canGoForward && enableEditHistoryQL) {
             dispatch(goForward({unitId: QL_EDIT_HISTORY_UNIT_ID}));
         }
@@ -48,13 +48,13 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
 
     useBindHotkey({
         key: UNDO_HOTKEY,
-        handler: onClickGoBack,
+        handler: handleClickGoBack,
         options: {scopes: HOTKEYS_SCOPES.QL},
     });
 
     useBindHotkey({
         key: REDO_HOTKEY,
-        handler: onClickGoForward,
+        handler: handleClickGoForward,
         options: {scopes: HOTKEYS_SCOPES.QL},
     });
 
@@ -64,7 +64,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                 key: 'toggle-table-preview-button',
                 // TODO move key from wizard
                 title: i18n('wizard', 'tooltip_table-preview'),
-                action: () => onClickButtonToggleTablePreview(),
+                action: () => handleClickButtonToggleTablePreview(),
                 className: b('toggle-preview-btn'),
                 icon: {
                     data: LayoutHeader,
@@ -78,7 +78,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
             items = [
                 {
                     key: 'undo',
-                    action: onClickGoBack,
+                    action: handleClickGoBack,
                     className: b('undo-btn'),
                     icon: {data: ArrowUturnCcwLeft, size: 16},
                     view: 'flat',
@@ -89,7 +89,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                 },
                 {
                     key: 'redo',
-                    action: onClickGoForward,
+                    action: handleClickGoForward,
                     className: b('redo-btn'),
                     icon: {data: ArrowUturnCwRight, size: 16},
                     view: 'flat',
@@ -105,10 +105,10 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
         return items;
     }, [
         enableEditHistoryQL,
-        onClickButtonToggleTablePreview,
-        onClickGoBack,
+        handleClickButtonToggleTablePreview,
+        handleClickGoBack,
         canGoBack,
-        onClickGoForward,
+        handleClickGoForward,
         canGoForward,
     ]);
 };

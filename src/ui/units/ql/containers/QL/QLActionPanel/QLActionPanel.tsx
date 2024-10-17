@@ -145,7 +145,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         return items;
     }, [redirectUrl]);
 
-    const getDefaultChartName = useCallback(() => {
+    const defaultChartName = useMemo(() => {
         if (connection === null) {
             return '';
         }
@@ -168,7 +168,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     ? i18n('wizard', 'label_widget-name-copy', {
                           name: Utils.getEntryNameFromKey(entry.key, true),
                       })
-                    : getDefaultChartName();
+                    : defaultChartName;
 
             const result = await entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.CreateQLChart,
@@ -197,11 +197,27 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     unitId: QL_EDIT_HISTORY_UNIT_ID,
                 }),
             );
+
+            dispatch(
+                addEditHistoryPoint({
+                    newState: {ql: qlState, wizard: wizardState},
+                    unitId: QL_EDIT_HISTORY_UNIT_ID,
+                }),
+            );
         },
-        [connection, defaultPath, dispatch, entry, entryDialoguesRef, getDefaultChartName],
+        [
+            connection,
+            defaultPath,
+            dispatch,
+            entry,
+            entryDialoguesRef,
+            defaultChartName,
+            qlState,
+            wizardState,
+        ],
     );
 
-    const onClickButtonSave = useCallback(
+    const handleClickButtonSave = useCallback(
         (mode) => {
             if (!previewData || !entry) {
                 return;
@@ -229,21 +245,29 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         [dispatch, entry, openSaveAsWidgetDialog, previewData, qlState, wizardState],
     );
 
+    const handleClickButtonSaveAs = useCallback(() => {
+        if (previewData) {
+            const preparedChartData = prepareChartDataBeforeSave(previewData);
+
+            openSaveAsWidgetDialog(preparedChartData);
+        }
+    }, [openSaveAsWidgetDialog, previewData]);
+
     const openNoRightsDialog = useCallback(() => {
         setDialogNoRightsVisible(true);
     }, []);
 
-    const onClickButtonToggleTablePreview = useCallback(() => {
+    const handleClickButtonToggleTablePreview = useCallback(() => {
         dispatch(toggleTablePreview());
     }, [dispatch]);
 
     const saveAsDraftClick = useCallback(() => {
-        onClickButtonSave(EntryUpdateMode.Save);
-    }, [onClickButtonSave]);
+        handleClickButtonSave(EntryUpdateMode.Save);
+    }, [handleClickButtonSave]);
 
     const saveAsPublishedClick = useCallback(() => {
-        onClickButtonSave(EntryUpdateMode.Publish);
-    }, [onClickButtonSave]);
+        handleClickButtonSave(EntryUpdateMode.Publish);
+    }, [handleClickButtonSave]);
 
     const saveAsAction = useCallback(() => {
         if (!previewData) {
@@ -267,8 +291,33 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         }
     }, [entry, entryDialoguesRef]);
 
+    const handleCloseDialogNoRights = useCallback(() => {
+        setDialogNoRightsVisible(false);
+    }, []);
+
+    const handleCancelDialogSettings = useCallback(() => {
+        setDialogSettingsVisible(false);
+    }, []);
+
+    const handleApplyDialogSettings = useCallback(
+        ({extraSettings: newExtraSettings}: {extraSettings: CommonSharedExtraSettings}) => {
+            setDialogSettingsVisible(false);
+
+            if (!_isEqual(extraSettings, newExtraSettings)) {
+                dispatch(setExtraSettings({extraSettings: newExtraSettings}));
+
+                dispatch(
+                    drawPreview({
+                        withoutTable: true,
+                    }),
+                );
+            }
+        },
+        [dispatch, extraSettings],
+    );
+
     const additionalButtons = useQLActionPanel({
-        onClickButtonToggleTablePreview,
+        handleClickButtonToggleTablePreview,
     });
 
     return (
@@ -283,7 +332,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     <QlActionPanelExtension key="ql-action-panel-extension" />,
                     <ChartSaveControls
                         key="header-right-controls"
-                        onClickButtonSave={onClickButtonSave}
+                        onClickButtonSave={handleClickButtonSave}
                         onOpenNoRightsDialog={openNoRightsDialog}
                         isLocked={Boolean(entryLocked)}
                         isSaveButtonDisabled={isSaveButtonDisabled}
@@ -300,43 +349,17 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
             />
             <DialogNoRights
                 visible={dialogNoRightsVisible}
-                onClose={() => {
-                    setDialogNoRightsVisible(false);
-                }}
+                onClose={handleCloseDialogNoRights}
                 onAccessRights={openRequestWidgetAccessRightsDialog}
-                onSaveAs={() => {
-                    if (previewData) {
-                        const preparedChartData = prepareChartDataBeforeSave(previewData);
-
-                        openSaveAsWidgetDialog(preparedChartData);
-                    }
-                }}
+                onSaveAs={handleClickButtonSaveAs}
             />
             {entry && (
                 <DialogSettings
                     entry={entry}
                     extraSettings={extraSettings}
                     visible={dialogSettingsVisible}
-                    onCancel={() => {
-                        setDialogSettingsVisible(false);
-                    }}
-                    onApply={({
-                        extraSettings: newExtraSettings,
-                    }: {
-                        extraSettings: CommonSharedExtraSettings;
-                    }) => {
-                        setDialogSettingsVisible(false);
-
-                        if (!_isEqual(extraSettings, newExtraSettings)) {
-                            dispatch(setExtraSettings({extraSettings: newExtraSettings}));
-
-                            dispatch(
-                                drawPreview({
-                                    withoutTable: true,
-                                }),
-                            );
-                        }
-                    }}
+                    onCancel={handleCancelDialogSettings}
+                    onApply={handleApplyDialogSettings}
                 />
             )}
         </React.Fragment>
