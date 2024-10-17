@@ -1,5 +1,14 @@
-import type {ExportingColumnOptions, ServerField} from '../../../../../../shared';
-import {getFakeTitleOrTitle, isDateField} from '../../../../../../shared';
+import type {
+    ColumnExportSettings,
+    ExportingColumnOptions,
+    ServerField,
+} from '../../../../../../shared';
+import {
+    getFakeTitleOrTitle,
+    getFormatOptions,
+    isDateField,
+    isNumberField,
+} from '../../../../../../shared';
 
 import {getDefaultDateFormat} from './misc-helpers';
 
@@ -23,5 +32,19 @@ export function getFieldExportingOptions(field?: ServerField): ExportingColumnOp
         title: field ? getFakeTitleOrTitle(field) : undefined,
         dataType: field?.data_type,
         format,
+    };
+}
+
+export function getExportColumnSettings(args: {
+    path: string;
+    field?: ServerField;
+}): ColumnExportSettings {
+    const {path, field} = args;
+
+    return {
+        name: getFakeTitleOrTitle(field),
+        formatter: field ? getFormatOptions(field) : {},
+        field: path,
+        type: isNumberField(field) ? 'number' : 'text',
     };
 }
