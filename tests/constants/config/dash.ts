@@ -11,6 +11,7 @@ export const dash: DashParametrizationConfig = {
         DashboardMoreThan100Revisions: DashUrls.DashboardMoreThan100Revisions,
         DashboardWithErrorChart: DashUrls.DashboardWithErrorChart,
         DashboardWithAPIErrorChart: DashUrls.DashboardWithAPIErrorChart,
+        DashboardWithDifferentWidgets: DashUrls.DashboardWithDifferentWidgets,
     },
     charts: {
         ChartCityPie: ChartsParams.ChartCityPie,

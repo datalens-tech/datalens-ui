@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 import {slct} from '../../utils';
-import {DashTabsQA} from '../../../src/shared/constants/qa/components';
+import {DashTabsQA} from '../../../src/shared';
 
 export class DashTabs {
     static selectors = {
