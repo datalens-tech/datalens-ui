@@ -3,7 +3,6 @@ import {
     AppEnvironment,
     DeviceType,
     DlsAcl,
-    EntryScope,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
@@ -286,8 +285,7 @@ export enum Scope {
     Config = 'config',
 }
 
-// TODO: delete after update
-export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Report];
+export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
