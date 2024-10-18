@@ -44,7 +44,7 @@ export const addShowInNavigatorToSeries = ({
             const xMinValue = getXAxisThresholdValue(graphs, 'min');
             const xMaxValue = getXAxisThresholdValue(graphs, 'max');
 
-            const navigatorParams = {...params.navigator} || {};
+            const navigatorParams = {...params.navigator};
 
             if (navigatorParams.xAxis) {
                 navigatorParams.xAxis.min = xMinValue;
