@@ -11,13 +11,13 @@ import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
+import {scrollToHash} from 'ui/utils';
 import {
     selectHashStates,
     selectShowTableOfContent,
     selectTabId,
     selectTabs,
 } from 'units/dash/store/selectors/dashTypedSelectors';
-import {scrollIntoView} from 'utils';
 
 import {
     appendSearchQuery,
@@ -33,9 +33,7 @@ const i18n = I18n.keyset('dash.table-of-content.view');
 
 const b = block('table-of-content');
 
-const scrollIntoViewOptions: ScrollIntoViewOptions = {behavior: 'smooth'};
 const dispatchResizeTimeout = 200;
-const scrollDelay = 300;
 
 const getHash = ({
     itemTitle,
@@ -51,16 +49,6 @@ const getHash = ({
     }
 
     return itemTitle ? `#${encodeURIComponent(itemTitle)}` : '';
-};
-
-const scrollIntoViewWithTimeout = (itemId: string) => {
-    setTimeout(
-        () => scrollIntoView(itemId, scrollIntoViewOptions),
-        // to have time to change the height of the react-grid-layout (200ms)
-        // DashKit rendering ended after location change (with manual page refresh) (50-70ms)
-        // small margin
-        scrollDelay,
-    );
 };
 
 const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
@@ -98,7 +86,7 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                     handleToggleTableOfContent();
                 }
                 if (disableHashNavigation) {
-                    scrollIntoViewWithTimeout(encodeURIComponent(itemTitle));
+                    scrollToHash({hash: `#${encodeURIComponent(itemTitle)}`, withDelay: true});
                 }
             },
             [isSelectedTab, disableHashNavigation, dispatch, handleToggleTableOfContent],
@@ -125,11 +113,6 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
             [disableHashNavigation, hashStates, isSelectedTab, location],
         );
 
-        React.useEffect(() => {
-            if (location.hash && !disableHashNavigation) {
-                scrollIntoViewWithTimeout(location.hash.replace('#', ''));
-            }
-        }, [location.hash, disableHashNavigation]);
         React.useEffect(() => {
             // to recalculate ReactGridLayout
             dispatchResize(dispatchResizeTimeout);

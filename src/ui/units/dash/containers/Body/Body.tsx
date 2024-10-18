@@ -65,7 +65,7 @@ import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
 import type SDK from '../../../../libs/sdk';
-import Utils from '../../../../utils';
+import Utils, {scrollToHash} from '../../../../utils';
 import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
@@ -152,6 +152,7 @@ type DashBodyState = {
     loaded: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
+    hash: string;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -180,18 +181,27 @@ const GROUPS_WEIGHT = {
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
+        let newState: Partial<DashBodyState> = {};
+
         const {
             prevMeta: {entryId, tabId},
         } = state;
-
         // reset loaded before new tab/entry items are mounted
         if (props.entryId !== entryId || props.tabId !== tabId) {
             state.loadedItemsMap.clear();
-
-            return {prevMeta: {tabId: props.tabId, entryId: props.entryId}, loaded: false};
+            newState = {
+                prevMeta: {tabId: props.tabId, entryId: props.entryId},
+                loaded: false,
+            };
         }
 
-        return null;
+        const newHash = props.location.hash;
+        if (newHash !== state.hash) {
+            newState.hash = newHash;
+            scrollToHash({hash: newHash.replace('#', ''), withDelay: props.tabId !== tabId});
+        }
+
+        return Object.keys(newState).length ? newState : null;
     }
 
     dashKitRef = React.createRef<DashKitComponent>();
@@ -250,6 +260,7 @@ class Body extends React.PureComponent<BodyProps> {
         prevMeta: {tabId: null, entryId: null},
         loaded: false,
         loadedItemsMap: new Map<string, boolean>(),
+        hash: '',
     };
 
     groups: DashKitGroup[] = [
@@ -288,6 +299,8 @@ class Body extends React.PureComponent<BodyProps> {
     componentDidMount() {
         // if localStorage already have a dash item, we need to set it to state
         this.storageHandler();
+
+        scrollToHash({hash: this.props.location.hash, withDelay: true, checkUserScroll: true});
 
         window.addEventListener('storage', this.storageHandler);
     }
@@ -853,6 +866,7 @@ class Body extends React.PureComponent<BodyProps> {
             isEditModeLoading,
             globalParams,
             dashkitSettings,
+            disableHashNavigation,
         } = this.props;
 
         const tabDataConfig = DL.IS_MOBILE
@@ -860,7 +874,8 @@ class Body extends React.PureComponent<BodyProps> {
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
-        const DashKit = getConfiguredDashKit();
+
+        const DashKit = getConfiguredDashKit(undefined, disableHashNavigation);
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState

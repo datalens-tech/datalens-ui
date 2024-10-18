@@ -15,24 +15,28 @@ type RendererProps = {
     nodeRef?: React.RefObject<HTMLDivElement>;
     classMod?: string;
     style?: React.CSSProperties;
+    childContent?: React.ReactNode;
 };
 
 export const RendererWrapper: React.FC<RendererProps> = React.memo(
-    ({children, type, nodeRef, classMod, ...props}) => {
+    ({children, type, nodeRef, classMod, childContent, ...props}) => {
         const innerNodeRef = React.useRef(null);
         useWidgetContext(props.id, nodeRef || innerNodeRef);
 
         return (
-            <div
-                ref={nodeRef || innerNodeRef}
-                className={b('wrapper', {
-                    [type]: Boolean(type),
-                    [String(classMod)]: Boolean(classMod),
-                })}
-                {...props}
-            >
-                {children}
-            </div>
+            <React.Fragment>
+                {childContent}
+                <div
+                    ref={nodeRef || innerNodeRef}
+                    className={b('wrapper', {
+                        [type]: Boolean(type),
+                        [String(classMod)]: Boolean(classMod),
+                    })}
+                    {...props}
+                >
+                    {children}
+                </div>
+            </React.Fragment>
         );
     },
 );
