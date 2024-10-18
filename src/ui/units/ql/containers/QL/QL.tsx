@@ -59,10 +59,10 @@ class QL extends React.PureComponent<QLInnerProps> {
         this.entryDialoguesRef = React.createRef();
         this.hotkeysAreaRef = React.createRef();
 
-        this.props.initEditHistoryUnit({
+        this.props.initEditHistoryUnit<{ql: QLState; wizard: WizardGlobalState}>({
             unitId: QL_EDIT_HISTORY_UNIT_ID,
             setState: ({state}) => {
-                const {ql, wizard} = state as unknown as {ql: QLState; wizard: WizardGlobalState};
+                const {ql, wizard} = state;
 
                 this.props.setQLStore({
                     store: ql,

@@ -5,13 +5,14 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Feature, QLPageQA} from 'shared';
-import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
-import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
-import {useBindHotkey} from 'ui/hooks/useBindHotkey';
-import {type DatalensGlobalState, Utils} from 'ui/index';
-import {goBack, goForward} from 'ui/store/actions/editHistory';
-import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
-import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
+
+import {type DatalensGlobalState, Utils} from '../../../../../';
+import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
+import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
+import {goBack, goForward} from '../../../../../store/actions/editHistory';
+import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
+import {QL_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 
 const b = block('wizard-action-panel');
 

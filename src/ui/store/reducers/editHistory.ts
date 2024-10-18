@@ -18,11 +18,11 @@ import type {CreateJDPOptions} from '../utils/jdp';
 
 export type Diff = JDPDelta;
 
-export type EditHistoryUnit = {
+export type EditHistoryUnit<T = unknown> = {
     diffs: Diff[];
     pointIndex: number;
-    pointState?: unknown;
-    setState: ({state}: {state: unknown}) => void;
+    pointState?: T;
+    setState: ({state}: {state: T}) => void;
     options: CreateJDPOptions;
 };
 

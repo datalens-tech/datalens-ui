@@ -1,14 +1,15 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import _isEqual from 'lodash/isEqual';
+import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
-import type {DatalensGlobalState, EntryDialogues} from 'ui';
+
+import type {DatalensGlobalState, EntryDialogues} from '../../../../../';
 import {
     ActionPanel,
     DialogNoRights,
@@ -16,18 +17,17 @@ import {
     EntryDialogResolveStatus,
     Utils,
     useEffectOnce,
-} from 'ui';
-import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
-import {QL_EDIT_HISTORY_UNIT_ID} from 'ui/units/ql/constants';
-
+} from '../../../../../';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {EntryContextMenuItems} from '../../../../../components/EntryContextMenu/helpers';
 import {isDraftVersion} from '../../../../../components/Revisions/helpers';
 import {registry} from '../../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../../store/actions/dialog';
+import {addEditHistoryPoint, resetEditHistoryUnit} from '../../../../../store/actions/editHistory';
 import {reloadRevisionsOnSave} from '../../../../../store/actions/entryContent';
 import DialogSettings from '../../../components/Dialogs/Settings/Settings';
+import {QL_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 import {prepareChartDataBeforeSave} from '../../../modules/helpers';
 import {
     drawPreview,
@@ -96,8 +96,8 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
 
     const dispatch = useDispatch();
 
-    const [dialogNoRightsVisible, setDialogNoRightsVisible] = useState(false);
-    const [dialogSettingsVisible, setDialogSettingsVisible] = useState(false);
+    const [dialogNoRightsVisible, setDialogNoRightsVisible] = React.useState(false);
+    const [dialogSettingsVisible, setDialogSettingsVisible] = React.useState(false);
 
     // Note, that QL uses QL store and Wizard store, because QL and Wizard use same visualization section
     const qlState = useSelector((state: DatalensGlobalState) => state.ql);
@@ -111,7 +111,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         });
     });
 
-    const handleSetActualRevision = useCallback(() => {
+    const handleSetActualRevision = React.useCallback(() => {
         if (!entry) {
             return;
         }
@@ -129,7 +129,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         }
     }, [dispatch, entry]);
 
-    const additionalEntryItems = useMemo(() => {
+    const additionalEntryItems = React.useMemo(() => {
         const items = [] as EntryContextMenuItems;
 
         if (redirectUrl) {
@@ -146,7 +146,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         return items;
     }, [redirectUrl]);
 
-    const defaultChartName = useMemo(() => {
+    const defaultChartName = React.useMemo(() => {
         if (connection === null) {
             return '';
         }
@@ -156,7 +156,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         return `${name} - ${i18n('sql', 'text_default-name')}`;
     }, [connection]);
 
-    const openSaveAsWidgetDialog = useCallback(
+    const openSaveAsWidgetDialog = React.useCallback(
         async (preparedChartData: QlConfig) => {
             if (!entryDialoguesRef || !connection) {
                 return;
@@ -218,7 +218,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         ],
     );
 
-    const handleClickButtonSave = useCallback(
+    const handleClickButtonSave = React.useCallback(
         (mode) => {
             if (!previewData || !entry) {
                 return;
@@ -246,7 +246,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         [dispatch, entry, openSaveAsWidgetDialog, previewData, qlState, wizardState],
     );
 
-    const handleClickButtonSaveAs = useCallback(() => {
+    const handleClickButtonSaveAs = React.useCallback(() => {
         if (previewData) {
             const preparedChartData = prepareChartDataBeforeSave(previewData);
 
@@ -254,23 +254,23 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         }
     }, [openSaveAsWidgetDialog, previewData]);
 
-    const openNoRightsDialog = useCallback(() => {
+    const openNoRightsDialog = React.useCallback(() => {
         setDialogNoRightsVisible(true);
     }, []);
 
-    const handleClickButtonToggleTablePreview = useCallback(() => {
+    const handleClickButtonToggleTablePreview = React.useCallback(() => {
         dispatch(toggleTablePreview());
     }, [dispatch]);
 
-    const saveAsDraftClick = useCallback(() => {
+    const saveAsDraftClick = React.useCallback(() => {
         handleClickButtonSave(EntryUpdateMode.Save);
     }, [handleClickButtonSave]);
 
-    const saveAsPublishedClick = useCallback(() => {
+    const saveAsPublishedClick = React.useCallback(() => {
         handleClickButtonSave(EntryUpdateMode.Publish);
     }, [handleClickButtonSave]);
 
-    const saveAsAction = useCallback(() => {
+    const saveAsAction = React.useCallback(() => {
         if (!previewData) {
             return;
         }
@@ -280,7 +280,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         openSaveAsWidgetDialog(preparedChartData);
     }, [openSaveAsWidgetDialog, previewData]);
 
-    const openRequestWidgetAccessRightsDialog = useCallback(() => {
+    const openRequestWidgetAccessRightsDialog = React.useCallback(() => {
         if (entry) {
             entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.Unlock,
@@ -292,19 +292,19 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
         }
     }, [entry, entryDialoguesRef]);
 
-    const handleCloseDialogNoRights = useCallback(() => {
+    const handleCloseDialogNoRights = React.useCallback(() => {
         setDialogNoRightsVisible(false);
     }, []);
 
-    const handleCancelDialogSettings = useCallback(() => {
+    const handleCancelDialogSettings = React.useCallback(() => {
         setDialogSettingsVisible(false);
     }, []);
 
-    const handleApplyDialogSettings = useCallback(
+    const handleApplyDialogSettings = React.useCallback(
         ({extraSettings: newExtraSettings}: {extraSettings: CommonSharedExtraSettings}) => {
             setDialogSettingsVisible(false);
 
-            if (!_isEqual(extraSettings, newExtraSettings)) {
+            if (!isEqual(extraSettings, newExtraSettings)) {
                 dispatch(setExtraSettings({extraSettings: newExtraSettings}));
 
                 dispatch(

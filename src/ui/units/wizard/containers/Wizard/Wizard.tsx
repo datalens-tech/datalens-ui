@@ -168,11 +168,11 @@ class Wizard extends React.Component<Props, State> {
             dialogSettingsVisible: false,
         };
 
-        this.props.initEditHistoryUnit({
+        this.props.initEditHistoryUnit<WizardGlobalState>({
             unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
             setState: ({state}) => {
                 this.props.setWizardStore({
-                    store: state as unknown as WizardGlobalState,
+                    store: state,
                 });
             },
             options: {

@@ -41,11 +41,15 @@ interface InitEditHistoryUnitAction {
     options: CreateJDPOptions;
 }
 
-export function initEditHistoryUnit({
+export function initEditHistoryUnit<T>({
     unitId,
     setState,
     options,
-}: Omit<InitEditHistoryUnitAction, 'type'>) {
+}: {
+    unitId: string;
+    setState: EditHistoryUnit<T>['setState'];
+    options: CreateJDPOptions;
+}) {
     return {
         type: INIT_EDIT_HISTORY_UNIT,
         unitId,
