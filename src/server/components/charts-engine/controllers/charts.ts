@@ -143,6 +143,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 scope: 'widget',
                 headers: getHeaders(req),
                 includePermissionsInfo: true,
+                mode: EntryUpdateMode.Publish,
             };
 
             if (links) {
@@ -151,37 +152,9 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
 
             USProvider.create(ctx, createParams)
                 .then((result) => {
-                    const updateParams: ProviderUpdateParams = {
-                        entryId: result.entryId,
-                        mode: 'publish',
-                        data: result.data,
-                        headers: getHeaders(req),
-                        links,
-                    };
-
-                    const {permissions, revId} = result;
-
-                    if (revId) {
-                        updateParams.revId = revId;
-                    }
-
-                    USProvider.update(ctx, updateParams)
-                        .then((result) => {
-                            res.send({
-                                ...result,
-                                data: chart,
-                                links,
-                                permissions,
-                            });
-                        })
-                        .catch((error) => {
-                            responseWithError({
-                                error,
-                                defaultMessage: 'Failed to create chart (publishing)',
-                                req,
-                                res,
-                            });
-                        });
+                    res.send({
+                        ...result,
+                    });
                 })
                 .catch((error) => {
                     responseWithError({
