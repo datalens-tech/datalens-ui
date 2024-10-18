@@ -227,7 +227,7 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
         });
 
         this.props.addEditHistoryPoint({
-            newState: this.props.qlState,
+            newState: {ql: this.props.qlState, wizard: this.props.wizardState},
             unitId: QL_EDIT_HISTORY_UNIT_ID,
         });
     };
@@ -250,7 +250,7 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
             this.props.updateChart(preparedChartData);
 
             this.props.addEditHistoryPoint({
-                newState: this.props.qlState,
+                newState: {ql: this.props.qlState, wizard: this.props.wizardState},
                 unitId: QL_EDIT_HISTORY_UNIT_ID,
             });
         }
@@ -281,7 +281,10 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         connectionSources: getConnectionSources(state),
         connectionSourcesSchemas: getConnectionSourcesSchemas(state),
         previewData: getPreviewData(state),
+
+        // Note, that QL uses QL store and Wizard store, because QL and Wizard use same visualization section
         qlState: state.ql,
+        wizardState: state.wizard,
     };
 };
 

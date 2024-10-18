@@ -568,6 +568,8 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
         extraSettings: getExtraSettings(state),
         valid: getValid(state),
         chartType: getChartType(state),
+
+        // Note, that QL uses QL store and Wizard store, because QL and Wizard use same visualization section
         qlState: state.ql,
         wizardState: state.wizard,
     };

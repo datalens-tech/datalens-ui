@@ -99,6 +99,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     const [dialogNoRightsVisible, setDialogNoRightsVisible] = useState(false);
     const [dialogSettingsVisible, setDialogSettingsVisible] = useState(false);
 
+    // Note, that QL uses QL store and Wizard store, because QL and Wizard use same visualization section
     const qlState = useSelector((state: DatalensGlobalState) => state.ql);
     const wizardState = useSelector((state: DatalensGlobalState) => state.wizard);
 
