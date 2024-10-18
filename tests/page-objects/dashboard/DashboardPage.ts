@@ -6,11 +6,13 @@ import {
     DashCommonQa,
     DashEntryQa,
     DashRelationTypes,
+    DatalensTabs,
     DialogConfirmQA,
     DialogDashWidgetQA,
     DialogGroupControlQa,
     DialogTabsQA,
     EntryDialogQA,
+    LOADED_DASH_CLASS,
     SelectQa,
     YfmQa,
 } from '../../../src/shared/constants';
@@ -43,7 +45,9 @@ import {
     ActionPanelEntryContextMenuQa,
 } from '../../../src/shared/constants/qa/action-panel';
 import {
+    DashBodyQa,
     DashKitOverlayMenuQa,
+    DashTabsQA,
     DashboardAddWidgetQa,
     DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
@@ -763,36 +767,52 @@ class DashboardPage extends BasePage {
     }
 
     async changeTab({tabName, tabSelector}: {tabName?: string; tabSelector?: string}) {
-        const tabsContainer = await this.page.waitForSelector(
-            DashboardPage.selectors.tabsContainer,
-        );
+        const tabsContainerLocator = this.page.locator(slct(DashTabsQA.Root));
 
-        // check for desktop tabs
-        const desktopTab = await tabsContainer.$(DashboardPage.selectors.tabsList);
-        if (desktopTab) {
-            const selector = tabSelector
-                ? tabSelector
-                : `${DashboardPage.selectors.tabItem} >> text=${tabName}`;
-            const tab = await desktopTab.waitForSelector(selector);
-            await tab.click();
+        await expect(tabsContainerLocator).toBeVisible();
+
+        let tabLocator;
+        if (tabName) {
+            tabLocator = tabsContainerLocator.getByText(tabName);
+        } else if (tabSelector) {
+            tabLocator = tabsContainerLocator.locator(tabSelector);
+        } else {
+            throw new Error('Tabs selector not found');
+        }
+
+        const isTabLocatorVisible = await tabLocator.isVisible();
+
+        if (isTabLocatorVisible) {
+            await tabLocator.click();
             return;
         }
 
-        // check for mobile tabs
-        const mobileTab = await tabsContainer.$(
-            `${DashboardPage.selectors.tabItem}${DashboardPage.selectors.tabItemActive}`,
-        );
-        if (mobileTab) {
-            await mobileTab.click();
-            const selector = tabSelector
-                ? tabSelector
-                : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
-            const tab = await this.page.waitForSelector(selector);
-            await tab.click();
-            return;
+        // it can be single switcher with tab name or some tabs and "more" switcher
+        const switcherLocator = tabsContainerLocator.locator(slct(DatalensTabs.SwitcherItem));
+        const switcherTabLocator = tabsContainerLocator
+            .locator(slct(DatalensTabs.MobileItem))
+            .first();
+
+        const isSwitcherVisible = await switcherLocator.isVisible();
+        const isSwitcherTabVisible = await switcherTabLocator.isVisible();
+        let mobileTabLocator;
+
+        if (isSwitcherVisible) {
+            mobileTabLocator = switcherLocator;
+        } else if (isSwitcherTabVisible) {
+            mobileTabLocator = switcherTabLocator;
+        } else {
+            throw new Error('Tabs selector not found');
         }
 
-        throw new Error('Tabs selector not found');
+        await mobileTabLocator.click();
+        await expect(this.page.locator(slct(SelectQa.SHEET))).toBeVisible();
+
+        const selector = tabSelector
+            ? tabSelector
+            : `${DashboardPage.selectors.selectItems}${DashboardPage.selectors.selectItemsMobile} ${DashboardPage.selectors.selectItemTitle} >> text=${tabName}`;
+        await this.page.locator(selector).click();
+        return;
     }
 
     async changeTabAndGetState({tabName, timeout}: {tabName: string; timeout: number}) {
@@ -1015,6 +1035,12 @@ class DashboardPage extends BasePage {
                 );
             }),
         );
+    }
+
+    async waitForWidgetsRender() {
+        // content-wrapper has loaded class when all widgets are rendered
+        const loadedWrapper = this.page.locator(slct(DashBodyQa.ContentWrapper));
+        await expect(loadedWrapper).toHaveClass(new RegExp(LOADED_DASH_CLASS));
     }
 
     async getTableFirstRowTexts(gridItemLocator: Locator) {

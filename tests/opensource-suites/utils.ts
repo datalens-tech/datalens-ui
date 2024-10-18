@@ -52,3 +52,23 @@ export async function addCustomPalette(page: Page, palette: {name: string; color
 
     await page.locator(slct(PaletteEditorQA.ApplyButton)).click();
 }
+
+// useful for scrollable content as playwright doesn't make screenshot
+// of content outside the viewport
+export const setViewportSizeAsContent = async (page: Page, selector: string) => {
+    const currentViewport = page.viewportSize();
+
+    const contentHeight = await page.evaluate((selector) => {
+        const app = document.querySelector(selector);
+        return app?.scrollHeight;
+    }, selector);
+
+    if (!currentViewport?.width || !contentHeight) {
+        return;
+    }
+
+    await page.setViewportSize({
+        width: currentViewport.width,
+        height: contentHeight,
+    });
+};
