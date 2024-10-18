@@ -1,7 +1,10 @@
+import {isEmbeddedEntry, isIframe} from 'ui/utils/embedded';
+
 import {
     ACCEPT_LANGUAGE_HEADER,
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
+    DISPLAY_MODE_HEADER,
     ENABLE,
     Feature,
     SUPERUSER_SWITCH_MODE_COOKIE_NAME,
@@ -48,6 +51,15 @@ ChartKit.setDataProviderSettings({
         if (DL.CURRENT_TENANT_ID) {
             request.headers[TENANT_ID_HEADER] = DL.CURRENT_TENANT_ID;
         }
+
+        let dispayMode = 'basic';
+
+        if (isEmbeddedEntry()) {
+            dispayMode = 'secure-embedded';
+        } else if (isIframe()) {
+            dispayMode = 'embedded';
+        }
+        request.headers[DISPLAY_MODE_HEADER] = dispayMode;
 
         if (DL.DISPLAY_SUPERUSER_SWITCH) {
             const cookieValue = Utils.getCookie(SUPERUSER_SWITCH_MODE_COOKIE_NAME);

@@ -15,8 +15,6 @@ export function handleEntryRedirect(entry: GetEntryByKeyResponse, res: Response)
             return res.redirect(`/${entry.entryId}`);
         case EntryScope.Connection:
             return res.redirect(`/connections/${entry.entryId}`);
-        case EntryScope.Report:
-            return res.redirect(`/reports/${entry.entryId}`);
         default:
             return res.redirect('/navigation');
     }
