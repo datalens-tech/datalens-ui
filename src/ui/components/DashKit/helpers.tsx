@@ -140,6 +140,7 @@ export const DashkitWrapper: React.FC<
                 skipReload,
                 isNewRelations,
                 dataProviderContextGetter,
+                hideErrorDetails: props.hideErrorDetails,
             };
         }, [
             props.config,
@@ -147,6 +148,7 @@ export const DashkitWrapper: React.FC<
             skipReload,
             isNewRelations,
             dataProviderContextGetter,
+            props.hideErrorDetails,
         ]);
 
         return (
