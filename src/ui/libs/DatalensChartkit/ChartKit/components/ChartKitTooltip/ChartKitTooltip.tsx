@@ -119,6 +119,14 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
             window.dispatchEvent(new CustomEvent('scroll'));
         });
 
+        React.useEffect(() => {
+            return () => {
+                if (timeoutIdRef.current) {
+                    window.clearTimeout(timeoutIdRef.current);
+                }
+            };
+        }, []);
+
         return (
             <Popup
                 key={anchor?.ref.current.id}
