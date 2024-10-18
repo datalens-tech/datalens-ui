@@ -188,13 +188,8 @@ class Wizard extends React.Component<Props, State> {
     componentDidMount() {
         window.addEventListener('beforeunload', this.unloadConfirmation);
 
-        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
-            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
-        });
-
-        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
-            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
-        });
+        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', this.enableWizardScope);
+        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', this.disableWizardScope);
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
     }
@@ -276,13 +271,8 @@ class Wizard extends React.Component<Props, State> {
 
         this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
 
-        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', () => {
-            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
-        });
-
-        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', () => {
-            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
-        });
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', this.enableWizardScope);
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', this.disableWizardScope);
     }
 
     render() {
@@ -594,6 +584,14 @@ class Wizard extends React.Component<Props, State> {
             </div>
         );
     }
+
+    private enableWizardScope = () => {
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+    };
+
+    private disableWizardScope = () => {
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {

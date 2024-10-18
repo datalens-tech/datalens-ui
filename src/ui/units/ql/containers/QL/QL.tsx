@@ -81,13 +81,8 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentDidMount() {
         const {history, location, match} = this.props;
 
-        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
-            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
-        });
-
-        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
-            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
-        });
+        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', this.enableQLScope);
+        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', this.disableQLScope);
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
 
@@ -155,13 +150,8 @@ class QL extends React.PureComponent<QLInnerProps> {
 
         this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
 
-        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', () => {
-            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
-        });
-
-        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', () => {
-            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
-        });
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', this.enableQLScope);
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', this.disableQLScope);
     }
 
     render() {
@@ -220,6 +210,14 @@ class QL extends React.PureComponent<QLInnerProps> {
             </React.Fragment>
         );
     }
+
+    private enableQLScope = () => {
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
+    };
+
+    private disableQLScope = () => {
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
+    };
 }
 
 const makeMapStateToProps = (state: DatalensGlobalState) => {
