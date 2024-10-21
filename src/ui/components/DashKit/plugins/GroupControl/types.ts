@@ -1,6 +1,6 @@
 import type {QueueItem, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import type {DashTabItemControlSourceType, StringParams, WorkbookId} from 'shared';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import type {ResponseSuccessSingleControl} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 
 import type {LoadStatus} from '../Control/types';
 
@@ -8,7 +8,7 @@ export type ContextProps = {
     workbookId?: WorkbookId;
 };
 
-export type ExtendedLoadedData = ResponseSuccessControls & {
+export type ExtendedLoadedData = ResponseSuccessSingleControl & {
     id: string;
     sourceType: DashTabItemControlSourceType;
 };
