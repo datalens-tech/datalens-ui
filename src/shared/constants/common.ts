@@ -23,6 +23,7 @@ export enum AppMode {
 export enum Language {
     Ru = 'ru',
     En = 'en',
+    Cn = 'zh-cn',
 }
 
 export enum DeviceType {
