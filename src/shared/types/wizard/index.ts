@@ -34,6 +34,7 @@ export * from './background-settings';
 export * from './misc';
 export * from './placeholder';
 export * from './sub-totals';
+export * from './export';
 
 export type VisualizationIconProps = Omit<IconProps, 'data'> & {
     id: IconId;

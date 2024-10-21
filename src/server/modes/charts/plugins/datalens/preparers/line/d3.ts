@@ -4,17 +4,32 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {ServerField} from '../../../../../../../shared';
+import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {AxisMode, PlaceholderId, getXAxisMode} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
+import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareLineData} from './prepare-line-data';
 
+type ExtendedLineSeries = LineSeries & {
+    custom?: {
+        exportSettings?: SeriesExportSettings;
+    };
+};
+
 export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {labels, placeholders, disableDefaultSorting = false, shared, idToDataType} = args;
+    const {
+        labels,
+        placeholders,
+        disableDefaultSorting = false,
+        shared,
+        idToDataType,
+        colors,
+        shapes,
+    } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
@@ -43,7 +58,28 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
 
-    const seriesData: LineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
+    const exportSettings: SeriesExportSettings = {
+        columns: [
+            getExportColumnSettings({path: 'x', field: xField}),
+            getExportColumnSettings({path: 'y', field: yFields[0]}),
+        ],
+    };
+
+    const colorItem = colors[0];
+    if (colorItem) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'series.custom.colorValue', field: colorItem}),
+        );
+    }
+
+    const shapeItem = shapes[0];
+    if (shapeItem) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'series.custom.shapeValue', field: shapeItem}),
+        );
+    }
+
+    const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
         return {
             name: graph.title,
             type: 'line',
@@ -80,7 +116,12 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
             },
             dashStyle: graph.dashStyle,
-            custom: graph.custom,
+            custom: {
+                ...graph.custom,
+                exportSettings,
+                colorValue: graph.colorValue,
+                shapeValue: graph.shapeValue,
+            },
         };
     });
 
