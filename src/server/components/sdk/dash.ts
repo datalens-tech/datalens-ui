@@ -183,7 +183,7 @@ class Dash {
                 ...data,
                 scope: EntryScope.Dash,
                 type: '',
-                mode: EntryUpdateMode.Publish,
+                mode: data.mode || EntryUpdateMode.Publish,
             };
 
             if (data.asNew) {

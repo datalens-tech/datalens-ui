@@ -6,12 +6,13 @@ import type {AxiosRequestConfig} from 'axios';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-import type {EntryPublicAuthor, EntryUpdateMode, WorkbookId} from '../../../../../../shared';
+import type {EntryPublicAuthor, WorkbookId} from '../../../../../../shared';
 import {
     AuthHeader,
     DL_COMPONENT_HEADER,
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
+    EntryUpdateMode,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
@@ -212,7 +213,7 @@ export type ProviderCreateParams = {
     includePermissionsInfo?: boolean | string;
     workbookId: string;
     name: string;
-    mode: EntryUpdateMode;
+    mode?: EntryUpdateMode;
 };
 
 function injectMetadata(headers: IncomingHttpHeaders, ctx: AppContext): IncomingHttpHeaders {
@@ -524,7 +525,7 @@ export class USProvider {
             includePermissionsInfo,
             workbookId,
             name,
-            mode,
+            mode = EntryUpdateMode.Publish,
         }: ProviderCreateParams,
     ) {
         const hrStart = process.hrtime();

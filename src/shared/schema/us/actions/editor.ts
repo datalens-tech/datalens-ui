@@ -14,7 +14,10 @@ export const editorActions = {
     _createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entries`,
-        params: ({type, key, data, meta = {}, name, workbookId}, headers) => {
+        params: (
+            {type, key, data, meta = {}, name, workbookId, mode = EntryUpdateMode.Publish},
+            headers,
+        ) => {
             return {
                 body: {
                     scope: 'widget',
@@ -24,7 +27,7 @@ export const editorActions = {
                     data,
                     name,
                     workbookId,
-                    mode: EntryUpdateMode.Publish,
+                    mode,
                 },
                 headers,
             };

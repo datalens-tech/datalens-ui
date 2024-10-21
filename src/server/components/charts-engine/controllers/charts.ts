@@ -143,7 +143,6 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 scope: 'widget',
                 headers: getHeaders(req),
                 includePermissionsInfo: true,
-                mode: EntryUpdateMode.Publish,
             };
 
             if (links) {
