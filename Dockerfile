@@ -47,16 +47,14 @@ RUN apt-get update
 RUN apt-get -y install nginx supervisor nodejs
 
 # remove unnecessary packages
-RUN apt-get -y purge curl gnupg gnupg2
-RUN apt-get -y autoremove
-RUN apt-get clean
-
-RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get -y purge curl gnupg gnupg2 && \
+    apt-get -y autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # timezone setting
 ENV TZ="Etc/UTC"
-RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
-RUN echo $TZ > /etc/timezone
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # user app
 RUN useradd -m -u 1000 app && mkdir /opt/app && chown app:app /opt/app
