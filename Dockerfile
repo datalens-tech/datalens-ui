@@ -1,42 +1,89 @@
-FROM ubuntu:22.04
+# use native build platform for build js files only once
+FROM --platform=${BUILDPLATFORM} ubuntu:22.04 AS native-build-stage
+
+ARG NODE_MAJOR=20
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/cert.pem
+
+RUN apt-get update && apt-get -y upgrade
+
+# node
+RUN apt-get -y install ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update && apt-get -y install nodejs
+
+RUN useradd -m -u 1000 app && mkdir /opt/app && chown app:app /opt/app
+
+WORKDIR /opt/app
+
+COPY package.json package-lock.json .npmrc /opt/app/
+RUN npm ci
+
+COPY . .
+RUN npm run build && chown app /opt/app/dist/run
+
+# runtime base image for both platform
+FROM ubuntu:22.04 AS base-stage
+
+ARG NODE_MAJOR=20
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get -y upgrade
+
+# node
+RUN apt-get -y install ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+
+RUN apt-get update
+RUN apt-get -y install nginx supervisor nodejs
+
+# remove unnecessary packages
+RUN apt-get -y purge curl gnupg gnupg2
+RUN apt-get -y autoremove
+RUN apt-get clean
+
+RUN rm -rf /var/lib/apt/lists/*
 
 # timezone setting
 ENV TZ="Etc/UTC"
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime
+RUN echo $TZ > /etc/timezone
 
-# add node.js repository
-RUN apt-get update && \
-    apt-get install -y ca-certificates curl gnupg && \
-    mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+# user app
+RUN useradd -m -u 1000 app && mkdir /opt/app && chown app:app /opt/app
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
-    apt-get -y install nginx supervisor nodejs
+# install package dependencies for production
+FROM base-stage AS install-stage
 
-# cleanup tmp and defaults
-RUN rm -rf /etc/nginx/sites-enabled/default /var/lib/apt/lists/*
-
-ARG app_version
-ARG CERT
-ARG USER=app
-
-ENV APP_BUILDER_CDN=false
-ENV UI_CORE_CDN=false
-ENV TMPDIR=/tmp
-ENV APP_VERSION=$app_version
-ENV NODE_ENV=production
-
-RUN useradd -ms /bin/bash --uid 1000 ${USER}
+# install system dependencies
+RUN apt-get update && apt-get -y install build-essential
 
 WORKDIR /opt/app
 
+COPY package.json package-lock.json .npmrc /opt/app/
+
+RUN npm ci && npm prune --production
+
+# production running stage
+FROM base-stage AS runtime-stage
+
+# cleanup nginx defaults
+RUN rm -rf /etc/nginx/sites-enabled/default
+
 COPY deploy/nginx /etc/nginx
 COPY deploy/supervisor /etc/supervisor/conf.d
-COPY . .
 
 # prepare rootless permissions for supervisor and nginx
+ARG USER=app
 RUN chown -R ${USER} /var/log/supervisor/ && \
     mkdir /var/run/supervisor && \
     chown -R ${USER} /var/run/supervisor && \
@@ -45,21 +92,28 @@ RUN chown -R ${USER} /var/log/supervisor/ && \
     mkdir -p /var/lib/nginx  && chown -R ${USER} /var/lib/nginx && \
     touch /run/nginx.pid && chown -R ${USER} /run/nginx.pid 
 
-# build app
-RUN npm ci -q --no-progress --include=dev --also=dev
-RUN npm run build
-RUN npm prune --production
-RUN rm -rf assets deploy src /tmp/* /root/.npm
+ARG app_version
+ENV APP_VERSION=$app_version
+ENV TMPDIR=/tmp
 
-RUN chown -R ${USER} /opt/app/dist/run 
+WORKDIR /opt/app
 
-# adding certificate
-RUN echo $CERT > /usr/local/share/ca-certificates/cert.pem
-ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/cert.pem
-RUN update-ca-certificates
+COPY package.json package-lock.json /opt/app/
+
+COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
+COPY --from=native-build-stage /opt/app/dist /opt/app/dist
+
+RUN chown -R ${USER} /opt/app/dist/run
 
 USER app
 
-EXPOSE 8080
+ENV NODE_ENV=production
+
+ENV APP_BUILDER_CDN=false
+ENV UI_CORE_CDN=false
+
+ENV APP_MODE=full
+ENV APP_ENV=production
+ENV APP_INSTALLATION=opensource
 
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
