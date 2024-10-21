@@ -11,16 +11,15 @@
     &__block {
         position: absolute;
         z-index: -1;
+        left: 0;
+        text-align: left;
     }
 
     &__separator {
-        position: absolute;
-        transform: translateX(-50%);
-        top: -15%;
-        left: 0;
+        display: inline-block;
+        width: 0;
         height: 130%;
-        width: 1px;
-        border-left: 1px solid var(--g-color-text-complementary);
+        border-right: 1px solid var(--g-color-text-complementary);
     }
 }
 
