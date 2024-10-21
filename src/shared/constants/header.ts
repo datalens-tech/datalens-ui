@@ -27,6 +27,7 @@ export const US_PUBLIC_API_TOKEN_HEADER = 'x-us-public-api-token';
 export const CSRF_TOKEN_HEADER = 'x-csrf-token';
 export const DLS_API_KEY_HEADER = 'x-api-key';
 export const DASH_INFO_HEADER = 'x-dash-info';
+export const DISPLAY_MODE_HEADER = 'x-dl-display-mode';
 export const DL_COMPONENT_HEADER = 'x-dl-component';
 export const DL_EMBED_TOKEN_HEADER = 'x-dl-embed-token';
 export const TENANT_ID_HEADER = 'x-dl-tenantid';
