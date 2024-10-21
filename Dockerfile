@@ -114,4 +114,6 @@ ENV APP_MODE=full
 ENV APP_ENV=production
 ENV APP_INSTALLATION=opensource
 
+EXPOSE 8080
+
 ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
