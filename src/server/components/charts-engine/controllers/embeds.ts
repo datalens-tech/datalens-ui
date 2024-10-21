@@ -229,7 +229,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         });
                     }
 
-                    const sharedData =
+                    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
                         controlWidgetConfig.type === DashTabItemType.GroupControl
                             ? controlWidgetConfig.data.group.find(({id}) => id === controlData.id)
                             : controlWidgetConfig.data;
@@ -240,8 +240,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         });
                     }
 
-                    (sharedData as DashTabItemControlData & {disabled?: boolean}).disabled =
-                        isControlDisabled(sharedData, embeddingInfo, controlTab);
+                    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
 
                     entry = {
                         data: {shared: sharedData},
