@@ -38,6 +38,7 @@ jobs:
         run: echo ${{ github.event.inputs.distinct_id }}
 
       - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -77,6 +78,19 @@ jobs:
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+
+      - name: Build docker ui image with cache
+        if: ${{ env.UI_VERSION == '' }}
+        uses: docker/build-push-action@v5.0.0
+        with:
+          network: host
+          context: .
+          push: false
+          tags: pr
+          labels: e2e-datalens-ui
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}

@@ -96,6 +96,7 @@ services:
 
   datalens-from-build:
     container_name: e2e-datalens-ui-build
+    image: e2e-datalens-ui:pr
     build:
       dockerfile: Dockerfile
       context: ../
