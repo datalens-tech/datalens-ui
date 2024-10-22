@@ -97,7 +97,7 @@ jobs:
         working-directory: ./tests
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          npm run test:docker:up-no-build & cd .. && npm ci && npm run test:install:chromium & wait
+          npm run test:docker:up-no-build && cd .. && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
