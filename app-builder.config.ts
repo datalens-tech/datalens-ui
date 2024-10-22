@@ -26,6 +26,11 @@ const vendors = (vendorsList: string[]) => {
         'react-dnd',
         'react-grid-layout',
         'react-beautiful-dnd',
+        '@gravity-ui/uikit',
+        '@gravity-ui/react-data-table',
+        '@gravity-ui/navigation',
+        '@gravity-ui/components',
+        '@gravity-ui/date-components',
     ]);
 };
 
