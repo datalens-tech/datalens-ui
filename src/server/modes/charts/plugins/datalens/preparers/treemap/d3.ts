@@ -5,10 +5,15 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 import escape from 'lodash/escape';
 
-import type {WrappedMarkdown} from '../../../../../../../shared';
+import type {
+    ColumnExportSettings,
+    SeriesExportSettings,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
+    PlaceholderId,
     isDateField,
     isMarkdownField,
 } from '../../../../../../../shared';
@@ -17,6 +22,7 @@ import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
 } from '../../utils/color-helpers';
+import {getExportColumnSettings} from '../../utils/export-helpers';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
@@ -33,6 +39,12 @@ type ExtendedTreemapSeriesData = Omit<TreemapSeriesData, 'name'> & {
     label?: string;
 };
 
+type ExtendedTreemapSeries = TreemapSeries & {
+    custom?: {
+        exportSettings?: SeriesExportSettings;
+    };
+};
+
 export function prepareD3Treemap({
     placeholders,
     resultData,
@@ -43,13 +55,11 @@ export function prepareD3Treemap({
     features,
     ChartEditor,
 }: PrepareFunctionArgs): Partial<ChartKitWidgetData> {
-    // Dimensions
-    const d = placeholders[0].items;
-    const dTypes = d.map((item) => item.data_type);
-    const useMarkdown = d?.some(isMarkdownField);
+    const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
+    const dTypes = dimensions.map((item) => item.data_type);
+    const useMarkdown = dimensions?.some(isMarkdownField);
 
-    // Measures
-    const m = placeholders[1].items;
+    const measures = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items ?? [];
 
     const color = colors[0];
     const colorFieldDataType = color ? idToDataType[color.guid] : null;
@@ -65,7 +75,7 @@ export function prepareD3Treemap({
     const treemapIds: string[] = [];
     const hashTable: Record<string, {value: string | null; label: string}> = {};
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
-    const isFloat = m[0] && m[0].data_type === 'float';
+    const isFloat = measures[0] && measures[0].data_type === 'float';
     const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
     let multimeasure = false;
     let measureNamesLevel: number;
@@ -79,13 +89,13 @@ export function prepareD3Treemap({
         });
     }
 
-    const measureNames = m.map((measureItem) => idToTitle[measureItem.guid]);
+    const measureNames = measures.map((measureItem) => idToTitle[measureItem.guid]);
 
     // TODO: think about why. After all, you can put only one field in the measures (Size) (treemap.tsx)
     if (measureNames.length > 1) {
         multimeasure = true;
 
-        d.some((item, level) => {
+        dimensions.some((item, level) => {
             if (item.type === 'PSEUDO') {
                 measureNamesLevel = level;
 
@@ -108,7 +118,7 @@ export function prepareD3Treemap({
 
         const dPath: (string | null)[] = [];
         let lastDimensionItem: ExtendedTreemapSeriesData | undefined;
-        d.forEach((item, level) => {
+        dimensions.forEach((item, level) => {
             if (item.type === 'PSEUDO') {
                 return;
             }
@@ -154,7 +164,7 @@ export function prepareD3Treemap({
 
             treemapItem.id = `id_${dPath.join('/')}`;
 
-            if (level === d.length - 1) {
+            if (level === dimensions.length - 1) {
                 lastDimensionItem = treemapItem;
             } else if (!treemapIds.includes(treemapItem.id)) {
                 treemap.push(treemapItem);
@@ -163,7 +173,7 @@ export function prepareD3Treemap({
         });
 
         const key = `id_${dPath.join('/')}`;
-        m.forEach((measureItem) => {
+        measures.forEach((measureItem) => {
             const actualTitle = idToTitle[measureItem.guid];
             const i = findIndexInOrder(order, measureItem, actualTitle);
             const value = values[i];
@@ -232,18 +242,25 @@ export function prepareD3Treemap({
         });
     }
 
-    const size = d.length;
+    const dimensionsSize = dimensions.length;
     const maxPadding = 5;
-    const levels: TreemapSeries['levels'] = new Array(size).fill(null).map((_, index) => ({
-        index: index + 1,
-        padding: Math.min(maxPadding, (size - index) * 2 - 1),
-    }));
+    const levels: TreemapSeries['levels'] = new Array(dimensionsSize)
+        .fill(null)
+        .map((_, index) => ({
+            index: index + 1,
+            padding: Math.min(maxPadding, (dimensionsSize - index) * 2 - 1),
+        }));
 
     if (useMarkdown) {
         ChartEditor.updateConfig({useMarkdown: true});
     }
 
-    const series: TreemapSeries = {
+    const exportSettingsCols = dimensions.map<ColumnExportSettings>((field, index) => {
+        return getExportColumnSettings({path: `name.${index}`, field});
+    });
+    exportSettingsCols.push(getExportColumnSettings({path: `value`, field: measures[0]}));
+
+    const series: ExtendedTreemapSeries = {
         type: 'treemap',
         name: '',
         layoutAlgorithm: 'squarify' as TreemapSeries['layoutAlgorithm'],
@@ -256,6 +273,11 @@ export function prepareD3Treemap({
         },
         levels,
         data: treemap as TreemapSeriesData[],
+        custom: {
+            exportSettings: {
+                columns: exportSettingsCols,
+            },
+        },
     };
 
     return {
