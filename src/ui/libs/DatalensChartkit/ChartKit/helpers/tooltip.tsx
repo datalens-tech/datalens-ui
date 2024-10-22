@@ -83,7 +83,7 @@ function treemapTooltipRenderer(
     return (
         <div className={b('content')}>
             {names.map((name, index) => (
-                <div key={`${name}_${index}`}>{name}</div>
+                <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
             <div>
                 <b>{label}</b>

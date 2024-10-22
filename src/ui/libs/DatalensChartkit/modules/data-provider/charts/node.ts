@@ -447,6 +447,7 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
 
         try {
             unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'series.data', []));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

@@ -77,8 +77,6 @@ export function prepareD3Treemap({
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
     const isFloat = measures[0] && measures[0].data_type === 'float';
     const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
-    let multimeasure = false;
-    let measureNamesLevel: number;
     let colorData: Record<string, {backgroundColor: string}> = {};
 
     if (color) {
@@ -86,23 +84,6 @@ export function prepareD3Treemap({
         Object.defineProperty(valuesForColorData, 'colorGuid', {
             enumerable: false,
             value: color.guid,
-        });
-    }
-
-    const measureNames = measures.map((measureItem) => idToTitle[measureItem.guid]);
-
-    // TODO: think about why. After all, you can put only one field in the measures (Size) (treemap.tsx)
-    if (measureNames.length > 1) {
-        multimeasure = true;
-
-        dimensions.some((item, level) => {
-            if (item.type === 'PSEUDO') {
-                measureNamesLevel = level;
-
-                return true;
-            } else {
-                return false;
-            }
         });
     }
 
@@ -182,17 +163,7 @@ export function prepareD3Treemap({
                 ...(measureItem.formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
             });
 
-            if (multimeasure) {
-                const dPathSpecial = [...dPath];
-
-                dPathSpecial.splice(measureNamesLevel, 0, actualTitle);
-
-                const specialKey = `${dPathSpecial.join('/')}`;
-
-                hashTable[specialKey] = {value: value, label};
-            } else {
-                hashTable[key] = {value: value, label};
-            }
+            hashTable[key] = {value: value, label};
 
             if (color) {
                 if (gradientMode) {
