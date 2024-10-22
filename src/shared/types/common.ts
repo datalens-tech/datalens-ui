@@ -251,10 +251,6 @@ export enum EntryScope {
     Dataset = 'dataset',
     Folder = 'folder',
     Connection = 'connection',
-
-    // TODO: delete after update
-    Report = 'report',
-    Presentation = 'presentation',
 }
 
 export interface Entry {

@@ -55,12 +55,6 @@ export type GetStylesArgs = GetBarStyleArgs & {
     showSeparator?: boolean;
 };
 
-export type GetSeparatorStyleArgs = {
-    min?: number;
-    max?: number;
-    offset?: number;
-};
-
 export type GetMinMaxWithOffsetArgs = {
     offset: number;
     min?: number;

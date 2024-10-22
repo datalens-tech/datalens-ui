@@ -267,6 +267,7 @@
   "label_time-interval": "Time interval",
   "label_title": "Name",
   "label_title-dialog-column-settings": "Column settings",
+  "label_tooltip": "Tooltip",
   "label_tooltip-sum": "Sum in tooltips",
   "label_tooltip-thresholds": "You can manually set threshold values, which will each correspond to a color.",
   "label_totals": "Totals",

@@ -1,0 +1,58 @@
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+name: E2E Build Application Docker
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: datalens-ui
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: 'Get release build version'
+        run: |
+          BUILD_VERSION=$(jq -r '.version' package.json)
+          COMMIT_NAME=$(git log -n 1 --pretty=format:%s)
+          echo "Release build version: ${BUILD_VERSION}"
+          echo "BUILD_VERSION=$BUILD_VERSION" >> "$GITHUB_ENV"
+          echo "COMMIT_NAME=$COMMIT_NAME" >> "$GITHUB_ENV"
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract tags for Docker
+        id: meta
+        uses: docker/metadata-action@v5.0.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.BUILD_VERSION }}-e2e
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5.0.0
+        with:
+          build-args: |
+            app_version=${{ env.BUILD_VERSION }}
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          file: tests/Dockerfile
+          platforms: linux/amd64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
