@@ -12,6 +12,7 @@ type UiSandboxRuntimeProps = {
     fnArgs: unknown[];
     fnContext: unknown;
     globalApi: object;
+    libs: string;
 };
 
 export class UiSandboxRuntime {
@@ -30,13 +31,15 @@ export class UiSandboxRuntime {
     }
 
     callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi} = props;
+        const {fn, fnContext, fnArgs, globalApi, libs} = props;
 
         this.defineVmArguments(fnArgs);
         this.defineVmContext(fnContext);
         this.defineVmApi(globalApi);
         const result = this.vm.evalCode(
-            `(${fn}).call(JSON.parse(context), ...(args.length
+            `
+            ${libs}
+            (${fn}).call(JSON.parse(context), ...(args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
