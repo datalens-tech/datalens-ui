@@ -100,6 +100,7 @@ jobs:
 
       - name: Run tests from builded docker image
         if: ${{ env.UI_VERSION != 'build-from-repo' }}
+        working-directory: ./tests
         run: |
           npm run test:e2e:docker
         env:
