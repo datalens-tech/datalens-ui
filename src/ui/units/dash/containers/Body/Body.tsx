@@ -107,6 +107,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {DashError} from '../DashError/DashError';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -279,9 +280,11 @@ class Body extends React.PureComponent<BodyProps> {
                     children,
                     props as DashkitGroupRenderWithContextProps,
                 ),
+            gridProperties: getPropertiesWithResizeHandles,
         },
         {
             id: DEFAULT_GROUP,
+            gridProperties: getPropertiesWithResizeHandles,
         },
     ];
 

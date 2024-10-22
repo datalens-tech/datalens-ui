@@ -183,6 +183,7 @@ class Dash {
                 ...data,
                 scope: EntryScope.Dash,
                 type: '',
+                mode: data.mode || EntryUpdateMode.Publish,
             };
 
             if (data.asNew) {
@@ -212,25 +213,10 @@ class Dash {
             )) as DashEntry & {
                 revId: string;
             };
-            let updatedEntry = null;
-            if (createdEntry.entryId) {
-                const {entryId} = createdEntry;
-                const updateData = {
-                    revId: createdEntry.revId,
-                } as unknown as UpdateEntryRequest<DashEntry>;
-
-                updatedEntry = (await US.updateEntry(
-                    entryId,
-                    EntryUpdateMode.Publish,
-                    updateData,
-                    headers,
-                    ctx,
-                )) as DashEntry;
-            }
 
             ctx.log('SDK_DASH_CREATE_SUCCESS', US.getLoggedEntry(createdEntry));
 
-            return updatedEntry as DashEntry;
+            return createdEntry;
         } catch (error) {
             ctx.logError('SDK_DASH_CREATE_FAILED', error, US.getLoggedErrorEntry(data));
 
