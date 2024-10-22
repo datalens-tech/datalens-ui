@@ -19,6 +19,7 @@ import {
     PIE_VISUALIZATION,
     SCATTER_D3_VISUALIZATION,
     SCATTER_VISUALIZATION,
+    TREEMAP_D3_VISUALIZATION,
     TREEMAP_VISUALIZATION,
 } from '../../../../constants/visualizations';
 
@@ -92,6 +93,10 @@ export function getAvailableQlVisualizations(
         {
             value: TREEMAP_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...TREEMAP_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: FLAT_TABLE_VISUALIZATION,
