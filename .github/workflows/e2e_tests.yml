@@ -17,7 +17,7 @@ on:
         description: 'custom us version'
       ui:
         description: 'custom ui version'
-        default: 'build-from-repo'
+        default: 'release'
 
 env:
   CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
@@ -47,7 +47,7 @@ jobs:
       - name: Get last version config
         run: |
           VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          if [ -z "${{ env.UI_VERSION }}" ]; then
+          if [ "${{ env.UI_VERSION }}" == "release" ]; then
             UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
             echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
           fi
