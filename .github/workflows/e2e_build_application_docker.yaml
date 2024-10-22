@@ -1,10 +1,7 @@
 on:
-  push:
-    branches:
-      - feat-add-e2e-docker-image
-  # workflow_dispatch:
-  # release:
-  #   types: [published]
+  workflow_dispatch:
+  release:
+    types: [published]
 
 concurrency:
   group: ${{ github.workflow }}
