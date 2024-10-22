@@ -2,6 +2,7 @@ import {expect} from '@playwright/test';
 
 import {
     ChartKitQa,
+    DialogFieldBackgroundSettingsQa,
     DialogFieldBarsSettingsQa,
     WizardPageQa,
     WizardVisualizationId,
@@ -49,6 +50,40 @@ datalensTest.describe('Wizard', () => {
                     .getByRole('textbox');
                 await scaleSettingsInputs.first().fill('0');
                 await scaleSettingsInputs.last().fill('1');
+                await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+                await expect(previewLoader).not.toBeVisible();
+                await expect(table).toBeVisible();
+                await expect(chartContainer).toHaveScreenshot();
+            },
+        );
+
+        datalensTest(
+            'Linear indicator with column background color @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+                const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+                const table = wizardPage.chartkit.getTableLocator();
+
+                await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'SalesSum',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'country',
+                );
+
+                await wizardPage.visualizationItemDialog.open(
+                    PlaceholderName.FlatTableColumns,
+                    'SalesSum',
+                );
+                await wizardPage.visualizationItemDialog.barsSettings.switchBars();
+                await wizardPage.page
+                    .locator(slct(DialogFieldBackgroundSettingsQa.EnableButton))
+                    .click();
                 await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
                 await expect(previewLoader).not.toBeVisible();
