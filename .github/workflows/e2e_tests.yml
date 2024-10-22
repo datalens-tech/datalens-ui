@@ -23,8 +23,7 @@ env:
   CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
   DATA_API_VERSION: ${{github.event.inputs.data-api}}
   US_VERSION: ${{github.event.inputs.us}}
-  UI_VERSION: 'release'
-  # UI_VERSION: ${{github.event.inputs.ui}}
+  UI_VERSION: ${{github.event.inputs.ui}}
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -48,10 +47,6 @@ jobs:
       - name: Get last version config
         run: |
           VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          if [ "${{ env.UI_VERSION }}" == "release" ]; then
-            UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
-            echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
-          fi
           if [ -z "${{ env.US_VERSION }}" ]; then
             US_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.usVersion')
             echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
