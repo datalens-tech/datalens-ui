@@ -139,6 +139,7 @@ jobs:
       - name: Save report link and pr number
         if: always()
         run: |
+          mkdir -p ./tests/artifacts
           echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
           echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
 
