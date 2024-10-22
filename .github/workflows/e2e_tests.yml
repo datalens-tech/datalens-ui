@@ -87,8 +87,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: pr
-          labels: e2e-datalens-ui
+          tags: e2e-datalens-ui:pr
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
