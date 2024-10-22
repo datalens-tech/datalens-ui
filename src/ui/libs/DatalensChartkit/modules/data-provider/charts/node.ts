@@ -333,9 +333,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
                 };
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
