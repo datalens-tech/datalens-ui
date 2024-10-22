@@ -86,6 +86,7 @@ jobs:
           network: host
           context: .
           push: false
+          load: true
           tags: pr
           labels: e2e-datalens-ui
           platforms: linux/amd64
