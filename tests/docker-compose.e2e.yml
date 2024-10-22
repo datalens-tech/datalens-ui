@@ -95,7 +95,7 @@ services:
       - ./data:/opt/e2e-data
 
   datalens-from-build:
-    container_name: e2e-datalens-ui
+    container_name: e2e-datalens-ui-build
     build:
       dockerfile: Dockerfile
       context: ../
@@ -117,7 +117,7 @@ services:
       HC: ${HC:-0}
 
   datalens-from-image:
-    container_name: e2e-datalens-ui
+    container_name: e2e-datalens-ui-image
     image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}
     depends_on:
       - us
