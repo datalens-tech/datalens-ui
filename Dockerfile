@@ -24,7 +24,10 @@ WORKDIR /opt/app
 COPY package.json package-lock.json .npmrc /opt/app/
 RUN npm ci
 
-COPY . .
+COPY ./dist /opt/app/dist
+COPY ./src /opt/app/src
+COPY app-builder.config.ts tsconfig.json /opt/app/
+
 RUN npm run build && chown app /opt/app/dist/run
 
 # runtime base image for both platform

@@ -1,7 +1,8 @@
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    branches:
+      release-*
 
 concurrency:
   group: ${{ github.workflow }}
