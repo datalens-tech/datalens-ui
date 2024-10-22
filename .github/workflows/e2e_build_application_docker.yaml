@@ -7,7 +7,7 @@ concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: false
 
-name: Build Application Docker
+name: E2E Build Application Docker
 
 env:
   REGISTRY: ghcr.io
@@ -22,9 +22,6 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
-      - uses: docker/setup-qemu-action@v3
-        with:
-          platforms: 'arm64'
       - uses: docker/setup-buildx-action@v3
       - name: 'Get release build version'
         run: |
@@ -45,8 +42,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.BUILD_VERSION }}
-            ${{ contains(env.COMMIT_NAME, '[release]') && 'type=raw,value=latest' || '' }}
+            type=raw,value=${{ env.BUILD_VERSION }}-e2e
       - name: Build and push Docker image
         uses: docker/build-push-action@v5.0.0
         with:
@@ -56,6 +52,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64,linux/arm64
+          file: tests/Dockerfile
+          platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max

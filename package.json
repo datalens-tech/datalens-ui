@@ -45,6 +45,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "@datalens-tech/ui-sandbox-modules": "^0.24.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@diplodoc/latex-extension": "^1.1.0",
     "@diplodoc/mermaid-extension": "^1.2.3",
@@ -54,7 +55,7 @@
     "@gravity-ui/chartkit": "^5.17.0",
     "@gravity-ui/dashkit": "^8.17.4",
     "@gravity-ui/date-utils": "^2.3.0",
-    "@gravity-ui/expresskit": "^2.0.1",
+    "@gravity-ui/expresskit": "^2.1.0",
     "@gravity-ui/gateway": "^2.6.1",
     "@gravity-ui/i18n": "^1.6.0",
     "@gravity-ui/nodekit": "^1.6.0",
