@@ -12,6 +12,7 @@
     "test:e2e:docker:report": "docker compose -f ./docker-compose.e2e.yml cp datalens-from-image-tests:/opt/app/tests/artifacts ./artifacts",
     "test:docker:check": "docker compose -f ./docker-compose.e2e.yml config",
     "test:docker:up": "docker compose -f ./docker-compose.e2e.yml up --quiet-pull -d datalens-from-build",
+    "test:docker:up-no-build": "docker compose -f ./docker-compose.e2e.yml up --no-build --quiet-pull -d datalens-from-build",
     "test:docker:down": "docker compose -f ./docker-compose.e2e.yml down --volumes",
     "deps": "bash ../scripts/cached-npm-install.sh",
     "typecheck": "tsc --noEmit",
