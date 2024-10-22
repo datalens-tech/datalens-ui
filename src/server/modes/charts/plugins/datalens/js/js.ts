@@ -477,8 +477,6 @@ function prepareSingleResult({
 
     const segments: ServerField[] = shared.segments || [];
 
-    console.log('---------visualization.id', visualization.id);
-
     switch (visualization.id) {
         case 'line':
         case 'area':
@@ -565,7 +563,6 @@ function prepareSingleResult({
             break;
 
         case WizardVisualizationId.TreemapD3:
-            console.log('prepareD3Treemap', prepareD3Treemap);
             prepare = prepareD3Treemap;
             rowsLimit = 800;
             break;
