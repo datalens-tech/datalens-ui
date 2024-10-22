@@ -34,12 +34,6 @@ const vendors = (vendorsList: string[]) => {
         '@gravity-ui/icons',
         '@gravity-ui/chartkit',
         '@gravity-ui/date-utils',
-        '@popperjs',
-        'yup',
-        'rc-slider',
-        'history',
-        'luxon',
-        'd3-selection',
     ]);
 };
 
