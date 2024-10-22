@@ -15,11 +15,15 @@ on:
         description: 'custom data-api version'
       us:
         description: 'custom us version'
+      ui:
+        description: 'custom ui version'
+        default: 'build-from-repo'
 
 env:
   CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
   DATA_API_VERSION: ${{github.event.inputs.data-api}}
   US_VERSION: ${{github.event.inputs.us}}
+  UI_VERSION: ${{github.event.inputs.ui}}
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -43,44 +47,79 @@ jobs:
       - name: Get last version config
         run: |
           VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          US_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.usVersion')
-          CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.controlApiVersion')
-          DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
-          echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
-          echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
-          echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
-
-      - name: Check Docker Compose Config
-        working-directory: ./tests
-        run: docker compose -f ./docker-compose.e2e.yml config
+          if [ -z "${{ env.UI_VERSION }}" ]; then
+            UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
+            echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${{ env.US_VERSION }}" ]; then
+            US_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.usVersion')
+            echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${{ env.CONTROL_API_VERSION }}" ]; then
+            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.controlApiVersion')
+            echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${{ env.DATA_API_VERSION }}" ]; then
+            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
+            echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
+          fi
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
+          UI_VERSION: ${{ env.UI_VERSION }}
 
-      - name: Run Docker Compose and Install dependencies for Datalens-UI
+      - name: Check docker compose Config
+        working-directory: ./tests
+        run: npm run test:docker:check
+        env:
+          US_VERSION: ${{ env.US_VERSION }}
+          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
+          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
+          UI_VERSION: ${{ env.UI_VERSION }}
+
+      - name: Up docker compose and install local deps for test
+        if: ${{ env.UI_VERSION == 'build-from-repo' }}
         working-directory: ./tests
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          sudo apt-get update
-          docker compose -f ./docker-compose.e2e.yml up -d & cd .. && npm ci && npm run test:install:chromium & wait
+          npm run test:docker:up & cd .. && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
 
-      - name: Run Test
-        run: E2E_DOMAIN="http://localhost:8080" E2E_RETRY_TIMES=1 NO_AUTH=true npm run test:e2e:opensource
+      - name: Run tests local from repo
+        if: ${{ env.UI_VERSION == 'build-from-repo' }}
+        run: npm run test:e2e:opensource
+        env:
+          NO_AUTH: true
+          E2E_RETRY_TIMES: 1
+          E2E_DOMAIN: http://localhost:8080
 
-      - name: Run Docker Shutdown
+      - name: Run tests from builded docker image
+        if: ${{ env.UI_VERSION != 'build-from-repo' }}
+        run: |
+          test:e2e:docker
+        env:
+          US_VERSION: ${{ env.US_VERSION }}
+          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
+          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
+          UI_VERSION: ${{ env.UI_VERSION }}
+
+      - name: Copy tests report from docker run
+        if: always() && ${{ env.UI_VERSION != 'build-from-repo' }}
         working-directory: ./tests
-        run: docker compose -f ./docker-compose.e2e.yml down
+        run: |
+          rm -rf ./artifacts
+          test:e2e:docker:report
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
+          UI_VERSION: ${{ env.UI_VERSION }}
 
-      - name: Save report link and pr
+      - name: Save report link and pr number
         if: always()
         run: |
           echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
