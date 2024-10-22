@@ -113,11 +113,11 @@ jobs:
         working-directory: ./tests
         run: |
           if [ -z "${{ env.UI_VERSION }}" ]; then
+            echo "skip export report from docker run..."
+          else
             echo "export report from docker run"
             rm -rf ./artifacts
             npm run test:e2e:docker:report
-          else
-            echo "skip export report from docker run..."
           fi
         env:
           US_VERSION: ${{ env.US_VERSION }}
