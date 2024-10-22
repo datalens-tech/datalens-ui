@@ -21,7 +21,12 @@ const getFileCacheConfig = () => {
 };
 
 const vendors = (vendorsList: string[]) => {
-    return vendorsList.concat(['react-split-pane', 'react-dnd', 'react-grid-layout']);
+    return vendorsList.concat([
+        'react-split-pane',
+        'react-dnd',
+        'react-grid-layout',
+        'react-beautiful-dnd',
+    ]);
 };
 
 const config: ServiceConfig = {
