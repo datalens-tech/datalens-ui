@@ -47,7 +47,7 @@ jobs:
       - name: Get last version config
         run: |
           VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          if [ -z "${{ env.UI_VERSION }}" == "release" ]; then
+          if [ "${{ env.UI_VERSION }}" == "release" ]; then
             UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
             echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
           fi
@@ -79,7 +79,7 @@ jobs:
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - name: Up docker compose and install local deps for test
-        if: ${{ env.UI_VERSION == 'build-from-repo' }}
+        if: ${{ env.UI_VERSION == '' }}
         working-directory: ./tests
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
@@ -90,7 +90,7 @@ jobs:
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
 
       - name: Run tests local from repo
-        if: ${{ env.UI_VERSION == 'build-from-repo' }}
+        if: ${{ env.UI_VERSION == '' }}
         run: npm run test:e2e:opensource
         env:
           NO_AUTH: true
@@ -98,7 +98,7 @@ jobs:
           E2E_DOMAIN: http://localhost:8080
 
       - name: Run tests from builded docker image
-        if: ${{ env.UI_VERSION != 'build-from-repo' }}
+        if: ${{ env.UI_VERSION != '' }}
         working-directory: ./tests
         run: |
           npm run test:e2e:docker
@@ -109,11 +109,27 @@ jobs:
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - name: Copy tests report from docker run
-        if: ${{ env.UI_VERSION != 'build-from-repo' }}
+        if: always()
         working-directory: ./tests
         run: |
-          rm -rf ./artifacts
-          npm run test:e2e:docker:report
+          if [ -z "${{ env.UI_VERSION }}" ]; then
+            echo "export report from docker run"
+            rm -rf ./artifacts
+            npm run test:e2e:docker:report
+          else
+            echo "skip export report from docker run..."
+          fi
+        env:
+          US_VERSION: ${{ env.US_VERSION }}
+          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
+          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
+          UI_VERSION: ${{ env.UI_VERSION }}
+
+      - name: Run docker compose down
+        if: always()
+        working-directory: ./tests
+        run: |
+          npm run test:docker:down
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
