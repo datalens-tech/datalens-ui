@@ -23,7 +23,8 @@ env:
   CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
   DATA_API_VERSION: ${{github.event.inputs.data-api}}
   US_VERSION: ${{github.event.inputs.us}}
-  UI_VERSION: ${{github.event.inputs.ui}}
+  UI_VERSION: 'release'
+  # UI_VERSION: ${{github.event.inputs.ui}}
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
