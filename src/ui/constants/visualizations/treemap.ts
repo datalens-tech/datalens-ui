@@ -1,5 +1,4 @@
 import {ChevronsExpandUpRight, GeoPolygons} from '@gravity-ui/icons';
-
 import type {Field, GraphShared, Placeholder, Shared} from 'shared';
 import {WizardVisualizationId, createMeasureNames, isMeasureNameOrValue} from 'shared';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
@@ -112,7 +111,7 @@ export const TREEMAP_VISUALIZATION: GraphShared['visualization'] = {
     ],
 };
 
-export const TREEMAP_D3_VISUALIZATION = {
+export const TREEMAP_D3_VISUALIZATION: GraphShared['visualization'] = {
     ...TREEMAP_VISUALIZATION,
     id: WizardVisualizationId.TreemapD3,
 };

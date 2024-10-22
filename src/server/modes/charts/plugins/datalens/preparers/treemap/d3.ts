@@ -1,13 +1,17 @@
-import type {ChartKitWidgetData, TreemapSeries, TreemapSeriesData} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {
+    ChartKitWidgetData,
+    TreemapSeries,
+    TreemapSeriesData,
+} from '@gravity-ui/chartkit/build/types/widget-data';
 import escape from 'lodash/escape';
 
+import type {WrappedMarkdown} from '../../../../../../../shared';
 import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
     isMarkdownField,
 } from '../../../../../../../shared';
-import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {
     mapAndColorizeHashTableByGradient,
@@ -23,16 +27,10 @@ import {
 import type {PrepareFunctionArgs} from '../types';
 
 type TreemapItemName = string | null | WrappedMarkdown;
-
-type TreemapItem = {
-    id: string;
+type ExtendedTreemapSeriesData = Omit<TreemapSeriesData, 'name'> & {
     name: TreemapItemName | TreemapItemName[];
-    parent?: string;
+    drillDownFilterValue: unknown;
     label?: string;
-    value?: number;
-    drillDownFilterValue?: string | null;
-    color?: string;
-    custom?: object;
 };
 
 export function prepareD3Treemap({
@@ -63,7 +61,7 @@ export function prepareD3Treemap({
 
     const {data, order} = resultData;
 
-    let treemap: TreemapSeriesData[] = [];
+    let treemap: ExtendedTreemapSeriesData[] = [];
     const treemapIds: string[] = [];
     const hashTable: Record<string, {value: string | null; label: string}> = {};
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
@@ -109,7 +107,7 @@ export function prepareD3Treemap({
         }
 
         const dPath: (string | null)[] = [];
-        let lastDimensionItem: TreemapSeriesData | undefined;
+        let lastDimensionItem: ExtendedTreemapSeriesData | undefined;
         d.forEach((item, level) => {
             if (item.type === 'PSEUDO') {
                 return;
@@ -142,15 +140,14 @@ export function prepareD3Treemap({
 
             const name = isMarkdownField(item) ? wrapMarkdownValue(value as string) : value;
 
-            const treemapItem: TreemapSeriesData = {
+            const treemapItem: ExtendedTreemapSeriesData = {
                 id: treemapId,
                 name,
                 drillDownFilterValue: value,
-                value: 0,
             };
 
             if (dPath.length) {
-                treemapItem.parent = `id_${dPath.join('/')}`;
+                treemapItem.parentId = `id_${dPath.join('/')}`;
             }
 
             dPath.push(value);
@@ -226,7 +223,7 @@ export function prepareD3Treemap({
         treemap = treemap.map((obj) => {
             const item = {...obj};
 
-            const colorDataValue = colorData[obj.id];
+            const colorDataValue = obj.id ? colorData[obj.id] : null;
             if (colorDataValue) {
                 item.color = colorDataValue.backgroundColor;
             }
@@ -235,42 +232,12 @@ export function prepareD3Treemap({
         });
     }
 
-    let levels;
-
-    if (d.length === 1) {
-        levels = [
-            {
-                level: 1,
-                borderWidth: 1,
-            },
-        ];
-    } else if (d.length === 2) {
-        levels = [
-            {
-                level: 1,
-                borderWidth: 3,
-            },
-            {
-                level: 2,
-                borderWidth: 1,
-            },
-        ];
-    } else {
-        levels = [
-            {
-                level: 1,
-                borderWidth: 5,
-            },
-            {
-                level: 2,
-                borderWidth: 3,
-            },
-            {
-                level: 3,
-                borderWidth: 1,
-            },
-        ];
-    }
+    const size = d.length;
+    const maxPadding = 5;
+    const levels: TreemapSeries['levels'] = new Array(size).fill(null).map((_, index) => ({
+        index: index + 1,
+        padding: Math.min(maxPadding, (size - index) * 2 - 1),
+    }));
 
     if (useMarkdown) {
         ChartEditor.updateConfig({useMarkdown: true});
@@ -282,12 +249,16 @@ export function prepareD3Treemap({
         layoutAlgorithm: 'squarify' as TreemapSeries['layoutAlgorithm'],
         dataLabels: {
             enabled: true,
+            html: useMarkdown,
+            style: {
+                fontColor: 'var(--g-color-text-complementary)',
+            },
         },
         levels,
-        data: treemap,
+        data: treemap as TreemapSeriesData[],
     };
 
-    const result: Partial<ChartKitWidgetData> = {
+    return {
         series: {
             data: [series],
         },
@@ -295,6 +266,4 @@ export function prepareD3Treemap({
             enabled: false,
         },
     };
-
-    return result;
 }
