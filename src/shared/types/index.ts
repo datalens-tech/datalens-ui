@@ -15,7 +15,6 @@ export * from './metrica';
 export * from './feature';
 export * from './config/wizard';
 export * from './bi-api';
-export * from './googleapis';
 export * from './color-palettes';
 export * from './common-update';
 export * from './menu';

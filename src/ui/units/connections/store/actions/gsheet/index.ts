@@ -1,9 +1,7 @@
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {batch} from 'react-redux';
-import {ConnectorType, Feature} from 'shared';
-import type {GoogleRefreshToken} from 'shared/schema';
-import Utils from 'ui/utils';
+import {ConnectorType} from 'shared';
 
 import {showToast} from '../../../../../store/actions/toaster';
 import type {DataLensApiError} from '../../../../../typings';
@@ -281,18 +279,11 @@ export const updateConnectionData = () => {
 
 export const googleLogin = (code: string) => {
     return async (dispatch: ConnectionsReduxDispatch) => {
-        let refreshToken: GoogleRefreshToken;
-        let error: DataLensApiError | undefined;
-
-        if (Utils.isEnabledFeature(Feature.EnableBIOAuth)) {
-            ({refresh_token: refreshToken, error} = await api.getOAuthToken({
-                code,
-                conn_type: ConnectorType.GsheetsV2,
-                scope: 'google',
-            }));
-        } else {
-            ({refreshToken, error} = await api.getGoogleCredentials(code));
-        }
+        const {refresh_token: refreshToken, error} = await api.getOAuthToken({
+            code,
+            conn_type: ConnectorType.GsheetsV2,
+            scope: 'google',
+        });
 
         if (error) {
             dispatch(
