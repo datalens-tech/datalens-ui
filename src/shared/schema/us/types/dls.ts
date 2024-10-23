@@ -44,20 +44,32 @@ export interface ModifyPermissionsBody {
     };
 }
 
-export interface ModifyPermissionsResponse extends GetPermissionsResponse {}
+type ModifyPermCheckType = 'straight' | 'hierarchical' | 'root';
+
+export interface ModifyPermissionsResponse {
+    result: 'ok';
+    nextPageToken?: string;
+}
 
 export interface ModifyPermissionsArgs {
     entryId: string;
     body: ModifyPermissionsBody;
+    checkType?: ModifyPermCheckType;
+    nested?: boolean;
+    page?: number;
+    pageSize?: number;
 }
 
-export type BatchPermissionsResponse = GetPermissionsResponse[];
+export type BatchPermissionsResponse = {
+    result: 'ok';
+};
 
 export interface BatchPermissionsArgs {
     nodes: {
         node: string;
         body: ModifyPermissionsBody;
     }[];
+    checkType?: ModifyPermCheckType;
 }
 
 export type CheckBulkPermissionResponse = {

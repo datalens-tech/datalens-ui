@@ -32,7 +32,16 @@ export const dlsActions = {
     modifyPermissions: createAction<ModifyPermissionsResponse, ModifyPermissionsArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/nodes/all/${filterUrlFragment(entryId)}/permissions`,
-        params: ({body}, headers) => ({body, headers}),
+        params: ({body, checkType, nested, page, pageSize}, headers) => ({
+            body: {
+                diff: body.diff,
+                checkType,
+                nested,
+                page,
+                pageSize,
+            },
+            headers,
+        }),
     }),
     batchPermissions: createAction<BatchPermissionsResponse, BatchPermissionsArgs>({
         method: 'POST',
