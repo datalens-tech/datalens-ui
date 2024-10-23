@@ -97,6 +97,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             [WRAPPED_FN_KEY]: {
                 fn: value.fn.toString(),
                 args: fnArgs,
+                libs: value.libs,
             },
         };
     };

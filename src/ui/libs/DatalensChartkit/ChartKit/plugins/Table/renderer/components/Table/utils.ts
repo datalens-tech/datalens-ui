@@ -6,6 +6,7 @@ import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
 import get from 'lodash/get';
+import round from 'lodash/round';
 import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
 
 import type {TableWidgetData} from '../../../../../../types';
@@ -158,7 +159,7 @@ export function getTableTitle(config: TableWidgetData['config']): TableTitle | u
 }
 
 export function getTableSizes(table: HTMLTableElement) {
-    const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
+    const tableScale = round(table?.getBoundingClientRect()?.width / table?.clientWidth, 2);
     let rows: HTMLTableRowElement[] = [];
 
     rows = Array.from(

@@ -58,7 +58,7 @@ const getMinMaxBarStyle = (args: GetMinMaxBarStyleArgs): React.CSSProperties => 
 
     let left: number;
     if (value < 0) {
-        left = separatorPart - valuePart;
+        left = Math.max(0, separatorPart - valuePart);
     } else {
         left = separatorPart;
     }
