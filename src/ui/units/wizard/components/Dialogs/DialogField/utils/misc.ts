@@ -57,7 +57,8 @@ export function canUseStringAsMarkdown(
             ];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
-        case WizardVisualizationId.Treemap: {
+        case WizardVisualizationId.Treemap:
+        case WizardVisualizationId.TreemapD3: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Dimensions];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }

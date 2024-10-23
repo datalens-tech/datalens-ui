@@ -1,4 +1,5 @@
 import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetSeries} from '@gravity-ui/chartkit/build/types/widget-data/series';
 import get from 'lodash/get';
 import type {ColumnExportSettings, SeriesExportSettings, TableRow} from 'shared';
 import type {TableData} from 'ui/libs/DatalensChartkit/types';
@@ -6,6 +7,18 @@ import type {TableData} from 'ui/libs/DatalensChartkit/types';
 type ChartToTableArgs = {
     chartData?: ChartKitWidgetData;
 };
+
+function getSeriesDataForExport(series: ChartKitWidgetSeries) {
+    switch (series.type) {
+        case 'treemap': {
+            // Only the leaves of the tree are involved in the export
+            return series.data.filter((d) => d.value);
+        }
+        default: {
+            return series.data;
+        }
+    }
+}
 
 export function chartToTable(args: ChartToTableArgs): TableData | null {
     const {chartData} = args;
@@ -37,7 +50,8 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
     })) as TableData['head'];
 
     chartData.series.data.forEach((s) => {
-        s.data.forEach((d) => {
+        const points = getSeriesDataForExport(s);
+        points.forEach((d) => {
             const row: TableRow = {cells: []};
 
             columns.forEach((col) => {
