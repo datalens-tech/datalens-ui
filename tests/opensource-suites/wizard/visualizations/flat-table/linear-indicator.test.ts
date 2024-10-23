@@ -4,6 +4,7 @@ import {
     ChartKitQa,
     DialogFieldBackgroundSettingsQa,
     DialogFieldBarsSettingsQa,
+    Operations,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -11,11 +12,13 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
-    datalensTest.describe('Flat table', () => {
+    datalensTest.describe.only('Flat table', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+            await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
 
             const wizardPage = new WizardPage({page});
             await wizardPage.setVisualization(WizardVisualizationId.FlatTable);
@@ -29,33 +32,35 @@ datalensTest.describe('Wizard', () => {
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
                 const table = wizardPage.chartkit.getTableLocator();
 
-                await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Filters,
+                    'id',
+                );
+                await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
+                await wizardPage.filterEditor.setInputValue('5');
+                await wizardPage.filterEditor.apply();
+
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.FlatTableColumns,
-                    'SalesSum',
+                    'id',
+                );
+
+                await wizardPage.createNewFieldWithFormula('max', 'max([id]) - 3');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'max',
                 );
                 await wizardPage.visualizationItemDialog.open(
                     PlaceholderName.FlatTableColumns,
-                    'SalesSum',
+                    'max',
                 );
-                await enableBar(wizardPage, [0, 1]);
+                await enableBar(wizardPage, [-1, 1]);
                 await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.FlatTableColumns,
-                    'country',
+                    'segment',
                 );
-                await wizardPage.createNewFieldWithFormula('negative', 'max(-10)');
-                await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.FlatTableColumns,
-                    'negative',
-                );
-                await wizardPage.visualizationItemDialog.open(
-                    PlaceholderName.FlatTableColumns,
-                    'negative',
-                );
-                await enableBar(wizardPage, [0, 10]);
-                await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
                 await expect(previewLoader).not.toBeVisible();
                 await expect(table).toBeVisible();

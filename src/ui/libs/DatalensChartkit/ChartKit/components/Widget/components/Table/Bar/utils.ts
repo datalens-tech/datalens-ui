@@ -21,8 +21,7 @@ export const getRangeValue = (min: number, max: number) => {
 };
 
 export const getRangeValuePart = (rangeValue: number, value: number) => {
-    const result = (Math.abs(value) * 100) / Math.abs(rangeValue);
-    return round(Math.max(0, Math.min(result, 100)), ROUND_PRESISION);
+    return round((Math.abs(value) * 100) / Math.abs(rangeValue), ROUND_PRESISION);
 };
 
 export const getMinMaxWithOffset = (args: GetMinMaxWithOffsetArgs) => {
@@ -54,11 +53,12 @@ const getMinMaxBarStyle = (args: GetMinMaxBarStyleArgs): React.CSSProperties => 
 
     const rangeValue = getRangeValue(min, max);
     const separatorPart = getRangeValuePart(rangeValue, min);
-    const valuePart = getRangeValuePart(rangeValue, value);
+    const valueBasedOnScale = Math.min(Math.max(min, value), max);
+    const valuePart = getRangeValuePart(rangeValue, valueBasedOnScale);
 
     let left: number;
-    if (value < 0) {
-        left = Math.max(0, separatorPart - valuePart);
+    if (valueBasedOnScale < 0) {
+        left = separatorPart - valuePart;
     } else {
         left = separatorPart;
     }
