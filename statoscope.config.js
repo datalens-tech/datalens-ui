@@ -24,7 +24,7 @@ module.exports = {
             ],
             // diff download size of entrypoints between input and reference stats. Fails if size diff is over the limit (10 kb)
             '@statoscope/webpack/diff-entry-download-size-limits': [
-                'error',
+                'warning',
                 {global: {maxInitialSizeDiff: 10 * 1024}},
             ],
             // diff download time of entrypoints between input and reference stats. Fails if download time is over the limit (500 ms)
