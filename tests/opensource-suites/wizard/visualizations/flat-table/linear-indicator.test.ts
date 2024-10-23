@@ -15,7 +15,7 @@ import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
-    datalensTest.describe.only('Flat table', () => {
+    datalensTest.describe('Flat table', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
