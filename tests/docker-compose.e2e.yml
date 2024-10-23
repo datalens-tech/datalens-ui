@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   pg-compeng:
     container_name: e2e-datalens-pg-compeng
@@ -61,7 +59,7 @@ services:
       POSTGRES_USER: us
       POSTGRES_PASSWORD: us
     volumes:
-      - ./metadata:/var/lib/postgresql/data
+      - pg-us-db:/var/lib/postgresql/data
 
   postgres-e2e:
     container_name: e2e-postgres
@@ -75,7 +73,7 @@ services:
 
   us:
     container_name: e2e-datalens-us
-    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-0.239.0}
+    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-release}
     depends_on:
       - pg-us
     environment:
@@ -96,8 +94,9 @@ services:
       - ./certs:/certs
       - ./data:/opt/e2e-data
 
-  datalens:
-    container_name: e2e-datalens-ui
+  datalens-from-build:
+    container_name: e2e-datalens-ui-build
+    image: e2e-datalens-ui:pr
     build:
       dockerfile: Dockerfile
       context: ../
@@ -117,3 +116,37 @@ services:
       US_ENDPOINT: "http://us:8083"
       NODE_EXTRA_CA_CERTS: "/usr/local/share/ca-certificates/cert.pem"
       HC: ${HC:-0}
+
+  datalens-from-image:
+    container_name: e2e-datalens-ui-image
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}
+    depends_on:
+      - us
+      - control-api
+      - data-api
+      - postgres-e2e
+    environment:
+      APP_MODE: "full"
+      APP_ENV: "production"
+      APP_INSTALLATION: "opensource"
+      AUTH_POLICY: "disabled"
+      US_ENDPOINT: "http://us:8083"
+      NODE_EXTRA_CA_CERTS: "/usr/local/share/ca-certificates/cert.pem"
+      HC: ${HC:-0}
+
+  datalens-from-image-tests:
+    container_name: e2e-datalens-ui-tests
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-0.2261.0}-e2e
+    depends_on:
+      - us
+      - control-api
+      - data-api
+      - postgres-e2e
+      - datalens-from-image
+    environment:
+      E2E_DOMAIN: http://datalens-from-image:8080
+      E2E_RETRY_TIMES: 1 
+      NO_AUTH: true
+
+volumes:
+  pg-us-db:

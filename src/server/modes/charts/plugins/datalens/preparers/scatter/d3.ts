@@ -4,12 +4,14 @@ import type {
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
+import type {SeriesExportSettings} from '../../../../../../../shared';
 import {PlaceholderId, getFakeTitleOrTitle, getXAxisMode} from '../../../../../../../shared';
 import type {
     PointCustomData,
     ScatterSeriesCustomData,
 } from '../../../../../../../shared/types/chartkit';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
+import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -71,15 +73,48 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 }
 
 export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<PointCustomData> {
-    const {shared, idToDataType, placeholders} = args;
+    const {shared, idToDataType, placeholders, colors, shapes} = args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
+
+    const exportSettings: SeriesExportSettings = {
+        columns: [
+            getExportColumnSettings({path: 'x', field: x}),
+            getExportColumnSettings({path: 'y', field: y}),
+        ],
+    };
+
+    if (z) {
+        exportSettings.columns.push(getExportColumnSettings({path: 'custom.name', field: z}));
+    }
+
+    if (size) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'custom.sizeLabel', field: size}),
+        );
+    }
+
+    const colorItem = colors[0];
+    if (colorItem) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'custom.cLabel', field: colorItem}),
+        );
+    }
+
+    const shapeItem = shapes[0];
+    if (shapeItem) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'custom.sLabel', field: shapeItem}),
+        );
+    }
+
     const seriesCustomData: ScatterSeriesCustomData = {
         xTitle: getFakeTitleOrTitle(x),
         yTitle: getFakeTitleOrTitle(y),
         pointTitle: getFakeTitleOrTitle(z),
         colorTitle: getFakeTitleOrTitle(color),
         sizeTitle: getFakeTitleOrTitle(size),
+        exportSettings,
     };
 
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});

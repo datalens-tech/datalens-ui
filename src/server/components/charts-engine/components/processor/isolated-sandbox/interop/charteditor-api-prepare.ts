@@ -143,6 +143,7 @@ const ChartEditor: IChartEditor = {
             [_ChartEditor_wrapFn_WRAPPED_FN_KEY]: {
                 fn: value.fn.toString(),
                 args: fnArgs,
+                libs: value.libs,
             },
         } as {[WRAPPED_FN_KEY]: UISandboxWrappedFunction};
     },

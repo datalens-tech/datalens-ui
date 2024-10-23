@@ -1,26 +1,12 @@
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
+import {USER_LANGUAGE_PARAM_NAME} from '@gravity-ui/nodekit';
 
-import {FALLBACK_LANGUAGES} from '../../shared';
-import {createI18nInstance, getLang} from '../utils/language';
+import {createI18nInstance} from '../utils/language';
 
 export default async function (req: Request, res: Response, next: NextFunction) {
-    const regionalEnvConfig = req.ctx.config.regionalEnvConfig;
     res.locals.userSettings = {};
-
-    const allowLanguages = regionalEnvConfig?.allowLanguages || FALLBACK_LANGUAGES;
-    const langHeader = req.acceptsLanguages(allowLanguages);
-    const langQuery = (req.query._lang || '') as string;
-    const lang = langQuery || langHeader || '';
-
-    const langResult = getLang({
-        lang,
-        hostname: req.hostname,
-        allowLanguages,
-        defaultLang: regionalEnvConfig?.defaultLang,
-    });
-
-    res.locals.userSettings.language = langResult;
-    res.locals.lang = langResult;
+    res.locals.userSettings.language = req.ctx.get(USER_LANGUAGE_PARAM_NAME);
+    res.locals.lang = req.ctx.get(USER_LANGUAGE_PARAM_NAME);
 
     // use `lang` from closure `res` object
     // maybe changed after user auth middleware and fill `userSettings`

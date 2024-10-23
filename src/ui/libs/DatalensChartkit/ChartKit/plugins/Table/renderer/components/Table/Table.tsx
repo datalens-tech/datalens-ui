@@ -2,6 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 import {BackgroundTable} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/BackgroundTable';
 
@@ -271,7 +272,11 @@ export const Table = React.memo<Props>((props: Props) => {
             <BackgroundTable
                 dimensions={widgetDimensions}
                 data={{header, body, footer}}
-                onChangeMinWidth={setCellMinWidth}
+                onChangeMinWidth={(colWidths) => {
+                    if (!isEqual(cellMinSizes, colWidths)) {
+                        setCellMinWidth(colWidths);
+                    }
+                }}
             />
         </React.Fragment>
     );

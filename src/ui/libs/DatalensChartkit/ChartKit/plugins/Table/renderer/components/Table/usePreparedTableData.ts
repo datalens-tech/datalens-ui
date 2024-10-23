@@ -11,11 +11,10 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
+import type {TableCell, TableCellsRow, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import type {TableData} from '../../../../../../types';
-import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import type {WidgetDimensions} from '../../types';
 import {mapHeadCell} from '../../utils/renderer';
 
@@ -27,9 +26,10 @@ import type {
     FooterRowViewData,
     HeadRowViewData,
     TData,
+    TFoot,
     TableViewData,
 } from './types';
-import {createTableColumns} from './utils';
+import {createTableColumns, getCellCustomStyle} from './utils';
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -50,7 +50,7 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
     };
 }
 
-function getFooterRows(table: Table<TData>, leftPositions: number[]) {
+function getFooterRows(table: Table<TData>, leftPositions: (number | undefined)[]) {
     return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
         const cells = f.headers.map<FooterCellViewData>((cell) => {
             const columnDef = cell.column.columnDef;
@@ -72,7 +72,7 @@ function getFooterRows(table: Table<TData>, leftPositions: number[]) {
             return {
                 id: cell.id,
                 style: cellStyle,
-                contentStyle: originalFooterData?.css ?? {},
+                contentStyle: getCellCustomStyle(originalFooterData),
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
@@ -118,11 +118,7 @@ export const usePreparedTableData = (props: {
 
     const columns = React.useMemo(() => {
         const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
-        const footerData = ((data.footer?.[0] as TableCellsRow)?.cells || []).map((td) => {
-            const cell = td as TableCommonCell;
-
-            return {...cell, css: cell.css ? camelCaseCss(cell.css) : undefined};
-        });
+        const footerData = ((data.footer?.[0] as TableCellsRow)?.cells ?? []) as TFoot[];
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
 
@@ -184,11 +180,6 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
-    const enableRowGrouping = React.useMemo(
-        () => data.head?.some((cell) => get(cell, 'group', false)),
-        [data.head],
-    );
-
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
@@ -201,6 +192,10 @@ export const usePreparedTableData = (props: {
         },
         getScrollElement: () => tableContainerRef.current,
         measureElement: (el) => {
+            const rowIndex = Number(el.getAttribute('data-index')) ?? -1;
+            const row = tableRows[rowIndex] as Row<TData>;
+            const rowId = row?.id ?? -1;
+
             const getRowHeight = () => {
                 const cells = Array.from(el?.getElementsByTagName('td') || []);
                 const simpleCell = cells.find((c) => {
@@ -210,16 +205,11 @@ export const usePreparedTableData = (props: {
                 return simpleCell?.getBoundingClientRect()?.height ?? 0;
             };
 
-            if (!enableRowGrouping) {
-                return getRowHeight();
+            if (rowId && typeof rowMeasures.current[rowId] === 'undefined') {
+                rowMeasures.current[rowId] = getRowHeight();
             }
 
-            const rowIndex = el.getAttribute('data-index') ?? '';
-            if (rowIndex && typeof rowMeasures.current[rowIndex] === 'undefined') {
-                rowMeasures.current[rowIndex] = getRowHeight();
-            }
-
-            return rowMeasures.current[rowIndex];
+            return rowMeasures.current[rowId];
         },
         overscan: 100,
     });
@@ -233,16 +223,46 @@ export const usePreparedTableData = (props: {
             return {min, fixed: fixedWidth ? Number(fixedWidth) : undefined};
         },
     );
-    const colSizes = getCellsWidth({
-        cols,
-        tableMinWidth: tableContainerRef.current?.clientWidth ?? 0,
-    });
 
-    const leftPositions = (headers[headers.length - 1]?.headers ?? []).map<number>((h) => {
-        const headData = h.column.columnDef.meta?.head;
-        const cellIndex = headData?.index ?? -1;
-        return colSizes.reduce((sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum), 1);
-    });
+    const colSizeRef = React.useRef<number[]>();
+    const tableMinWidth = tableContainerRef.current?.clientWidth ?? 0;
+    const colSizes = React.useMemo(() => {
+        const result = getCellsWidth({
+            cols,
+            tableMinWidth,
+        });
+
+        if (!isEqual(result, colSizeRef.current)) {
+            colSizeRef.current = result;
+        }
+
+        return colSizeRef.current ?? [];
+    }, [cols, tableMinWidth]);
+
+    const leftPositionsRef = React.useRef<(number | undefined)[]>([]);
+    const leftPositions = React.useMemo(() => {
+        const newValue = (headers[headers.length - 1]?.headers ?? []).map<number | undefined>(
+            (h) => {
+                const headData = h.column.columnDef.meta?.head;
+                if (!headData?.pinned) {
+                    return undefined;
+                }
+
+                const cellIndex = headData?.index ?? -1;
+                return colSizes.reduce(
+                    (sum, _s, i) => (i < cellIndex ? sum + colSizes[i] : sum),
+                    1,
+                );
+            },
+        );
+
+        if (!isEqual(newValue, leftPositionsRef.current)) {
+            leftPositionsRef.current = newValue;
+        }
+
+        return leftPositionsRef.current;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [colSizes]);
 
     const headerRows = React.useMemo(() => {
         return headers
@@ -271,7 +291,7 @@ export const usePreparedTableData = (props: {
                         }
 
                         const cellStyle: React.CSSProperties = {
-                            ...get(originalCellData, 'css', {}),
+                            ...getCellCustomStyle(originalCellData),
                             left,
                         };
 
@@ -305,7 +325,7 @@ export const usePreparedTableData = (props: {
             })
             .filter(Boolean) as HeadRowViewData[];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [columns]);
+    }, [columns, leftPositions]);
 
     const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
@@ -325,7 +345,7 @@ export const usePreparedTableData = (props: {
         const prevCells = new Array(tableRows[0]?.getVisibleCells()?.length);
         return virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
             const row = tableRows[virtualRow.index] as Row<TData>;
-            const rowMeasuredHeight = rowMeasures.current[virtualRow.index];
+            const rowMeasuredHeight = rowMeasures.current[row.id];
             const visibleCells = row.getVisibleCells();
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
@@ -361,9 +381,9 @@ export const usePreparedTableData = (props: {
                     left = leftPositions[originalHeadData?.index ?? -1];
                 }
                 const cellStyle: React.CSSProperties = {
-                    left,
+                    ...getCellCustomStyle(originalCellData),
                     ...additionalStyles,
-                    ...camelCaseCss(originalCellData.css),
+                    left,
                 };
 
                 if (typeof originalHeadData?.width !== 'undefined') {

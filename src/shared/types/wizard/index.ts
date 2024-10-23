@@ -6,6 +6,7 @@ import type {
     FilterField,
     HierarchyField,
     Link,
+    ServerCommonSharedExtraSettings,
     ServerDatasetField,
     ServerTooltipConfig,
 } from '../';
@@ -33,6 +34,7 @@ export * from './background-settings';
 export * from './misc';
 export * from './placeholder';
 export * from './sub-totals';
+export * from './export';
 
 export type VisualizationIconProps = Omit<IconProps, 'data'> & {
     id: IconId;
@@ -99,6 +101,7 @@ export interface CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';

@@ -1,5 +1,5 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
-import type {DurationUnit} from '@gravity-ui/date-utils/build/typings';
+import type {DurationUnit} from '@gravity-ui/date-utils';
 import isFunction from 'lodash/isFunction';
 
 import type {ServerDatasetField} from '../types';

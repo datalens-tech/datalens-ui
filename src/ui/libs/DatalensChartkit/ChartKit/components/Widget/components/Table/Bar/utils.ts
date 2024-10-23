@@ -9,7 +9,6 @@ import type {
     GetMinBarStyleArgs,
     GetMinMaxBarStyleArgs,
     GetMinMaxWithOffsetArgs,
-    GetSeparatorStyleArgs,
     GetStylesArgs,
 } from './types';
 
@@ -22,7 +21,8 @@ export const getRangeValue = (min: number, max: number) => {
 };
 
 export const getRangeValuePart = (rangeValue: number, value: number) => {
-    return round((Math.abs(value) * 100) / Math.abs(rangeValue), ROUND_PRESISION);
+    const result = (Math.abs(value) * 100) / Math.abs(rangeValue);
+    return round(Math.max(0, Math.min(result, 100)), ROUND_PRESISION);
 };
 
 export const getMinMaxWithOffset = (args: GetMinMaxWithOffsetArgs) => {
@@ -55,35 +55,52 @@ const getMinMaxBarStyle = (args: GetMinMaxBarStyleArgs): React.CSSProperties => 
     const rangeValue = getRangeValue(min, max);
     const separatorPart = getRangeValuePart(rangeValue, min);
     const valuePart = getRangeValuePart(rangeValue, value);
-    let background: string | undefined;
 
+    let left: number;
     if (value < 0) {
-        const minColorStop = separatorPart - valuePart;
-        background = `linear-gradient(to right, transparent 0% ${minColorStop}%, ${color} ${minColorStop}% ${separatorPart}%, transparent ${separatorPart}% 100%)`;
+        left = separatorPart - valuePart;
     } else {
-        const valueColorStop = separatorPart + valuePart;
-        background = `linear-gradient(to right, transparent 0% ${separatorPart}%, ${color} ${separatorPart}% ${valueColorStop}%, transparent ${valueColorStop}% 100%)`;
+        left = separatorPart;
     }
 
-    return {background};
+    return {background: color, marginLeft: `${left}%`, width: `${valuePart}%`};
+};
+
+const getLeftPosition = (align: string, width: number) => {
+    switch (align) {
+        case 'right': {
+            return `${100 - width}%`;
+        }
+        case 'center': {
+            return `${(100 - width) / 2}%`;
+        }
+        case 'left':
+        default: {
+            return 0;
+        }
+    }
 };
 
 const getMinBarStyle = (args: GetMinBarStyleArgs): React.CSSProperties => {
     const {value, min, color, align = 'right'} = args;
     const valuePart = getRangeValuePart(min, value);
-    const valueColorStop = 100 - valuePart;
-    const background = `linear-gradient(to ${align}, transparent 0% ${valueColorStop}%, ${color} ${valueColorStop}% 100%)`;
 
-    return {background};
+    return {
+        background: color,
+        width: `${valuePart}%`,
+        marginLeft: getLeftPosition(align, valuePart),
+    };
 };
 
 const getMaxBarStyle = (args: GetMaxBarStyleArgs): React.CSSProperties => {
     const {value, max, color, align = 'left'} = args;
     const valuePart = getRangeValuePart(max, value);
-    const valueColorStop = 100 - valuePart;
-    const background = `linear-gradient(to ${align}, transparent 0% ${valueColorStop}%, ${color} ${valueColorStop}% 100%)`;
 
-    return {background};
+    return {
+        background: color,
+        width: `${valuePart}%`,
+        marginLeft: getLeftPosition(align, valuePart),
+    };
 };
 
 export const getBarStyle = (args: GetBarStyleArgs): React.CSSProperties => {
@@ -102,19 +119,6 @@ export const getBarStyle = (args: GetBarStyleArgs): React.CSSProperties => {
     }
 
     return {};
-};
-
-export const getSeparatorStyle = (args: GetSeparatorStyleArgs): React.CSSProperties | undefined => {
-    const {min, max} = args;
-
-    if (isUndefined(min) || isUndefined(max)) {
-        return undefined;
-    }
-
-    const rangeValue = getRangeValue(min, max);
-    const separatorPart = getRangeValuePart(rangeValue, min);
-
-    return {left: `${separatorPart}%`};
 };
 
 export const getStyles = (
@@ -147,8 +151,16 @@ export const getStyles = (
         };
     }
 
-    if (isValid && showBar && showSeparator) {
-        separatorStyle = getSeparatorStyle({...getMinMaxWithOffset({min, max, offset})});
+    const shouldShowSeperator =
+        isValid && showBar && showSeparator && !(isUndefined(min) || isUndefined(max)) && barHeight;
+    if (shouldShowSeperator) {
+        separatorStyle = {
+            marginTop: -barHeight * 0.15,
+        };
+
+        if (value < 0) {
+            separatorStyle.width = `100%`;
+        }
     }
 
     return {barStyle, separatorStyle};

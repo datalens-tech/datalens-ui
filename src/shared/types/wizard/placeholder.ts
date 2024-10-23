@@ -23,6 +23,7 @@ export interface PlaceholderSettings {
     axisFormatMode?: string;
     axisModeMap?: Record<string, string>;
     disableAxisMode?: boolean;
+    axisVisibility?: string;
 }
 
 export type Placeholder = {

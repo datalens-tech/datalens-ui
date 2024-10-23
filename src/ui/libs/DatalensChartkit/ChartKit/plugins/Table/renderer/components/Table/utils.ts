@@ -1,12 +1,16 @@
+import type React from 'react';
+
 import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
 import get from 'lodash/get';
+import round from 'lodash/round';
 import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
 
 import type {TableWidgetData} from '../../../../../../types';
+import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import {getTreeCellColumnIndex, getTreeSetColumnSortAscending} from '../../utils';
 
 import type {TData, TFoot, THead} from './types';
@@ -155,7 +159,7 @@ export function getTableTitle(config: TableWidgetData['config']): TableTitle | u
 }
 
 export function getTableSizes(table: HTMLTableElement) {
-    const tableScale = table?.getBoundingClientRect()?.width / table?.clientWidth;
+    const tableScale = round(table?.getBoundingClientRect()?.width / table?.clientWidth, 2);
     let rows: HTMLTableRowElement[] = [];
 
     rows = Array.from(
@@ -214,4 +218,25 @@ export function getTableSizes(table: HTMLTableElement) {
         });
         return acc;
     }, []);
+}
+
+export function getCellCustomStyle(cellData: unknown): React.CSSProperties {
+    const css = camelCaseCss(get(cellData, 'css', {}));
+
+    // Since the table is created with flex/grid instead of standard table layout,
+    // some of styles will not work as expected - we replace them here
+    if (css.verticalAlign && !css.alignItems) {
+        switch (css.verticalAlign) {
+            case 'middle': {
+                css.alignItems = 'center';
+                break;
+            }
+            case 'bottom': {
+                css.alignItems = 'end';
+                break;
+            }
+        }
+    }
+
+    return css;
 }

@@ -73,6 +73,8 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
     EnableBIConnectorIcons = 'EnableBIConnectorIcons',
+    /** Enable undo/redo buttons & hotkeys in ql */
+    EnableEditHistoryQL = 'EnableEditHistoryQL',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -1,6 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {EntryScope, TENANT_ID_HEADER} from '../../shared';
+import {TENANT_ID_HEADER} from '../../shared';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
@@ -53,22 +53,9 @@ export default async (req: Request, res: Response): Promise<void> => {
     }
 
     if (entry) {
-        switch (entry.scope) {
-            case EntryScope.Folder:
-                return res.redirect(`/navigation/${entry.entryId}`);
-            case EntryScope.Dataset:
-                return res.redirect(`/datasets/${entry.entryId}`);
-            case EntryScope.Widget:
-                return res.redirect(`/wizard/${entry.entryId}`);
-            case EntryScope.Dash:
-                return res.redirect(`/${entry.entryId}`);
-            case EntryScope.Connection:
-                return res.redirect(`/connections/${entry.entryId}`);
-            case EntryScope.Report:
-                return res.redirect(`/reports/${entry.entryId}`);
-            default:
-                return res.redirect('/navigation');
-        }
+        const {handleEntryRedirect} = registry.common.functions.getAll();
+
+        return handleEntryRedirect(entry, res);
     } else {
         res.send(res.renderDatalensLayout(layoutConfig));
         return;
