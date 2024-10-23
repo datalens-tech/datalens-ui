@@ -222,11 +222,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         return (
             <DialogPlaceholderRow
-                settingCustomWidth="400px"
                 title={i18n('wizard', 'label_nulls')}
                 setting={
                     <DialogRadioButtons
-                        stretched={true}
                         qa="connect-nulls-radio-buttons"
                         items={nullsOptions}
                         value={selectedValue}
