@@ -143,15 +143,49 @@ function clearVmProp(prop: unknown) {
     return prop;
 }
 
-const getUnwrappedFunction = (args: {
+async function getUiSandboxLibs(libs: string[]) {
+    const modules = await Promise.all(
+        libs.map(async (lib) => {
+            switch (lib) {
+                case 'date-utils@2.3.0': {
+                    // eslint-disable-next-line import/no-extraneous-dependencies
+                    const module = await import(
+                        // @ts-ignore
+                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.3.0.js?raw'
+                    );
+                    return module.default;
+                }
+                case 'date-utils':
+                case 'date-utils@2.5.3': {
+                    // eslint-disable-next-line import/no-extraneous-dependencies
+                    const module = await import(
+                        // @ts-ignore
+                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.5.3.js?raw'
+                    );
+                    return module.default;
+                }
+                default: {
+                    throw new ChartKitCustomError(null, {
+                        details: `The library '${lib}' is not available`,
+                    });
+                }
+            }
+        }),
+    );
+
+    return modules.filter(Boolean).join('');
+}
+
+async function getUnwrappedFunction(args: {
     sandbox: QuickJSWASMModule;
     wrappedFn: UISandboxWrappedFunction;
     options?: UiSandboxRuntimeOptions;
     entryId: string;
     entryType: string;
-}) => {
+}) {
     const {sandbox, wrappedFn, options, entryId, entryType} = args;
-    return function (this: unknown, ...args: unknown[]) {
+    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    return function (this: unknown, ...restArgs: unknown[]) {
         if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
                 code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
@@ -166,7 +200,7 @@ const getUnwrappedFunction = (args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        const fnArgs = [...args, ...preparedUserArgs].map((a) => clearVmProp(a));
+        const fnArgs = [...restArgs, ...preparedUserArgs].map((a) => clearVmProp(a));
 
         // prepare function context
         const fnContext = clearVmProp(this);
@@ -247,6 +281,7 @@ const getUnwrappedFunction = (args: {
             fnContext,
             fnArgs,
             globalApi,
+            libs,
         });
 
         const performance = Performance.getDuration(runId);
@@ -256,39 +291,61 @@ const getUnwrappedFunction = (args: {
 
         return unwrapHtml(result);
     };
-};
+}
 
-export const unwrapPossibleFunctions = (args: {
+export async function unwrapPossibleFunctions(args: {
     entryId: string;
     entryType: string;
     sandbox: QuickJSWASMModule;
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
-}) => {
+}) {
     const {sandbox, target, options, entryId, entryType} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
 
-    Object.keys(target).forEach((key) => {
-        const value = target[key];
+    await Promise.all(
+        Object.keys(target).map(async (key) => {
+            const value = target[key];
 
-        if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
-            const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
-            // TODO: it will become unnecessary after removal Feature.NoJsonFn
-            wrappedFn.fn = String(wrappedFn.fn);
-            // Do argument mutation on purpose
-            // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction({sandbox, wrappedFn, options, entryId, entryType});
-        } else if (Array.isArray(value)) {
-            value.forEach((item) =>
-                unwrapPossibleFunctions({entryId, sandbox, options, target: item, entryType}),
-            );
-        } else if (value && typeof value === 'object') {
-            unwrapPossibleFunctions({entryId, sandbox, options, target: value, entryType});
-        }
-    });
-};
+            if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
+                const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
+                // TODO: it will become unnecessary after removal Feature.NoJsonFn
+                wrappedFn.fn = String(wrappedFn.fn);
+                // Do argument mutation on purpose
+                // eslint-disable-next-line no-param-reassign
+                target[key] = await getUnwrappedFunction({
+                    sandbox,
+                    wrappedFn,
+                    options,
+                    entryId,
+                    entryType,
+                });
+            } else if (Array.isArray(value)) {
+                await Promise.all(
+                    value.map((item) =>
+                        unwrapPossibleFunctions({
+                            entryId,
+                            sandbox,
+                            options,
+                            target: item,
+                            entryType,
+                        }),
+                    ),
+                );
+            } else if (value && typeof value === 'object') {
+                await unwrapPossibleFunctions({
+                    entryId,
+                    sandbox,
+                    options,
+                    target: value,
+                    entryType,
+                });
+            }
+        }),
+    );
+}
 
 export const shouldUseUISandbox = (target: TargetValue) => {
     if (!target || typeof target !== 'object') {

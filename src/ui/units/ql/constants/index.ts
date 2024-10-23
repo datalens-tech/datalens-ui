@@ -82,3 +82,5 @@ export const AVAILABLE_CONNECTION_TYPES_BY_CHART_TYPE = {
 export const QL_MOCKED_DATASET_ID = 'ql-mocked-dataset';
 
 export const DEFAULT_VISUALIZATION_ID_QL = VISUALIZATION_IDS.COLUMN;
+
+export const QL_EDIT_HISTORY_UNIT_ID = 'ql';

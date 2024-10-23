@@ -6,15 +6,21 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import isNull from 'lodash/isNull';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
-import {PlaceholderId, WizardVisualizationId, getDefaultFormatting, isPseudoField} from 'shared';
+import {
+    DialogFieldSettingsQa,
+    PlaceholderId,
+    WizardVisualizationId,
+    getDefaultFormatting,
+    isPseudoField,
+} from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
@@ -479,6 +485,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                                 this.setState({isMarkdown: checked});
                             }}
                             checked={this.state.isMarkdown ?? false}
+                            qa={DialogFieldSettingsQa.MarkdownEnableButton}
                         />
                     }
                 />

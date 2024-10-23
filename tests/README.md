@@ -34,10 +34,10 @@ Install Node.js >= v18.17.0 manually or via [node version manager](https://githu
 Start project in dev mode (don't forget to update docker images first):
 
 ```bash
-docker compose -f tests/docker-compose.e2e.yml -f tests/docker-compose.e2e-dev.yml up
+docker compose -f tests/docker-compose.e2e.yml up
 
 # Start datalens ui in dev mode:
-npm ci # Use next command on Apple M1: npm ci --target_arch=x64
+npm ci
 npm run dev
 ```
 

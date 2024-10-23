@@ -1,4 +1,6 @@
 import type {ConfigNode} from 'libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {AnyAction} from 'redux';
+import type {ThunkDispatch} from 'redux-thunk';
 import type {
     CommonSharedExtraSettings,
     QLChartType,
@@ -12,10 +14,46 @@ import type {
     QlConfigParam,
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
+import type {DatalensGlobalState} from 'ui/index';
+import type {CloseDialogAction, OpenDialogAction} from 'ui/store/actions/dialog';
+import type {RESET_WIZARD_STORE, SetWizardStoreAction} from 'ui/units/wizard/actions';
 import type {DatasetAction} from 'units/wizard/actions/dataset';
 import type {VisualizationAction} from 'units/wizard/actions/visualization';
 
 import type {AppStatus, ConnectionStatus, VisualizationStatus} from '../../constants';
+import type {
+    ADD_PARAM,
+    ADD_PARAM_IN_QUERY,
+    ADD_QUERY,
+    DRAW_PREVIEW,
+    DUPLICATE_QUERY,
+    REMOVE_PARAM,
+    REMOVE_PARAM_IN_QUERY,
+    REMOVE_QUERY,
+    RESET_QL_STORE,
+    SET_CHART_TYPE,
+    SET_COLUMNS_ORDER,
+    SET_CONNECTION,
+    SET_CONNECTION_SOURCES,
+    SET_CONNECTION_SOURCE_SCHEMA,
+    SET_CONNECTION_STATUS,
+    SET_DEFAULT_PATH,
+    SET_ENTRY,
+    SET_ENTRY_KEY,
+    SET_ERROR,
+    SET_EXTRA_SETTINGS,
+    SET_QL_STORE,
+    SET_QUERY_METADATA,
+    SET_QUERY_VALUE,
+    SET_SETTINGS,
+    SET_STATUS,
+    SET_TABLE_PREVIEW_DATA,
+    SET_VISUALIZATION_STATUS,
+    TOGGLE_TABLE_PREVIEW,
+    UPDATE_PARAM,
+    UPDATE_PARAM_IN_QUERY,
+    UPDATE_QUERY,
+} from '../actions/ql';
 
 // QLEntry - chart created in QL
 export interface QLEntry extends GetEntryResponse {
@@ -70,21 +108,26 @@ export interface QLState {
 }
 
 export interface QLActionResetQLStore {
-    type: symbol;
+    type: typeof RESET_QL_STORE;
+}
+
+export interface QLActionSetQLStore {
+    type: typeof SET_QL_STORE;
+    store: QLState;
 }
 
 export interface QLActionSetStatus {
-    type: symbol;
+    type: typeof SET_STATUS;
     appStatus: AppStatus;
 }
 
 export interface QLActionSetError {
-    type: symbol;
+    type: typeof SET_ERROR;
     error: Error;
 }
 
 export interface QLActionSetSettings {
-    type: symbol;
+    type: typeof SET_SETTINGS;
     chartType: QLChartType | null;
     tabs: QLTabs;
     queryValue: string;
@@ -98,131 +141,151 @@ export interface QLActionSetSettings {
 }
 
 export interface QLActionSetDefaultPath {
-    type: symbol;
+    type: typeof SET_DEFAULT_PATH;
     newDefaultPath: string;
 }
 
 export interface QLActionSetEntry {
-    type: symbol;
+    type: typeof SET_ENTRY;
     entry: QLEntry | null;
 }
 
 export interface QLActionSetEntryKey {
-    type: symbol;
+    type: typeof SET_ENTRY_KEY;
     payload: string;
 }
 
 export interface QLActionSetExtraSettings {
-    type: symbol;
+    type: typeof SET_EXTRA_SETTINGS;
     extraSettings: CommonSharedExtraSettings;
 }
 
+export interface QLActionAddQuery {
+    type: typeof ADD_QUERY;
+}
+
+export interface QLActionDuplcateQuery {
+    type: typeof DUPLICATE_QUERY;
+    index: number;
+}
+
 export interface QLActionUpdateQuery {
-    type: symbol;
+    type: typeof UPDATE_QUERY;
     query: QLConfigQuery;
     index: number;
 }
 
 export interface QLActionRemoveQuery {
-    type: symbol;
+    type: typeof REMOVE_QUERY;
     index: number;
 }
 
 export interface QLActionUpdateParam {
-    type: symbol;
+    type: typeof UPDATE_PARAM;
     param: QlConfigParam;
     index: number;
 }
 
 export interface QLActionRemoveParam {
-    type: symbol;
+    type: typeof REMOVE_PARAM;
     index: number;
 }
 
+export interface QLActionAddParam {
+    type: typeof ADD_PARAM;
+}
+
 export interface QLActionAddParamInQuery {
-    type: symbol;
+    type: typeof ADD_PARAM_IN_QUERY;
     queryIndex: number;
 }
 
 export interface QLActionUpdateParamInQuery {
-    type: symbol;
+    type: typeof UPDATE_PARAM_IN_QUERY;
     param: QlConfigParam;
     queryIndex: number;
     paramIndex: number;
 }
 
 export interface QLActionRemoveParamInQuery {
-    type: symbol;
+    type: typeof REMOVE_PARAM_IN_QUERY;
     queryIndex: number;
     paramIndex: number;
 }
 
 export interface QLActionSetQueryMetadata {
-    type: symbol;
+    type: typeof SET_QUERY_METADATA;
     metadata: {
         order: QlConfigResultEntryMetadataDataColumnOrGroup[];
     };
 }
 
 export interface QLActionSetTablePreviewData {
-    type: symbol;
+    type: typeof SET_TABLE_PREVIEW_DATA;
     tablePreviewData: QlConfigPreviewTableData;
 }
 
 export interface QLActionSetVisualizationStatus {
-    type: symbol;
+    type: typeof SET_VISUALIZATION_STATUS;
     visualizationStatus: VisualizationStatus;
 }
 
 export interface QLActionSetColumnsOrder {
-    type: symbol;
+    type: typeof SET_COLUMNS_ORDER;
     order: QlConfigResultEntryMetadataDataColumnOrGroup[];
 }
 
 export interface QLActionSetConnectionSources {
-    type: symbol;
+    type: typeof SET_CONNECTION_SOURCES;
     connectionSources: Record<string, string>[];
     connectionFreeformSources: Record<string, string>[];
 }
 
 export interface QLActionSetConnectionSourceSchema {
-    type: symbol;
+    type: typeof SET_CONNECTION_SOURCE_SCHEMA;
     tableName: string;
     schema: Record<string, any>[];
 }
 
 export interface QLActionSetChartType {
-    type: symbol;
+    type: typeof SET_CHART_TYPE;
     chartType: QLChartType | null;
 }
 
 export interface QLActionSetConnection {
-    type: symbol;
+    type: typeof SET_CONNECTION;
     connection: QLConnectionEntry;
 }
 
 export interface QLActionSetConnectionStatus {
-    type: symbol;
+    type: typeof SET_CONNECTION_STATUS;
     connectionStatus: ConnectionStatus;
 }
 
 export interface QLActionSetQueryValue {
-    type: symbol;
+    type: typeof SET_QUERY_VALUE;
     newValue: string;
 }
 
 export interface QLActionDrawPreview {
-    type: symbol;
+    type: typeof DRAW_PREVIEW;
     withoutTable?: boolean;
     previewData: any;
 }
 
+export interface QLActionToggleTablePreview {
+    type: typeof TOGGLE_TABLE_PREVIEW;
+}
+
 export interface ResetWizardStoreAction {
-    type: string;
+    type: typeof RESET_WIZARD_STORE;
 }
 
 export type QLAction =
     | QLActionResetQLStore
+    | QLActionSetQLStore
+    | QLActionAddQuery
+    | QLActionUpdateQuery
     | QLActionSetChartType
     | QLActionSetExtraSettings
     | QLActionSetConnectionSources
@@ -235,12 +298,29 @@ export type QLAction =
     | QLActionSetQueryMetadata
     | QLActionSetColumnsOrder
     | QLActionSetConnection
+    | QLActionSetConnectionStatus
     | QLActionSetQueryValue
     | QLActionDrawPreview
     | VisualizationAction
     | DatasetAction
     | ResetWizardStoreAction
-    | QLActionSetEntryKey;
+    | SetWizardStoreAction
+    | QLActionSetEntryKey
+    | QLActionSetVisualizationStatus
+    | QLActionSetTablePreviewData
+    | QLActionRemoveParamInQuery
+    | QLActionUpdateParamInQuery
+    | QLActionAddParamInQuery
+    | QLActionRemoveParam
+    | QLActionUpdateParam
+    | QLActionAddParam
+    | QLActionRemoveQuery
+    | QLActionDuplcateQuery
+    | QLActionToggleTablePreview
+    | CloseDialogAction
+    | OpenDialogAction;
+
+export type QLDispatch = ThunkDispatch<DatalensGlobalState, void, AnyAction>;
 
 export type QLChartConfig = ConfigNode & {
     data: {

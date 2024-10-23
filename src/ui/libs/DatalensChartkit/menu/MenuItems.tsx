@@ -13,7 +13,7 @@ import {
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
-import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE} from 'shared';
+import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetKind} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -201,11 +201,13 @@ export const getOpenAsTableMenuItem = ({
         />
     ),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
-        const isGraphWidget = loadedData?.data && loadedData?.type === CHARTKIT_WIDGET_TYPE.GRAPH;
         const isExportAllowed = !loadedData?.extra.dataExportForbidden;
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
+        const isChart =
+            loadedData?.data &&
+            ([WidgetKind.Graph, WidgetKind.D3] as string[]).includes(loadedData?.type);
 
-        return Boolean(!isCriticalError && isExportAllowed && isGraphWidget);
+        return Boolean(!isCriticalError && isExportAllowed && isChart);
     },
     action:
         customConfig?.action ||

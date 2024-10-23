@@ -41,11 +41,15 @@ interface InitEditHistoryUnitAction {
     options: CreateJDPOptions;
 }
 
-export function initEditHistoryUnit({
+export function initEditHistoryUnit<T>({
     unitId,
     setState,
     options,
-}: Omit<InitEditHistoryUnitAction, 'type'>) {
+}: {
+    unitId: string;
+    setState: EditHistoryUnit<T>['setState'];
+    options: CreateJDPOptions;
+}) {
     return {
         type: INIT_EDIT_HISTORY_UNIT,
         unitId,
@@ -173,7 +177,7 @@ export function goBack({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            dispatch(setState({state: targetState}));
+            setState({state: targetState});
         });
     };
 }
@@ -212,7 +216,7 @@ export function goForward({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            dispatch(setState({state: targetState}));
+            setState({state: targetState});
         });
     };
 }
