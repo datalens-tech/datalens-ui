@@ -34,22 +34,27 @@ datalensTest.describe('Wizard', () => {
                     PlaceholderName.FlatTableColumns,
                     'SalesSum',
                 );
-                await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.FlatTableColumns,
-                    'country',
-                );
-
                 await wizardPage.visualizationItemDialog.open(
                     PlaceholderName.FlatTableColumns,
                     'SalesSum',
                 );
-                await wizardPage.visualizationItemDialog.barsSettings.switchBars();
-                await wizardPage.visualizationItemDialog.barsSettings.switchScaleMode('manual');
-                const scaleSettingsInputs = page
-                    .locator(slct(DialogFieldBarsSettingsQa.ScaleInputsWrapper))
-                    .getByRole('textbox');
-                await scaleSettingsInputs.first().fill('0');
-                await scaleSettingsInputs.last().fill('1');
+                await enableBar(wizardPage, [0, 1]);
+                await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'country',
+                );
+                await wizardPage.createNewFieldWithFormula('negative', 'max(-10)');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'negative',
+                );
+                await wizardPage.visualizationItemDialog.open(
+                    PlaceholderName.FlatTableColumns,
+                    'negative',
+                );
+                await enableBar(wizardPage, [0, 10]);
                 await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
                 await expect(previewLoader).not.toBeVisible();
@@ -93,3 +98,14 @@ datalensTest.describe('Wizard', () => {
         );
     });
 });
+
+async function enableBar(wizardPage: WizardPage, scale: [number, number]) {
+    await wizardPage.visualizationItemDialog.barsSettings.switchBars();
+    await wizardPage.visualizationItemDialog.barsSettings.switchScaleMode('manual');
+    const scaleSettingsInputs = wizardPage.page
+        .locator(slct(DialogFieldBarsSettingsQa.ScaleInputsWrapper))
+        .getByRole('textbox');
+    const [min, max] = scale;
+    await scaleSettingsInputs.first().fill(String(min));
+    await scaleSettingsInputs.last().fill(String(max));
+}
