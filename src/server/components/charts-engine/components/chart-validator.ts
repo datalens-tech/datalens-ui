@@ -32,6 +32,11 @@ const MODEL_TABS = {
         'js,params,shared,ui,url,config',
         'js,params,secrets,shared,ui,url,config',
     ]),
+
+    [EDITOR_TYPE.WHITE_BOX_NODE]: new Set([
+        'js,params,shared,ui,url,config',
+        'js,params,secrets,shared,ui,url,config',
+    ]),
 };
 
 export const chartValidator = {

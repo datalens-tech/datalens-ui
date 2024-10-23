@@ -188,6 +188,8 @@ type AlertWidget = WidgetBase & {
 
 type D3Widget = WidgetBase & {type: 'd3'};
 
+type WhiteBoxWidget = WidgetBase & {type: 'white-box'};
+
 type WidgetComponentProps =
     | GraphWidget
     | TableWidgetData
@@ -350,7 +352,8 @@ export type Widget =
     | YMapWidget
     | TextWidget
     | TimeseriesWidget
-    | MarkupWidget;
+    | MarkupWidget
+    | WhiteBoxWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';
