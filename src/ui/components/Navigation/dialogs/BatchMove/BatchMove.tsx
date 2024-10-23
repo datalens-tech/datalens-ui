@@ -150,6 +150,7 @@ export const BatchMove = ({
                 <AccessError
                     onClose={handleClose}
                     entries={entries}
+                    entriesWithRights={entriesWithRights}
                     onNext={handleNextAfterAccessError}
                 />
             );
