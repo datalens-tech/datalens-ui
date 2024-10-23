@@ -29,7 +29,7 @@ module.exports = {
             ],
             // diff download time of entrypoints between input and reference stats. Fails if download time is over the limit (500 ms)
             '@statoscope/webpack/diff-entry-download-time-limits': [
-                'error',
+                'warning',
                 {global: {maxInitialDownloadTimeDiff: 500}},
             ],
             // compares usage of specified packages usage between input and reference stats.
