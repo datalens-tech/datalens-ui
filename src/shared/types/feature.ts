@@ -75,6 +75,10 @@ export enum Feature {
     EnableBIConnectorIcons = 'EnableBIConnectorIcons',
     /** Enable undo/redo buttons & hotkeys in ql */
     EnableEditHistoryQL = 'EnableEditHistoryQL',
+    /** Depends on US feature UseMovePermAction.
+     * It checks admin permission for move entries instead of edit permission.
+     */
+    UseMovePermAction = 'UseMovePermAction',
 }
 
 export type FeatureConfig = Record<string, boolean>;
