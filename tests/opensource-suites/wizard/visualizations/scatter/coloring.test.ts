@@ -5,7 +5,6 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Scatter chart', () => {
@@ -19,7 +18,6 @@ datalensTest.describe('Wizard', () => {
         datalensTest(
             'Point color set by the fake title of the field @screenshot',
             async ({page}) => {
-                await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
                 const wizardPage = new WizardPage({page});
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
                 const chart = chartContainer.locator('.chartkit-d3');
