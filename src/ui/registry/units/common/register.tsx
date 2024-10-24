@@ -1,4 +1,5 @@
 import {extractEntryId, isEntryId} from 'shared';
+import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
@@ -92,5 +93,6 @@ export const registerCommonPlugins = () => {
         getAllEntryScopes,
         getTopLevelEntryScopes,
         getScopeTypeIcon,
+        getEntryScopesWithRevisionsList,
     });
 };

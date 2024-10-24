@@ -17,7 +17,6 @@ import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils/utils';
-import {getAvailableScopes} from '../RevisionsPanel/utils';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
 
@@ -83,7 +82,8 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
     Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
 export const getEntryContextMenu = (): ContextMenuItem[] => {
-    const {getTopLevelEntryScopes, getAllEntryScopes} = registry.common.functions.getAll();
+    const {getTopLevelEntryScopes, getAllEntryScopes, getEntryScopesWithRevisionsList} =
+        registry.common.functions.getAll();
 
     return [
         {
@@ -99,7 +99,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 
-                return getAvailableScopes().includes(entry.scope as EntryScope);
+                return getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope);
             },
         },
         {
