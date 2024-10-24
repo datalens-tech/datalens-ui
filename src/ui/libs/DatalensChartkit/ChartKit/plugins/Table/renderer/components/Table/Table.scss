@@ -145,6 +145,7 @@
         box-sizing: border-box;
         height: 100%;
         background: var(--dl-table-header-bg-color);
+        border-bottom: 0;
     }
 
     &__header &__sort-icon {

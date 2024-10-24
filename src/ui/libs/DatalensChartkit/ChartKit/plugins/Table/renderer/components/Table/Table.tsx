@@ -251,21 +251,23 @@ export const Table = React.memo<Props>((props: Props) => {
                                     ))}
                                 </colgroup>
                             )}
-                            <TableHead
-                                sticky={true}
-                                rows={header.rows}
-                                style={header.style}
-                                tableHeight={tableActualHeight}
-                            />
                             {cellMinSizes && (
-                                <TableBody
-                                    rows={body.rows}
-                                    style={body.style}
-                                    onCellClick={handleCellClick}
-                                    rowRef={body.rowRef}
-                                />
+                                <React.Fragment>
+                                    <TableHead
+                                        sticky={true}
+                                        rows={header.rows}
+                                        style={header.style}
+                                        tableHeight={tableActualHeight}
+                                    />
+                                    <TableBody
+                                        rows={body.rows}
+                                        style={body.style}
+                                        onCellClick={handleCellClick}
+                                        rowRef={body.rowRef}
+                                    />
+                                    <TableFooter rows={footer.rows} style={footer.style} />
+                                </React.Fragment>
                             )}
-                            <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
                     )}
                 </div>
