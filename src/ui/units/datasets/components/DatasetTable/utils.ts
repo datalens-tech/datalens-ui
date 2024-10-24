@@ -10,7 +10,7 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import {DATASET_FIELD_TYPES, Feature} from 'shared';
-import type {Permissions} from 'shared/types/dls';
+import type {Permissions} from 'shared/types/permissions';
 import Utils from 'ui/utils';
 import {getDatasetLabelValue} from 'ui/utils/helpers';
 

@@ -1,5 +1,5 @@
 import type {WorkbookId} from '../../../../shared';
-import type {InitialPermissions, Permissions} from '../../../types';
+import type {Permissions} from '../../../types';
 
 import type {EntriesCommonArgs} from './common';
 import type {
@@ -171,7 +171,6 @@ export interface CreateFolderResponse extends EntryFields {
 
 export interface CreateFolderArgs {
     key: string;
-    initialPermissions?: InitialPermissions;
 }
 
 export interface DeleteUSEntryResponse extends EntryFields {
