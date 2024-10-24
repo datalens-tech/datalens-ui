@@ -27,9 +27,10 @@ import type {
     HeadRowViewData,
     TData,
     TFoot,
+    THead,
     TableViewData,
 } from './types';
-import {createTableColumns, getCellCustomStyle} from './utils';
+import {createTableColumns, getCellCustomStyle, getColumnId} from './utils';
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -97,6 +98,28 @@ function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
     return isEqual(prev, current);
 }
 
+function findCell(
+    cols: ColumnDef<TData>[],
+    predicate: (col: ColumnDef<TData>) => boolean,
+): THead | undefined {
+    for (let i = 0; i < cols.length; i++) {
+        const col = cols[i];
+        if (predicate(col)) {
+            return col.meta?.head;
+        }
+
+        const subColumns = get(col, 'columns', []);
+        if (subColumns.length) {
+            const subCol = findCell(subColumns, predicate);
+            if (subCol) {
+                return subCol;
+            }
+        }
+    }
+
+    return undefined;
+}
+
 export const usePreparedTableData = (props: {
     tableContainerRef: React.MutableRefObject<HTMLDivElement | null>;
     dimensions: WidgetDimensions;
@@ -105,6 +128,7 @@ export const usePreparedTableData = (props: {
     onSortingChange?: (column: TableHead | undefined, sortOrder: 'asc' | 'desc') => void;
     getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
     cellMinSizes: number[] | null;
+    sortingState?: SortingState;
 }): TableViewData => {
     const {
         dimensions,
@@ -114,6 +138,7 @@ export const usePreparedTableData = (props: {
         data,
         getCellAdditionStyles,
         cellMinSizes,
+        sortingState,
     } = props;
 
     const columns = React.useMemo(() => {
@@ -122,7 +147,19 @@ export const usePreparedTableData = (props: {
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
 
-    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const initialSortingState = React.useMemo(() => {
+        return (sortingState ?? []).reduce<SortingState>((acc, s) => {
+            const thead = findCell(columns, (col) => col.meta?.head?.id === s.id);
+            if (thead) {
+                acc.push({
+                    id: getColumnId(thead),
+                    desc: s.desc,
+                });
+            }
+            return acc;
+        }, []);
+    }, [columns, sortingState]);
+    const [sorting, setSorting] = React.useState<SortingState>(initialSortingState);
 
     const tableRowsData = React.useMemo(() => {
         return data.rows.map<TData>((r) => get(r, 'cells', []));
@@ -148,27 +185,7 @@ export const usePreparedTableData = (props: {
 
             const updates = typeof updater === 'function' ? updater(sorting) : updater;
             const {id, desc} = updates[0] || {};
-
-            const findCell = (cols: ColumnDef<TData>[]): TableHead | undefined => {
-                for (let i = 0; i < cols.length; i++) {
-                    const col = cols[i];
-                    if (col.id === id) {
-                        return col.meta?.head as TableHead;
-                    }
-
-                    const subColumns = get(col, 'columns', []);
-                    if (subColumns.length) {
-                        const subCol = findCell(subColumns);
-                        if (subCol) {
-                            return subCol;
-                        }
-                    }
-                }
-
-                return undefined;
-            };
-
-            const headCellData = findCell(columns);
+            const headCellData = findCell(columns, (col) => col.id === id) as TableHead;
             const sortOrder = desc ? 'desc' : 'asc';
 
             if (onSortingChange) {
@@ -325,7 +342,7 @@ export const usePreparedTableData = (props: {
             })
             .filter(Boolean) as HeadRowViewData[];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [columns, leftPositions]);
+    }, [columns, leftPositions, sorting]);
 
     const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');

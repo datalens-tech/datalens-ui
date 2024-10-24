@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {SortingState} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
@@ -122,6 +123,15 @@ export const Table = React.memo<Props>((props: Props) => {
         return {cursor, ...actionParamsCss};
     };
 
+    let initialSortingState: SortingState | undefined;
+    if (config?.sort) {
+        initialSortingState = [
+            {
+                id: config.sort,
+                desc: config?.order === 'desc',
+            },
+        ];
+    }
     const {colgroup, header, body, footer, totalSize} = usePreparedTableData({
         data,
         dimensions: widgetDimensions,
@@ -130,6 +140,7 @@ export const Table = React.memo<Props>((props: Props) => {
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
         cellMinSizes,
+        sortingState: initialSortingState,
     });
 
     React.useEffect(() => {

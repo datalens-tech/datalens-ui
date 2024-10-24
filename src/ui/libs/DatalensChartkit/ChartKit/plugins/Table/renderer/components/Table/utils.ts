@@ -65,6 +65,10 @@ function getSortingFunction(args: {
     return 'auto';
 }
 
+export function getColumnId(headCell: THead) {
+    return `${headCell.id}__${headCell.index}`;
+}
+
 function createColumn(args: {
     headCell: THead;
     rows?: TableRow[];
@@ -73,10 +77,10 @@ function createColumn(args: {
     size?: number;
 }) {
     const {headCell, footerCell, index, size, rows} = args;
-    const {id, width, cell, ...columnOptions} = headCell;
+    const {width, cell, ...columnOptions} = headCell;
     const options = {
         ...columnOptions,
-        id: `${id}__${index}`,
+        id: getColumnId(headCell),
         meta: {
             width,
             footer: footerCell,
