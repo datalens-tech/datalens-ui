@@ -42,6 +42,7 @@ export type ControlShared = {
         title: string;
         value: string;
     }[];
+    disabled?: boolean;
 };
 
 export type UIControl = {
@@ -56,4 +57,5 @@ export type UIControl = {
     minDate?: string;
     maxDate?: string;
     required?: boolean;
+    disabled?: boolean;
 };

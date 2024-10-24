@@ -28,7 +28,8 @@ import {
 import {DL} from 'ui/constants/common';
 import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ResponseSuccessSingleControl} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ControlSelect as ControlSelectType} from 'ui/libs/DatalensChartkit/types';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
@@ -59,7 +60,7 @@ type ControlItemSelectProps = {
     data: DashTabItemControlSingle;
     defaults: ConfigItem['defaults'];
     status: LoadStatus;
-    loadedData: null | ResponseSuccessControls;
+    loadedData: null | ResponseSuccessSingleControl;
     loadingItems: boolean;
     actualParams: StringParams;
     onChange: ({param, value}: {param: string; value: string | string[]}) => void;
@@ -329,8 +330,12 @@ export const ControlItemSelect = ({
             : source.fieldName;
     const selectedValue = unwrapFromArrayAndSkipOperation(defaults![fieldId]);
     const preselectedContent = [{title: selectedValue, value: selectedValue}];
-    // @ts-ignore
-    const content = loadedData?.uiScheme?.controls[0].content;
+
+    const content = loadedData
+        ? (loadedData.uiScheme?.controls[0] as ControlSelectType).content
+        : null;
+    const disabled = loadedData?.uiScheme?.controls[0].disabled;
+
     const emptyPaceholder = Utils.isEnabledFeature(Feature.EmptySelector)
         ? i18n('placeholder_empty')
         : undefined;
@@ -375,7 +380,7 @@ export const ControlItemSelect = ({
         className: b(null, classMixin),
         labelClassName: b(null, labelMixin),
         key: fieldId,
-        value: preparedValue as string,
+        value: disabled ? '' : (preparedValue as string),
         onChange: onSelectChange,
         onOpenChange,
         loadingItems,
@@ -384,6 +389,7 @@ export const ControlItemSelect = ({
         hint: getControlHint(source),
         hasValidationError: Boolean(selectValidationError),
         renderOverlay,
+        disabled,
         ...selectProps,
     };
 

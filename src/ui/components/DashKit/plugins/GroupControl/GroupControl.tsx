@@ -23,7 +23,6 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
@@ -522,8 +521,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     ) => {
         let label = '';
         if (loadedData?.uiScheme && 'controls' in loadedData.uiScheme) {
-            const controls = loadedData.uiScheme.controls as ActiveControl[];
-            label = controls[0].label;
+            label = loadedData.uiScheme.controls[0].label;
         }
 
         const currentItem = (this.props.data as unknown as DashTabItemGroupControlData).group?.find(
@@ -665,8 +663,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this.adjustWidgetLayout(false);
             }
 
-            const disableButtons = Object.values(this.controlsStatus).every(
-                (status) => status === LOAD_STATUS.FAIL,
+            const disableButtons = Object.values(this.controlsData).every(
+                (data) => data === null || data.uiScheme?.controls[0].disabled,
             );
 
             this.resolveMetaInControl();

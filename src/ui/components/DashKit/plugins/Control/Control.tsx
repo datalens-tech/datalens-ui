@@ -36,6 +36,7 @@ import {
 import type {
     ResponseError,
     ResponseSuccessControls,
+    ResponseSuccessSingleControl,
 } from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {ControlBase, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
@@ -564,7 +565,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 data={data}
                 defaults={defaults}
                 status={status}
-                loadedData={loadedData}
+                // ResponseSuccessControls can only be sent for external control
+                loadedData={loadedData as ResponseSuccessSingleControl}
                 loadingItems={loadingItems}
                 actualParams={this.actualParams}
                 onChange={this.onChange}
@@ -651,7 +653,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 widgetId: id,
                 className: b('item'),
                 key: param,
-                value: preparedValue,
+                value: control.disabled ? '' : preparedValue,
                 onChange,
                 innerLabel,
                 label,

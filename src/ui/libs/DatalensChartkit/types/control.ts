@@ -11,9 +11,10 @@ export interface ControlBase {
     updateControlsOnChange: boolean;
     postUpdateOnChange: boolean;
     operation?: string;
+    disabled?: boolean;
 }
 
-interface ControlSelect extends ControlBase {
+export interface ControlSelect extends ControlBase {
     type: 'select';
     labelInside: boolean;
     innerLabel: string;
@@ -73,16 +74,16 @@ interface ControlLineBreak {
     type: 'line-break';
 }
 
-export type ActiveControl =
+export type ActiveControl = SingleControl | ControlTextarea | ControlButton;
+
+export type Control = ActiveControl | ControlLineBreak;
+
+export type SingleControl =
     | ControlSelect
-    | ControlTextarea
     | ControlInput
     | ControlCheckbox
     | ControlDatepicker
-    | ControlRangeDatepicker
-    | ControlButton;
-
-export type Control = ActiveControl | ControlLineBreak;
+    | ControlRangeDatepicker;
 
 export type ValidatedControl =
     | ControlSelect

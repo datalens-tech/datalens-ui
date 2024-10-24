@@ -28,6 +28,7 @@ export const buildGraph = ({
         content,
         param,
         required: source.required,
+        disabled: shared.disabled,
     };
 
     switch (source.elementType) {
