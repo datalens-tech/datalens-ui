@@ -313,8 +313,8 @@ export const usePreparedTableData = (props: {
                         };
 
                         if (typeof originalCellData?.width !== 'undefined') {
-                            cellStyle.whiteSpace = 'normal';
-                            cellStyle.wordBreak = 'break-word';
+                            cellStyle.whiteSpace = cellStyle.whiteSpace ?? 'normal';
+                            cellStyle.wordBreak = cellStyle.wordBreak ?? 'break-word';
                         }
 
                         return {

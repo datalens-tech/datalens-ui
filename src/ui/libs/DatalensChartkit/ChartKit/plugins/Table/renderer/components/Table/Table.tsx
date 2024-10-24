@@ -150,7 +150,11 @@ export const Table = React.memo<Props>((props: Props) => {
     }, [onReady, cellMinSizes]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const tableActualHeight = useTableHeight({ref: tableRef, ready: Boolean(cellMinSizes)});
+    const tableActualHeight = useTableHeight({
+        ref: tableRef,
+        ready: Boolean(cellMinSizes),
+        totalSize,
+    });
     const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
@@ -290,6 +294,7 @@ export const Table = React.memo<Props>((props: Props) => {
                         setCellMinWidth(colWidths);
                     }
                 }}
+                width={config?.settings?.width ?? 'auto'}
             />
         </React.Fragment>
     );
