@@ -45,7 +45,7 @@ export default class ColorDialog {
         return Promise.all(elements.map((element) => element.innerText()));
     }
 
-    async selectColor(colorValue: ColorValue) {
+    async selectColor(colorValue: string) {
         await this.page.click(slct(colorValue));
     }
 

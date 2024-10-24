@@ -15,6 +15,7 @@ import {
     AxisMode,
     DATASET_FIELD_TYPES,
     DialogFieldMainSectionQa,
+    DialogFieldSettingsQa,
     PlaceholderId,
     WizardVisualizationId,
     isDateField,
@@ -118,7 +119,11 @@ export class DialogFieldMainSection extends React.Component<Props> {
             <DialogFieldRow
                 title={i18n('wizard', 'label_original-title')}
                 setting={
-                    <DialogFieldInput qa="dialog-title-input" value={originTitle} disabled={true} />
+                    <DialogFieldInput
+                        qa={DialogFieldSettingsQa.FieldTitleInput}
+                        value={originTitle}
+                        disabled={true}
+                    />
                 }
             />
         );
@@ -136,7 +141,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 title={i18n('wizard', 'label_title')}
                 setting={
                     <DialogFieldInput
-                        qa="dialog-title-input"
+                        qa={DialogFieldSettingsQa.FieldTitleInput}
                         onUpdate={this.props.handleTitleInputUpdate}
                         value={title}
                     />
