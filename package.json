@@ -31,6 +31,7 @@
     "prepare": "husky install",
     "test:e2e": "cd tests && npm run test:e2e",
     "test:e2e:opensource": "cd tests && npm run test:e2e:opensource",
+    "test:e2e:opensource:shard": "cd tests && npm run test:e2e:opensource:shard",
     "test:e2e:us-dump": "bash scripts/e2e/us-dump.sh",
     "test:install:chromium": "cd tests && npm run test:install:chromium",
     "test:e2e:docker": "bash scripts/e2e/playwright-docker.sh 'npm run test:e2e:opensource'",
