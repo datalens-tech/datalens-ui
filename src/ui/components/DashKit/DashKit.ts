@@ -10,7 +10,7 @@ import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import {pluginImage} from './plugins/Image/Image';
 import textPlugin from './plugins/Text/Text';
-import pluginTitle from './plugins/Title/Title';
+import getTitlePlugin from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
 
 let isConfigured = false;
@@ -33,7 +33,10 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null) => {
+export const getConfiguredDashKit = (
+    pluginDefaultsGetter: typeof currentDefaultsGetter = null,
+    disableHashNavigation?: boolean,
+) => {
     const controlSettings = {
         getDistincts: getDistinctsAction(),
     };
@@ -41,7 +44,7 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
         const plugins = wrapPlugins(
             [
-                pluginTitle,
+                getTitlePlugin(disableHashNavigation),
                 textPlugin.setSettings({
                     apiHandler: MarkdownProvider.getMarkdown,
                 }),
