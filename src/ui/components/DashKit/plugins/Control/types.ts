@@ -48,6 +48,7 @@ export type SelectorError = {
                 status?: number;
                 uiUrl?: string;
                 url?: string;
+                code?: string;
             }
         >;
     };

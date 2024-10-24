@@ -38,7 +38,6 @@ import {
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -276,8 +275,7 @@ export const Control = ({
                     },
                     requestId: error.response.headers['x-request-id'],
                     extra: {
-                        // TODO: clean isEmbeddedEntry
-                        hideErrorDetails: extDashkitContext?.hideErrorDetails || isEmbeddedEntry(),
+                        hideErrorDetails: Boolean(extDashkitContext?.hideErrorDetails),
                     },
                 };
             } else {

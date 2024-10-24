@@ -2,7 +2,6 @@ import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    DlsAcl,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
@@ -251,13 +250,6 @@ export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
 
-export const PERMISSION = {
-    READ: DlsAcl.View,
-    WRITE: DlsAcl.Edit,
-    ADMIN: DlsAcl.Adm,
-    EXECUTE: DlsAcl.Execute,
-};
-
 export const URL_OPTIONS = {
     THEME: '_theme',
     EMBEDDED: '_embedded',
@@ -286,8 +278,6 @@ export enum Scope {
 }
 
 export const ALL_SCOPES: string[] = Object.values(Scope);
-
-export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
 

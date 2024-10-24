@@ -2,7 +2,12 @@ import type {Request} from '@gravity-ui/expresskit';
 
 import type {ServerI18n} from '../../../i18n/types';
 import type {QlExtendedConfig} from '../../../shared';
-import {QL_TYPE, WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../shared';
+import {
+    QL_TYPE,
+    WizardVisualizationId,
+    isD3Visualization,
+    isMonitoringOrPrometheusChart,
+} from '../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../shared/modules/config/ql';
 import {getTranslationFn} from '../../../shared/modules/language';
 import {identifyParams} from '../../modes/charts/plugins/ql/utils/identify-params';
@@ -23,6 +28,10 @@ export default {
 
         const {visualization, chartType} = config;
         const id = visualization.id;
+
+        if (isD3Visualization(id as WizardVisualizationId)) {
+            return QL_TYPE.D3_QL_NODE;
+        }
 
         switch (id) {
             case 'table': // Legacy
@@ -59,13 +68,6 @@ export default {
                 } else {
                     return QL_TYPE.METRIC_QL_NODE;
                 }
-            }
-            case WizardVisualizationId.LineD3:
-            case WizardVisualizationId.ScatterD3:
-            case WizardVisualizationId.BarXD3:
-            case WizardVisualizationId.PieD3:
-            case WizardVisualizationId.DonutD3: {
-                return QL_TYPE.D3_QL_NODE;
             }
             default:
                 return QL_TYPE.GRAPH_QL_NODE;

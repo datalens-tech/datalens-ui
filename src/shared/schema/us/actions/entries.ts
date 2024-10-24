@@ -221,7 +221,7 @@ export const entriesActions = {
     createFolder: createAction<CreateFolderResponse, CreateFolderArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entries`,
-        params: ({key, initialPermissions}, headers) => {
+        params: ({key}, headers) => {
             return {
                 body: {
                     scope: 'folder',
@@ -229,7 +229,6 @@ export const entriesActions = {
                     key,
                     meta: {},
                     data: {},
-                    initialPermissions,
                 },
                 headers,
             };

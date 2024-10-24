@@ -37,5 +37,6 @@ export const QlQa = {
         VisualizationsQa.DonutD3,
         VisualizationsQa.Metric,
         VisualizationsQa.FlatTable,
+        VisualizationsQa.TreemapD3,
     ],
 };

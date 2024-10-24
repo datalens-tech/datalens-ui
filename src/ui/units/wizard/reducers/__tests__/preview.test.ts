@@ -42,6 +42,7 @@ describe('Preview reducer', () => {
             [VISUALIZATION_IDS.SCATTER_D3]: WizardType.D3WizardNode,
             [VISUALIZATION_IDS.COMBINED_CHART]: WizardType.GraphWizardNode,
             [VISUALIZATION_IDS.GEOPOINT_WITH_CLUSTER]: WizardType.GraphWizardNode,
+            [VISUALIZATION_IDS.TREEMAP_D3]: WizardType.D3WizardNode,
         };
 
         it('Should return same state when calls with empty args', () => {

@@ -5,7 +5,7 @@ import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {batch, useDispatch} from 'react-redux';
 
-import type {GoogleRefreshToken} from '../../../../../../../shared/schema/types';
+import type {RefreshToken} from '../../../../../../../shared/schema/types';
 import {closeDialog, openDialog} from '../../../../../../store/actions/dialog';
 import type {GSheetItem, UpdateGSheetItemArgs, UploadedGSheet} from '../../../../store';
 import {
@@ -40,7 +40,7 @@ type OpenReplaceSourceDialogArgs = {
     caption: string;
     authorized: boolean;
     connectionId?: string;
-    refreshToken?: GoogleRefreshToken;
+    refreshToken?: RefreshToken;
 };
 
 export const useGSheetDialogs = () => {
