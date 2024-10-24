@@ -71,10 +71,6 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
 
             timeoutIdRef.current = window.setTimeout(() => {
                 setOpen(nextOpen);
-
-                if (!nextOpen) {
-                    setHover(false);
-                }
             }, delay);
         }, []);
 
@@ -141,7 +137,10 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                         setOpenAsync(false, anchor.hideDelay);
                     }
                 }}
-                onTransitionExited={() => setAnchor(null)}
+                onTransitionExited={() => {
+                    setHover(false);
+                    setAnchor(null);
+                }}
             >
                 <div className={b()} dangerouslySetInnerHTML={{__html: anchor?.content || ''}} />
             </Popup>
