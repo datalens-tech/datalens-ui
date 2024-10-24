@@ -1,8 +1,8 @@
 import type {CSVDelimiter, CSVEncoding} from '../../../constants';
 import type {DATASET_FIELD_TYPES} from '../../../types';
-import type {GoogleRefreshToken} from '../../types';
 
 export type StateStatus = 'ready' | 'in_progress' | 'failed';
+export type RefreshToken = string | null | undefined;
 
 export type GetFileStatusResponse = {
     file_id: string;
@@ -132,7 +132,7 @@ export type AddGoogleSheetArgs = {
     type: 'gsheets';
     url: string;
     authorized: boolean;
-    refresh_token?: GoogleRefreshToken;
+    refresh_token?: RefreshToken;
     connection_id?: string;
 };
 
@@ -167,7 +167,7 @@ export type YandexDocumentUpdatedSource = BaseUpdatedSource & {
 type UpdateGoogleSheetDataArgs = {
     type: 'gsheets';
     sources: GoogleSheetUpdatedSource[];
-    refresh_token?: GoogleRefreshToken;
+    refresh_token?: RefreshToken;
 };
 
 type UpdateYandexDocumentDataArgs = {
@@ -195,5 +195,5 @@ export type AddYandexDocumentArgs = {
     connection_id?: string;
     private_path?: string;
     public_link?: string;
-    oauth_token?: GoogleRefreshToken;
+    oauth_token?: RefreshToken;
 };

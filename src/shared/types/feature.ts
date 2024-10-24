@@ -66,8 +66,6 @@ export enum Feature {
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
-    /** Use BI handles for getting oauth applications tokens */
-    EnableBIOAuth = 'EnableBIOAuth',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',

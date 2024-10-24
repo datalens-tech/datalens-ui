@@ -1,5 +1,5 @@
 import {isEqual} from 'lodash';
-import type {GoogleRefreshToken} from 'shared/schema/types';
+import type {RefreshToken} from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
 
 import {FieldKey} from '../../constants';
@@ -15,7 +15,7 @@ export const formChangedSelector = (state: DatalensGlobalState) => {
 
 export const googleRefreshTokenSelector = (state: DatalensGlobalState) => {
     const form = formSelector(state);
-    return form[FieldKey.RefreshToken] as GoogleRefreshToken;
+    return form[FieldKey.RefreshToken] as RefreshToken;
 };
 
 export const validationErrorsSelector = (state: DatalensGlobalState) => {
