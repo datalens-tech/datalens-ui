@@ -26,20 +26,8 @@ const vendors = (vendorsList: string[]) => {
         'react-dnd',
         'react-grid-layout',
         'react-beautiful-dnd',
-        '@react-dnd',
-        '@gravity-ui/react-data-table',
-        '@gravity-ui/icons',
-        '@gravity-ui/date-utils',
-        '@popperjs',
-        'yup',
-        'rc-slider',
-        'rc-util',
-        'dnd-core',
-        'react-transition-group',
-        'jsondiffpatch',
-        'history',
-        'luxon',
-        'd3-selection',
+        '@popperjs/core',
+        'focus-trap',
     ]);
 };
 
