@@ -457,7 +457,7 @@ describe('withConfiguredEntryContextMenu', () => {
     for (const testData of testDataContextMenu) {
         // description of the showMenuInCharts parameter:
         // - The page is not editor, the page path does not contain (part !== 'editor')
-        // affects the result of the getAvailableScopes() function for the REVISIONS action
+        // affects the result of the getEntryScopesWithRevisionsList() function for the REVISIONS action
         const testSuffix = `${testData.input.params.entry.scope} - [testId: ${testData.testId}]`;
 
         // eslint-disable-next-line @typescript-eslint/no-loop-func
