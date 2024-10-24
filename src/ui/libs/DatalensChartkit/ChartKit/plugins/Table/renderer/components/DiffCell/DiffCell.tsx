@@ -9,13 +9,18 @@ const b = block('dl-table');
 
 type DiffCellProps = {
     value?: number;
-    diff?: number;
+    diff?: number | null;
     column?: DiffTableColumn;
     diffOnly?: boolean;
 };
 
 export const DiffCell = (props: DiffCellProps) => {
     const {value = 0, diff, column, diffOnly} = props;
+
+    if (diffOnly && diff === null) {
+        return <React.Fragment>{String(diff)}</React.Fragment>;
+    }
+
     const numberFormatOptions = column as DiffTableColumn;
 
     let diffMod = '';

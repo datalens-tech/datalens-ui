@@ -3,8 +3,9 @@ import React from 'react';
 export const useTableHeight = (args: {
     ref: React.MutableRefObject<HTMLTableElement | null>;
     ready: boolean;
+    totalSize?: number;
 }) => {
-    const {ref, ready} = args;
+    const {ref, ready, totalSize} = args;
     const [height, setHeight] = React.useState<number | undefined>();
 
     React.useEffect(() => {
@@ -18,7 +19,7 @@ export const useTableHeight = (args: {
         if (tableActualHeight && tableActualHeight !== height) {
             setHeight(tableActualHeight);
         }
-    }, [height, ref, ready]);
+    }, [height, ref, ready, totalSize]);
 
     return height;
 };
