@@ -19,7 +19,7 @@ import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
 import RevisionsControls from './components/RevisionsControls';
-import {getAvailableScopes, getDraftWarningAvailableScopes} from './utils';
+import {getDraftWarningAvailableScopes} from './utils';
 
 import './RevisionsPanel.scss';
 
@@ -134,9 +134,11 @@ const RevisionsPanel = ({
     const {scope, updatedBy, updatedAt} = entry;
     const {publishedId, currentRevId, savedId, revisionsLoadingStatus} = storedEntryContent;
 
+    const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
+
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
     const isInAvailableScopes = React.useMemo(
-        () => getAvailableScopes().includes(scope as EntryScope),
+        () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
         [location, scope],
     );
     const isDraftInAvailableScopes = React.useMemo(
