@@ -4,6 +4,7 @@ import {
     ChartKitQa,
     DialogFieldBackgroundSettingsQa,
     DialogFieldBarsSettingsQa,
+    Operations,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -11,11 +12,13 @@ import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualizat
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
+import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Flat table', () => {
         datalensTest.beforeEach(async ({page, config}) => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+            await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
 
             const wizardPage = new WizardPage({page});
             await wizardPage.setVisualization(WizardVisualizationId.FlatTable);
@@ -29,28 +32,35 @@ datalensTest.describe('Wizard', () => {
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
                 const table = wizardPage.chartkit.getTableLocator();
 
-                await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
                 await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.FlatTableColumns,
-                    'SalesSum',
+                    PlaceholderName.Filters,
+                    'id',
                 );
+                await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
+                await wizardPage.filterEditor.setInputValue('5');
+                await wizardPage.filterEditor.apply();
+
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.FlatTableColumns,
-                    'country',
+                    'id',
                 );
 
+                await wizardPage.createNewFieldWithFormula('max', 'max([id]) - 3');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'max',
+                );
                 await wizardPage.visualizationItemDialog.open(
                     PlaceholderName.FlatTableColumns,
-                    'SalesSum',
+                    'max',
                 );
-                await wizardPage.visualizationItemDialog.barsSettings.switchBars();
-                await wizardPage.visualizationItemDialog.barsSettings.switchScaleMode('manual');
-                const scaleSettingsInputs = page
-                    .locator(slct(DialogFieldBarsSettingsQa.ScaleInputsWrapper))
-                    .getByRole('textbox');
-                await scaleSettingsInputs.first().fill('0');
-                await scaleSettingsInputs.last().fill('1');
+                await enableBar(wizardPage, [-1, 1]);
                 await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'segment',
+                );
 
                 await expect(previewLoader).not.toBeVisible();
                 await expect(table).toBeVisible();
@@ -93,3 +103,14 @@ datalensTest.describe('Wizard', () => {
         );
     });
 });
+
+async function enableBar(wizardPage: WizardPage, scale: [number, number]) {
+    await wizardPage.visualizationItemDialog.barsSettings.switchBars();
+    await wizardPage.visualizationItemDialog.barsSettings.switchScaleMode('manual');
+    const scaleSettingsInputs = wizardPage.page
+        .locator(slct(DialogFieldBarsSettingsQa.ScaleInputsWrapper))
+        .getByRole('textbox');
+    const [min, max] = scale;
+    await scaleSettingsInputs.first().fill(String(min));
+    await scaleSettingsInputs.last().fill(String(max));
+}

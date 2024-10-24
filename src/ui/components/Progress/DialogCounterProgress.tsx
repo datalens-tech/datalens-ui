@@ -26,9 +26,10 @@ export const DialogCounterProgress = ({
     caption,
     open = true,
 }: DialogCounterProgressProps) => {
-    const progress = Math.floor((100 * value) / count);
+    const totalUnknown = count === 0;
 
-    const textProgress = `${value} / ${count}`;
+    const progress = totalUnknown ? 100 : Math.floor((100 * value) / count);
+    const textProgress = totalUnknown ? value : `${value} / ${count}`;
 
     return (
         <Dialog
@@ -47,6 +48,7 @@ export const DialogCounterProgress = ({
                         theme={hasError ? 'danger' : 'info'}
                         size="s"
                         value={progress}
+                        loading={totalUnknown}
                     />
                     <div className={b('text-progress')}>{textProgress}</div>
                 </div>
