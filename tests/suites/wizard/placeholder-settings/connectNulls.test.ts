@@ -100,11 +100,15 @@ datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', ()
     });
 
     datalensTest(
-        'For a chart with areas, only 2 settings are available "Do not display", "Display as 0" and "Display as 0" is selected',
+        'For a chart with areas, 3 settings are available and "Display as 0" is selected',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
 
-            const expectedValues = [AxisNullsMode.Ignore, AxisNullsMode.AsZero];
+            const expectedValues = [
+                AxisNullsMode.Ignore,
+                AxisNullsMode.AsZero,
+                AxisNullsMode.UsePrevious,
+            ];
 
             await openTestPage(page, RobotChartsWizardUrls.WizardForDatasetSampleCh);
 
