@@ -164,6 +164,36 @@ async function getUiSandboxLibs(libs: string[]) {
                     );
                     return module.default;
                 }
+                case 'd3-selection': {
+                    // @ts-ignore
+                    const module = await import('./d3-selection.js?raw');
+                    return module.default;
+                }
+                case 'd3-array': {
+                    // @ts-ignore
+                    const module = await import('./d3-array.js?raw');
+                    return module.default;
+                }
+                case 'd3-chord': {
+                    // @ts-ignore
+                    const module = await import('./d3-chord.js?raw');
+                    return module.default;
+                }
+                case 'd3-format': {
+                    // @ts-ignore
+                    const module = await import('./d3-format.js?raw');
+                    return module.default;
+                }
+                case 'd3-shape': {
+                    // @ts-ignore
+                    const module = await import('./d3-shape.js?raw');
+                    return module.default;
+                }
+                case 'happy-dom': {
+                    // @ts-ignore
+                    const module = await import('./happy-dom.js?raw');
+                    return module.default;
+                }
                 default: {
                     throw new ChartKitCustomError(null, {
                         details: `The library '${lib}' is not available`,

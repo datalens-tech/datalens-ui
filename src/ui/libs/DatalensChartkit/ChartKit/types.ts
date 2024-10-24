@@ -63,5 +63,9 @@ declare module '@gravity-ui/chartkit' {
             data: any;
             widget: TableWidgetData;
         };
+        'white-box': {
+            data: any;
+            widget: any;
+        };
     }
 }

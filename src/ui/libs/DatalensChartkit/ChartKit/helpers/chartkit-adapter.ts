@@ -92,6 +92,12 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
             break;
         }
+
+        case 'white-box': {
+            chartkitType = 'white-box';
+
+            break;
+        }
     }
 
     return chartkitType;
