@@ -18,6 +18,7 @@ import {Loader} from '../../../Loader/Loader';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import Paginator from './Paginator/Paginator';
+import {WrappedHTMLNode} from './WrappedHTMLNode';
 import type {TableProps} from './types';
 import {
     camelCaseCss,
@@ -25,6 +26,7 @@ import {
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
+    isWrappedHTML,
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
@@ -180,7 +182,12 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             return null;
         }
 
+        if (isWrappedHTML(title)) {
+            return <WrappedHTMLNode as="div" className={b('title')} value={title} />;
+        }
+
         const tableTitle = typeof title === 'string' ? {text: title} : title;
+
         return (
             <div className={b('title')} style={camelCaseCss(tableTitle.style)}>
                 {tableTitle.text}

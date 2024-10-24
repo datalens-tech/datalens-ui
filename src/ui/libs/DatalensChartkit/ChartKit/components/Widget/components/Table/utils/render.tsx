@@ -22,16 +22,15 @@ import type {
     TableCommonCell,
     TableHead,
     TableRow,
-    WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
-import {generateHtml} from '../../../../../../modules/html-generator';
 import {markupToRawString} from '../../../../../../modules/table';
 import type {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
+import {WrappedHTMLNode} from '../WrappedHTMLNode';
 import type {TableProps} from '../types';
 
 import {getAdditionalStyles, getRowActionParams} from './action-params';
@@ -101,10 +100,6 @@ const diffFormatter = (
     return <span className={b('diff')}>{diff}</span>;
 };
 
-function getReactNodeWithWrappedHTML(value: WrappedHTML) {
-    return <span dangerouslySetInnerHTML={{__html: generateHtml(value.__wrappedHTML__)}} />;
-}
-
 // eslint-disable-next-line complexity
 export function valueFormatter(
     columnType: CommonTableColumn['type'],
@@ -155,7 +150,7 @@ export function valueFormatter(
                 />
             );
         } else if (isWrappedHTML(cell.value)) {
-            resultValue = getReactNodeWithWrappedHTML(cell.value);
+            resultValue = <WrappedHTMLNode value={cell.value} />;
         } else if ('value' in cell) {
             resultValue = cell.value;
 
@@ -306,7 +301,7 @@ function getHeaderNode(column: TableHead) {
     if (markup) {
         content = <Markup item={markup} />;
     } else if (isWrappedHTML(formattedName)) {
-        content = getReactNodeWithWrappedHTML(formattedName);
+        content = <WrappedHTMLNode value={formattedName} />;
     } else {
         content = formattedName ?? name;
     }
