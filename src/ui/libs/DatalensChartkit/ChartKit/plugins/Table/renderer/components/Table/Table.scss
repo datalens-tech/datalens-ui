@@ -14,10 +14,10 @@
     &:before {
         content: '';
         position: absolute;
-        top: var(--dl-table-cell-border-offset, -1px);
+        top: 0;
         width: calc(100% + 1.99px);
         left: var(--dl-table-cell-border-offset, -1px);
-        height: calc(100% + 1.99px);
+        height: 100%;
         pointer-events: none;
     }
 }
@@ -132,7 +132,6 @@
 
     &__header &__tr:first-child {
         th {
-            border-top: 1px solid var(--dl-table-border-color);
             min-height: var(--dl-table-header-row-height);
         }
     }
@@ -213,7 +212,6 @@
 
         @include stickyCellBg();
         &:before {
-            border-bottom: 1px solid var(--dl-table-border-color);
             border-left: 1px solid var(--dl-table-border-color);
         }
     }

@@ -279,7 +279,7 @@ export const usePreparedTableData = (props: {
 
         return leftPositionsRef.current;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [colSizes]);
+    }, [colSizes, data.head]);
 
     const headerRows = React.useMemo(() => {
         return headers
