@@ -3,7 +3,7 @@ import type {CSSProperties} from 'react';
 import type {StringParams} from '@gravity-ui/dashkit/helpers';
 import {I18N} from 'i18n';
 import pick from 'lodash/pick';
-import type {DashTabItemControlData} from 'shared';
+import {type DashTabItemControlData, ErrorCode} from 'shared';
 import {
     CHARTS_ERROR_CODE,
     type ResponseSuccessControls,
@@ -68,16 +68,22 @@ export const filterSignificantParams = ({
 };
 
 export const getErrorTitle = (errorInfo: SelectorError) => {
-    const datasetsStatus =
+    const datasetsField =
         errorInfo?.details && 'sources' in errorInfo.details && errorInfo.details.sources
             ? Object.keys(errorInfo.details.sources)[0]
             : null;
-    // TODO: use specific code instead of status
-    if (
-        errorInfo?.code === CHARTS_ERROR_CODE.DATA_FETCHING_ERROR &&
-        datasetsStatus &&
-        errorInfo?.details?.sources?.[datasetsStatus]?.status === 409
-    ) {
+
+    if (!datasetsField) {
+        return null;
+    }
+
+    const datasetInfo = errorInfo?.details?.sources?.[datasetsField];
+
+    const isIncorrectEntryIdCode =
+        datasetInfo?.code === ErrorCode.IncorrectEntryIdForEmbed ||
+        datasetInfo?.body?.code === ErrorCode.IncorrectEntryIdForEmbed;
+
+    if (errorInfo?.code === CHARTS_ERROR_CODE.DATA_FETCHING_ERROR && isIncorrectEntryIdCode) {
         return i18n('label_error-outdated-message');
     }
 
