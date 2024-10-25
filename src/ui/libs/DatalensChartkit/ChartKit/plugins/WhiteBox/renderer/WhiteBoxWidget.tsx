@@ -40,9 +40,14 @@ const WhiteBoxWidget = (props: WhiteBoxWidgetProps) => {
             const content = originalData.render({...dimensions});
             if (contentRef.current) {
                 contentRef.current.innerHTML = content ?? '';
+
+                const widgetRendering = Performance.getDuration(generatedId);
+                if (onLoad && widgetRendering) {
+                    onLoad({widget: props.data, widgetRendering});
+                }
             }
         }
-    }, [dimensions, originalData]);
+    }, [dimensions, generatedId, onLoad, originalData, props.data]);
 
     const debuncedHandleResize = React.useMemo(() => debounce(handleResize, 100), [handleResize]);
 
@@ -57,14 +62,6 @@ const WhiteBoxWidget = (props: WhiteBoxWidgetProps) => {
             window.removeEventListener('resize', debuncedHandleResize);
         };
     }, [debuncedHandleResize]);
-
-    React.useLayoutEffect(() => {
-        const widgetRendering = Performance.getDuration(generatedId);
-
-        if (onLoad && widgetRendering) {
-            onLoad({widget: props.data, widgetRendering});
-        }
-    }, [generatedId, onLoad, props.data]);
 
     if (!originalData || (typeof originalData === 'object' && !Object.keys(originalData).length)) {
         throw new ChartKitError({

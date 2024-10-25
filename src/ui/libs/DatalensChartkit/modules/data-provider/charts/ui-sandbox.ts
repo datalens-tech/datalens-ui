@@ -20,7 +20,7 @@ import {generateHtml} from '../../html-generator';
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
-export const UI_SANDBOX_FN_TIME_LIMIT = 100;
+export const UI_SANDBOX_FN_TIME_LIMIT = 1000;
 
 /**
  * Config value to check. It could have any type.
@@ -189,9 +189,14 @@ async function getUiSandboxLibs(libs: string[]) {
                     const module = await import('./d3-shape.js?raw');
                     return module.default;
                 }
-                case 'happy-dom': {
+                case 'd3': {
                     // @ts-ignore
-                    const module = await import('./happy-dom.js?raw');
+                    const module = await import('./d3.js?raw');
+                    return module.default;
+                }
+                case 'light-js-dom': {
+                    // @ts-ignore
+                    const module = await import('./light-js-dom.js?raw');
                     return module.default;
                 }
                 default: {
