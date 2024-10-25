@@ -23,7 +23,6 @@ jobs:
         with:
           sparse-checkout: .
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
       - uses: actions/setup-node@v3
         with:
           node-version: 20
