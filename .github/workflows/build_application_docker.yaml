@@ -1,8 +1,11 @@
 on:
   workflow_dispatch:
-  push:
-    branches:
-      release-*
+  workflow_run:
+    workflows:
+      - 'Publish Platform'
+      - 'Publish Platform Hotfix'
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}
@@ -18,11 +21,15 @@ jobs:
   build:
     name: datalens-ui
     runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.conclusion == 'success'
     permissions:
       contents: read
       packages: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{github.event.workflow_run.head_sha || github.ref}}
       - uses: docker/setup-qemu-action@v3
         with:
           platforms: 'arm64'

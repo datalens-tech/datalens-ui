@@ -1,21 +1,24 @@
-import {Page} from '@playwright/test';
-import {
-    ColorMode,
-    DialogColorQa,
+import type {Page} from '@playwright/test';
+
+import type {
     DialogFieldAggregationSelectorValuesQa,
-    DialogFieldBackgroundSettingsQa,
     DialogFieldGroupingSelectorValuesQa,
     DialogFieldLabelModeValuesQa,
-    DialogFieldMainSectionQa,
     DialogFieldTypeSelectorValuesQa,
     GradientType,
 } from '../../../src/shared';
-
+import {
+    ColorMode,
+    DialogColorQa,
+    DialogFieldBackgroundSettingsQa,
+    DialogFieldMainSectionQa,
+    DialogFieldSettingsQa,
+} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
 
 import {BarsSettings} from './BarsSettings';
-import {PlaceholderName} from './SectionVisualization';
+import type {PlaceholderName} from './SectionVisualization';
 
 export default class VisualizationItemDialog {
     barsSettings: BarsSettings;
@@ -34,7 +37,10 @@ export default class VisualizationItemDialog {
     }
 
     async changeTitle(title: string) {
-        await this.page.fill(`${slct('dialog-title-input')} input`, title);
+        const input = this.page
+            .locator(slct(DialogFieldSettingsQa.FieldTitleInput))
+            .locator('input');
+        await input.fill(title);
     }
 
     async changeSelectorValue(
