@@ -196,7 +196,7 @@ export const buildChartsConfigPrivate = (
     ).includes(visualizationId);
 
     if (isTableWidget) {
-        set(config, 'settings.width', 'max-height');
+        set(config, 'settings.width', 'max-content');
     }
 
     const placeholders = shared.visualization.placeholders;

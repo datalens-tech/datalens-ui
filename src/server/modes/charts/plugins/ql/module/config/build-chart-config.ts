@@ -1,7 +1,12 @@
 import type {HighchartsWidgetData} from '@gravity-ui/chartkit/highcharts';
+import set from 'lodash/set';
 
 import type {FeatureConfig, IChartEditor, QlConfig} from '../../../../../../../shared';
-import {DEFAULT_CHART_LINES_LIMIT, Feature} from '../../../../../../../shared';
+import {
+    DEFAULT_CHART_LINES_LIMIT,
+    Feature,
+    WizardVisualizationId,
+} from '../../../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
 import {log} from '../../utils/misc-helpers';
 
@@ -35,6 +40,13 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
         }
 
         config.enableGPTInsights = enableGPTInsights;
+    }
+
+    const visualizationId = qlConfig?.visualization?.id;
+    const isTableWidget = visualizationId === WizardVisualizationId.FlatTable;
+
+    if (isTableWidget) {
+        set(config, 'settings.width', 'max-content');
     }
 
     config.hideHolidaysBands = !features[Feature.HolidaysOnChart];
