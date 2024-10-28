@@ -1,3 +1,4 @@
+import type {WidgetDensityType} from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import type {
@@ -69,6 +70,7 @@ export interface V11CommonSharedExtraSettings {
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
     pinnedColumns?: number;
+    density?: WidgetDensityType;
 }
 
 export type V11NavigatorSettings = {

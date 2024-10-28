@@ -1,10 +1,5 @@
 :root {
-    --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
-    --dl-table-header-row-height: 28px;
-    --dl-table-row-height: 30px;
-    --dl-table-cell-horizontal-padding: 10px;
-    --dl-table-cell-vertical-padding: 5px;
     --dl-table-cell-vertical-align: top;
     --dl-table-footer-cell-vertical-align: top;
     --dl-table-sort-icon-space: 18px;
@@ -26,6 +21,29 @@
     border-collapse: collapse;
     min-width: 100%;
     width: max-content;
+
+    &_size {
+        &_l {
+            --dl-table-row-height: 30px;
+            --dl-table-font-size: 13px;
+            --dl-table-cell-vertical-padding: 6px;
+            --dl-table-cell-horizontal-padding: 10px;
+        }
+
+        &_m {
+            --dl-table-row-height: 24px;
+            --dl-table-font-size: 12px;
+            --dl-table-cell-vertical-padding: 4px;
+            --dl-table-cell-horizontal-padding: 6px;
+        }
+
+        &_s {
+            --dl-table-row-height: 20px;
+            --dl-table-font-size: 11px;
+            --dl-table-cell-vertical-padding: 2.5px;
+            --dl-table-cell-horizontal-padding: 4px;
+        }
+    }
 
     &__table-wrapper {
         width: 100%;
@@ -50,7 +68,7 @@
         border: 1px solid var(--dl-table-border-color);
         border-top: 0;
         border-left: 0;
-        font-size: 10pt;
+        font-size: var(--dl-table-font-size);
 
         &_clickable {
             cursor: pointer;
@@ -133,14 +151,14 @@
     &__header &__tr:first-child {
         th {
             border-top: 1px solid var(--dl-table-border-color);
-            min-height: var(--dl-table-header-row-height);
+            min-height: var(--dl-table-row-height);
         }
     }
 
     &__header &__th {
         position: relative;
         font-weight: 500;
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
@@ -235,7 +253,7 @@
     }
 
     &__no-data {
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         background: var(--dl-table-no-data-bg-color);
         border: 1px solid var(--dl-table-border-color);
         min-height: var(--dl-table-row-height);

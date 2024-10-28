@@ -22,6 +22,7 @@ import type {
     TableRow,
     TableTitle,
     TableWidgetEventScope,
+    WidgetDensityType,
     WidgetEvent,
 } from '../../../../shared';
 import type {ChartsData} from '../modules/data-provider/charts';
@@ -263,6 +264,7 @@ export type TableWidgetData = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            density?: WidgetDensityType;
         };
         unresolvedParams?: StringParams;
     };

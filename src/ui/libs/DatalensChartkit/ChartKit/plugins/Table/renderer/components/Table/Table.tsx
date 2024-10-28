@@ -3,7 +3,14 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
+import {DEFAULT_WIDGET_DENSITY} from 'shared';
+import type {
+    type StringParams,
+    type TableCell,
+    type TableCellsRow,
+    type TableCommonCell,
+    WidgetDensityType,
+} from 'shared';
 import {BackgroundTable} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/BackgroundTable';
 
 import {isMacintosh} from '../../../../../../../../utils';
@@ -49,6 +56,7 @@ export const Table = React.memo<Props>((props: Props) => {
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
+    const density: WidgetDensityType = get(config, 'density', DEFAULT_WIDGET_DENSITY);
 
     const [cellMinSizes, setCellMinWidth] = React.useState<number[] | null>(null);
 
@@ -229,7 +237,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     )}
                     {!noData && (
                         <table
-                            className={b({prepared: true})}
+                            className={b({prepared: true, size: density})}
                             style={{minHeight: totalSize}}
                             ref={tableRef}
                         >
@@ -277,6 +285,7 @@ export const Table = React.memo<Props>((props: Props) => {
                         setCellMinWidth(colWidths);
                     }
                 }}
+                size={density}
             />
         </React.Fragment>
     );

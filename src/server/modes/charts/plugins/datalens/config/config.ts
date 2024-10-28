@@ -1,3 +1,5 @@
+import set from 'lodash/set';
+
 import type {FeatureConfig, ServerChartsConfig} from '../../../../../../shared';
 import {
     ChartkitHandlers,
@@ -187,6 +189,15 @@ export const buildChartsConfigPrivate = (
         (config as TableConfig).settings = {
             externalSort: true,
         };
+    }
+
+    const isTableWidget = (
+        [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
+    ).includes(visualizationId);
+    const density = widgetConfig?.density ?? shared?.extraSettings?.density;
+
+    if (isTableWidget && density) {
+        set(config, 'density', density);
     }
 
     const placeholders = shared.visualization.placeholders;

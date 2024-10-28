@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader} from '@gravity-ui/uikit';
+import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
@@ -17,12 +17,15 @@ import type {
     PlaceholderSettings,
     QLChartType,
     Shared,
+    WidgetDensityType,
 } from 'shared';
 import {
+    DEFAULT_WIDGET_DENSITY,
     Feature,
     IndicatorTitleMode,
     NavigatorLinesMode,
     PlaceholderId,
+    WidgetDensity,
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isD3Visualization,
@@ -73,6 +76,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'pivotFallback',
     'navigatorSettings',
     'pivotInlineSort',
+    'density',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -180,6 +184,7 @@ interface State {
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
+    density?: WidgetDensityType;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -228,6 +233,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             qlAutoExecuteChart,
             pivotInlineSort = CHART_SETTINGS.PIVOT_INLINE_SORT.ON,
             tooltip,
+            density,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -286,6 +292,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 ? CHART_SETTINGS.D3_FALLBACK.OFF
                 : CHART_SETTINGS.D3_FALLBACK.ON,
             tooltip,
+            density,
         };
     }
 
@@ -547,6 +554,38 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                     this.setState({title: value});
                 }}
             />
+        );
+    }
+
+    renderDensity() {
+        const {visualization} = this.props;
+        const isTableWidget = (
+            [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
+        ).includes(visualization.id);
+
+        if (!isTableWidget) {
+            return null;
+        }
+
+        const sizes = Object.values(WidgetDensity);
+        const selected = this.state.density ?? DEFAULT_WIDGET_DENSITY;
+
+        return (
+            <div>
+                <span className={b('label')}>{i18n('wizard', 'label_widget-density')}</span>
+                <RadioButton
+                    value={selected}
+                    onChange={(event) => {
+                        this.setState({density: event.target.value as WidgetDensityType});
+                    }}
+                >
+                    {sizes.map((item) => (
+                        <RadioButton.Option key={item} value={item}>
+                            {item.toUpperCase()}
+                        </RadioButton.Option>
+                    ))}
+                </RadioButton>
+            </div>
         );
     }
 
@@ -944,6 +983,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         return (
             <div className={b('settings')}>
                 {this.renderTitleMode()}
+                {this.renderDensity()}
                 {this.renderLegend()}
                 {this.renderTooltip()}
                 {this.renderTooltipSum()}

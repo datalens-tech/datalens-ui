@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {WidgetDensityType} from 'shared';
 
 import {COMPONENT_CLASSNAME} from '../../../../../../../../components/Widgets/Chart/helpers/helpers';
 import {waitForContent} from '../../../../../helpers/wait-for-content';
@@ -18,6 +19,7 @@ const b = block('dl-table');
 type Props = {
     dimensions: WidgetDimensions;
     data: TableViewData;
+    size: WidgetDensityType;
     onChangeMinWidth?: (cellSizes: number[]) => void;
 };
 
@@ -26,6 +28,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
         dimensions,
         data: {header, body, footer},
         onChangeMinWidth,
+        size,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -70,7 +73,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
                 style={{height: dimensions?.height, width: dimensions?.width}}
                 ref={containerRef}
             >
-                <table className={b({prepared: false})} ref={tableRef}>
+                <table className={b({prepared: false, size})} ref={tableRef}>
                     <TableHead rows={header.rows} />
                     <TableBody rows={body.rows} />
                     <TableFooter rows={footer.rows} />
