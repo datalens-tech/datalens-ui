@@ -1,8 +1,11 @@
 on:
   workflow_dispatch:
-  push:
-    branches:
-      release-*
+  workflow_run:
+    workflows:
+      - 'Publish Platform'
+      - 'Publish Platform Hotfix'
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}
@@ -18,11 +21,23 @@ jobs:
   build:
     name: datalens-ui
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == '' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
     steps:
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v2
+        if: ${{ github.event.workflow_run.id != '' }}
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
+      - name: Extract commit ref from workflow
+        run: |
+          echo "COMMIT_REF=$(cat workflow_ref/ref || echo '${{ github.ref }}')" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.COMMIT_REF || github.ref }}
       - uses: docker/setup-qemu-action@v3
         with:
           platforms: 'arm64'
