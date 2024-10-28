@@ -130,12 +130,6 @@
         }
     }
 
-    &__header &__tr:first-child {
-        th {
-            min-height: var(--dl-table-header-row-height);
-        }
-    }
-
     &__header &__th {
         position: relative;
         font-weight: 500;
@@ -143,6 +137,7 @@
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
+        min-height: var(--dl-table-header-row-height);
         background: var(--dl-table-header-bg-color);
         border-bottom: 0;
     }
