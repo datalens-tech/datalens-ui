@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import set from 'lodash/set';
 import type {TableCell, TableHead, TableRow} from 'shared';
 
 import type {TableData} from '../../../../../types';
@@ -41,8 +42,7 @@ export function mapTableData(data: TableData | undefined): Required<TableData> {
             const cellWidth = get(cell, 'css.width');
             if (cellWidth) {
                 colsWidth[index] = cellWidth;
-                // eslint-disable-next-line no-param-reassign
-                delete (cell.css as object).width;
+                set(cell as object, 'css.width', undefined);
             }
         });
 
