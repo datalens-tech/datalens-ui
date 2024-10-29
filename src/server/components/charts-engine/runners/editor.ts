@@ -2,10 +2,14 @@ import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, getServerFeatures, isEnabledServerFeature} from '../../../../shared';
+import {getTranslationFn} from '../../../../shared/modules/language';
+import {createI18nInstance} from '../../../utils/language';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 
 import {commonRunner} from './common';
 import {runServerlessEditor} from './serverlessEditor';
+
+const DEFAULT_USER_LANG = 'ru';
 
 import type {RunnerHandlerProps} from '.';
 
@@ -26,6 +30,8 @@ async function getChartBuilder({
     config: RunnerHandlerProps['config'];
     isScreenshoter: boolean;
 }) {
+    const i18n = createI18nInstance({lang: userLang});
+    const getTranslation = getTranslationFn(i18n.getI18nServer());
     const serverFeatures = getServerFeatures(parentContext);
     const chartBuilder = await getIsolatedSandboxChartBuilder({
         userLang,
@@ -35,6 +41,7 @@ async function getChartBuilder({
         isScreenshoter,
         chartsEngine,
         serverFeatures,
+        getTranslation,
     });
 
     return {chartBuilder};
@@ -60,9 +67,11 @@ export const runEditor = async (
 
     const {widgetConfig} = req.body;
 
+    const userLang = (res.locals && res.locals.lang) || DEFAULT_USER_LANG;
+
     const {chartBuilder} = await getChartBuilder({
         parentContext,
-        userLang: res.locals && res.locals.lang,
+        userLang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,
         config,
