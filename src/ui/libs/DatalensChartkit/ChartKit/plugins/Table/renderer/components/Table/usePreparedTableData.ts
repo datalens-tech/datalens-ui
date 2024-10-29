@@ -200,7 +200,7 @@ export const usePreparedTableData = (props: {
     const rowMeasures = React.useRef<Record<string, number>>({});
     React.useEffect(() => {
         rowMeasures.current = {};
-    }, [data, dimensions]);
+    }, [data, dimensions, cellMinSizes]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
