@@ -197,9 +197,8 @@ export const usePreparedTableData = (props: {
     const headers = table.getHeaderGroups();
     const tableRows = table.getRowModel().rows;
 
-    const rowMeasures = React.useRef<Record<string, number>>({});
-    React.useEffect(() => {
-        rowMeasures.current = {};
+    const rowMeasures = React.useMemo<Record<string, number>>(() => {
+        return {};
     }, [data, dimensions, cellMinSizes]);
 
     const rowVirtualizer = useVirtualizer({
@@ -222,11 +221,11 @@ export const usePreparedTableData = (props: {
                 return simpleCell?.getBoundingClientRect()?.height ?? 0;
             };
 
-            if (rowId && typeof rowMeasures.current[rowId] === 'undefined') {
-                rowMeasures.current[rowId] = getRowHeight();
+            if (rowId && typeof rowMeasures[rowId] === 'undefined') {
+                rowMeasures[rowId] = getRowHeight();
             }
 
-            return rowMeasures.current[rowId];
+            return rowMeasures[rowId];
         },
         overscan: 100,
     });
@@ -362,7 +361,7 @@ export const usePreparedTableData = (props: {
         const prevCells = new Array(tableRows[0]?.getVisibleCells()?.length);
         return virtualItems.reduce<BodyRowViewData[]>((rowsAcc, virtualRow) => {
             const row = tableRows[virtualRow.index] as Row<TData>;
-            const rowMeasuredHeight = rowMeasures.current[row.id];
+            const rowMeasuredHeight = rowMeasures[row.id];
             const visibleCells = row.getVisibleCells();
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
