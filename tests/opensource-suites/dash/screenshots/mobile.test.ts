@@ -4,7 +4,7 @@ import {TestParametrizationConfig} from '../../../types/config';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ChartKitTableQa, DashBodyQa} from '../../../../src/shared';
+import {DashBodyQa} from '../../../../src/shared';
 import {setViewportSizeAsContent} from '../../utils';
 
 const DEVICE_NAME = 'Galaxy S9+';
@@ -29,9 +29,7 @@ datalensTest.describe('Dashboards - Mobile screenshots', () => {
 
             const contentContainer = page.locator(slct(DashBodyQa.App));
 
-            await expect(contentContainer).toHaveScreenshot({
-                mask: [page.locator(slct(ChartKitTableQa.Widget))],
-            });
+            await expect(contentContainer).toHaveScreenshot();
         },
     );
     datalensTest(
@@ -50,9 +48,7 @@ datalensTest.describe('Dashboards - Mobile screenshots', () => {
 
             const contentContainer = page.locator(slct(DashBodyQa.App));
 
-            await expect(contentContainer).toHaveScreenshot({
-                mask: [page.locator(slct(ChartKitTableQa.Widget))],
-            });
+            await expect(contentContainer).toHaveScreenshot();
         },
     );
 });
