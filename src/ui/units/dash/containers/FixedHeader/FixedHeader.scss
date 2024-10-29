@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @mixin flexReactGridLayout($minHeight: 44px) {
     & > .react-grid-layout {
         flex: 1;
@@ -56,7 +58,7 @@ $fixedSectionOffset: 8px;
     }
 
     &__controls-settings {
-        width: (100% / 36) * 1;
+        width: math.div(100%, 36) * 1;
         flex-shrink: 0;
         position: relative;
     }
