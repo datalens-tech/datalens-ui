@@ -1,7 +1,6 @@
 :root {
     --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
-    --dl-table-header-row-height: 28px;
     --dl-table-row-height: 30px;
     --dl-table-cell-horizontal-padding: 10px;
     --dl-table-cell-vertical-padding: 5px;
@@ -14,10 +13,10 @@
     &:before {
         content: '';
         position: absolute;
-        top: var(--dl-table-cell-border-offset, -1px);
+        top: 0;
         width: calc(100% + 1.99px);
         left: var(--dl-table-cell-border-offset, -1px);
-        height: calc(100% + 1.99px);
+        height: 100%;
         pointer-events: none;
     }
 }
@@ -130,13 +129,6 @@
         }
     }
 
-    &__header &__tr:first-child {
-        th {
-            border-top: 1px solid var(--dl-table-border-color);
-            min-height: var(--dl-table-header-row-height);
-        }
-    }
-
     &__header &__th {
         position: relative;
         font-weight: 500;
@@ -144,7 +136,9 @@
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
+        min-height: var(--dl-table-row-height);
         background: var(--dl-table-header-bg-color);
+        border-bottom: 0;
     }
 
     &__header &__sort-icon {
@@ -212,7 +206,6 @@
 
         @include stickyCellBg();
         &:before {
-            border-bottom: 1px solid var(--dl-table-border-color);
             border-left: 1px solid var(--dl-table-border-color);
         }
     }
