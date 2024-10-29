@@ -197,7 +197,7 @@ export const buildChartsConfigPrivate = (
 
     if (isTableWidget) {
         const density = widgetConfig?.density ?? shared?.extraSettings?.density;
-        if (density) {
+        if (density && features[Feature.TableDensity]) {
             set(config, 'density', density);
         }
 
