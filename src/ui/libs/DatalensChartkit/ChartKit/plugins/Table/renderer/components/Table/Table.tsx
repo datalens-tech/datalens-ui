@@ -5,10 +5,10 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import {DEFAULT_WIDGET_DENSITY} from 'shared';
 import type {
-    type StringParams,
-    type TableCell,
-    type TableCellsRow,
-    type TableCommonCell,
+    StringParams,
+    TableCell,
+    TableCellsRow,
+    TableCommonCell,
     WidgetDensityType,
 } from 'shared';
 import {BackgroundTable} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/BackgroundTable';
