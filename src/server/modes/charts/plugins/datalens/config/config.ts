@@ -194,10 +194,14 @@ export const buildChartsConfigPrivate = (
     const isTableWidget = (
         [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
     ).includes(visualizationId);
-    const density = widgetConfig?.density ?? shared?.extraSettings?.density;
 
-    if (isTableWidget && density) {
-        set(config, 'density', density);
+    if (isTableWidget) {
+        const density = widgetConfig?.density ?? shared?.extraSettings?.density;
+        if (density) {
+            set(config, 'density', density);
+        }
+
+        set(config, 'settings.width', 'max-content');
     }
 
     const placeholders = shared.visualization.placeholders;
