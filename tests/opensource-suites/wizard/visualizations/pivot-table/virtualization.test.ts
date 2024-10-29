@@ -83,7 +83,7 @@ datalensTest.describe('Wizard', () => {
             await expect(chartContainer).toHaveScreenshot();
         });
 
-        datalensTest.only(
+        datalensTest(
             'Scroll for tables with row grouping and fixed column width @screenshot',
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
