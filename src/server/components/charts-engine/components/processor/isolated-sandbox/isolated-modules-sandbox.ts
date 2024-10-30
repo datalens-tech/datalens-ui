@@ -2,8 +2,6 @@ import type IsolatedVM from 'isolated-vm';
 import {isString} from 'lodash';
 
 import type {IChartEditor} from '../../../../../../shared';
-import {getTranslationFn} from '../../../../../../shared/modules/language';
-import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
@@ -14,16 +12,19 @@ import {safeStringify} from './utils';
 
 const {RUNTIME_ERROR, RUNTIME_TIMEOUT_ERROR} = config;
 
-const DEFAULT_USER_LANG = 'ru';
-
 type ProcessModuleParams = {
     name: string;
     code: string;
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
+    getTranslation: (
+        keyset: string,
+        key: string,
+        params?: Record<string, string | number>,
+    ) => string;
 };
 
 type ExecuteParams = {
@@ -144,11 +145,11 @@ export const processModule = async ({
     userLogin,
     isScreenshoter,
     context,
+    getTranslation,
 }: ProcessModuleParams) => {
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
     const chartEditorApi = {
-        getTranslation: getTranslationFn(i18n.getI18nServer()),
-        getUserLang: () => userLang || DEFAULT_USER_LANG,
+        getTranslation,
+        getUserLang: () => userLang,
         getUserLogin: () => userLogin || '',
     };
 
