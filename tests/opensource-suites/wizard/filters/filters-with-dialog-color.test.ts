@@ -62,7 +62,7 @@ datalensTest.describe('Wizard filters', () => {
         },
     );
 
-    datalensTest.only(
+    datalensTest(
         'Two or more values of the Date field from the dashboard filter section should use IN operation by default',
         async ({page}: {page: Page}) => {
             const dateFilterValues = ['2015-01-01', '2016-01-01'];
