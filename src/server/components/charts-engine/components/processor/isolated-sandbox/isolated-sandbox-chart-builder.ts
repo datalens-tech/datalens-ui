@@ -64,11 +64,10 @@ export const getIsolatedSandboxChartBuilder = async (
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-
+    const palettes = getAvailablePalettesMap();
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
 
-    const palettesMap = getAvailablePalettesMap();
     const qlConnectionTypeMap = getQLConnectionTypeMap();
     context.evalSync(
         `
@@ -79,7 +78,7 @@ export const getIsolatedSandboxChartBuilder = async (
          let __usedParams;
          let __runtimeMetadata = {userParamsOverride: undefined};
          let __features = JSON.parse('${JSON.stringify(serverFeatures)}');
-         let __palettes = JSON.parse('${JSON.stringify(palettesMap)}');
+         let __palettes = JSON.parse('${JSON.stringify(palettes)}');
          let __qlConnectionTypeMap = JSON.parse('${JSON.stringify(qlConnectionTypeMap)}');
     `,
     );
