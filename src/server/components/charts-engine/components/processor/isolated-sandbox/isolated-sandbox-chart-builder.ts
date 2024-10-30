@@ -42,8 +42,8 @@ type IsolatedSandboxChartBuilderArgs = {
         key: string,
         params?: Record<string, string | number>,
     ) => string;
-    palettesMap: Record<string, Palette>;
-    qlConnectionTypeMap: Record<string, ConnectorType>;
+    getAvailablePalettesMap: () => Record<string, Palette>;
+    getQLConnectionTypeMap: () => Record<string, ConnectorType>;
 };
 
 export const getIsolatedSandboxChartBuilder = async (
@@ -59,14 +59,17 @@ export const getIsolatedSandboxChartBuilder = async (
         workbookId,
         serverFeatures,
         getTranslation,
-        palettesMap,
-        qlConnectionTypeMap,
+        getAvailablePalettesMap,
+        getQLConnectionTypeMap,
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
 
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
+
+    const palettesMap = getAvailablePalettesMap();
+    const qlConnectionTypeMap = getQLConnectionTypeMap();
     context.evalSync(
         `
          // I do not know why, but this is not exists in V8 Isolate.
