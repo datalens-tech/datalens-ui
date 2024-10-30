@@ -36,7 +36,7 @@ async function getChartBuilder({
     const serverFeatures = getServerFeatures(parentContext);
     const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
     const palettesMap = getAvailablePalettesMap();
-    const getQLConnectionTypeMap = registry.getQLConnectionTypeMap();
+    const qlConnectionTypeMap = registry.getQLConnectionTypeMap();
     const chartBuilder = await getIsolatedSandboxChartBuilder({
         userLang,
         userLogin,
@@ -47,7 +47,7 @@ async function getChartBuilder({
         serverFeatures,
         getTranslation,
         palettesMap,
-        getQLConnectionTypeMap,
+        qlConnectionTypeMap,
     });
 
     return {chartBuilder};
