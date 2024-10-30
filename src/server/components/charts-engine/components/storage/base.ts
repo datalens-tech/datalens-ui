@@ -99,7 +99,7 @@ export class BaseStorage {
                     requestId,
                 })
                     .then((config) => {
-                        this.cachedConfigs[key] = config as unknown as ResolvedConfig;
+                        this.cachedConfigs[key] = config;
                     })
                     .catch((error) => {
                         ctx.logError('Error preloading config', error, {
@@ -126,6 +126,14 @@ export class BaseStorage {
         });
     }
 
+    fetchConfig(
+        ctx: AppContext,
+        params: EmbedResolveConfigProps & {unreleased: boolean},
+    ): Promise<EmbeddingInfo>;
+    fetchConfig(
+        ctx: AppContext,
+        params: ResolveConfigProps & {unreleased: boolean},
+    ): Promise<ResolvedConfig>;
     fetchConfig(
         ctx: AppContext,
         params: (ResolveConfigProps | EmbedResolveConfigProps) & {unreleased: boolean},
@@ -214,14 +222,19 @@ export class BaseStorage {
         this.cachedConfigs = preloaded;
     }
 
-    resolveConfig(ctx: AppContext, props: ResolveConfigProps | EmbedResolveConfigProps) {
+    resolveConfig(ctx: AppContext, props: ResolveConfigProps) {
         const {key, unreleased = false, noCache = false} = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
             return Promise.resolve(this.cachedConfigs[key]);
         }
 
-        return this.fetchConfig(ctx, {...props, unreleased, noCache});
+        return this.fetchConfig(ctx, {...props, unreleased, noCache}) as Promise<ResolvedConfig>;
+    }
+
+    resolveEmbedConfig(ctx: AppContext, props: EmbedResolveConfigProps) {
+        const {unreleased = false, noCache = false} = props;
+        return this.fetchConfig(ctx, {...props, unreleased, noCache}) as Promise<EmbeddingInfo>;
     }
 
     private initProvider(config: BaseStorageInitParams['config']) {
