@@ -318,10 +318,20 @@ export function getFiltersFields(
     fields: Field[],
 ): {filtersFields: Field[]; chartFilters: FilterField[]} {
     const filtersFields: Field[] = [];
-    paramsPairs.forEach((paramPair) => {
+    const groupedParams = paramsPairs.reduce<Record<string, string[]>>((acc, paramPair) => {
         const key = paramPair[0];
         const urlValue: string = paramPair[1];
 
+        if (!(key in acc)) {
+            acc[key] = [];
+        }
+
+        acc[key].push(urlValue);
+
+        return acc;
+    }, {});
+
+    Object.entries(groupedParams).forEach(([key, values]) => {
         // Let's try to find the filtered field
         const foundItem = findFieldInDatasetSection({
             datasetSectionFields: fields,
@@ -334,49 +344,56 @@ export function getFiltersFields(
         }
 
         const isFilterAlreadyInChart = filters.find((filter) => filter.guid === foundItem.guid);
-        if (!urlValue && isFilterAlreadyInChart && Utils.isEnabledFeature(Feature.EmptySelector)) {
-            filtersFields.push({
-                ...foundItem,
-                unsaved: true,
-                filter: {
-                    operation: {code: Operations.NO_SELECTED_VALUES},
-                    value: [''],
-                },
-            });
-        } else if (urlValue === '') {
-            return;
-        }
+        const defaultOperation =
+            isDateField(foundItem) && values.length === 1 ? Operations.EQ : undefined;
 
-        const defaultOperation = isDateField(foundItem) ? Operations.EQ : undefined;
-        const parsedFiltersOperation = resolveOperation(urlValue, defaultOperation);
-
-        if (!parsedFiltersOperation) {
-            return;
-        }
-
-        const code = parsedFiltersOperation.operation;
-        const value: string[] = [parsedFiltersOperation.value];
-
-        // Let's try to find such a filter among the parameters created from search
-        const foundFilter = filtersFields.find((item) => {
-            return item.guid === key || item.title === key;
-        });
-
-        // If such a filter is found, then we do not create a new one, but supplement the old one, but only if the operator supports multi-selection
-        if (foundFilter && (code === Operations.IN || code === Operations.NIN)) {
-            foundFilter.filter!.value = [...foundFilter.filter!.value, ...value];
-        } else {
-            filtersFields.push({
-                ...foundItem,
-                unsaved: true,
-                filter: {
-                    operation: {
-                        code,
+        values.forEach((urlValue) => {
+            if (
+                !urlValue &&
+                isFilterAlreadyInChart &&
+                Utils.isEnabledFeature(Feature.EmptySelector)
+            ) {
+                filtersFields.push({
+                    ...foundItem,
+                    unsaved: true,
+                    filter: {
+                        operation: {code: Operations.NO_SELECTED_VALUES},
+                        value: [''],
                     },
-                    value,
-                },
+                });
+            } else if (urlValue === '') {
+                return;
+            }
+
+            const parsedFiltersOperation = resolveOperation(urlValue, defaultOperation);
+            if (!parsedFiltersOperation) {
+                return;
+            }
+
+            const code = parsedFiltersOperation.operation;
+            const value: string[] = [parsedFiltersOperation.value];
+
+            // Let's try to find such a filter among the parameters created from search
+            const foundFilter = filtersFields.find((item) => {
+                return item.guid === key || item.title === key;
             });
-        }
+
+            // If such a filter is found, then we do not create a new one, but supplement the old one, but only if the operator supports multi-selection
+            if (foundFilter && (code === Operations.IN || code === Operations.NIN)) {
+                foundFilter.filter!.value = [...foundFilter.filter!.value, ...value];
+            } else {
+                filtersFields.push({
+                    ...foundItem,
+                    unsaved: true,
+                    filter: {
+                        operation: {
+                            code,
+                        },
+                        value,
+                    },
+                });
+            }
+        });
     });
 
     const chartFilters = getChartFiltersWithDisabledProp({

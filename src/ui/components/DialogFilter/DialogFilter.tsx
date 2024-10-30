@@ -340,6 +340,19 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
             return null;
         }
 
+        if (operation.selectable && !useManualInput) {
+            return (
+                <SelectFilter
+                    values={values}
+                    dimensions={dimensions}
+                    useSuggest={useSuggest}
+                    suggestFetching={suggestFetching}
+                    changeValue={this.onChangeValue}
+                    onChangeSuggest={this.debouncedChangeSuggest}
+                />
+            );
+        }
+
         const commonDataType = getCommonDataType(this.field);
 
         switch (commonDataType) {
@@ -361,19 +374,6 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
             }
 
             default: {
-                if (operation.selectable && !useManualInput) {
-                    return (
-                        <SelectFilter
-                            values={values}
-                            dimensions={dimensions}
-                            useSuggest={useSuggest}
-                            suggestFetching={suggestFetching}
-                            changeValue={this.onChangeValue}
-                            onChangeSuggest={this.debouncedChangeSuggest}
-                        />
-                    );
-                }
-
                 return (
                     <InputFilter
                         values={values as string[]}
