@@ -28,6 +28,47 @@ type OnClickHandlerArgs = {
 
 export function handleClick(args: OnClickHandlerArgs) {
     const {widgetData, event, onChange, point, series} = args;
+    const drillDownData = widgetData?.config?.drillDown;
+
+    if (drillDownData) {
+        const params: StringParams = widgetData?.params ?? {};
+        const drillDownLevel = params.drillDownLevel || ['0'];
+
+        let filters = (params.drillDownFilters || []) as string[];
+        if (!filters.some(Boolean)) {
+            filters = new Array(drillDownData?.breadcrumbs.length).fill('');
+        }
+
+        const level = Number(drillDownLevel[0]);
+        if (level === drillDownData.breadcrumbs.length - 1) {
+            return;
+        }
+
+        const drillDownFilters = filters.map((filter, index) => {
+            if (level === index) {
+                return get(point, 'drillDownFilterValue', '');
+            }
+
+            return filter;
+        });
+
+        onChange?.(
+            {
+                type: 'PARAMS_CHANGED',
+                data: {
+                    params: {
+                        drillDownLevel: String(level + 1),
+                        drillDownFilters,
+                    },
+                },
+            },
+            {forceUpdate: true},
+            true,
+            true,
+        );
+        return;
+    }
+
     const clickActions = getNormalizedClickActions(widgetData as GraphWidget);
 
     clickActions.forEach((action) => {
