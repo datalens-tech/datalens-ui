@@ -11,9 +11,9 @@ import type {
 import {EDITOR_TYPE_CONFIG_TABS, Feature} from '../../../../../../shared';
 import type {ChartsEngine} from '../../../index';
 import type {ResolvedConfig} from '../../storage/types';
-import {Processor} from '../index';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
 
+import {resolveDependencies} from './dependencies';
 import type {ModulesSandboxExecuteResult} from './isolated-modules-sandbox';
 import {Sandbox} from './sandbox';
 
@@ -92,7 +92,7 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildModules: async ({subrequestHeaders, req, ctx, onModuleBuild}) => {
-            const resolvedModules = (await Processor.resolveDependencies({
+            const resolvedModules = (await resolveDependencies({
                 chartsEngine,
                 config,
                 subrequestHeaders,
