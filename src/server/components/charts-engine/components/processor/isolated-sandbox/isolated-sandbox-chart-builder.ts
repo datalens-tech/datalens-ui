@@ -43,7 +43,7 @@ type IsolatedSandboxChartBuilderArgs = {
         params?: Record<string, string | number>,
     ) => string;
     palettesMap: Record<string, Palette>;
-    getQLConnectionTypeMap: Record<string, ConnectorType>;
+    qlConnectionTypeMap: Record<string, ConnectorType>;
 };
 
 export const getIsolatedSandboxChartBuilder = async (
@@ -60,7 +60,7 @@ export const getIsolatedSandboxChartBuilder = async (
         serverFeatures,
         getTranslation,
         palettesMap,
-        getQLConnectionTypeMap,
+        qlConnectionTypeMap,
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
@@ -77,7 +77,7 @@ export const getIsolatedSandboxChartBuilder = async (
          let __runtimeMetadata = {userParamsOverride: undefined};
          let __features = JSON.parse('${JSON.stringify(serverFeatures)}');
          let __palettes = JSON.parse('${JSON.stringify(palettesMap)}');
-         let __qlConnectionTypeMap = JSON.parse('${JSON.stringify(getQLConnectionTypeMap)}');
+         let __qlConnectionTypeMap = JSON.parse('${JSON.stringify(qlConnectionTypeMap)}');
     `,
     );
 
