@@ -45,16 +45,43 @@ datalensTest.describe('Wizard', () => {
                     'id',
                 );
 
-                await wizardPage.createNewFieldWithFormula('max', 'max([id]) - 3');
+                // an indicator with a negative minimum and positive maximum scale values
+                await wizardPage.createNewFieldWithFormula('ind1', 'max([id]) - 3');
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.FlatTableColumns,
-                    'max',
+                    'ind1',
                 );
                 await wizardPage.visualizationItemDialog.open(
                     PlaceholderName.FlatTableColumns,
-                    'max',
+                    'ind1',
                 );
                 await enableBar(wizardPage, [-1, 1]);
+                await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+                // an indicator with a positive minimum and maximum scale values
+                await wizardPage.createNewFieldWithFormula('ind2', 'max([id]) - 3');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'ind2',
+                );
+                await wizardPage.visualizationItemDialog.open(
+                    PlaceholderName.FlatTableColumns,
+                    'ind2',
+                );
+                await enableBar(wizardPage, [0.1, 1]);
+                await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+                // an indicator with a positive minimum and maximum scale values
+                await wizardPage.createNewFieldWithFormula('ind3', 'max([id]) - 3');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.FlatTableColumns,
+                    'ind3',
+                );
+                await wizardPage.visualizationItemDialog.open(
+                    PlaceholderName.FlatTableColumns,
+                    'ind3',
+                );
+                await enableBar(wizardPage, [-1, -0.1]);
                 await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
                 await wizardPage.sectionVisualization.addFieldByClick(
