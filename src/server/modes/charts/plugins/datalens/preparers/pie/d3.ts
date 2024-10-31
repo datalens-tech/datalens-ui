@@ -23,6 +23,10 @@ type MapPieSeriesArgs = {
     ChartEditor: PrepareFunctionArgs['ChartEditor'];
 };
 
+type ExtendedPieSeriesData = PieSeriesData & {
+    drillDownFilterValue?: string;
+};
+
 type ExtendedPieSeries = PieSeries & {
     custom?: {
         totals?: string;
@@ -41,11 +45,12 @@ function mapPieSeries(args: MapPieSeriesArgs) {
         },
         data:
             graph.data?.map<PieSeriesData>((item) => {
-                const dataItem: PieSeriesData = {
+                const dataItem: ExtendedPieSeriesData = {
                     value: item.y,
                     color: String(item.color),
                     name: item.name,
                     custom: item.custom,
+                    drillDownFilterValue: item.drillDownFilterValue,
                 };
 
                 if (isLabelsEnabled) {
