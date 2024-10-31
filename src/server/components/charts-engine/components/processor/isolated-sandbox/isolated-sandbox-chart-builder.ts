@@ -2,9 +2,13 @@ import fs from 'fs';
 
 import ivm from 'isolated-vm';
 
-import type {DashWidgetConfig, FeatureConfig} from '../../../../../../shared';
+import type {
+    ConnectorType,
+    DashWidgetConfig,
+    FeatureConfig,
+    Palette,
+} from '../../../../../../shared';
 import {EDITOR_TYPE_CONFIG_TABS, Feature} from '../../../../../../shared';
-import {registry} from '../../../../../registry';
 import type {ChartsEngine} from '../../../index';
 import type {ResolvedConfig} from '../../storage/types';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
@@ -38,6 +42,8 @@ type IsolatedSandboxChartBuilderArgs = {
         key: string,
         params?: Record<string, string | number>,
     ) => string;
+    getAvailablePalettesMap: () => Record<string, Palette>;
+    getQLConnectionTypeMap: () => Record<string, ConnectorType>;
 };
 
 export const getIsolatedSandboxChartBuilder = async (
@@ -53,16 +59,16 @@ export const getIsolatedSandboxChartBuilder = async (
         workbookId,
         serverFeatures,
         getTranslation,
+        getAvailablePalettesMap,
+        getQLConnectionTypeMap,
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
-    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
-
     const palettes = getAvailablePalettesMap();
-
     const isolate = new ivm.Isolate({memoryLimit: 1024});
     const context = isolate.createContextSync();
-    const getQLConnectionTypeMap = registry.getQLConnectionTypeMap();
+
+    const qlConnectionTypeMap = getQLConnectionTypeMap();
     context.evalSync(
         `
          // I do not know why, but this is not exists in V8 Isolate.
@@ -73,7 +79,7 @@ export const getIsolatedSandboxChartBuilder = async (
          let __runtimeMetadata = {userParamsOverride: undefined};
          let __features = JSON.parse('${JSON.stringify(serverFeatures)}');
          let __palettes = JSON.parse('${JSON.stringify(palettes)}');
-         let __qlConnectionTypeMap = JSON.parse('${JSON.stringify(getQLConnectionTypeMap)}');
+         let __qlConnectionTypeMap = JSON.parse('${JSON.stringify(qlConnectionTypeMap)}');
     `,
     );
 

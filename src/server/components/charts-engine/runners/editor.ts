@@ -3,6 +3,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {DashWidgetConfig} from '../../../../shared';
 import {Feature, getServerFeatures, isEnabledServerFeature} from '../../../../shared';
 import {getTranslationFn} from '../../../../shared/modules/language';
+import {registry} from '../../../registry';
 import {createI18nInstance} from '../../../utils/language';
 import {getIsolatedSandboxChartBuilder} from '../components/processor/isolated-sandbox/isolated-sandbox-chart-builder';
 
@@ -33,6 +34,8 @@ async function getChartBuilder({
     const i18n = createI18nInstance({lang: userLang});
     const getTranslation = getTranslationFn(i18n.getI18nServer());
     const serverFeatures = getServerFeatures(parentContext);
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+    const getQLConnectionTypeMap = registry.getQLConnectionTypeMap;
     const chartBuilder = await getIsolatedSandboxChartBuilder({
         userLang,
         userLogin,
@@ -42,6 +45,8 @@ async function getChartBuilder({
         chartsEngine,
         serverFeatures,
         getTranslation,
+        getAvailablePalettesMap,
+        getQLConnectionTypeMap,
     });
 
     return {chartBuilder};
