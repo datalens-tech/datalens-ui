@@ -222,19 +222,19 @@ export class BaseStorage {
         this.cachedConfigs = preloaded;
     }
 
-    resolveConfig(ctx: AppContext, props: ResolveConfigProps) {
+    resolveConfig(ctx: AppContext, props: ResolveConfigProps): Promise<ResolvedConfig> {
         const {key, unreleased = false, noCache = false} = props;
         if (!noCache && !unreleased && this.cachedConfigs[key]) {
             ctx.log('STORAGE_CONF_PRELOAD_HIT', {key});
             return Promise.resolve(this.cachedConfigs[key]);
         }
 
-        return this.fetchConfig(ctx, {...props, unreleased, noCache}) as Promise<ResolvedConfig>;
+        return this.fetchConfig(ctx, {...props, unreleased});
     }
 
-    resolveEmbedConfig(ctx: AppContext, props: EmbedResolveConfigProps) {
-        const {unreleased = false, noCache = false} = props;
-        return this.fetchConfig(ctx, {...props, unreleased, noCache}) as Promise<EmbeddingInfo>;
+    resolveEmbedConfig(ctx: AppContext, props: EmbedResolveConfigProps): Promise<EmbeddingInfo> {
+        const {unreleased = false} = props;
+        return this.fetchConfig(ctx, {...props, unreleased});
     }
 
     private initProvider(config: BaseStorageInitParams['config']) {
