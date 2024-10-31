@@ -42,7 +42,7 @@ async function getChartBuilder({
         widgetConfig,
         config,
         isScreenshoter,
-        chartsEngine,
+        nativeModules: chartsEngine.nativeModules,
         serverFeatures,
         getTranslation,
         getAvailablePalettesMap,

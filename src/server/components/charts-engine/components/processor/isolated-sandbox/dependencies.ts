@@ -2,7 +2,6 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
 
-import type {ChartsEngine} from '../../..';
 import type {WorkbookId} from '../../../../../../shared';
 import {resolveConfig as storageResolveConfig} from '../../storage';
 import type {ResolvedConfig} from '../../storage/types';
@@ -28,14 +27,14 @@ export class DepsResolveError extends Error {
 }
 
 export const resolveDependencies = async ({
-    chartsEngine,
+    nativeModules,
     config,
     subrequestHeaders,
     req,
     ctx,
     workbookId,
 }: {
-    chartsEngine: ChartsEngine;
+    nativeModules: Record<string, unknown>;
     subrequestHeaders: Record<string, string>;
     config: {data: Record<string, string>; key: string};
     req: Request;
@@ -53,7 +52,7 @@ export const resolveDependencies = async ({
 
     async function resolveDeps(depsList: string[]): Promise<ResolvedConfig[]> {
         const filteredDepsList = depsList.filter(
-            (dep) => !Object.keys(chartsEngine.nativeModules).includes(dep),
+            (dep) => !Object.keys(nativeModules).includes(dep),
         );
 
         const uniqDeps = Array.from(new Set(filteredDepsList.map((dep) => dep)));
