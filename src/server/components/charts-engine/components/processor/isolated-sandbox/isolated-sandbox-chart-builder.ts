@@ -9,11 +9,9 @@ import type {
     Palette,
 } from '../../../../../../shared';
 import {EDITOR_TYPE_CONFIG_TABS, Feature} from '../../../../../../shared';
-import type {ChartsEngine} from '../../../index';
-import type {ResolvedConfig} from '../../storage/types';
-import {Processor} from '../index';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
 
+import {resolveDependencies} from './dependencies';
 import type {ModulesSandboxExecuteResult} from './isolated-modules-sandbox';
 import {Sandbox} from './sandbox';
 
@@ -32,7 +30,7 @@ type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;
     userLang: string;
     isScreenshoter: boolean;
-    chartsEngine: ChartsEngine;
+    nativeModules: Record<string, unknown>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
@@ -53,7 +51,7 @@ export const getIsolatedSandboxChartBuilder = async (
         userLogin,
         userLang,
         isScreenshoter,
-        chartsEngine,
+        nativeModules,
         config,
         widgetConfig,
         workbookId,
@@ -94,14 +92,14 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildModules: async ({subrequestHeaders, req, ctx, onModuleBuild}) => {
-            const resolvedModules = (await Processor.resolveDependencies({
-                chartsEngine,
+            const resolvedModules = await resolveDependencies({
+                nativeModules,
                 config,
                 subrequestHeaders,
                 req,
                 ctx,
                 workbookId,
-            })) as ResolvedConfig[];
+            });
 
             const processedModules: Record<string, ModulesSandboxExecuteResult> = {};
 
@@ -112,7 +110,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     code: bundledLibriesCode,
                     userLogin,
                     userLang,
-                    nativeModules: chartsEngine.nativeModules,
+                    nativeModules,
                     isScreenshoter,
                     context,
                     getTranslation,
@@ -128,7 +126,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     code: resolvedModule.data.js,
                     userLogin,
                     userLang,
-                    nativeModules: chartsEngine.nativeModules,
+                    nativeModules,
                     isScreenshoter,
                     context,
                     getTranslation,
