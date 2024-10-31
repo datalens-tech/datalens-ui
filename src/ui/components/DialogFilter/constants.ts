@@ -52,6 +52,7 @@ export const DATE_OPERATIONS: Operation[] = [
     ...BASE_EQUALITY_OPERATIONS.map((item) => ({...item, range: false})),
     ...BASE_COMPARSION_OPERATIONS.map((item) => ({...item, range: false})),
     ...BASE_NULL_OPERATIONS.map((item) => ({...item, range: false})),
+    ...BASE_SET_OPERATIONS.map((item) => ({...item, selectable: true})),
 ];
 
 export const ARRAY_OPERATIONS: Operation[] = [
