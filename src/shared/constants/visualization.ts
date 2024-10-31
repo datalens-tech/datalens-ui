@@ -18,10 +18,13 @@ export enum WizardVisualizationId {
     DonutD3 = 'donut-d3',
     Metric = 'metric',
     Treemap = 'treemap',
+    TreemapD3 = 'treemap-d3',
     FlatTable = 'flatTable',
     PivotTable = 'pivotTable',
     Geolayer = 'geolayer',
     Geopoint = 'geopoint',
+    Geopolygon = 'geopolygon',
+    GeopointWithCluster = 'geopoint-with-cluster',
     CombinedChart = 'combined-chart',
 }
 

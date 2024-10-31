@@ -8,19 +8,17 @@ import type {
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
     FormSchema,
-    GetAuthorizationUrlResponse,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
     GetEntryResponse,
     GetFileSourceStatusResponse,
     GetFileSourcesResponse,
     GetFileStatusResponse,
-    GetGCredentialsResponse,
     GetOAuthTokenArgs,
     GetOAuthTokenResponse,
     GetOAuthUriArgs,
     GetOAuthUriResponse,
-    GoogleRefreshToken,
+    RefreshToken,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
     UpdateS3BasedConnectionDataArgs,
@@ -307,7 +305,7 @@ const addGoogleSheet = async ({
     url: string;
     authorized: boolean;
     connectionId?: string;
-    refreshToken?: GoogleRefreshToken;
+    refreshToken?: RefreshToken;
 }): Promise<{gsheet?: AddGoogleSheetResponse; error?: DataLensApiError}> => {
     try {
         const gsheet = await getSdk().biConverter.addGoogleSheet({
@@ -333,28 +331,6 @@ const updateS3BasedConnectionData = async (
     } catch (error) {
         logger.logError('Redux actions (conn): addGoogleSheet failed', error);
         return {files: [], error};
-    }
-};
-
-const getGoogleAuthorizationUrl = async (): Promise<
-    GetAuthorizationUrlResponse & {error?: DataLensApiError}
-> => {
-    const scopes = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
-    try {
-        return await getSdk().googleapis.getAuthorizationUrl({scopes});
-    } catch (error) {
-        return {uri: '', error};
-    }
-};
-
-const getGoogleCredentials = async (
-    code: string,
-): Promise<GetGCredentialsResponse & {error?: DataLensApiError}> => {
-    try {
-        const response = await getSdk().googleapis.getCredentials({code});
-        return response;
-    } catch (error) {
-        return {accessToken: '', error};
     }
 };
 
@@ -426,8 +402,6 @@ export const api = {
     applySourceSettings,
     addGoogleSheet,
     updateS3BasedConnectionData,
-    getGoogleAuthorizationUrl,
-    getGoogleCredentials,
     addYandexDocument,
     getOAuthUrl,
     getOAuthToken,

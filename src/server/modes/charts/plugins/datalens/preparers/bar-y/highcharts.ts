@@ -8,10 +8,12 @@ import {
     getAxisMode,
     getFakeTitleOrTitle,
     getIsNavigatorEnabled,
+    getXAxisMode,
     isDateField,
     isFloatField,
     isMeasureNameOrValue,
 } from '../../../../../../../shared';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -21,7 +23,6 @@ import {
     shouldUseGradientLegend,
 } from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -29,7 +30,16 @@ import {prepareBarYData} from './prepare-bar-y-data';
 
 // eslint-disable-next-line complexity
 function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
-    const {placeholders, colors, colorsConfig, sort, visualizationId, shared, graphs} = args;
+    const {
+        placeholders,
+        colors,
+        colorsConfig,
+        sort,
+        visualizationId,
+        shared,
+        graphs,
+        idToDataType,
+    } = args;
     // for some reason, the vertical axis for the horizontal bar is considered the X axis
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -40,13 +50,15 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const ySectionItems = yPlaceholder?.items || [];
     const colorItem = colors[0];
 
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
+
     const customConfig: any = {
         xAxis: {
             type: getAxisType({
                 field: x,
                 settings: xPlaceholder?.settings,
-                visualizationIds: getAllVisualizationsIds(shared),
-                sort,
+                axisMode: xAxisMode,
             }),
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {

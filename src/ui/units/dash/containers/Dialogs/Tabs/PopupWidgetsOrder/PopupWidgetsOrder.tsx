@@ -33,6 +33,7 @@ const LIST_PREFIX_TEXTS = {
     control: i18n('label_control'),
     group_control: i18n('label_group_control'),
     widget: i18n('label_widget'),
+    image: i18n('label_image'),
 };
 
 const WidgetRow = (item: DashTabItem) => {

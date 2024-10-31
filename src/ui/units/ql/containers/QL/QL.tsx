@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import {PageTitle} from 'components/PageTitle';
 import ViewError from 'components/ViewError/ViewError';
 import ViewLoader from 'components/ViewLoader/ViewLoader';
+import type {HotkeysContextType} from 'react-hotkeys-hook/dist/HotkeysProvider';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
@@ -12,16 +13,21 @@ import {cleanRevisions, setRevisionsMode} from 'store/actions/entryContent';
 import {RevisionsMode} from 'store/typings/entryContent';
 import type {DatalensGlobalState} from 'ui';
 import {EntryDialogues, URL_QUERY} from 'ui';
+import {HOTKEYS_SCOPES} from 'ui/constants/misc';
+import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
+import {initEditHistoryUnit, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import type {WizardGlobalState} from 'ui/units/wizard/reducers';
 import Grid from 'units/ql/components/Grid/Grid';
-import {AppStatus} from 'units/ql/constants';
-import Header from 'units/ql/containers/Header/Header';
-import {initializeApplication, resetQLStore} from 'units/ql/store/actions/ql';
+import {AppStatus, QL_EDIT_HISTORY_UNIT_ID} from 'units/ql/constants';
+import {initializeApplication, resetQLStore, setQLStore} from 'units/ql/store/actions/ql';
 import {getAppError, getAppStatus, getConnection, getEntry} from 'units/ql/store/reducers/ql';
-import type {QLConnectionEntry, QLEntry} from 'units/ql/store/typings/ql';
-import {resetWizardStore} from 'units/wizard/actions';
+import type {QLConnectionEntry, QLEntry, QLState} from 'units/ql/store/typings/ql';
+import {resetWizardStore, setWizardStore} from 'units/wizard/actions';
 import {getUrlParamFromStr} from 'utils';
 
 import {registry} from '../../../../registry';
+
+import {QLActionPanel} from './QLActionPanel/QLActionPanel';
 
 import './QL.scss';
 
@@ -39,19 +45,46 @@ interface QLProps {
 
 type QLInnerProps = QLProps &
     RouteComponentProps<{qlEntryId?: string; workbookId?: string}> &
-    DispatchProps;
+    DispatchProps & {
+        hotkeysContext?: HotkeysContextType;
+    };
 
 class QL extends React.PureComponent<QLInnerProps> {
     entryDialoguesRef: React.RefObject<EntryDialogues>;
+    private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
     constructor(props: QLInnerProps) {
         super(props);
 
         this.entryDialoguesRef = React.createRef();
+        this.hotkeysAreaRef = React.createRef();
+
+        this.props.initEditHistoryUnit<{ql: QLState; wizard: WizardGlobalState}>({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+            setState: ({state}) => {
+                const {ql, wizard} = state;
+
+                this.props.setQLStore({
+                    store: ql,
+                });
+
+                this.props.setWizardStore({
+                    store: wizard,
+                });
+            },
+            options: {
+                pathIgnoreList: ['/preview/highchartsWidget', '/preview/filters'],
+            },
+        });
     }
 
     componentDidMount() {
         const {history, location, match} = this.props;
+
+        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', this.enableQLScope);
+        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', this.disableQLScope);
+
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
 
         this.props.initializeApplication({location, history, match});
     }
@@ -71,6 +104,7 @@ class QL extends React.PureComponent<QLInnerProps> {
 
         if (hasRevisionChanged && !hasQlEntryChanged) {
             this.props.resetQLStore();
+
             this.props.initializeApplication({
                 location,
                 history,
@@ -91,7 +125,13 @@ class QL extends React.PureComponent<QLInnerProps> {
                 });
             }
 
+            this.props.resetEditHistoryUnit({
+                unitId: QL_EDIT_HISTORY_UNIT_ID,
+            });
+
             this.props.resetQLStore();
+            this.props.resetWizardStore();
+
             this.props.initializeApplication({
                 location,
                 history,
@@ -103,6 +143,15 @@ class QL extends React.PureComponent<QLInnerProps> {
     componentWillUnmount() {
         this.props.resetQLStore();
         this.props.resetWizardStore();
+
+        this.props.resetEditHistoryUnit({
+            unitId: QL_EDIT_HISTORY_UNIT_ID,
+        });
+
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
+
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', this.enableQLScope);
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', this.disableQLScope);
     }
 
     render() {
@@ -111,7 +160,11 @@ class QL extends React.PureComponent<QLInnerProps> {
         return (
             <React.Fragment>
                 <PageTitle entry={entry} />
-                <Header {...routeProps} entry={entry} entryDialoguesRef={this.entryDialoguesRef} />
+                <QLActionPanel
+                    {...routeProps}
+                    entry={entry}
+                    entryDialoguesRef={this.entryDialoguesRef}
+                />
                 {this.renderContent()}
             </React.Fragment>
         );
@@ -151,12 +204,20 @@ class QL extends React.PureComponent<QLInnerProps> {
         return (
             <React.Fragment>
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <div className={b('content')}>
+                <div className={b('content')} ref={this.hotkeysAreaRef}>
                     <Grid entryDialoguesRef={this.entryDialoguesRef} size={size} />
                 </div>
             </React.Fragment>
         );
     }
+
+    private enableQLScope = () => {
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.QL);
+    };
+
+    private disableQLScope = () => {
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.QL);
+    };
 }
 
 const makeMapStateToProps = (state: DatalensGlobalState) => {
@@ -169,8 +230,12 @@ const makeMapStateToProps = (state: DatalensGlobalState) => {
 };
 
 const mapDispatchToProps = {
+    initEditHistoryUnit,
+    resetEditHistoryUnit,
     initializeApplication,
+    setQLStore,
     resetQLStore,
+    setWizardStore,
     resetWizardStore,
     cleanRevisions,
     setRevisionsMode,
@@ -179,4 +244,4 @@ const mapDispatchToProps = {
 export default connect(
     makeMapStateToProps,
     mapDispatchToProps,
-)(compose<QLInnerProps, QLProps>(withRouter)(QL));
+)(compose<QLInnerProps, QLProps>(withRouter)(withHotkeysContext(QL)));

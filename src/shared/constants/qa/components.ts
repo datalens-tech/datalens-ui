@@ -35,7 +35,10 @@ export enum ConnectionsDialogQA {
 }
 
 export enum AddFieldQA {
+    Option = 'add-field-option',
     AddFieldButton = 'add-field-button',
+    MeasureFieldIcon = 'add-measure-field-icon',
+    DimensionsFieldIcon = 'add-dimension-field-icon',
 }
 
 export enum DialogTabsQA {
@@ -117,6 +120,7 @@ export enum DialogDraftWarningQA {
 export enum DialogDashWidgetItemQA {
     Text = 'dialog_widget-text',
     Title = 'dialog_widget-title',
+    Image = 'dialog_widget-image',
 }
 
 export enum DialogDashTitleQA {
@@ -160,10 +164,6 @@ export const enum CreateEntityButton {
     Popup = 'create-entry-button-popup',
 }
 
-export enum DashTabsQA {
-    Root = 'dash-tabs',
-}
-
 export enum DocSectionQa {
     Group = 'doc-section-group',
     Item = 'doc-section-item',
@@ -172,4 +172,10 @@ export enum DocSectionQa {
 
 export enum PreviewQa {
     ChartWrapper = 'preview-chart-wrapper',
+}
+
+export enum DatalensTabs {
+    MobileItem = 'dash-mobile-tab-item',
+    Item = 'dash-tab-item',
+    SwitcherItem = 'dash-tab-switcher-item',
 }

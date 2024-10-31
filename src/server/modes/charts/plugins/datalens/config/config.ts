@@ -1,3 +1,5 @@
+import set from 'lodash/set';
+
 import type {FeatureConfig, ServerChartsConfig} from '../../../../../../shared';
 import {
     ChartkitHandlers,
@@ -88,7 +90,7 @@ export const buildChartsConfigPrivate = (
     let hideHolidaysBands = !features[Feature.HolidaysOnChart];
     if (!hideHolidaysBands) {
         hideHolidaysBands = [visualization].concat(visualization.layers || []).some((layer) => {
-            return layer.placeholders.some((placeholder) => {
+            return layer.placeholders?.some((placeholder) => {
                 return (
                     placeholder.id === PlaceholderId.X &&
                     (placeholder.settings?.holidays || 'off') === 'off'
@@ -187,6 +189,14 @@ export const buildChartsConfigPrivate = (
         (config as TableConfig).settings = {
             externalSort: true,
         };
+    }
+
+    const isTableWidget = (
+        [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
+    ).includes(visualizationId);
+
+    if (isTableWidget) {
+        set(config, 'settings.width', 'max-content');
     }
 
     const placeholders = shared.visualization.placeholders;

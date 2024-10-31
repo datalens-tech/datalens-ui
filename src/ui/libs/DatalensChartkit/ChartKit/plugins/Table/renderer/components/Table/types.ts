@@ -36,6 +36,7 @@ export type THead = {
     cell?: RenderCellFn<CellData>;
     columns?: THead[];
     left?: number;
+    index?: number;
 };
 
 export type TData = CellData[];
@@ -80,7 +81,6 @@ export type HeadCellViewData = {
     sortable: boolean;
     pinned: boolean;
     style?: React.CSSProperties;
-    width: number;
     sorting: 'asc' | 'desc' | false;
     content: JSX.Element | React.ReactNode;
     onClick: () => void;
@@ -106,13 +106,13 @@ export type BodyCellViewData = {
     index: number;
     /* Original cell data */
     data: unknown;
+    maxHeight?: number;
 };
 
 export type BodyRowViewData = {
     id: string;
     index: number;
     cells: BodyCellViewData[];
-    ref?: (node: HTMLTableRowElement) => void;
     y?: number;
 };
 
@@ -128,4 +128,24 @@ export type FooterCellViewData = {
 export type FooterRowViewData = {
     id: string;
     cells: FooterCellViewData[];
+};
+
+export type RowRef = (node: HTMLTableRowElement) => void;
+
+export type TableViewData = {
+    colgroup?: {width: string}[];
+    header: {
+        rows: HeadRowViewData[];
+        style?: React.CSSProperties;
+    };
+    body: {
+        rows: BodyRowViewData[];
+        style?: React.CSSProperties;
+        rowRef?: RowRef;
+    };
+    footer: {
+        rows: FooterRowViewData[];
+        style?: React.CSSProperties;
+    };
+    totalSize?: number;
 };

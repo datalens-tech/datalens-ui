@@ -110,3 +110,8 @@ export const TREEMAP_VISUALIZATION: GraphShared['visualization'] = {
         },
     ],
 };
+
+export const TREEMAP_D3_VISUALIZATION: GraphShared['visualization'] = {
+    ...TREEMAP_VISUALIZATION,
+    id: WizardVisualizationId.TreemapD3,
+};

@@ -197,10 +197,16 @@ export const saveUserToLocals = (res: Response, introspectResult: IntrospectResu
     res.locals.zitadel.email = introspectResult.email;
 };
 
-export const getUserInfo = (_req: Request, res: Response): Partial<DLUser> => ({
-    login: res.locals.zitadel.login,
-    email: res.locals.zitadel.email,
-    formattedLogin: res.locals.zitadel.login,
-    displayName: res.locals.zitadel.displayName,
-    uid: res.locals.zitadel.userId,
-});
+export const getUserInfo = (_req: Request, res: Response): Partial<DLUser> => {
+    if (!res.locals.zitadel) {
+        return {};
+    }
+
+    return {
+        login: res.locals.zitadel.login,
+        email: res.locals.zitadel.email,
+        formattedLogin: res.locals.zitadel.login,
+        displayName: res.locals.zitadel.displayName,
+        uid: res.locals.zitadel.userId,
+    };
+};

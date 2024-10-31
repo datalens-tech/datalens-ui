@@ -58,3 +58,12 @@ jobs:
           prerelease: false
       - name: 'Success notify'
         run: echo "Version bumped to '$TAG_NEW_VERSION' and pushed to remote repository"
+      - name: Save workflow ref
+        run: |
+          mkdir -p ./workflow_ref
+          echo "${{ env.NEW_BRANCH }}" > ./workflow_ref/ref
+      - uses: actions/upload-artifact@v3
+        with:
+          name: workflow_ref
+          path: ./workflow_ref/
+          retention-days: 30

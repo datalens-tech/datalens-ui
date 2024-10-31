@@ -1,6 +1,8 @@
 import type {AppEnvironment} from '../../../shared';
 import {
     AppInstallation,
+    CSP_HEADER,
+    CSP_REPORT_TO_HEADER,
     DL_CONTEXT_HEADER,
     Language,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
@@ -38,6 +40,7 @@ export default {
     regionalEnvConfig: {
         defaultLang: Language.En,
         allowLanguages: [Language.En, Language.Ru],
+        langQueryParamName: '_lang',
     },
 
     csp: 'disabled',
@@ -201,8 +204,8 @@ export default {
         },
     },
 
-    appSensitiveKeys: [SERVICE_USER_ACCESS_TOKEN_HEADER],
-    appSensitiveHeaders: [SERVICE_USER_ACCESS_TOKEN_HEADER],
+    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
+    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
 
     isZitadelEnabled: isTrueArg(process.env.ZITADEL),
 

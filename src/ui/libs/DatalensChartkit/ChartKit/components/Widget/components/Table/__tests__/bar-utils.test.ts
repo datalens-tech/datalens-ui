@@ -1,18 +1,11 @@
 import type React from 'react';
 
-import type {
-    BarProps,
-    GetBarStyleArgs,
-    GetMinMaxWithOffsetArgs,
-    GetSeparatorStyleArgs,
-    GetStylesArgs,
-} from '../Bar/types';
+import type {BarProps, GetBarStyleArgs, GetMinMaxWithOffsetArgs, GetStylesArgs} from '../Bar/types';
 import {
     getBarStyle,
     getMinMaxWithOffset,
     getRangeValue,
     getRangeValuePart,
-    getSeparatorStyle,
     getStyles,
     isPropsValid,
 } from '../Bar/utils';
@@ -42,47 +35,30 @@ describe('chartkit/Table/utils/bars-utils', () => {
         [{value: 5}, {}],
         [
             {value: 5, max: 10, color: 'red'},
-            {background: 'linear-gradient(to left, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', marginLeft: 0, width: '50%'},
         ],
         [
             {value: 5, max: 10, align: 'right', color: 'red'},
-            {background: 'linear-gradient(to right, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', marginLeft: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, color: 'red'},
-            {background: 'linear-gradient(to right, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', marginLeft: '50%', width: '50%'},
         ],
         [
             {value: -5, min: -10, align: 'left', color: 'red'},
-            {background: 'linear-gradient(to left, transparent 0% 50%, red 50% 100%)'},
+            {background: 'red', marginLeft: 0, width: '50%'},
         ],
         [
             {value: 5, min: -10, max: 10, color: 'red'},
-            {
-                background:
-                    'linear-gradient(to right, transparent 0% 50%, red 50% 75%, transparent 75% 100%)',
-            },
+            {background: 'red', marginLeft: '50%', width: '25%'},
         ],
         [
             {value: -5, min: -10, max: 10, color: 'red'},
-            {
-                background:
-                    'linear-gradient(to right, transparent 0% 25%, red 25% 50%, transparent 50% 100%)',
-            },
+            {background: 'red', marginLeft: '25%', width: '25%'},
         ],
     ])('getBarStyle (args: %j)', (args, expected) => {
         const result = getBarStyle(args);
-        expect(result).toEqual(expected);
-    });
-
-    test.each<[GetSeparatorStyleArgs, React.CSSProperties | undefined] /* [args, expected] */>([
-        [{min: undefined, max: 60}, undefined],
-        [{min: 0, max: undefined}, undefined],
-        [{min: -20, max: 0}, {left: '100%'}],
-        [{min: 0, max: 20}, {left: '0%'}],
-        [{min: -20, max: 60}, {left: '25%'}],
-    ])('getSeparatorStyle (args: %j)', (args, expected) => {
-        const result = getSeparatorStyle(args);
         expect(result).toEqual(expected);
     });
 

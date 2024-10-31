@@ -12,6 +12,7 @@ import {
     DL_COMPONENT_HEADER,
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
+    EntryUpdateMode,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
@@ -21,7 +22,7 @@ import {
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../../../../shared';
-import {TIMEOUT_10_SEC} from '../../../../../../shared/constants';
+import {ErrorCode, TIMEOUT_10_SEC} from '../../../../../../shared/constants';
 import {createErrorHandler} from '../../error-handler';
 import {getDuration} from '../../utils';
 import type {ChartEntryData, DashEntryData, EmbeddingInfo} from '../types';
@@ -42,7 +43,6 @@ axiosRetry(axios, {
 });
 
 const ENTRY_NOT_FOUND = 'ENTRY_NOT_FOUND';
-const ENTRY_FORBIDDEN = 'ENTRY_FORBIDDEN';
 const PASSED_PROPERTIES: (keyof Entry)[] = [
     'entryId',
     'data',
@@ -213,6 +213,7 @@ export type ProviderCreateParams = {
     includePermissionsInfo?: boolean | string;
     workbookId: string;
     name: string;
+    mode?: EntryUpdateMode;
 };
 
 function injectMetadata(headers: IncomingHttpHeaders, ctx: AppContext): IncomingHttpHeaders {
@@ -308,7 +309,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = id;
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -382,7 +383,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = key;
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -438,7 +439,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = 'embedToken';
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -496,7 +497,7 @@ export class USProvider {
                     throw error;
                 } else if (error.response && error.response.status === 403) {
                     error.description = 'embedToken and id';
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -524,6 +525,7 @@ export class USProvider {
             includePermissionsInfo,
             workbookId,
             name,
+            mode = EntryUpdateMode.Publish,
         }: ProviderCreateParams,
     ) {
         const hrStart = process.hrtime();
@@ -539,6 +541,7 @@ export class USProvider {
             workbookId: string;
             name: string;
             includePermissionsInfo?: boolean;
+            mode: EntryUpdateMode;
         } = {
             key,
             data,
@@ -548,6 +551,7 @@ export class USProvider {
             meta,
             workbookId,
             name,
+            mode,
         };
 
         if (links) {
@@ -581,7 +585,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -666,7 +670,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {
@@ -706,7 +710,7 @@ export class USProvider {
                     error.status = 404;
                     throw error;
                 } else if (error.response && error.response.status === 403) {
-                    error.code = ENTRY_FORBIDDEN;
+                    error.code = ErrorCode.EntryForbidden;
                     error.status = 403;
                     throw error;
                 } else {

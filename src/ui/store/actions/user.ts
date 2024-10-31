@@ -9,14 +9,14 @@ type UserDispatch = ThunkDispatch<DatalensGlobalState, void, UserAction>;
 
 export const UPDATE_USER_SETTINGS = Symbol('user/UPDATE_USER_SETTINGS');
 
-export type NewUserSettings = Partial<DLUserSettings>;
+export type NewUserSettings<T = {}> = Partial<T & DLUserSettings>;
 
 type UpdateUserSettingsAction = {
     type: typeof UPDATE_USER_SETTINGS;
     payload: {userSettings: NewUserSettings};
 };
 
-export function updateUserSettings({newSettings}: {newSettings: NewUserSettings}) {
+export function updateUserSettings<T>({newSettings}: {newSettings: NewUserSettings<T>}) {
     return async (dispatch: UserDispatch) => {
         try {
             const {getUpdatedUserSettings} = registry.common.functions.getAll();

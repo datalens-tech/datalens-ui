@@ -1,7 +1,9 @@
+import type {WrappedMarkup} from '../../../utils';
 import type {WrappedMarkdown} from '../../../utils/markdown';
+import type {SeriesExportSettings} from '../../wizard';
 
 export type PointCustomData = {
-    name?: string | number | WrappedMarkdown;
+    name?: string | number | WrappedMarkdown | WrappedMarkup;
     xLabel?: string | WrappedMarkdown;
     yLabel?: string | WrappedMarkdown;
     cLabel?: string | null | WrappedMarkdown;
@@ -16,4 +18,5 @@ export type ScatterSeriesCustomData = {
     colorTitle?: string;
     shapeTitle?: string;
     sizeTitle?: string;
+    exportSettings?: SeriesExportSettings;
 };

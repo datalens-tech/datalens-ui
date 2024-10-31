@@ -4,8 +4,9 @@ import {DialogCounterProgress} from 'components/Progress/DialogCounterProgress';
 import {useEffectOnce} from 'hooks';
 import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
-import {PLACE} from 'shared';
+import {Feature, PLACE} from 'shared';
 import {DialogSuccessWithAction} from 'ui/components/DialogSuccessWithAction/DialogSuccessWithAction';
+import Utils from 'utils';
 
 import type {NavigationEntry} from '../../../../../shared/schema';
 import type {ChangeLocation} from '../../types';
@@ -41,7 +42,11 @@ export const BatchMove = ({
     const moveCancelled = React.useRef(false);
 
     const entriesWithRights = React.useMemo(() => {
-        return entries.filter((entry) => entry.permissions.edit === true);
+        return entries.filter((entry) =>
+            Utils.isEnabledFeature(Feature.UseMovePermAction)
+                ? entry.permissions.admin === true
+                : entry.permissions.edit === true,
+        );
     }, [entries]);
 
     useEffectOnce(() => {
@@ -145,6 +150,7 @@ export const BatchMove = ({
                 <AccessError
                     onClose={handleClose}
                     entries={entries}
+                    entriesWithRights={entriesWithRights}
                     onNext={handleNextAfterAccessError}
                 />
             );

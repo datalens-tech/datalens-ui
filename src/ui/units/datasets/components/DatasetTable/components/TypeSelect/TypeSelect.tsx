@@ -8,9 +8,8 @@ import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {DataTypeIcon} from 'ui';
 
-import {getSelectedValueForSelect} from '../../../../../../utils/helpers';
+import {getDatasetLabelValue, getSelectedValueForSelect} from '../../../../../../utils/helpers';
 import {datasetValidationSelector} from '../../../../store/selectors/dataset';
-import {getLabelValue} from '../../utils';
 
 import './TypeSelect.scss';
 
@@ -51,7 +50,7 @@ class TypeSelectComponent extends React.Component<Props> {
             .map((type): SelectOption => {
                 return {
                     value: type,
-                    content: getLabelValue(type),
+                    content: getDatasetLabelValue(type),
                     disabled: validation.isLoading,
                 };
             })
@@ -99,7 +98,7 @@ class TypeSelectComponent extends React.Component<Props> {
                 view="flat"
                 className={b('select-control')}
             >
-                {this.renderSelectOption({value, content: getLabelValue(value)})}
+                {this.renderSelectOption({value, content: getDatasetLabelValue(value)})}
             </Button>
         );
     };

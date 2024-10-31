@@ -6,8 +6,8 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import isNull from 'lodash/isNull';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {Dispatch} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
@@ -15,7 +15,7 @@ import type {
     TableFieldBackgroundSettings,
 } from 'shared';
 import {
-    Feature,
+    DialogFieldSettingsQa,
     PlaceholderId,
     WizardVisualizationId,
     getDefaultFormatting,
@@ -27,7 +27,6 @@ import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
-import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -468,7 +467,6 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
     private renderMarkdownSettings() {
         const {item, placeholderId, visualization} = this.props;
         const canTransformToMarkdown =
-            Utils.isEnabledFeature(Feature.WizardMarkdownFields) &&
             item?.data_type === DATASET_FIELD_TYPES.STRING &&
             canUseStringAsMarkdown(visualization.id as WizardVisualizationId, placeholderId);
 
@@ -487,6 +485,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                                 this.setState({isMarkdown: checked});
                             }}
                             checked={this.state.isMarkdown ?? false}
+                            qa={DialogFieldSettingsQa.MarkdownEnableButton}
                         />
                     }
                 />

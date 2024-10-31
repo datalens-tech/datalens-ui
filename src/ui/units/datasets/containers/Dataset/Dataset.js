@@ -15,6 +15,7 @@ import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
 import {DatasetActionQA, ErrorCode, ErrorContentTypes} from 'shared';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {
     addAvatar,
     addSource,
@@ -33,7 +34,7 @@ import {
     updateDatasetByValidation,
 } from 'units/datasets/store/actions/creators';
 import CommonUtils from 'utils/utils';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import ActionPanel from '../../../../components/ActionPanel/ActionPanel';
@@ -192,8 +193,8 @@ class Dataset extends React.Component {
         const {ytPath, isCreationProcess, history} = this.props;
         const {isAuto} = this.state;
 
-        const sourceId = uuid();
-        const avatarId = uuid();
+        const sourceId = uuidv1();
+        const avatarId = uuidv1();
         const source = {
             ...this.props.sourceTemplate,
             id: sourceId,
@@ -447,7 +448,10 @@ class Dataset extends React.Component {
             >
                 {i18n('button_save')}
             </Button>,
-            <NavigationPrompt key="navigation-prompt" when={!saveButtonDisabled} />,
+            <NavigationPrompt
+                key="navigation-prompt"
+                when={!saveButtonDisabled && !this.props.isRenameWithoutReload}
+            />,
         ];
 
         const leftItems = [
@@ -710,6 +714,7 @@ Dataset.propTypes = {
     sourcePrototypes: PropTypes.array,
     datasetPreview: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    isRenameWithoutReload: PropTypes.bool,
     asideHeaderData: PropTypes.shape({
         size: PropTypes.number.isRequired,
     }),
@@ -739,6 +744,7 @@ const mapStateToProps = createStructuredSelector({
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,
+    isRenameWithoutReload: selectIsRenameWithoutReload,
 });
 const mapDispatchToProps = {
     fetchFieldTypes,

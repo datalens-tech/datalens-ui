@@ -7,14 +7,11 @@ export enum Feature {
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
-    EnableChartEditor = 'EnableChartEditor',
     EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
     ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
-    EnableEditHistory = 'EnableEditHistory',
-    EnableShareWidget = 'EnableShareWidget',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
     RevisionsListNoLimit = 'RevisionsListNoLimit',
@@ -64,36 +61,22 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    /** New Table plugin for wizard and QL(flat tables only). */
-    NewTablePluginForWizardAndQl = 'NewTablePluginForWizardAndQl',
-    /** New Table plugin for wizard and QL(pivot tables). */
-    NewPluginForPivotTables = 'NewPluginForPivotTables',
     ChartWithFnLogging = 'ChartWithFnLogging',
-    PinnedColumns = 'PinnedColumns',
-    PinnedColumnsForPivotTables = 'PinnedColumnsForPivotTables',
     EnableFooter = 'EnableFooter',
-    /** Enable Isolated VM Sandbox */
-    EnableIsolatedSandbox = 'EnableIsolatedSandbox',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /** Disable setting min-height: unset for all embedded dashes by default. Enbale min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
-    RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
-    /** Use BI handles for getting oauth applications tokens */
-    EnableBIOAuth = 'EnableBIOAuth',
-    NewSandbox_1p = 'NewSandbox_1p',
-    NewSandbox_10p = 'NewSandbox_10p',
-    NewSandbox_33p = 'NewSandbox_33p',
-    NewSandbox_50p = 'NewSandbox_50p',
-    NewSandbox_75p = 'NewSandbox_75p',
-    NewSandbox_100p = 'NewSandbox_100p',
-    SandboxEngineSelectSwitch = 'SandboxEngineSelectSwitch',
-    /** Allow markdown in chart fields. */
-    WizardMarkdownFields = 'WizardMarkdownFields',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
-    /** Render markup in chart dataLabels. */
-    MarkupInLabels = 'MarkupInLabels',
+    NewTableWidgetForCE = 'NewTableWidgetForCE',
+    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
+    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
+    /** Enable undo/redo buttons & hotkeys in ql */
+    EnableEditHistoryQL = 'EnableEditHistoryQL',
+    /** Depends on US feature UseMovePermAction.
+     * It checks admin permission for move entries instead of edit permission.
+     */
+    UseMovePermAction = 'UseMovePermAction',
 }
 
 export type FeatureConfig = Record<string, boolean>;

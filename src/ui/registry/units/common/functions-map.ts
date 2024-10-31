@@ -1,4 +1,5 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {ActionPanelItem} from '@gravity-ui/dashkit';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
@@ -44,6 +45,7 @@ import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
+import type {SetEntryKey} from './types/functions/setEntryKey';
 import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
 
 export const commonFunctionsMap = {
@@ -62,6 +64,7 @@ export const commonFunctionsMap = {
     getIconDataById: makeFunctionTemplate<(arg: IconId) => SVGIconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),
     getAccessEntryMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
+    setEntryKey: makeFunctionTemplate<SetEntryKey>(),
     getMoveToWorkbooksMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
     setOldSdkDefaultHeaders:
         makeFunctionTemplate<(config: ConfigSdk, headers: HeadersSdk) => void>(),
@@ -138,4 +141,19 @@ export const commonFunctionsMap = {
             }) => CopiedConfigData
         >(),
     checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
+    getBasicActionPanelItems: makeFunctionTemplate<() => ActionPanelItem[]>(),
+    getListMembersFilter:
+        makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
+    getTopLevelEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
+    getAllEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
+    getScopeTypeIcon: makeFunctionTemplate<(scope: EntryScope) => string | null>(),
+    getEntryScopesWithRevisionsList: makeFunctionTemplate<() => EntryScope[]>(),
+    getRevisionsPanelEntryScopesTexts: makeFunctionTemplate<
+        () => {
+            [key: string]: {
+                scopeText: string;
+                panelText: string;
+            };
+        }
+    >(),
 } as const;

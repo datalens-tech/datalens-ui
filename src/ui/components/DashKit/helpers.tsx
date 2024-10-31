@@ -2,16 +2,18 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import type {ConfigItem, ItemState} from '@gravity-ui/dashkit';
+import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
+import {DashKit} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {StringParams} from 'shared';
+import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
 import {Utils} from 'ui';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
 import URI from '../../libs/DatalensChartkit/modules/uri/uri';
@@ -106,3 +108,55 @@ export function getDashKitMenu() {
         },
     ];
 }
+
+interface DashkitWrapperProps extends DashKitProps {
+    // ref object
+    ref?: React.ForwardedRef<DashKit>;
+    // Make noOverlay partial
+    noOverlay?: boolean;
+    // Extended Controls props
+    skipReload?: boolean;
+    isNewRelations?: boolean;
+    hideErrorDetails?: boolean;
+    // Extended headers context for widgets
+    dataProviderContextGetter?: () => DashChartRequestContext;
+}
+
+export const DashkitWrapper: React.FC<
+    Omit<DashkitWrapperProps, 'onItemEdit' | 'editMode'> & // Making edit props optional when editMode === false
+        (
+            | {editMode: true; onItemEdit: DashkitWrapperProps['onItemEdit']}
+            | {editMode: false; onItemEdit?: DashkitWrapperProps['onItemEdit']}
+        )
+> = React.forwardRef(
+    (
+        {skipReload = false, isNewRelations = false, dataProviderContextGetter, ...props},
+        ref: React.ForwardedRef<DashKit>,
+    ) => {
+        const contextValue = React.useMemo(() => {
+            return {
+                config: props.config,
+                defaultGlobalParams: props.defaultGlobalParams,
+                skipReload,
+                isNewRelations,
+                dataProviderContextGetter,
+                hideErrorDetails: props.hideErrorDetails,
+            };
+        }, [
+            props.config,
+            props.defaultGlobalParams,
+            skipReload,
+            isNewRelations,
+            dataProviderContextGetter,
+            props.hideErrorDetails,
+        ]);
+
+        return (
+            <ExtendedDashKitContext.Provider value={contextValue}>
+                <DashKit {...props} ref={ref} />
+            </ExtendedDashKitContext.Provider>
+        );
+    },
+);
+
+DashkitWrapper.displayName = 'DashkitContainer';

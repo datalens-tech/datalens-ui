@@ -23,6 +23,7 @@ import type {
     DashSettings,
     DashTab,
     DashTabItem,
+    DashTabItemImage,
     DashTabItemWidget,
     Dataset,
     DatasetFieldType,
@@ -46,6 +47,7 @@ import {RevisionsMode} from '../../../../store/typings/entryContent';
 import history from '../../../../utils/history';
 import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
+import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import * as actionTypes from '../constants/dashActionTypes';
@@ -360,10 +362,11 @@ type SetItemDataBase = {
 };
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle;
+    data: SetItemDataText | SetItemDataTitle | SetItemDataImage;
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
@@ -934,7 +937,11 @@ export const setSettings = (settings: DashSettings): SetSettingsAction => ({
     payload: settings,
 });
 
-export const setCopiedItemData = (payload: {item: AddConfigItem; options: AddNewItemOptions}) => ({
+export const setCopiedItemData = (payload: {
+    item: AddConfigItem;
+    context?: CopiedConfigContext;
+    options: AddNewItemOptions;
+}) => ({
     type: actionTypes.SET_COPIED_ITEM_DATA,
     payload,
 });
@@ -966,18 +973,6 @@ export const updateDashOpenedDesc = (
 ): SetDashOpenedDescKeyAction => ({
     type: SET_DASH_OPENED_DESC,
     payload,
-});
-
-export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');
-export type SetRenameWithoutReloadAction = {
-    type: typeof SET_RENAME_WITHOUT_RELOAD;
-    payload: boolean;
-};
-export const setRenameWithoutReload = (
-    isRenameWithoutReload: boolean,
-): SetRenameWithoutReloadAction => ({
-    type: SET_RENAME_WITHOUT_RELOAD,
-    payload: isRenameWithoutReload,
 });
 
 export const SET_SKIP_RELOAD = Symbol('dash/SET_SKIP_RELOAD');

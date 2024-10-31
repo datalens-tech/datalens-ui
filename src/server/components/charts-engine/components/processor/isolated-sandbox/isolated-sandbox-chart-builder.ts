@@ -26,13 +26,18 @@ if (fs.existsSync(CE_BUNDLE_PATH)) {
 
 type IsolatedSandboxChartBuilderArgs = {
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     isScreenshoter: boolean;
     chartsEngine: ChartsEngine;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
     config: {data: Record<string, string>; meta: {stype: string}; key: string};
     workbookId?: string;
     serverFeatures: FeatureConfig;
+    getTranslation: (
+        keyset: string,
+        key: string,
+        params?: Record<string, string | number>,
+    ) => string;
 };
 
 export const getIsolatedSandboxChartBuilder = async (
@@ -47,6 +52,7 @@ export const getIsolatedSandboxChartBuilder = async (
         widgetConfig,
         workbookId,
         serverFeatures,
+        getTranslation,
     } = args;
     const type = config.meta.stype;
     let shared: Record<string, any>;
@@ -58,7 +64,10 @@ export const getIsolatedSandboxChartBuilder = async (
     const context = isolate.createContextSync();
     const getQLConnectionTypeMap = registry.getQLConnectionTypeMap();
     context.evalSync(
-        `const __modules = {};
+        `
+         // I do not know why, but this is not exists in V8 Isolate.
+         Math.E = ${Math.E};
+         const __modules = {};
          let __params;
          let __usedParams;
          let __runtimeMetadata = {userParamsOverride: undefined};
@@ -100,6 +109,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
                     context,
+                    getTranslation,
                 });
                 onModuleBuild(result);
                 processedModules[name] = result;
@@ -115,6 +125,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     nativeModules: chartsEngine.nativeModules,
                     isScreenshoter,
                     context,
+                    getTranslation,
                 });
                 onModuleBuild(result);
                 processedModules[name] = result;
@@ -139,6 +150,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 isScreenshoter,
                 context,
                 features,
+                getTranslation,
             });
 
             return {
@@ -161,6 +173,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 isScreenshoter,
                 context,
                 features,
+                getTranslation,
             });
 
             return {
@@ -189,6 +202,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     isScreenshoter,
                     context,
                     features,
+                    getTranslation,
                 });
             } else if (config.data.map) {
                 // Highcharts tab
@@ -207,6 +221,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     isScreenshoter,
                     context,
                     features,
+                    getTranslation,
                 });
             } else if (config.data.ymap) {
                 // Yandex.Maps tab
@@ -225,6 +240,7 @@ export const getIsolatedSandboxChartBuilder = async (
                     isScreenshoter,
                     context,
                     features,
+                    getTranslation,
                 });
             }
 
@@ -255,6 +271,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 isScreenshoter,
                 context,
                 features,
+                getTranslation,
             });
 
             return {
@@ -281,6 +298,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 isScreenshoter,
                 context,
                 features,
+                getTranslation,
             });
 
             return {
@@ -306,6 +324,7 @@ export const getIsolatedSandboxChartBuilder = async (
                 isScreenshoter,
                 context,
                 features,
+                getTranslation,
             });
 
             return {

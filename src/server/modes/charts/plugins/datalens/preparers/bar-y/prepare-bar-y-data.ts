@@ -1,5 +1,4 @@
 import type {
-    Field,
     HighchartsSeriesCustomObject,
     ServerField,
     ServerPlaceholder,
@@ -8,9 +7,8 @@ import type {
 import {
     AxisMode,
     AxisNullsMode,
-    Feature,
-    getActualAxisModeForField,
     getFakeTitleOrTitle,
+    getXAxisMode,
     isDateField,
     isMarkdownField,
     isMarkupField,
@@ -22,6 +20,7 @@ import {
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
@@ -32,7 +31,6 @@ import {
     numericCollator,
 } from '../../utils/misc-helpers';
 import {addActionParamValue} from '../helpers/action-params';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import {getSortedCategories, getXAxisValue, prepareLines} from '../line/helpers';
 import {colorizeByGradient} from '../line/helpers/color-helpers/colorizeByGradient';
 import {getSortedLineKeys} from '../line/helpers/getSortedLineKeys';
@@ -57,30 +55,18 @@ export function prepareBarYData({
     layerChartMeta,
     usedColors,
     disableDefaultSorting = false,
-    features,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
-    const isMarkdownFieldsEnabled = features[Feature.WizardMarkdownFields];
-    const isMarkupLabelsEnabled = features[Feature.MarkupInLabels];
 
-    const xPlaceholder = placeholders[0];
     const x: ServerField | undefined = placeholders[0].items[0];
     const xDataType = x ? idToDataType[x.guid] : null;
     const xIsNumber = isNumberField(x);
     const xIsPseudo = isPseudoField(x);
     const xIsDate = isDateField(x);
-
-    let xAxisMode = AxisMode.Discrete;
-    if (x && xDataType) {
-        xAxisMode = getActualAxisModeForField({
-            field: {guid: x.guid, data_type: xDataType} as Field,
-            axisSettings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
-        }) as AxisMode;
-    }
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig});
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? placeholders[0].items[1]
@@ -111,8 +97,8 @@ export function prepareBarYData({
         isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
-    const isMarkdownLabel = isMarkdownFieldsEnabled && isMarkdownField(labelItem);
-    const isMarkupLabel = isMarkupLabelsEnabled && isMarkupField(labelItem);
+    const isMarkdownLabel = isMarkdownField(labelItem);
+    const isMarkupLabel = isMarkupField(labelItem);
 
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
     const isColorizeByMeasure = isMeasureField(colorItem);
@@ -239,7 +225,7 @@ export function prepareBarYData({
                 segmentIndexInOrder: -1,
                 layers: shared.visualization?.layers,
                 colorMode,
-                convertMarkupToString: !isMarkupLabelsEnabled,
+                convertMarkupToString: false,
             });
         });
 

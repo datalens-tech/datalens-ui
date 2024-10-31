@@ -1,0 +1,7 @@
+{
+  "label_error-access-message": "Невозможно использовать токен с заданными параметрами",
+  "label_error-invalid-format-token-message": "Неверный формат токена",
+  "label_error-invalid-token-message": "Токен не подходит для данного встраивания",
+  "label_error-outdated-message": "Настройки встраивания устарели",
+  "label_error-token-not-found-message": "Во встраивании отсутствует токен"
+}

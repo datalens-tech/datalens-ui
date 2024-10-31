@@ -47,7 +47,7 @@ import {PIE_D3_VISUALIZATION, PIE_VISUALIZATION} from './pie';
 import {PIVOT_TABLE_VISUALIZATION} from './pivotTable';
 import {POLYLINE_VISUALIZATION} from './polyline';
 import {SCATTER_D3_VISUALIZATION, SCATTER_VISUALIZATION} from './scatter';
-import {TREEMAP_VISUALIZATION} from './treemap';
+import {TREEMAP_D3_VISUALIZATION, TREEMAP_VISUALIZATION} from './treemap';
 
 export const SETTINGS = {
     AXIS_FORMAT_MODE: {
@@ -70,6 +70,10 @@ export const SETTINGS = {
     TYPE: {
         LINEAR: 'linear',
         LOGARITHMIC: 'logarithmic',
+    },
+    AXIS_VISIBILITY: {
+        SHOW: 'show',
+        HIDE: 'hide',
     },
     GRID: {
         ON: 'on',
@@ -117,6 +121,10 @@ export const CHART_SETTINGS = {
         SHOW: LegendDisplayMode.Show,
         HIDE: LegendDisplayMode.Hide,
     },
+    TOOLTIP: {
+        SHOW: 'show',
+        HIDE: 'hide',
+    },
     TOOLTIP_SUM: {
         ON: 'on',
         OFF: 'off',
@@ -157,6 +165,10 @@ export const CHART_SETTINGS = {
         ON: 'on',
         OFF: 'off',
     },
+    PIVOT_INLINE_SORT: {
+        ON: 'on',
+        OFF: 'off',
+    },
 };
 
 export const VISUALIZATION_IDS = {
@@ -188,6 +200,7 @@ export const VISUALIZATION_IDS = {
     PIE_D3: PIE_D3_VISUALIZATION.id,
     BAR_X_D3: BAR_X_D3_VISUALIZATION.id,
     DONUT_D3: DONUT_D3_VISUALIZATION.id,
+    TREEMAP_D3: TREEMAP_D3_VISUALIZATION.id,
 };
 
 export const VISUALIZATIONS_BY_ID = {

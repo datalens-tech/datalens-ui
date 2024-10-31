@@ -99,8 +99,8 @@ class PlaceholderComponent extends React.PureComponent<Props> {
         const itemsClassName = `data-qa-placeholder-item ${additionalItemsClassName || ''}`;
         return (
             <div data-qa={qa} className="subcontainer">
-                {this.renderPlaceholderTitle()}
                 <DNDContainer
+                    title={this.renderPlaceholderTitle()}
                     id={id}
                     capacity={capacity}
                     allowedTypes={allowedTypes}

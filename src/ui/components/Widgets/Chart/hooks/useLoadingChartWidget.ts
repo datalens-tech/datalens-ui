@@ -3,11 +3,11 @@ import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm'
 import React from 'react';
 
 import debounce from 'lodash/debounce';
-import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import type {
@@ -17,7 +17,6 @@ import type {
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {LoadedWidgetData, OnChangeData} from '../../../../libs/DatalensChartkit/types';
 import logger from '../../../../libs/logger';
-import {selectIsNewRelations} from '../../../../units/dash/store/selectors/dashTypedSelectors';
 import type {
     CurrentTab,
     WidgetPluginDataWithTabs,
@@ -118,15 +117,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const [loadedDescription, setLoadedDescription] = React.useState<string | null>(null);
     const [description, setDescription] = React.useState<string | null>(null);
-    const [scrollOffset, setScrollOffset] = React.useState<number | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
     const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
+    const [isRendered, setIsRendered] = React.useState(false);
 
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetDataRef>();
     const mutationObserver = React.useRef<MutationObserver | null>(null);
 
-    const isNewRelations = useSelector(selectIsNewRelations);
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const isNewRelations = extDashkitContext?.isNewRelations || false;
+    const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
 
@@ -166,6 +167,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     : false;
 
             adjustLayout(!newAutoHeight);
+            setIsRendered(true);
+
+            // Triggering update after chart render
+            if (isReadyToReflowRef.current && handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -228,6 +235,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
     } = useLoadingChart({
         dataProvider,
+        dataProviderContextGetter,
         initialData,
         requestId,
         requestCancellationRef,
@@ -260,7 +268,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         showLoader,
         isFullscreen,
         hideTabs,
-        withShareWidget,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,
@@ -300,10 +307,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const handleToggleFullscreenMode = React.useCallback(() => {
         const searchParams = new URLSearchParams(history.location.search);
         const isFullscreenNewMode = !searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
-        const scrollHeight = isFullscreenNewMode ? window.scrollY : null;
 
         if (isFullscreenNewMode) {
-            setScrollOffset(scrollHeight);
             searchParams.set(FOCUSED_WIDGET_PARAM_NAME, widgetId);
         } else {
             searchParams.delete(FOCUSED_WIDGET_PARAM_NAME);
@@ -353,10 +358,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * debounced call of chartkit reflow
      */
     const isReadyToReflowRef = React.useRef(false);
-    isReadyToReflowRef.current = isInit && !isLoading;
+    isReadyToReflowRef.current = isInit && !isLoading && isRendered;
     const debouncedChartReflow = React.useCallback(
         debounce(() => {
             handleChartkitReflow();
+
             // Triggering update after chart changed it size
             if (isReadyToReflowRef.current && handleUpdate) {
                 requestAnimationFrame(() => handleUpdate());
@@ -397,11 +403,11 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
     React.useEffect(() => {
-        if (isInit && !isLoading) {
+        if (isInit && !isLoading && isRendered) {
             handleUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, handleUpdate]);
+    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, isRendered, handleUpdate]);
 
     /**
      * updating widget description by markdown
@@ -413,16 +419,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         setDescription(loadedDescription);
         handleChartkitReflow();
     }, [loadedDescription, description, handleChartkitReflow]);
-
-    /**
-     * updating window position on change fullscreen mode (for mob version)
-     */
-    React.useLayoutEffect(() => {
-        if (!isFullscreen && scrollOffset !== null) {
-            window.scrollTo(0, scrollOffset || 0);
-            setScrollOffset(null);
-        }
-    }, [scrollOffset, isFullscreen]);
 
     /**
      * handle changed chart tab
@@ -686,7 +682,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         handleRenderChart,
         description,
         hideTabs,
-        withShareWidget,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,

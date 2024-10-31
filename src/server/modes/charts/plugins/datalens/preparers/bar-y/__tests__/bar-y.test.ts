@@ -1,3 +1,4 @@
+import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 
 import type {DATASET_FIELD_TYPES} from '../../../../../../../../shared';
@@ -50,23 +51,29 @@ describe('prepareBarYData', () => {
     });
 
     test('X is empty, Y has datetime field -> categories_ms contains values from the Y field', () => {
-        const result = prepareBarYData({
-            ...args,
-            placeholders: [
-                {
-                    id: 'y',
-                    items: [DateTimeField],
-                    settings: {
-                        axisModeMap: {
-                            [DateTimeField.guid]: AxisMode.Continuous,
-                        },
+        const placeholders = [
+            {
+                id: 'y',
+                items: [DateTimeField],
+                settings: {
+                    axisModeMap: {
+                        [DateTimeField.guid]: AxisMode.Continuous,
                     },
                 },
-                {
-                    id: 'x',
-                    items: [],
+            },
+            {
+                id: 'x',
+                items: [],
+            },
+        ];
+        const result = prepareBarYData({
+            ...args,
+            placeholders,
+            shared: merge(args.shared, {
+                visualization: {
+                    placeholders,
                 },
-            ],
+            }),
             resultData: {
                 data: [['2023-09-17T00:00:00.000Z'], ['2023-09-18T00:00:00.000Z']],
                 order: [DateTimeField],

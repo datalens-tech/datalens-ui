@@ -222,7 +222,9 @@
             background: var(--g-color-base-simple-hover);
         }
 
-        color: var(--g-color-text-secondary);
+        & {
+            color: var(--g-color-text-secondary);
+        }
     }
 
     &__btn-change-favorite {

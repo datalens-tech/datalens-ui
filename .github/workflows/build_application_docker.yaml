@@ -1,7 +1,11 @@
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  workflow_run:
+    workflows:
+      - 'Publish Platform'
+      - 'Publish Platform Hotfix'
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}
@@ -17,16 +21,27 @@ jobs:
   build:
     name: datalens-ui
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == '' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
     steps:
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v2
+        if: ${{ github.event.workflow_run.id != '' }}
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
+      - name: Extract commit ref from workflow
+        run: |
+          echo "COMMIT_REF=$(cat workflow_ref/ref || echo '${{ github.ref }}')" >> "$GITHUB_ENV"
       - uses: actions/checkout@v4
-        # ? disabled due to a very long ARM build
-        # - uses: docker/setup-qemu-action@v3
-        #   with:
-        #     platforms: 'arm64'
-        # - uses: docker/setup-buildx-action@v3
+        with:
+          ref: ${{ env.COMMIT_REF || github.ref }}
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: 'arm64'
+      - uses: docker/setup-buildx-action@v3
       - name: 'Get release build version'
         run: |
           BUILD_VERSION=$(jq -r '.version' package.json)
@@ -57,7 +72,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # ? disabled due to a very long ARM build
-          # platforms: linux/amd64,linux/arm64
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

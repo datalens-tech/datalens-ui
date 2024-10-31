@@ -8,10 +8,14 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
-import {connect} from 'react-redux';
-import type {DashTabItemControlSingle, DashTabItemGroupControlData, StringParams} from 'shared';
+import type {
+    DashTabAliases,
+    DashTabConnection,
+    DashTabItemControlSingle,
+    DashTabItemGroupControlData,
+    StringParams,
+} from 'shared';
 import {ControlQA, DashTabItemType} from 'shared';
-import {type DatalensGlobalState} from 'ui';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -22,14 +26,7 @@ import {
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
-import {
-    selectCurrentTab,
-    selectDashGlobalDefaultParams,
-    selectIsNewRelations,
-    selectSkipReload,
-    selectTabHashState,
-} from '../../../../units/dash/store/selectors/dashTypedSelectors';
-import {DashConfigContext} from '../../../../units/dash/utils/context';
+import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
@@ -51,8 +48,6 @@ import './GroupControl.scss';
 const GROUP_CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 const GROUP_CONTROL_LOADING_EMULATION_TIMEOUT = 100;
 
-type StateProps = ReturnType<typeof mapStateToProps>;
-
 type OwnProps = ControlSettings &
     ContextProps &
     PluginWidgetProps<Record<string, StringParams>> & {
@@ -61,7 +56,7 @@ type OwnProps = ControlSettings &
         };
     };
 
-type PluginGroupControlProps = OwnProps & StateProps;
+type PluginGroupControlProps = OwnProps;
 
 type PluginGroupControl = Plugin<PluginGroupControlProps, Record<string, StringParams>> & {
     setSettings: (settings: ControlSettings) => Plugin;
@@ -73,7 +68,9 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 const LOCAL_META_VERSION = 2;
 
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
-    static contextType = DashConfigContext;
+    static contextType = ExtendedDashKitContext;
+
+    declare context: React.ContextType<typeof ExtendedDashKitContext>;
 
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
@@ -117,6 +114,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             needReload: false,
             localUpdateLoader: false,
             quickActionLoader: false,
+            disableButtons: true,
         };
     }
 
@@ -285,6 +283,15 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         });
     };
 
+    private getCurrentTabConfig() {
+        return (
+            this.context?.config || {
+                aliases: {} as DashTabAliases,
+                connections: [] as DashTabConnection[],
+            }
+        );
+    }
+
     private getControlsIds = ({
         data,
         controlId,
@@ -305,7 +312,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             (groupItem) => Object.keys(groupItem.defaults || {})[0],
         );
 
-        const currentNamespaceAliases = this.props.currentTabConfig?.aliases[this.props.namespace];
+        const currentNamespaceAliases = this.getCurrentTabConfig()?.aliases[this.props.namespace];
         // we leave only aliases that involve two or more selectors from the group
         const groupAliasesList = currentNamespaceAliases
             ? currentNamespaceAliases.reduce((aliasArr: string[][], currentAlias) => {
@@ -444,7 +451,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         params: Record<string, StringParams>;
         meta?: StateAndParamsMetaData;
     }) => {
-        const defaultGlobalParams = this.props.defaultGlobalParams || {};
+        const defaultGlobalParams = this.context?.defaultGlobalParams || {};
 
         const currentConfigItem = {
             id: this.props.id,
@@ -457,7 +464,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // to get changed params considering aliases and relations only inside group
         const updatedStateParams = getItemsParams({
             config: {
-                ...(this.props.currentTabConfig || this.context || {aliases: [], connections: []}),
+                ...this.getCurrentTabConfig(),
                 items: [currentConfigItem],
             } as Config,
             itemsStateAndParams: {
@@ -591,7 +598,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const result = [];
 
         for (const [id, data] of Object.entries(this.controlsData)) {
-            if (this.props.isNewRelations) {
+            if (this.context?.isNewRelations) {
                 result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
             } else {
                 result.push(this.resolveMeta(data));
@@ -650,11 +657,17 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.controlsProgressCount++;
         }
 
+        this.controlsStatus[controlId] = status;
+
         if (!this.controlsProgressCount) {
             // adjust widget layout only for the first loading of widget
             if (this.props.data.autoHeight && !this.state.isInit) {
                 this.adjustWidgetLayout(false);
             }
+
+            const disableButtons = Object.values(this.controlsStatus).every(
+                (status) => status === LOAD_STATUS.FAIL,
+            );
 
             this.resolveMetaInControl();
             this.setState({
@@ -663,10 +676,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 silentLoading: false,
                 isInit: true,
                 localUpdateLoader: false,
+                disableButtons,
             });
         }
-
-        this.controlsStatus[controlId] = status;
     };
 
     private renderControl(item: DashTabItemControlSingle) {
@@ -772,6 +784,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         className={b('item', {button: true})}
                         onChange={this.handleApplyChange}
                         qa={ControlQA.controlButtonApply}
+                        disabled={this.state.disableButtons}
                     />
                 )}
                 {controlData.buttonReset && (
@@ -782,6 +795,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         onClick={resetAction}
                         onChange={this.handleResetChange}
                         qa={ControlQA.controlButtonReset}
+                        disabled={this.state.disableButtons}
                     />
                 )}
             </React.Fragment>
@@ -805,7 +819,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     // @ts-ignore
     // need for autoreload from dashkit
     private reload({silentLoading}: {silentLoading?: boolean}) {
-        if (this.props.skipReload || !this.state.isInit || this._isUnmounted) {
+        if (this.context?.skipReload || !this.state.isInit || this._isUnmounted) {
             return;
         }
 
@@ -853,18 +867,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    defaultGlobalParams: selectDashGlobalDefaultParams(state),
-    currentTabConfig: selectCurrentTab(state),
-    skipReload: selectSkipReload(state),
-    isNewRelations: selectIsNewRelations(state),
-    currentState: selectTabHashState(state),
-});
-
-const GroupControlWithStore = connect(mapStateToProps, null, null, {
-    forwardRef: true,
-})(GroupControl);
-
 const plugin: PluginGroupControl = {
     type: DashTabItemType.GroupControl,
     defaultLayout: DEFAULT_CONTROL_LAYOUT,
@@ -880,7 +882,7 @@ const plugin: PluginGroupControl = {
         const workbookId = props.context.workbookId;
 
         return (
-            <GroupControlWithStore
+            <GroupControl
                 {...props}
                 getDistincts={plugin.getDistincts}
                 workbookId={workbookId}

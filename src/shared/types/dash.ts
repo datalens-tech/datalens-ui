@@ -1,5 +1,6 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
+import type {DASH_INFO_HEADER} from '../constants';
 import type {Operations} from '../modules';
 
 import type {ClientChartsConfig, Dictionary, Entry, EntryScope, StringParams} from './index';
@@ -8,12 +9,15 @@ export enum ControlType {
     Dash = 'control_dash',
 }
 
+export type DashChartRequestContext = Record<typeof DASH_INFO_HEADER, string>;
+
 export enum DashTabItemType {
     Title = 'title',
     Text = 'text',
     Widget = 'widget',
     Control = 'control',
     GroupControl = 'group_control',
+    Image = 'image',
 }
 
 export enum DashTabItemTitleSize {
@@ -113,7 +117,13 @@ export type DashTabItem =
     | DashTabItemTitle
     | DashTabItemWidget
     | DashTabItemControl
-    | DashTabItemGroupControl;
+    | DashTabItemGroupControl
+    | DashTabItemImage;
+
+type BackgroundSettings = {
+    color: string;
+    enabled: boolean;
+};
 
 export interface DashTabItemBase {
     id: string;
@@ -129,10 +139,7 @@ export interface DashTabItemText extends DashTabItemBase {
     data: {
         text: string;
         autoHeight?: boolean;
-        background?: {
-            enabled: boolean;
-            color: string;
-        };
+        background?: BackgroundSettings;
     };
 }
 
@@ -143,10 +150,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         size: DashTabItemTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
-        background?: {
-            enabled: boolean;
-            color: string;
-        };
+        background?: BackgroundSettings;
     };
 }
 
@@ -164,10 +168,7 @@ export interface DashTabItemWidgetTab {
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
-    background?: {
-        enabled: boolean;
-        color: string;
-    };
+    background?: BackgroundSettings;
 }
 
 export interface DashTabItemControl extends DashTabItemBase {
@@ -322,4 +323,14 @@ export interface DashStats {
     userId: string;
     tenantId: string;
     traceId?: string;
+}
+
+export interface DashTabItemImage extends DashTabItemBase {
+    type: DashTabItemType.Image;
+    data: {
+        src: string;
+        alt?: string;
+        background?: BackgroundSettings;
+        preserveAspectRatio?: boolean;
+    };
 }

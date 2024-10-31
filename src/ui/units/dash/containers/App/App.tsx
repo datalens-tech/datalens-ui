@@ -5,6 +5,7 @@ import LocationChange from 'components/LocationChange/LocationChange';
 import {usePrevious} from 'hooks/usePrevious';
 import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
+import {DashBodyQa} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {useMountedState} from 'ui/hooks/useMountedState';
@@ -14,7 +15,7 @@ import Utils from 'ui/utils/utils';
 import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import type {CurrentPageEntry} from '../../../../components/Navigation/types';
-import {DL, URL_QUERY} from '../../../../constants/common';
+import {DL} from '../../../../constants/common';
 import {isEmbeddedMode} from '../../../../utils/embedded';
 import {useIframeFeatures} from '../../hooks/useIframeFeatures';
 import {dispatchResize} from '../../modules/helpers';
@@ -27,6 +28,7 @@ import {
     selectStateHashId,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getTabId} from '../../utils/getTabId';
 import {DashWrapper} from '../Dash/Dash';
 
 import './App.scss';
@@ -75,7 +77,7 @@ export function App({...routeProps}: RouteComponentProps) {
             PostMessage.send({code: PostMessageCode.UrlChanged, data: {pathname, search}});
 
             const searchParams = new URLSearchParams(search);
-            const newTabId = searchParams.get(URL_QUERY.TAB_ID) || (tabs && tabs[0].id) || '';
+            const newTabId = getTabId(searchParams, tabs);
             const newStateHashId = searchParams.get('state') || '';
 
             // update hashStates only when state is not equal (i.e. switched back or between tabs
@@ -94,20 +96,17 @@ export function App({...routeProps}: RouteComponentProps) {
 
     const {Footer} = registry.common.components.getAll();
     const showFooter = Utils.isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
-    const enableUnsetHeight =
-        isEmbedded && !Utils.isEnabledFeature(Feature.RemoveEmbedUnsetDashHeight);
 
     return (
         <div
             className={b({
                 mobile: DL.IS_MOBILE,
                 embedded: isEmbedded,
-                'unset-height': enableUnsetHeight,
             })}
             ref={wrapRef}
         >
             <LocationChange onLocationChanged={locationChangeHandler} />
-            <div className={b('content')}>
+            <div className={b('content')} data-qa={DashBodyQa.App}>
                 <DashWrapper {...routeProps} />
             </div>
             {showFooter && <Footer />}

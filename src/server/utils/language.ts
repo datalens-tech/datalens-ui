@@ -7,7 +7,6 @@ import {I18N_DEST_PATH} from '../../i18n/constants';
 import {readKeysets} from '../../i18n/read-keysets';
 import type {Keysets, ServerI18n, TypedI18n} from '../../i18n/types';
 import {initI18n} from '../../i18n/utils';
-import {Language} from '../../shared/constants';
 
 export type KeysetData = {content: Keysets; filename: string};
 export type KeysetFile = Record<string, KeysetData>;
@@ -46,33 +45,6 @@ export function addTranslationsScript({
         defer: true,
         crossOrigin: 'anonymous',
     };
-}
-
-export function getLang({
-    lang,
-    defaultLang = Language.En,
-    allowLanguages = [],
-    hostname = '',
-}: {
-    lang?: string;
-    defaultLang?: string;
-    allowLanguages?: string[];
-    hostname?: string;
-} = {}) {
-    const isAllowed = allowLanguages.includes(lang || '');
-
-    if (!isAllowed && /\.(ru)|(com)$/.test(hostname)) {
-        const tldLang = hostname.endsWith('.com') ? Language.En : Language.Ru;
-        if (allowLanguages.includes(tldLang)) {
-            return tldLang;
-        }
-    }
-
-    if (!isAllowed || !lang) {
-        return defaultLang;
-    }
-
-    return lang;
 }
 
 const i18nInstanceByLang: Record<string, TypedI18n> = {};

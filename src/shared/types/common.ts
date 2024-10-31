@@ -4,6 +4,7 @@ import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
 import type {Endpoints} from '../endpoints';
+import type {ConnectorIconData} from '../schema/types';
 
 import type {ChartkitGlobalSettings} from './chartkit';
 import type {DashData, DashStateData} from './dash';
@@ -28,7 +29,6 @@ export interface LandingLayoutPageError {
     description?: string;
     pageTitle?: RenderParams<{DL: DLGlobalData}>['title'];
     pageMeta?: RenderParams<{DL: DLGlobalData}>['meta'];
-    useCrawlerContent?: boolean;
     pageLinks?: RenderParams<{DL: DLGlobalData}>['links'];
 }
 
@@ -70,7 +70,6 @@ export interface DLUserSettings {
     dlStartInDataLensExt?: boolean; // CHARTS-6146
     dlFieldEditorDocShown?: boolean; // CHARTS-6168
     dlGsheetAuthHintShown?: boolean; // CHARTS-6811
-    dlSanboxDebugMode?: boolean;
 
     // DC specific user settings
     crmContactCreated?: boolean;
@@ -211,6 +210,7 @@ export type DLGlobalData = {
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
+    connectorIcons?: ConnectorIconData[];
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
@@ -251,10 +251,6 @@ export enum EntryScope {
     Dataset = 'dataset',
     Folder = 'folder',
     Connection = 'connection',
-    Report = 'report',
-
-    // TODO: delete after update
-    Presentation = 'presentation',
 }
 
 export interface Entry {

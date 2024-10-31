@@ -168,39 +168,30 @@ class Wizard extends React.Component<Props, State> {
             dialogSettingsVisible: false,
         };
 
-        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-            this.props.initEditHistoryUnit({
-                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                setState: ({state}) => {
-                    return this.props.setWizardStore({
-                        store: state as unknown as WizardGlobalState,
-                    });
-                },
-                options: {
-                    pathIgnoreList: [
-                        '/preview/highchartsWidget',
-                        '/preview/filters',
-                        '/visualization/layers',
-                    ],
-                },
-            });
-        }
+        this.props.initEditHistoryUnit<WizardGlobalState>({
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            setState: ({state}) => {
+                this.props.setWizardStore({
+                    store: state,
+                });
+            },
+            options: {
+                pathIgnoreList: [
+                    '/preview/highchartsWidget',
+                    '/preview/filters',
+                    '/visualization/layers',
+                ],
+            },
+        });
     }
 
     componentDidMount() {
         window.addEventListener('beforeunload', this.unloadConfirmation);
 
-        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-            this.hotkeysAreaRef?.current?.addEventListener('mouseenter', () => {
-                this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
-            });
+        this.hotkeysAreaRef?.current?.addEventListener('mouseenter', this.enableWizardScope);
+        this.hotkeysAreaRef?.current?.addEventListener('mouseleave', this.disableWizardScope);
 
-            this.hotkeysAreaRef?.current?.addEventListener('mouseleave', () => {
-                this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
-            });
-
-            this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
-        }
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
     }
 
     shouldComponentUpdate(nextProps: Readonly<Props>, nextState: Readonly<State>): boolean {
@@ -251,11 +242,9 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.resetWizardStore();
 
-            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-                this.props.resetEditHistoryUnit({
-                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                });
-            }
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
 
             const entryId = newEntryId;
             const params: SetDefaultsArgs = {entryId};
@@ -276,21 +265,14 @@ class Wizard extends React.Component<Props, State> {
 
         this.props.resetWizardStore();
 
-        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-            this.props.resetEditHistoryUnit({
-                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-            });
+        this.props.resetEditHistoryUnit({
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+        });
 
-            this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
 
-            this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', () => {
-                this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
-            });
-
-            this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', () => {
-                this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
-            });
-        }
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseenter', this.enableWizardScope);
+        this.hotkeysAreaRef?.current?.removeEventListener('mouseleave', this.disableWizardScope);
     }
 
     render() {
@@ -360,11 +342,9 @@ class Wizard extends React.Component<Props, State> {
             isWidgetWasSaved: true,
         });
 
-        if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-            this.props.resetEditHistoryUnit({
-                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-            });
-        }
+        this.props.resetEditHistoryUnit({
+            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+        });
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
@@ -382,16 +362,14 @@ class Wizard extends React.Component<Props, State> {
 
             await this.props.reloadRevisionsOnSave(true);
 
-            if (Utils.isEnabledFeature(Feature.EnableEditHistory)) {
-                this.props.resetEditHistoryUnit({
-                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                });
+            this.props.resetEditHistoryUnit({
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
 
-                this.props.addEditHistoryPoint({
-                    newState: this.props.wizardState,
-                    unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                });
-            }
+            this.props.addEditHistoryPoint({
+                newState: this.props.wizardState,
+                unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+            });
         } else {
             // Saving a new one
             this.openSaveAsWidgetDialog();
@@ -606,6 +584,14 @@ class Wizard extends React.Component<Props, State> {
             </div>
         );
     }
+
+    private enableWizardScope = () => {
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.WIZARD);
+    };
+
+    private disableWizardScope = () => {
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.WIZARD);
+    };
 }
 
 const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {

@@ -25,7 +25,7 @@ import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-
 import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
-import prepareTreemapData from '../../../preparers/treemap';
+import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
 import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
@@ -191,7 +191,12 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            prepare = prepareTreemapData;
+            prepare = prepareHighchartsTreemap;
+            rowsLimit = 800;
+            break;
+
+        case WizardVisualizationId.TreemapD3:
+            prepare = prepareD3Treemap;
             rowsLimit = 800;
             break;
 
@@ -280,6 +285,7 @@ export default ({
         colorsConfig,
         labels = [],
         tooltips = [],
+        tooltipConfig,
         geopointsConfig,
         sort = [],
     } = shared;
@@ -294,6 +300,7 @@ export default ({
             sort,
             shapes = [],
             shapesConfig = {},
+            tooltipConfig = {},
         } = (visualization as ServerVisualizationLayer).commonPlaceholders);
     }
 
@@ -314,6 +321,7 @@ export default ({
         layerSettings: (visualization as ServerVisualizationLayer).layerSettings,
         labels,
         tooltips,
+        tooltipConfig,
         datasets: datasetsIds,
 
         resultData,

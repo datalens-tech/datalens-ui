@@ -6,7 +6,9 @@ import type {
     FilterField,
     HierarchyField,
     Link,
+    ServerCommonSharedExtraSettings,
     ServerDatasetField,
+    ServerTooltipConfig,
 } from '../';
 import type {
     ColorMode,
@@ -32,6 +34,7 @@ export * from './background-settings';
 export * from './misc';
 export * from './placeholder';
 export * from './sub-totals';
+export * from './export';
 
 export type VisualizationIconProps = Omit<IconProps, 'data'> & {
     id: IconId;
@@ -98,9 +101,11 @@ export interface CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
+    pivotInlineSort?: 'on' | 'off';
     // For old charts, navigatorMode was specified in the body of extraSettings
     navigatorMode?: string;
     navigatorSeriesName?: string;
@@ -200,7 +205,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
             | WizardVisualizationId.ScatterD3
-            | WizardVisualizationId.Treemap;
+            | WizardVisualizationId.Treemap
+            | WizardVisualizationId.TreemapD3;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;
@@ -352,6 +358,7 @@ export interface VisualizationLayerShared extends CommonSharedLayer {
             colorsConfig?: ColorsConfig;
             geopointsConfig?: PointSizeConfig;
             shapesConfig?: ShapesConfig;
+            tooltipConfig?: ServerTooltipConfig;
         };
         name: string;
         iconProps: VisualizationIconProps;

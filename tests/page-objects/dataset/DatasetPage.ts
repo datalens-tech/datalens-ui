@@ -1,7 +1,7 @@
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
 
-import {slct} from '../../utils';
+import {deleteEntity, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
 import DialogParameter from '../common/DialogParameter';
 
@@ -45,7 +45,7 @@ class DatasetPage extends BasePage {
         await this.page.click('.dataset-panel input[value=sources]');
     }
 
-    async createDatasetInFolder({name = uuid()}: {name?: string} = {}) {
+    async createDatasetInFolder({name = uuidv1()}: {name?: string} = {}) {
         const formSubmit = await this.page.waitForSelector(slct(DatasetActionQA.CreateButton));
         // open creation dialog
         await formSubmit.click();
@@ -60,6 +60,10 @@ class DatasetPage extends BasePage {
         } catch {
             throw new Error("Dataset wasn't created");
         }
+    }
+
+    async deleteEntry() {
+        await deleteEntity(this.page);
     }
 }
 

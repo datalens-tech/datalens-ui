@@ -21,6 +21,14 @@ type BaseConnectorItem = {
     backend_driven_form: boolean;
     hidden: boolean;
     title: string;
+    /**
+     * Controls the behavior of connector's list item in the list.
+     *
+     * 1. `free` - connector **is** shown in the list and **is** available for creation
+     * 2. `hidden` - connector **is not** shown in the list and **is** available for creation
+     * 3. `uncreatable` - connector **is not** shown in the list and **is not** available for creation
+     */
+    visibility_mode: 'free' | 'hidden' | 'uncreatable';
     alias?: string;
 };
 
@@ -123,4 +131,27 @@ export type GetConnectionTypedQueryErrorResponse = {
         db_message?: string;
     };
     requestId: string;
+};
+
+export type ConnectorIconView = 'standard' | 'nav';
+
+type ConnectorIconDataMap = Record<ConnectorIconView, string>;
+
+export type ConnectorIconData = {conn_type: string} & (
+    | {
+          /** Indicates that icons data store in base64 format. */
+          type: 'data';
+          /** Map of links to sources on s3 or icons in base64 format. */
+          data: ConnectorIconDataMap;
+      }
+    | {
+          /** Indicates that icons data store as links on cdn. */
+          type: 'url';
+          /** Map of links to sources on s3 or icons in base64 format. */
+          url: ConnectorIconDataMap;
+      }
+);
+
+export type ListConnectorIconsResponse = {
+    icons: ConnectorIconData[];
 };

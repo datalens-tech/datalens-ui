@@ -1,5 +1,6 @@
 import {DL} from 'constants/common';
 
+import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
 import type {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
@@ -11,7 +12,7 @@ import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
-import type {ChartsStats, StringParams, WizardType} from 'shared';
+import type {ChartsStats, DashChartRequestContext, StringParams, WizardType} from 'shared';
 import {
     ControlType,
     DL_COMPONENT_HEADER,
@@ -22,6 +23,7 @@ import {
     ErrorCode,
     Feature,
     MAX_SEGMENTS_NUMBER,
+    WidgetKind,
 } from 'shared';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
@@ -29,7 +31,7 @@ import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/type
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import Utils from '../../../../../utils';
-import {CHARTKIT_WIDGET_TYPE} from '../../../ChartKit/components/Widget/Widget';
+import {chartToTable} from '../../../ChartKit/helpers/d3-chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
     ChartKitLoadSuccess,
@@ -373,17 +375,33 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     }
 
     static postProcess(processed: Widget & ChartsData): Widget & ChartsData {
-        if (processed.type === 'graph') {
-            const denormalizedParams = Object.keys(processed.params).reduce(
-                (result: Record<string, string>, key) => {
-                    const value = processed.params[key];
-                    result[key] =
-                        Array.isArray(value) && value.length ? value[0] : (value as string);
-                    return result;
-                },
-                {},
-            );
+        const denormalizedParams = Object.keys(processed.params).reduce(
+            (result: Record<string, string>, key) => {
+                const value = processed.params[key];
+                result[key] = Array.isArray(value) && value.length ? value[0] : (value as string);
+                return result;
+            },
+            {},
+        );
+        /** @depreacted _editor_type to support links from the Stat */
+        const chartType = denormalizedParams['_chart_type'] || denormalizedParams['_editor_type'];
 
+        if (chartType === WidgetKind.Table) {
+            switch (processed.type) {
+                case WidgetKind.Graph: {
+                    return ChartsDataProvider.graphToTable(processed);
+                }
+                case WidgetKind.D3: {
+                    return {
+                        ...processed,
+                        type: 'table',
+                        data: chartToTable({chartData: processed.data as ChartKitWidgetData}),
+                    } as Widget & ChartsData;
+                }
+            }
+        }
+
+        if (processed.type === 'graph') {
             const newConfig: GraphWidget['config'] = {
                 hideComments:
                     denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] === '1' ||
@@ -414,21 +432,6 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     override_range_min: parseInt(denormalizedParams['_highstock_start'], 10),
                     override_range_max: parseInt(denormalizedParams['_highstock_end'], 10),
                 };
-            }
-
-            /** @depreacted _editor_type to support links from the Stat */
-            const chartType =
-                denormalizedParams['_chart_type'] || denormalizedParams['_editor_type'];
-            if (chartType) {
-                if (processed.type === 'graph' && chartType === CHARTKIT_WIDGET_TYPE.TABLE) {
-                    return ChartsDataProvider.graphToTable({
-                        ...processed,
-                        config: {
-                            ...processed.config,
-                            ...newConfig,
-                        },
-                    });
-                }
             }
 
             return {
@@ -584,15 +587,18 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     async getWidget({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
         const loaded = await this.load<ResponseSuccess>({
             data: props,
+            contextHeaders,
             requestId,
             requestCancellation,
         });
@@ -622,15 +628,18 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     async getControls({
         props,
+        contextHeaders,
         requestId,
         requestCancellation,
     }: {
         props: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
         const loaded = await this.load<ResponseSuccessControls>({
             data: props,
+            contextHeaders,
             requestId,
             requestCancellation,
             onlyControls: true,
@@ -757,8 +766,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
-    private getLoadHeaders(requestId: string) {
+    private getLoadHeaders(requestId: string, contextHeaders?: DashChartRequestContext) {
         const headers: Record<string, string | null> = {
+            ...(contextHeaders ?? {}),
             [REQUEST_ID_HEADER]: requestId,
         };
         if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
@@ -770,11 +780,13 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
     private async load<T extends ResponseSuccess | ResponseSuccessControls>({
         data,
+        contextHeaders,
         requestId,
         requestCancellation,
         onlyControls = false,
     }: {
         data: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
         requestId: string;
         requestCancellation: CancelTokenSource;
         onlyControls?: boolean;
@@ -815,7 +827,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 uiOnly: onlyControls || undefined,
                 workbookId,
             },
-            headers: this.getLoadHeaders(requestId),
+            headers: this.getLoadHeaders(requestId, contextHeaders),
             'axios-retry': {
                 retries: isEditMode || this.settings.noRetry ? 0 : 1,
             },

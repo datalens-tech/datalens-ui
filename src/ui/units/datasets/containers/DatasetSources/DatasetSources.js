@@ -28,7 +28,7 @@ import {
     updateRelation,
     updateSource,
 } from 'units/datasets/store/actions/creators';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
@@ -389,7 +389,7 @@ class DatasetSources extends React.Component {
     };
 
     shapeUpdateAddInitialAvatar = (initialItem) => {
-        const avatarId = uuid();
+        const avatarId = uuidv1();
         let update;
 
         const title = DatasetUtils.getSourceTitle(initialItem);
@@ -407,7 +407,7 @@ class DatasetSources extends React.Component {
                 },
             };
         } else {
-            const sourceId = uuid();
+            const sourceId = uuidv1();
 
             update = {
                 source: {
@@ -439,8 +439,8 @@ class DatasetSources extends React.Component {
         const {id: leftAvatarId} = leftItem;
         const {id: rightItemId} = rightItem;
 
-        const rightAvatarId = uuid();
-        const relationId = uuid();
+        const rightAvatarId = uuidv1();
+        const relationId = uuidv1();
         let update = {};
 
         const title = this.formAvatarTitle(rightItem);
@@ -481,7 +481,7 @@ class DatasetSources extends React.Component {
                     },
                 };
             } else {
-                const rightSourceId = uuid();
+                const rightSourceId = uuidv1();
 
                 update = {
                     source: {

@@ -221,16 +221,7 @@ class QLPage extends ChartPage {
 
     waitForSomeSuccessfulRender() {
         return new Promise((resolve, reject) => {
-            this.page
-                .waitForSelector('.chartkit .chartkit-d3-bar-x')
-                .then(resolve, () => undefined);
-
-            this.page
-                .waitForSelector('.chartkit .chartkit-d3-scatter')
-                .then(resolve, () => undefined);
-
-            this.page.waitForSelector('.chartkit .chartkit-d3-pie').then(resolve, () => undefined);
-
+            this.page.waitForSelector('.chartkit .chartkit-d3').then(resolve, () => undefined);
             this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
 
             const metricLocators = [

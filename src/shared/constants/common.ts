@@ -74,6 +74,7 @@ export const QL_CHART_NODE = {
     table_sql_node: 'table',
     table_ql_node: 'table',
     markup_ql_node: 'config',
+    metric2_ql_node: 'statface_graph',
 };
 
 export const EDITOR_CHART_NODE = {

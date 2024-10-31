@@ -28,6 +28,7 @@ export type V11ChartsConfig = {
     links: V11Link[];
     sort: V11Sort[];
     tooltips: V11Tooltip[];
+    tooltipConfig?: V11TooltipConfig;
     type: 'datalens';
     updates: V11Update[];
     visualization: V11Visualization;
@@ -53,6 +54,7 @@ export interface V11CommonSharedExtraSettings {
     legendMode?: 'show' | 'hide';
     metricFontSize?: string;
     metricFontColor?: string;
+    tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
@@ -60,6 +62,7 @@ export interface V11CommonSharedExtraSettings {
     navigatorSeriesName?: string;
     totals?: 'on' | 'off';
     pivotFallback?: 'on' | 'off';
+    pivotInlineSort?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
     navigatorSettings?: V11NavigatorSettings;
@@ -149,6 +152,7 @@ export type V11CommonPlaceholders = {
     colorsConfig?: V11ColorsConfig;
     geopointsConfig?: V11PointSizeConfig;
     shapesConfig?: V11ShapesConfig;
+    tooltipConfig?: V11TooltipConfig;
 };
 
 export type V11Layer = {
@@ -176,6 +180,10 @@ export type V11PlaceholderSettings = {
     axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
+    /* Whether axis, including axis title, line, ticks and labels, should be visible
+     * @default 'show'
+     **/
+    axisVisibility?: 'show' | 'hide';
 };
 
 export type V11Placeholder = {
@@ -288,6 +296,11 @@ export type V11ColorsConfig = {
 export type V11ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
+};
+
+export type V11TooltipConfig = {
+    color?: 'on' | 'off';
+    fieldTitle?: 'on' | 'off';
 };
 
 export type V11ChartsConfigDatasetField = {

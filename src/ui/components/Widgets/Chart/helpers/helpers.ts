@@ -341,7 +341,6 @@ export const getPreparedConstants = (props: {
     }
 
     const hideTabs = isFullscreen ? true : Boolean(tabsLength === 1 && hideTitle);
-    const withShareWidget = Utils.isEnabledFeature(Feature.EnableShareWidget) && isFullscreen;
 
     const isFirstLoadOrAfterError = loadedData === null;
 
@@ -370,7 +369,6 @@ export const getPreparedConstants = (props: {
         showLoader,
         isFullscreen,
         hideTabs,
-        withShareWidget,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,

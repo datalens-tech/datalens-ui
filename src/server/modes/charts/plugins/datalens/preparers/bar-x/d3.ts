@@ -4,11 +4,18 @@ import type {
     ChartKitWidgetData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {ServerField} from '../../../../../../../shared';
-import {LabelsPositions, PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
+import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
+import {
+    AxisMode,
+    LabelsPositions,
+    PlaceholderId,
+    getFakeTitleOrTitle,
+    getXAxisMode,
+} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
+import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
-import {getAllVisualizationsIds} from '../helpers/visualizations';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -20,21 +27,36 @@ type OldBarXDataItem = {
     custom?: any;
 } | null;
 
+type ExtendedBarXSeries = BarXSeries & {
+    custom?: {
+        exportSettings?: SeriesExportSettings;
+        colorValue?: string;
+    };
+};
+
 export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
-    const {shared, labels, placeholders, disableDefaultSorting = false, sort} = args;
+    const {
+        shared,
+        labels,
+        placeholders,
+        disableDefaultSorting = false,
+        idToDataType,
+        colors,
+    } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+    const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     const isCategoriesXAxis =
         !xField ||
         getAxisType({
             field: xField,
             settings: xPlaceholder?.settings,
-            visualizationIds: getAllVisualizationsIds(shared),
-            sort,
+            axisMode: xAxisMode,
         }) === 'category' ||
         disableDefaultSorting;
 
@@ -53,7 +75,21 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
           ? [getFakeTitleOrTitle(yField)]
           : [];
 
-    const seriesData = preparedData.graphs.map<BarXSeries>((graph) => {
+    const exportSettings: SeriesExportSettings = {
+        columns: [
+            getExportColumnSettings({path: isCategoriesXAxis ? 'category' : 'x', field: xField}),
+            getExportColumnSettings({path: 'y', field: yField}),
+        ],
+    };
+
+    const colorItem = colors[0];
+    if (colorItem) {
+        exportSettings.columns.push(
+            getExportColumnSettings({path: 'series.custom.colorValue', field: colorItem}),
+        );
+    }
+
+    const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
         return {
             name: graph.title,
             type: 'bar-x',
@@ -86,7 +122,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
                 },
                 [],
             ),
-            custom: graph.custom,
+            custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,

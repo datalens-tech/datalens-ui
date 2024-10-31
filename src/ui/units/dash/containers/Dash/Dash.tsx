@@ -58,6 +58,7 @@ import {
     selectTabId,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
 import Body from '../Body/Body';
 import Dialogs from '../Dialogs/Dialogs';
@@ -85,17 +86,23 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
 
     private entryDialoguesRef = React.createRef<EntryDialogues>();
 
-    componentDidMount() {
+    async componentDidMount() {
         const {extractEntryId} = registry.common.functions.getAll();
         const entryId = extractEntryId(this.props.location.pathname);
         const {entry, lockToken, history, location, match} = this.props;
 
         if (entry?.entryId !== entryId) {
-            this.props.loadDash({
+            await this.props.loadDash({
                 history: history,
                 location: location,
                 params: match.params,
             });
+        }
+
+        const search = this.props.location.search;
+        const tabId = getTabId(new URLSearchParams(search), this.props.tabs);
+        if (tabId !== this.props.tabId) {
+            this.props.setPageTab(tabId);
         }
 
         if (Utils.isEnabledFeature(Feature.AuthUpdateWithTimeout)) {
@@ -138,10 +145,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props.updateDashOpenedDesc(showOpenedDescription === '1');
         }
 
-        const tabId =
-            currentSearchParams.get(URL_QUERY.TAB_ID) ||
-            (this.props.tabs && this.props.tabs[0].id) ||
-            null;
+        const tabId = getTabId(currentSearchParams, this.props.tabs);
         const prevTabId = prevSearchParams.get(URL_QUERY.TAB_ID);
 
         const currentPath = currentSearchParams.get(URL_QUERY.CURRENT_PATH);
@@ -281,6 +285,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     onPasteItem={this.onPasteItem}
                     globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
                     dashkitSettings={this.getDashkitSettings(settings)}
+                    onlyView={DL.IS_MOBILE}
                 />
                 <Dialogs />
             </React.Fragment>
@@ -390,16 +395,15 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             toScope: this.props.entry.scope,
         }) as CopiedConfigData;
 
-        const data = migratedItemData.data;
-
         this.props.setCopiedItemData({
             item: {
-                data,
+                data: migratedItemData.data,
                 type: migratedItemData.type,
                 defaults: migratedItemData.defaults,
                 namespace: migratedItemData.namespace,
                 layout: migratedItemData?.layout,
             },
+            context: itemData.copyContext,
             options: {
                 updateLayout,
             },

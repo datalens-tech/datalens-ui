@@ -41,9 +41,13 @@ import {compose} from 'recompose';
 import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {
     ControlQA,
+    DASH_INFO_HEADER,
+    DashBodyQa,
     DashEntryQa,
     DashKitOverlayMenuQa,
+    DashTabItemType,
     Feature,
+    LOADED_DASH_CLASS,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -96,11 +100,14 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
+    selectIsNewRelations,
     selectSettings,
     selectShowTableOfContent,
+    selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {DashError} from '../DashError/DashError';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -143,6 +150,9 @@ type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
+    loaded: boolean;
+    prevMeta: {tabId: string | null; entryId: string | null};
+    loadedItemsMap: Map<string, boolean>;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -168,10 +178,23 @@ const GROUPS_WEIGHT = {
     [DEFAULT_GROUP]: 0,
 } as const;
 
-const DashKit = getConfiguredDashKit();
-
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
+    static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
+        const {
+            prevMeta: {entryId, tabId},
+        } = state;
+
+        // reset loaded before new tab/entry items are mounted
+        if (props.entryId !== entryId || props.tabId !== tabId) {
+            state.loadedItemsMap.clear();
+
+            return {prevMeta: {tabId: props.tabId, entryId: props.entryId}, loaded: false};
+        }
+
+        return null;
+    }
+
     dashKitRef = React.createRef<DashKitComponent>();
     entryDialoguesRef = React.createRef<EntryDialogues>();
 
@@ -225,6 +248,9 @@ class Body extends React.PureComponent<BodyProps> {
         fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
+        prevMeta: {tabId: null, entryId: null},
+        loaded: false,
+        loadedItemsMap: new Map<string, boolean>(),
     };
 
     groups: DashKitGroup[] = [
@@ -254,9 +280,11 @@ class Body extends React.PureComponent<BodyProps> {
                     children,
                     props as DashkitGroupRenderWithContextProps,
                 ),
+            gridProperties: getPropertiesWithResizeHandles,
         },
         {
             id: DEFAULT_GROUP,
+            gridProperties: getPropertiesWithResizeHandles,
         },
     ];
 
@@ -667,6 +695,8 @@ class Body extends React.PureComponent<BodyProps> {
                 return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
                     workbookId: this.props.workbookId ?? null,
                     fromScope: this.props.entry.scope,
+                    targetEntryId: this.props.entryId,
+                    targetDashTabId: this.props.tabId,
                 });
             };
 
@@ -802,6 +832,19 @@ class Body extends React.PureComponent<BodyProps> {
         };
     }
 
+    dataProviderContextGetter = () => {
+        const {tabId, entryId} = this.props;
+
+        const dashInfo = {
+            dashId: entryId || '',
+            tabId: tabId || '',
+        };
+
+        return {
+            [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
+        };
+    };
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
@@ -820,6 +863,7 @@ class Body extends React.PureComponent<BodyProps> {
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
+        const DashKit = getConfiguredDashKit();
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
@@ -848,6 +892,12 @@ class Body extends React.PureComponent<BodyProps> {
                 globalParams={globalParams}
                 overlayControls={this.getOverlayControls()}
                 overlayMenuItems={this.getOverlayMenu()}
+                skipReload={this.props.skipReload}
+                isNewRelations={this.props.isNewRelations}
+                onItemMountChange={this.handleItemMountChange}
+                onItemRender={this.handleItemRender}
+                hideErrorDetails={this.props.hideErrorDetails}
+                dataProviderContextGetter={this.dataProviderContextGetter}
             />
         );
     };
@@ -858,6 +908,22 @@ class Body extends React.PureComponent<BodyProps> {
 
     private handleDragEnd = () => {
         this.setState({isGlobalDragging: false});
+    };
+
+    private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
+        if (isMounted) {
+            this.state.loadedItemsMap.set(item.id, false);
+        }
+    };
+
+    private handleItemRender = (item: ConfigItem) => {
+        const {loadedItemsMap} = this.state;
+
+        if (loadedItemsMap.get(item.id) !== true) {
+            loadedItemsMap.set(item.id, true);
+
+            this.setState({loaded: Array.from(loadedItemsMap.values()).every(Boolean)});
+        }
     };
 
     private renderBody() {
@@ -873,6 +939,8 @@ class Body extends React.PureComponent<BodyProps> {
             disableHashNavigation,
         } = this.props;
 
+        const {loaded, hasCopyInBuffer} = this.state;
+
         switch (mode) {
             case Mode.Loading:
             case Mode.Updating:
@@ -887,8 +955,13 @@ class Body extends React.PureComponent<BodyProps> {
 
         const showEditActionPanel = mode === Mode.Edit;
 
+        const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
+
         const content = (
-            <div className={b('content-wrapper', {mobile: DL.IS_MOBILE})}>
+            <div
+                data-qa={DashBodyQa.ContentWrapper}
+                className={b('content-wrapper', {mobile: DL.IS_MOBILE}, loadedMixin)}
+            >
                 <div
                     className={b('content-container', {
                         mobile: DL.IS_MOBILE,
@@ -920,9 +993,10 @@ class Body extends React.PureComponent<BodyProps> {
                                 toggleAnimation={true}
                                 disable={!showEditActionPanel}
                                 items={getActionPanelItems({
-                                    copiedData: this.state.hasCopyInBuffer,
+                                    copiedData: hasCopyInBuffer,
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
+                                    filterItem: (item) => item.id === DashTabItemType.Image,
                                 })}
                                 className={b('edit-panel', {
                                     'aside-opened': isSidebarOpened,
@@ -957,6 +1031,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
+    skipReload: selectSkipReload(state),
+    isNewRelations: selectIsNewRelations(state),
 });
 
 const mapDispatchToProps = {

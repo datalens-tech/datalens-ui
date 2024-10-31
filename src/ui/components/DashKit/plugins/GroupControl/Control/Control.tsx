@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEqual from 'lodash/isEqual';
 import type {
+    DashTab,
     DashTabItemControlDataset,
     DashTabItemControlManual,
     DashTabItemControlSingle,
@@ -36,7 +37,7 @@ import {
     unwrapFromArray,
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
-import {DashConfigContext} from 'ui/units/dash/utils/context';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -48,6 +49,7 @@ import type {
     ControlSettings,
     ErrorData,
     LoadStatus,
+    SelectorError,
     ValidationErrorData,
 } from '../../Control/types';
 import {
@@ -59,7 +61,12 @@ import {
 } from '../../Control/utils';
 import DebugInfoTool from '../../DebugInfoTool/DebugInfoTool';
 import type {ExtendedLoadedData} from '../types';
-import {clearLoaderTimer, filterSignificantParams, getControlWidthStyle} from '../utils';
+import {
+    clearLoaderTimer,
+    filterSignificantParams,
+    getControlWidthStyle,
+    getErrorTitle,
+} from '../utils';
 
 import {getInitialState, reducer} from './store/reducer';
 import {
@@ -120,7 +127,7 @@ export const Control = ({
     dependentSelectors,
     groupId,
 }: ControlProps) => {
-    const currentTab = React.useContext(DashConfigContext);
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
 
     const [prevNeedReload, setPrevNeedReload] = React.useState(needReload);
     const isMounted = useMountedState([]);
@@ -210,7 +217,7 @@ export const Control = ({
                     controlData: {
                         id,
                         groupId,
-                        tabId: currentTab?.id,
+                        tabId: (extDashkitContext?.config as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
                     params: currentSignificantParams.current || params,
@@ -258,14 +265,22 @@ export const Control = ({
             let errorData = null;
 
             if (error.response && error.response.data) {
+                const errorInfo = error.response.data?.error as SelectorError;
+
                 errorData = {
-                    data: {error: error.response.data?.error, status: error.response.data?.status},
+                    data: {
+                        error: errorInfo,
+                        status: error.response.data?.status,
+                        title: getErrorTitle(errorInfo),
+                    },
                     requestId: error.response.headers['x-request-id'],
+                    extra: {
+                        hideErrorDetails: Boolean(extDashkitContext?.hideErrorDetails),
+                    },
                 };
             } else {
                 errorData = {data: {message: error.message}};
             }
-
             setErrorState(errorData, LOAD_STATUS.FAIL);
         }
     };
@@ -467,6 +482,10 @@ export const Control = ({
         return null;
     };
 
+    const handleClickRetry = () => {
+        reload();
+    };
+
     const renderControl = () => {
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
@@ -588,10 +607,6 @@ export const Control = ({
         }
 
         return null;
-    };
-
-    const handleClickRetry = () => {
-        reload();
     };
 
     return renderControl();

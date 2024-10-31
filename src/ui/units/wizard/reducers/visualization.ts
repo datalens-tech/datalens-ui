@@ -9,6 +9,8 @@ import type {
     Placeholder,
     PlaceholderSettings,
     PointSizeConfig,
+    ServerChartsConfig,
+    ServerTooltipConfig,
     ShapesConfig,
     Shared,
     Sort,
@@ -17,11 +19,12 @@ import type {
     VisualizationWithLayersShared,
 } from 'shared';
 import {
+    AxisMode,
     DATASET_FIELD_TYPES,
     PlaceholderId,
     WizardVisualizationId,
+    getXAxisMode,
     isDimensionField,
-    isFieldHierarchy,
     isMeasureField,
     isMeasureValue,
     isVisualizationWithLayers,
@@ -49,6 +52,7 @@ import {
     SET_SHAPES_CONFIG,
     SET_SORT,
     SET_TOOLTIPS,
+    SET_TOOLTIP_CONFIG,
     SET_VISUALIZATION,
     SET_VISUALIZATION_PLACEHOLDER_ITEMS,
     SET_Y_AXIS_CONFLICT,
@@ -59,6 +63,7 @@ import {getSelectedLayer, getSelectedLayerId} from '../utils/helpers';
 import {getPlaceholderAxisModeMap, isPlaceholderWithAxisMode} from '../utils/placeholder';
 
 import {clearUnusedVisualizationItems, getPlaceholdersWithMergedSettings} from './utils';
+import {isTableColorValid} from './utils/checkTableColor';
 import {updateColorsHierarchies} from './utils/updateColorHierarchies';
 
 export interface VisualizationState {
@@ -83,6 +88,7 @@ export interface VisualizationState {
     distincts?: Record<string, string[]>;
     drillDownLevel: number;
     pointConflict?: boolean;
+    tooltipConfig?: ServerTooltipConfig;
 }
 
 const initialState: VisualizationState = {
@@ -400,7 +406,7 @@ export function visualization(
                         ].filter((item) => {
                             return item.type !== 'PSEUDO';
                         });
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     // From the scatter similarly, only there are 3 sections
@@ -410,7 +416,7 @@ export function visualization(
                             ...oldPlaceholders[1].items,
                             ...oldPlaceholders[2].items,
                         ];
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     // When switching to PivotTable, only one of the dimensions and indicators is filled in
@@ -429,7 +435,7 @@ export function visualization(
                             (item) => item.type !== 'PSEUDO',
                         );
                         placeholders[2].items = oldPlaceholders[1].items;
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
                         break;
 
                     case 'scatter-pivotTable': {
@@ -450,7 +456,7 @@ export function visualization(
                             placeholders[2].items = [measures[0]];
                         }
 
-                        prevColors = prevColors.filter((color) => !isFieldHierarchy(color));
+                        prevColors = prevColors.filter(isTableColorValid);
 
                         break;
                     }
@@ -664,10 +670,15 @@ export function visualization(
                 }
 
                 if (isPlaceholderWithAxisMode(placeholder)) {
+                    const chartConfig = {
+                        visualization,
+                        colors,
+                        shapes,
+                        sort,
+                    } as Partial<ServerChartsConfig>;
                     const axisModeMap = getPlaceholderAxisModeMap({
                         placeholder,
-                        visualizationId: visualization.id as WizardVisualizationId,
-                        sort,
+                        axisMode: getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete,
                     });
                     placeholder.settings = Object.assign({}, placeholder.settings, {
                         axisModeMap,
@@ -999,6 +1010,16 @@ export function visualization(
                 drillDownLevel,
             };
         }
+        case SET_TOOLTIP_CONFIG: {
+            const {tooltipConfig} = action;
+
+            const visualization = updateCommonPlaceholders(state.visualization, {tooltipConfig});
+            const layers =
+                (visualization as VisualizationWithLayersShared['visualization'] | undefined)
+                    ?.layers || state.layers;
+
+            return {...state, tooltipConfig: {...tooltipConfig}, visualization, layers};
+        }
         default:
             return state;
     }
@@ -1080,6 +1101,7 @@ function updateCommonPlaceholders(
         geopointsConfig?: object;
         colorsConfig?: TableShared['colorsConfig'];
         shapesConfig?: ShapesConfig;
+        tooltipConfig?: ServerTooltipConfig;
     },
     options?: {updateAllLayers?: boolean},
 ) {

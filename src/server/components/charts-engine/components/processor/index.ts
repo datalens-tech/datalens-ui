@@ -37,8 +37,8 @@ import type {DataFetcherResult} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {extractDependencies} from './dependencies';
 import {ProcessorHooks} from './hooks';
+import {SandboxError} from './isolated-sandbox/sandbox';
 import {updateActionParams, updateParams} from './paramsUtils';
-import {SandboxError} from './sandbox';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
     ChartBuilder,
@@ -896,9 +896,7 @@ export class Processor {
 
             return result;
         } catch (error) {
-            const sandboxVersion =
-                isObject(error) && 'sandboxVersion' in error && error.sandboxVersion;
-            ctx.logError('Run failed', error, {sandboxVersion});
+            ctx.logError('Run failed', error);
 
             const isError = (error: unknown): error is SandboxError => {
                 return isObject(error);
@@ -960,7 +958,6 @@ export class Processor {
                                 ? StackTracePreparer.prepare(executionResult.stackTrace)
                                 : '',
                             tabName: error.executionResult ? error.executionResult.filename : '',
-                            sandboxVersion: error.sandboxVersion || 1,
                         },
                         statusCode: DEFAULT_RUNTIME_ERROR_STATUS,
                     };

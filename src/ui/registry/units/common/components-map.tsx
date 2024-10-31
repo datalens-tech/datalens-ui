@@ -3,6 +3,7 @@ import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
+import type {WorkbookEntriesTableTabsProps} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import {Example} from './components/Example/Example';
@@ -15,6 +16,8 @@ import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEn
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
 import type {CloudTreeSelectBaseProps} from './types/components/CloudTreeSelectBase';
 import type {DialogAddParticipantsProps} from './types/components/DialogAddParticipants';
+import type {DialogImageWidgetLinkHintProps} from './types/components/DialogImageWidgetLinkHint';
+import type {DialogRelatedEntitiesRadioHintProps} from './types/components/DialogRelatedEntitiesRadioHint';
 import type {DialogShareProps} from './types/components/DialogShare';
 import type {DownloadScreenshotProps} from './types/components/DownloadScreenshot';
 import type {EntryBreadcrumbsProps} from './types/components/EntryBreadcrumbs';
@@ -57,4 +60,7 @@ export const commonComponentsMap = {
     AclSubject: makeDefaultEmpty<AclSubjectProps>(),
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
+    DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
+    DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
+    WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
 } as const;

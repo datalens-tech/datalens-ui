@@ -5,6 +5,8 @@ import {Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DL} from 'ui/constants/common';
 
+import {DatalensTabs} from '../../../shared/constants/qa/components';
+
 import './Tabs.scss';
 
 const b = block('dl-tabs');
@@ -49,6 +51,13 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                     wrapTo={(item, node) => {
                         const isActive = item?.id === restProps.activeTab;
 
+                        let qa;
+                        if (item) {
+                            qa = DL.IS_MOBILE ? DatalensTabs.MobileItem : DatalensTabs.Item;
+                        } else {
+                            qa = DatalensTabs.SwitcherItem;
+                        }
+
                         return item?.id ? (
                             <Link
                                 onClick={handleTabLinkClick}
@@ -56,11 +65,14 @@ function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<
                                     active: isActive,
                                 })}
                                 href={`${window.location.pathname}?tab=${item.id}`}
+                                qa={qa}
                             >
                                 {node}
                             </Link>
                         ) : (
-                            <div className={b('tab', {active: isActive})}>{node}</div>
+                            <div data-qa={qa} className={b('tab', {active: isActive})}>
+                                {node}
+                            </div>
                         );
                     }}
                 />
