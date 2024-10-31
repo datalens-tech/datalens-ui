@@ -147,4 +147,13 @@ export const commonFunctionsMap = {
     getTopLevelEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
     getAllEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),
     getScopeTypeIcon: makeFunctionTemplate<(scope: EntryScope) => string | null>(),
+    getEntryScopesWithRevisionsList: makeFunctionTemplate<() => EntryScope[]>(),
+    getRevisionsPanelEntryScopesTexts: makeFunctionTemplate<
+        () => {
+            [key: string]: {
+                scopeText: string;
+                panelText: string;
+            };
+        }
+    >(),
 } as const;

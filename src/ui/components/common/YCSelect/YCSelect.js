@@ -402,7 +402,6 @@ export class YCSelect extends React.PureComponent {
             isFetchingItems: false,
             isControlClicked: false,
             isItemsGrouped: YCSelect.isItemsGrouped(items),
-            allowHideOnContentScroll: false,
             fetchError: null,
         };
     }
@@ -693,10 +692,6 @@ export class YCSelect extends React.PureComponent {
 
     setPopupWidth = (width) => {
         this.setState({popupWidth: width});
-    };
-
-    setAllowHideOnContentScroll = (value) => {
-        this.setState({allowHideOnContentScroll: value});
     };
 
     _handleSelectorScroll = _debounce((event) => {
@@ -1511,7 +1506,6 @@ export class YCSelect extends React.PureComponent {
             selectOnlyCurrentItem: this.selectOnlyCurrentItem,
             setPopupWidth: this.setPopupWidth,
             errorContent,
-            ...(mobile && {setAllowHideOnContentScroll: this.setAllowHideOnContentScroll}),
         };
 
         if (selectedPopup) {
@@ -1634,7 +1628,7 @@ export class YCSelect extends React.PureComponent {
 
     _renderMobileContent() {
         const {label} = this.props;
-        const {showMainPopup, showSelectedPopup, allowHideOnContentScroll} = this.state;
+        const {showMainPopup, showSelectedPopup} = this.state;
 
         return (
             <React.Fragment>
@@ -1643,7 +1637,7 @@ export class YCSelect extends React.PureComponent {
                     title={label}
                     visible={showMainPopup}
                     contentClassName={bSheet(null, getModifier('mobile'))}
-                    allowHideOnContentScroll={allowHideOnContentScroll}
+                    allowHideOnContentScroll={false}
                     onClose={this._onOutsideMainPopupClick}
                 >
                     {this._renderPopupContent({isMobile: true})}
@@ -1653,7 +1647,7 @@ export class YCSelect extends React.PureComponent {
                     title={label}
                     visible={showSelectedPopup}
                     contentClassName={bSheet(null, getModifier('mobile'))}
-                    allowHideOnContentScroll={allowHideOnContentScroll}
+                    allowHideOnContentScroll={false}
                     onClose={this._onOutsideSelectedItemsPopupClick}
                 >
                     <div className={bPopup('select-title')}>{trans('selected_popup_title')}</div>

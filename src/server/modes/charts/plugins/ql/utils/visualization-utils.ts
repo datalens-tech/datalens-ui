@@ -147,9 +147,10 @@ export const migrateOrAutofillVisualization = ({
 
             newVisualization.placeholders[0].items = measureFields;
         }
-    } else if (visualizationId === WizardVisualizationId.Treemap) {
-        // Scatter visualization was not present in older ql charts,
-        // so we don't need to migrate older order
+    } else if (
+        visualizationId === WizardVisualizationId.Treemap ||
+        visualizationId === WizardVisualizationId.TreemapD3
+    ) {
         const {dimensionFields, sizeFields} = autofillTreemapVisualization({
             fields,
         });

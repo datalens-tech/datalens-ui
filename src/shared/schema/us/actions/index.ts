@@ -1,6 +1,5 @@
 import {collectionsActions} from './collections';
 import {colorPalettesActions} from './color-palettes';
-import {dlsActions} from './dls';
 import {editorActions} from './editor';
 import {embedsActions} from './embeds';
 import {entriesActions} from './entries';
@@ -18,7 +17,6 @@ export const actions = {
     ...entriesActions,
     ...presetsActions,
     ...locksActions,
-    ...dlsActions,
     ...favoritesActions,
     ...editorActions,
     ...stateActions,

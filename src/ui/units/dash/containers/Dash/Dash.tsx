@@ -285,6 +285,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     onPasteItem={this.onPasteItem}
                     globalParams={getUrlGlobalParams(location.search, dashGlobalDefaultParams)}
                     dashkitSettings={this.getDashkitSettings(settings)}
+                    onlyView={DL.IS_MOBILE}
                 />
                 <Dialogs />
             </React.Fragment>

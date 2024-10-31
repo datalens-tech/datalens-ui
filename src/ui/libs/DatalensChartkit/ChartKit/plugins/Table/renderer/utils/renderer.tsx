@@ -17,6 +17,7 @@ import type {
 import {ChartKitTableQa, isMarkupItem} from 'shared';
 
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
+import {DEFAULT_DATE_FORMAT} from '../../../../../../../constants/misc';
 import {numberFormatter} from '../../../../components/Widget/components/Table/utils/misc';
 import {BarCell} from '../components/BarCell/BarCell';
 import {DiffCell} from '../components/DiffCell/DiffCell';
@@ -150,7 +151,7 @@ export function renderCellContent(args: {
             formattedValue = String(cell.value);
         } else if (cellType === 'date' && cell.value) {
             const dateTimeValue = dateTimeUtc({input: cell.value as string});
-            const dateTimeFormat = get(column, 'format');
+            const dateTimeFormat = get(column, 'format', DEFAULT_DATE_FORMAT);
             formattedValue = dateTimeValue?.isValid()
                 ? dateTimeValue.format(dateTimeFormat)
                 : String(cell.value);

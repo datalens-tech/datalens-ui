@@ -44,7 +44,7 @@ import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table'
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
 import preparePolylineData from '../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../preparers/scatter';
-import prepareTreemapData from '../preparers/treemap';
+import {prepareD3Treemap, prepareHighchartsTreemap} from '../preparers/treemap';
 import type {
     LayerChartMeta,
     PrepareFunction,
@@ -558,7 +558,12 @@ function prepareSingleResult({
             break;
 
         case 'treemap':
-            prepare = prepareTreemapData;
+            prepare = prepareHighchartsTreemap;
+            rowsLimit = 800;
+            break;
+
+        case WizardVisualizationId.TreemapD3:
+            prepare = prepareD3Treemap;
             rowsLimit = 800;
             break;
 

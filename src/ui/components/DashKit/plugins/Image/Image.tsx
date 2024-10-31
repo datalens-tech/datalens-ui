@@ -62,6 +62,6 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
 
 export const pluginImage: Plugin<Props> = {
     type: DashTabItemType.Image,
-    defaultLayout: {w: 12, h: 12},
+    defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
     renderer: PluginImage,
 };

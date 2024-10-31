@@ -252,7 +252,9 @@ export type TableWidgetData = WidgetBaseWithData &
             title?: string | TableTitle;
             sort?: string;
             order?: 'asc' | 'desc';
-            settings?: DataTableProps<DataTableData>['settings'];
+            settings?: DataTableProps<DataTableData>['settings'] & {
+                width?: 'auto' | 'max-content';
+            };
             paginator?: {
                 enabled: boolean;
                 limit?: number;

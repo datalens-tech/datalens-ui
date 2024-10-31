@@ -4,7 +4,6 @@ export * from './utils';
 export * from './absurd';
 export * from './connections';
 export * from './docs';
-export * from './permissions';
 export {getWorkbookIdFromPathname} from './workbooks';
 export * from './urlSearch';
 export * from './urlUtils';

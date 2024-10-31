@@ -13,7 +13,9 @@
         width: 705px;
     }
 
-    --dl-dropdown-navigation-width: 330px;
+    & {
+        --dl-dropdown-navigation-width: 330px;
+    }
 
     &__sidebar {
         max-height: 100%;

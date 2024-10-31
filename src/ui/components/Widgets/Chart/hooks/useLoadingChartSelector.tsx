@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 import {useHistory} from 'react-router-dom';
 import type {DashSettings, DashTabItemControl} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {useBeforeLoad} from 'ui/hooks/useBeforeLoad';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {
@@ -85,6 +86,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         data,
     } = props;
 
+    const [isRendered, setIsRendered] = React.useState(false);
+
     const resolveMetaDataRef = React.useRef<ResolveMetaDataRef>();
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
@@ -95,6 +98,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const history = useHistory();
 
     const loadOnlyVisibleCharts = (settings as DashSettings).loadOnlyVisibleCharts ?? true;
+
+    const handleUpdate = useBeforeLoad(props.onBeforeLoad);
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -123,7 +128,14 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             }
 
             const newAutoHeight = Boolean(props.data.autoHeight);
+
             adjustLayout(!newAutoHeight);
+            setIsRendered(true);
+
+            // Triggering update after chart render
+            if (isReadyToReflowRef.current && handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
         },
         [adjustLayout, dataProvider, props.data.autoHeight],
     );
@@ -242,11 +254,20 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         return item?.defaults || {};
     }, [extDashkitContext?.config, widgetId]);
 
+    const isReadyToReflowRef = React.useRef(false);
+    isReadyToReflowRef.current = isInit && !isLoading && isRendered;
     /**
      * debounced call of chartkit reflow
      */
     const debouncedChartReflow = React.useCallback(
-        debounce(handleChartkitReflow, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
+        debounce(() => {
+            handleChartkitReflow();
+
+            // Triggering update after chart changed it size
+            if (isReadyToReflowRef.current && handleUpdate) {
+                requestAnimationFrame(() => handleUpdate());
+            }
+        }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
         [handleChartkitReflow],
     );
 
@@ -366,6 +387,17 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     React.useEffect(() => {
         debouncedChartReflow();
     }, [width, height, debouncedChartReflow]);
+
+    /**
+     * changed position and loaded state watcher
+     */
+    const currentLayout = layout.find(({i}) => i === widgetId);
+    React.useEffect(() => {
+        if (isInit && !isLoading && isRendered) {
+            handleUpdate?.();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, isRendered, handleUpdate]);
 
     /**
      * Load selector if load only visible setting disabled

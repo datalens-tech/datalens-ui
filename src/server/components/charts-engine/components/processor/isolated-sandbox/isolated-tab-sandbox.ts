@@ -2,10 +2,8 @@ import type IsolatedVM from 'isolated-vm';
 import {isString} from 'lodash';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
-import {getTranslationFn} from '../../../../../../shared/modules/language';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
-import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {getChartApiContext} from '../chart-api-context';
 import {Console} from '../console';
@@ -17,7 +15,6 @@ import {prepareChartEditorApi} from './interop/charteditor-api';
 import {getPrepare} from './prepare';
 import {SandboxError} from './sandbox';
 
-const DEFAULT_USER_LANG = 'ru';
 const {RUNTIME_ERROR, RUNTIME_TIMEOUT_ERROR} = config;
 const DEFAULT_PROCESSING_TIMEOUT = 500;
 
@@ -34,12 +31,17 @@ type ProcessTabParams = {
     shared: Record<string, object> | Shared | ServerChartsConfig;
     hooks: ProcessorHooks;
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
     features: {
         noJsonFn: boolean;
     };
+    getTranslation: (
+        keyset: string,
+        key: string,
+        params?: Record<string, string | number>,
+    ) => string;
 };
 
 type ExecuteParams = {
@@ -253,6 +255,7 @@ export const processTab = async ({
     isScreenshoter,
     context,
     features,
+    getTranslation,
 }: ProcessTabParams) => {
     const originalParams = params;
     const originalUsedParams = usedParams;
@@ -269,9 +272,8 @@ export const processTab = async ({
         userLang,
     });
 
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
-    chartApiContext.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
-    chartApiContext.ChartEditor.getUserLang = () => userLang || DEFAULT_USER_LANG;
+    chartApiContext.ChartEditor.getTranslation = getTranslation;
+    chartApiContext.ChartEditor.getUserLang = () => userLang;
     chartApiContext.ChartEditor.getUserLogin = () => userLogin || '';
 
     const result = await execute({

@@ -15,6 +15,7 @@ export const enum VisualizationsQa {
     DonutD3 = 'visualization-item-donut-d3',
     Metric = 'visualization-item-metric',
     Treemap = 'visualization-item-treemap',
+    TreemapD3 = 'visualization-item-treemap-d3',
     FlatTable = 'visualization-item-flatTable',
     PivotTable = 'visualization-item-pivotTable',
     Geolayer = 'visualization-item-geolayer',
