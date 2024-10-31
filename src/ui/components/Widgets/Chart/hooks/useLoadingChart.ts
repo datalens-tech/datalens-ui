@@ -363,8 +363,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             return;
         }
 
-        const onBeforeChartLoadPromise = onBeforeChartLoad?.();
-
         cleanUpConflictingParameters({
             prev: prevInnerParamsRefCurrent,
             current: requestDataProps.params,
@@ -458,7 +456,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 ),
             );
 
-            await onBeforeChartLoadPromise;
+            await onBeforeChartLoad?.();
 
             // order is important for updateHighchartsConfig from editor
             onChartLoad?.({
