@@ -10,7 +10,6 @@ import type {
 } from '../../../../../../shared';
 import {EDITOR_TYPE_CONFIG_TABS, Feature} from '../../../../../../shared';
 import type {ChartsEngine} from '../../../index';
-import type {ResolvedConfig} from '../../storage/types';
 import type {ChartBuilder, ChartBuilderResult} from '../types';
 
 import {resolveDependencies} from './dependencies';
@@ -94,14 +93,14 @@ export const getIsolatedSandboxChartBuilder = async (
         },
 
         buildModules: async ({subrequestHeaders, req, ctx, onModuleBuild}) => {
-            const resolvedModules = (await resolveDependencies({
+            const resolvedModules = await resolveDependencies({
                 chartsEngine,
                 config,
                 subrequestHeaders,
                 req,
                 ctx,
                 workbookId,
-            })) as ResolvedConfig[];
+            });
 
             const processedModules: Record<string, ModulesSandboxExecuteResult> = {};
 
