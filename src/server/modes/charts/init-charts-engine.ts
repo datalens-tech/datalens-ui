@@ -6,6 +6,7 @@ import sizeof from 'object-sizeof';
 import {Feature, isEnabledServerFeature, isObjectWithFunction} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
+import type {Runner} from '../../components/charts-engine/runners';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
 import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
 import {checkValidation} from '../../lib/validation';
@@ -17,12 +18,14 @@ export function initChartsEngine({
     config,
     beforeAuth,
     afterAuth,
+    additionalRunners = [],
 }: {
     plugins: Plugin[];
     ctx: AppContext;
     config: AppConfig;
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
+    additionalRunners?: Runner[];
 }) {
     const getTime = () => new Date().toISOString().replace('T', ' ').split('.')[0];
     const shouldLogChartWithFunction = isEnabledServerFeature(ctx, Feature.ChartWithFnLogging);
@@ -163,6 +166,8 @@ export function initChartsEngine({
 
     const cacheClient = new CacheClient({config});
 
+    const defaultRunners = getDefaultRunners();
+
     return new ChartsEngine({
         config,
         secrets: chartsEngineConfig.secrets,
@@ -173,7 +178,7 @@ export function initChartsEngine({
         nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
-        runners: getDefaultRunners(),
+        runners: [...defaultRunners, ...additionalRunners],
     });
 }
 
