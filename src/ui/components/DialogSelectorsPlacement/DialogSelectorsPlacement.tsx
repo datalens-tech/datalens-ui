@@ -4,28 +4,29 @@ import {Dialog, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {DialogGroupControlQa} from 'shared';
+import {closeDialog} from 'ui/store/actions/dialog';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
-import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions';
+import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import type {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
-import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/controls/selectors';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../../../../../constants/dialogs';
+import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
 
-import './ControlsPlacementDialog.scss';
+import './DialogSelectorsPlacement.scss';
 
 export const DIALOG_SELECTORS_PLACEMENT = Symbol('DIALOG_SELECTORS_PLACEMENT');
 
-export type ControlsPlacementDialogProps = {
-    onClose: () => void;
+export type DialogControlsPlacementProps = {
+    onApply: (state: SelectorsGroupDialogState) => void;
+    selectorsGroup: SelectorsGroupDialogState;
 };
 
 export type OpenDialogControlsPlacementArgs = {
     id: typeof DIALOG_SELECTORS_PLACEMENT;
-    props: ControlsPlacementDialogProps;
+    props: DialogControlsPlacementProps;
 };
 
 const b = block('controls-placement-dialog');
@@ -37,8 +38,10 @@ const resetAutoValues = (group: SelectorDialogState[]) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
-const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
-    const selectorsGroup = useSelector(selectSelectorsGroup);
+const DialogControlsPlacement: React.FC<DialogControlsPlacementProps> = ({
+    onApply,
+    selectorsGroup,
+}) => {
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const [showErrors, setShowErrors] = React.useState(false);
@@ -59,20 +62,20 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
         });
     }, []);
 
+    const onClose = React.useCallback(() => dispatch(closeDialog()), [dispatch]);
+
     const handleApplyClick = React.useCallback(() => {
         if (errorsIndexes.length) {
             setShowErrors(true);
             return;
         }
         const updatedItemsState = resetAutoValues(itemsState);
-        dispatch(
-            updateSelectorsGroup({
-                ...selectorsGroup,
-                group: updatedItemsState,
-            }),
-        );
+        onApply({
+            ...selectorsGroup,
+            group: updatedItemsState,
+        });
         onClose();
-    }, [selectorsGroup, itemsState, dispatch, onClose, errorsIndexes.length]);
+    }, [selectorsGroup, itemsState, onClose, onApply, errorsIndexes.length]);
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
@@ -170,4 +173,4 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
     );
 };
 
-DialogManager.registerDialog(DIALOG_SELECTORS_PLACEMENT, ControlsPlacementDialog);
+DialogManager.registerDialog(DIALOG_SELECTORS_PLACEMENT, DialogControlsPlacement);

@@ -5,14 +5,13 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
+import type {Dispatch} from 'redux';
 import {
     DashTabItemControlSourceType,
     DashTabItemType,
     DialogGroupControlQa,
     TitlePlacementOption,
 } from 'shared';
-import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
@@ -26,10 +25,6 @@ import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
 } from 'ui/units/dash/store/reducers/dash';
-import {
-    selectActiveSelectorIndex,
-    selectSelectorsGroup,
-} from 'units/dash/store/selectors/controls/selectors';
 
 import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
 import type {
@@ -38,7 +33,6 @@ import type {
 } from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
-import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';
 
@@ -77,12 +71,19 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
-export const GroupControlSidebar = () => {
-    const selectorsGroup = useSelector(selectSelectorsGroup);
-    const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
+type Props = {
+    selectorsGroup: SelectorsGroupDialogState;
+    activeSelectorIndex: number;
+    openSelectorsPlacementDialog: () => void;
+    dispatch: Dispatch<any>;
+};
 
-    const dispatch = useDispatch();
-
+export const GroupControlSidebar = ({
+    selectorsGroup,
+    activeSelectorIndex,
+    openSelectorsPlacementDialog,
+    dispatch,
+}: Props) => {
     const initialTabIndex =
         selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
@@ -119,21 +120,6 @@ export const GroupControlSidebar = () => {
         setDefaultTabIndex((currentTabIndex) => currentTabIndex + 1);
         return i18n('label_default-tab', {index: defaultTabIndex});
     }, [defaultTabIndex]);
-
-    const handleClosePlacementDialog = React.useCallback(() => {
-        dispatch(closeDialog());
-    }, [dispatch]);
-
-    const handleSelectorsPlacementClick = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_SELECTORS_PLACEMENT,
-                props: {
-                    onClose: handleClosePlacementDialog,
-                },
-            }),
-        );
-    }, [dispatch, handleClosePlacementDialog]);
 
     const handleChangeAutoHeight = React.useCallback(
         (value) => {
@@ -286,7 +272,7 @@ export const GroupControlSidebar = () => {
                         view="outlined"
                         width="max"
                         className={b('order-selectors-button')}
-                        onClick={handleSelectorsPlacementClick}
+                        onClick={openSelectorsPlacementDialog}
                         qa={DialogGroupControlQa.placementButton}
                     >
                         <Icon data={Gear} height={16} width={16} />

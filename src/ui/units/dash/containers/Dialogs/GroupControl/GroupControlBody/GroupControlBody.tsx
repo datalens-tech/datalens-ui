@@ -3,9 +3,8 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
-import {selectSelectorControlType} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import type {SelectorElementType} from 'ui/units/dash/store/actions/dashTyped';
 import Utils from 'ui/utils/utils';
 
 import {ELEMENT_TYPE} from '../../Control/constants';
@@ -25,9 +24,7 @@ import './../GroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-export const GroupControlBody = () => {
-    const elementType = useSelector(selectSelectorControlType);
-
+export const GroupControlBody = ({elementType}: {elementType: SelectorElementType}) => {
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
 
     return (
