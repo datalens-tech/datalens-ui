@@ -5,7 +5,6 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {Dispatch} from 'redux';
 import {
     DashTabItemControlSourceType,
     DashTabItemType,
@@ -14,27 +13,21 @@ import {
 } from 'shared';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
-import {
-    addSelectorToGroup,
-    copyControlToStorage,
-    setActiveSelectorIndex,
-    updateSelectorsGroup,
-} from 'ui/units/dash/store/actions/controls/actions';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
 } from 'ui/units/dash/store/reducers/dash';
 
-import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
 import type {
-    TabMenuItemData,
-    UpdateState,
-} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
+    SelectorDialogState,
+    SetSelectorDialogItemArgs,
+} from '../../../units/dash/store/actions/dashTyped';
+import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
+import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
+import {TabActionType} from '../../DialogChartWidget/TabMenu/types';
 
-import './../GroupControl.scss';
+import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
@@ -75,14 +68,22 @@ type Props = {
     selectorsGroup: SelectorsGroupDialogState;
     activeSelectorIndex: number;
     openSelectorsPlacementDialog: () => void;
-    dispatch: Dispatch<any>;
+    addSelectorToGroup: (selectorArgs: SetSelectorDialogItemArgs) => void;
+    copyControlToStorage: (index: number) => void;
+    setSelectorDialogItem: (title: string) => void;
+    setActiveSelectorIndex: (index: number) => void;
+    updateSelectorsGroup: (selectorState: SelectorsGroupDialogState) => void;
 };
 
 export const GroupControlSidebar = ({
     selectorsGroup,
     activeSelectorIndex,
     openSelectorsPlacementDialog,
-    dispatch,
+    addSelectorToGroup,
+    copyControlToStorage,
+    setSelectorDialogItem,
+    setActiveSelectorIndex,
+    updateSelectorsGroup,
 }: Props) => {
     const initialTabIndex =
         selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
@@ -96,24 +97,18 @@ export const GroupControlSidebar = ({
                 return;
             } else if (action === TabActionType.Add) {
                 const newSelector = items[items.length - 1];
-                dispatch(addSelectorToGroup(newSelector));
+                addSelectorToGroup(newSelector);
             } else if (action !== TabActionType.ChangeChosen) {
-                dispatch(
-                    updateSelectorsGroup({
-                        ...selectorsGroup,
-                        group: items,
-                        ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
-                    }),
-                );
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    group: items,
+                    ...(items.length === 1 ? SINGLE_SELECTOR_SETTINGS : {}),
+                });
             }
 
-            dispatch(
-                setActiveSelectorIndex({
-                    activeSelectorIndex: selectedItemIndex,
-                }),
-            );
+            setActiveSelectorIndex(selectedItemIndex);
         },
-        [dispatch, selectorsGroup],
+        [setActiveSelectorIndex, addSelectorToGroup, updateSelectorsGroup, selectorsGroup],
     );
 
     const getDefaultTabText = React.useCallback(() => {
@@ -123,60 +118,43 @@ export const GroupControlSidebar = ({
 
     const handleChangeAutoHeight = React.useCallback(
         (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    autoHeight: value,
-                }),
-            );
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                autoHeight: value,
+            });
         },
-        [dispatch, selectorsGroup],
+        [updateSelectorsGroup, selectorsGroup],
     );
 
     const handleChangeButtonApply = React.useCallback(
         (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    buttonApply: value,
-                }),
-            );
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                buttonApply: value,
+            });
         },
-        [dispatch, selectorsGroup],
+        [updateSelectorsGroup, selectorsGroup],
     );
 
     const handleChangeButtonReset = React.useCallback(
         (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    buttonReset: value,
-                }),
-            );
+            updateSelectorsGroup({
+                ...selectorsGroup,
+                buttonReset: value,
+            });
         },
-        [dispatch, selectorsGroup],
+        [updateSelectorsGroup, selectorsGroup],
     );
 
-    const handleChangeUpdateControls = (value: boolean) => {
-        dispatch(
+    const handleChangeUpdateControls = React.useCallback(
+        (value: boolean) => {
             updateSelectorsGroup({
                 ...selectorsGroup,
                 updateControlsOnChange: value,
-            }),
-        );
-    };
-
-    const handleCopyItem = (itemIndex: number) => {
-        dispatch(copyControlToStorage(itemIndex));
-    };
-
-    const handleUpdateItem = (title: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                title,
-            }),
-        );
-    };
+            });
+        },
+        [selectorsGroup, updateSelectorsGroup],
+    );
 
     const showAutoHeight =
         isMultipleSelectors ||
@@ -201,8 +179,8 @@ export const GroupControlSidebar = ({
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
-                    onCopyItem={handleCopyItem}
-                    onUpdateItem={handleUpdateItem}
+                    onCopyItem={copyControlToStorage}
+                    onUpdateItem={setSelectorDialogItem}
                 />
             </div>
             <div className={b('settings')}>

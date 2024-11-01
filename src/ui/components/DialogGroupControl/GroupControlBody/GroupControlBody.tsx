@@ -7,19 +7,19 @@ import {Feature} from 'shared';
 import type {SelectorElementType} from 'ui/units/dash/store/actions/dashTyped';
 import Utils from 'ui/utils/utils';
 
-import {ELEMENT_TYPE} from '../../Control/constants';
-import {HintRow} from '../../Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
-import {InnerTitleRow} from '../../Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
-import {TitlePlacementRow} from '../../Control2/Sections/AppearanceSection/Rows/TitlePlacementRow/TitlePlacementRow';
-import {TitleRow} from '../../Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
-import {CommonSettingsSection} from '../../Control2/Sections/CommonSettingsSection/CommonSettingsSection';
-import {InputTypeSelector} from '../../Control2/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
-import {OperationSelector} from '../../Control2/Sections/OperationSelector/OperationSelector';
-import {RequiredValueCheckbox} from '../../Control2/Sections/ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
-import {ValueSelector} from '../../Control2/Sections/ValueSelector/ValueSelector';
-import {SelectorTypeSelect} from '../../Control2/SelectorTypeSelect/SelectorTypeSelect';
+import {ELEMENT_TYPE} from '../../../units/dash/containers/Dialogs/Control/constants';
+import {HintRow} from '../../../units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/Rows/HintRow/HintRow';
+import {InnerTitleRow} from '../../../units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
+import {TitlePlacementRow} from '../../../units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/Rows/TitlePlacementRow/TitlePlacementRow';
+import {TitleRow} from '../../../units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
+import {CommonSettingsSection} from '../../../units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
+import {InputTypeSelector} from '../../../units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
+import {OperationSelector} from '../../../units/dash/containers/Dialogs/Control2/Sections/OperationSelector/OperationSelector';
+import {RequiredValueCheckbox} from '../../../units/dash/containers/Dialogs/Control2/Sections/ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
+import {ValueSelector} from '../../../units/dash/containers/Dialogs/Control2/Sections/ValueSelector/ValueSelector';
+import {SelectorTypeSelect} from '../../../units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 
-import './../GroupControl.scss';
+import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');

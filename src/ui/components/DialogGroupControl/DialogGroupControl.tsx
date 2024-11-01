@@ -5,6 +5,9 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared/constants/qa';
 import {openDialog} from 'ui/store/actions/dialog';
+import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+import type {SetSelectorDialogItemArgs} from 'ui/units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
@@ -14,34 +17,76 @@ import {
     selectSelectorDialog,
 } from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {
+    addSelectorToGroup,
     applyGroupControlDialog,
+    copyControlToStorage,
+    setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'units/dash/store/actions/controls/actions';
 
-import {DIALOG_SELECTORS_PLACEMENT} from '../../../../../components/DialogSelectorsPlacement/DialogSelectorsPlacement';
-import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';
-import {closeDialog} from '../../../store/actions/dialogs/actions';
+import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
+import {closeDialog} from '../../units/dash/store/actions/dialogs/actions';
+import {DIALOG_SELECTORS_PLACEMENT} from '../DialogSelectorsPlacement/DialogSelectorsPlacement';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
 import {GroupControlFooter} from './GroupControlFooter/GroupControlFooter';
 import {GroupControlSidebar} from './GroupControlSidebar/GroupControlSidebar';
 
-import './GroupControl.scss';
+import './DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-export const GroupControl = () => {
+export const DialogGroupControl = () => {
+    const dispatch = useDispatch();
+
     const {id, draftId} = useSelector(selectSelectorDialog);
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
     const elementType = useSelector(selectSelectorControlType);
 
-    const dispatch = useDispatch();
-
     const handleClose = React.useCallback(() => {
         dispatch(closeDialog());
     }, [dispatch]);
+
+    const handleAddSelectorToGroup = React.useCallback(
+        (selectorArgs: SetSelectorDialogItemArgs) => {
+            dispatch(addSelectorToGroup(selectorArgs));
+        },
+        [dispatch],
+    );
+
+    const handleCopyControlToStorage = React.useCallback(
+        (index: number) => {
+            dispatch(copyControlToStorage(index));
+        },
+        [dispatch],
+    );
+
+    const handleSetSelectorDialogItem = React.useCallback(
+        (title: string) => {
+            dispatch(setSelectorDialogItem({title}));
+        },
+        [dispatch],
+    );
+
+    const handleSetActiveSelectorIndex = React.useCallback(
+        (index: number) => {
+            dispatch(
+                setActiveSelectorIndex({
+                    activeSelectorIndex: index,
+                }),
+            );
+        },
+        [dispatch],
+    );
+
+    const handleUpdateSelectorsGroup = React.useCallback(
+        (selectorState: SelectorsGroupDialogState) => {
+            dispatch(updateSelectorsGroup(selectorState));
+        },
+        [dispatch],
+    );
 
     const openSelectorsPlacementDialog = React.useCallback(() => {
         dispatch(
@@ -70,7 +115,11 @@ export const GroupControl = () => {
             sidebar={
                 <GroupControlSidebar
                     openSelectorsPlacementDialog={openSelectorsPlacementDialog}
-                    dispatch={dispatch}
+                    addSelectorToGroup={handleAddSelectorToGroup}
+                    copyControlToStorage={handleCopyControlToStorage}
+                    setSelectorDialogItem={handleSetSelectorDialogItem}
+                    setActiveSelectorIndex={handleSetActiveSelectorIndex}
+                    updateSelectorsGroup={handleUpdateSelectorsGroup}
                     selectorsGroup={selectorsGroup}
                     activeSelectorIndex={activeSelectorIndex}
                 />

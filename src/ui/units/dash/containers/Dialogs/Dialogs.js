@@ -5,6 +5,7 @@ import {useEffectOnce} from 'ui';
 import {registry} from 'ui/registry';
 
 import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
+import {DialogGroupControl} from '../../../../components/DialogGroupControl/DialogGroupControl';
 import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
 import DialogTitleWidget from '../../../../components/DialogTitleWidget/DialogTitleWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
@@ -20,7 +21,6 @@ import {
 
 import Connections from './Connections/Connections';
 import Control2 from './Control2/Control2';
-import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 
@@ -108,7 +108,7 @@ export function Dialogs() {
         case DIALOG_TYPE.CONTROL:
             return <Control2 />;
         case DIALOG_TYPE.GROUP_CONTROL:
-            return <GroupControl />;
+            return <DialogGroupControl />;
         case DIALOG_TYPE.SETTINGS:
             return <Settings />;
         case DIALOG_TYPE.SELECT_STATE: {
