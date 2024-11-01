@@ -837,7 +837,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const dashInfo = {
             dashId: entryId || '',
-            tabId: tabId || '',
+            dashTabId: tabId || '',
         };
 
         return {
