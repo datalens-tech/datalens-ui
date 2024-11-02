@@ -65,7 +65,7 @@ import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
 import type SDK from '../../../../libs/sdk';
-import Utils, {scrollToHash} from '../../../../utils';
+import Utils from '../../../../utils';
 import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
@@ -107,6 +107,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {scrollToHash} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -198,7 +199,7 @@ class Body extends React.PureComponent<BodyProps> {
         const newHash = props.location.hash;
         if (newHash !== state.hash) {
             newState.hash = newHash;
-            scrollToHash({hash: newHash.replace('#', ''), withDelay: props.tabId !== tabId});
+            scrollToHash({hash: newHash, withDelay: props.tabId !== tabId});
         }
 
         return Object.keys(newState).length ? newState : null;
@@ -875,7 +876,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        const DashKit = getConfiguredDashKit(undefined, disableHashNavigation);
+        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
 
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState

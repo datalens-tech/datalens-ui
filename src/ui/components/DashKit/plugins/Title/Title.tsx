@@ -13,7 +13,7 @@ import {
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
-import DashAnchorLink from './DashAnchorLink/DashAnchorLink';
+import AnchorLink from './AnchorLink/AnchorLink';
 
 import './Title.scss';
 
@@ -101,7 +101,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
 
         const anchor =
             disableHashNavigation || props.editMode ? null : (
-                <DashAnchorLink size={data.size} x={currentLayout.x || 0} to={data.text} />
+                <AnchorLink size={data.size} x={currentLayout.x || 0} to={data.text} />
             );
 
         return (

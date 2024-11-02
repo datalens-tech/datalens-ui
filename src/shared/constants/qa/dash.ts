@@ -49,6 +49,7 @@ export enum DashEntryQa {
 export enum TableOfContentQa {
     TableOfContent = 'table-of-content',
     CloseBtn = 'table-of-content-close',
+    MobileTableOfContent = 'mobile-table-of-content',
 }
 
 export enum DashMetaQa {
@@ -98,4 +99,9 @@ export enum DashkitQa {
 
 export enum DashBodyQa {
     ContentWrapper = 'dash-body-content-wrapper',
+}
+
+export enum FixedHeaderQa {
+    Container = 'dash-fixed-header-containter',
+    Controls = 'dash-fixed-header-controls',
 }

@@ -35,7 +35,7 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
 
 export const getConfiguredDashKit = (
     pluginDefaultsGetter: typeof currentDefaultsGetter = null,
-    disableHashNavigation?: boolean,
+    options?: {disableHashNavigation?: boolean},
 ) => {
     const controlSettings = {
         getDistincts: getDistinctsAction(),
@@ -44,7 +44,7 @@ export const getConfiguredDashKit = (
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
         const plugins = wrapPlugins(
             [
-                getTitlePlugin(disableHashNavigation),
+                getTitlePlugin(options?.disableHashNavigation),
                 textPlugin.setSettings({
                     apiHandler: MarkdownProvider.getMarkdown,
                 }),

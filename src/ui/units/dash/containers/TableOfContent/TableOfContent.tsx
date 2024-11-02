@@ -11,7 +11,7 @@ import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
-import {scrollToHash} from 'ui/utils';
+import {scrollToHash} from 'ui/utils/scrollUtils';
 import {
     selectHashStates,
     selectShowTableOfContent,
@@ -86,7 +86,7 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                     handleToggleTableOfContent();
                 }
                 if (disableHashNavigation) {
-                    scrollToHash({hash: `#${encodeURIComponent(itemTitle)}`, withDelay: true});
+                    scrollToHash({hash: encodeURIComponent(itemTitle), withDelay: true});
                 }
             },
             [isSelectedTab, disableHashNavigation, dispatch, handleToggleTableOfContent],
