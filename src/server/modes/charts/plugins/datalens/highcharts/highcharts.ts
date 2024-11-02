@@ -1,3 +1,5 @@
+import set from 'lodash/set';
+
 import type {
     DATASET_FIELD_TYPES,
     FeatureConfig,
@@ -10,7 +12,6 @@ import {
     LabelsPositions,
     LegendDisplayMode,
     VISUALIZATIONS_WITH_LABELS_POSITION,
-    getIsNavigatorEnabled,
     isDateField,
 } from '../../../../../../shared';
 import type {IgnoreProps} from '../utils/axis-helpers';
@@ -73,11 +74,6 @@ export const buildHighchartsConfigPrivate = (args: {
     }
 
     const plotOptions: any = {};
-
-    // By default, ChartKit enables navigator when there is a highstock object in config
-    const navigator: Highcharts.Options['navigator'] = {
-        enabled: false,
-    };
 
     const axisWithAppliedSettings = applyCommonAxisSettings({shared, xAxis, yAxis});
     xAxis = axisWithAppliedSettings.xAxis;
@@ -208,25 +204,18 @@ export const buildHighchartsConfigPrivate = (args: {
         },
     };
 
-    if (getIsNavigatorEnabled(shared)) {
-        navigator.enabled = true;
-        const navigatorSeries: {
-            type: string | undefined;
-            stacking?: string;
-        } = {
-            type: chart.type,
-        };
-        switch (shared.visualization.id) {
-            case 'area':
-                navigatorSeries.stacking = 'normal';
-                break;
-            case 'area100p':
-                navigatorSeries.stacking = 'percent';
-                break;
-            default:
-                break;
+    const navigator: Highcharts.Options['navigator'] = {
+        series: {
+            dataLabels: {color: 'transparent'},
+            fillOpacity: 0.15,
+        },
+    };
+
+    switch (shared.visualization.id) {
+        case 'column': {
+            set(navigator, 'yAxis.softMin', 0);
+            break;
         }
-        navigator.series = navigatorSeries;
     }
 
     const result: ExtendedHighchartsOptions = {
@@ -241,12 +230,7 @@ export const buildHighchartsConfigPrivate = (args: {
         // Option navigator.series.dataLabels.enabled = false does not work (highcharts v8.2.2)
         // The documentation says that the series between the chart and the navigator are fumbling, and apparently,
         // because of this, there is a problem when trying to hide dataLabels, because they are marked in the series
-        navigator: {
-            series: {
-                dataLabels: {color: 'transparent'},
-                fillOpacity: 0.15,
-            },
-        },
+        navigator,
     };
 
     log('HIGHCHARTS:');
