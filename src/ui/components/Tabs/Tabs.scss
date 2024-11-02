@@ -37,6 +37,11 @@ $adaptiveTabsClass: '.gc-adaptive-tabs';
 
     &__tab {
         width: 100%;
+
+        // Users often use emojis in tab titles,
+        // so we have to set min-width for correct  ellipsis
+        min-width: 40px;
+
         display: inline-block;
         border-bottom: var(--gc-tabs-border-width) solid transparent;
         height: calc(#{var(--gc-tabs-height)} - 2px);

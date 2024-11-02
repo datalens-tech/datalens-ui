@@ -39,6 +39,11 @@ export const enum DialogColumnSettingsQa {
     PinnedColumnsInput = 'dialog-column-settings-pinned-columns-input',
 }
 
+export const enum DialogFieldSettingsQa {
+    FieldTitleInput = 'dialog-title-input',
+    MarkdownEnableButton = 'dialog-field-md-switcher',
+}
+
 export const enum DialogFieldBackgroundSettingsQa {
     EnableButton = 'dialog-field-bg-switcher',
     FillTypeButtons = 'dialog-field-bg-fill-type',

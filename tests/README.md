@@ -34,10 +34,10 @@ Install Node.js >= v18.17.0 manually or via [node version manager](https://githu
 Start project in dev mode (don't forget to update docker images first):
 
 ```bash
-docker compose -f tests/docker-compose.e2e.yml -f tests/docker-compose.e2e-dev.yml up
+docker compose -f tests/docker-compose.e2e.yml up
 
 # Start datalens ui in dev mode:
-npm ci # Use next command on Apple M1: npm ci --target_arch=x64
+npm ci
 npm run dev
 ```
 
@@ -48,8 +48,7 @@ npm run test:e2e:opensource
 ```
 
 ### How to add or modify new connection/dataset/chart/dashboard for E2E tests:
-
-1. Start project `sudo rm -rf tests/metadata && docker compose -f tests/docker-compose.e2e.yml pull && docker compose -f tests/docker-compose.e2e.yml up`
+1. Start project `docker compose -f tests/docker-compose.e2e.yml down -v && docker compose -f tests/docker-compose.e2e.yml up datalens-from-build`
 2. Create necessary test entries in interface
 3. Run `npm run test:e2e:us-dump` - this command will create new database dump with test entries which you just created
 

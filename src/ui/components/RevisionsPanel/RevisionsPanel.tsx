@@ -19,7 +19,7 @@ import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
 import RevisionsControls from './components/RevisionsControls';
-import {getAvailableScopes, getDraftWarningAvailableScopes} from './utils';
+import {getDraftWarningAvailableScopes} from './utils';
 
 import './RevisionsPanel.scss';
 
@@ -39,22 +39,15 @@ export type RevisionsPanelProps = {
 const b = block('revisions-panel');
 const i18n = I18n.keyset('component.revisions-panel.view');
 
-const SCOPE_TEXTS: Record<string, string> = {
-    dash: i18n('label_dash'),
-    widget: i18n('label_chart'),
-    editor: i18n('label_editor'),
-};
-export const SCOPE_TEXTS_PANEL: Record<string, string> = {
-    dash: i18n('label_of-dash'),
-    widget: i18n('label_of-chart'),
-    editor: i18n('label_of-editor'),
-};
-
 export const lockedTextInfo = (loginOrId: string, scope: string) => {
     const {getLoginById} = registry.common.functions.getAll();
     const LoginById = getLoginById();
 
     const showLogin = LoginById && loginOrId && loginOrId !== 'unknown';
+
+    const {getRevisionsPanelEntryScopesTexts} = registry.common.functions.getAll();
+
+    const scopeTexts = getRevisionsPanelEntryScopesTexts();
 
     return (
         <div>
@@ -66,10 +59,10 @@ export const lockedTextInfo = (loginOrId: string, scope: string) => {
                         view="secondary"
                     />
                     &nbsp;
-                    {i18n('label_entry-is-editing-by', {scope: SCOPE_TEXTS[scope]})}
+                    {i18n('label_entry-is-editing-by', {scope: scopeTexts[scope]?.scopeText || ''})}
                 </React.Fragment>
             ) : (
-                i18n('label_already-editing-entry', {scope: SCOPE_TEXTS[scope]})
+                i18n('label_already-editing-entry', {scope: scopeTexts[scope]?.scopeText || ''})
             )}
         </div>
     );
@@ -84,6 +77,10 @@ type LockedTextInfoParams = {
 
 export const setLockedTextInfo = ({loginOrId, scope, callback, onError}: LockedTextInfoParams) => {
     return function (dispatch: AppDispatch) {
+        const {getRevisionsPanelEntryScopesTexts} = registry.common.functions.getAll();
+
+        const scopeTexts = getRevisionsPanelEntryScopesTexts();
+
         dispatch(
             openDialogConfirm({
                 onApply: () => {
@@ -108,7 +105,7 @@ export const setLockedTextInfo = ({loginOrId, scope, callback, onError}: LockedT
                 },
                 widthType: 'medium',
                 confirmHeaderText: getCapitalizedStr(
-                    i18n('label_entry-is-editing', {scope: SCOPE_TEXTS[scope]}),
+                    i18n('label_entry-is-editing', {scope: scopeTexts[scope]?.scopeText || ''}),
                 ),
                 cancelButtonText: i18n('button_cancel'),
                 confirmButtonText: i18n('button_edit-anyway'),
@@ -134,9 +131,11 @@ const RevisionsPanel = ({
     const {scope, updatedBy, updatedAt} = entry;
     const {publishedId, currentRevId, savedId, revisionsLoadingStatus} = storedEntryContent;
 
+    const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
+
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
     const isInAvailableScopes = React.useMemo(
-        () => getAvailableScopes().includes(scope as EntryScope),
+        () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
         [location, scope],
     );
     const isDraftInAvailableScopes = React.useMemo(
@@ -201,7 +200,11 @@ const RevisionsPanel = ({
         return null;
     }
 
-    const scopeText = SCOPE_TEXTS_PANEL[scope] || '';
+    const {getRevisionsPanelEntryScopesTexts} = registry.common.functions.getAll();
+
+    const scopeTexts = getRevisionsPanelEntryScopesTexts();
+
+    const scopeText = scopeTexts[scope]?.panelText || '';
     const date = moment(updatedAt).format(TIMESTAMP_FORMAT);
 
     const {getLoginById} = registry.common.functions.getAll();

@@ -1,7 +1,7 @@
 import type {
     AddGoogleSheetResponse,
     FileSourceInfo,
-    GoogleRefreshToken,
+    RefreshToken,
     StateStatus,
     UpdateFileSourceResponse,
 } from '../../../../../shared/schema';
@@ -83,7 +83,7 @@ type GSheetActiveDialogReplace = {
     sourceId: string;
     authorized: boolean;
     connectionId?: string;
-    refreshToken?: GoogleRefreshToken;
+    refreshToken?: RefreshToken;
 };
 
 type GSheetActiveDialogLogout = {

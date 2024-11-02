@@ -7,8 +7,8 @@
 
     $itemsRightPadding: 10px;
 
-    $buttonVerticalPaddings: ($controlDefaultHeight - $buttonSmallHeight)/2;
-    $checkboxVerticalPaddings: ($controlDefaultHeight - $checkboxHeight)/2;
+    $buttonVerticalPaddings: ($controlDefaultHeight - $buttonSmallHeight) * 0.5;
+    $checkboxVerticalPaddings: ($controlDefaultHeight - $checkboxHeight) * 0.5;
 
     display: block;
     height: 100%;

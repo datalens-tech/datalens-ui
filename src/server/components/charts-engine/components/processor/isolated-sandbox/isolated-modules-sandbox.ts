@@ -2,58 +2,30 @@ import type IsolatedVM from 'isolated-vm';
 import {isString} from 'lodash';
 
 import type {IChartEditor} from '../../../../../../shared';
-import {getTranslationFn} from '../../../../../../shared/modules/language';
-import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {Console} from '../console';
 
 import type {ChartEditorGetTranslation} from './interop/charteditor-api';
 import {requireShim} from './require-shim';
+import {SandboxError} from './sandbox';
 import {safeStringify} from './utils';
 
-const {
-    RUNTIME_ERROR,
-    RUNTIME_TIMEOUT_ERROR,
-    CONFIG_LOADING_ERROR,
-    DEPS_RESOLVE_ERROR,
-    ROWS_NUMBER_OVERSIZE,
-    DATA_FETCHING_ERROR,
-    SEGMENTS_OVERSIZE,
-    TABLE_OVERSIZE,
-} = config;
-
-const DEFAULT_USER_LANG = 'ru';
+const {RUNTIME_ERROR, RUNTIME_TIMEOUT_ERROR} = config;
 
 type ProcessModuleParams = {
     name: string;
     code: string;
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     nativeModules: Record<string, unknown>;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
+    getTranslation: (
+        keyset: string,
+        key: string,
+        params?: Record<string, string | number>,
+    ) => string;
 };
-
-export class SandboxError extends Error {
-    code:
-        | typeof RUNTIME_ERROR
-        | typeof RUNTIME_TIMEOUT_ERROR
-        | typeof CONFIG_LOADING_ERROR
-        | typeof DEPS_RESOLVE_ERROR
-        | typeof ROWS_NUMBER_OVERSIZE
-        | typeof DATA_FETCHING_ERROR
-        | typeof SEGMENTS_OVERSIZE
-        | typeof TABLE_OVERSIZE = RUNTIME_ERROR;
-    executionResult?: {
-        executionTiming: [number, number];
-        filename: string;
-        logs: {type: string; value: string}[][];
-        stackTrace?: string;
-    };
-    details?: Record<string, string | number>;
-    stackTrace?: string;
-    sandboxVersion = 2;
-}
 
 type ExecuteParams = {
     code: string;
@@ -173,11 +145,11 @@ export const processModule = async ({
     userLogin,
     isScreenshoter,
     context,
+    getTranslation,
 }: ProcessModuleParams) => {
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
     const chartEditorApi = {
-        getTranslation: getTranslationFn(i18n.getI18nServer()),
-        getUserLang: () => userLang || DEFAULT_USER_LANG,
+        getTranslation,
+        getUserLang: () => userLang,
         getUserLogin: () => userLogin || '',
     };
 

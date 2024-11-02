@@ -36,3 +36,11 @@
         }
     }
 }
+
+.chartkit-tooltip {
+    font-family: var(--g-text-body-font-family);
+
+    &__content {
+        font-size: 12px;
+    }
+}

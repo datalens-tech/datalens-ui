@@ -5,6 +5,7 @@ import LocationChange from 'components/LocationChange/LocationChange';
 import {usePrevious} from 'hooks/usePrevious';
 import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
+import {DashBodyQa} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {useMountedState} from 'ui/hooks/useMountedState';
@@ -105,7 +106,7 @@ export function App({...routeProps}: RouteComponentProps) {
             ref={wrapRef}
         >
             <LocationChange onLocationChanged={locationChangeHandler} />
-            <div className={b('content')}>
+            <div className={b('content')} data-qa={DashBodyQa.App}>
                 <DashWrapper {...routeProps} />
             </div>
             {showFooter && <Footer />}

@@ -98,10 +98,15 @@ export enum DashkitQa {
 }
 
 export enum DashBodyQa {
+    App = 'dash-app',
     ContentWrapper = 'dash-body-content-wrapper',
 }
 
 export enum FixedHeaderQa {
     Container = 'dash-fixed-header-containter',
     Controls = 'dash-fixed-header-controls',
+}
+
+export enum DashTabsQA {
+    Root = 'dash-tabs',
 }

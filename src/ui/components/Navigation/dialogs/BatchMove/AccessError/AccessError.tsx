@@ -18,16 +18,18 @@ type Props = {
     onClose: () => void;
     onNext: () => void;
     entries: NavigationEntry[];
+    entriesWithRights: NavigationEntry[];
 };
 
-export const AccessError = ({onClose, onNext, entries}: Props) => {
+export const AccessError = ({onClose, onNext, entries, entriesWithRights}: Props) => {
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
 
-    const entriesWithoutEditRights = React.useMemo(() => {
-        return entries.filter((entry) => entry.permissions.edit === false);
-    }, [entries]);
+    const entriesWithoutMoveRights = React.useMemo(() => {
+        const entriesIdsWithRights = new Set(entriesWithRights.map(({entryId}) => entryId));
+        return entries.filter(({entryId}) => !entriesIdsWithRights.has(entryId));
+    }, [entries, entriesWithRights]);
 
-    const hasButtonApply = entries.length !== entriesWithoutEditRights.length;
+    const hasButtonApply = entries.length !== entriesWithoutMoveRights.length;
 
     const handleClickRequestRights = (item: NavigationEntry) => {
         entryDialoguesRef.current?.open({
@@ -58,7 +60,7 @@ export const AccessError = ({onClose, onNext, entries}: Props) => {
                         </div>
                         <EntriesList
                             className={b('list')}
-                            entries={entriesWithoutEditRights}
+                            entries={entriesWithoutMoveRights}
                             renderAction={(item) => (
                                 <Button
                                     view="outlined"

@@ -107,6 +107,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollToHash} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
@@ -291,9 +292,11 @@ class Body extends React.PureComponent<BodyProps> {
                     children,
                     props as DashkitGroupRenderWithContextProps,
                 ),
+            gridProperties: getPropertiesWithResizeHandles,
         },
         {
             id: DEFAULT_GROUP,
+            gridProperties: getPropertiesWithResizeHandles,
         },
     ];
 
@@ -848,7 +851,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const dashInfo = {
             dashId: entryId || '',
-            tabId: tabId || '',
+            dashTabId: tabId || '',
         };
 
         return {

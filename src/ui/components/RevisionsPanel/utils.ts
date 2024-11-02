@@ -8,7 +8,7 @@ const isChartsPage = (part: string) => part !== 'editor';
 /**
  * Which sections should be allowed to show a new panel with versions
  */
-export function getAvailableScopes() {
+export function getEntryScopesWithRevisionsList(): EntryScope[] {
     const res = [EntryScope.Dash];
     const currentPathPart = getCurrentPageFirstPathPart();
 

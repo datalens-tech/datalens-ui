@@ -1,7 +1,9 @@
 import React from 'react';
 
+import type {SortingState} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
 import {BackgroundTable} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/BackgroundTable';
 
@@ -121,6 +123,15 @@ export const Table = React.memo<Props>((props: Props) => {
         return {cursor, ...actionParamsCss};
     };
 
+    let initialSortingState: SortingState | undefined;
+    if (config?.sort) {
+        initialSortingState = [
+            {
+                id: config.sort,
+                desc: config?.order === 'desc',
+            },
+        ];
+    }
     const {colgroup, header, body, footer, totalSize} = usePreparedTableData({
         data,
         dimensions: widgetDimensions,
@@ -129,6 +140,7 @@ export const Table = React.memo<Props>((props: Props) => {
         onSortingChange: handleSortingChange,
         getCellAdditionStyles,
         cellMinSizes,
+        sortingState: initialSortingState,
     });
 
     React.useEffect(() => {
@@ -138,7 +150,11 @@ export const Table = React.memo<Props>((props: Props) => {
     }, [onReady, cellMinSizes]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const tableActualHeight = useTableHeight({ref: tableRef, ready: Boolean(cellMinSizes)});
+    const tableActualHeight = useTableHeight({
+        ref: tableRef,
+        ready: Boolean(cellMinSizes),
+        totalSize,
+    });
     const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
@@ -239,21 +255,23 @@ export const Table = React.memo<Props>((props: Props) => {
                                     ))}
                                 </colgroup>
                             )}
-                            <TableHead
-                                sticky={true}
-                                rows={header.rows}
-                                style={header.style}
-                                tableHeight={tableActualHeight}
-                            />
                             {cellMinSizes && (
-                                <TableBody
-                                    rows={body.rows}
-                                    style={body.style}
-                                    onCellClick={handleCellClick}
-                                    rowRef={body.rowRef}
-                                />
+                                <React.Fragment>
+                                    <TableHead
+                                        sticky={true}
+                                        rows={header.rows}
+                                        style={header.style}
+                                        tableHeight={tableActualHeight}
+                                    />
+                                    <TableBody
+                                        rows={body.rows}
+                                        style={body.style}
+                                        onCellClick={handleCellClick}
+                                        rowRef={body.rowRef}
+                                    />
+                                    <TableFooter rows={footer.rows} style={footer.style} />
+                                </React.Fragment>
                             )}
-                            <TableFooter rows={footer.rows} style={footer.style} />
                         </table>
                     )}
                 </div>
@@ -271,7 +289,12 @@ export const Table = React.memo<Props>((props: Props) => {
             <BackgroundTable
                 dimensions={widgetDimensions}
                 data={{header, body, footer}}
-                onChangeMinWidth={setCellMinWidth}
+                onChangeMinWidth={(colWidths) => {
+                    if (!isEqual(cellMinSizes, colWidths)) {
+                        setCellMinWidth(colWidths);
+                    }
+                }}
+                width={config?.settings?.width ?? 'auto'}
             />
         </React.Fragment>
     );

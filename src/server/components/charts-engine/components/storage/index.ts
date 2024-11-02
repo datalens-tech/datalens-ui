@@ -1,6 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import type {BaseStorageInitParams, ResolveConfigProps} from './base';
+import type {BaseStorageInitParams, EmbedResolveConfigProps, ResolveConfigProps} from './base';
+import type {EmbeddingInfo, ResolvedConfig} from './types';
 import {UnitedStorage} from './united-storage';
 import {USProvider} from './united-storage/provider';
 
@@ -11,8 +12,18 @@ export function initStorage(data: BaseStorageInitParams) {
     storage.init(data);
 }
 
-export function resolveConfig(ctx: AppContext, options: ResolveConfigProps) {
+export function resolveConfig(
+    ctx: AppContext,
+    options: ResolveConfigProps,
+): Promise<ResolvedConfig> {
     return storage.resolveConfig(ctx, options);
+}
+
+export function resolveEmbedConfig(
+    ctx: AppContext,
+    options: EmbedResolveConfigProps,
+): Promise<EmbeddingInfo> {
+    return storage.resolveEmbedConfig(ctx, options);
 }
 
 export function initPreloading(ctx: AppContext) {

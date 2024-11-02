@@ -11,7 +11,7 @@ import {
     ErrorCode,
     isEnabledServerFeature,
 } from '../../../../shared';
-import {resolveConfig} from '../components/storage';
+import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
@@ -88,7 +88,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         // 3. it's selector from embedded dash, id is not used, dash is resolved by
         // token to get embeddedInfo and check token
         const configPromise = ctx.call('configLoading', (cx) =>
-            resolveConfig(cx, configResolveArgs),
+            resolveEmbedConfig(cx, configResolveArgs),
         );
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});

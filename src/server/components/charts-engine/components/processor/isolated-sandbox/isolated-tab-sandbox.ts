@@ -2,10 +2,8 @@ import type IsolatedVM from 'isolated-vm';
 import {isString} from 'lodash';
 
 import type {DashWidgetConfig} from '../../../../../../shared';
-import {getTranslationFn} from '../../../../../../shared/modules/language';
 import type {IChartEditor, Shared} from '../../../../../../shared/types';
 import type {ServerChartsConfig} from '../../../../../../shared/types/config/wizard';
-import {createI18nInstance} from '../../../../../utils/language';
 import {config} from '../../../constants';
 import {getChartApiContext} from '../chart-api-context';
 import {Console} from '../console';
@@ -15,18 +13,9 @@ import type {RuntimeMetadata} from '../types';
 
 import {prepareChartEditorApi} from './interop/charteditor-api';
 import {getPrepare} from './prepare';
+import {SandboxError} from './sandbox';
 
-const DEFAULT_USER_LANG = 'ru';
-const {
-    RUNTIME_ERROR,
-    RUNTIME_TIMEOUT_ERROR,
-    CONFIG_LOADING_ERROR,
-    DEPS_RESOLVE_ERROR,
-    ROWS_NUMBER_OVERSIZE,
-    DATA_FETCHING_ERROR,
-    SEGMENTS_OVERSIZE,
-    TABLE_OVERSIZE,
-} = config;
+const {RUNTIME_ERROR, RUNTIME_TIMEOUT_ERROR} = config;
 const DEFAULT_PROCESSING_TIMEOUT = 500;
 
 type ProcessTabParams = {
@@ -42,34 +31,18 @@ type ProcessTabParams = {
     shared: Record<string, object> | Shared | ServerChartsConfig;
     hooks: ProcessorHooks;
     userLogin: string | null;
-    userLang: string | null;
+    userLang: string;
     isScreenshoter: boolean;
     context: IsolatedVM.Context;
     features: {
         noJsonFn: boolean;
     };
+    getTranslation: (
+        keyset: string,
+        key: string,
+        params?: Record<string, string | number>,
+    ) => string;
 };
-
-export class SandboxError extends Error {
-    code:
-        | typeof RUNTIME_ERROR
-        | typeof RUNTIME_TIMEOUT_ERROR
-        | typeof CONFIG_LOADING_ERROR
-        | typeof DEPS_RESOLVE_ERROR
-        | typeof ROWS_NUMBER_OVERSIZE
-        | typeof DATA_FETCHING_ERROR
-        | typeof SEGMENTS_OVERSIZE
-        | typeof TABLE_OVERSIZE = RUNTIME_ERROR;
-    executionResult?: {
-        executionTiming: [number, number];
-        filename: string;
-        logs: LogItem[][];
-        stackTrace?: string;
-    };
-    details?: Record<string, string | number>;
-    stackTrace?: string;
-    sandboxVersion = 2;
-}
 
 type ExecuteParams = {
     code: string;
@@ -282,6 +255,7 @@ export const processTab = async ({
     isScreenshoter,
     context,
     features,
+    getTranslation,
 }: ProcessTabParams) => {
     const originalParams = params;
     const originalUsedParams = usedParams;
@@ -298,9 +272,8 @@ export const processTab = async ({
         userLang,
     });
 
-    const i18n = createI18nInstance({lang: userLang || DEFAULT_USER_LANG});
-    chartApiContext.ChartEditor.getTranslation = getTranslationFn(i18n.getI18nServer());
-    chartApiContext.ChartEditor.getUserLang = () => userLang || DEFAULT_USER_LANG;
+    chartApiContext.ChartEditor.getTranslation = getTranslation;
+    chartApiContext.ChartEditor.getUserLang = () => userLang;
     chartApiContext.ChartEditor.getUserLogin = () => userLogin || '';
 
     const result = await execute({

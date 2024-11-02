@@ -27,6 +27,9 @@ if (nodekit.config.isZitadelEnabled) {
     nodekit.config.appAuthHandler = authZitadel;
 }
 
+nodekit.config.appAllowedLangs = nodekit.config.regionalEnvConfig?.allowLanguages;
+nodekit.config.appDefaultLang = nodekit.config.regionalEnvConfig?.defaultLang;
+
 const app = initOpensourceApp(nodekit);
 registry.setupApp(app);
 
