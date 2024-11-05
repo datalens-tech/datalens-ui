@@ -4,7 +4,7 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 
-import type {ChartKitHtmlItem, WrappedHTML} from '../../../../../../shared';
+import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
@@ -240,9 +240,23 @@ async function getUnwrappedFunction(args: {
                     numberFormat: window.Highcharts.numberFormat,
                     dateFormat: window.Highcharts.dateFormat,
                 },
-                ChartEditor: {
-                    getChartClientRect: () => {
+                Chart: {
+                    getBoundingClientRect: () => {
                         return getCurrentChart()?.container.getBoundingClientRect();
+                    },
+                    appendElements: (node: unknown) => {
+                        const chart = getCurrentChart();
+
+                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const container = chart.container;
+                        const wrapper = document.createElement('div');
+                        wrapper.insertAdjacentHTML('beforeend', html);
+                        const nodes = Array.from(wrapper.childNodes);
+
+                        return nodes.map((node) => {
+                            const el = container.appendChild(node) as HTMLElement;
+                            return el.getBoundingClientRect();
+                        });
                     },
                     updateSeries: (seriesIndex: number, data: any) => {
                         processHtmlFields(data);
@@ -251,10 +265,6 @@ async function getUnwrappedFunction(args: {
                     updateTitle: (data: any) => {
                         processHtmlFields(data);
                         getCurrentChart()?.title?.update(data);
-                    },
-                    appendElement: (value: WrappedHTML) => {
-                        const container = getCurrentChart()?.container;
-                        container?.insertAdjacentHTML('beforeend', unwrapHtml(value) as string);
                     },
                     findPoint: (fn: (point: unknown) => boolean) => {
                         const chartSeries = getCurrentChart()?.series ?? [];
