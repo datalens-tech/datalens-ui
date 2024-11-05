@@ -572,7 +572,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         return (
             <div>
-                <span className={b('label')}>{i18n('wizard', 'label_widget-density')}</span>
+                <span className={b('label')}>{i18n('wizard', 'label_widget-size')}</span>
                 <RadioButton
                     value={selected}
                     onChange={(event) => {
