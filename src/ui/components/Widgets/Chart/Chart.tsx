@@ -78,6 +78,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         forceShowSafeChart,
         paneSplitOrientation,
         widgetDashState,
+        onBeforeChartLoad,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -190,6 +191,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         isPageHidden,
         autoupdateInterval,
         forceShowSafeChart,
+        onBeforeChartLoad,
     });
 
     /**

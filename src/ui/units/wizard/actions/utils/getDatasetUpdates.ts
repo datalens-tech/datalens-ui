@@ -67,10 +67,19 @@ function isDeleteUpdate(update: Update) {
     return update.action === 'delete' || update.action === 'delete_field';
 }
 
-function mergeUpdates(prevUpdates: Update[], updates: Update[], datasetId: string) {
+function mergeUpdates(args: {
+    prevUpdates: Update[];
+    updates: Update[];
+    datasetId: string;
+    availableDatasetIds: string[];
+}) {
+    const {prevUpdates, updates, datasetId, availableDatasetIds} = args;
+    const usedDatasetIds = new Set([...availableDatasetIds, datasetId]);
     // Here we delete the old updates that are not relevant, so as not to store them,
     const filteredOldUpdates = prevUpdates.reduceRight((acc: Update[], newestOldUpdate) => {
         const needsDelete =
+            (newestOldUpdate.field.datasetId &&
+                !usedDatasetIds.has(newestOldUpdate.field.datasetId)) ||
             isDeleteUpdate(newestOldUpdate) ||
             updates.some((newUpdate: Update) => {
                 const fieldDatasetId = newUpdate.field.datasetId || datasetId;
@@ -353,7 +362,12 @@ export function getDatasetUpdates(args: UpdateDatasetArgs) {
     });
 
     result.schema = newResultSchema;
-    result.updates = mergeUpdates(oldUpdates, updates, dataset.id);
+    result.updates = mergeUpdates({
+        prevUpdates: oldUpdates,
+        updates,
+        datasetId: dataset.id,
+        availableDatasetIds: prevDatasets.map((d) => d.id),
+    });
     result.dimensions = dimensions;
     result.measures = measures;
     result.hierarchies = validateHierarchies({

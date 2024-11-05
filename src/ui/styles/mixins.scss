@@ -149,9 +149,10 @@
     &:active {
         color: var(--g-color-text-secondary);
     }
-
-    display: inline;
-    text-decoration: none;
+    & {
+        display: inline;
+        text-decoration: none;
+    }
 
     &:hover {
         color: var(--g-color-text-primary);

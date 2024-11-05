@@ -4,12 +4,10 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {ChartsEngine} from '..';
 import type {WorkbookId} from '../../../../shared';
 import {ControlType} from '../../../../shared';
-import {EDITOR_TYPE} from '../../../../shared/constants';
 import type {ProcessorParams} from '../components/processor';
 import type {ReducedResolvedConfig, ResolvedConfig} from '../components/storage/types';
 
 import {runControl} from './control';
-import {runEditor} from './editor';
 import {runWizardChart} from './wizard';
 
 export type Runner = {
@@ -37,23 +35,6 @@ export type RunnerHandlerProps = {
 
 export function getDefaultRunners() {
     const runners: Runner[] = [
-        {
-            name: 'editor',
-            trigger: new Set([
-                'graph_node',
-                'table_node',
-                'text_node',
-                'metric_node',
-                'map_node',
-                'ymap_node',
-                'control_node',
-                'markdown_node',
-                'markup_node',
-                'timeseries_node',
-                EDITOR_TYPE.D3_NODE,
-            ]),
-            handler: runEditor,
-        },
         {
             name: 'wizard',
             trigger: new Set([

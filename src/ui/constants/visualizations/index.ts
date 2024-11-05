@@ -97,6 +97,7 @@ export const SETTINGS = {
         IGNORE: AxisNullsMode.Ignore,
         CONNECT: AxisNullsMode.Connect,
         AS_ZERO: AxisNullsMode.AsZero,
+        USE_PREVIOUS: AxisNullsMode.UsePrevious,
     },
     HOLIDAYS: {
         ON: 'on',

@@ -3,10 +3,12 @@
 .dl-aside-header {
     &__item-link {
         @include link-reset;
-        display: flex;
-        height: 40px;
-        width: 100%;
-        align-items: center;
+        & {
+            display: flex;
+            height: 40px;
+            width: 100%;
+            align-items: center;
+        }
     }
 
     &__item-wrap {

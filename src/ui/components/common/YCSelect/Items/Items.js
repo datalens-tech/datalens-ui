@@ -244,19 +244,6 @@ export class ItemsWrapper extends React.PureComponent {
         this._addUserItem();
     };
 
-    /**
-     * @param {object} opt
-     * @param {number} opt.scrollOffset
-     * @returns {void}
-     */
-    _onAutosizerListScroll = ({scrollOffset}) => {
-        const {setAllowHideOnContentScroll} = this.props;
-
-        if (setAllowHideOnContentScroll) {
-            setAllowHideOnContentScroll(scrollOffset === 0);
-        }
-    };
-
     _renderItem = (item, style = {}) => {
         const {innerValue} = this.props;
         const isSelected = innerValue.has(item.value);
@@ -493,7 +480,6 @@ export class ItemsWrapper extends React.PureComponent {
                             overscanCount={5}
                             estimatedItemSize={itemHeight}
                             onItemsRendered={this._onItemsRendered}
-                            onScroll={this._onAutosizerListScroll}
                         >
                             {this._itemRenderer}
                         </List>
