@@ -99,6 +99,7 @@ export class UiSandboxRuntime {
 
         const items: QuickJSHandle[] = [];
 
+        let timeoutId: ReturnType<typeof setTimeout>;
         const setItem = (item: object, parent: QuickJSHandle) => {
             Object.entries(item).forEach(([key, value]) => {
                 if (typeof value === 'object') {
@@ -129,7 +130,8 @@ export class UiSandboxRuntime {
                                     fnContext.dispose();
                                     mappedArgs.forEach((arg) => arg.dispose());
 
-                                    setTimeout(() => {
+                                    clearTimeout(timeoutId);
+                                    timeoutId = setTimeout(() => {
                                         if (callEnded) {
                                             if (longLivedCallbackHandle.alive) {
                                                 longLivedCallbackHandle.dispose();
