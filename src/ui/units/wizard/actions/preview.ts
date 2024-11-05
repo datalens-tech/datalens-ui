@@ -72,7 +72,7 @@ export function setUpdates({updates}: {updates: Update[]}): SetUpdatesAction {
 
 type ActualizeAndSetUpdatesArgs = {
     updates: Update[];
-    onUpdateItemsGuids?: string[];
+    onUpdateItemsGuids?: {guid: string; datasetId?: string}[];
     shouldMergeUpdatesFromState?: boolean;
 };
 

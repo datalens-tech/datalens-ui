@@ -11,6 +11,7 @@ import {
     SquareLetterT,
 } from '@gravity-ui/icons';
 import {i18n} from 'i18n';
+import {pick} from 'lodash';
 import isEqual from 'lodash/isEqual';
 import type {
     CommonNumberFormattingOptions,
@@ -440,7 +441,7 @@ type ActualizaeUpdatesArgs = {
     visualization?: Shared['visualization'];
     sectionDatasetFields: Field[];
     visualizationFields: Field[];
-    onUpdateItemsGuids?: string[];
+    onUpdateItemsGuids?: {guid: string; datasetId?: string}[];
 };
 
 export function actualizeUpdates({
@@ -456,28 +457,42 @@ export function actualizeUpdates({
         return updates;
     }
 
-    const sectionDatasetFieldsGuids = new Set(sectionDatasetFields.map((field) => field.guid));
+    const getFieldKey = (field: {guid: string; datasetId?: string}) =>
+        `${field.datasetId}__${field.guid}`;
+
+    const sectionDatasetFieldsGuids = sectionDatasetFields.reduce<Record<string, Field>>(
+        (acc, field) => {
+            acc[getFieldKey(field)] = field;
+
+            return acc;
+        },
+        {},
+    );
 
     const placeholders: Placeholder[] = currentVisualization?.placeholders || [];
-
     const placeholdersItems = placeholders.reduce((acc: Field[], placeholder: Placeholder) => {
         const items = placeholder.items || [];
 
         return [...acc, ...items];
     }, [] as Field[]);
 
-    const sectionVisualizationFieldsGuids = new Set([
-        ...placeholdersItems.map((field: Field) => field.guid),
-        ...visualizationFields.map((field: Field) => field.guid),
+    const sectionVisualizationFields = [
+        ...placeholdersItems.map((field: Field) => pick(field, 'guid', 'datasetId')),
+        ...visualizationFields.map((field: Field) => pick(field, 'guid', 'datasetId')),
         ...onUpdateItemsGuids,
-    ]);
+    ].reduce<Record<string, unknown>>((acc, field) => {
+        acc[getFieldKey(field)] = field;
+
+        return acc;
+    }, {});
 
     return updates.filter((update: Update) => {
         const field = update.field;
+        const key = getFieldKey(field);
 
         return (
-            (sectionDatasetFieldsGuids.has(field.guid) && isFieldVisible(field as Field)) ||
-            sectionVisualizationFieldsGuids.has(field.guid)
+            (sectionDatasetFieldsGuids[key] && isFieldVisible(field as Field)) ||
+            sectionVisualizationFields[key]
         );
     });
 }
