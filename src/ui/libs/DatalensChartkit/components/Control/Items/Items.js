@@ -69,6 +69,7 @@ function BaseControlSelect({
     required,
     hasValidationError,
     limitLabel,
+    disabled,
 }) {
     const [currentValue, setCurrentValue] = React.useState(
         multiselect ? wrapToArray(value) : value,
@@ -128,6 +129,7 @@ function BaseControlSelect({
             className={b('yc-select')}
             showSelectAll={showSelectAll}
             hasValidationError={hasValidationError}
+            disabled={disabled}
         />
     );
 }
@@ -160,6 +162,7 @@ BaseControlSelect.propTypes = {
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
     limitLabel: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 function BaseControlInput({
@@ -170,6 +173,7 @@ function BaseControlInput({
     labelInside,
     label,
     hasValidationError,
+    disabled,
 }) {
     const [text, setText] = React.useState(value || '');
 
@@ -200,6 +204,7 @@ function BaseControlInput({
             // onKeyDown={event => event.keyCode === 13 && props.onEnter(text)}
             size={controlSize}
             error={isInvalid}
+            disabled={disabled}
         />
     );
 }
@@ -218,6 +223,7 @@ BaseControlInput.propTypes = {
     widgetId: PropTypes.string,
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
+    disabled: PropTypes.bool,
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -310,6 +316,7 @@ function BaseControlDatepicker({
     labelInside,
     label,
     labelPlacement,
+    disabled,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -341,6 +348,7 @@ function BaseControlDatepicker({
             hasValidationError={hasValidationError}
             required={required}
             label={labelInside ? label : innerLabel}
+            disabled={disabled}
         />
     );
 }
@@ -363,6 +371,7 @@ BaseControlDatepicker.propTypes = {
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 function BaseControlRangeDatepicker({
@@ -380,6 +389,7 @@ function BaseControlRangeDatepicker({
     labelInside,
     label,
     labelPlacement,
+    disabled,
 }) {
     let from;
     let to;
@@ -439,6 +449,7 @@ function BaseControlRangeDatepicker({
             required={required}
             fillPartialInterval={true}
             label={labelInside ? label : innerLabel}
+            disabled={disabled}
         />
     );
 }
@@ -470,6 +481,7 @@ BaseControlRangeDatepicker.propTypes = {
     innerLabel: PropTypes.string,
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 function BaseControlButton({label, theme, onChange, qa, disabled}) {
@@ -503,7 +515,7 @@ BaseControlButton.propTypes = {
     qa: PropTypes.string,
 };
 
-function BaseControlCheckbox({label, value, onChange}) {
+function BaseControlCheckbox({label, value, onChange, disabled}) {
     const checked = value === CheckboxControlValue.TRUE;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.CHECKBOX : 'm';
@@ -518,6 +530,7 @@ function BaseControlCheckbox({label, value, onChange}) {
             onChange={() =>
                 onChange(checked ? CheckboxControlValue.FALSE : CheckboxControlValue.TRUE)
             }
+            disabled={disabled}
         >
             {label}
         </Checkbox>
@@ -536,6 +549,7 @@ BaseControlCheckbox.propTypes = {
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hidden: PropTypes.bool,
     widgetId: PropTypes.string,
+    disabled: PropTypes.bool,
 };
 
 const ControlInput = withWrapForControls(BaseControlInput);

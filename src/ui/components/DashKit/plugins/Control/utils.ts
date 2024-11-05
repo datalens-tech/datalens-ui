@@ -10,7 +10,9 @@ import {DATASET_IGNORED_DATA_TYPES, DashTabItemControlSourceType} from 'shared';
 import type {
     ChartsData,
     DatasetFieldsListItem,
+    ResponseControlsExtra,
     ResponseSuccessControls,
+    ResponseSuccessSingleControl,
 } from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 
 import {LOAD_STATUS} from './constants';
@@ -58,12 +60,14 @@ export const getLabels = (data: DashTabItemControlSingle) => {
     return {label, innerLabel};
 };
 
-export const getDatasetSourceInfo = ({
+export const getDatasetSourceInfo = <
+    T extends ResponseControlsExtra = ResponseSuccessSingleControl,
+>({
     currentLoadedData,
     data,
     actualLoadedData,
 }: {
-    currentLoadedData?: ResponseSuccessControls;
+    currentLoadedData?: T;
     data: DashTabItemControlDataset;
     actualLoadedData: null | ResponseSuccessControls;
 }) => {
@@ -106,20 +110,22 @@ export const getDatasetSourceInfo = ({
     return {datasetId, datasetFieldId, datasetFieldType, datasetFields, datasetFieldsMap};
 };
 
-export const checkDatasetFieldType = ({
+export const checkDatasetFieldType = <
+    T extends ResponseControlsExtra = ResponseSuccessSingleControl,
+>({
     currentLoadedData,
     datasetData,
     actualLoadedData,
     onError,
     onSucces,
 }: {
-    currentLoadedData: ResponseSuccessControls;
+    currentLoadedData: T;
     datasetData: DashTabItemControlDataset;
     actualLoadedData: ResponseSuccessControls | null;
     onError: (errorData: ErrorData, status: LoadStatus) => void;
-    onSucces: (loadedData: ResponseSuccessControls, status: LoadStatus) => void;
+    onSucces: (loadedData: T, status: LoadStatus) => void;
 }) => {
-    const {datasetFieldType} = getDatasetSourceInfo({
+    const {datasetFieldType} = getDatasetSourceInfo<T>({
         currentLoadedData,
         data: datasetData,
         actualLoadedData,
