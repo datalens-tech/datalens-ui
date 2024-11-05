@@ -6,36 +6,37 @@ import {useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import {DL} from 'ui/constants';
 
-import './AnchorLink.scss';
+import '../Title.scss';
 
-const b = block('dashkit-title-anchor-link');
+const b = block('dashkit-plugin-title-container');
 
 interface AnchorLinkProps {
     size: PluginTitleProps['data']['size'];
-    x: number;
     to: string;
+    show?: boolean;
+    top: number | null;
 }
 
-const AnchorLink = ({size, x, to}: AnchorLinkProps) => {
+const AnchorLink = ({size, to, show, top}: AnchorLinkProps) => {
     const location = useLocation();
     const hash = `#${encodeURIComponent(to)}`;
     const isLinkVisible = location.hash === hash;
 
     const link = {...location, hash};
 
-    if (DL.IS_MOBILE) {
+    if (DL.IS_MOBILE || !show) {
         return null;
     }
 
     return (
         <React.Fragment>
             <Link
-                className={b({
+                className={b('anchor', {
                     size,
-                    absolute: x === 0,
                     visible: isLinkVisible,
                 })}
                 to={link}
+                style={{top: `${top}px`}}
             >
                 #
             </Link>
