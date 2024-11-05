@@ -178,7 +178,7 @@ export class UiSandboxRuntime {
         }
 
         if (typeof value === 'object') {
-            const result = this.vm.evalCode(`JSON.parse('${JSON.stringify(value)}')`);
+            const result = this.vm.evalCode('(' + JSON.stringify(value) + ')');
             return result.error ?? result.value;
         }
 
