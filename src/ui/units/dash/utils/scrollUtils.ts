@@ -1,4 +1,12 @@
-import {ActionPanelQA, FixedHeaderQa, TableOfContentQa} from 'shared/constants/qa';
+import {ActionPanelQA, DatalensHeader, FixedHeaderQa, TableOfContentQa} from 'shared/constants/qa';
+
+const OFFSETS_QA = [
+    ActionPanelQA.ActionPanel,
+    FixedHeaderQa.Controls,
+    FixedHeaderQa.Container,
+    TableOfContentQa.MobileTableOfContent,
+    DatalensHeader.DesktopContainer,
+];
 
 export const scrollIntoView = (id: string) => {
     const element = document.getElementById(id);
@@ -6,14 +14,14 @@ export const scrollIntoView = (id: string) => {
         return;
     }
 
-    const offsets = [
-        document.querySelector(`[data-qa="${ActionPanelQA.ActionPanel}"]`)?.clientHeight,
-        document.querySelector(`[data-qa="${FixedHeaderQa.Controls}"]`)?.clientHeight,
-        document.querySelector(`[data-qa="${FixedHeaderQa.Container}"]`)?.clientHeight,
-        document.querySelector('.dl-header__container:not(.dl-header__container_mobile)')
-            ?.clientHeight,
-        document.querySelector(`[data-qa=${TableOfContentQa.MobileTableOfContent}]`)?.scrollHeight,
-    ];
+    const offsets = OFFSETS_QA.map(
+        (qa) => document.querySelector(`[data-qa="${qa}"]`)?.clientHeight,
+    )
+        // TODO: Remove
+        .concat([
+            document.querySelector('.dl-header__container:not(.dl-header__container_mobile)')
+                ?.clientHeight,
+        ]);
 
     const offset = offsets.reduce((acc: number, cur: number | undefined) => acc + (cur || 0), 0);
     // offset of elements + small indentation from them
