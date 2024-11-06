@@ -111,6 +111,7 @@ export interface SelectControlProps {
     renderOverlay?: () => React.ReactNode;
     style?: React.CSSProperties;
     hint?: string;
+    disabled?: boolean;
 }
 
 export type ChartControlRef =
