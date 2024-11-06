@@ -1,11 +1,12 @@
-import {ActionPanelQA, DatalensHeader, FixedHeaderQa, TableOfContentQa} from 'shared/constants/qa';
+import {ActionPanelQA, FixedHeaderQa, TableOfContentQa} from 'shared/constants/qa';
 
 const OFFSETS_QA = [
     ActionPanelQA.ActionPanel,
     FixedHeaderQa.Controls,
     FixedHeaderQa.Container,
     TableOfContentQa.MobileTableOfContent,
-    DatalensHeader.DesktopContainer,
+    // TODO: add after use
+    // DatalensHeader.DesktopContainer,
 ];
 
 export const scrollIntoView = (id: string) => {

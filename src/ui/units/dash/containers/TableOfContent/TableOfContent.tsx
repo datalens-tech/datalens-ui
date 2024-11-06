@@ -11,7 +11,7 @@ import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
-import {scrollToHash} from 'ui/utils/scrollUtils';
+import {scrollToHash} from 'ui/units/dash/utils/scrollUtils';
 import {
     selectHashStates,
     selectShowTableOfContent,

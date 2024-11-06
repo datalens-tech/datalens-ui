@@ -1,46 +1,20 @@
 export const scrollIntoView = (
     id: string,
-    _options?: ScrollIntoViewOptions,
-    _elementTopOffset?: number,
+    options?: ScrollIntoViewOptions,
+    elementTopOffset?: number,
 ) => {
     const element = document.getElementById(id);
     if (!element) {
         return;
     }
-
-    const offsets = [
-        document.querySelector('.action-panel')?.clientHeight,
-        document.querySelector('.dash-fixed-header__controls')?.clientHeight,
-        document.querySelector('.dash-fixed-header__container')?.clientHeight,
-        document.querySelector('.dl-header')?.clientHeight,
-    ];
-
-    const offset = offsets.reduce((acc: number, cur: number | undefined) => acc + (cur || 0), 0);
-    element.style.scrollMarginTop = offset + 'px';
-
-    element.scrollIntoView();
-};
-
-// to have time to change the height of the react-grid-layout (200ms)
-// DashKit rendering ended after location change (with manual page refresh) (50-70ms)
-// small margin
-const SCROLL_DELAY = 300;
-export const scrollToHash = ({
-    hash,
-    withDelay,
-    checkUserScroll,
-}: {
-    hash: string;
-    withDelay?: boolean;
-    checkUserScroll?: boolean;
-}) => {
-    setTimeout(
-        () => {
-            // if the user scrolls the page by himself, disable scrolling
-            if (!checkUserScroll || window.scrollY === 0) {
-                scrollIntoView(hash.replace('#', ''));
-            }
-        },
-        withDelay ? SCROLL_DELAY : 0,
-    );
+    // https://stackoverflow.com/questions/24665602/scrollintoview-scrolls-just-too-far/54494495#54494495
+    const height = element.getBoundingClientRect().height;
+    const pos = element.style.position;
+    const top = element.style.top;
+    element.style.position = 'relative';
+    const offset = elementTopOffset || height;
+    element.style.top = `-${offset}px`;
+    element.scrollIntoView(options);
+    element.style.top = top;
+    element.style.position = pos;
 };
