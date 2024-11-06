@@ -70,6 +70,7 @@ export function Dialogs() {
                     setItemData={(newItemData) => {
                         dispatch(setItemData(newItemData));
                     }}
+                    enableShowAnchor={true}
                 />
             );
         case DIALOG_TYPE.TEXT: {

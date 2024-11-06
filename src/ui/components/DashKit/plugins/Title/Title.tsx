@@ -13,6 +13,8 @@ import {
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
+import AnchorLink from './AnchorLink/AnchorLink';
+
 import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
@@ -21,13 +23,16 @@ type Props = PluginTitleProps;
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
-const titlePlugin = {
+const getTitlePlugin = (disableHashNavigation?: boolean) => ({
     ...pluginTitle,
     renderer: function Wrapper(
         props: Props,
         forwardedRef: React.LegacyRef<PluginTitle> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
+        const contentRef = React.useRef<HTMLDivElement>(null);
+
+        const [anchorTop, setAnchorTop] = React.useState<number | null>(null);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -82,6 +87,7 @@ const titlePlugin = {
             h: null,
             w: null,
         };
+
         React.useEffect(() => {
             handleUpdate?.();
             // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,6 +103,42 @@ const titlePlugin = {
             data.text,
         ]);
 
+        const showAnchor = !disableHashNavigation && !props.editMode && data.showAnchor;
+
+        // If isLefftSide is true the anchor is absolute and positioned relative to widget container
+        // If isLeftSide is false the anchor is relative and positioned inside content container
+        const isLeftSide = currentLayout.x === 0;
+
+        React.useLayoutEffect(() => {
+            if (showAnchor && contentRef.current && rootNodeRef.current) {
+                const contentHeight = contentRef.current?.getBoundingClientRect().height;
+                const rootHeight = rootNodeRef.current?.getBoundingClientRect().height;
+
+                const diffOfHeight = (contentHeight - rootHeight) / 2;
+
+                let top = 0;
+
+                // There is a diffOfHeighterence between height of widget container and content container
+                // Top setting depends on which of the containers is larger and the type of positioning
+                if ((isLeftSide && diffOfHeight < 0) || (!isLeftSide && diffOfHeight > 0)) {
+                    top = Math.abs(diffOfHeight);
+                }
+
+                setAnchorTop(top);
+            } else if (!showAnchor) {
+                setAnchorTop(null);
+            }
+        }, [
+            currentLayout.x,
+            currentLayout.h,
+            currentLayout.w,
+            showAnchor,
+            data.text,
+            data.size,
+            data.background?.enabled,
+            isLeftSide,
+        ]);
+
         return (
             <RendererWrapper
                 id={props.id}
@@ -109,13 +151,17 @@ const titlePlugin = {
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
+                        'left-side': isLeftSide,
+                        'with-anchor': Boolean(data.showAnchor),
                     })}
+                    ref={contentRef}
                 >
+                    <AnchorLink size={data.size} to={data.text} show={showAnchor} top={anchorTop} />
                     {content}
                 </div>
             </RendererWrapper>
         );
     },
-};
+});
 
-export default titlePlugin;
+export default getTitlePlugin;

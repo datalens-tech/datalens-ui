@@ -11,7 +11,8 @@
         }
 
         &_title {
-            overflow: hidden;
+            scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
+            overflow: clip;
             display: flex;
             align-items: center;
             max-height: 100%;

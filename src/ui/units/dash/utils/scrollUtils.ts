@@ -1,22 +1,31 @@
-export const scrollIntoView = (
-    id: string,
-    _options?: ScrollIntoViewOptions,
-    _elementTopOffset?: number,
-) => {
+import {ActionPanelQA, DatalensHeader, FixedHeaderQa, TableOfContentQa} from 'shared/constants/qa';
+
+const OFFSETS_QA = [
+    ActionPanelQA.ActionPanel,
+    FixedHeaderQa.Controls,
+    FixedHeaderQa.Container,
+    TableOfContentQa.MobileTableOfContent,
+    DatalensHeader.DesktopContainer,
+];
+
+export const scrollIntoView = (id: string) => {
     const element = document.getElementById(id);
     if (!element) {
         return;
     }
 
-    const offsets = [
-        document.querySelector('.action-panel')?.clientHeight,
-        document.querySelector('.dash-fixed-header__controls')?.clientHeight,
-        document.querySelector('.dash-fixed-header__container')?.clientHeight,
-        document.querySelector('.dl-header')?.clientHeight,
-    ];
+    const offsets = OFFSETS_QA.map(
+        (qa) => document.querySelector(`[data-qa="${qa}"]`)?.clientHeight,
+    )
+        // TODO: Remove
+        .concat([
+            document.querySelector('.dl-header__container:not(.dl-header__container_mobile)')
+                ?.clientHeight,
+        ]);
 
     const offset = offsets.reduce((acc: number, cur: number | undefined) => acc + (cur || 0), 0);
-    element.style.scrollMarginTop = offset + 'px';
+    // offset of elements + small indentation from them
+    element.style.scrollMarginTop = offset + 5 + 'px';
 
     element.scrollIntoView();
 };
