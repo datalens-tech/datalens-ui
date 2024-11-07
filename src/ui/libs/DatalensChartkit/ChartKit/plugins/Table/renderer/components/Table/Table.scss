@@ -32,7 +32,7 @@
         &_highlight-rows {
             tbody tr:not(.dl-table__tr_no-data):hover td:not(.dl-table__td_pinned),
             tbody tr:not(.dl-table__tr_no-data):hover td:before {
-                background: var(--g-color-base-simple-hover);
+                background: var(--dl-table-cell-bg-color, var(--g-color-base-simple-hover));
             }
         }
     }
