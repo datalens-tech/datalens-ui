@@ -68,6 +68,8 @@ const initialState = {
     activeSelectorIndex: 0,
 
     skipReload: false,
+
+    widgetsCurrentTab: {},
 };
 
 export function getGroupSelectorDialogInitialState() {
