@@ -17,15 +17,15 @@ import type {
     PlaceholderSettings,
     QLChartType,
     Shared,
-    WidgetDensityType,
+    WidgetSizeType,
 } from 'shared';
 import {
-    DEFAULT_WIDGET_DENSITY,
+    DEFAULT_WIDGET_SIZE,
     Feature,
     IndicatorTitleMode,
     NavigatorLinesMode,
     PlaceholderId,
-    WidgetDensity,
+    WidgetSize,
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isD3Visualization,
@@ -76,7 +76,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'pivotFallback',
     'navigatorSettings',
     'pivotInlineSort',
-    'density',
+    'size',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -184,7 +184,7 @@ interface State {
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
-    density?: WidgetDensityType;
+    size?: WidgetSizeType;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -233,7 +233,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             qlAutoExecuteChart,
             pivotInlineSort = CHART_SETTINGS.PIVOT_INLINE_SORT.ON,
             tooltip,
-            density,
+            size,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -292,7 +292,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 ? CHART_SETTINGS.D3_FALLBACK.OFF
                 : CHART_SETTINGS.D3_FALLBACK.ON,
             tooltip,
-            density,
+            size,
         };
     }
 
@@ -557,26 +557,26 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
-    renderDensity() {
+    renderWidgetSize() {
         const {visualization} = this.props;
         const isTableWidget = (
             [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
         ).includes(visualization.id);
 
-        if (!isTableWidget || !Utils.isEnabledFeature(Feature.TableDensity)) {
+        if (!isTableWidget || !Utils.isEnabledFeature(Feature.TableSize)) {
             return null;
         }
 
-        const sizes = Object.values(WidgetDensity);
-        const selected = this.state.density ?? DEFAULT_WIDGET_DENSITY;
+        const sizes = Object.values(WidgetSize);
+        const selected = this.state.size ?? DEFAULT_WIDGET_SIZE;
 
         return (
-            <div>
+            <div className={b('widget-size')}>
                 <span className={b('label')}>{i18n('wizard', 'label_widget-size')}</span>
                 <RadioButton
                     value={selected}
                     onChange={(event) => {
-                        this.setState({density: event.target.value as WidgetDensityType});
+                        this.setState({size: event.target.value as WidgetSizeType});
                     }}
                 >
                     {sizes.map((item) => (
@@ -983,7 +983,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         return (
             <div className={b('settings')}>
                 {this.renderTitleMode()}
-                {this.renderDensity()}
+                {this.renderWidgetSize()}
                 {this.renderLegend()}
                 {this.renderTooltip()}
                 {this.renderTooltipSum()}

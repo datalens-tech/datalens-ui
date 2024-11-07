@@ -9,6 +9,10 @@
         align-items: flex-start;
     }
 
+    &__widget-size {
+        align-items: center;
+    }
+
     &__settings > div:last-child {
         margin-bottom: 0;
     }

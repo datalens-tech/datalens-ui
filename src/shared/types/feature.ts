@@ -78,7 +78,7 @@ export enum Feature {
      */
     UseMovePermAction = 'UseMovePermAction',
     /** Setting to control the density of the table - font size and cell margins */
-    TableDensity = 'TableDensity',
+    TableSize = 'TableSize',
 }
 
 export type FeatureConfig = Record<string, boolean>;

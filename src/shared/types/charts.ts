@@ -1,7 +1,7 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 
 import type {WRAPPED_HTML_KEY} from '../constants';
-import type {WidgetDensity} from '../constants/charts';
+import type {WidgetSize} from '../constants/charts';
 import type {WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {ChartsInsight, IntervalPart} from '../modules';
 
@@ -227,7 +227,7 @@ export interface ExtendedExportingCsvOptions
     columnHeaderFormatter?: string;
 }
 
-export type WidgetDensityType = (typeof WidgetDensity)[keyof typeof WidgetDensity];
+export type WidgetSizeType = (typeof WidgetSize)[keyof typeof WidgetSize];
 
 /**
  * Config of dash widget item, used for settings of actionParams (enabled filtering charts in section)
@@ -242,7 +242,7 @@ export type DashWidgetConfig = {
             fields?: string[];
         };
         /** Defines parameters such as font size or margins */
-        density?: WidgetDensityType;
+        size?: WidgetSizeType;
     };
 };
 

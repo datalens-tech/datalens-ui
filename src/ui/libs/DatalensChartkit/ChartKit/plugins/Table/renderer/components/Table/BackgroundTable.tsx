@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {WidgetDensityType} from 'shared';
+import type {WidgetSizeType} from 'shared';
 
 import {COMPONENT_CLASSNAME} from '../../../../../../../../components/Widgets/Chart/helpers/helpers';
 import {waitForContent} from '../../../../../helpers/wait-for-content';
@@ -19,7 +19,7 @@ const b = block('dl-table');
 type Props = {
     dimensions: WidgetDimensions;
     data: TableViewData;
-    size: WidgetDensityType;
+    size: WidgetSizeType;
     onChangeMinWidth?: (cellSizes: number[]) => void;
     width?: 'auto' | 'max-content';
 };
