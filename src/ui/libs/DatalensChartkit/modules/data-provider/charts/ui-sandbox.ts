@@ -1,10 +1,11 @@
+import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 
-import type {ChartKitHtmlItem, WrappedHTML} from '../../../../../../shared';
+import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
@@ -16,6 +17,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
+import {validateUrl} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -213,9 +215,15 @@ async function getUnwrappedFunction(args: {
                 log: (...logArgs: unknown[]) => console.log(...logArgs),
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
-            Highcharts: {
-                numberFormat: window.Highcharts.numberFormat,
-                dateFormat: window.Highcharts.dateFormat,
+            window: {
+                open: function (url: string, target?: string) {
+                    try {
+                        validateUrl(url);
+                        window.open(url, target === '_self' ? '_self' : '_blank');
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
             },
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
@@ -240,9 +248,23 @@ async function getUnwrappedFunction(args: {
                     numberFormat: window.Highcharts.numberFormat,
                     dateFormat: window.Highcharts.dateFormat,
                 },
-                ChartEditor: {
-                    getChartClientRect: () => {
+                Chart: {
+                    getBoundingClientRect: () => {
                         return getCurrentChart()?.container.getBoundingClientRect();
+                    },
+                    appendElements: (node: unknown) => {
+                        const chart = getCurrentChart();
+
+                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const container = chart.container;
+                        const wrapper = document.createElement('div');
+                        wrapper.insertAdjacentHTML('beforeend', html);
+                        const nodes = Array.from(wrapper.childNodes);
+
+                        return nodes.map((node) => {
+                            const el = container.appendChild(node) as HTMLElement;
+                            return el.getBoundingClientRect();
+                        });
                     },
                     updateSeries: (seriesIndex: number, data: any) => {
                         processHtmlFields(data);
@@ -252,9 +274,36 @@ async function getUnwrappedFunction(args: {
                         processHtmlFields(data);
                         getCurrentChart()?.title?.update(data);
                     },
-                    appendElement: (value: WrappedHTML) => {
-                        const container = getCurrentChart()?.container;
-                        container?.insertAdjacentHTML('beforeend', unwrapHtml(value) as string);
+                    updatePoints: (updates: PointOptionsType, match?: Record<string, unknown>) => {
+                        const seriesOptions: [string, unknown][] = [];
+                        const pointOptions: [string, unknown][] = [];
+                        Object.entries(match ?? {}).forEach(([key, value]) => {
+                            if (key.startsWith('series.')) {
+                                seriesOptions.push([key.replace('series.', ''), value]);
+                            } else {
+                                pointOptions.push([key, value]);
+                            }
+                        });
+
+                        let shouldRedraw = false;
+                        const chart = getCurrentChart();
+                        const chartSeries = chart.series;
+                        chartSeries.forEach((s) => {
+                            if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
+                                s.points?.forEach((p) => {
+                                    if (
+                                        pointOptions.every(([key, value]) => get(p, key) === value)
+                                    ) {
+                                        p.update(updates, false);
+                                        shouldRedraw = true;
+                                    }
+                                });
+                            }
+                        });
+
+                        if (shouldRedraw) {
+                            chart.redraw();
+                        }
                     },
                     findPoint: (fn: (point: unknown) => boolean) => {
                         const chartSeries = getCurrentChart()?.series ?? [];
