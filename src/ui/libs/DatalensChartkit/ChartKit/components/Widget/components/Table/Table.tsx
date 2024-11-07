@@ -6,7 +6,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {DEFAULT_WIDGET_SIZE} from 'shared';
-import type {type TableCommonCell, type TableHead, type TableRow, WidgetSizeType} from 'shared';
+import type {TableCommonCell, TableHead, TableRow, WidgetSizeType} from 'shared';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {
