@@ -36,8 +36,6 @@ import type {LogItem} from './console';
 import type {DataFetcherResult} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
-import {DepsResolveError} from './isolated-sandbox/dependencies';
-import {SandboxError} from './isolated-sandbox/sandbox';
 import {updateActionParams, updateParams} from './paramsUtils';
 import {StackTracePreparer} from './stack-trace-prepaper';
 import type {
@@ -72,6 +70,26 @@ const {
     REQUEST_SIZE_LIMIT_EXCEEDED,
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
 } = configConstants;
+
+export class SandboxError extends Error {
+    code:
+        | typeof RUNTIME_ERROR
+        | typeof RUNTIME_TIMEOUT_ERROR
+        | typeof CONFIG_LOADING_ERROR
+        | typeof DEPS_RESOLVE_ERROR
+        | typeof ROWS_NUMBER_OVERSIZE
+        | typeof DATA_FETCHING_ERROR
+        | typeof SEGMENTS_OVERSIZE
+        | typeof TABLE_OVERSIZE = RUNTIME_ERROR;
+    executionResult?: {
+        executionTiming: [number, number];
+        filename: string;
+        logs: {type: string; value: string}[][];
+        stackTrace?: string;
+    };
+    details?: Record<string, string | number>;
+    stackTrace?: string;
+}
 
 function collectModulesLogs({
     processedModules,
@@ -368,7 +386,11 @@ export class Processor {
                 }
 
                 const sandboxErrorFilename =
-                    error instanceof SandboxError ? error.executionResult?.filename : null;
+                    'executionResult' in error &&
+                    isObject(error.executionResult) &&
+                    'filename' in error.executionResult
+                        ? error.executionResult?.filename
+                        : null;
                 const axiosErrorFileName =
                     error instanceof AxiosError && 'description' in error
                         ? error.description
@@ -377,9 +399,7 @@ export class Processor {
                 const filename = sandboxErrorFilename || axiosErrorFileName || 'required modules';
 
                 const stackTraceText =
-                    error instanceof DepsResolveError
-                        ? error.description
-                        : `module (${filename}): ${reason}`;
+                    'description' in error ? error.description : `module (${filename}): ${reason}`;
 
                 return {
                     error: {
