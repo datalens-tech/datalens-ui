@@ -99,6 +99,7 @@ export class UiSandboxRuntime {
 
         const items: QuickJSHandle[] = [];
 
+        let timeoutId: number;
         const setItem = (item: object, parent: QuickJSHandle) => {
             Object.entries(item).forEach(([key, value]) => {
                 if (typeof value === 'object') {
@@ -129,7 +130,8 @@ export class UiSandboxRuntime {
                                     fnContext.dispose();
                                     mappedArgs.forEach((arg) => arg.dispose());
 
-                                    setTimeout(() => {
+                                    clearTimeout(timeoutId);
+                                    timeoutId = window.setTimeout(() => {
                                         if (callEnded) {
                                             if (longLivedCallbackHandle.alive) {
                                                 longLivedCallbackHandle.dispose();
@@ -178,7 +180,7 @@ export class UiSandboxRuntime {
         }
 
         if (typeof value === 'object') {
-            const result = this.vm.evalCode(`JSON.parse('${JSON.stringify(value)}')`);
+            const result = this.vm.evalCode('(' + JSON.stringify(value) + ')');
             return result.error ?? result.value;
         }
 
