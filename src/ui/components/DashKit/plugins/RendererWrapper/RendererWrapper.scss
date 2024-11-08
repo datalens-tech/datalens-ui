@@ -10,6 +10,11 @@
             background-color: var(--g-color-base-float);
         }
 
+        .dashkit-grid-item__item_editMode &_text,
+        .dashkit-grid-item__item_editMode &_title {
+            background-color: var(--g-color-base-float);
+        }
+
         &_title {
             scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
             overflow: clip;
@@ -18,9 +23,26 @@
             max-height: 100%;
         }
 
-        .dashkit-grid-item__item_editMode &_text,
-        .dashkit-grid-item__item_editMode &_title {
-            background-color: var(--g-color-base-float);
+        &_title:hover {
+            .dashkit-plugin-title-container__anchor {
+                opacity: 1;
+            }
+
+            .dashkit-plugin-title-container_with-absolute-anchor::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 44px;
+                right: 0;
+                mask-image: linear-gradient(
+                    to right,
+                    transparent,
+                    rgba(255, 255, 255, 0.95),
+                    rgb(0, 0, 0)
+                );
+                background-color: var(--g-color-base-generic-ultralight);
+            }
         }
     }
 }

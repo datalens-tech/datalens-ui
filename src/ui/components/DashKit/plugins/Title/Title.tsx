@@ -105,7 +105,6 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         ]);
 
         const showAnchor = !disableHashNavigation && !props.editMode;
-        const showAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
         React.useLayoutEffect(() => {
             if (showAnchor && contentRef.current && rootNodeRef.current) {
@@ -139,27 +138,23 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
-                beforeContentNode={
-                    <AnchorLink
-                        size={data.size}
-                        to={data.text}
-                        show={showAbsoluteAnchor}
-                        absolute={true}
-                    />
-                }
             >
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
                         'with-inline-anchor': Boolean(isInlineAnchor),
+                        'with-absolute-anchor': Boolean(showAnchor && !isInlineAnchor),
                     })}
                     ref={contentRef}
                 >
                     {content}
-                    {isInlineAnchor && (
-                        <AnchorLink size={data.size} to={data.text} show={showAnchor} />
-                    )}
+                    <AnchorLink
+                        size={data.size}
+                        to={data.text}
+                        show={showAnchor}
+                        absolute={!isInlineAnchor}
+                    />
                 </div>
             </RendererWrapper>
         );

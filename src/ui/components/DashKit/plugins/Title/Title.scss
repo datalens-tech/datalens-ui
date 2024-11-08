@@ -21,6 +21,10 @@
         #{$class}__anchor {
             padding: 5px;
         }
+
+        #{$class}__anchor_absolute {
+            padding: 2px 5px;
+        }
     }
 
     &_with-inline-anchor {
@@ -29,6 +33,17 @@
         .dashkit-plugin-title {
             padding-right: 0;
         }
+    }
+
+    &:has(&__anchor_absolute:focus-visible)::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 44px;
+        right: 0;
+        mask-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.95), rgb(0, 0, 0));
+        background-color: var(--g-color-base-generic-ultralight);
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
@@ -55,7 +70,7 @@
         &_absolute {
             position: absolute;
             padding: 0 5px;
-            top: 0;
+            top: 0.3em;
             right: 0;
             z-index: 1;
         }
@@ -80,18 +95,4 @@
             line-height: 20px;
         }
     }
-}
-
-.dashkit-item__renderer:hover {
-    .dashkit-plugin-title-container__anchor {
-        opacity: 1;
-    }
-}
-
-.dashkit-item__renderer:hover
-    .dashkit-plugin-title-container__anchor_absolute
-    ~ .dashkit-plugin-container__wrapper,
-.dashkit-plugin-title-container__anchor_absolute:focus-visible
-    ~ .dashkit-plugin-container__wrapper {
-    mask-image: linear-gradient(to right, rgb(0, 0, 0), rgb(255, 255, 255), transparent);
 }
