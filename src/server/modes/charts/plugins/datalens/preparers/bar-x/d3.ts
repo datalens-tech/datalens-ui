@@ -134,11 +134,6 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
         series: {
             data: seriesData,
         },
-        yAxis: [
-            {
-                min: 0,
-            },
-        ],
     };
 
     if (config.series.data.length <= 1) {
