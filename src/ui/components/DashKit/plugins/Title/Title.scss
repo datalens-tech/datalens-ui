@@ -13,25 +13,22 @@
     &_with-color {
         display: flex;
 
-        & .dashkit-plugin-title {
+        .dashkit-plugin-title {
             padding: 5px 10px;
             align-items: center;
         }
 
-        & #{$class}__anchor {
+        #{$class}__anchor {
             padding: 5px;
         }
     }
 
-    &_with-color:not(&_left-side) {
-        #{$class}__anchor ~ .dashkit-plugin-title {
-            padding-left: 0;
-        }
-    }
+    &_with-inline-anchor {
+        display: flex;
 
-    &_left-side &__anchor {
-        right: 100%;
-        position: absolute;
+        .dashkit-plugin-title {
+            padding-right: 0;
+        }
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
@@ -41,22 +38,26 @@
 
     &__anchor {
         opacity: 0;
-        padding-right: 5px;
+        padding: 0 5px 5px 5px;
+        position: relative;
         height: fit-content;
         text-decoration: none;
         color: var(--g-color-text-link);
-        position: relative;
-        float: left;
-        top: 0;
 
-        &_visible,
-        &:hover,
         &:focus-visible {
             opacity: 1;
         }
 
         &:hover {
             color: var(--g-color-text-link-hover);
+        }
+
+        &_absolute {
+            position: absolute;
+            padding: 0 5px;
+            top: 0;
+            right: 0;
+            z-index: 1;
         }
 
         &_size_l {
@@ -79,8 +80,18 @@
             line-height: 20px;
         }
     }
+}
 
-    &:hover &__anchor {
+.dashkit-item__renderer:hover {
+    .dashkit-plugin-title-container__anchor {
         opacity: 1;
     }
+}
+
+.dashkit-item__renderer:hover
+    .dashkit-plugin-title-container__anchor_absolute
+    ~ .dashkit-plugin-container__wrapper,
+.dashkit-plugin-title-container__anchor_absolute:focus-visible
+    ~ .dashkit-plugin-container__wrapper {
+    mask-image: linear-gradient(to right, rgb(0, 0, 0), rgb(255, 255, 255), transparent);
 }

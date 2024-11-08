@@ -14,13 +14,12 @@ interface AnchorLinkProps {
     size: PluginTitleProps['data']['size'];
     to: string;
     show?: boolean;
-    top: number | null;
+    absolute?: boolean;
 }
 
-const AnchorLink = ({size, to, show, top}: AnchorLinkProps) => {
+const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
     const location = useLocation();
     const hash = `#${encodeURIComponent(to)}`;
-    const isLinkVisible = location.hash === hash;
 
     const link = {...location, hash};
 
@@ -33,10 +32,9 @@ const AnchorLink = ({size, to, show, top}: AnchorLinkProps) => {
             <Link
                 className={b('anchor', {
                     size,
-                    visible: isLinkVisible,
+                    absolute,
                 })}
                 to={link}
-                style={{top: `${top}px`}}
             >
                 #
             </Link>

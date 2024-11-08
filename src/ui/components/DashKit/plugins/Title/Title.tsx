@@ -22,6 +22,7 @@ const b = block('dashkit-plugin-title-container');
 type Props = PluginTitleProps;
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
+const MAX_ANCHOR_WIDTH = 28;
 
 const getTitlePlugin = (disableHashNavigation?: boolean) => ({
     ...pluginTitle,
@@ -32,7 +33,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
 
-        const [anchorTop, setAnchorTop] = React.useState<number | null>(null);
+        const [isInlineAnchor, setIsInlineAnchor] = React.useState<boolean>(false);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -103,30 +104,23 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             data.text,
         ]);
 
-        const showAnchor = !disableHashNavigation && !props.editMode && data.showAnchor;
-
-        // If isLefftSide is true the anchor is absolute and positioned relative to widget container
-        // If isLeftSide is false the anchor is relative and positioned inside content container
-        const isLeftSide = currentLayout.x === 0;
+        const showAnchor = !disableHashNavigation && !props.editMode;
+        const showAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
         React.useLayoutEffect(() => {
             if (showAnchor && contentRef.current && rootNodeRef.current) {
-                const contentHeight = contentRef.current?.getBoundingClientRect().height;
-                const rootHeight = rootNodeRef.current?.getBoundingClientRect().height;
+                const contentHeight = contentRef.current.getBoundingClientRect().height || 0;
+                const contentWidth = contentRef.current.getBoundingClientRect().width || 0;
 
-                const diffOfHeight = (contentHeight - rootHeight) / 2;
+                const rootHeight = rootNodeRef.current.getBoundingClientRect().height || 0;
+                const rootWidth = rootNodeRef.current.getBoundingClientRect().width || 0;
 
-                let top = 0;
+                const widthCondition = contentWidth + MAX_ANCHOR_WIDTH < rootWidth;
+                const heightCondition = contentHeight <= rootHeight;
 
-                // There is a diffOfHeighterence between height of widget container and content container
-                // Top setting depends on which of the containers is larger and the type of positioning
-                if ((isLeftSide && diffOfHeight < 0) || (!isLeftSide && diffOfHeight > 0)) {
-                    top = Math.abs(diffOfHeight);
-                }
-
-                setAnchorTop(top);
+                setIsInlineAnchor(widthCondition && heightCondition);
             } else if (!showAnchor) {
-                setAnchorTop(null);
+                setIsInlineAnchor(false);
             }
         }, [
             currentLayout.x,
@@ -136,7 +130,6 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             data.text,
             data.size,
             data.background?.enabled,
-            isLeftSide,
         ]);
 
         return (
@@ -146,18 +139,27 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
+                beforeContentNode={
+                    <AnchorLink
+                        size={data.size}
+                        to={data.text}
+                        show={showAbsoluteAnchor}
+                        absolute={true}
+                    />
+                }
             >
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
-                        'left-side': isLeftSide,
-                        'with-anchor': Boolean(data.showAnchor),
+                        'with-inline-anchor': Boolean(isInlineAnchor),
                     })}
                     ref={contentRef}
                 >
-                    <AnchorLink size={data.size} to={data.text} show={showAnchor} top={anchorTop} />
                     {content}
+                    {isInlineAnchor && (
+                        <AnchorLink size={data.size} to={data.text} show={showAnchor} />
+                    )}
                 </div>
             </RendererWrapper>
         );

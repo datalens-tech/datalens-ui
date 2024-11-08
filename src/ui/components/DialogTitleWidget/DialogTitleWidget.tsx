@@ -38,7 +38,6 @@ interface DialogTitleWidgetState {
     autoHeight?: boolean;
     hasBackground?: boolean;
     backgroundColor?: string;
-    showAnchor?: boolean;
 }
 
 interface DialogTitleWidgetProps {
@@ -48,7 +47,6 @@ interface DialogTitleWidgetProps {
 
     enableAutoheight?: boolean;
     enableShowInTOC?: boolean;
-    enableShowAnchor?: boolean;
 
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
@@ -68,7 +66,6 @@ class DialogTitleWidget extends React.PureComponent<
             showInTOC: true,
             autoHeight: false,
             hasBackground: false,
-            showAnchor: true,
             backgroundColor: 'transparent',
         },
     };
@@ -97,18 +94,9 @@ class DialogTitleWidget extends React.PureComponent<
     state: DialogTitleWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight, enableShowInTOC, enableShowAnchor} =
-            this.props;
-        const {
-            text,
-            size,
-            showInTOC,
-            validation,
-            autoHeight,
-            hasBackground,
-            backgroundColor,
-            showAnchor,
-        } = this.state;
+        const {openedItemId, dialogIsVisible, enableAutoheight, enableShowInTOC} = this.props;
+        const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
+            this.state;
 
         return (
             <Dialog
@@ -148,21 +136,6 @@ class DialogTitleWidget extends React.PureComponent<
                                 className={b('checkbox')}
                             >
                                 {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
-                            </Checkbox>
-                        </div>
-                    )}
-                    {enableShowAnchor && (
-                        <div className={b('setting-row')}>
-                            <Checkbox
-                                checked={showAnchor}
-                                onChange={() =>
-                                    this.setState((prevState) => ({
-                                        showAnchor: !prevState.showAnchor,
-                                    }))
-                                }
-                                className={b('checkbox')}
-                            >
-                                {i18n('dash.title-dialog.edit', 'field_show-anchor')}
                             </Checkbox>
                         </div>
                     )}
@@ -219,8 +192,7 @@ class DialogTitleWidget extends React.PureComponent<
     onSizeChange = (size?: string) => this.setState({size: size as DashTabItemTitleSize});
 
     onApply = () => {
-        const {text, size, showInTOC, autoHeight, hasBackground, backgroundColor, showAnchor} =
-            this.state;
+        const {text, size, showInTOC, autoHeight, hasBackground, backgroundColor} = this.state;
         if (text?.trim()) {
             this.props.setItemData({
                 data: {
@@ -228,7 +200,6 @@ class DialogTitleWidget extends React.PureComponent<
                     size,
                     showInTOC,
                     autoHeight,
-                    showAnchor,
                     background: {
                         enabled: hasBackground,
                         color: backgroundColor,
