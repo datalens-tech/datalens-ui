@@ -6,6 +6,8 @@ export const selectAsideHeaderData = (state: DatalensGlobalState) =>
 export const selectAsideHeaderIsCompact = (state: DatalensGlobalState) =>
     state.asideHeader.isCompact;
 
+export const selectAsideHeaderIsHidden = (state: DatalensGlobalState) => state.asideHeader.isHidden;
+
 export const selectAsideHeaderSettings = (state: DatalensGlobalState) => state.asideHeader.settings;
 
 export const selectAsideHeaderPanelVisible = (state: DatalensGlobalState) =>

@@ -493,7 +493,11 @@ export const getRelationsData = ({
     return relationsItems;
 };
 
-const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem) => {
+const getCurrentWidgetTabShortInfo = (
+    data: DashKit | null,
+    widget: DashTabItem,
+    tabId?: string,
+) => {
     if (widget.type === DashTabItemType.Control || widget.type === DashTabItemType.GroupControl) {
         return widget;
     }
@@ -509,7 +513,8 @@ const getCurrentWidgetTabShortInfo = (data: DashKit | null, widget: DashTabItem)
         currentPlugin?.chartKitRef?.current?.props.id || currentPlugin?.getCurrentTabChartId?.();
 
     const res = currentPlugin?.props.data.tabs.find(
-        (item: DashTabItemWidgetTab) => item.chartId === currentWidgetId,
+        (item: DashTabItemWidgetTab) =>
+            (item.id === tabId || !tabId) && item.chartId === currentWidgetId,
     );
     if (res) {
         return {...res, namespace: currentPlugin.props.namespace};
@@ -522,17 +527,20 @@ export const getCurrentWidgetMeta = ({
     dashkitData,
     widget,
     itemId,
+    tabId,
 }: {
     metaData: DashMetaDataNoRelations;
     dashkitData: DashKit | null;
     widget: DashTabItem;
     // current item id for widgets with multiple items
     itemId: string | null;
+    tabId?: string;
 }): DashkitMetaDataItem => {
     if (itemId) {
         return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
     }
-    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget);
+
+    const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, tabId);
     return (metaData?.find((item) => item.widgetId === tabInfo?.id) || {}) as DashkitMetaDataItem;
 };
 
