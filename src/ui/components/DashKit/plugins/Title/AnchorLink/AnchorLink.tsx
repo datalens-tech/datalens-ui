@@ -17,7 +17,7 @@ interface AnchorLinkProps {
     absolute?: boolean;
 }
 
-const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
+export const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
     const location = useLocation();
     const hash = `#${encodeURIComponent(to)}`;
 
@@ -41,5 +41,3 @@ const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
         </React.Fragment>
     );
 };
-
-export default AnchorLink;

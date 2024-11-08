@@ -13,7 +13,7 @@ import {
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
-import AnchorLink from './AnchorLink/AnchorLink';
+import {AnchorLink} from './AnchorLink/AnchorLink';
 
 import './Title.scss';
 

@@ -59,7 +59,6 @@ class DialogTitleWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableShowInTOC: true,
-        enableShowAnchor: false,
         openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0],
@@ -87,7 +86,6 @@ class DialogTitleWidget extends React.PureComponent<
             autoHeight: Boolean(nextProps.openedItemData.autoHeight),
             hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
             backgroundColor: nextProps.openedItemData.background?.color || '',
-            showAnchor: Boolean(nextProps.openedItemData.showAnchor),
         };
     }
 
