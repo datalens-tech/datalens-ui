@@ -21,7 +21,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.BarXD3);
         });
 
-        datalensTest.only('Negative Y values @screenshot', async ({page}) => {
+        datalensTest('Negative Y values @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.createNewFieldWithFormula('x', 'str([id])');
