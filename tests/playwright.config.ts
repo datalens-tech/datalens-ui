@@ -50,7 +50,9 @@ const globalSetupPath = './utils/playwright/datalens/e2e/setup-e2e';
 
 console.log(`Base URL for tests is: ${baseURL}`);
 
-const testTimeout = 60000 * 1.5;
+const testTimeout = process.env.E2E_ACTION_TIMEOUT
+    ? parseInt(process.env.E2E_ACTION_TIMEOUT)
+    : 60000 * 1.5;
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,

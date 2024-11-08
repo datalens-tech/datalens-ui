@@ -9,6 +9,7 @@ import {
     SET_ASIDE_HEADER_SETTINGS,
     RESET_ASIDE_HEADER_SETTINGS,
     SET_IS_COMPACT,
+    SET_IS_HIDDEN,
 } from '../actions/asideHeader';
 import {DL} from '../../constants/common';
 import {ErrorContentTypes} from 'shared';
@@ -61,10 +62,12 @@ const initialState: Omit<AsideHeaderState, 'isCompact'> = {
     },
     settings: initialSettings,
     currentPageEntry: null,
+    isHidden: false,
 };
 
 const getAsideHeaderInitialState = (): AsideHeaderState => {
     const {getIsCompact} = registry.common.functions.getAll();
+
     return {
         ...initialState,
         isCompact: getIsCompact(),
@@ -128,6 +131,13 @@ export default function asideHeader(
             return {
                 ...state,
                 isCompact: action.isCompact,
+            };
+        }
+
+        case SET_IS_HIDDEN: {
+            return {
+                ...state,
+                isHidden: action.isHidden,
             };
         }
 
