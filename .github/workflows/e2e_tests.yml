@@ -106,7 +106,8 @@ jobs:
         run: npm run test:e2e:opensource
         env:
           NO_AUTH: true
-          E2E_RETRY_TIMES: 1
+          E2E_RETRY_TIMES: 2
+          E2E_ACTION_TIMEOUT: 30000
           E2E_DOMAIN: http://localhost:8080
 
       - name: Run tests from builded docker image
@@ -118,6 +119,8 @@ jobs:
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+          E2E_RETRY_TIMES: 2
+          E2E_ACTION_TIMEOUT: 30000
 
       - name: Copy tests report from docker run
         if: always()

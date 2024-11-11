@@ -121,6 +121,9 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, config.dash.urls.DashboardWithLongContentBeforeChart);
+
+            page.setViewportSize({width: 1000, height: 600});
+
             await dashboardPage.duplicateDashboard({
                 dashId: config.dash.urls.DashboardWithLongContentBeforeChart,
                 useUserFolder: true,
