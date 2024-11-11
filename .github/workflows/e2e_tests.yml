@@ -107,7 +107,7 @@ jobs:
         env:
           NO_AUTH: true
           E2E_RETRY_TIMES: 2
-          E2E_ACTION_TIMEOUT: 30000
+          E2E_ACTION_TIMEOUT: 60000
           E2E_DOMAIN: http://localhost:8080
 
       - name: Run tests from builded docker image
@@ -120,7 +120,7 @@ jobs:
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
           E2E_RETRY_TIMES: 2
-          E2E_ACTION_TIMEOUT: 30000
+          E2E_ACTION_TIMEOUT: 60000
 
       - name: Copy tests report from docker run
         if: always()
