@@ -112,7 +112,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         const withInlineAnchor = showAnchor && isInlineAnchor;
         const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
-        React.useLayoutEffect(() => {
+        const calculateAnchor = React.useCallback(() => {
             if (showAnchor && contentRef.current && rootNodeRef.current) {
                 const contentHeight = contentRef.current.getBoundingClientRect().height || 0;
                 const contentWidth = contentRef.current.getBoundingClientRect().width || 0;
@@ -136,15 +136,31 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             } else {
                 setIsInlineAnchor(false);
             }
+        }, [showAnchor]);
+
+        React.useLayoutEffect(() => {
+            calculateAnchor();
         }, [
             currentLayout.x,
             currentLayout.h,
             currentLayout.w,
-            showAnchor,
             data.text,
             data.size,
             data.background?.enabled,
+            calculateAnchor,
         ]);
+
+        React.useEffect(() => {
+            const debouncedCalculateAnchor = debounce(
+                calculateAnchor,
+                WIDGET_RESIZE_DEBOUNCE_TIMEOUT,
+            );
+            window.addEventListener('resize', debouncedCalculateAnchor);
+
+            return () => {
+                window.removeEventListener('resize', debouncedCalculateAnchor);
+            };
+        }, [calculateAnchor]);
 
         return (
             <RendererWrapper
