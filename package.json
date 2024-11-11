@@ -24,7 +24,7 @@
     "typecheck:i18n": "tsc -p src/i18n --noEmit",
     "typecheck:server": "tsc -p src/server --noEmit",
     "typecheck:ui": "tsc -p src/ui --noEmit",
-    "typecheck:tests": "cd tests && npm run typecheck",
+    "typecheck:tests": "cd tests && tsc --noEmit",
     "typecheck": "npm run i18n:prepare && npm run typecheck:server && npm run typecheck:ui && npm run typecheck:tests",
     "test:jest": "npm run i18n:prepare && jest",
     "test:jestWatch": "npm run i18n:prepare && jest --watchAll",
