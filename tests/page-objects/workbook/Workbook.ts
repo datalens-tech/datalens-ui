@@ -32,10 +32,16 @@ export class Workbook {
     }
 
     async openWorkbookItemMenu(dashId: string) {
-        await this.page
-            .locator(`${slct(WorkbookPage.ListItem)} ${slct(dashId.replace('/', ''))}`)
+        const listItem = this.page.locator(
+            `${slct(WorkbookPage.ListItem)} ${slct(dashId.replace('/', ''))}`,
+        );
+        await listItem.focus();
+
+        const menuDropDownBtn = listItem
             .locator('..')
-            .locator(`${slct(WorkbookPage.MenuDropDownBtn)}`)
-            .click();
+            .locator(`${slct(WorkbookPage.MenuDropDownBtn)}`);
+
+        await menuDropDownBtn.focus();
+        await menuDropDownBtn.click();
     }
 }
