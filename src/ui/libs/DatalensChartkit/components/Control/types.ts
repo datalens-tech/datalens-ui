@@ -1,6 +1,7 @@
 import type {StringParams} from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
+import type {DataProps} from '../../../../components/Widgets/Chart/types';
 import type {
     ActiveControl,
     ControlsOnlyWidget,
@@ -20,6 +21,9 @@ export type ControlProps<TProviderData = unknown> = {
         callChangeByClick?: boolean,
     ) => void;
     onUpdate?: (data: OnChangeData) => void;
+    dataProps?: DataProps;
+    requestId?: string;
+    onAction?: (args: {data: unknown}) => void;
     initialParams?: ChartInitialParams;
 } & Omit<WidgetProps, 'data'>;
 

@@ -503,6 +503,12 @@ export function getChartEditorTypes(type: string) {
                     docs: docsControls,
                 },
                 {
+                    name: 'Actions',
+                    id: 'actions',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                {
                     name: 'Shared',
                     id: 'shared',
                     language: 'json',

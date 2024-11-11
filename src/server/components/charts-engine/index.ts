@@ -138,6 +138,13 @@ class ChartsEngine {
                 if (Array.isArray(plugin.processorHooks)) {
                     this.processorHooks = [...this.processorHooks, ...plugin.processorHooks];
                 }
+
+                if (plugin.controllers) {
+                    Object.entries(plugin.controllers).forEach(([key, value]) => {
+                        // @ts-ignore
+                        this.controllers[key] = value(this);
+                    }, {});
+                }
             });
         }
     }

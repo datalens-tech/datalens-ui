@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import {showToast} from 'ui/store/actions/toaster';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
@@ -101,6 +102,28 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
+    const onAction = React.useCallback((actionArgs: {data?: any} = {}) => {
+        const {action, ...args} = actionArgs.data ?? {};
+
+        switch (action) {
+            case 'toast': {
+                dispatch(showToast({...args}));
+                break;
+            }
+            case 'setPatams': {
+                if (onChange) {
+                    onChange(
+                        {type: 'PARAMS_CHANGED', data: {params: args}},
+                        {forceUpdate: true},
+                        true,
+                    );
+                }
+
+                break;
+            }
+        }
+    }, []);
+
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
             <Loader
@@ -147,6 +170,9 @@ export const Content = (props: ChartContentProps) => {
                         getControls={getControls}
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
+                        dataProps={dataProps}
+                        requestId={requestId}
+                        onAction={onAction}
                     />
                 )}
                 {Boolean(drillDownData) && (

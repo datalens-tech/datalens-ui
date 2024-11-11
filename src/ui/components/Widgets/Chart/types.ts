@@ -293,12 +293,13 @@ export type WidgetDataRef = React.MutableRefObject<
 
 export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChange'> &
     Pick<ChartsProps, 'id'> &
-    Pick<ChartContentProps, 'nonBodyScroll'> & {
+    Pick<ChartContentProps, 'nonBodyScroll' | 'dataProps' | 'requestId'> & {
         data: ChartContentProps['loadedData'];
         onLoad: ChartKitWrapperParams['onRender'];
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
+        onAction?: (args: {data: unknown}) => void;
     };
 
 export type ResolveWidgetControlDataRefArgs =

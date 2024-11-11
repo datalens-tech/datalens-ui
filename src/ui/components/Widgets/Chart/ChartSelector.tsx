@@ -344,6 +344,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
+                            requestId={requestId}
                         />
                     )}
                     {/* DatalensChartkitContent for error displaying & retry */}
