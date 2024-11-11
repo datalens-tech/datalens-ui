@@ -71,7 +71,7 @@ jobs:
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - name: Check docker compose Config
-        run: npm run test:docker:check
+        run: npm run test:e2e:docker:check
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
@@ -95,7 +95,7 @@ jobs:
         if: ${{ env.UI_VERSION == '' }}
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          npm run test:docker:up-no-build && npm ci && npm run test:install:chromium & wait
+          npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
@@ -138,7 +138,7 @@ jobs:
       - name: Run docker compose down
         if: always()
         run: |
-          npm run test:docker:down
+          npm run test:e2e:docker:down
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
