@@ -71,7 +71,6 @@ jobs:
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - name: Check docker compose Config
-        working-directory: ./tests
         run: npm run test:docker:check
         env:
           US_VERSION: ${{ env.US_VERSION }}
@@ -94,10 +93,9 @@ jobs:
 
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}
-        working-directory: ./tests
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          npm run test:docker:up-no-build && cd .. && npm ci && npm run test:install:chromium & wait
+          npm run test:docker:up-no-build && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
@@ -113,7 +111,6 @@ jobs:
 
       - name: Run tests from builded docker image
         if: ${{ env.UI_VERSION != '' }}
-        working-directory: ./tests
         run: |
           npm run test:e2e:docker
         env:
@@ -124,13 +121,12 @@ jobs:
 
       - name: Copy tests report from docker run
         if: always()
-        working-directory: ./tests
         run: |
           if [ -z "${{ env.UI_VERSION }}" ]; then
             echo "skip export report from docker run..."
           else
             echo "export report from docker run"
-            rm -rf ./artifacts
+            rm -rf ./tests/artifacts
             npm run test:e2e:docker:report
           fi
         env:
@@ -141,7 +137,6 @@ jobs:
 
       - name: Run docker compose down
         if: always()
-        working-directory: ./tests
         run: |
           npm run test:docker:down
         env:
