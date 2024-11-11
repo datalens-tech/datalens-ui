@@ -1,3 +1,5 @@
+@import '../mixins.scss';
+
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
@@ -21,10 +23,6 @@
         #{$class}__anchor {
             padding: 5px;
         }
-
-        #{$class}__anchor_absolute {
-            padding: 2px 5px;
-        }
     }
 
     &_with-inline-anchor {
@@ -36,14 +34,7 @@
     }
 
     &:has(&__anchor_absolute:focus-visible)::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 44px;
-        right: 0;
-        mask-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.95), rgb(0, 0, 0));
-        background-color: var(--g-color-base-generic-ultralight);
+        @include with-fade-effect;
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
@@ -70,7 +61,6 @@
         &_absolute {
             position: absolute;
             padding: 0 5px;
-            top: 0.3em;
             right: 0;
             z-index: 1;
         }

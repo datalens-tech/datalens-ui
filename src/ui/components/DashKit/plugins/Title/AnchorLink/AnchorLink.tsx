@@ -15,9 +15,10 @@ interface AnchorLinkProps {
     to: string;
     show?: boolean;
     absolute?: boolean;
+    top: number;
 }
 
-export const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
+export const AnchorLink = ({size, to, show, absolute, top}: AnchorLinkProps) => {
     const location = useLocation();
     const hash = `#${encodeURIComponent(to)}`;
 
@@ -35,6 +36,7 @@ export const AnchorLink = ({size, to, show, absolute}: AnchorLinkProps) => {
                     absolute,
                 })}
                 to={link}
+                style={{top}}
             >
                 #
             </Link>

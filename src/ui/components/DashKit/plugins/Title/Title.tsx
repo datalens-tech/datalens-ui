@@ -23,6 +23,9 @@ type Props = PluginTitleProps;
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 const MAX_ANCHOR_WIDTH = 28;
+// text can be placed directly on the upper border of container,
+// in which case a small negative offset is needed
+const MIN_AVAILABLE_ANCHOR_OFFSET = -5;
 
 const getTitlePlugin = (disableHashNavigation?: boolean) => ({
     ...pluginTitle,
@@ -34,6 +37,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         const contentRef = React.useRef<HTMLDivElement>(null);
 
         const [isInlineAnchor, setIsInlineAnchor] = React.useState<boolean>(false);
+        const [anchorTop, setAnchorTop] = React.useState(0);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -105,6 +109,8 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         ]);
 
         const showAnchor = !disableHashNavigation && !props.editMode;
+        const withInlineAnchor = showAnchor && isInlineAnchor;
+        const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
         React.useLayoutEffect(() => {
             if (showAnchor && contentRef.current && rootNodeRef.current) {
@@ -114,11 +120,20 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
                 const rootHeight = rootNodeRef.current.getBoundingClientRect().height || 0;
                 const rootWidth = rootNodeRef.current.getBoundingClientRect().width || 0;
 
-                const widthCondition = contentWidth + MAX_ANCHOR_WIDTH < rootWidth;
-                const heightCondition = contentHeight <= rootHeight;
+                const offsetTop =
+                    contentRef.current.getBoundingClientRect().top -
+                    rootNodeRef.current.getBoundingClientRect().top;
 
-                setIsInlineAnchor(widthCondition && heightCondition);
-            } else if (!showAnchor) {
+                const isWidthFits = contentWidth + MAX_ANCHOR_WIDTH < rootWidth;
+                const isHeightFits = contentHeight <= rootHeight;
+
+                const enableInlineAnchor = isWidthFits && isHeightFits;
+                const calculatedAnchorTop =
+                    offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET || enableInlineAnchor ? 0 : offsetTop;
+
+                setAnchorTop(calculatedAnchorTop);
+                setIsInlineAnchor(enableInlineAnchor);
+            } else {
                 setIsInlineAnchor(false);
             }
         }, [
@@ -143,8 +158,8 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
-                        'with-inline-anchor': Boolean(isInlineAnchor),
-                        'with-absolute-anchor': Boolean(showAnchor && !isInlineAnchor),
+                        'with-inline-anchor': Boolean(withInlineAnchor),
+                        'with-absolute-anchor': Boolean(withAbsoluteAnchor),
                     })}
                     ref={contentRef}
                 >
@@ -153,6 +168,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
                         size={data.size}
                         to={data.text}
                         show={showAnchor}
+                        top={anchorTop}
                         absolute={!isInlineAnchor}
                     />
                 </div>

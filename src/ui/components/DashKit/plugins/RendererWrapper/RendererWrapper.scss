@@ -1,3 +1,5 @@
+@import '../mixins.scss';
+
 .dashkit-plugin-container {
     &__wrapper {
         height: 100%;
@@ -29,19 +31,7 @@
             }
 
             .dashkit-plugin-title-container_with-absolute-anchor::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                width: 44px;
-                right: 0;
-                mask-image: linear-gradient(
-                    to right,
-                    transparent,
-                    rgba(255, 255, 255, 0.95),
-                    rgb(0, 0, 0)
-                );
-                background-color: var(--g-color-base-generic-ultralight);
+                @include with-fade-effect;
             }
         }
     }
