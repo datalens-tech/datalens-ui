@@ -8,6 +8,7 @@ export type AsideHeaderState = {
     currentPageEntry: CurrentPageEntry | null;
     settings: AsideHeaderSettings;
     isCompact: boolean;
+    isHidden: boolean;
 };
 
 export type AsideHeaderSettings = {
