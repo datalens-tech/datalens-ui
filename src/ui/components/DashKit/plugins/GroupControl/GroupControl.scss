@@ -97,6 +97,10 @@
             margin-top: 10px;
         }
 
+        #{$class}__item_checkbox {
+            padding: 4px;
+        }
+
         #{$class}__item-label {
             max-width: 95%;
         }
