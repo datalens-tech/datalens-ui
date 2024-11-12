@@ -58,6 +58,11 @@ services:
       POSTGRES_DB: us-db-ci_purgeable
       POSTGRES_USER: us
       POSTGRES_PASSWORD: us
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "us-db-ci_purgeable"]
+      interval: 5s
+      retries: 10
+      start_period: 3s
     volumes:
       - pg-us-db:/var/lib/postgresql/data
 
@@ -75,7 +80,8 @@ services:
     container_name: e2e-datalens-us
     image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-release}
     depends_on:
-      - pg-us
+      pg-us:
+        condition: service_healthy
     environment:
       APP_INSTALLATION: "opensource"
       APP_ENV: "prod"
@@ -136,7 +142,7 @@ services:
 
   datalens-from-image-tests:
     container_name: e2e-datalens-ui-tests
-    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-0.2261.0}-e2e
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}-e2e
     depends_on:
       - us
       - control-api
