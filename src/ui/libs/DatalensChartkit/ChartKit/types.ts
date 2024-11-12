@@ -65,7 +65,7 @@ declare module '@gravity-ui/chartkit' {
         };
         'blank-chart': {
             data: any;
-            widget: any;
+            widget: unknown;
         };
     }
 }

@@ -22,7 +22,7 @@ import {validateUrl} from '../../html-generator/utils';
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
 export const UI_SANDBOX_TOTAL_TIME_LIMIT = 3000;
-export const UI_SANDBOX_FN_TIME_LIMIT = 1000;
+export const UI_SANDBOX_FN_TIME_LIMIT = 100;
 
 /**
  * Config value to check. It could have any type.
@@ -164,41 +164,6 @@ async function getUiSandboxLibs(libs: string[]) {
                         // @ts-ignore
                         '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.5.3.js?raw'
                     );
-                    return module.default;
-                }
-                case 'd3-selection': {
-                    // @ts-ignore
-                    const module = await import('./d3-selection.js?raw');
-                    return module.default;
-                }
-                case 'd3-array': {
-                    // @ts-ignore
-                    const module = await import('./d3-array.js?raw');
-                    return module.default;
-                }
-                case 'd3-chord': {
-                    // @ts-ignore
-                    const module = await import('./d3-chord.js?raw');
-                    return module.default;
-                }
-                case 'd3-format': {
-                    // @ts-ignore
-                    const module = await import('./d3-format.js?raw');
-                    return module.default;
-                }
-                case 'd3-shape': {
-                    // @ts-ignore
-                    const module = await import('./d3-shape.js?raw');
-                    return module.default;
-                }
-                case 'd3': {
-                    // @ts-ignore
-                    const module = await import('./d3.js?raw');
-                    return module.default;
-                }
-                case 'light-js-dom': {
-                    // @ts-ignore
-                    const module = await import('./light-js-dom.js?raw');
                     return module.default;
                 }
                 default: {
