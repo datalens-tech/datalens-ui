@@ -1,9 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -euo pipefail
 
+PW_VERSION=$(npm list --depth=0 | grep '@playwright/test' | sed -E 's|.+@||')
+
 IMAGE_NAME="mcr.microsoft.com/playwright"
-IMAGE_TAG="v1.40.0-jammy" # This version have to be synchronized with playwright version from package.json
+IMAGE_TAG="v${PW_VERSION}-jammy" # this version have to be synchronized with playwright version from package.json
 
 NODE_MODULES_CACHE_DIR="$HOME/.cache/datalens-playwright-docker-node-modules"
 
@@ -15,12 +17,12 @@ run_command() {
         /bin/bash -c "$1"
 }
 
-if [[ "$1" = "clear-cache" ]]; then
+if [ "$1" = "clear-cache" ]; then
     rm -rf "$NODE_MODULES_CACHE_DIR"
     exit 0
 fi
 
-if [[ ! -d "$NODE_MODULES_CACHE_DIR" ]]; then
+if [ ! -d "$NODE_MODULES_CACHE_DIR" ]; then
     run_command 'npm ci'
     run_command 'npm run test:install:chromium'
 fi

@@ -311,9 +311,11 @@ export const fillDatePicker = async (args: {page: Page; selector: string; value?
     const datePicker = page.locator(selector).first();
     const valueParts = value.split(/\.| |:/).filter(Boolean);
 
+    await datePicker.focus();
+
     // date parts should be entered one by one,
     // otherwise playwright cannot fill date field in properly way
     for (const part of valueParts) {
-        await datePicker.fill(part);
+        await datePicker.pressSequentially(part);
     }
 };
