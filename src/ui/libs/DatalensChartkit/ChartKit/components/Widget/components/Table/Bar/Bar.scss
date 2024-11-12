@@ -22,6 +22,7 @@
         width: 0;
         height: 130%;
         border-right: 1px solid var(--g-color-text-complementary);
+        margin-top: calc(-0.15 * var(--dl-table-cell-bar-height, 19px));
     }
 }
 

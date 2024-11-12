@@ -238,7 +238,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 ref={tableContainerRef}
             >
                 <TableTitleView title={title} />
-                <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
+                <div className={b('table-wrapper', {'highlight-rows': highlightRows, size})}>
                     {noData && (
                         <div className={b('no-data')}>
                             {i18n('chartkit-table', 'message-no-data')}
@@ -246,7 +246,7 @@ export const Table = React.memo<Props>((props: Props) => {
                     )}
                     {!noData && (
                         <table
-                            className={b({prepared: true, size})}
+                            className={b({prepared: true})}
                             style={{minHeight: totalSize}}
                             ref={tableRef}
                         >

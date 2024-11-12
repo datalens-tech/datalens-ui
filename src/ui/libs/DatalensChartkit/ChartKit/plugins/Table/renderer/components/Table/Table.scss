@@ -22,38 +22,6 @@
     min-width: 100%;
     width: max-content;
 
-    &_size {
-        &_l {
-            --dl-table-row-height: 30px;
-            --dl-table-font-size: 13px;
-            --dl-table-cell-vertical-padding: 5px;
-            --dl-table-cell-horizontal-padding: 10px;
-            --dl-table-cell-bar-height: 19px;
-            --chartkit-bg-bar-offset-width: 10px;
-            line-height: 16px;
-        }
-
-        &_m {
-            --dl-table-row-height: 24px;
-            --dl-table-font-size: 12px;
-            --dl-table-cell-vertical-padding: 4px;
-            --dl-table-cell-horizontal-padding: 6px;
-            --chartkit-bg-bar-offset-width: 6px;
-            --dl-table-cell-bar-height: 17px;
-            line-height: 15px;
-        }
-
-        &_s {
-            --dl-table-row-height: 20px;
-            --dl-table-font-size: 11px;
-            --dl-table-cell-vertical-padding: 3px;
-            --dl-table-cell-horizontal-padding: 4px;
-            --chartkit-bg-bar-offset-width: 4px;
-            --dl-table-cell-bar-height: 15px;
-            line-height: 13px;
-        }
-    }
-
     &__table-wrapper {
         width: 100%;
 
@@ -61,6 +29,38 @@
             tbody tr:not(.dl-table__tr_no-data):hover td:not(.dl-table__td_pinned),
             tbody tr:not(.dl-table__tr_no-data):hover td:before {
                 background: var(--dl-table-cell-bg-color, var(--g-color-base-simple-hover));
+            }
+        }
+
+        &_size {
+            &_l {
+                --dl-table-row-height: 30px;
+                --dl-table-font-size: 13px;
+                --dl-table-cell-vertical-padding: 5px;
+                --dl-table-cell-horizontal-padding: 10px;
+                --dl-table-cell-bar-height: 19px;
+                --chartkit-bg-bar-offset-width: 10px;
+                line-height: 16px;
+            }
+
+            &_m {
+                --dl-table-row-height: 24px;
+                --dl-table-font-size: 12px;
+                --dl-table-cell-vertical-padding: 4px;
+                --dl-table-cell-horizontal-padding: 6px;
+                --chartkit-bg-bar-offset-width: 6px;
+                --dl-table-cell-bar-height: 17px;
+                line-height: 15px;
+            }
+
+            &_s {
+                --dl-table-row-height: 20px;
+                --dl-table-font-size: 11px;
+                --dl-table-cell-vertical-padding: 3px;
+                --dl-table-cell-horizontal-padding: 4px;
+                --chartkit-bg-bar-offset-width: 4px;
+                --dl-table-cell-bar-height: 15px;
+                line-height: 13px;
             }
         }
     }
