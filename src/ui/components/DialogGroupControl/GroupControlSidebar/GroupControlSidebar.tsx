@@ -5,6 +5,7 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {DashTabItemGroupControlData} from 'shared';
 import {
     DashTabItemControlSourceType,
     DashTabItemType,
@@ -14,10 +15,6 @@ import {
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
-import {
-    getSelectorDialogFromData,
-    getSelectorGroupDialogFromData,
-} from 'ui/units/dash/store/reducers/dash';
 
 import type {
     SelectorDialogState,
@@ -26,6 +23,7 @@ import type {
 import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../DialogChartWidget/TabMenu/types';
+import {getSelectorDialogFromData, getSelectorGroupDialogFromData} from '../useGroupControlState';
 
 import '../DialogGroupControl.scss';
 
@@ -58,7 +56,9 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     }
 
     const pasteItems = pasteConfig?.data.group
-        ? getSelectorGroupDialogFromData(pasteConfig?.data).group
+        ? getSelectorGroupDialogFromData(
+              pasteConfig?.data as unknown as DashTabItemGroupControlData,
+          ).group
         : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
 
     return pasteItems as TabMenuItemData<SelectorDialogState>[];

@@ -20,16 +20,13 @@ export type SelectorDialogValidation = {
     selectorParameters?: string;
 };
 
+// TODO REMOVE
 export type SelectorsGroupDialogState = {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
     updateControlsOnChange: boolean;
-    defaults?: Record<string, string | string[]>;
     group: SelectorDialogState[];
-    id?: string;
-    namespace?: string;
-    pastedIdsDictionary: Record<string, string>;
 };
 
 export type SelectorSourceType =

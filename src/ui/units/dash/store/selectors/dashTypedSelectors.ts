@@ -55,6 +55,8 @@ export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
 
+export const selectOpenedDialogType = (state: DatalensGlobalState) => state.dash.openedDialog;
+
 export const selectSelectorSourceType = (state: DatalensGlobalState) =>
     (state.dash as DashState).selectorDialog.sourceType;
 

@@ -14,7 +14,7 @@ import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
-    selectIsDialogVisible,
+    selectOpenedDialogType,
     selectOpenedItemData,
     selectWidgetsCurrentTab,
 } from '../../store/selectors/dashTypedSelectors';
@@ -30,23 +30,31 @@ import Tabs from './Tabs/Tabs';
 export function Dialogs() {
     const dispatch = useDispatch();
 
-    const openedDialog = useSelector((state) => state.dash.openedDialog);
+    const openedDialog = useSelector(selectOpenedDialogType);
     const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
     const openedItemId = useSelector((state) => state.dash.openedItemId);
-    const openedItemData = useSelector((state) => selectOpenedItemData(state));
-    const currentTabId = useSelector((state) => selectCurrentTabId(state));
-    const workbookId = useSelector((state) => selectDashWorkbookId(state));
-    const widgetsCurrentTab = useSelector((state) => selectWidgetsCurrentTab(state));
+    const openedItemData = useSelector(selectOpenedItemData);
+    const currentTabId = useSelector(selectCurrentTabId);
+    const workbookId = useSelector(selectDashWorkbookId);
+    const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
     const navigationPath = useSelector((state) => state.dash.navigationPath);
 
-    const dialogTextIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
+    const handleCloseDialog = React.useCallback(() => {
+        dispatch(closeDialog());
+    }, [dispatch]);
+
+    const handleSetItemData = React.useCallback(
+        (newItemData) => {
+            dispatch(setItemData(newItemData));
+        },
+        [dispatch],
     );
-    const dialogTitleIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.TITLE),
-    );
-    const dialogChartIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
+
+    const handleChangeNavigationPath = React.useCallback(
+        (newNavigationPath) => {
+            dispatch(changeNavigationPath(newNavigationPath));
+        },
+        [dispatch],
     );
 
     useEffectOnce(() => {
@@ -65,11 +73,9 @@ export function Dialogs() {
                 <DialogTitleWidget
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
-                    dialogIsVisible={dialogTitleIsVisible}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
+                    dialogIsVisible={true}
+                    closeDialog={handleCloseDialog}
+                    setItemData={handleSetItemData}
                 />
             );
         case DIALOG_TYPE.TEXT: {
@@ -77,11 +83,9 @@ export function Dialogs() {
                 <DialogTextWidgetWrapper
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
-                    dialogIsVisible={dialogTextIsVisible}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
+                    dialogIsVisible={true}
+                    closeDialog={handleCloseDialog}
+                    setItemData={handleSetItemData}
                 />
             );
         }
@@ -92,23 +96,27 @@ export function Dialogs() {
                     openedItemData={openedItemData}
                     widgetType={widgetType}
                     currentTabId={currentTabId}
-                    dialogIsVisible={dialogChartIsVisible}
+                    dialogIsVisible={true}
                     workbookId={workbookId}
                     widgetsCurrentTab={widgetsCurrentTab}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
+                    closeDialog={handleCloseDialog}
+                    setItemData={handleSetItemData}
                     navigationPath={navigationPath}
-                    changeNavigationPath={(newNavigationPath) => {
-                        dispatch(changeNavigationPath(newNavigationPath));
-                    }}
+                    changeNavigationPath={handleChangeNavigationPath}
                 />
             );
         case DIALOG_TYPE.CONTROL:
             return <Control2 />;
         case DIALOG_TYPE.GROUP_CONTROL:
-            return <DialogGroupControl />;
+            return (
+                <DialogGroupControl
+                    openedItemId={openedItemId}
+                    openedItemData={openedItemData}
+                    dialogIsVisible={true}
+                    closeDialog={handleCloseDialog}
+                    setItemData={handleSetItemData}
+                />
+            );
         case DIALOG_TYPE.SETTINGS:
             return <Settings />;
         case DIALOG_TYPE.SELECT_STATE: {

@@ -5,6 +5,8 @@ import isEmpty from 'lodash/isEmpty';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared/types';
 import {DashTabItemType, TitlePlacementOption} from 'shared/types';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
+// TODO remove
+import {getGroupSelectorDialogInitialState} from 'ui/components/DialogGroupControl/useGroupControlState';
 import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
@@ -12,7 +14,6 @@ import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../constants/dialogs';
-import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
 import {
     selectCurrentTabId,
     selectOpenedItem,

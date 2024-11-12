@@ -4,7 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import type {SelectorElementType} from 'ui/units/dash/store/actions/dashTyped';
+import type {SelectorDialogState, SelectorElementType} from 'ui/units/dash/store/actions/dashTyped';
 import Utils from 'ui/utils/utils';
 
 import {ELEMENT_TYPE} from '../../../units/dash/containers/Dialogs/Control/constants';
@@ -24,7 +24,12 @@ import '../DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-export const GroupControlBody = ({elementType}: {elementType: SelectorElementType}) => {
+type GroupControlBodyProps = {
+    elementType: SelectorElementType;
+    controlData: SelectorDialogState;
+};
+
+export const GroupControlBody: React.FC<GroupControlBodyProps> = ({elementType}) => {
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
 
     return (
