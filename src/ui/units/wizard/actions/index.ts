@@ -3,6 +3,7 @@ import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
+import uniqWith from 'lodash/uniqWith';
 import type {
     ColorsConfig,
     Dataset,
@@ -1211,7 +1212,7 @@ export function updateDatasetByValidation({
 
 const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[]}) => {
     return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
-        const preparedUpdates = updates.map((update) => {
+        let preparedUpdates = updates.map((update) => {
             const {field} = update;
             Object.keys(field).forEach((key: string) => {
                 if ((field as Record<string, any>)[key] === null) {
@@ -1221,6 +1222,7 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
 
             return update;
         });
+        preparedUpdates = uniqWith(preparedUpdates, isEqual);
 
         const workbookId = selectWizardWorkbookId(getState());
 

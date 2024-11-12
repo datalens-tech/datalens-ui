@@ -38,6 +38,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.COMMIT_REF || github.ref }}
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: 'arm64'
       - uses: docker/setup-buildx-action@v3
       - name: 'Get release build version'
         run: |
@@ -69,6 +72,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           file: tests/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           cache-from: type=gha
           cache-to: type=gha,mode=max

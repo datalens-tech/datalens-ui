@@ -32,3 +32,4 @@ report
 reference.json
 input.json
 result.json
+.last-run.json
