@@ -142,7 +142,7 @@ services:
 
   datalens-from-image-tests:
     container_name: e2e-datalens-ui-tests
-    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-0.2261.0}-e2e
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}-e2e
     depends_on:
       - us
       - control-api
