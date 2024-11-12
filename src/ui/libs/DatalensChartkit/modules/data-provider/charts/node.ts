@@ -256,6 +256,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         extra,
         requestId,
         traceId,
+        widgetConfig,
     } = loaded;
 
     try {
@@ -283,6 +284,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             isOldWizard: false,
             isEditor: loadedType in EDITOR_CHART_NODE,
             isQL: loadedType in QL_CHART_NODE,
+            widgetConfig,
         };
 
         if ('unresolvedParams' in loaded) {

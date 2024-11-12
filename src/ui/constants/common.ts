@@ -231,6 +231,9 @@ export const DL = {
     get RUN_ENDPOINT() {
         return window.DL.runEndpoint || '/api/run';
     },
+    get API_PREFIX() {
+        return window.DL.apiPrefix || '/api';
+    },
     get CONNECTOR_ICONS() {
         return window.DL.connectorIcons || [];
     },

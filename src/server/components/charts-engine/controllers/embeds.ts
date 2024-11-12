@@ -288,6 +288,11 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 req.body.config = entry;
                 req.body.key = entry.key;
 
+                req.body.widgetConfig = {
+                    ...req.body.widgetConfig,
+                    enableMenuExport: embeddingInfo.embed.settings?.enableExport === true,
+                };
+
                 return runnerFound.handler(ctx, {
                     chartsEngine,
                     req,

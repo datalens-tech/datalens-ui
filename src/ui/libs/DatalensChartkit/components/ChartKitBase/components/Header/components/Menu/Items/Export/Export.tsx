@@ -33,7 +33,7 @@ const i18n = I18n.keyset('chartkit.menu.export');
 
 const toaster = new Toaster();
 
-const getExportResult = async ({chartData, params, path}: ExportChartArgs) => {
+const getExportResult = async ({chartData, params}: ExportChartArgs) => {
     const {widgetDataRef, loadedData, widget} = chartData;
 
     const fileName = getFileName(loadedData.key);
@@ -42,7 +42,6 @@ const getExportResult = async ({chartData, params, path}: ExportChartArgs) => {
     const exportResult = (await exportWidget({
         widgetDataRef: widgetDataRef?.current,
         widget: widgetDataRef?.current || widget,
-        path,
         data: loadedData.data,
         widgetType: loadedData.type,
         options: params,
@@ -59,8 +58,8 @@ const getExportResult = async ({chartData, params, path}: ExportChartArgs) => {
     return exportResult;
 };
 
-const copyData = async ({chartData, params, path}: ExportChartArgs) => {
-    const exportResult = await getExportResult({chartData, path, params});
+const copyData = async ({chartData, params}: ExportChartArgs) => {
+    const exportResult = await getExportResult({chartData, params});
     if (!exportResult) {
         return;
     }
@@ -71,13 +70,13 @@ const copyData = async ({chartData, params, path}: ExportChartArgs) => {
     }
 };
 
-const downloadData = async ({chartData, params, path, onExportLoading}: ExportChartArgs) => {
+const downloadData = async ({chartData, params, onExportLoading}: ExportChartArgs) => {
     const {loadedData} = chartData;
     const fileName = getFileName(loadedData.key) + '.';
     setLoadingToast(fileName, params?.format || '');
     onExportLoading?.(true);
 
-    const exportResult = await getExportResult({chartData, path, params});
+    const exportResult = await getExportResult({chartData, params});
     if (!exportResult) {
         toaster.remove(fileName);
         onExportLoading?.(false);
@@ -124,18 +123,10 @@ const csvExportAction = (
 };
 
 const directExportAction = (
-    chartsDataProvider: ChartKitDataProvider,
     format: ExportFormatsType,
     onExportLoading?: ExportChartArgs['onExportLoading'],
 ) => {
     return async (chartData: ExportActionArgs) => {
-        const {loadedData, propsData} = chartData;
-
-        const path = chartsDataProvider.getGoAwayLink(
-            {loadedData, propsData},
-            {urlPostfix: '/preview', idPrefix: '/editor/'},
-        );
-
         const params = {
             format,
             delValues: null,
@@ -144,10 +135,10 @@ const directExportAction = (
         };
 
         if (format === EXPORT_FORMATS.XLSX) {
-            downloadData({chartData, params, path, onExportLoading});
+            downloadData({chartData, params, onExportLoading});
             return;
         }
-        copyData({chartData, params, path});
+        copyData({chartData, params});
     };
 };
 
@@ -210,7 +201,7 @@ const getSubItems = ({
             isVisible: ({loadedData, error}: MenuItemArgs) =>
                 Utils.isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
-            action: directExportAction(chartsDataProvider, EXPORT_FORMATS.XLSX, onExportLoading),
+            action: directExportAction(EXPORT_FORMATS.XLSX, onExportLoading),
         },
         {
             id: MenuItemsIds.EXPORT_CSV,
@@ -222,14 +213,14 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_MARKDOWN,
             title: i18n('format_markdown'),
             isVisible: isExportVisible,
-            action: directExportAction(chartsDataProvider, EXPORT_FORMATS.MARKDOWN),
+            action: directExportAction(EXPORT_FORMATS.MARKDOWN),
         },
         {
             id: MenuItemsIds.EXPORT_WIKI,
             title: i18n('format_wiki'),
             isVisible: ({loadedData, error}: MenuItemArgs) =>
                 Boolean(showWiki) && isExportVisible({loadedData, error}),
-            action: directExportAction(chartsDataProvider, EXPORT_FORMATS.WIKI),
+            action: directExportAction(EXPORT_FORMATS.WIKI),
         },
         {
             id: MenuItemsIds.EXPORT_SCREENSHOT,

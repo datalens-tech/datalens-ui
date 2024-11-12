@@ -734,7 +734,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${DL.RUN_ENDPOINT}`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run`,
                 method: 'post',
                 ...requestOptions,
                 headers,

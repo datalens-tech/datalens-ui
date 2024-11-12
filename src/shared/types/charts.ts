@@ -238,6 +238,7 @@ export type DashWidgetConfig = {
             enable?: boolean;
             fields?: string[];
         };
+        enableMenuExport?: boolean;
     };
 };
 
