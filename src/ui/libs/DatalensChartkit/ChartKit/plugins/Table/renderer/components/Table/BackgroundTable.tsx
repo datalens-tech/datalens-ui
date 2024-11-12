@@ -71,11 +71,11 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     return (
         <Portal>
             <div
-                className={b('background-table', COMPONENT_CLASSNAME)}
+                className={b('background-table', {size}, COMPONENT_CLASSNAME)}
                 style={{height: dimensions?.height, width: dimensions?.width}}
                 ref={containerRef}
             >
-                <table className={b({prepared: false, size})} ref={tableRef} style={{width}}>
+                <table className={b({prepared: false})} ref={tableRef} style={{width}}>
                     <TableHead rows={header.rows} />
                     <TableBody rows={body.rows} />
                     <TableFooter rows={footer.rows} />
