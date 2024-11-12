@@ -70,7 +70,7 @@ export const EDITOR_TYPE = {
     MARKUP_NODE: 'markup_node',
     TIMESERIES_NODE: 'timeseries_node',
     D3_NODE: 'd3_node',
-    WHITE_BOX_NODE: 'white-box_node',
+    BLANK_CHART_NODE: 'blank-chart_node',
 };
 
 export const ENTRY_TYPES = {

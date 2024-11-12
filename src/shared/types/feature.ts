@@ -77,6 +77,8 @@ export enum Feature {
      * It checks admin permission for move entries instead of edit permission.
      */
     UseMovePermAction = 'UseMovePermAction',
+    /** An empty chart for drawing something unusual */
+    BlankChart = 'BlankChart',
 }
 
 export type FeatureConfig = Record<string, boolean>;

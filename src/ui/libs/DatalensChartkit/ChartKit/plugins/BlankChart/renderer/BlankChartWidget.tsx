@@ -8,13 +8,13 @@ import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 import {ChartQa} from '../../../../../../../shared';
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
-import type {WhiteBoxWidgetProps, WidgetDimensions} from '../types';
+import type {BlankChartWidgetProps, WidgetDimensions} from '../types';
 
-import './WhiteBoxWidget.scss';
+import './BlankChartWidget.scss';
 
-const b = block('chartkit-white-box-widget');
+const b = block('chartkit-blank-chart-widget');
 
-const WhiteBoxWidget = (props: WhiteBoxWidgetProps) => {
+const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const {
         id,
         onLoad,
@@ -78,4 +78,4 @@ const WhiteBoxWidget = (props: WhiteBoxWidgetProps) => {
     );
 };
 
-export default WhiteBoxWidget;
+export default BlankChartWidget;

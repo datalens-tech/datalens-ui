@@ -3,11 +3,11 @@ import {HighchartsPlugin} from '@gravity-ui/chartkit/highcharts';
 import {IndicatorPlugin} from '@gravity-ui/chartkit/indicator';
 import {YagrPlugin} from '@gravity-ui/chartkit/yagr';
 
+import {BlankChartPlugin} from './BlankChart';
 import {HighchartsMapPlugin} from './HighchartsMap';
 import {MarkupPlugin} from './Markup';
 import {MetricPlugin} from './Metric';
 import {TablePlugin} from './Table';
-import {WhiteBoxPlugin} from './WhiteBox';
 import {YandexMapPlugin} from './YandexMap';
 
 export {MetricPlugin} from './Metric';
@@ -28,5 +28,5 @@ export const getChartkitPlugins = () => [
     D3Plugin,
     MarkupPlugin,
     TablePlugin,
-    WhiteBoxPlugin,
+    BlankChartPlugin,
 ];

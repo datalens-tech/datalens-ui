@@ -93,8 +93,8 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
             break;
         }
 
-        case 'white-box': {
-            chartkitType = 'white-box';
+        case 'blank-chart': {
+            chartkitType = 'blank-chart';
 
             break;
         }

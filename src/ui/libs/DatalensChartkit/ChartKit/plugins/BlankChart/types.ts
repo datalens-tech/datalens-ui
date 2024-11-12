@@ -7,7 +7,7 @@ export type WidgetDimensions = {
     height: number;
 };
 
-export type WhiteBoxWidgetProps = {
+export type BlankChartWidgetProps = {
     id: string;
     data: {
         data: {
@@ -21,6 +21,6 @@ export type WhiteBoxWidgetProps = {
         callExternalOnChange?: boolean,
         callChangeByClick?: boolean,
     ) => void;
-    onLoad?: (data?: ChartKitOnLoadData<'white-box'>) => void;
+    onLoad?: (data?: ChartKitOnLoadData<'blank-chart'>) => void;
     widgetDashState?: WidgetDashState;
 };

@@ -51,7 +51,7 @@ export function getDefaultRunners() {
                 'markup_node',
                 'timeseries_node',
                 EDITOR_TYPE.D3_NODE,
-                EDITOR_TYPE.WHITE_BOX_NODE,
+                EDITOR_TYPE.BLANK_CHART_NODE,
             ]),
             handler: runEditor,
         },

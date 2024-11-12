@@ -10,5 +10,5 @@ export const enum EditorTemplatesQA {
     Timeseries = 'editor-templates-timeseries-item',
     Markup = 'editor-templates-markup-item',
     D3 = 'editor-templates-d3-item',
-    WhiteBox = 'editor-templates-white-box-item',
+    BlankChart = 'editor-templates-blank-chart-item',
 }

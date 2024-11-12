@@ -1,6 +1,8 @@
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
 import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
+import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('editor.templates.view');
 
@@ -10,7 +12,7 @@ export type ChartEditorType = {
         name: string;
         id: string;
         language: string;
-        docs: {
+        docs?: {
             title: string;
             path: string;
         }[];
@@ -636,7 +638,10 @@ export function getChartEditorTypes(type: string) {
                 },
             ],
         },
-        [EDITOR_TYPE.WHITE_BOX_NODE]: {
+    } as Record<string, ChartEditorType>;
+
+    if (Utils.isEnabledFeature(Feature.BlankChart)) {
+        chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] = {
             get name() {
                 return i18n('label_graph');
             },
@@ -683,7 +688,8 @@ export function getChartEditorTypes(type: string) {
                     docs: docsShare,
                 },
             ],
-        },
-    } as Record<string, ChartEditorType>;
+        };
+    }
+
     return chartEditorTypes[type];
 }
