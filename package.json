@@ -64,7 +64,7 @@
     "@gravity-ui/dashkit": "^8.18.0",
     "@gravity-ui/date-utils": "^2.3.0",
     "@gravity-ui/expresskit": "^2.1.0",
-    "@gravity-ui/gateway": "^2.6.2",
+    "@gravity-ui/gateway": "^3.1.1",
     "@gravity-ui/i18n": "^1.6.0",
     "@gravity-ui/nodekit": "^1.7.0",
     "@node-rs/crc32": "^1.7.2",
