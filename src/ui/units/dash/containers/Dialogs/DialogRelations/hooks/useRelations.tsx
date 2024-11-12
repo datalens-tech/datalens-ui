@@ -2,7 +2,9 @@ import React from 'react';
 
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
+import {useSelector} from 'react-redux';
 import type {DashTabItem, WorkbookId} from 'shared';
+import {selectWidgetsCurrentTab} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import type {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
 import {getSdk} from '../../../../../../libs/schematic-sdk';
@@ -54,6 +56,8 @@ export const useRelations = ({
     const [prevItemId, setPrevItemId] = React.useState(itemId);
     const [prevWidgetId, setPrevWidgetId] = React.useState(widget.id);
 
+    const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
+
     const getCurrentWidgetInfo = React.useCallback(
         (
             dashWidgetsMetaData: Omit<DashkitMetaDataItem, 'relations'>[],
@@ -65,11 +69,14 @@ export const useRelations = ({
 
             const {connections} = dashKitRef.current.props.config;
 
+            const widgetCurrentTabId = widgetsCurrentTab[widget.id];
+
             const currentMeta = getCurrentWidgetMeta({
                 metaData: dashWidgetsMetaData,
                 dashkitData: dashKitRef.current,
                 widget,
                 itemId,
+                tabId: widgetCurrentTabId,
             });
 
             const currentRelations = getRelationsData({
@@ -83,7 +90,7 @@ export const useRelations = ({
             setCurrentWidgetMeta(currentMeta);
             setRelations(currentRelations);
         },
-        [dashKitRef, dialogAliases, itemId, widget],
+        [dashKitRef, dialogAliases, itemId, widget, widgetsCurrentTab],
     );
 
     // the current item is changed in the modal

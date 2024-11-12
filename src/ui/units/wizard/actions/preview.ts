@@ -1,6 +1,8 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
+import uniqWith from 'lodash/uniqWith';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 
@@ -72,7 +74,7 @@ export function setUpdates({updates}: {updates: Update[]}): SetUpdatesAction {
 
 type ActualizeAndSetUpdatesArgs = {
     updates: Update[];
-    onUpdateItemsGuids?: string[];
+    onUpdateItemsGuids?: {guid: string; datasetId?: string}[];
     shouldMergeUpdatesFromState?: boolean;
 };
 
@@ -136,13 +138,14 @@ export function actualizeAndSetUpdates({
             ? [...updates, ...wizardState.preview.updates]
             : updates;
 
-        const actualizedUpdates = actualizeUpdates({
+        let actualizedUpdates = actualizeUpdates({
             updates: rawUpdates,
             visualization,
             sectionDatasetFields,
             onUpdateItemsGuids,
             visualizationFields,
         });
+        actualizedUpdates = uniqWith(actualizedUpdates, isEqual);
 
         dispatch(setUpdates({updates: actualizedUpdates}));
     };

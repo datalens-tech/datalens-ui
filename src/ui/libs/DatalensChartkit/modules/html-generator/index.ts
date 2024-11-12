@@ -64,7 +64,7 @@ export function generateHtml(
         }
 
         Object.entries(attributes).forEach(([key, value]) => {
-            if (key && !ALLOWED_ATTRIBUTES.includes(key.toLowerCase())) {
+            if (!ALLOWED_ATTRIBUTES.includes(key?.toLowerCase())) {
                 throw new ChartKitCustomError(null, {
                     details: `Attribute '${key}' is not allowed`,
                 });

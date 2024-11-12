@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
 import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
-import {resolveConfig} from '../components/storage';
+import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
@@ -52,7 +52,9 @@ export const embeddedEntryController = (req: Request, res: Response) => {
         requestId: req.id,
     };
 
-    const configPromise = ctx.call('configLoading', (cx) => resolveConfig(cx, configResolveArgs));
+    const configPromise = ctx.call('configLoading', (cx) =>
+        resolveEmbedConfig(cx, configResolveArgs),
+    );
 
     ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
 

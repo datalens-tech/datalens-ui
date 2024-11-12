@@ -92,6 +92,7 @@ export type LoadingChartHookProps = {
     isPageHidden?: boolean;
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
+    onBeforeChartLoad?: () => Promise<void>;
 };
 
 type AutoupdateDataType = {
@@ -149,6 +150,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         autoupdateInterval,
         isPageHidden,
         forceShowSafeChart,
+        onBeforeChartLoad,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -453,6 +455,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     loadedWidgetData as ResolveWidgetControlDataRefArgs,
                 ),
             );
+
+            await onBeforeChartLoad?.();
 
             // order is important for updateHighchartsConfig from editor
             onChartLoad?.({

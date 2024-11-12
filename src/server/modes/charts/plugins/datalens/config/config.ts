@@ -1,3 +1,5 @@
+import set from 'lodash/set';
+
 import type {FeatureConfig, ServerChartsConfig} from '../../../../../../shared';
 import {
     ChartkitHandlers,
@@ -187,6 +189,14 @@ export const buildChartsConfigPrivate = (
         (config as TableConfig).settings = {
             externalSort: true,
         };
+    }
+
+    const isTableWidget = (
+        [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
+    ).includes(visualizationId);
+
+    if (isTableWidget) {
+        set(config, 'settings.width', 'max-content');
     }
 
     const placeholders = shared.visualization.placeholders;

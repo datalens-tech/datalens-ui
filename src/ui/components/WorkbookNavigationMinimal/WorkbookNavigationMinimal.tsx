@@ -11,7 +11,7 @@ import moment from 'moment';
 import type {EntryScope} from 'shared';
 import {WorkbookNavigationMinimalQa} from 'shared';
 import type {GetEntryResponse, GetWorkbookEntriesArgs} from 'shared/schema';
-import {CLUSTERS_DATE_FORMAT_DATE} from 'ui/constants/misc';
+import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
 
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
@@ -148,7 +148,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     private renderItem = (item: Item) => {
         const {entry, inactive, qa} = item;
         const name = entry.key.split('/').pop();
-        const date = moment(entry.createdAt).format(CLUSTERS_DATE_FORMAT_DATE);
+        const date = moment(entry.createdAt).format(DEFAULT_DATE_FORMAT);
 
         return (
             <div data-qa={qa} className={b('row', {inactive})}>

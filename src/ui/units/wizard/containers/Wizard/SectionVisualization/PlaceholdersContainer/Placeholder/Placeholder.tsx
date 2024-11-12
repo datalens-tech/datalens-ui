@@ -4,6 +4,7 @@ import {Gear} from '@gravity-ui/icons';
 import type {IconData, IconProps} from '@gravity-ui/uikit';
 import {Icon, Popover} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import pick from 'lodash/pick';
 import type {ConnectableElement} from 'react-dnd';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
@@ -223,7 +224,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
     ) => {
         const items = args[0];
 
-        const onUpdateItemsGuids = items.map((item: Field) => item.guid);
+        const onUpdateItemsGuids = items.map((item: Field) => pick(item, 'guid', 'datasetId'));
 
         this.props.actualizeAndSetUpdates({updates: this.props.updates, onUpdateItemsGuids});
         this.props.onUpdate(...args);

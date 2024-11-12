@@ -83,7 +83,7 @@ const getLeftPosition = (align: string, width: number) => {
 
 const getMinBarStyle = (args: GetMinBarStyleArgs): React.CSSProperties => {
     const {value, min, color, align = 'right'} = args;
-    const valuePart = getRangeValuePart(min, value);
+    const valuePart = Math.min(100, getRangeValuePart(min, value));
 
     return {
         background: color,
@@ -94,7 +94,7 @@ const getMinBarStyle = (args: GetMinBarStyleArgs): React.CSSProperties => {
 
 const getMaxBarStyle = (args: GetMaxBarStyleArgs): React.CSSProperties => {
     const {value, max, color, align = 'left'} = args;
-    const valuePart = getRangeValuePart(max, value);
+    const valuePart = Math.min(100, getRangeValuePart(max, value));
 
     return {
         background: color,

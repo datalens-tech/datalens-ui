@@ -39,13 +39,19 @@ export default class ColorDialog {
         await this.page.click(this.cancelButtonSelector);
     }
 
+    async checkFieldValues(text: string[]) {
+        const items = this.page.locator(this.valueLabelSelector);
+        await expect(items.first()).toBeVisible();
+        await expect(items).toHaveText(text);
+    }
+
     async getFieldValues(): Promise<string[]> {
         await this.page.waitForSelector(this.valueLabelSelector);
         const elements = await this.page.$$(this.valueLabelSelector);
         return Promise.all(elements.map((element) => element.innerText()));
     }
 
-    async selectColor(colorValue: ColorValue) {
+    async selectColor(colorValue: string) {
         await this.page.click(slct(colorValue));
     }
 

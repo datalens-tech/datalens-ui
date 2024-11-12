@@ -1,4 +1,5 @@
 import _isEmpty from 'lodash/isEmpty';
+import isNil from 'lodash/isNil';
 
 import type {HighchartsSeriesCustomObject} from '../../../../../../../shared';
 import {
@@ -6,6 +7,7 @@ import {
     AxisNullsMode,
     PlaceholderId,
     WizardVisualizationId,
+    getAxisNullsSettings,
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
@@ -130,12 +132,6 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     if (isSortByMeasureColor) {
         measureColorSortLine[getFakeTitleOrTitle(colorItem)] = {data: {}};
     }
-
-    const defaultNullValue =
-        visualizationId === WizardVisualizationId.Area ||
-        visualizationId === WizardVisualizationId.Area100p
-            ? AxisNullsMode.AsZero
-            : AxisNullsMode.Connect;
 
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
@@ -335,12 +331,16 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     nulls = nullsY2;
                 }
 
-                nulls = nulls || defaultNullValue;
+                nulls = getAxisNullsSettings(nulls, visualizationId);
 
                 const innerLabels = labelsValues[lineKey];
 
                 const customSeriesData: HighchartsSeriesCustomObject = {};
 
+                const shouldUsePreviousValueForEmptyPoint =
+                    visualizationId === WizardVisualizationId.Area &&
+                    nulls === AxisNullsMode.UsePrevious;
+                let prevYValue: string | number | null | undefined = null;
                 const graph: any = {
                     id: line.id,
                     title: line.title || 'Null',
@@ -355,6 +355,14 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                             if (typeof value === 'undefined' && nulls === AxisNullsMode.AsZero) {
                                 value = 0;
+                            }
+
+                            if (shouldUsePreviousValueForEmptyPoint) {
+                                if (isNil(value)) {
+                                    value = prevYValue ?? value;
+                                } else {
+                                    prevYValue = value;
+                                }
                             }
 
                             // We can skip a point only if we put x in each point instead of categories

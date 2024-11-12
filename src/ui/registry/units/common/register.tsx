@@ -28,6 +28,7 @@ import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {WorkbookEntriesTableTabs} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {getAllEntryScopes} from '../../../utils/getAllEntryScopes';
 import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
+import {getRevisionsPanelEntryScopesTexts} from '../../../utils/getRevisionsPanelEntryScopesTexts';
 import {getScopeTypeIcon} from '../../../utils/getScopeTypeIcon';
 import {getTopLevelEntryScopes} from '../../../utils/getTopLevelEntryScopes';
 import {getIconDataById} from '../../../utils/icons';
@@ -94,5 +95,6 @@ export const registerCommonPlugins = () => {
         getTopLevelEntryScopes,
         getScopeTypeIcon,
         getEntryScopesWithRevisionsList,
+        getRevisionsPanelEntryScopesTexts,
     });
 };

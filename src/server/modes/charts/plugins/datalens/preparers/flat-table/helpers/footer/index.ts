@@ -1,5 +1,5 @@
 import type {BarTableCell, ServerField, TableCommonCell} from '../../../../../../../../../shared';
-import {isDateField, isMarkupField} from '../../../../../../../../../shared';
+import {isDateField, isMarkupField, isStringField} from '../../../../../../../../../shared';
 import {TABLE_TOTALS_STYLES} from '../../../../../constants/misc';
 import {
     findIndexInOrder,
@@ -41,6 +41,8 @@ export const prepareFooterValue = (
     } else if (isDateField({data_type: itemDataType})) {
         const date = new Date(total);
         value = getTimezoneOffsettedTime(date);
+    } else if (isStringField({data_type: itemDataType})) {
+        value = total;
     }
 
     if (columnIndex === 0) {

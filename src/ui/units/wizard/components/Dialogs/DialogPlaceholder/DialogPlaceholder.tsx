@@ -9,19 +9,21 @@ import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import type {
+    AxisNullsMode,
     Field,
     Placeholder,
     PlaceholderSettings,
     ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
-    WizardVisualizationId,
 } from 'shared';
 import {
     DialogPlaceholderQa,
     Feature,
     PlaceholderId,
+    WizardVisualizationId,
     getAxisMode,
+    getAxisNullsSettings,
     hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
     isFieldHierarchy,
@@ -206,16 +208,26 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             nullsOptions.splice(1, 0, connectOption);
         }
 
+        if (visualizationId === WizardVisualizationId.Area) {
+            nullsOptions.push({
+                value: SETTINGS.NULLS.USE_PREVIOUS,
+                content: i18n('wizard', 'label_use-previous'),
+            });
+        }
+
+        const selectedValue = getAxisNullsSettings(
+            settings.nulls as AxisNullsMode,
+            visualizationId,
+        );
+
         return (
             <DialogPlaceholderRow
-                settingCustomWidth="400px"
                 title={i18n('wizard', 'label_nulls')}
                 setting={
                     <DialogRadioButtons
-                        stretched={true}
                         qa="connect-nulls-radio-buttons"
                         items={nullsOptions}
-                        value={settings.nulls}
+                        value={selectedValue}
                         onUpdate={this.handleNullsRadioButtonUpdate}
                     />
                 }

@@ -1,7 +1,6 @@
 :root {
     --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
-    --dl-table-header-row-height: 28px;
     --dl-table-row-height: 30px;
     --dl-table-cell-horizontal-padding: 10px;
     --dl-table-cell-vertical-padding: 5px;
@@ -14,10 +13,10 @@
     &:before {
         content: '';
         position: absolute;
-        top: var(--dl-table-cell-border-offset, -1px);
+        top: 0;
         width: calc(100% + 1.99px);
         left: var(--dl-table-cell-border-offset, -1px);
-        height: calc(100% + 1.99px);
+        height: 100%;
         pointer-events: none;
     }
 }
@@ -31,8 +30,15 @@
         width: 100%;
 
         &_highlight-rows {
-            --dl-table-row-hover-bg-color: var(--g-color-base-simple-hover);
+            tbody tr:not(.dl-table__tr_no-data):hover td:not(.dl-table__td_pinned),
+            tbody tr:not(.dl-table__tr_no-data):hover td:before {
+                background: var(--dl-table-cell-bg-color, var(--g-color-base-simple-hover));
+            }
         }
+    }
+
+    &__snapter-container {
+        height: 100%;
     }
 
     &__title {
@@ -51,6 +57,7 @@
         border-top: 0;
         border-left: 0;
         font-size: 10pt;
+        background: var(--dl-table-cell-bg-color);
 
         &_clickable {
             cursor: pointer;
@@ -130,13 +137,6 @@
         }
     }
 
-    &__header &__tr:first-child {
-        th {
-            border-top: 1px solid var(--dl-table-border-color);
-            min-height: var(--dl-table-header-row-height);
-        }
-    }
-
     &__header &__th {
         position: relative;
         font-weight: 500;
@@ -144,7 +144,9 @@
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
+        min-height: var(--dl-table-row-height);
         background: var(--dl-table-header-bg-color);
+        border-bottom: 0;
     }
 
     &__header &__sort-icon {
@@ -196,6 +198,7 @@
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
+        background: var(--dl-table-cell-bg-color);
     }
 
     &__footer .chartkit-table-bar {
@@ -212,8 +215,9 @@
 
         @include stickyCellBg();
         &:before {
-            border-bottom: 1px solid var(--dl-table-border-color);
+            background: var(--dl-table-cell-bg-color);
             border-left: 1px solid var(--dl-table-border-color);
+            z-index: -1;
         }
     }
 
@@ -227,11 +231,6 @@
             1px 3px 13px 0 var(--g-color-sfx-shadow-light);
         border-right: 1px solid var(--g-color-text-hint);
         pointer-events: none;
-    }
-
-    &__body &__tr:not(&__tr_no-data):hover td:not(&__td_pinned),
-    &__body &__tr:not(&__tr_no-data):hover td:before {
-        background: var(--dl-table-row-hover-bg-color);
     }
 
     &__no-data {

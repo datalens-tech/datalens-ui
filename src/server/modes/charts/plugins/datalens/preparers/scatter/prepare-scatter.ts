@@ -6,6 +6,7 @@ import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
+    getFakeTitleOrTitle,
     getFormatOptions,
     isDateField,
     isMarkdownField,
@@ -398,7 +399,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             graphs[0].title = color.fakeTitle || idToTitle[color.guid];
         }
     } else {
-        const value = idToTitle[y.guid];
+        const yField = {...y, title: idToTitle[y.guid] ?? y.title};
+        const value = getFakeTitleOrTitle(yField);
         const colorFromConfig = getMountedColor(colorsConfig, value) || colorsConfig.colors[0];
         graphs.forEach((graph) => {
             graph.color = colorFromConfig;

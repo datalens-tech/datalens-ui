@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ResponseSuccessSingleControl} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 
 import type {ErrorData, LoadStatus} from '../../../Control/types';
@@ -9,7 +9,7 @@ export type Dispatch = React.Dispatch<Action>;
 
 export type State = {
     status: LoadStatus;
-    loadedData: null | ResponseSuccessControls;
+    loadedData: null | ResponseSuccessSingleControl;
     errorData: null | ErrorData;
     loadingItems: boolean;
     validationError: null | string;
@@ -33,7 +33,7 @@ export const setErrorData = (payload: SetErrorData['payload']): SetErrorData => 
 export const CONTROL_SET_LOADED_DATA = Symbol('control/SET_LOADED_DATA');
 type SetLoadedData = {
     type: typeof CONTROL_SET_LOADED_DATA;
-    payload: {status: LoadStatus; loadedData: ResponseSuccessControls};
+    payload: {status: LoadStatus; loadedData: ResponseSuccessSingleControl};
 };
 export const setLoadedData = (payload: SetLoadedData['payload']): SetLoadedData => {
     return {
