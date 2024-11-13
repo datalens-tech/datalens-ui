@@ -573,12 +573,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         return (
             <div className={b('widget-size')}>
                 <span className={b('label')}>{i18n('wizard', 'label_widget-size')}</span>
-                <RadioButton
-                    value={selected}
-                    onChange={(event) => {
-                        this.setState({size: event.target.value as WidgetSizeType});
-                    }}
-                >
+                <RadioButton value={selected} onUpdate={(value) => this.setState({size: value})}>
                     {sizes.map((item) => (
                         <RadioButton.Option key={item} value={item}>
                             {item.toUpperCase()}
