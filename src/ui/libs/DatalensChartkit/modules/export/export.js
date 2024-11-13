@@ -41,7 +41,8 @@ const TABLE_DATE_FORMAT_BY_SCALE = {
     y: 'YYYY',
 };
 
-const API = `${DL.API_PREFIX}/export`;
+//TODO: use only api_prefix
+const API = DL.API_PREFIX ? `${DL.API_PREFIX}/export` : '/api/export';
 
 function tableHeadToGraphs(head, prefix) {
     return head.reduce((result, column) => {

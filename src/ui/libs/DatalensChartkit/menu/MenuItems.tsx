@@ -169,7 +169,7 @@ export const getEditMenuItem = ({
     icon: customConfig?.icon || (
         <ChartKitIcon data={Pencil} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => !DL.IS_MOBILE,
+    isVisible: () => !DL.IS_MOBILE && (customConfig?.isVisible ? customConfig.isVisible() : true),
     action:
         customConfig?.action ||
         (({loadedData = {}, propsData, chartsDataProvider: dataProvider}) => {
