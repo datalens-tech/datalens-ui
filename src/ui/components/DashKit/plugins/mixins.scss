@@ -5,6 +5,10 @@
     bottom: 0;
     width: 44px;
     right: 0;
-    mask-image: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.95), rgb(0, 0, 0));
-    background-color: var(--g-color-base-generic-ultralight);
+    background: linear-gradient(
+        to right,
+        transparent,
+        color-mix(in srgb, var(--g-color-base-generic-ultralight) 95%, transparent),
+        var(--g-color-base-generic-ultralight)
+    );
 }

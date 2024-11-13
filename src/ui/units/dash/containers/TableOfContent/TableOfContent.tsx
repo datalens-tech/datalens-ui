@@ -11,7 +11,6 @@ import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
-import {scrollToHash} from 'ui/units/dash/utils/scrollUtils';
 import {
     selectHashStates,
     selectShowTableOfContent,
@@ -51,8 +50,14 @@ const getHash = ({
     return itemTitle ? `#${encodeURIComponent(itemTitle)}` : '';
 };
 
-const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
-    ({disableHashNavigation}) => {
+const TableOfContent = React.memo(
+    ({
+        disableHashNavigation,
+        onItemClick,
+    }: {
+        disableHashNavigation?: boolean;
+        onItemClick: (itemTitle: string, hasTabChanged: boolean) => void;
+    }) => {
         const dispatch = useDispatch();
         const location = useLocation();
 
@@ -85,11 +90,9 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                 if (DL.IS_MOBILE) {
                     handleToggleTableOfContent();
                 }
-                if (disableHashNavigation) {
-                    scrollToHash({hash: encodeURIComponent(itemTitle), withDelay: true});
-                }
+                onItemClick(itemTitle, !isSelectedTab(tabId));
             },
-            [isSelectedTab, disableHashNavigation, dispatch, handleToggleTableOfContent],
+            [isSelectedTab, onItemClick, dispatch, handleToggleTableOfContent],
         );
 
         const handleSheetClose = () => {

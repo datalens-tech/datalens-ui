@@ -112,20 +112,15 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
         const withInlineAnchor = showAnchor && isInlineAnchor;
         const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
-        const calculateAnchor = React.useCallback(() => {
+        const calculateAnchor = React.useCallback((showAnchor) => {
             if (showAnchor && contentRef.current && rootNodeRef.current) {
-                const contentHeight = contentRef.current.getBoundingClientRect().height || 0;
-                const contentWidth = contentRef.current.getBoundingClientRect().width || 0;
+                const contentRect = contentRef.current.getBoundingClientRect();
+                const rootRect = rootNodeRef.current.getBoundingClientRect();
 
-                const rootHeight = rootNodeRef.current.getBoundingClientRect().height || 0;
-                const rootWidth = rootNodeRef.current.getBoundingClientRect().width || 0;
+                const offsetTop = contentRect.top - rootRect.top;
 
-                const offsetTop =
-                    contentRef.current.getBoundingClientRect().top -
-                    rootNodeRef.current.getBoundingClientRect().top;
-
-                const isWidthFits = contentWidth + MAX_ANCHOR_WIDTH < rootWidth;
-                const isHeightFits = contentHeight <= rootHeight;
+                const isWidthFits = contentRect.width + MAX_ANCHOR_WIDTH < rootRect.width;
+                const isHeightFits = contentRect.height <= rootRect.height;
 
                 const enableInlineAnchor = isWidthFits && isHeightFits;
                 const calculatedAnchorTop =
@@ -136,10 +131,10 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             } else {
                 setIsInlineAnchor(false);
             }
-        }, [showAnchor]);
+        }, []);
 
         React.useLayoutEffect(() => {
-            calculateAnchor();
+            calculateAnchor(showAnchor);
         }, [
             currentLayout.x,
             currentLayout.h,
@@ -148,6 +143,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             data.size,
             data.background?.enabled,
             calculateAnchor,
+            showAnchor,
         ]);
 
         React.useEffect(() => {

@@ -108,7 +108,7 @@ import {
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
 import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
-import {scrollToHash} from '../../utils/scrollUtils';
+import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
@@ -155,6 +155,7 @@ type DashBodyState = {
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
     hash: string;
+    delayedScrollId: string | null;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -200,7 +201,12 @@ class Body extends React.PureComponent<BodyProps> {
         const newHash = props.location.hash;
         if (newHash !== state.hash) {
             newState.hash = newHash;
-            scrollToHash({hash: newHash, withDelay: props.tabId !== tabId});
+            if (state.loaded && newState.loaded !== false) {
+                scrollIntoView(newHash.replace('#', ''));
+                newState.delayedScrollId = null;
+            } else {
+                newState.delayedScrollId = newHash.replace('#', '');
+            }
         }
 
         return Object.keys(newState).length ? newState : null;
@@ -263,6 +269,7 @@ class Body extends React.PureComponent<BodyProps> {
         loaded: false,
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
+        delayedScrollId: null,
     };
 
     groups: DashKitGroup[] = [
@@ -304,7 +311,9 @@ class Body extends React.PureComponent<BodyProps> {
         // if localStorage already have a dash item, we need to set it to state
         this.storageHandler();
 
-        scrollToHash({hash: this.props.location.hash, withDelay: true, checkUserScroll: true});
+        if (this.props.location.hash) {
+            this.setState({delayedScrollId: this.props.location.hash.replace('#', '')});
+        }
 
         window.addEventListener('storage', this.storageHandler);
     }
@@ -938,7 +947,26 @@ class Body extends React.PureComponent<BodyProps> {
         if (loadedItemsMap.get(item.id) !== true) {
             loadedItemsMap.set(item.id, true);
 
-            this.setState({loaded: Array.from(loadedItemsMap.values()).every(Boolean)});
+            const isLoaded = Array.from(loadedItemsMap.values()).every(Boolean);
+            const updatedState: Partial<DashBodyState> = {loaded: isLoaded};
+
+            if (isLoaded && this.state.delayedScrollId) {
+                scrollIntoView(this.state.delayedScrollId);
+                updatedState.delayedScrollId = null;
+            }
+
+            this.setState(updatedState);
+        }
+    };
+
+    private handleTocItemClick = (itemTitle: string, hasTabChanged: boolean) => {
+        if (this.props.disableHashNavigation) {
+            // after click on other tab in toc
+            if (this.state.loaded && !hasTabChanged) {
+                scrollIntoView(encodeURIComponent(itemTitle));
+            } else {
+                this.setState({delayedScrollId: encodeURIComponent(itemTitle)});
+            }
         }
     };
 
@@ -987,7 +1015,10 @@ class Body extends React.PureComponent<BodyProps> {
                             settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
                     })}
                 >
-                    <TableOfContent disableHashNavigation={disableHashNavigation} />
+                    <TableOfContent
+                        disableHashNavigation={disableHashNavigation}
+                        onItemClick={this.handleTocItemClick}
+                    />
                     <div
                         className={b('content', {
                             'with-table-of-content': showTableOfContent && hasTableOfContent,
