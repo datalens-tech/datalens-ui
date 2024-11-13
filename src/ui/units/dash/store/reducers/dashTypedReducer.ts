@@ -4,6 +4,7 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
@@ -13,8 +14,7 @@ import {
     SET_ACTIVE_SELECTOR_INDEX,
     UPDATE_SELECTORS_GROUP,
 } from '../actions/controls/actions';
-import type {SelectorsGroupDialogState} from '../actions/controls/types';
-import type {SelectorDialogState, TabsHashStates} from '../actions/dashTyped';
+import type {TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
     SET_DASHKIT_REF,

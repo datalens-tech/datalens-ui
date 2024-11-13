@@ -13,6 +13,7 @@ import {
     TitlePlacementOption,
 } from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
@@ -21,7 +22,6 @@ import {
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
-import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
@@ -37,7 +37,7 @@ import type {
     UpdateState,
 } from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
+import {setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';

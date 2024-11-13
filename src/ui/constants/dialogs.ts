@@ -1,6 +1,5 @@
 import {DashTabItemType} from 'shared';
-
-import type {SelectorDialogState} from '../units/dash/store/actions/dashTyped';
+import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 export const ITEM_TYPE = {
     TITLE: DashTabItemType.Title,

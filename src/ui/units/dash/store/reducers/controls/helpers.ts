@@ -1,7 +1,6 @@
 import {i18n} from 'i18n';
 import type {DashTab, DashTabItemGroupControl} from 'shared/types';
-
-import type {SelectorDialogState} from '../../actions/dashTyped';
+import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 export const getActualUniqueFieldNameValidation = (
     group: SelectorDialogState[],
