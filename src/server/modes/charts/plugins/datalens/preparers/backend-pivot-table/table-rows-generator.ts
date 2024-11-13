@@ -87,8 +87,6 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
         colorKey,
         isTotalCell: isTotalsRowValue,
         css: {
-            fontSize: '13px',
-            lineHeight: '15px',
             ...(isTotalsRowValue ? TABLE_TOTALS_STYLES : {}),
         },
     };
