@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import {i18n} from 'i18n';
+import omit from 'lodash/omit';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
@@ -43,6 +44,11 @@ import {selectWidget} from '../../../selectors/widget';
 import {shouldComponentUpdateWithDeepComparison} from '../../../utils/helpers';
 
 import './SectionPreview.scss';
+
+const FORBIDDEN_PARAMS = [
+    // it should not be possible to redefine the type of visualization
+    '_chart_type',
+];
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -150,7 +156,8 @@ class SectionPreview extends Component<Props> {
                 } as unknown as ConfigNode;
             }
 
-            const params = Utils.getParamsFromSearch(window.location.search);
+            const searchParams = Utils.getParamsFromSearch(window.location.search);
+            const params = omit(searchParams, FORBIDDEN_PARAMS);
             const {actionParamsEnabled} = Utils.getOptionsFromSearch(window.location.search);
 
             return (
