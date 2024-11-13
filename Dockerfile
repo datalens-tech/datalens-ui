@@ -54,6 +54,9 @@ RUN npm run build
 RUN npm prune --production
 RUN rm -rf assets deploy src /tmp/* /root/.npm
 
+RUN mkdir /opt/app/table-report-headers
+RUN chown -R ${USER} /opt/app/table-report-headers
+
 RUN chown -R ${USER} /opt/app/dist/run
 RUN chown -R ${USER} /opt/app/export 
 

@@ -223,23 +223,34 @@ export async function exportEntries(req: Request, res: Response) {
         const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body['params']);
 
         const exportPath = path.join(__dirname, '../', '../', '../', 'export');
+        const headersPath = path.join(__dirname, '../', '../', '../', 'table-report-headers');
+
         const pythonScript = path.join(exportPath, 'dash2sheets.py');
 
-        const publicOutputPath = path.join(exportPath, `${r.body['exportFilename'] +'-' + Date.now()}.${r.body['outputFormat']}`);
+        const exportFilename = r.body['exportFilename'];
+        const publicOutputPath = path.join(exportPath, `${exportFilename +'-' + Date.now()}.${r.body['outputFormat']}`);
 
         let files = [];
+        
+        const clearRegexp = /[\[\]\:\*\?\/\\]/g;
 
         const filteredLinks = Object.keys(chartData);
         for(let i = 0; i < filteredLinks.length; i++) {
             if(chartData[filteredLinks[i]].extra.datasets) {
                 let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
-                const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(/[\[\]\:\*\?\/\\]/g, '_')}.${r.body['formSettings'].format}`);
+                const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(clearRegexp, '_')}.${r.body['formSettings'].format}`);
                 files.push(publicOutputCSVPath);
 
                 const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
                 await fs.promises.writeFile(publicOutputCSVPath, response.data);
             }
         }
+
+        const publicCSVMetaPath =  path.join(exportPath, `${exportFilename.replace(clearRegexp, '_')}.meta`);
+        await fs.promises.writeFile(
+            publicCSVMetaPath, 
+            Object.values(chartData).map((item:any)=>item.key?.split("/")?.[1]).join('\n')
+        );
 
         const destroy = async () => {
             if(fs.existsSync(publicOutputPath)) {
@@ -259,7 +270,7 @@ export async function exportEntries(req: Request, res: Response) {
         } 
 
         // тут нужно вызвать скрипт python
-        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=;`, ...files]);
+        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `HEADERS_PATH="${headersPath}"`, `META_NAME="${publicCSVMetaPath}"`, `SEP=;`, ...files]);
         if (resSpawn != null && resSpawn.stderr.byteLength > 0) {
             context.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
                 outputPath: publicOutputPath,
