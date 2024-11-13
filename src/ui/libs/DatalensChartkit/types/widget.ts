@@ -23,6 +23,7 @@ import type {
     TableTitle,
     TableWidgetEventScope,
     WidgetEvent,
+    WidgetSizeType,
 } from '../../../../shared';
 import type {ChartsData} from '../modules/data-provider/charts';
 
@@ -267,6 +268,7 @@ export type TableWidgetData = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            size?: WidgetSizeType;
         };
         unresolvedParams?: StringParams;
     };

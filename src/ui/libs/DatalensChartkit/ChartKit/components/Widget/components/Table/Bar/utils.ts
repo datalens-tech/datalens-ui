@@ -152,11 +152,13 @@ export const getStyles = (
     }
 
     const shouldShowSeperator =
-        isValid && showBar && showSeparator && !(isUndefined(min) || isUndefined(max)) && barHeight;
+        isValid && showBar && showSeparator && !(isUndefined(min) || isUndefined(max));
     if (shouldShowSeperator) {
-        separatorStyle = {
-            marginTop: -barHeight * 0.15,
-        };
+        separatorStyle = {};
+
+        if (barHeight) {
+            separatorStyle.marginTop = -barHeight * 0.15;
+        }
 
         if (value < 0) {
             separatorStyle.width = `100%`;

@@ -112,5 +112,46 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest('Subtotals for Columns @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            // Setup filters
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Filters,
+                'Category',
+            );
+            await wizardPage.filterEditor.selectValues(['Furniture']);
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.PivotTableColumns,
+                'sub_category',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Measures,
+                'Sales',
+            );
+
+            // Set the width of the columns so that the screenshots are not flapping due to the auto width
+            await wizardPage.columnSettings.open(PlaceholderName.Rows);
+            await wizardPage.columnSettings.switchUnit('segment', 'pixel');
+            await wizardPage.columnSettings.fillWidthValueInput('segment', '100');
+            await wizardPage.columnSettings.apply();
+
+            // Turn on subtotals
+            await wizardPage.visualizationItemDialog.open(
+                PlaceholderName.PivotTableColumns,
+                'sub_category',
+            );
+            await wizardPage.page.locator(slct(DialogFieldSubTotalsQa.SubTotalsSwitch)).click();
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
     });
 });
