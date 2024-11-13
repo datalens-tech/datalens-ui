@@ -18,7 +18,6 @@ import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
-import type {ControlDialogState} from './store/reducers/controlDialog';
 import type {EditHistoryState} from './store/reducers/editHistory';
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
 
@@ -74,5 +73,4 @@ export type DatalensGlobalState = {
     copyEntriesToWorkbook: CopyEntriesToWorkbookState;
     editHistory: EditHistoryState;
     iamAccessDialog: IamAccessDialogState;
-    controlDialog: ControlDialogState;
 };

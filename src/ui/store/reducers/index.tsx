@@ -10,10 +10,8 @@ import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
 import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
 
 import {editHistory} from './editHistory';
-import {controlDialog} from './controlDialog';
 
 export default {
-    controlDialog,
     user,
     asideHeader,
     workbooks,
