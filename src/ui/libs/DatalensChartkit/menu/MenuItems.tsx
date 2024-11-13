@@ -90,11 +90,8 @@ export const getAlertsMenuItem = ({
                 return false;
             }
 
-            const isVisible = customConfig?.isVisible ? customConfig.isVisible() : true;
-
             return (
                 !isCriticalError &&
-                isVisible &&
                 (loadedData.isNewWizard || loadedData.type === CHARTKIT_WIDGET_TYPE.GRAPH)
             );
         },
@@ -140,7 +137,7 @@ export const getNewWindowMenuItem = ({
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: () => (customConfig?.isVisible ? customConfig.isVisible() : true),
+    isVisible: () => true,
     action:
         customConfig?.action ||
         (({loadedData, propsData, chartsDataProvider: dataProvider}) => {
@@ -172,7 +169,7 @@ export const getEditMenuItem = ({
     icon: customConfig?.icon || (
         <ChartKitIcon data={Pencil} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => !DL.IS_MOBILE && (customConfig?.isVisible ? customConfig.isVisible() : true),
+    isVisible: () => !DL.IS_MOBILE,
     action:
         customConfig?.action ||
         (({loadedData = {}, propsData, chartsDataProvider: dataProvider}) => {
@@ -210,9 +207,7 @@ export const getOpenAsTableMenuItem = ({
             loadedData?.data &&
             ([WidgetKind.Graph, WidgetKind.D3] as string[]).includes(loadedData?.type);
 
-        const isVisible = customConfig?.isVisible ? customConfig.isVisible() : true;
-
-        return Boolean(!isCriticalError && isVisible && isExportAllowed && isChart);
+        return Boolean(!isCriticalError && isExportAllowed && isChart);
     },
     action:
         customConfig?.action ||
@@ -242,11 +237,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
             className={ICONS_MENU_DEFAULT_CLASSNAME}
         />
     ),
-    isVisible: ({loadedData}: MenuItemArgs) => {
-        const isVisible = customConfig?.isVisible ? customConfig.isVisible() : true;
-
-        return Boolean(isVisible && loadedData?.type);
-    },
+    isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
     action:
         customConfig?.action ||
         function action({loadedData, propsData}) {
@@ -287,7 +278,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
     icon: customConfig?.icon || (
         <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} className={ICONS_MENU_DEFAULT_CLASSNAME} />
     ),
-    isVisible: () => (customConfig?.isVisible ? customConfig.isVisible() : true),
+    isVisible: () => true,
     action:
         customConfig?.action ||
         function action({propsData, loadedData}) {
@@ -325,11 +316,8 @@ export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): Me
         const searchParams = new URLSearchParams(window.location.search);
         const isFullscreenMode = searchParams.has(FOCUSED_WIDGET_PARAM_NAME);
 
-        const isVisible = customConfig.isVisible ? customConfig.isVisible() : true;
-
         return Boolean(
-            isVisible &&
-                DL.IS_MOBILE &&
+            DL.IS_MOBILE &&
                 loadedData &&
                 !error &&
                 !isWidgetTypeDoNotNeedOverlay(loadedData.type) &&

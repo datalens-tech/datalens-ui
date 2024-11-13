@@ -269,12 +269,8 @@ export const getExportItem = ({
         const isExportAllowed = !loadedData?.extra.dataExportForbidden;
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
-        const isVisible = customConfig?.isVisible ? customConfig.isVisible() : true;
-
         return Boolean(
-            isVisible &&
-                isExportAllowed &&
-                (isExportVisible({loadedData, error}) || isScreenshotVisible),
+            isExportAllowed && (isExportVisible({loadedData, error}) || isScreenshotVisible),
         );
     },
     action: (data: ExportActionArgs) => {
