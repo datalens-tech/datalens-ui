@@ -290,7 +290,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 req.body.widgetConfig = {
                     ...req.body.widgetConfig,
-                    enableMenuExport: embeddingInfo.embed.settings?.enableExport === true,
+                    enableExport: embeddingInfo.embed.settings?.enableExport === true,
                 };
 
                 return runnerFound.handler(ctx, {

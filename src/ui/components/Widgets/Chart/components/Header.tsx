@@ -3,7 +3,6 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {useSelector} from 'react-redux';
-import {MenuItemsIds} from 'shared';
 import type {StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
@@ -94,27 +93,7 @@ export const Header = (props: HeaderProps) => {
      */
     const hideChartComments = Boolean((loadedData?.config as GraphWidget['config'])?.hideComments);
 
-    // exceptions that are shown forcibly under certain conditions
-    // when menu is not available
-    const {forceVisibleMenuConfig, hasForceVisibleItems} = React.useMemo(() => {
-        if (isMenuAvailable) {
-            return {
-                forceVisibleMenuConfig: {},
-                hasForceVisibleItems: false,
-            };
-        }
-
-        const config = {
-            [MenuItemsIds.EXPORT]: loadedData?.widgetConfig?.enableMenuExport,
-        };
-
-        return {
-            forceVisibleMenuConfig: config,
-            hasForceVisibleItems: Object.values(config).some(Boolean),
-        };
-    }, [loadedData?.widgetConfig?.enableMenuExport, isMenuAvailable]);
-
-    const canBeShownMenu = (isMenuAvailable || hasForceVisibleItems) && widgetDataRef;
+    const canBeShownMenu = isMenuAvailable && widgetDataRef;
 
     const configMenu = menuType
         ? getChartkitMenu({
@@ -127,6 +106,7 @@ export const Header = (props: HeaderProps) => {
               onFullscreenClick,
               isEditAvaible,
               extraOptions: {enableActionParams},
+              widgetConfig: loadedData?.widgetConfig,
           })
         : settings.menu;
 
@@ -171,8 +151,6 @@ export const Header = (props: HeaderProps) => {
                     /* isWidgetMenuDataChanged - need this flag for extra rerender after widget rendered to check visibility of items (it is not used in component directly) */
                     isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                     chartsDataProvider={dataProvider}
-                    forceVisibleMenuConfig={forceVisibleMenuConfig}
-                    hasForceVisibleItems={hasForceVisibleItems}
                 />
             )}
         </div>

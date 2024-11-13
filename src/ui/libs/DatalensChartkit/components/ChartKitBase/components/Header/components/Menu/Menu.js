@@ -53,8 +53,6 @@ export class Menu extends React.PureComponent {
          * but we need to toggle show/hide comments menu
          */
         hideChartComments: PropTypes.bool,
-        forceVisibleMenuConfig: PropTypes.object,
-        hasForceVisibleItems: PropTypes.bool,
     };
 
     state = {
@@ -133,10 +131,6 @@ export class Menu extends React.PureComponent {
     getFilteredItem = (item, data) => {
         const visibleSubItems = this.getVisibleSubItems(data, item.items || []);
         if (!this.isVisibleItem({isVisible: item.isVisible, data})) {
-            return null;
-        }
-        const {forceVisibleMenuConfig, hasForceVisibleItems} = this.props;
-        if (hasForceVisibleItems && !forceVisibleMenuConfig[item.id]) {
             return null;
         }
         return {...item, items: visibleSubItems};
