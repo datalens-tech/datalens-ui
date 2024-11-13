@@ -73,6 +73,8 @@ export const EDITOR_TYPE = {
     BLANK_CHART_NODE: 'blank-chart_node',
 };
 
+export type EditorTypes = (typeof EDITOR_TYPE)[keyof typeof EDITOR_TYPE];
+
 export const ENTRY_TYPES = {
     legacyEditor: Object.values(LEGACY_EDITOR_TYPE),
     editor: Object.values(EDITOR_TYPE),
