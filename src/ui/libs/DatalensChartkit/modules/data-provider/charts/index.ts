@@ -530,7 +530,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     }
 
     private settings: Settings = {
-        endpoint: DL.ENDPOINTS.chartkitDefault,
+        endpoint: '/',
         lang: 'ru',
         noRetry: false,
     };
