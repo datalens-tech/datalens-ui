@@ -4,6 +4,7 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import {getSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
@@ -48,7 +49,7 @@ import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
 import {getActualUniqueFieldNameValidation} from './controls/helpers';
-import {TAB_PROPERTIES, getSelectorDialogInitialState} from './dash';
+import {TAB_PROPERTIES} from './dash';
 
 export type DashState = {
     tabId: null | string;
@@ -309,9 +310,13 @@ export function dashTypedReducer(
 
         case ADD_SELECTOR_TO_GROUP: {
             const {payload} = action;
-            const newSelector = getSelectorDialogInitialState({
-                lastUsedDatasetId: state.lastUsedDatasetId,
-            });
+            const newSelector = getSelectorDialogInitialState(
+                state.lastUsedDatasetId
+                    ? {
+                          lastUsedDatasetId: state.lastUsedDatasetId,
+                      }
+                    : {},
+            );
 
             // if current length is 1, the added selector will be the second so we enable autoHeight
             const autoHeight =

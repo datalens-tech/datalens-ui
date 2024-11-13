@@ -6,6 +6,7 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
 import {
     DashTabItemControlSourceType,
     DashTabItemType,
@@ -13,6 +14,10 @@ import {
     TitlePlacementOption,
 } from 'shared';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {
+    getSelectorDialogFromData,
+    getSelectorGroupDialogFromData,
+} from 'ui/store/reducers/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
@@ -22,10 +27,6 @@ import {
     setActiveSelectorIndex,
     updateSelectorsGroup,
 } from 'ui/units/dash/store/actions/controls/actions';
-import {
-    getSelectorDialogFromData,
-    getSelectorGroupDialogFromData,
-} from 'ui/units/dash/store/reducers/dash';
 import {
     selectActiveSelectorIndex,
     selectSelectorsGroup,
@@ -71,8 +72,15 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     }
 
     const pasteItems = pasteConfig?.data.group
-        ? getSelectorGroupDialogFromData(pasteConfig?.data).group
-        : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
+        ? getSelectorGroupDialogFromData(
+              pasteConfig?.data as unknown as DashTabItemGroupControlData,
+          ).group
+        : [
+              getSelectorDialogFromData(
+                  pasteConfig.data as unknown as DashTabItemControlData,
+                  pasteConfig.defaults,
+              ),
+          ];
 
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };

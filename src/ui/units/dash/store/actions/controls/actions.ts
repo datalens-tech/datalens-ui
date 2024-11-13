@@ -8,6 +8,7 @@ import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
+import {getGroupSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
 import type {
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
@@ -16,7 +17,6 @@ import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../constants/dialogs';
-import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
 import {
     selectCurrentTabId,
     selectOpenedItem,
