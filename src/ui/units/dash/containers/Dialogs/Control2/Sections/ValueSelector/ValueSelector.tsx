@@ -9,8 +9,8 @@ import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {registry} from 'ui/registry';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,

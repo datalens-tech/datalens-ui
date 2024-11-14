@@ -13,8 +13,9 @@ import {
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
-import {setLastUsedDatasetId, setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setLastUsedDatasetId} from 'units/dash/store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,

@@ -6,8 +6,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {TitlePlacementOption} from 'shared/types/dash';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {ELEMENT_TYPE} from 'ui/units/dash/containers/Dialogs/Control/constants';
-import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,

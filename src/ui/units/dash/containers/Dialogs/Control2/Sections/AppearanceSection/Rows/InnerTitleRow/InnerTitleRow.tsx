@@ -6,8 +6,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import type {SelectorSourceType} from 'ui/store/typings/controlDialog';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,

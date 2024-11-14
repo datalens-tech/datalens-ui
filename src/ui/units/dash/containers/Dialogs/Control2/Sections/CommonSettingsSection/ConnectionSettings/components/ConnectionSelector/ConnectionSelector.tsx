@@ -3,13 +3,11 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 
 import logger from '../../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../../libs/schematic-sdk';
-import {
-    setLastUsedConnectionId,
-    setSelectorDialogItem,
-} from '../../../../../../../../store/actions/dashTyped';
+import {setLastUsedConnectionId} from '../../../../../../../../store/actions/dashTyped';
 import {
     selectDashWorkbookId,
     selectSelectorDialog,

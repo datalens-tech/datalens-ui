@@ -25,11 +25,8 @@ import type {
 } from 'shared';
 import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
-import type {
-    ItemDataSource,
-    SelectorDialogState,
-    SetSelectorDialogItemArgs,
-} from 'ui/store/typings/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import type {ItemDataSource, SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -381,20 +378,6 @@ export const setItemData = (data: SetItemDataArgs) => {
 
         getState().dash.dragOperationProps?.commit();
     };
-};
-
-export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
-
-export const setSelectorDialogItem = (payload: SetSelectorDialogItemArgs) => {
-    return {
-        type: SET_SELECTOR_DIALOG_ITEM,
-        payload,
-    };
-};
-
-export type SetSelectorDialogItemAction = {
-    type: typeof SET_SELECTOR_DIALOG_ITEM;
-    payload: SetSelectorDialogItemArgs;
 };
 
 export const applyControl2Dialog = () => {

@@ -4,8 +4,8 @@ import {RadioButton, Select} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import Utils from 'ui/utils';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
