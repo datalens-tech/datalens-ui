@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {useDispatch} from 'react-redux';
-import type {SetSelectorDialogItemArgs} from 'units/dash/store/actions/dashTyped';
+import type {SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
 import {setSelectorDialogItem as setSelectorDialogItemAction} from 'units/dash/store/actions/dashTyped';
 
 export const useSetSelectorDialogItem = () => {

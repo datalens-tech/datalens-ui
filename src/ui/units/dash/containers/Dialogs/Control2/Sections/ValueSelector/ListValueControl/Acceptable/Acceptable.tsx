@@ -9,7 +9,7 @@ import update from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
-import type {AcceptableValue} from 'ui/units/dash/store/actions/dashTyped';
+import type {AcceptableValue} from 'ui/store/typings/controlDialog';
 import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
 import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 

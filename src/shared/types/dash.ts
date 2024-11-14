@@ -185,7 +185,8 @@ export interface DashTabItemControlData {
         | DashTabItemControlDataset['source']
         | DashTabItemControlManual['source']
         | DashTabItemControlExternal['source'];
-    placementMode?: string;
+    placementMode?: 'auto' | '%' | 'px';
+    autoHeight?: boolean;
     width?: string;
     defaults?: StringParams;
     namespace: string;

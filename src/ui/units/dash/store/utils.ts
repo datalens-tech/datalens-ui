@@ -3,12 +3,11 @@ import {I18n} from 'i18n';
 import type {FakeDashData} from 'shared/types/dash';
 import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
+import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 import Utils from 'ui/utils';
 
 import {CheckboxControlValue, ELEMENT_TYPE} from '../containers/Dialogs/Control/constants';
 import {Mode} from '../modules/constants';
-
-import type {SelectorElementType} from './actions/dashTyped';
 
 const storeI18n = I18n.keyset('dash.store.view');
 const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');
