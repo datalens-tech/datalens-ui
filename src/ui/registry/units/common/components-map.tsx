@@ -14,7 +14,6 @@ import type {AclSubjectProps} from './types/components/AclSubject';
 import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest';
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
-import type {CloudTreeSelectBaseProps} from './types/components/CloudTreeSelectBase';
 import type {DialogAddParticipantsProps} from './types/components/DialogAddParticipants';
 import type {DialogImageWidgetLinkHintProps} from './types/components/DialogImageWidgetLinkHint';
 import type {DialogRelatedEntitiesRadioHintProps} from './types/components/DialogRelatedEntitiesRadioHint';
@@ -34,7 +33,6 @@ import type {YfmWrapperProps} from './types/components/YfmWrapper';
 
 export const commonComponentsMap = {
     [EXAMPLE_COMPONENT]: Example,
-    CloudTreeSelectBase: makeDefaultEmpty<CloudTreeSelectBaseProps>(),
     DownloadScreenshot: makeDefaultEmpty<DownloadScreenshotProps>(),
     YfmWrapperContent: makeDefaultEmpty<YfmWrapperProps>(),
     ActionPanelEntrySelect: makeDefaultEmpty<ActionPanelEntrySelectProps>(),
