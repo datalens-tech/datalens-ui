@@ -935,9 +935,23 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
+    private executeDelayedScroll = () => {
+        if (this.state.delayedScrollId) {
+            scrollIntoView(this.state.delayedScrollId);
+            this.setState({delayedScrollId: null});
+        }
+    };
+
     private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
+
+            if (
+                this.state.loadedItemsMap.size === this.props.tabData?.items.length &&
+                this.props.settings.loadOnlyVisibleCharts
+            ) {
+                this.executeDelayedScroll();
+            }
         }
     };
 
@@ -948,14 +962,12 @@ class Body extends React.PureComponent<BodyProps> {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded = Array.from(loadedItemsMap.values()).every(Boolean);
-            const updatedState: Partial<DashBodyState> = {loaded: isLoaded};
 
-            if (isLoaded && this.state.delayedScrollId) {
-                scrollIntoView(this.state.delayedScrollId);
-                updatedState.delayedScrollId = null;
+            if (isLoaded && !this.props.settings.loadOnlyVisibleCharts) {
+                this.executeDelayedScroll();
             }
 
-            this.setState(updatedState);
+            this.setState({loaded: isLoaded});
         }
     };
 
