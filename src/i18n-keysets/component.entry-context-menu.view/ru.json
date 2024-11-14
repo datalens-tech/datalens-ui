@@ -3,6 +3,7 @@
   "value_add-favorites-alias": "Добавить лейбл",
   "value_copy": "Копировать",
   "value_copy-link": "Копировать ссылку",
+  "value_copy-success": "Объект успешно скопирован",
   "value_delete": "Удалить",
   "value_duplicate": "Дублировать",
   "value_edit-favorites-alias": "Изменить лейбл",
@@ -11,6 +12,5 @@
   "value_rename": "Переименовать",
   "value_revisions": "История изменений",
   "value_share": "Поделиться",
-  "value_show-related-entities": "Связанные объекты",
-  "value_copy-success": "Объект успешно скопирован"
+  "value_show-related-entities": "Связанные объекты"
 }
