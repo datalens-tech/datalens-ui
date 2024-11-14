@@ -12,6 +12,7 @@ import {
 } from 'ui/store/actions/controlDialog';
 import {getSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
+import {getActualUniqueFieldNameValidation} from 'ui/store/utils/controlDialog';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
@@ -48,7 +49,6 @@ import type {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
-import {getActualUniqueFieldNameValidation} from './controls/helpers';
 import {TAB_PROPERTIES} from './dash';
 
 export type DashState = {

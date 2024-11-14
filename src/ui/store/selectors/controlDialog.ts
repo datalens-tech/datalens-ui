@@ -1,9 +1,7 @@
 import type {DatalensGlobalState} from 'ui/index';
 
-import type {DashState} from '../../reducers/dashTypedReducer';
-
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorsGroup;
+    (state.dash as DatalensGlobalState['dash']).selectorsGroup;
 
 export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
-    (state.dash as DashState).activeSelectorIndex || 0;
+    (state.dash as DatalensGlobalState['dash']).activeSelectorIndex || 0;

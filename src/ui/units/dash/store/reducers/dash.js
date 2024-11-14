@@ -10,6 +10,7 @@ import {
     getSelectorDialogInitialState,
     getSelectorGroupDialogFromData,
 } from 'ui/store/reducers/controlDialog';
+import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 import Utils from 'utils';
 
@@ -18,7 +19,6 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
-import {migrateConnectionsForGroupControl} from './controls/helpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
 const i18n = I18n.keyset('dash.store.view');
