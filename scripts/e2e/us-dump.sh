@@ -1,3 +1,5 @@
+#!/bin/bash
+
 US_CONTAINER_NAME="e2e-datalens-pg-us"
 US_DB_HOST="pg-us"
 US_DB_USER="us"
@@ -39,7 +41,7 @@ if [ $CONNECTION_CHECK_RESULT_STATUS_CODE -ne 0 ]; then
 fi
 
 DUMP_CMD="pg_dump --dbname=$US_CONNECTION --column-inserts -a -t workbooks -t entries -t revisions -t links"
-docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" | grep -Ev "^(--|SET|SELECT pg_catalog.set_config)" > $DUMP_TMP
+docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" | grep -Ev "^(--|SET|SELECT pg_catalog.set_config)" >$DUMP_TMP
 DUMP_RESULT_STATUS_CODE=$?
 
 if [ $DUMP_RESULT_STATUS_CODE -ne 0 ]; then

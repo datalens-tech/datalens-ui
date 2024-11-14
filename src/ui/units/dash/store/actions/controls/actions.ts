@@ -8,23 +8,25 @@ import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
+import {getGroupSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
+import type {
+    SelectorsGroupDialogState,
+    SetSelectorDialogItemArgs,
+} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../constants/dialogs';
-import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
 import {
     selectCurrentTabId,
     selectOpenedItem,
     selectOpenedItemData,
 } from '../../selectors/dashTypedSelectors';
-import type {SetSelectorDialogItemArgs} from '../dashTyped';
 import {setItemData, setSelectorDialogItem} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
 
 import {getControlDefaultsForField, getControlValidation, getItemDataSource} from './helpers';
-import type {SelectorsGroupDialogState} from './types';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 

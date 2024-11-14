@@ -32,7 +32,7 @@ concurrency:
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
@@ -71,8 +71,7 @@ jobs:
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - name: Check docker compose Config
-        working-directory: ./tests
-        run: npm run test:docker:check
+        run: npm run test:e2e:docker:check
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
@@ -94,10 +93,9 @@ jobs:
 
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}
-        working-directory: ./tests
         run: |
           sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          npm run test:docker:up-no-build && cd .. && npm ci && npm run test:install:chromium & wait
+          npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
@@ -109,11 +107,13 @@ jobs:
         env:
           NO_AUTH: true
           E2E_RETRY_TIMES: 1
+          E2E_TEST_TIMEOUT: 90000
+          E2E_ACTION_TIMEOUT: 10000
+          E2E_EXPECT_TIMEOUT: 10000
           E2E_DOMAIN: http://localhost:8080
 
       - name: Run tests from builded docker image
         if: ${{ env.UI_VERSION != '' }}
-        working-directory: ./tests
         run: |
           npm run test:e2e:docker
         env:
@@ -121,16 +121,19 @@ jobs:
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+          E2E_RETRY_TIMES: 1
+          E2E_TEST_TIMEOUT: 90000
+          E2E_ACTION_TIMEOUT: 10000
+          E2E_EXPECT_TIMEOUT: 10000
 
       - name: Copy tests report from docker run
         if: always()
-        working-directory: ./tests
         run: |
           if [ -z "${{ env.UI_VERSION }}" ]; then
             echo "skip export report from docker run..."
           else
             echo "export report from docker run"
-            rm -rf ./artifacts
+            rm -rf ./tests/artifacts
             npm run test:e2e:docker:report
           fi
         env:
@@ -141,9 +144,8 @@ jobs:
 
       - name: Run docker compose down
         if: always()
-        working-directory: ./tests
         run: |
-          npm run test:docker:down
+          npm run test:e2e:docker:down
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}

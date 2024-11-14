@@ -8,7 +8,6 @@ import {getStyles, isPropsValid} from './utils';
 import './Bar.scss';
 
 const b = block('chartkit-table-bar');
-const DEFAULT_HEIGHT = '100%';
 const DEFAULT_BG_COLOR = 'var(--g-color-base-neutral-medium)';
 
 export const Bar = (props: BarProps) => {
@@ -19,7 +18,7 @@ export const Bar = (props: BarProps) => {
         max,
         offset,
         align,
-        barHeight = DEFAULT_HEIGHT,
+        barHeight,
         color = DEFAULT_BG_COLOR,
         showLabel = true,
         showBar = true,
