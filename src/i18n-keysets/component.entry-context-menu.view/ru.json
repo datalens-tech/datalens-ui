@@ -12,5 +12,6 @@
   "value_rename": "Переименовать",
   "value_revisions": "История изменений",
   "value_share": "Поделиться",
-  "value_show-related-entities": "Связанные объекты"
+  "value_show-related-entities": "Связанные объекты",
+  "value_copy-success": "Объект успешно скопирован"
 }
