@@ -25,7 +25,7 @@ import {
     Square,
     SquareCheck,
 } from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon, Toaster} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -172,11 +172,17 @@ type MemoContext = {
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
+type GetPreparedCopyItemOptions<T extends object = {}> = (
+    itemToCopy: PreparedCopyItemOptions<T>,
+) => PreparedCopyItemOptions<T>;
+
 const GROUPS_WEIGHT = {
     [FIXED_GROUP_HEADER_ID]: 2,
     [FIXED_GROUP_CONTAINER_ID]: 1,
     [DEFAULT_GROUP]: 0,
 } as const;
+
+const toaster = new Toaster();
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
@@ -335,6 +341,16 @@ class Body extends React.PureComponent<BodyProps> {
             this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
         } else if (config) {
             this.props.setCurrentTabData(config as unknown as DashTab);
+        }
+    };
+
+    onItemCopy = (error: null | Error, _item?: PreparedCopyItemOptions) => {
+        if (error === null) {
+            toaster.add({
+                name: 'successCopyElement',
+                theme: 'success',
+                title: i18n('component.entry-context-menu.view', 'value_copy-success'),
+            });
         }
     };
 
@@ -858,13 +874,14 @@ class Body extends React.PureComponent<BodyProps> {
             dashkitSettings,
         } = this.props;
 
+        const {getPreparedCopyItemOptions: getOptions, ...context} = this.getContext();
+
         const tabDataConfig = DL.IS_MOBILE
             ? this.getMobileLayout()
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
         const DashKit = getConfiguredDashKit();
-
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
                 canEdit={this.props.canEdit}
@@ -884,7 +901,13 @@ class Body extends React.PureComponent<BodyProps> {
                 groups={
                     Utils.isEnabledFeature(Feature.EnableDashFixedHeader) ? this.groups : undefined
                 }
-                context={this.getContext()}
+                context={context}
+                getPreparedCopyItemOptions={
+                    getOptions
+                        ? (getOptions satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>)
+                        : undefined
+                }
+                onCopyFulfill={this.onItemCopy}
                 onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
                 settings={dashkitSettings}

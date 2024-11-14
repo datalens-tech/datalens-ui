@@ -11,5 +11,6 @@
   "value_rename": "Rename",
   "value_revisions": "Change history",
   "value_share": "Share",
-  "value_show-related-entities": "Related objects"
+  "value_show-related-entities": "Related objects",
+  "value_copy-success": "Object copied successfully"
 }
