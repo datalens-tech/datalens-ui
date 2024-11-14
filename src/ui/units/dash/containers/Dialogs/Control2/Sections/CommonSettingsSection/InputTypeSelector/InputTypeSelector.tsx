@@ -12,7 +12,7 @@ import {
     DialogControlQa,
 } from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
-import type {SelectorElementType} from 'units/dash/store/actions/dashTyped';
+import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
 import {
     selectIsControlConfigurationDisabled,

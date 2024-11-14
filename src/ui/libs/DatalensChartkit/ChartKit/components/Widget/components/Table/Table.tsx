@@ -4,7 +4,9 @@ import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import type {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import type {TableCommonCell, TableHead, TableRow} from 'shared';
+import get from 'lodash/get';
+import {DEFAULT_WIDGET_SIZE} from 'shared';
+import type {TableCommonCell, TableHead, TableRow, WidgetSizeType} from 'shared';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {
@@ -151,6 +153,11 @@ export class Table extends React.PureComponent<TableProps, TableState> {
     }
 
     render() {
+        const {
+            data: {config = {}},
+        } = this.props;
+        const size: WidgetSizeType = get(config, 'size', DEFAULT_WIDGET_SIZE);
+
         Performance.mark(this.getId(true));
 
         if (this.state.waitingForFont) {
@@ -158,7 +165,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         }
 
         return (
-            <div className={b()}>
+            <div className={b({size})}>
                 <div
                     className={b(
                         'body',
