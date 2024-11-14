@@ -281,8 +281,6 @@ export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
 
-export const CURRENT_CLOUD_STORE_KEY = 'dl_current_cloud';
-
 export const RUBLE = '₽';
 
 export const FORMULA_LANGUAGE_ID = 'datalens-formula';
