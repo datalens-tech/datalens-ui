@@ -152,6 +152,7 @@ type DashBodyState = {
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
+    mounted: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
     hash: string;
@@ -189,23 +190,28 @@ class Body extends React.PureComponent<BodyProps> {
         const {
             prevMeta: {entryId, tabId},
         } = state;
+        let isItemsUnmounted = false;
         // reset loaded before new tab/entry items are mounted
         if (props.entryId !== entryId || props.tabId !== tabId) {
             state.loadedItemsMap.clear();
             newState = {
                 prevMeta: {tabId: props.tabId, entryId: props.entryId},
                 loaded: false,
+                mounted: false,
             };
+
+            isItemsUnmounted = true;
         }
 
         const newHash = props.location.hash;
         if (newHash !== state.hash) {
             newState.hash = newHash;
-            if (state.loaded && newState.loaded !== false) {
+
+            if (isItemsUnmounted) {
+                newState.delayedScrollId = newHash.replace('#', '');
+            } else if (state.loaded || (state.mounted && props.settings.loadOnlyVisibleCharts)) {
                 scrollIntoView(newHash.replace('#', ''));
                 newState.delayedScrollId = null;
-            } else {
-                newState.delayedScrollId = newHash.replace('#', '');
             }
         }
 
@@ -267,6 +273,7 @@ class Body extends React.PureComponent<BodyProps> {
         hasCopyInBuffer: null,
         prevMeta: {tabId: null, entryId: null},
         loaded: false,
+        mounted: false,
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
         delayedScrollId: null,
@@ -935,8 +942,15 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
-    private executeDelayedScroll = () => {
-        if (this.state.delayedScrollId) {
+    private executeDelayedScroll = (status: 'mounted' | 'loaded') => {
+        if (!this.state.delayedScrollId) {
+            return;
+        }
+
+        if (
+            status === 'loaded' ||
+            (status === 'mounted' && this.props.settings.loadOnlyVisibleCharts)
+        ) {
             scrollIntoView(this.state.delayedScrollId);
             this.setState({delayedScrollId: null});
         }
@@ -946,11 +960,9 @@ class Body extends React.PureComponent<BodyProps> {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
-            if (
-                this.state.loadedItemsMap.size === this.props.tabData?.items.length &&
-                this.props.settings.loadOnlyVisibleCharts
-            ) {
-                this.executeDelayedScroll();
+            if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+                this.setState({mounted: true});
+                this.executeDelayedScroll('mounted');
             }
         }
     };
@@ -963,8 +975,8 @@ class Body extends React.PureComponent<BodyProps> {
 
             const isLoaded = Array.from(loadedItemsMap.values()).every(Boolean);
 
-            if (isLoaded && !this.props.settings.loadOnlyVisibleCharts) {
-                this.executeDelayedScroll();
+            if (isLoaded) {
+                this.executeDelayedScroll('loaded');
             }
 
             this.setState({loaded: isLoaded});
@@ -973,11 +985,16 @@ class Body extends React.PureComponent<BodyProps> {
 
     private handleTocItemClick = (itemTitle: string, hasTabChanged: boolean) => {
         if (this.props.disableHashNavigation) {
-            // after click on other tab in toc
-            if (this.state.loaded && !hasTabChanged) {
-                scrollIntoView(encodeURIComponent(itemTitle));
-            } else {
+            if (hasTabChanged) {
                 this.setState({delayedScrollId: encodeURIComponent(itemTitle)});
+                return;
+            }
+
+            if (
+                this.state.loaded ||
+                (this.state.mounted && this.props.settings.loadOnlyVisibleCharts)
+            ) {
+                scrollIntoView(encodeURIComponent(itemTitle));
             }
         }
     };
