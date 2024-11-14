@@ -3,8 +3,8 @@ import React from 'react';
 import {RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {EMPTY_VALUE} from 'ui/units/dash/modules/constants';
-import type {SelectorDialogState} from 'ui/units/dash/store/actions/dashTyped';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../../../constants/dialogs';
 

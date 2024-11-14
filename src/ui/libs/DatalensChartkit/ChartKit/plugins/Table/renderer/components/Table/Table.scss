@@ -1,9 +1,5 @@
 :root {
-    --dl-table-header-vertical-padding: 5px;
     --dl-table-header-cell-vertical-align: top;
-    --dl-table-row-height: 30px;
-    --dl-table-cell-horizontal-padding: 10px;
-    --dl-table-cell-vertical-padding: 5px;
     --dl-table-cell-vertical-align: top;
     --dl-table-footer-cell-vertical-align: top;
     --dl-table-sort-icon-space: 18px;
@@ -21,6 +17,40 @@
     }
 }
 
+@mixin tableSize() {
+    &_size {
+        &_l {
+            --dl-table-row-height: 30px;
+            --dl-table-font-size: 13px;
+            --dl-table-cell-vertical-padding: 5px;
+            --dl-table-cell-horizontal-padding: 10px;
+            --dl-table-cell-bar-height: 19px;
+            --chartkit-bg-bar-offset-width: 10px;
+            line-height: 16px;
+        }
+
+        &_m {
+            --dl-table-row-height: 24px;
+            --dl-table-font-size: 12px;
+            --dl-table-cell-vertical-padding: 4px;
+            --dl-table-cell-horizontal-padding: 6px;
+            --chartkit-bg-bar-offset-width: 6px;
+            --dl-table-cell-bar-height: 17px;
+            line-height: 15px;
+        }
+
+        &_s {
+            --dl-table-row-height: 20px;
+            --dl-table-font-size: 11px;
+            --dl-table-cell-vertical-padding: 3px;
+            --dl-table-cell-horizontal-padding: 4px;
+            --chartkit-bg-bar-offset-width: 4px;
+            --dl-table-cell-bar-height: 15px;
+            line-height: 13px;
+        }
+    }
+}
+
 .dl-table {
     border-collapse: collapse;
     min-width: 100%;
@@ -35,6 +65,8 @@
                 background: var(--dl-table-cell-bg-color, var(--g-color-base-simple-hover));
             }
         }
+
+        @include tableSize();
     }
 
     &__title {
@@ -52,7 +84,7 @@
         border: 1px solid var(--dl-table-border-color);
         border-top: 0;
         border-left: 0;
-        font-size: 10pt;
+        font-size: var(--dl-table-font-size);
         background: var(--dl-table-cell-bg-color);
 
         &_clickable {
@@ -136,7 +168,7 @@
     &__header &__th {
         position: relative;
         font-weight: 500;
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         vertical-align: var(--dl-table-header-cell-vertical-align);
         box-sizing: border-box;
         height: 100%;
@@ -229,7 +261,7 @@
     }
 
     &__no-data {
-        padding: var(--dl-table-header-vertical-padding) var(--dl-table-cell-horizontal-padding);
+        padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         background: var(--dl-table-no-data-bg-color);
         border: 1px solid var(--dl-table-border-color);
         min-height: var(--dl-table-row-height);
@@ -251,6 +283,8 @@
         overflow: auto;
         font-size: var(--g-text-body-1-font-size);
         user-select: none;
+
+        @include tableSize();
 
         table {
             min-width: auto;

@@ -108,7 +108,7 @@ export const ALLOWED_ATTRIBUTES = [
     'fill',
     'fill-opacity',
     'fill-rule',
-    'filterUnits',
+    'filterunits',
     'flood-color',
     'flood-opacity',
     'font-family',

@@ -1,6 +1,8 @@
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
 import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
+import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('editor.templates.view');
 
@@ -10,7 +12,7 @@ export type ChartEditorType = {
         name: string;
         id: string;
         language: string;
-        docs: {
+        docs?: {
             title: string;
             path: string;
         }[];
@@ -637,5 +639,57 @@ export function getChartEditorTypes(type: string) {
             ],
         },
     } as Record<string, ChartEditorType>;
+
+    if (Utils.isEnabledFeature(Feature.BlankChart)) {
+        chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] = {
+            get name() {
+                return i18n('label_graph');
+            },
+            tabs: [
+                {
+                    name: 'Urls',
+                    id: 'url',
+                    language: 'javascript',
+                    docs: docsUrls,
+                },
+                {
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
+                },
+                {
+                    name: 'JavaScript',
+                    id: 'js',
+                    language: 'javascript',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.CHART,
+                        },
+                        docsVendor,
+                    ],
+                },
+                {
+                    name: 'Controls',
+                    id: 'ui',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                {
+                    name: 'Config',
+                    id: 'config',
+                    language: 'javascript',
+                },
+                {
+                    name: 'Shared',
+                    id: 'shared',
+                    language: 'json',
+                    docs: docsShare,
+                },
+            ],
+        };
+    }
+
     return chartEditorTypes[type];
 }

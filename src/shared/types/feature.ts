@@ -10,7 +10,6 @@ export enum Feature {
     EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
-    ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
@@ -77,6 +76,10 @@ export enum Feature {
      * It checks admin permission for move entries instead of edit permission.
      */
     UseMovePermAction = 'UseMovePermAction',
+    /** An empty chart for drawing something unusual */
+    BlankChart = 'BlankChart',
+    /** Setting to control the density of the table - font size and cell margins */
+    TableSize = 'TableSize',
 }
 
 export type FeatureConfig = Record<string, boolean>;

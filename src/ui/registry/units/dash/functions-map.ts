@@ -1,9 +1,9 @@
 import type {ReactElement} from 'react';
 
 import type {EntryDialogOnCloseArg} from 'ui/components/EntryDialogues/types';
+import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
-import type {SelectorElementType} from '../../../units/dash/store/actions/dashTyped';
 import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
 import type {BeforeCloseDialogItemAction} from './types/BeforeCloseDialogItem';

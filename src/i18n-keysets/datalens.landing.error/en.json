@@ -14,7 +14,6 @@
   "label_title-cloud-folder-access-denied": "You don't have access to DataLens objects in this folder",
   "label_title-fail": "Something went wrong",
   "label_title-forbidden-entry": "Access restricted",
-  "label_title-inaccessible-entry-folder": "You don't have access to DataLens in this folder",
   "label_title-missing-current-cloud-folder": "Select a folder to work with DataLens",
   "label_title-missing-entry": "Not found"
 }

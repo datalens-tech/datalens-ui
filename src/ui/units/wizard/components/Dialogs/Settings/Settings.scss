@@ -9,6 +9,10 @@
         align-items: flex-start;
     }
 
+    &__widget-size {
+        align-items: center;
+    }
+
     &__settings > div:last-child {
         margin-bottom: 0;
     }
@@ -30,5 +34,11 @@
 
     &__tooltip {
         display: inline-block;
+    }
+
+    &__label {
+        display: inline-block;
+        width: 125px;
+        margin-right: 16px;
     }
 }

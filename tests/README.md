@@ -92,3 +92,8 @@ To update snapshots, you must first set the env variable `E2E_UPDATE_SNAPSHOTS`:
 E2E_UPDATE_SNAPSHOTS=1
 ```
 And later commit the resulting screenshots.
+
+When updating dependencies used in tests (for example, playwright), you may need to rebuild the image:
+```sh
+test:e2e:docker:playwright:clear
+```

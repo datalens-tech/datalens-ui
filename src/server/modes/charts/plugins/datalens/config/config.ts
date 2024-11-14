@@ -196,6 +196,11 @@ export const buildChartsConfigPrivate = (
     ).includes(visualizationId);
 
     if (isTableWidget) {
+        const size = widgetConfig?.size ?? shared?.extraSettings?.size;
+        if (size && features[Feature.TableSize]) {
+            set(config, 'size', size);
+        }
+
         set(config, 'settings.width', 'max-content');
     }
 

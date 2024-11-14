@@ -23,6 +23,7 @@ import type {
     TableTitle,
     TableWidgetEventScope,
     WidgetEvent,
+    WidgetSizeType,
 } from '../../../../shared';
 import type {ChartsData} from '../modules/data-provider/charts';
 
@@ -188,6 +189,8 @@ type AlertWidget = WidgetBase & {
 
 type D3Widget = WidgetBase & {type: 'd3'};
 
+type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
+
 type WidgetComponentProps =
     | GraphWidget
     | TableWidgetData
@@ -265,6 +268,7 @@ export type TableWidgetData = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            size?: WidgetSizeType;
         };
         unresolvedParams?: StringParams;
     };
@@ -352,7 +356,8 @@ export type Widget =
     | YMapWidget
     | TextWidget
     | TimeseriesWidget
-    | MarkupWidget;
+    | MarkupWidget
+    | BlankChartWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';
