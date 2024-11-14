@@ -476,7 +476,13 @@ export const Control = ({
             case DashTabItemControlElementType.Date:
                 return <ControlDatepicker {...stubProps} type="datepicker" />;
             case DashTabItemControlElementType.Checkbox:
-                return <ControlCheckbox {...stubProps} type="checkbox" />;
+                return (
+                    <ControlCheckbox
+                        {...stubProps}
+                        className={b('item', {checkbox: true})}
+                        type="checkbox"
+                    />
+                );
         }
 
         return null;

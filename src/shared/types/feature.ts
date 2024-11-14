@@ -77,6 +77,8 @@ export enum Feature {
      * It checks admin permission for move entries instead of edit permission.
      */
     UseMovePermAction = 'UseMovePermAction',
+    /** Setting to control the density of the table - font size and cell margins */
+    TableSize = 'TableSize',
 }
 
 export type FeatureConfig = Record<string, boolean>;

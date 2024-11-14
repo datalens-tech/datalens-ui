@@ -1,13 +1,14 @@
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
 import {DashTabItemControlSourceType} from 'shared/types';
+import type {
+    ItemDataSource,
+    SelectorDialogState,
+    SelectorDialogValidation,
+} from 'ui/store/typings/controlDialog';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
 import {addOperationForValue} from 'ui/units/dash/modules/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
-
-import type {SelectorDialogState} from '../dashTyped';
-
-import type {ItemDataSource, SelectorDialogValidation} from './types';
 
 const fieldNameValidationSourceTypes: Partial<Record<DashTabItemControlSourceType, boolean>> = {
     [DashTabItemControlSourceType.Manual]: true,

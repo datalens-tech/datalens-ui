@@ -14,10 +14,6 @@ import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import type {
-    ConnectionQueryContent,
-    ConnectionQueryTypeOptions,
-    ConnectionQueryTypeValues,
-    DATASET_FIELD_TYPES,
     DashData,
     DashEntry,
     DashSettings,
@@ -25,15 +21,15 @@ import type {
     DashTabItem,
     DashTabItemImage,
     DashTabItemWidget,
-    Dataset,
-    DatasetFieldType,
-    Operations,
     RecursivePartial,
-    StringParams,
-    TitlePlacementOption,
 } from 'shared';
 import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
+import type {
+    ItemDataSource,
+    SelectorDialogState,
+    SetSelectorDialogItemArgs,
+} from 'ui/store/typings/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -66,7 +62,6 @@ import {
     getControlValidation,
     getItemDataSource,
 } from './controls/helpers';
-import type {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {
     getBeforeCloseDialogItemAction,
@@ -389,58 +384,6 @@ export const setItemData = (data: SetItemDataArgs) => {
 };
 
 export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
-
-export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
-
-export type SelectorDialogState = {
-    title?: string;
-    titlePlacement?: TitlePlacementOption;
-    innerTitle?: string;
-    sourceType?: SelectorSourceType;
-    autoHeight?: boolean;
-    chartId?: string;
-    showTitle?: boolean;
-    showInnerTitle?: boolean;
-    elementType: SelectorElementType;
-    defaultValue?: string | string[];
-    dataset?: Dataset;
-    datasetId?: string;
-    connectionId?: string;
-    selectorParameters?: StringParams;
-    selectorParametersGroup?: number;
-    connectionQueryType?: ConnectionQueryTypeValues;
-    connectionQueryTypes?: ConnectionQueryTypeOptions[];
-    connectionQueryContent?: ConnectionQueryContent;
-    datasetFieldId?: string;
-    fieldName?: string;
-    acceptableValues?: AcceptableValue[];
-    isRange?: boolean;
-    multiselectable?: boolean;
-    defaults: Record<string, string | string[]>;
-    required?: boolean;
-    useDefaultValue?: boolean;
-    usePreset?: boolean;
-    operation?: Operations;
-    validation: SelectorDialogValidation;
-    isManualTitle?: boolean;
-    fieldType?: DATASET_FIELD_TYPES;
-    datasetFieldType?: DatasetFieldType;
-    placementMode: 'auto' | '%' | 'px';
-    width: string;
-    id?: string;
-    namespace?: string;
-    showHint?: boolean;
-    hint?: string;
-    // unique id for manipulating selectors in the creation phase
-    draftId?: string;
-};
-
-export type AcceptableValue = {
-    title: string;
-    value: string;
-};
-
-export type SetSelectorDialogItemArgs = Partial<SelectorDialogState>;
 
 export const setSelectorDialogItem = (payload: SetSelectorDialogItemArgs) => {
     return {

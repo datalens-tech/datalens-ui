@@ -4,7 +4,8 @@ import type {SortingState} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {StringParams, TableCell, TableCellsRow, TableCommonCell} from 'shared';
+import {DEFAULT_WIDGET_SIZE} from 'shared';
+import type {StringParams, TableCell, TableCellsRow, TableCommonCell, WidgetSizeType} from 'shared';
 import {BackgroundTable} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/components/Table/BackgroundTable';
 
 import {isMacintosh} from '../../../../../../../../utils';
@@ -50,6 +51,7 @@ export const Table = React.memo<Props>((props: Props) => {
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
+    const size: WidgetSizeType = get(config, 'size', DEFAULT_WIDGET_SIZE);
 
     const [cellMinSizes, setCellMinWidth] = React.useState<number[] | null>(null);
 
@@ -236,7 +238,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 ref={tableContainerRef}
             >
                 <TableTitleView title={title} />
-                <div className={b('table-wrapper', {'highlight-rows': highlightRows})}>
+                <div className={b('table-wrapper', {'highlight-rows': highlightRows, size})}>
                     {noData && (
                         <div className={b('no-data')}>
                             {i18n('chartkit-table', 'message-no-data')}
@@ -294,6 +296,7 @@ export const Table = React.memo<Props>((props: Props) => {
                         setCellMinWidth(colWidths);
                     }
                 }}
+                size={size}
                 width={config?.settings?.width ?? 'auto'}
             />
         </React.Fragment>
