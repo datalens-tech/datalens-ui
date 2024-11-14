@@ -27,6 +27,11 @@ import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import type {ItemDataSource, SelectorDialogState} from 'ui/store/typings/controlDialog';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from 'ui/store/utils/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -54,11 +59,6 @@ import {
 } from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
-import {
-    getControlDefaultsForField,
-    getControlValidation,
-    getItemDataSource,
-} from './controls/helpers';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {
     getBeforeCloseDialogItemAction,

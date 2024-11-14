@@ -14,6 +14,11 @@ import {
 } from 'ui/store/actions/controlDialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {getGroupSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from 'ui/store/utils/controlDialog';
 import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
@@ -26,8 +31,6 @@ import {
 import {setItemData} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
-
-import {getControlDefaultsForField, getControlValidation, getItemDataSource} from './helpers';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
