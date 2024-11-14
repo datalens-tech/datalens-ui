@@ -80,6 +80,7 @@ export enum Feature {
     BlankChart = 'BlankChart',
     /** Setting to control the density of the table - font size and cell margins */
     TableSize = 'TableSize',
+    ChartActions = 'ChartActions',
 }
 
 export type FeatureConfig = Record<string, boolean>;

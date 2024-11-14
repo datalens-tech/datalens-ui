@@ -1,12 +1,10 @@
 import type {Request} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
 import isObject from 'lodash/isObject';
 
 import type {StringParams} from '../../../../shared';
 import Utils from '../../../utils';
 import {resolveConfig} from '../components/storage';
 import type {ResolveConfigError, ResolveConfigProps} from '../components/storage/base';
-import type {ResolvedConfig} from '../components/storage/types';
 
 export function shouldUseUnreleasedConfig(args: {request: Request; params?: StringParams}) {
     const {request, params} = args;
@@ -26,8 +24,6 @@ export function shouldUseUnreleasedConfig(args: {request: Request; params?: Stri
 type LoadChartConfigArgs = {
     extraSettings?: any;
     subrequestHeaders?: any;
-    ctx: AppContext;
-    config: ResolvedConfig;
     request: Request;
     params?: StringParams;
     id?: string;
@@ -36,12 +32,8 @@ type LoadChartConfigArgs = {
 };
 
 export async function resolveChartConfig(args: LoadChartConfigArgs) {
-    const {config, params, id, key, workbookId, ctx, request, extraSettings, subrequestHeaders} =
-        args;
-
-    if (config) {
-        return config;
-    }
+    const {params, id, key, workbookId, request, extraSettings, subrequestHeaders} = args;
+    const {ctx} = request;
 
     const configResolveArgs: ResolveConfigProps = {
         unreleased: shouldUseUnreleasedConfig({request, params}),

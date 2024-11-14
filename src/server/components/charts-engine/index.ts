@@ -25,7 +25,7 @@ const defaultControllers = {
     embeddedEntry: embeddedEntryController,
 };
 import type {Runner} from './runners';
-import type {Plugin, SourceConfig, TelemetryCallbacks} from './types';
+import type {ChartEngineController, Plugin, SourceConfig, TelemetryCallbacks} from './types';
 import {MiddlewareStage} from './types';
 
 type Controllers = {
@@ -140,10 +140,13 @@ class ChartsEngine {
                 }
 
                 if (plugin.controllers) {
-                    Object.entries(plugin.controllers).forEach(([key, value]) => {
-                        // @ts-ignore
-                        this.controllers[key] = value(this);
+                    const controllers = Object.entries(plugin.controllers).reduce<
+                        Record<string, ChartEngineController>
+                    >((acc, [key, value]) => {
+                        acc[key] = value(this);
+                        return acc;
                     }, {});
+                    Object.assign(this.controllers, controllers);
                 }
             });
         }

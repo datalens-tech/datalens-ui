@@ -8,6 +8,7 @@ import type {ChartsEngine} from '..';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import {registry} from '../../../registry';
+import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
 import {resolveChartConfig} from './utils';
@@ -47,7 +48,10 @@ export const runController = (
             return;
         }
 
-        if (!chartConfig) {
+        let config: ResolvedConfig | {error: unknown};
+        if (chartConfig) {
+            config = chartConfig;
+        } else {
             if (!params && key) {
                 const parsedUrl = url.parse(key);
                 if (parsedUrl.query) {
@@ -61,19 +65,17 @@ export const runController = (
                     };
                 }
             }
-        }
 
-        const config = await resolveChartConfig({
-            subrequestHeaders: res.locals.subrequestHeaders,
-            ctx,
-            config: chartConfig,
-            request: req,
-            params,
-            id,
-            key,
-            workbookId,
-            extraSettings,
-        });
+            config = await resolveChartConfig({
+                subrequestHeaders: res.locals.subrequestHeaders,
+                request: req,
+                params,
+                id,
+                key,
+                workbookId,
+                extraSettings,
+            });
+        }
 
         if ('error' in config) {
             const status = get(config, 'error.details.code', 500);

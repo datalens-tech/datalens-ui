@@ -503,12 +503,6 @@ export function getChartEditorTypes(type: string) {
                     docs: docsControls,
                 },
                 {
-                    name: 'Actions',
-                    id: 'actions',
-                    language: 'javascript',
-                    docs: docsControls,
-                },
-                {
                     name: 'Shared',
                     id: 'shared',
                     language: 'json',
@@ -645,6 +639,15 @@ export function getChartEditorTypes(type: string) {
             ],
         },
     } as Record<string, ChartEditorType>;
+
+    if (Utils.isEnabledFeature(Feature.ChartActions)) {
+        chartEditorTypes[EDITOR_TYPE.CONTROL_NODE].tabs.push({
+            name: 'Actions',
+            id: 'actions',
+            language: 'javascript',
+            docs: docsControls,
+        });
+    }
 
     if (Utils.isEnabledFeature(Feature.BlankChart)) {
         chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] = {
