@@ -182,6 +182,13 @@ const GROUPS_WEIGHT = {
     [DEFAULT_GROUP]: 0,
 } as const;
 
+const ITEMS_STATE_STATUS = {
+    MOUNTED: 'mounted',
+    LOADED: 'loaded',
+} as const;
+
+type ItemStateStatus = (typeof ITEMS_STATE_STATUS)[keyof typeof ITEMS_STATE_STATUS];
+
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
@@ -942,14 +949,14 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
-    private executeDelayedScroll = (status: 'mounted' | 'loaded') => {
+    private executeDelayedScroll = (status: ItemStateStatus) => {
         if (!this.state.delayedScrollId) {
             return;
         }
 
         if (
-            status === 'loaded' ||
-            (status === 'mounted' && this.props.settings.loadOnlyVisibleCharts)
+            status === ITEMS_STATE_STATUS.LOADED ||
+            (status === ITEMS_STATE_STATUS.MOUNTED && this.props.settings.loadOnlyVisibleCharts)
         ) {
             scrollIntoView(this.state.delayedScrollId);
             this.setState({delayedScrollId: null});
@@ -962,7 +969,7 @@ class Body extends React.PureComponent<BodyProps> {
 
             if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
                 this.setState({mounted: true});
-                this.executeDelayedScroll('mounted');
+                this.executeDelayedScroll(ITEMS_STATE_STATUS.MOUNTED);
             }
         }
     };
@@ -976,7 +983,7 @@ class Body extends React.PureComponent<BodyProps> {
             const isLoaded = Array.from(loadedItemsMap.values()).every(Boolean);
 
             if (isLoaded) {
-                this.executeDelayedScroll('loaded');
+                this.executeDelayedScroll(ITEMS_STATE_STATUS.LOADED);
             }
 
             this.setState({loaded: isLoaded});
