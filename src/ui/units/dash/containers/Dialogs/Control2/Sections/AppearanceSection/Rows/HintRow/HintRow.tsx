@@ -6,13 +6,13 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-
-import {registry} from '../../../../../../../../../registry';
 import {
     getDatasetField,
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from '../../../../../../../store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
+
+import {registry} from '../../../../../../../../../registry';
 
 const b = block('control2-appearance-section');
 

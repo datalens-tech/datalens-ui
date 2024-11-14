@@ -9,7 +9,7 @@ import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
 
 import '../ValueSelector.scss';
 

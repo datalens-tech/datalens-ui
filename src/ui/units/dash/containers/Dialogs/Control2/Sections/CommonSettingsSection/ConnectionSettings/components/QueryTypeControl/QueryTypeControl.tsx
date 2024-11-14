@@ -11,8 +11,7 @@ import {
     type ConnectionRequiredParameter,
 } from 'shared';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-
-import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';

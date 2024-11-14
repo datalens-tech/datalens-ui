@@ -11,7 +11,7 @@ import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorRequired,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
 
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 

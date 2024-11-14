@@ -5,9 +5,9 @@ import {TextInput} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
-import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
 const i18n = I18n.keyset('dash.control-dialog.edit');
 export const EditLabelControl = () => {
     const dispatch = useDispatch();

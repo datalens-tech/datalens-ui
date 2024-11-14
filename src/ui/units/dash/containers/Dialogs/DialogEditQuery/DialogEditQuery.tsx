@@ -8,12 +8,12 @@ import type {ConnectionQueryContent} from 'shared';
 import {mapParametersRecordToTypedQueryApiParameters} from 'shared/modules/typed-query-api';
 import type {GetConnectionTypedQueryErrorResponse} from 'shared/schema';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {selectWorkbookId} from '../../../../workbooks/store/selectors';
-import {selectSelectorDialog} from '../../../store/selectors/dashTypedSelectors';
 
 import {QueryEditor} from './QueryEditor/QueryEditor';
 import {QueryError} from './QueryError/QueryError';

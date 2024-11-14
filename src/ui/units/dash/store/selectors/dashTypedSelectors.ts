@@ -1,8 +1,4 @@
-import type {Operation} from 'components/DialogFilter/constants';
-import {BOOLEAN_OPERATIONS} from 'components/DialogFilter/constants';
-import {getAvailableOperations} from 'components/DialogFilter/utils';
 import type {DatalensGlobalState} from 'index';
-import {getFilterOperations} from 'libs/datasetHelper';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
 import type {
@@ -10,22 +6,12 @@ import type {
     DashTabItemControlData,
     DashTabItemWidget,
     DashTabItemWidgetTab,
-    Operations,
 } from 'shared';
-import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {selectSelectorSourceType} from 'ui/store/selectors/controlDialog';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import {
-    ALL_OPERATIONS,
-    DATEPICKER_OPERATIONS,
-    DATEPICKER_RANGE_OPERATIONS,
-    INPUT_OPERATIONS_NUMBER_OR_DATE,
-    INPUT_OPERATIONS_TEXT,
-    MULTISELECT_OPERATIONS,
-    SELECTOR_OPERATIONS,
-} from '../constants/operations';
 import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
@@ -55,159 +41,11 @@ export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
 
-export const selectSelectorSourceType = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.sourceType;
-
-export const selectSelectorControlType = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.elementType;
-
-export const selectSelectorDefaultValue = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.defaultValue;
-
-export const selectSelectorRequired = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.required;
-
-export const selectSelectorValidation = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog.validation;
-
-export const selectSelectorDialog = (state: DatalensGlobalState) =>
-    (state.dash as DashState).selectorDialog;
-
 export const selectSkipReload = (state: DatalensGlobalState) =>
     (state.dash as DashState)?.skipReload || false;
 
 export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
     (state.dash as DashState).widgetsCurrentTab;
-
-export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState) => {
-    const selectorDialog = (state.dash as DashState).selectorDialog;
-
-    switch (selectorDialog.sourceType) {
-        case DashTabItemControlSourceType.Dataset:
-            return !selectorDialog.datasetFieldId;
-        case DashTabItemControlSourceType.Connection:
-            return !selectorDialog.connectionQueryContent;
-        default:
-            return false;
-    }
-};
-
-export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): boolean => {
-    const {sourceType, connectionId, connectionQueryTypes} = state.dash.selectorDialog;
-
-    switch (sourceType) {
-        case DashTabItemControlSourceType.Connection:
-            return Boolean(connectionId && connectionQueryTypes?.length);
-        case DashTabItemControlSourceType.External:
-            return true;
-        default:
-            return false;
-    }
-};
-
-export const getDatasetField = (state: DatalensGlobalState) => {
-    const {dataset, datasetFieldId} = (state.dash as DashState).selectorDialog;
-    return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
-        (item) => item.guid === datasetFieldId,
-    );
-};
-
-export const selectAvailableOperationsDict = (
-    state: DatalensGlobalState,
-): Record<Operations, boolean> | undefined => {
-    const {dataset, datasetFieldId} = (state.dash as DashState).selectorDialog;
-
-    if (!dataset) {
-        return undefined;
-    }
-
-    const field = (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
-        (item) => item.guid === datasetFieldId,
-    );
-
-    if (!field) {
-        return undefined;
-    }
-
-    const filterOperations = getFilterOperations(field, dataset.options);
-
-    const availableOperations = getAvailableOperations(field, filterOperations);
-
-    const availableOperationsDict = availableOperations.reduce(
-        (acc: Record<Operations, boolean>, item: Operation) => {
-            acc[item.value] = true;
-            return acc;
-        },
-        {} as Record<Operations, boolean>,
-    );
-
-    return availableOperationsDict;
-};
-
-export const selectInputOperations = (state: DatalensGlobalState) => {
-    const {multiselectable, isRange, elementType, fieldType, sourceType, datasetFieldId} = (
-        state.dash as DashState
-    ).selectorDialog;
-
-    if (sourceType !== 'dataset' && elementType === 'checkbox') {
-        return BOOLEAN_OPERATIONS;
-    }
-
-    if (sourceType !== 'dataset') {
-        return ALL_OPERATIONS;
-    }
-
-    if (!datasetFieldId) {
-        return undefined;
-    }
-
-    const availableOperations = selectAvailableOperationsDict(state);
-
-    let inputOperations;
-
-    switch (elementType) {
-        case 'select': {
-            if (multiselectable) {
-                inputOperations = MULTISELECT_OPERATIONS;
-                break;
-            }
-
-            inputOperations = SELECTOR_OPERATIONS;
-            break;
-        }
-
-        case 'date': {
-            if (isRange) {
-                inputOperations = DATEPICKER_RANGE_OPERATIONS;
-                break;
-            }
-
-            inputOperations = DATEPICKER_OPERATIONS;
-            break;
-        }
-
-        case 'input': {
-            if (fieldType === DATASET_FIELD_TYPES.STRING) {
-                inputOperations = INPUT_OPERATIONS_TEXT;
-                break;
-            }
-
-            inputOperations = INPUT_OPERATIONS_NUMBER_OR_DATE;
-            break;
-        }
-
-        case 'checkbox': {
-            inputOperations = BOOLEAN_OPERATIONS;
-            break;
-        }
-    }
-
-    if (!availableOperations) {
-        return inputOperations;
-    }
-
-    return inputOperations.filter((operation) => availableOperations[operation.value]);
-};
 
 export const selectTabId = (state: DatalensGlobalState) => state.dash?.tabId;
 

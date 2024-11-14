@@ -11,8 +11,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {ControlQA} from 'shared';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {EntrySelector} from '../EntrySelector/EntrySelector';
 

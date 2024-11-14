@@ -10,8 +10,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {AcceptableValue} from 'ui/store/typings/controlDialog';
-import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import Dialog from '../../../../../Control/Dialog/Dialog';
 

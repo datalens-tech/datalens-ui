@@ -4,7 +4,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {SelectFeatured} from 'ui/components/Select/wrappers/SelectFeatured';
-import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {useSetSelectorDialogItem} from './hooks';
 import type {StaticValueSelectorProps} from './types';

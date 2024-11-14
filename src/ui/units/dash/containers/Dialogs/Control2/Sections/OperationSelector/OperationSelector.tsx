@@ -11,7 +11,7 @@ import {
     selectInputOperations,
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
 
 import '../../Control2.scss';
 
