@@ -204,6 +204,7 @@ export type DLGlobalData = {
           }
         | boolean;
     runEndpoint?: string;
+    apiPrefix?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;

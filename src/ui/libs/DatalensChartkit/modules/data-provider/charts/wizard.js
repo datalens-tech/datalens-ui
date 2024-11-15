@@ -344,6 +344,7 @@ function run(loaded) {
         traceId,
         _confStorageConfig: {data: config, type, entryId, key},
         publicAuthor,
+        widgetConfig,
     } = loaded;
 
     try {
@@ -362,6 +363,7 @@ function run(loaded) {
             isNewWizard: false,
             isOldWizard: true,
             extra: {},
+            widgetConfig,
         };
 
         if (unresolvedParams) {

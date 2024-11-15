@@ -241,7 +241,7 @@ export type DashWidgetConfig = {
             enable?: boolean;
             fields?: string[];
         };
-        /** Defines parameters such as font size or margins */
+        enableExport?: boolean;
         size?: WidgetSizeType;
     };
 };

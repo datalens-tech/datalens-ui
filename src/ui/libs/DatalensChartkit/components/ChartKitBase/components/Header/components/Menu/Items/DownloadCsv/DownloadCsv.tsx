@@ -18,7 +18,7 @@ const i18n = I18n.keyset('chartkit.menu.download-csv');
 const EXPORT_WARNING_TYPE = 'table';
 
 type DownloadCsvProps = {
-    onApply: ({chartData, params, path}: ExportChartArgs) => void;
+    onApply: ({chartData, params}: ExportChartArgs) => void;
     loading?: boolean;
     onClose: () => void;
     chartType: string;
@@ -89,7 +89,6 @@ export const DownloadCsv = ({
     onClose,
     chartType,
     chartData,
-    path,
     onExportLoading,
 }: DownloadCsvProps) => {
     const [delValue, setDelValue] = React.useState(';');
@@ -106,9 +105,9 @@ export const DownloadCsv = ({
             encoding,
         };
 
-        onApply({chartData, params, path, onExportLoading});
+        onApply({chartData, params, onExportLoading});
         onClose();
-    }, [chartData, delNumber, delValue, encoding, onApply, path]);
+    }, [chartData, delNumber, delValue, encoding, onApply]);
 
     return (
         <Dialog
