@@ -6,12 +6,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {TitlePlacementOption} from 'shared/types/dash';
-import {ELEMENT_TYPE} from 'ui/units/dash/containers/Dialogs/Control/constants';
-import {setSelectorDialogItem} from 'ui/units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
+import {ELEMENT_TYPE} from 'ui/units/dash/containers/Dialogs/Control/constants';
 
 import '../../AppearanceSection.scss';
 

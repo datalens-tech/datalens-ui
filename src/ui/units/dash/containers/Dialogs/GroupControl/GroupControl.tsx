@@ -4,7 +4,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared/constants/qa';
-import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../../../components/TwoColumnDialog/TwoColumnDialog';

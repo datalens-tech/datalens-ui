@@ -4,7 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {Acceptable} from './Acceptable/Acceptable';
 import {MultiselectableCheckbox} from './MultiselectableCheckbox';

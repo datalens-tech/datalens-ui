@@ -10,15 +10,15 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
+import {
+    selectIsParametersSectionAvailable,
+    selectSelectorDialog,
+} from 'ui/store/selectors/controlDialog';
 import {AppearanceSection} from 'units/dash/containers/Dialogs/Control2/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'units/dash/containers/Dialogs/Control2/Sections/CommonSettingsSection/CommonSettingsSection';
 import {SelectorPreview} from 'units/dash/containers/Dialogs/Control2/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'units/dash/containers/Dialogs/Control2/SelectorTypeSelect/SelectorTypeSelect';
 import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
-import {
-    selectIsParametersSectionAvailable,
-    selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {ParametersSection} from './Sections/ParametersSection/ParametersSection';
 

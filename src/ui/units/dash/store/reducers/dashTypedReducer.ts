@@ -4,17 +4,19 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import {
+    ADD_SELECTOR_TO_GROUP,
+    SET_ACTIVE_SELECTOR_INDEX,
+    SET_SELECTOR_DIALOG_ITEM,
+    UPDATE_SELECTORS_GROUP,
+} from 'ui/store/actions/controlDialog';
 import {getSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
+import {getActualUniqueFieldNameValidation} from 'ui/store/utils/controlDialog';
 
 import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
 import type {DashUpdateStatus} from '../../typings/dash';
-import {
-    ADD_SELECTOR_TO_GROUP,
-    SET_ACTIVE_SELECTOR_INDEX,
-    UPDATE_SELECTORS_GROUP,
-} from '../actions/controls/actions';
 import type {TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
@@ -36,7 +38,6 @@ import {
     SET_PAGE_DEFAULT_TAB_ITEMS,
     SET_PAGE_TAB,
     SET_PAGE_TABS_ITEMS,
-    SET_SELECTOR_DIALOG_ITEM,
     SET_SETTINGS,
     SET_STATE,
     SET_STATE_HASH_ID,
@@ -48,7 +49,6 @@ import type {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
 import {getInitialDefaultValue} from '../utils';
 
-import {getActualUniqueFieldNameValidation} from './controls/helpers';
 import {TAB_PROPERTIES} from './dash';
 
 export type DashState = {

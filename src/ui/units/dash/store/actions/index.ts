@@ -1,13 +1,14 @@
 import type {ThunkDispatch} from 'redux-thunk';
 import type {DatalensGlobalState} from 'ui';
-
-import type {EntryContentAction} from '../../../../store/actions/entryContent';
-
 import type {
     AddSelectorToGroupAction,
     SetActiveSelectorIndexAction,
+    SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
-} from './controls/actions';
+} from 'ui/store/actions/controlDialog';
+
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
+
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
@@ -28,7 +29,6 @@ import type {
     SetPageDefaultTabItemsAction,
     SetPageTabAction,
     SetPageTabsItemsAction,
-    SetSelectorDialogItemAction,
     SetSettingsAction,
     SetSkipReloadAction,
     SetStateAction,

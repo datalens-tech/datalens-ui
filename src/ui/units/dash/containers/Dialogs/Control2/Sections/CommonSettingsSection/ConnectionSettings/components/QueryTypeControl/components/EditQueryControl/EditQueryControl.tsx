@@ -5,11 +5,13 @@ import {PencilToLine} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {FieldWrapper} from '../../../../../../../../../../../../components/FieldWrapper/FieldWrapper';
 import {openDialogEditQuery} from '../../../../../../../../../../store/actions/dialogs/dialog-edit-query';
-import {selectSelectorDialog} from '../../../../../../../../../../store/selectors/dashTypedSelectors';
+
 const i18n = I18n.keyset('dash.control-dialog.edit');
+
 export const EditQueryControl: React.FC = () => {
     const {validation} = useSelector(selectSelectorDialog);
     const dispatch = useDispatch();

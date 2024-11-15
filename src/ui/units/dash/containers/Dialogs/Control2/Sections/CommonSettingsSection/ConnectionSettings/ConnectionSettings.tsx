@@ -2,8 +2,8 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
-import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
 import {RequiredValueCheckbox} from '../../ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
 import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';

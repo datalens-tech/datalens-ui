@@ -10,9 +10,8 @@ import {
     ConnectionQueryTypeValues,
     type ConnectionRequiredParameter,
 } from 'shared';
-
-import {setSelectorDialogItem} from '../../../../../../../../store/actions/dashTyped';
-import {selectSelectorDialog} from '../../../../../../../../store/selectors/dashTypedSelectors';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {EditLabelControl} from './components/EditLabelControl/EditLabelControl';
 import {EditQueryControl} from './components/EditQueryControl/EditQueryControl';

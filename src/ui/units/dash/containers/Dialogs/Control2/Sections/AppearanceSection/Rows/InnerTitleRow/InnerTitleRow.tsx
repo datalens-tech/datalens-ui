@@ -6,12 +6,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
-import type {SelectorSourceType} from 'ui/store/typings/controlDialog';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
+import type {SelectorSourceType} from 'ui/store/typings/controlDialog';
 
 import {ELEMENT_TYPE} from '../../../../../Control/constants';
 

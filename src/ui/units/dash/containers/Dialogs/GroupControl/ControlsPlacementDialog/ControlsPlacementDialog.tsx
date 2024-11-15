@@ -6,10 +6,10 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa} from 'shared';
+import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
+import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
-import {updateSelectorsGroup} from 'ui/units/dash/store/actions/controls/actions';
-import {selectSelectorsGroup} from 'ui/units/dash/store/selectors/controls/selectors';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../../constants/dialogs';
 

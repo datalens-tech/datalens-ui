@@ -13,24 +13,22 @@ import {
     DialogGroupControlQa,
     TitlePlacementOption,
 } from 'shared';
+import {
+    addSelectorToGroup,
+    setActiveSelectorIndex,
+    setSelectorDialogItem,
+    updateSelectorsGroup,
+} from 'ui/store/actions/controlDialog';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
 } from 'ui/store/reducers/controlDialog';
+import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
-import {
-    addSelectorToGroup,
-    copyControlToStorage,
-    setActiveSelectorIndex,
-    updateSelectorsGroup,
-} from 'ui/units/dash/store/actions/controls/actions';
-import {
-    selectActiveSelectorIndex,
-    selectSelectorsGroup,
-} from 'units/dash/store/selectors/controls/selectors';
+import {copyControlToStorage} from 'ui/units/dash/store/actions/controls/actions';
 
 import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
 import type {
@@ -38,7 +36,6 @@ import type {
     UpdateState,
 } from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';

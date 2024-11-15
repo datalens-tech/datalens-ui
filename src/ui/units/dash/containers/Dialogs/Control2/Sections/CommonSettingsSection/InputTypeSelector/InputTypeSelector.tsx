@@ -12,13 +12,13 @@ import {
     DialogControlQa,
 } from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
-import type {SelectorElementType} from 'ui/store/typings/controlDialog';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
+import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 
 import {ELEMENT_TYPE} from '../../../../Control/constants';
 import {getElementOptions} from '../helpers/input-type-select';
