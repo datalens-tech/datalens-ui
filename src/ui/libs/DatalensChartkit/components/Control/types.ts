@@ -12,7 +12,6 @@ import type {
 export type ControlProps<TProviderData = unknown> = {
     data: ControlsOnlyWidget & TProviderData;
     getControls: (params: StringParams) => Promise<(ControlsOnlyWidget & TProviderData) | null>;
-    runAction: (args: StringParams) => Promise<unknown>;
     onLoad: (data?: OnLoadData) => void;
     onChange: (
         data: OnChangeData,
@@ -21,8 +20,9 @@ export type ControlProps<TProviderData = unknown> = {
         callChangeByClick?: boolean,
     ) => void;
     onUpdate?: (data: OnChangeData) => void;
-    onAction: (args: {data: unknown}) => void;
     initialParams?: ChartInitialParams;
+    runAction: (args: StringParams) => Promise<unknown>;
+    onAction: (args: {data: unknown}) => void;
 } & Omit<WidgetProps, 'data'>;
 
 export interface ControlState {

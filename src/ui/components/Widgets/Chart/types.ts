@@ -25,6 +25,7 @@ import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ControlProps} from '../../../libs/DatalensChartkit/components/Control/types';
 import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
 import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
 import type {
@@ -208,7 +209,6 @@ export type ChartKitWrapperParams = {
     ) => void;
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
-    runAction: (params: StringParams) => Promise<unknown>;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
 };
@@ -286,21 +286,23 @@ export type ChartContentProps = Pick<
         initialParams: StringParams;
         enableActionParams?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
+        runAction?: ControlProps['runAction'];
     };
 
 export type WidgetDataRef = React.MutableRefObject<
     ChartKitLoadSuccess<ChartsData>['data']['widget'] | null
 >;
 
-export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChange' | 'runAction'> &
+export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChange'> &
     Pick<ChartsProps, 'id'> &
-    Pick<ChartContentProps, 'nonBodyScroll' | 'dataProps' | 'requestId'> & {
+    Pick<ChartContentProps, 'nonBodyScroll'> & {
         data: ChartContentProps['loadedData'];
         onLoad: ChartKitWrapperParams['onRender'];
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-        onAction?: (args: {data: unknown}) => void;
+        runAction?: ControlProps['runAction'];
+        onAction?: ControlProps['onAction'];
     };
 
 export type ResolveWidgetControlDataRefArgs =

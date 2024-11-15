@@ -156,6 +156,10 @@ class Control<TProviderData> extends React.PureComponent<
     async runAction(args: StringParams) {
         const {runAction, onAction} = this.props;
 
+        if (!runAction || !onAction) {
+            return;
+        }
+
         const responseData = await runAction({...this.state.params, ...args});
         onAction({data: get(responseData, 'data')});
     }

@@ -171,8 +171,6 @@ export const Content = (props: ChartContentProps) => {
                         getControls={getControls}
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
-                        dataProps={dataProps}
-                        requestId={requestId}
                         runAction={runAction}
                         onAction={onAction}
                     />

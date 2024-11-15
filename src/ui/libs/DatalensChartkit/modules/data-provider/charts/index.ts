@@ -7,7 +7,6 @@ import type {Series as HighchartSeries} from 'highcharts';
 import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
-import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import merge from 'lodash/merge';
 import omit from 'lodash/omit';
@@ -861,7 +860,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
     }
 
     private processError(args: {
-        error: Error;
+        error: any;
         requestId: string;
         includeLogs?: boolean;
         isEditMode?: boolean;
@@ -873,7 +872,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         }
 
         const debug = {requestId};
-        if (!get(error, 'response')) {
+        if (!error.response) {
             throw DatalensChartkitCustomError.wrap(error, {code: ERROR_CODE.NETWORK, debug});
         }
 
