@@ -25,7 +25,7 @@ import {
     Square,
     SquareCheck,
 } from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon, Toaster} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import {i18n} from 'i18n';
@@ -58,6 +58,7 @@ import {
     FIXED_HEADER_GROUP_LINE_MAX_ROWS,
 } from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
+import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -166,9 +167,6 @@ type MemoContext = {
     isEmbeddedMode?: boolean;
     isPublicMode?: boolean;
     workbookId?: string | null;
-    getPreparedCopyItemOptions?: (
-        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-    ) => ReturnType<typeof getPreparedCopyItemOptions>;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
@@ -181,8 +179,6 @@ const GROUPS_WEIGHT = {
     [FIXED_GROUP_CONTAINER_ID]: 1,
     [DEFAULT_GROUP]: 0,
 } as const;
-
-const toaster = new Toaster();
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
@@ -344,11 +340,11 @@ class Body extends React.PureComponent<BodyProps> {
         }
     };
 
-    onItemCopy = (error: null | Error, _item?: PreparedCopyItemOptions) => {
+    onItemCopy = (error: null | Error) => {
         if (error === null) {
-            toaster.add({
+            this.props.showToast({
                 name: 'successCopyElement',
-                theme: 'success',
+                type: 'success',
                 title: i18n('component.entry-context-menu.view', 'value_copy-success'),
             });
         }
@@ -707,18 +703,8 @@ class Body extends React.PureComponent<BodyProps> {
             memoContext.workbookId !== this.props.workbookId ||
             memoContext.fixedHeaderCollapsed !== isCollapsed
         ) {
-            const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
-                return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
-                    workbookId: this.props.workbookId ?? null,
-                    fromScope: this.props.entry.scope,
-                    targetEntryId: this.props.entryId,
-                    targetDashTabId: this.props.tabId,
-                });
-            };
-
             this._memoizedContext = {
                 ...(memoContext || {}),
-                getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
                 fixedHeaderCollapsed: isCollapsed,
                 isEmbeddedMode: isEmbeddedMode(),
@@ -727,6 +713,15 @@ class Body extends React.PureComponent<BodyProps> {
         }
 
         return this._memoizedContext;
+    };
+
+    getPreparedCopyItemOptionsFn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
+        return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
+            workbookId: this.props.workbookId ?? null,
+            fromScope: this.props.entry.scope,
+            targetEntryId: this.props.entryId,
+            targetDashTabId: this.props.tabId,
+        });
     };
 
     getOverlayControls = (): DashKitProps['overlayControls'] => {
@@ -874,7 +869,7 @@ class Body extends React.PureComponent<BodyProps> {
             dashkitSettings,
         } = this.props;
 
-        const {getPreparedCopyItemOptions: getOptions, ...context} = this.getContext();
+        const context = this.getContext();
 
         const tabDataConfig = DL.IS_MOBILE
             ? this.getMobileLayout()
@@ -903,9 +898,8 @@ class Body extends React.PureComponent<BodyProps> {
                 }
                 context={context}
                 getPreparedCopyItemOptions={
-                    getOptions
-                        ? (getOptions satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>)
-                        : undefined
+                    this
+                        .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
                 }
                 onCopyFulfill={this.onItemCopy}
                 onItemEdit={this.props.openItemDialogAndSetData}
@@ -1069,6 +1063,7 @@ const mapDispatchToProps = {
     closeDialogRelations,
     setNewRelations,
     openDialog,
+    showToast,
 };
 
 export default compose<BodyProps, OwnProps>(
