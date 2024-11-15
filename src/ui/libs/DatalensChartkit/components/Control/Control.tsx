@@ -14,7 +14,6 @@ import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
-import {runChartAction} from '../../modules/data-provider/charts/chart-actions';
 import type {
     ActiveControl,
     Control as TControl,
@@ -155,18 +154,10 @@ class Control<TProviderData> extends React.PureComponent<
     }
 
     async runAction(args: StringParams) {
-        const {dataProps: entityData, requestId, onAction} = this.props;
+        const {runAction, onAction} = this.props;
 
-        if (entityData) {
-            const responseData = await runChartAction({
-                data: entityData,
-                requestId,
-                params: {...this.state.params, ...args},
-            });
-            if (onAction) {
-                onAction({data: get(responseData, 'data')});
-            }
-        }
+        const responseData = await runAction({...this.state.params, ...args});
+        onAction({data: get(responseData, 'data')});
     }
 
     onChange(control: ActiveControl, value: SimpleControlValue, index: number) {

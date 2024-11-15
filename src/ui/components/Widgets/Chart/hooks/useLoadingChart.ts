@@ -931,5 +931,12 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
+        runAction: function (params: StringParams) {
+            return dataProvider.runAction({
+                props: {...initialData, params},
+                requestId,
+                ...(dataProviderContextGetter ? {contextHeaders: dataProviderContextGetter()} : {}),
+            });
+        },
     };
 };

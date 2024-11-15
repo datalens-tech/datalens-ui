@@ -170,6 +170,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         dataProps,
         isWidgetMenuDataChanged,
         reloadChart,
+        runAction,
     } = useLoadingChart({
         chartKitRef: forwardedRef,
         dataProvider,
@@ -273,6 +274,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 loadedData={loadedData}
                 forwardedRef={forwardedRef}
                 getControls={loadControls}
+                runAction={runAction}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}

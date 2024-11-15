@@ -208,6 +208,7 @@ export type ChartKitWrapperParams = {
     ) => void;
     onRetry?: () => void;
     getControls: (params: StringParams) => void;
+    runAction: (params: StringParams) => Promise<unknown>;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
 };
@@ -291,7 +292,7 @@ export type WidgetDataRef = React.MutableRefObject<
     ChartKitLoadSuccess<ChartsData>['data']['widget'] | null
 >;
 
-export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChange'> &
+export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChange' | 'runAction'> &
     Pick<ChartsProps, 'id'> &
     Pick<ChartContentProps, 'nonBodyScroll' | 'dataProps' | 'requestId'> & {
         data: ChartContentProps['loadedData'];

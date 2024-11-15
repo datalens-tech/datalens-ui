@@ -67,6 +67,7 @@ export const Content = (props: ChartContentProps) => {
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
+        runAction,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -172,6 +173,7 @@ export const Content = (props: ChartContentProps) => {
                         initialParams={initialParams}
                         dataProps={dataProps}
                         requestId={requestId}
+                        runAction={runAction}
                         onAction={onAction}
                     />
                 )}

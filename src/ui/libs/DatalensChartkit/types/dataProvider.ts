@@ -34,6 +34,11 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         requestId: string;
         requestCancellation: K;
     }) => Promise<(ControlsOnlyWidget & R) | null>;
+    runAction: (args: {
+        props: T;
+        requestId: string;
+        contextHeaders?: DashChartRequestContext;
+    }) => Promise<unknown | null>;
     setSettings?: <TSettings>(settings: TSettings) => void;
     pushStats?: (
         input: any, // ChartKitLoadSuccess<ChartsData>, // TODO after remove old alternative Chartkit code, cause cycle imports
