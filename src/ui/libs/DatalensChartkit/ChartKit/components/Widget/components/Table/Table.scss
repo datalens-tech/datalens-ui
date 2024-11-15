@@ -207,6 +207,14 @@
         }
     }
 
+    thead tr {
+        height: var(--data-table-row-height);
+    }
+
+    &__box_sticky-head_moving thead tr {
+        height: 0px;
+    }
+
     &__td {
         // safari(15) cannot apply 100% row height to a cell
         height: auto;
