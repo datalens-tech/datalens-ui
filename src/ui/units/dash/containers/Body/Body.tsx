@@ -58,6 +58,7 @@ import {
     FIXED_HEADER_GROUP_LINE_MAX_ROWS,
 } from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
+import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
@@ -166,11 +167,12 @@ type MemoContext = {
     isEmbeddedMode?: boolean;
     isPublicMode?: boolean;
     workbookId?: string | null;
-    getPreparedCopyItemOptions?: (
-        itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>,
-    ) => ReturnType<typeof getPreparedCopyItemOptions>;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
+
+type GetPreparedCopyItemOptions<T extends object = {}> = (
+    itemToCopy: PreparedCopyItemOptions<T>,
+) => PreparedCopyItemOptions<T>;
 
 const GROUPS_WEIGHT = {
     [FIXED_GROUP_HEADER_ID]: 2,
@@ -335,6 +337,16 @@ class Body extends React.PureComponent<BodyProps> {
             this.onStateChange(itemsStateAndParams as TabsHashStates, config as unknown as DashTab);
         } else if (config) {
             this.props.setCurrentTabData(config as unknown as DashTab);
+        }
+    };
+
+    onItemCopy = (error: null | Error) => {
+        if (error === null) {
+            this.props.showToast({
+                name: 'successCopyElement',
+                type: 'success',
+                title: i18n('component.entry-context-menu.view', 'value_copy-success'),
+            });
         }
     };
 
@@ -691,18 +703,8 @@ class Body extends React.PureComponent<BodyProps> {
             memoContext.workbookId !== this.props.workbookId ||
             memoContext.fixedHeaderCollapsed !== isCollapsed
         ) {
-            const fn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
-                return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
-                    workbookId: this.props.workbookId ?? null,
-                    fromScope: this.props.entry.scope,
-                    targetEntryId: this.props.entryId,
-                    targetDashTabId: this.props.tabId,
-                });
-            };
-
             this._memoizedContext = {
                 ...(memoContext || {}),
-                getPreparedCopyItemOptions: memoContext.getPreparedCopyItemOptions || fn,
                 workbookId: this.props.workbookId,
                 fixedHeaderCollapsed: isCollapsed,
                 isEmbeddedMode: isEmbeddedMode(),
@@ -711,6 +713,15 @@ class Body extends React.PureComponent<BodyProps> {
         }
 
         return this._memoizedContext;
+    };
+
+    getPreparedCopyItemOptionsFn = (itemToCopy: PreparedCopyItemOptions<CopiedConfigContext>) => {
+        return getPreparedCopyItemOptions(itemToCopy, this.props.tabData, {
+            workbookId: this.props.workbookId ?? null,
+            fromScope: this.props.entry.scope,
+            targetEntryId: this.props.entryId,
+            targetDashTabId: this.props.tabId,
+        });
     };
 
     getOverlayControls = (): DashKitProps['overlayControls'] => {
@@ -858,13 +869,14 @@ class Body extends React.PureComponent<BodyProps> {
             dashkitSettings,
         } = this.props;
 
+        const context = this.getContext();
+
         const tabDataConfig = DL.IS_MOBILE
             ? this.getMobileLayout()
             : (tabData as DashKitProps['config'] | null);
 
         const isEmptyTab = !tabDataConfig?.items.length;
         const DashKit = getConfiguredDashKit();
-
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
                 canEdit={this.props.canEdit}
@@ -884,7 +896,12 @@ class Body extends React.PureComponent<BodyProps> {
                 groups={
                     Utils.isEnabledFeature(Feature.EnableDashFixedHeader) ? this.groups : undefined
                 }
-                context={this.getContext()}
+                context={context}
+                getPreparedCopyItemOptions={
+                    this
+                        .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
+                }
+                onCopyFulfill={this.onItemCopy}
                 onItemEdit={this.props.openItemDialogAndSetData}
                 onChange={this.onChange}
                 settings={dashkitSettings}
@@ -1046,6 +1063,7 @@ const mapDispatchToProps = {
     closeDialogRelations,
     setNewRelations,
     openDialog,
+    showToast,
 };
 
 export default compose<BodyProps, OwnProps>(
