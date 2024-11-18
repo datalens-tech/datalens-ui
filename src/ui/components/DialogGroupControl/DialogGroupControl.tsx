@@ -7,8 +7,8 @@ import {ControlQA} from 'shared/constants/qa';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
-import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
 import {closeDialog} from '../../units/dash/store/actions/dialogs/actions';
+import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
 
 import {GroupControlBody} from './GroupControlBody/GroupControlBody';
 import {GroupControlFooter} from './GroupControlFooter/GroupControlFooter';
