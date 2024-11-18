@@ -1,4 +1,4 @@
-import {RESTRICTED_PARAM_NAMES} from 'shared';
+import {registry} from '../../../../registry';
 
 import type {ParamsSettingData} from './types';
 
@@ -78,7 +78,9 @@ export const validateParamTitle = (paramTitle: string) => {
         return 'invalid-format';
     }
 
-    if (RESTRICTED_PARAM_NAMES.includes(titleTrimmed)) {
+    const {getRestrictedParamNames} = registry.common.functions.getAll();
+
+    if (getRestrictedParamNames().includes(titleTrimmed)) {
         return 'restricted-param';
     }
 

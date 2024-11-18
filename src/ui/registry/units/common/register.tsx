@@ -1,6 +1,7 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
+import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
@@ -96,5 +97,6 @@ export const registerCommonPlugins = () => {
         getScopeTypeIcon,
         getEntryScopesWithRevisionsList,
         getRevisionsPanelEntryScopesTexts,
+        getRestrictedParamNames,
     });
 };
