@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useEffectOnce} from 'ui';
 import DialogChartWidget from 'ui/components/DialogChartWidget/DialogChartWidget';
 import DialogExternalControl from 'ui/components/DialogExternalControl/DialogExternalControl';
+import {DialogGroupControl} from 'ui/components/DialogGroupControl/DialogGroupControl';
 import {DialogTextWidgetWrapper} from 'ui/components/DialogTextWidget';
 import DialogTitleWidget from 'ui/components/DialogTitleWidget/DialogTitleWidget';
 import {registry} from 'ui/registry';
@@ -20,7 +21,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 
 import Connections from './Connections/Connections';
-import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 
@@ -108,7 +108,7 @@ export function Dialogs() {
         case DIALOG_TYPE.CONTROL:
             return <DialogExternalControl />;
         case DIALOG_TYPE.GROUP_CONTROL:
-            return <GroupControl />;
+            return <DialogGroupControl />;
         case DIALOG_TYPE.SETTINGS:
             return <Settings />;
         case DIALOG_TYPE.SELECT_STATE: {

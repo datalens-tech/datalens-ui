@@ -18,9 +18,9 @@ import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSe
 import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
 import Utils from 'ui/utils/utils';
 
-import {ELEMENT_TYPE} from '../../Control/constants';
+import {ELEMENT_TYPE} from '../../../units/dash/containers/Dialogs/Control/constants';
 
-import './../GroupControl.scss';
+import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');

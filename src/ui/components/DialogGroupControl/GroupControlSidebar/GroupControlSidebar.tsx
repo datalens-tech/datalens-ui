@@ -30,15 +30,12 @@ import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {copyControlToStorage} from 'ui/units/dash/store/actions/controls/actions';
 
-import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
-import type {
-    TabMenuItemData,
-    UpdateState,
-} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {DIALOG_SELECTORS_PLACEMENT} from '../../../../../../components/DialogControlsPlacement/DialogControlsPlacement';
+import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
+import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
+import {TabActionType} from '../../DialogChartWidget/TabMenu/types';
+import {DIALOG_SELECTORS_PLACEMENT} from '../../DialogControlsPlacement/DialogControlsPlacement';
 
-import './../GroupControl.scss';
+import '../DialogGroupControl.scss';
 
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');

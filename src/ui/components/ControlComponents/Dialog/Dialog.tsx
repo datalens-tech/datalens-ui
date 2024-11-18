@@ -4,7 +4,7 @@ import {Dialog as CommonDialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {DialogControlParamsQa} from 'shared/constants';
-import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
+import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
 
 import './Dialog.scss';
 
