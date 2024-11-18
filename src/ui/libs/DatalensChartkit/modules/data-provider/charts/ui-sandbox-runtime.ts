@@ -12,6 +12,7 @@ type UiSandboxRuntimeProps = {
     fnArgs: unknown[];
     fnContext: unknown;
     globalApi: object;
+    libs: string;
 };
 
 export class UiSandboxRuntime {
@@ -30,13 +31,15 @@ export class UiSandboxRuntime {
     }
 
     callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi} = props;
+        const {fn, fnContext, fnArgs, globalApi, libs} = props;
 
         this.defineVmArguments(fnArgs);
         this.defineVmContext(fnContext);
         this.defineVmApi(globalApi);
         const result = this.vm.evalCode(
-            `(${fn}).call(JSON.parse(context), ...(args.length
+            `
+            ${libs}
+            (${fn}).call(JSON.parse(context), ...(args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
@@ -96,6 +99,7 @@ export class UiSandboxRuntime {
 
         const items: QuickJSHandle[] = [];
 
+        let timeoutId: number;
         const setItem = (item: object, parent: QuickJSHandle) => {
             Object.entries(item).forEach(([key, value]) => {
                 if (typeof value === 'object') {
@@ -126,7 +130,8 @@ export class UiSandboxRuntime {
                                     fnContext.dispose();
                                     mappedArgs.forEach((arg) => arg.dispose());
 
-                                    setTimeout(() => {
+                                    clearTimeout(timeoutId);
+                                    timeoutId = window.setTimeout(() => {
                                         if (callEnded) {
                                             if (longLivedCallbackHandle.alive) {
                                                 longLivedCallbackHandle.dispose();
@@ -175,7 +180,7 @@ export class UiSandboxRuntime {
         }
 
         if (typeof value === 'object') {
-            const result = this.vm.evalCode(`JSON.parse('${JSON.stringify(value)}')`);
+            const result = this.vm.evalCode('(' + JSON.stringify(value) + ')');
             return result.error ?? result.value;
         }
 

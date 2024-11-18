@@ -4,6 +4,7 @@ import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
 import type {Endpoints} from '../endpoints';
+import type {ConnectorIconData} from '../schema/types';
 
 import type {ChartkitGlobalSettings} from './chartkit';
 import type {DashData, DashStateData} from './dash';
@@ -203,6 +204,7 @@ export type DLGlobalData = {
           }
         | boolean;
     runEndpoint?: string;
+    apiPrefix?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;
@@ -221,6 +223,7 @@ export type DLGlobalData = {
     oidc_name_4?: string;
     oidc_base_url_4?: string;
     hideNavigation?: boolean;
+    connectorIcons?: ConnectorIconData[];
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {
@@ -261,10 +264,6 @@ export enum EntryScope {
     Dataset = 'dataset',
     Folder = 'folder',
     Connection = 'connection',
-    Report = 'report',
-
-    // TODO: delete after update
-    Presentation = 'presentation',
 }
 
 export interface Entry {

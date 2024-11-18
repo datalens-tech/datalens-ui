@@ -3,20 +3,22 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemControlSourceType, DashTabItemType, Feature, TitlePlacementOption} from 'shared';
-import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
-import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
+import {DashTabItemType, Feature} from 'shared';
+import {
+    getGroupSelectorDialogInitialState,
+    getSelectorDialogFromData,
+    getSelectorDialogInitialState,
+    getSelectorGroupDialogFromData,
+} from 'ui/store/reducers/controlDialog';
+import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
-import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import Utils from 'utils';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../../../constants/dialogs';
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
-import {migrateConnectionsForGroupControl} from './controls/helpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
 const i18n = I18n.keyset('dash.store.view');
@@ -68,105 +70,9 @@ const initialState = {
     activeSelectorIndex: 0,
 
     skipReload: false,
+
+    widgetsCurrentTab: {},
 };
-
-export function getGroupSelectorDialogInitialState() {
-    return {
-        autoHeight: false,
-        buttonApply: false,
-        buttonReset: false,
-        updateControlsOnChange: true,
-        group: [],
-    };
-}
-
-export function getSelectorDialogInitialState(args = {}) {
-    const sourceType =
-        Utils.isEnabledFeature(Feature.GroupControls) &&
-        args.openedDialog === DashTabItemType.Control
-            ? DashTabItemControlSourceType.External
-            : DashTabItemControlSourceType.Dataset;
-
-    return {
-        elementType: ELEMENT_TYPE.SELECT,
-        validation: {},
-        sourceType,
-        defaults: {},
-        datasetId: args.lastUsedDatasetId,
-        connectionId: args.lastUsedConnectionId,
-        showTitle: true,
-        titlePlacement: TitlePlacementOption.Left,
-        placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
-        width: '',
-        required: false,
-        showHint: false,
-        draftId: getRandomKey(),
-    };
-}
-
-export function getSelectorDialogFromData(data, defaults) {
-    let selectorParameters;
-
-    switch (data.sourceType) {
-        case DashTabItemControlSourceType.Connection:
-            selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
-            break;
-        case DashTabItemControlSourceType.External:
-            selectorParameters = defaults;
-            break;
-        default:
-            selectorParameters = {};
-    }
-
-    return {
-        validation: {},
-        isManualTitle: true,
-
-        defaults,
-
-        title: data.title,
-        sourceType: data.sourceType,
-        autoHeight: data.autoHeight,
-
-        datasetId: data.source.datasetId,
-        connectionId: data.source.connectionId,
-        selectorParameters,
-        connectionQueryType: data.source.connectionQueryType,
-        connectionQueryTypes: data.source.connectionQueryTypes,
-        connectionQueryContent: data.source.connectionQueryContent,
-        elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
-        defaultValue: data.source.defaultValue,
-        datasetFieldId: data.source.datasetFieldId,
-        showTitle: data.source.showTitle,
-        titlePlacement: data.source.titlePlacement,
-        multiselectable: data.source.multiselectable,
-        isRange: data.source.isRange,
-        fieldName: data.source.fieldName,
-        fieldType: data.source.fieldType,
-        datasetFieldType: data.source.datasetFieldType,
-        acceptableValues: data.source.acceptableValues,
-        chartId: data.source.chartId,
-        operation: data.source.operation,
-        innerTitle: data.source.innerTitle,
-        showInnerTitle: data.source.showInnerTitle,
-        required: data.source.required,
-        showHint: data.source.showHint,
-        hint: data.source.hint,
-
-        placementMode: data.placementMode || CONTROLS_PLACEMENT_MODE.AUTO,
-        width: data.width || '',
-
-        id: data.id,
-        namespace: data.namespace,
-    };
-}
-
-export function getSelectorGroupDialogFromData(data) {
-    return {
-        ...data,
-        group: data.group.map((item) => getSelectorDialogFromData(item)),
-    };
-}
 
 // eslint-disable-next-line complexity
 function dash(state = initialState, action) {

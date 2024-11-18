@@ -7,70 +7,32 @@ import {DashTabItemType, TitlePlacementOption} from 'shared/types';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY, type DatalensGlobalState} from 'ui/index';
 import type {AppDispatch} from 'ui/store';
+import {
+    setActiveSelectorIndex,
+    setSelectorDialogItem,
+    updateSelectorsGroup,
+} from 'ui/store/actions/controlDialog';
 import {showToast} from 'ui/store/actions/toaster';
+import {getGroupSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from 'ui/store/utils/controlDialog';
 import type {CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import {getPreparedCopyItemOptions} from 'ui/units/dash/modules/helpers';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../../../constants/dialogs';
-import {getGroupSelectorDialogInitialState} from '../../reducers/dash';
 import {
     selectCurrentTabId,
     selectOpenedItem,
     selectOpenedItemData,
 } from '../../selectors/dashTypedSelectors';
-import type {SetSelectorDialogItemArgs} from '../dashTyped';
-import {setItemData, setSelectorDialogItem} from '../dashTyped';
+import {setItemData} from '../dashTyped';
 import {closeDialog as closeDashDialog} from '../dialogs/actions';
 import {getExtendedItemDataAction} from '../helpers';
 
-import {getControlDefaultsForField, getControlValidation, getItemDataSource} from './helpers';
-import type {SelectorsGroupDialogState} from './types';
-
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
-
-export const ADD_SELECTOR_TO_GROUP = Symbol('dash/ADD_SELECTOR_TO_GROUP');
-
-export const addSelectorToGroup = (payload: SetSelectorDialogItemArgs) => {
-    return {
-        type: ADD_SELECTOR_TO_GROUP,
-        payload,
-    };
-};
-
-export type AddSelectorToGroupAction = {
-    type: typeof ADD_SELECTOR_TO_GROUP;
-    payload: SetSelectorDialogItemArgs;
-};
-
-export const UPDATE_SELECTORS_GROUP = Symbol('dash/UPDATE_SELECTORS_GROUP');
-
-export type UpdateSelectorsGroupAction = {
-    type: typeof UPDATE_SELECTORS_GROUP;
-    payload: SelectorsGroupDialogState;
-};
-
-export const updateSelectorsGroup = (payload: UpdateSelectorsGroupAction['payload']) => {
-    return {
-        type: UPDATE_SELECTORS_GROUP,
-        payload,
-    };
-};
-
-export const SET_ACTIVE_SELECTOR_INDEX = Symbol('dash/SET_ACTIVE_SELECTOR_INDEX');
-
-export type SetActiveSelectorIndexAction = {
-    type: typeof SET_ACTIVE_SELECTOR_INDEX;
-    payload: {
-        activeSelectorIndex: number;
-    };
-};
-
-export const setActiveSelectorIndex = (payload: SetActiveSelectorIndexAction['payload']) => {
-    return {
-        type: SET_ACTIVE_SELECTOR_INDEX,
-        payload,
-    };
-};
 
 export const copyControlToStorage = (controlIndex: number) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {

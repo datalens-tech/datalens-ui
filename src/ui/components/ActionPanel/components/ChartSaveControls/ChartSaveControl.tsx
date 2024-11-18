@@ -3,8 +3,10 @@ import React from 'react';
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {useSelector} from 'react-redux';
 import type {EntryUpdateMode} from 'shared';
 import {DL} from 'ui/constants/common';
+import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
 import NavigationPrompt from '../../../NavigationPrompt/NavigationPrompt';
 
@@ -62,6 +64,8 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
         isNewChart,
     } = props;
     const additionalItems = useAdditionalItems({items: additionalControls});
+
+    const isRenameWithoutReload = useSelector(selectIsRenameWithoutReload);
 
     const mainDropdownItems = React.useMemo<DropdownMenuItemMixed<() => void>[]>(() => {
         const saveAsDraftItem = {
@@ -128,7 +132,10 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
                             isSaveAsDraft={!isCurrentRevisionActual && !isNewChart}
                         />
                     </div>
-                    <NavigationPrompt when={!isSaveButtonDisabled} key="navigation-prompt" />
+                    <NavigationPrompt
+                        when={!isSaveButtonDisabled && !isRenameWithoutReload}
+                        key="navigation-prompt"
+                    />
                 </React.Fragment>
             )}
             {!hideSaveDropdown && (

@@ -10,7 +10,6 @@ export enum Feature {
     EnableChartEditorDocs = 'EnableChartEditorDocs',
     EnableSaveAsEditorScript = 'EnableSaveAsEditorScript',
     EnableCustomMonitoring = 'EnableCustomMonitoring',
-    ShowActionPanelTreeSelect = 'ShowActionPanelTreeSelect',
     EnableDashChartStat = 'EnableDashChartStat',
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
@@ -64,15 +63,23 @@ export enum Feature {
     ChartWithFnLogging = 'ChartWithFnLogging',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /** Disable setting min-height: unset for all embedded dashes by default. Enable min-height: unset only on message event with EMBEDDED_DASH_MESSAGE_NAME */
-    RemoveEmbedUnsetDashHeight = 'RemoveEmbedUnsetDashHeight',
     /* Enable dashboard fixed header */
     EnableDashFixedHeader = 'EnableDashFixedHeader',
-    /** Use BI handles for getting oauth applications tokens */
-    EnableBIOAuth = 'EnableBIOAuth',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
+    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
+    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
+    /** Enable undo/redo buttons & hotkeys in ql */
+    EnableEditHistoryQL = 'EnableEditHistoryQL',
+    /** Depends on US feature UseMovePermAction.
+     * It checks admin permission for move entries instead of edit permission.
+     */
+    UseMovePermAction = 'UseMovePermAction',
+    /** An empty chart for drawing something unusual */
+    BlankChart = 'BlankChart',
+    /** Setting to control the density of the table - font size and cell margins */
+    TableSize = 'TableSize',
 }
 
 export type FeatureConfig = Record<string, boolean>;

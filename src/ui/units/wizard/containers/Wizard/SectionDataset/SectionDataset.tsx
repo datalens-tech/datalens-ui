@@ -51,7 +51,7 @@ import {selectUpdates} from 'units/wizard/selectors/preview';
 import {selectDefaultPath, selectIsNavigationVisible} from 'units/wizard/selectors/settings';
 import {selectHierarchies, selectVisualization} from 'units/wizard/selectors/visualization';
 import {selectWidget} from 'units/wizard/selectors/widget';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import type {DialogFieldEditorProps} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
 import {DIALOG_FIELD_EDITOR} from '../../../../../components/DialogFieldEditor/DialogFieldEditor';
@@ -207,7 +207,7 @@ class SectionDataset extends React.Component<Props, State> {
 
         const resultSchema = getResultSchemaFromDataset(dataset);
 
-        const guid = uuid();
+        const guid = uuidv1();
 
         let {title} = field;
 
@@ -319,7 +319,7 @@ class SectionDataset extends React.Component<Props, State> {
                         ...item,
                         local: false,
                         title: '',
-                        guid: uuid(),
+                        guid: uuidv1(),
                         calc_mode: 'formula' as DatasetFieldCalcMode,
                         formula: `[${item.originalTitle || item.title}]`,
                     };
@@ -328,13 +328,13 @@ class SectionDataset extends React.Component<Props, State> {
                 field = {
                     ...item,
                     title: '',
-                    guid: uuid(),
+                    guid: uuidv1(),
                 };
             } else {
                 field = {
                     ...item,
                     title: '',
-                    guid: uuid(),
+                    guid: uuidv1(),
                     fakeTitle: '',
                     calc_mode: 'formula' as DatasetFieldCalcMode,
                     formula: `[${item.originalTitle || item.title}]`,

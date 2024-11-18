@@ -2,8 +2,6 @@ import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    DlsAcl,
-    EntryScope,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
@@ -266,8 +264,16 @@ export const DL = {
     get OIDC_NAME_4() {
         return window.DL.oidc_name_4 || 'OIDC';
     },
+    // TODO: delete
     get RUN_ENDPOINT() {
         return window.DL.runEndpoint || '/api/run';
+    },
+    // TODO: add fallback
+    get API_PREFIX() {
+        return window.DL.apiPrefix;
+    },
+    get CONNECTOR_ICONS() {
+        return window.DL.connectorIcons || [];
     },
 };
 
@@ -284,13 +290,6 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
-
-export const PERMISSION = {
-    READ: DlsAcl.View,
-    WRITE: DlsAcl.Edit,
-    ADMIN: DlsAcl.Adm,
-    EXECUTE: DlsAcl.Execute,
-};
 
 export const URL_OPTIONS = {
     THEME: '_theme',
@@ -319,21 +318,9 @@ export enum Scope {
     Config = 'config',
 }
 
-export const ALL_SCOPES: string[] = [...Object.values(Scope), EntryScope.Report];
-
-export const SCOPE_WITH_EXECUTE: string[] = [Scope.Connection, Scope.Dataset];
-
-export const OBJECT_SCOPES = [
-    EntryScope.Widget,
-    EntryScope.Dataset,
-    EntryScope.Dash,
-    EntryScope.Connection,
-    EntryScope.Report,
-];
+export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
-
-export const CURRENT_CLOUD_STORE_KEY = 'dl_current_cloud';
 
 export const RUBLE = '₽';
 

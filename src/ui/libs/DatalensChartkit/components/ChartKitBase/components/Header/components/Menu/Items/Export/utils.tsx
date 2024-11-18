@@ -6,12 +6,11 @@ import {I18n} from 'i18n';
 import {isObject} from 'lodash';
 import isEmpty from 'lodash/isEmpty';
 import ReactDOM from 'react-dom';
+import {WidgetKind} from 'shared';
 import {formatBytes} from 'shared/modules/format-units/formatUnit';
 import {DL} from 'ui/constants/common';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-
-import {CHARTKIT_WIDGET_TYPE} from '../../../../../../../../ChartKit/components/Widget/Widget';
 
 import type {ExportResultType} from './types';
 
@@ -148,8 +147,9 @@ export const isExportVisible = ({
     }
 
     const data = loadedData?.data;
-    const type = loadedData?.type;
+    const type = loadedData?.type as WidgetKind;
     return (
-        !isEmpty(data) && [CHARTKIT_WIDGET_TYPE.GRAPH, CHARTKIT_WIDGET_TYPE.TABLE].includes(type)
+        !isEmpty(data) &&
+        ([WidgetKind.Graph, WidgetKind.Table, WidgetKind.D3] as WidgetKind[]).includes(type)
     );
 };

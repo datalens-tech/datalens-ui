@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useSelector} from 'react-redux';
 import {DashTabItemControlSourceType} from 'shared';
-import {selectSelectorDialog} from 'units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {ConnectionSettings} from './ConnectionSettings/ConnectionSettings';
 import {DatasetSettings} from './DatasetSettings/DatasetSettings';

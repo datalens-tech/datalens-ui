@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader} from '@gravity-ui/uikit';
+import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
@@ -17,12 +17,15 @@ import type {
     PlaceholderSettings,
     QLChartType,
     Shared,
+    WidgetSizeType,
 } from 'shared';
 import {
+    DEFAULT_WIDGET_SIZE,
     Feature,
     IndicatorTitleMode,
     NavigatorLinesMode,
     PlaceholderId,
+    WidgetSize,
     WizardVisualizationId,
     getIsNavigatorAvailable,
     isD3Visualization,
@@ -64,6 +67,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'indicatorTitleMode',
     'title',
     'legendMode',
+    'tooltip',
     'tooltipSum',
     'pagination',
     'limit',
@@ -72,9 +76,23 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'pivotFallback',
     'navigatorSettings',
     'pivotInlineSort',
+    'size',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
+
+const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
+    WizardVisualizationId.Line,
+    WizardVisualizationId.LineD3,
+    WizardVisualizationId.Area,
+    WizardVisualizationId.Area100p,
+    WizardVisualizationId.Column,
+    WizardVisualizationId.Column100p,
+    WizardVisualizationId.Bar,
+    WizardVisualizationId.Bar100p,
+    WizardVisualizationId.Scatter,
+    WizardVisualizationId.Treemap,
+]);
 
 const TOOLTIP_SUM_SUPPORTED_VISUALIZATION = new Set([
     'line',
@@ -152,6 +170,7 @@ interface State {
     indicatorTitleMode: IndicatorTitleMode;
     title: string;
     legendMode: string;
+    tooltip?: CommonSharedExtraSettings['tooltip'];
     tooltipSum: string;
     feed: string;
     pagination?: string;
@@ -165,6 +184,7 @@ interface State {
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
+    size?: WidgetSizeType;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -212,6 +232,8 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             pivotFallback = 'off',
             qlAutoExecuteChart,
             pivotInlineSort = CHART_SETTINGS.PIVOT_INLINE_SORT.ON,
+            tooltip,
+            size,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -269,6 +291,8 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             d3Fallback: isD3Visualization(visualization.id as WizardVisualizationId)
                 ? CHART_SETTINGS.D3_FALLBACK.OFF
                 : CHART_SETTINGS.D3_FALLBACK.ON,
+            tooltip,
+            size,
         };
     }
 
@@ -533,6 +557,33 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderWidgetSize() {
+        const {visualization} = this.props;
+        const isTableWidget = (
+            [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
+        ).includes(visualization.id);
+
+        if (!isTableWidget || !Utils.isEnabledFeature(Feature.TableSize)) {
+            return null;
+        }
+
+        const sizes = Object.values(WidgetSize);
+        const selected = this.state.size ?? DEFAULT_WIDGET_SIZE;
+
+        return (
+            <div className={b('widget-size')}>
+                <span className={b('label')}>{i18n('wizard', 'label_widget-size')}</span>
+                <RadioButton value={selected} onUpdate={(value) => this.setState({size: value})}>
+                    {sizes.map((item) => (
+                        <RadioButton.Option key={item} value={item}>
+                            {item.toUpperCase()}
+                        </RadioButton.Option>
+                    ))}
+                </RadioButton>
+            </div>
+        );
+    }
+
     renderLegend() {
         const {legendMode = CHART_SETTINGS.LEGEND.SHOW} = this.state;
 
@@ -556,9 +607,30 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderTooltip() {
+        const {visualization} = this.props;
+
+        if (!VISUALIZATION_WITH_TOOLTIP_AVAILABLE.has(visualization.id)) {
+            return null;
+        }
+
+        const {tooltip = CHART_SETTINGS.TOOLTIP.SHOW} = this.state;
+        return (
+            <SettingSwitcher
+                currentValue={tooltip}
+                checkedValue={CHART_SETTINGS.TOOLTIP.SHOW}
+                uncheckedValue={CHART_SETTINGS.TOOLTIP.HIDE}
+                onChange={(value) => {
+                    this.setState({tooltip: value as CommonSharedExtraSettings['tooltip']});
+                }}
+                title={i18n('wizard', 'label_tooltip')}
+            />
+        );
+    }
+
     renderTooltipSum() {
         const {visualization} = this.props;
-        const tooltipSum = this.state.tooltipSum || CHART_SETTINGS.TOOLTIP_SUM.ON;
+        const {tooltip, tooltipSum = CHART_SETTINGS.TOOLTIP_SUM.ON} = this.state;
 
         const tooltipSumEnabled = TOOLTIP_SUM_SUPPORTED_VISUALIZATION.has(visualization.id);
 
@@ -578,6 +650,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 }}
                 title={title}
                 qa="tooltip-sum-switcher"
+                disabled={tooltip === CHART_SETTINGS.TOOLTIP.HIDE}
             />
         );
     }
@@ -905,7 +978,9 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         return (
             <div className={b('settings')}>
                 {this.renderTitleMode()}
+                {this.renderWidgetSize()}
                 {this.renderLegend()}
+                {this.renderTooltip()}
                 {this.renderTooltipSum()}
                 {this.renderPagination()}
                 {this.renderLimit()}

@@ -72,10 +72,11 @@
     max-width: 75%;
     font-size: var(--g-text-body-1-font-size);
     vertical-align: bottom;
+
+    flex-shrink: 0;
 }
 
 .dataset-select-item__description {
-    max-width: 45%;
     display: inline-block;
     overflow: hidden;
     text-overflow: ellipsis;

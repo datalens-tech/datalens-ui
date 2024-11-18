@@ -1,9 +1,18 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
+import {DL} from 'ui/constants';
+import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/d3-chart-to-table';
+import {registry} from 'ui/registry';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
-import {getFormatOptions, getXlsxNumberFormat, isMarkupItem} from '../../../../../shared';
+import {
+    DL_EMBED_TOKEN_HEADER,
+    WidgetKind,
+    getFormatOptions,
+    getXlsxNumberFormat,
+    isMarkupItem,
+} from '../../../../../shared';
 import logger from '../../../../libs/logger';
-import {CHARTKIT_WIDGET_TYPE} from '../../ChartKit/components/Widget/Widget';
 import {chartsDataProvider} from '../../index';
 import axiosInstance from '../axios/axios';
 import {EXPORT_FORMATS} from '../constants/constants';
@@ -32,7 +41,8 @@ const TABLE_DATE_FORMAT_BY_SCALE = {
     y: 'YYYY',
 };
 
-const API = '/api/export';
+//TODO: use only api_prefix
+const API = DL.API_PREFIX ? `${DL.API_PREFIX}/export` : '/api/export';
 
 function tableHeadToGraphs(head, prefix) {
     return head.reduce((result, column) => {
@@ -143,128 +153,136 @@ function getXlsxFormattedCellData(value, options) {
 
 function prepareValues({widget, data, widgetType, extra, options = {}}) {
     const {format} = options;
-    if (!widget) {
-        return {};
-    }
 
-    if (widgetType === CHARTKIT_WIDGET_TYPE.GRAPH) {
-        let dataRows;
-        try {
-            dataRows = widget.getDataRows();
-        } catch (error) {
-            logger.logError('ChartKit: Export error, widget.getDataRows failed', error);
-            return {};
+    switch (widgetType) {
+        case WidgetKind.D3: {
+            return prepareValues({
+                widget: {},
+                data: chartToTable({chartData: data}),
+                widgetType: WidgetKind.Table,
+            });
         }
+        case WidgetKind.Graph: {
+            if (!widget) {
+                return {};
+            }
 
-        const result = {
-            graphs: dataRows.reduce((result, data, rowIndex) => {
-                if (rowIndex === 0) {
-                    data.forEach((value, index) => {
-                        const columnExportOptions = getColumnExportOptions(widget, value);
-                        result[index] = {
-                            data: [],
-                            title: value,
-                            type: columnExportOptions.dataType,
-                            formatting: columnExportOptions.formatting,
-                            format: columnExportOptions.format,
-                        };
-                    });
-                } else {
-                    data.forEach((value, index) => {
-                        let cellData = value;
+            let dataRows;
+            try {
+                dataRows = widget.getDataRows();
+            } catch (error) {
+                logger.logError('ChartKit: Export error, widget.getDataRows failed', error);
+                return {};
+            }
 
-                        if (format === EXPORT_FORMATS.XLSX) {
-                            const formattedCellData = getXlsxFormattedCellData(
-                                value,
-                                result[index],
-                            );
-
-                            if (formattedCellData) {
-                                cellData = formattedCellData;
-                            }
-                        }
-
-                        result[index].data[rowIndex - 1] = cellData;
-                    });
-                }
-                return result;
-            }, []),
-        };
-
-        return result;
-    }
-
-    if (widgetType === CHARTKIT_WIDGET_TYPE.TABLE) {
-        const {head} = data;
-        const rows = data.rows || [];
-        const footer = data.footer || [];
-        const fieldsList = (extra?.datasets || []).map((ds) => ds.fieldsList || []).flat(2) || [];
-
-        const graphs = tableHeadToGraphs(head);
-        const allTableRows = [...rows, ...footer];
-
-        allTableRows.forEach((row, rowIndex) => {
-            const cells = row.values?.map((value) => ({value})) || row.cells;
-            cells.forEach((cell, index) => {
-                const value = cell.grid || cell.value;
-                const graph = graphs[index];
-
-                if (typeof graph === 'undefined') {
-                    return;
-                }
-
-                if (format === EXPORT_FORMATS.XLSX) {
-                    const cellType = cell.type || graph.type;
-                    const cellFormat = cell.format || graph.format;
-                    const formattedCellData = getXlsxFormattedCellData(value, {
-                        type: cellType,
-                        format: cellFormat,
-                    });
-
-                    if (formattedCellData) {
-                        graph.data[rowIndex] = formattedCellData;
-                        return;
-                    }
-                }
-
-                if (isMarkupItem(value)) {
-                    graph.data.push(markupToRawString(value));
-                } else if (graph.type === 'date') {
-                    const dateFormat = graph.format
-                        ? graph.format
-                        : TABLE_DATE_FORMAT_BY_SCALE[graph.scale];
-                    graph.data[rowIndex] = value ? moment.utc(value).format(dateFormat) : value;
-                } else if (graph.type === 'grid') {
-                    if (index === 0) {
-                        const prepared = prepareRowHeadersForGrid(value);
-                        graph.data = graph.data.concat(prepared);
+            return {
+                graphs: dataRows.reduce((result, data, rowIndex) => {
+                    if (rowIndex === 0) {
+                        data.forEach((value, index) => {
+                            const columnExportOptions = getColumnExportOptions(widget, value);
+                            result[index] = {
+                                data: [],
+                                title: value,
+                                type: columnExportOptions.dataType,
+                                formatting: columnExportOptions.formatting,
+                                format: columnExportOptions.format,
+                            };
+                        });
                     } else {
-                        const prepared = value.map((cell) => cell.value);
-                        graph.data = graph.data.concat(prepared);
-                    }
-                } else if (format === EXPORT_FORMATS.XLSX && cell.type === 'number') {
-                    let formatting;
-                    const cellField = fieldsList.find((field) => field.guid === cell.fieldId);
+                        data.forEach((value, index) => {
+                            let cellData = value;
 
-                    if (cellField) {
-                        formatting = getFormatOptions({
-                            formatting: cellField.formatting,
-                            data_type: cellField.dataType,
+                            if (format === EXPORT_FORMATS.XLSX) {
+                                const formattedCellData = getXlsxFormattedCellData(
+                                    value,
+                                    result[index],
+                                );
+
+                                if (formattedCellData) {
+                                    cellData = formattedCellData;
+                                }
+                            }
+
+                            result[index].data[rowIndex - 1] = cellData;
                         });
                     }
+                    return result;
+                }, []),
+            };
+        }
+        case WidgetKind.Table: {
+            const {head} = data;
+            const rows = data.rows || [];
+            const footer = data.footer || [];
+            const fieldsList =
+                (extra?.datasets || []).map((ds) => ds.fieldsList || []).flat(2) || [];
 
-                    graph.data[rowIndex] = {
-                        v: cell.value,
-                        t: 'n',
-                        z: getXlsxNumberFormat(Number(cell.value), formatting),
-                    };
-                } else {
-                    graph.data[rowIndex] = value;
-                }
+            const graphs = tableHeadToGraphs(head);
+            const allTableRows = [...rows, ...footer];
+
+            allTableRows.forEach((row, rowIndex) => {
+                const cells = row.values?.map((value) => ({value})) || row.cells;
+                cells.forEach((cell, index) => {
+                    const value = cell.grid || cell.value;
+                    const graph = graphs[index];
+
+                    if (typeof graph === 'undefined') {
+                        return;
+                    }
+
+                    if (format === EXPORT_FORMATS.XLSX) {
+                        const cellType = cell.type || graph.type;
+                        const cellFormat = cell.format || graph.format;
+                        const formattedCellData = getXlsxFormattedCellData(value, {
+                            type: cellType,
+                            format: cellFormat,
+                        });
+
+                        if (formattedCellData) {
+                            graph.data[rowIndex] = formattedCellData;
+                            return;
+                        }
+                    }
+
+                    if (isMarkupItem(value)) {
+                        graph.data.push(markupToRawString(value));
+                    } else if (graph.type === 'date') {
+                        const dateFormat = graph.format
+                            ? graph.format
+                            : TABLE_DATE_FORMAT_BY_SCALE[graph.scale];
+                        graph.data[rowIndex] = value ? moment.utc(value).format(dateFormat) : value;
+                    } else if (graph.type === 'grid') {
+                        if (index === 0) {
+                            const prepared = prepareRowHeadersForGrid(value);
+                            graph.data = graph.data.concat(prepared);
+                        } else {
+                            const prepared = value.map((cell) => cell.value);
+                            graph.data = graph.data.concat(prepared);
+                        }
+                    } else if (format === EXPORT_FORMATS.XLSX && cell.type === 'number') {
+                        let formatting;
+                        const cellField = fieldsList.find((field) => field.guid === cell.fieldId);
+
+                        if (cellField) {
+                            formatting = getFormatOptions({
+                                formatting: cellField.formatting,
+                                data_type: cellField.dataType,
+                            });
+                        }
+
+                        graph.data[rowIndex] = {
+                            v: cell.value,
+                            t: 'n',
+                            z: getXlsxNumberFormat(Number(cell.value), formatting),
+                        };
+                    } else {
+                        graph.data[rowIndex] = value;
+                    }
+                });
             });
-        });
 
-        return {graphs};
+            return {graphs};
+        }
     }
 
     return null;
@@ -298,7 +316,7 @@ function tryConvertData(action, args) {
 }
 
 function convertDataToMarkdown({widget, data, widgetType}) {
-    const {graphs} = prepareValues({widget, data, widgetType});
+    const {graphs = []} = prepareValues({widget, data, widgetType});
     const amountOfTableRows = Math.max(...graphs.map((graph) => graph.data.length));
 
     const result = graphs.reduce(
@@ -381,7 +399,6 @@ function convertDataToWiki({widget, data, widgetType}) {
 
 async function exportWidget({
     widget,
-    path,
     data,
     widgetType,
     options,
@@ -390,7 +407,6 @@ async function exportWidget({
     downloadName,
 }) {
     const params = {
-        chartUrl: path,
         formSettings: options,
         lang: settings.lang,
         // downloadConfig: props.downloadConfig,
@@ -400,12 +416,19 @@ async function exportWidget({
 
     const stringifyData = encodeURIComponent(JSON.stringify(params));
 
+    const headers = {};
+
+    if (isEmbeddedEntry()) {
+        const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+        headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
+    }
+
     const request = {
         url: `${chartsDataProvider.endpoint}${API}`,
         method: 'post',
         data: {data: stringifyData, exportFilename},
         responseType: 'blob',
-        headers: {},
+        headers,
     };
 
     // append and remove are needed in particular for FireFox
@@ -433,7 +456,6 @@ async function exportWidget({
 export default async ({
     widget,
     widgetDataRef,
-    path,
     data,
     widgetType,
     options = getStorageState(),
@@ -464,7 +486,6 @@ export default async ({
         default: {
             return exportWidget({
                 widget: widgetDataRef?.current || widget,
-                path,
                 data,
                 widgetType,
                 options,

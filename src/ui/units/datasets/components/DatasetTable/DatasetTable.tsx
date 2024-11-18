@@ -16,7 +16,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
-import type {Permissions} from 'shared/types/dls';
+import type {Permissions} from 'shared/types/permissions';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants';
 

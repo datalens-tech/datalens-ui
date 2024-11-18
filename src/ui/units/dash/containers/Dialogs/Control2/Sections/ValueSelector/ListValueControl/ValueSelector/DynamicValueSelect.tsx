@@ -4,7 +4,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {SelectFeaturedAsync} from 'ui/components/Select/wrappers/SelectFeaturedAsync';
-import {selectSelectorDialog} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {useSetSelectorDialogItem} from './hooks';
 import type {DynamicValueSelectorProps} from './types';

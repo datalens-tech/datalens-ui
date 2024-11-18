@@ -12,6 +12,7 @@ import {
     DL_COMPONENT_HEADER,
     DL_CONTEXT_HEADER,
     DL_EMBED_TOKEN_HEADER,
+    EntryUpdateMode,
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
@@ -217,6 +218,7 @@ export type ProviderCreateParams = {
     includePermissionsInfo?: boolean | string;
     workbookId: string;
     name: string;
+    mode?: EntryUpdateMode;
 };
 
 function injectMetadata(headers: IncomingHttpHeaders, ctx: AppContext): IncomingHttpHeaders {
@@ -528,6 +530,7 @@ export class USProvider {
             includePermissionsInfo,
             workbookId,
             name,
+            mode = EntryUpdateMode.Publish,
         }: ProviderCreateParams,
     ) {
         const hrStart = process.hrtime();
@@ -543,6 +546,7 @@ export class USProvider {
             workbookId: string;
             name: string;
             includePermissionsInfo?: boolean;
+            mode: EntryUpdateMode;
         } = {
             key,
             data,
@@ -552,6 +556,7 @@ export class USProvider {
             meta,
             workbookId,
             name,
+            mode,
         };
 
         if (links) {

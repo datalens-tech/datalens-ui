@@ -4,10 +4,10 @@ import {FormRow, HelpPopover} from '@gravity-ui/components';
 import {TextInput} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {FieldWrapper} from '../../../../../../../../components/FieldWrapper/FieldWrapper';
-import {setSelectorDialogItem} from '../../../../../../store/actions/dashTyped';
-import {selectSelectorDialog} from '../../../../../../store/selectors/dashTypedSelectors';
 
 export type ParameterNameInputProps = {
     label: string;

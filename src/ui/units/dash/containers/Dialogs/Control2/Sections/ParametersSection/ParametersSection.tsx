@@ -4,6 +4,8 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ParamsSettingsQA} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {SectionWrapper} from '../../../../../../../components/SectionWrapper/SectionWrapper';
 import {ParamsSettings} from '../../../../../components/ParamsSettings/ParamsSettings';
@@ -14,8 +16,6 @@ import {
     updateParamValue,
     validateParamTitleOnlyUnderscore,
 } from '../../../../../components/ParamsSettings/helpers';
-import {setSelectorDialogItem} from '../../../../../store/actions/dashTyped';
-import {selectSelectorDialog} from '../../../../../store/selectors/dashTypedSelectors';
 
 import './ParametersSection.scss';
 

@@ -3,7 +3,7 @@ import type {ApiByScope, SdkActionOptions, SdkConfig} from '@gravity-ui/sdk';
 import sdkFactory from '@gravity-ui/sdk';
 import type {Lang} from '@gravity-ui/sdk/build/constants';
 import type {AxiosError} from 'axios';
-import uuid from 'uuid/v4';
+import {v4 as uuidv4} from 'uuid';
 
 import {
     ACCEPT_LANGUAGE_HEADER,
@@ -56,7 +56,7 @@ const sdkConfig: SdkConfig = {
         return {
             ...options,
             headers: {
-                [REQUEST_ID_HEADER]: `dl.${DL.REQUEST_ID.slice(-5)}.${uuid().slice(0, 8)}`,
+                [REQUEST_ID_HEADER]: `dl.${DL.REQUEST_ID.slice(-5)}.${uuidv4().slice(0, 8)}`,
                 ...options?.headers,
             },
         };

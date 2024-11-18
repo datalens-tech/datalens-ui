@@ -14,7 +14,6 @@
   "label_title-cloud-folder-access-denied": "У вас нет доступа к объектам DataLens в этом каталоге",
   "label_title-fail": "Что-то пошло не так",
   "label_title-forbidden-entry": "Доступ ограничен",
-  "label_title-inaccessible-entry-folder": "У вас нет доступа к DataLens в этом каталоге",
   "label_title-missing-current-cloud-folder": "Выберите каталог для работы с DataLens",
   "label_title-missing-entry": "Не найдено"
 }

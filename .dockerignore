@@ -28,3 +28,5 @@ dist/run/*
 
 secrets/*
 !secrets/.keep
+
+tests/artifacts

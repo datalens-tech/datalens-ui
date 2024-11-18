@@ -40,6 +40,7 @@ export const DASH_WIDGET_TYPES = {
     MARKDOWN: 'markdown',
     TIMESERIES: 'timeseries',
     D3: 'd3',
+    BLANK_CHART: 'blank-chart',
     MARKUP: 'markup',
 } as const;
 

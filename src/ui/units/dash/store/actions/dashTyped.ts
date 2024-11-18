@@ -14,10 +14,6 @@ import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
 import type {
-    ConnectionQueryContent,
-    ConnectionQueryTypeOptions,
-    ConnectionQueryTypeValues,
-    DATASET_FIELD_TYPES,
     DashData,
     DashEntry,
     DashSettings,
@@ -25,15 +21,17 @@ import type {
     DashTabItem,
     DashTabItemImage,
     DashTabItemWidget,
-    Dataset,
-    DatasetFieldType,
-    Operations,
     RecursivePartial,
-    StringParams,
-    TitlePlacementOption,
 } from 'shared';
 import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import type {ItemDataSource, SelectorDialogState} from 'ui/store/typings/controlDialog';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from 'ui/store/utils/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -61,12 +59,6 @@ import {
 } from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
-import {
-    getControlDefaultsForField,
-    getControlValidation,
-    getItemDataSource,
-} from './controls/helpers';
-import type {ItemDataSource, SelectorDialogValidation, SelectorSourceType} from './controls/types';
 import {closeDialog as closeDashDialog} from './dialogs/actions';
 import {
     getBeforeCloseDialogItemAction,
@@ -386,72 +378,6 @@ export const setItemData = (data: SetItemDataArgs) => {
 
         getState().dash.dragOperationProps?.commit();
     };
-};
-
-export const SET_SELECTOR_DIALOG_ITEM = Symbol('dash/SET_SELECTOR_DIALOG_ITEM');
-
-export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
-
-export type SelectorDialogState = {
-    title?: string;
-    titlePlacement?: TitlePlacementOption;
-    innerTitle?: string;
-    sourceType?: SelectorSourceType;
-    autoHeight?: boolean;
-    chartId?: string;
-    showTitle?: boolean;
-    showInnerTitle?: boolean;
-    elementType: SelectorElementType;
-    defaultValue?: string | string[];
-    dataset?: Dataset;
-    datasetId?: string;
-    connectionId?: string;
-    selectorParameters?: StringParams;
-    selectorParametersGroup?: number;
-    connectionQueryType?: ConnectionQueryTypeValues;
-    connectionQueryTypes?: ConnectionQueryTypeOptions[];
-    connectionQueryContent?: ConnectionQueryContent;
-    datasetFieldId?: string;
-    fieldName?: string;
-    acceptableValues?: AcceptableValue[];
-    isRange?: boolean;
-    multiselectable?: boolean;
-    defaults: Record<string, string | string[]>;
-    required?: boolean;
-    useDefaultValue?: boolean;
-    usePreset?: boolean;
-    operation?: Operations;
-    validation: SelectorDialogValidation;
-    isManualTitle?: boolean;
-    fieldType?: DATASET_FIELD_TYPES;
-    datasetFieldType?: DatasetFieldType;
-    placementMode: 'auto' | '%' | 'px';
-    width: string;
-    id?: string;
-    namespace?: string;
-    showHint?: boolean;
-    hint?: string;
-    // unique id for manipulating selectors in the creation phase
-    draftId?: string;
-};
-
-export type AcceptableValue = {
-    title: string;
-    value: string;
-};
-
-export type SetSelectorDialogItemArgs = Partial<SelectorDialogState>;
-
-export const setSelectorDialogItem = (payload: SetSelectorDialogItemArgs) => {
-    return {
-        type: SET_SELECTOR_DIALOG_ITEM,
-        payload,
-    };
-};
-
-export type SetSelectorDialogItemAction = {
-    type: typeof SET_SELECTOR_DIALOG_ITEM;
-    payload: SetSelectorDialogItemArgs;
 };
 
 export const applyControl2Dialog = () => {
@@ -973,18 +899,6 @@ export const updateDashOpenedDesc = (
 ): SetDashOpenedDescKeyAction => ({
     type: SET_DASH_OPENED_DESC,
     payload,
-});
-
-export const SET_RENAME_WITHOUT_RELOAD = Symbol('dash/SET_RENAME_WITHOUT_RELOAD');
-export type SetRenameWithoutReloadAction = {
-    type: typeof SET_RENAME_WITHOUT_RELOAD;
-    payload: boolean;
-};
-export const setRenameWithoutReload = (
-    isRenameWithoutReload: boolean,
-): SetRenameWithoutReloadAction => ({
-    type: SET_RENAME_WITHOUT_RELOAD,
-    payload: isRenameWithoutReload,
 });
 
 export const SET_SKIP_RELOAD = Symbol('dash/SET_SKIP_RELOAD');

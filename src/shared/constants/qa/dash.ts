@@ -95,3 +95,12 @@ export enum DashRelationTypes {
 export enum DashkitQa {
     GRID_ITEM = 'dashkit-grid-item',
 }
+
+export enum DashBodyQa {
+    App = 'dash-app',
+    ContentWrapper = 'dash-body-content-wrapper',
+}
+
+export enum DashTabsQA {
+    Root = 'dash-tabs',
+}

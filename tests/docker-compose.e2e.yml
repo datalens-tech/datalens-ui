@@ -1,11 +1,9 @@
-version: "3.7"
-
 services:
   pg-compeng:
     container_name: e2e-datalens-pg-compeng
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
 
@@ -55,19 +53,24 @@ services:
 
   pg-us:
     container_name: e2e-datalens-pg-us
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
       POSTGRES_DB: us-db-ci_purgeable
       POSTGRES_USER: us
       POSTGRES_PASSWORD: us
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "us-db-ci_purgeable"]
+      interval: 5s
+      retries: 10
+      start_period: 3s
     volumes:
-      - ./metadata:/var/lib/postgresql/data
+      - pg-us-db:/var/lib/postgresql/data
 
   postgres-e2e:
     container_name: e2e-postgres
-    image: postgres:13-alpine
+    image: postgres:16-alpine
     environment:
-      POSTGRES_PASSWORD: "e2e"
+      POSTGRES_PASSWORD: e2e
       POSTGRES_DB: sales
       POSTGRES_USER: e2e
     volumes:
@@ -75,9 +78,10 @@ services:
 
   us:
     container_name: e2e-datalens-us
-    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-0.239.0}
+    image: ghcr.io/datalens-tech/datalens-us:${US_VERSION:-release}
     depends_on:
-      - pg-us
+      pg-us:
+        condition: service_healthy
     environment:
       APP_INSTALLATION: "opensource"
       APP_ENV: "prod"
@@ -96,8 +100,9 @@ services:
       - ./certs:/certs
       - ./data:/opt/e2e-data
 
-  datalens:
-    container_name: e2e-datalens-ui
+  datalens-from-build:
+    container_name: e2e-datalens-ui-build
+    image: e2e-datalens-ui:pr
     build:
       dockerfile: Dockerfile
       context: ../
@@ -117,3 +122,40 @@ services:
       US_ENDPOINT: "http://us:8083"
       NODE_EXTRA_CA_CERTS: "/usr/local/share/ca-certificates/cert.pem"
       HC: ${HC:-0}
+
+  datalens-from-image:
+    container_name: e2e-datalens-ui-image
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}
+    depends_on:
+      - us
+      - control-api
+      - data-api
+      - postgres-e2e
+    environment:
+      APP_MODE: "full"
+      APP_ENV: "production"
+      APP_INSTALLATION: "opensource"
+      AUTH_POLICY: "disabled"
+      US_ENDPOINT: "http://us:8083"
+      NODE_EXTRA_CA_CERTS: "/usr/local/share/ca-certificates/cert.pem"
+      HC: ${HC:-0}
+
+  datalens-from-image-tests:
+    container_name: e2e-datalens-ui-tests
+    image: ghcr.io/datalens-tech/datalens-ui:${UI_VERSION:-release}-e2e
+    depends_on:
+      - us
+      - control-api
+      - data-api
+      - postgres-e2e
+      - datalens-from-image
+    environment:
+      E2E_DOMAIN: http://datalens-from-image:8080
+      E2E_RETRY_TIMES: ${E2E_RETRY_TIMES:-0}
+      E2E_ACTION_TIMEOUT: ${E2E_ACTION_TIMEOUT}
+      E2E_EXPECT_TIMEOUT: ${E2E_EXPECT_TIMEOUT}
+      E2E_TEST_TIMEOUT: ${E2E_TEST_TIMEOUT}
+      NO_AUTH: true
+
+volumes:
+  pg-us-db:

@@ -132,3 +132,26 @@ export type GetConnectionTypedQueryErrorResponse = {
     };
     requestId: string;
 };
+
+export type ConnectorIconView = 'standard' | 'nav';
+
+type ConnectorIconDataMap = Record<ConnectorIconView, string>;
+
+export type ConnectorIconData = {conn_type: string} & (
+    | {
+          /** Indicates that icons data store in base64 format. */
+          type: 'data';
+          /** Map of links to sources on s3 or icons in base64 format. */
+          data: ConnectorIconDataMap;
+      }
+    | {
+          /** Indicates that icons data store as links on cdn. */
+          type: 'url';
+          /** Map of links to sources on s3 or icons in base64 format. */
+          url: ConnectorIconDataMap;
+      }
+);
+
+export type ListConnectorIconsResponse = {
+    icons: ConnectorIconData[];
+};

@@ -30,7 +30,7 @@ import {
 } from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
 import {CONTROL_TYPE} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {type EntityRequestOptions} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
-import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {ResponseSuccessSingleControl} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
 import type {ActiveControl} from 'ui/libs/DatalensChartkit/types';
 import {
     addOperationForValue,
@@ -38,7 +38,6 @@ import {
     unwrapFromArrayAndSkipOperation,
 } from 'ui/units/dash/modules/helpers';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {chartsDataProvider} from '../../../../../libs/DatalensChartkit';
 import logger from '../../../../../libs/logger';
@@ -167,7 +166,7 @@ export const Control = ({
     };
 
     const setLoadedDataState = (
-        newLoadedData: ResponseSuccessControls,
+        newLoadedData: ResponseSuccessSingleControl,
         loadedStatus: LoadStatus,
     ) => {
         const statusResponse = getStatus(loadedStatus);
@@ -276,8 +275,7 @@ export const Control = ({
                     },
                     requestId: error.response.headers['x-request-id'],
                     extra: {
-                        // TODO: clean isEmbeddedEntry
-                        hideErrorDetails: extDashkitContext?.hideErrorDetails || isEmbeddedEntry(),
+                        hideErrorDetails: Boolean(extDashkitContext?.hideErrorDetails),
                     },
                 };
             } else {
@@ -478,7 +476,13 @@ export const Control = ({
             case DashTabItemControlElementType.Date:
                 return <ControlDatepicker {...stubProps} type="datepicker" />;
             case DashTabItemControlElementType.Checkbox:
-                return <ControlCheckbox {...stubProps} type="checkbox" />;
+                return (
+                    <ControlCheckbox
+                        {...stubProps}
+                        className={b('item', {checkbox: true})}
+                        type="checkbox"
+                    />
+                );
         }
 
         return null;
@@ -489,6 +493,7 @@ export const Control = ({
     };
 
     const renderControl = () => {
+        // data is already in dash config, it's available without '/api/run' requests
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
         const {required, operation, elementType, titlePlacement} = source;
@@ -504,7 +509,7 @@ export const Control = ({
             label,
             labelPlacement: titlePlacement,
             className: b('item'),
-            // TODO: move class to withWrapForContros after cleaning code from old selectors
+            // TODO: move class to withWrapForContros after cleaning code from GroupControls flag
             labelClassName: b('item-label', {vertical}),
 
             style,
@@ -512,6 +517,8 @@ export const Control = ({
             hint: getControlHint(controlData.source),
         };
 
+        // due to the logic of calculating the content,
+        // the select itself is responsible for its own loading stub
         if (elementType === DashTabItemControlElementType.Select) {
             return (
                 <ControlItemSelect
@@ -555,7 +562,8 @@ export const Control = ({
             return renderLoadingStub(initialProps);
         }
 
-        const {param} = control;
+        // this is data from '/api/run' request
+        const {param, disabled} = control;
 
         const preparedValue = unwrapFromArrayAndSkipOperation(params[param]);
 
@@ -590,10 +598,11 @@ export const Control = ({
             param,
             type: control.type,
             widgetId: id,
-            value: preparedValue,
+            value: disabled ? '' : preparedValue,
             required,
             onChange: onChangeControl,
             hasValidationError: Boolean(currentValidationError),
+            disabled,
             ...getTypeProps(control, controlData, currentValidationError),
         };
 

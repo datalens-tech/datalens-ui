@@ -62,6 +62,11 @@ type ChartKitBaseWrapperProps = ChartsProps & {
         dataProvider: ChartKitDataProvider,
     ) => void;
 
+    /**
+     * will be awaited before commiting load event
+     */
+    onBeforeChartLoad?: () => Promise<void>;
+
     onChange?: (data: OnChangeData) => void;
     transformLoadedData?: (data: LoadedWidgetData) => LoadedWidgetData;
 

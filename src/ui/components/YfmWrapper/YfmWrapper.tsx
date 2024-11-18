@@ -3,6 +3,7 @@ import React from 'react';
 import {useLatex} from '@diplodoc/latex-extension/react';
 import {useMermaid} from '@diplodoc/mermaid-extension/react';
 import {getThemeType, useThemeValue} from '@gravity-ui/uikit';
+import type {DebouncedFunc} from 'lodash';
 import debounce from 'lodash/debounce';
 import {YfmMetaScripts} from 'shared/constants/yfm';
 import {YFM_LATEX_CLASSNAME, YFM_MERMAID_CLASSNAME} from 'ui/constants';
@@ -43,6 +44,9 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
     (props, forwardedRef) => {
         const YfmWrapperContent = registry.common.components.get('YfmWrapperContent');
         const elementRef = React.useRef<HTMLDivElement | null>(null);
+        const debouncedRenderLatexAndMermaid = React.useRef<
+            DebouncedFunc<() => void> | undefined
+        >();
         const hasLatexScript =
             Array.isArray(props.metaScripts) && props.metaScripts.includes(YfmMetaScripts.LATEX);
         const hasMermaidScript =
@@ -65,6 +69,42 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
         const renderMermaid = useMermaid();
         const currentMermaidTheme = getMermaidTheme(useThemeValue());
 
+        const renderLatexAndMermaid = () => {
+            const element = elementRef?.current;
+
+            if (!element) {
+                return;
+            }
+
+            if (hasLatexScript) {
+                const latexNodes = [...element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`)].filter(
+                    isNeedToUpdateNode,
+                );
+
+                if (latexNodes.length) {
+                    renderLatex({nodes: latexNodes}).then(() => {
+                        props.onRenderCallback?.();
+                    });
+                }
+            }
+
+            if (hasMermaidScript) {
+                const mermaidNodes = [
+                    ...element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`),
+                ].filter(isNeedToUpdateNode);
+
+                if (mermaidNodes.length) {
+                    renderMermaid({
+                        theme: currentMermaidTheme,
+                        nodes: mermaidNodes,
+                        dompurifyConfig,
+                    }).then(() => {
+                        props.onRenderCallback?.();
+                    });
+                }
+            }
+        };
+
         React.useEffect(() => {
             if (hasLatexScript && !hasLatexImported) {
                 hasLatexImported = true;
@@ -81,54 +121,21 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
             }
         }, [hasLatexScript, hasMermaidScript]);
 
-        const debounceRender = React.useCallback(
-            debounce(() => {
-                const element = elementRef?.current;
+        React.useLayoutEffect(() => {
+            if (!hasLatexScript && !hasMermaidScript) {
+                return;
+            }
 
-                if (!element) {
-                    return;
-                }
+            if (debouncedRenderLatexAndMermaid.current) {
+                debouncedRenderLatexAndMermaid.current.cancel();
+            }
 
-                if (hasLatexScript) {
-                    const latexNodes = [
-                        ...element.querySelectorAll(`.${YFM_LATEX_CLASSNAME}`),
-                    ].filter(isNeedToUpdateNode);
-
-                    if (latexNodes.length) {
-                        renderLatex({nodes: latexNodes}).then(() => {
-                            props.onRenderCallback?.();
-                        });
-                    }
-                }
-
-                if (hasMermaidScript) {
-                    const mermaidNodes = [
-                        ...element.querySelectorAll(`.${YFM_MERMAID_CLASSNAME}`),
-                    ].filter(isNeedToUpdateNode);
-
-                    if (mermaidNodes.length) {
-                        renderMermaid({
-                            theme: currentMermaidTheme,
-                            nodes: mermaidNodes,
-                            dompurifyConfig,
-                        }).then(() => {
-                            props.onRenderCallback?.();
-                        });
-                    }
-                }
-            }, PLUGINS_REDRAW_TIMEOUT),
-            [
-                elementRef,
-                hasLatexScript,
-                hasMermaidScript,
-                currentMermaidTheme,
-                renderLatex,
-                renderMermaid,
-                props.onRenderCallback,
-            ],
-        );
-
-        React.useLayoutEffect(() => debounceRender(), [debounceRender]);
+            debouncedRenderLatexAndMermaid.current = debounce(
+                renderLatexAndMermaid,
+                PLUGINS_REDRAW_TIMEOUT,
+            );
+            debouncedRenderLatexAndMermaid.current();
+        });
 
         return (
             <YfmWrapperContent

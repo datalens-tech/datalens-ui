@@ -45,3 +45,5 @@ export const RESTRICTED_PARAM_NAMES = [
 ];
 
 export const DASH_CURRENT_SCHEME_VERSION = 7;
+
+export const LOADED_DASH_CLASS = 'dash-body-loaded';

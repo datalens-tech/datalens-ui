@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
-import {selectSelectorControlType} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
 import Utils from 'ui/utils/utils';
 
 import {ELEMENT_TYPE} from '../../Control/constants';

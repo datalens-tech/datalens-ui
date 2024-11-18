@@ -3,6 +3,7 @@ import React from 'react';
 import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
+import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -71,26 +72,42 @@ export const CollectionActions = React.memo<Props>(
 
         const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
 
+        const getItemText = ({
+            icon,
+            text,
+            hint,
+        }: {
+            icon: SVGIconData;
+            text: string;
+            hint?: string;
+        }) => (
+            <div className={b('dropdown-item')}>
+                <Icon className={b('dropdown-icon')} data={icon} />
+                <div className={b('dropdown-text')}>
+                    {text}
+                    {hint && <div className={b('dropdown-hint')}>{hint}</div>}
+                </div>
+            </div>
+        );
+
         if (showCreateWorkbook) {
             createActionItems.push({
-                text: (
-                    <div className={b('dropdown-item')}>
-                        <Icon data={workbookIcon} />
-                        <div className={b('dropdown-text')}>{i18n('action_create-workbook')}</div>
-                    </div>
-                ),
+                text: getItemText({
+                    icon: workbookIcon,
+                    text: i18n('action_create-workbook'),
+                    hint: i18n('action_create-workbook-hint'),
+                }),
                 action: onCreateWorkbookClick,
             });
         }
 
         if (showCreateCollection) {
             createActionItems.push({
-                text: (
-                    <div className={b('dropdown-item')}>
-                        <Icon data={collectionIcon} />
-                        <div className={b('dropdown-text')}>{i18n('action_create-collection')}</div>
-                    </div>
-                ),
+                text: getItemText({
+                    icon: collectionIcon,
+                    text: i18n('action_create-collection'),
+                    hint: i18n('action_create-collection-hint'),
+                }),
                 action: onCreateCollectionClick,
             });
         }
@@ -100,28 +117,21 @@ export const CollectionActions = React.memo<Props>(
 
             if (showAddDemoWorkbook) {
                 subItems.push({
-                    text: (
-                        <div className={b('dropdown-item')}>
-                            <Icon data={workbookDemoIcon} />
-                            <div className={b('dropdown-text')}>
-                                {i18n('action_add-demo-workbook')}
-                            </div>
-                        </div>
-                    ),
+                    text: getItemText({
+                        icon: workbookDemoIcon,
+                        text: i18n('action_add-demo-workbook'),
+                        hint: i18n('action_add-demo-workbook-hint'),
+                    }),
                     action: onAddDemoWorkbookClick,
                 });
             }
 
             if (showAddLearningMaterialsWorkbook) {
                 subItems.push({
-                    text: (
-                        <div className={b('dropdown-item')}>
-                            <Icon data={workbookDemoIcon} />
-                            <div className={b('dropdown-text')}>
-                                {i18n('action_add-learning-materials-workbook')}
-                            </div>
-                        </div>
-                    ),
+                    text: getItemText({
+                        icon: workbookDemoIcon,
+                        text: i18n('action_add-learning-materials-workbook'),
+                    }),
                     action: onAddLearningMaterialsWorkbookClick,
                 });
             }

@@ -126,7 +126,6 @@ export interface SharedAppContextParams {
     gateway: {
         reqBody: Request['body'];
         requestId: string;
-        googleOAuthClient?: GoogleOAuthClient;
 
         checkRequestForDeveloperModeAccess: (args: {
             ctx: AppContext;

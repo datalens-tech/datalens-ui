@@ -82,6 +82,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         oidc_name_4: req.ctx.config.oidc_name_4,
         oidc_base_url_4: req.ctx.config.oidc_base_url_4,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
+        connectorIcons: res.locals.connectorIcons,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

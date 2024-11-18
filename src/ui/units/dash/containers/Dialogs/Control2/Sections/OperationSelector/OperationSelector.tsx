@@ -6,12 +6,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {Operations} from 'shared';
 import {getDefaultTitleForOperation} from 'shared';
 import {SelectFeatured} from 'ui/components/Select/wrappers/SelectFeatured';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectInputOperations,
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
 
 import '../../Control2.scss';
 

@@ -4,7 +4,9 @@ import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import type {DataTableProps, Settings} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import type {TableCommonCell, TableHead, TableRow} from 'shared';
+import get from 'lodash/get';
+import {DEFAULT_WIDGET_SIZE} from 'shared';
+import type {TableCommonCell, TableHead, TableRow, WidgetSizeType} from 'shared';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {
@@ -18,6 +20,7 @@ import {Loader} from '../../../Loader/Loader';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import Paginator from './Paginator/Paginator';
+import {WrappedHTMLNode} from './WrappedHTMLNode';
 import type {TableProps} from './types';
 import {
     camelCaseCss,
@@ -25,6 +28,7 @@ import {
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
+    isWrappedHTML,
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
@@ -149,6 +153,11 @@ export class Table extends React.PureComponent<TableProps, TableState> {
     }
 
     render() {
+        const {
+            data: {config = {}},
+        } = this.props;
+        const size: WidgetSizeType = get(config, 'size', DEFAULT_WIDGET_SIZE);
+
         Performance.mark(this.getId(true));
 
         if (this.state.waitingForFont) {
@@ -156,7 +165,7 @@ export class Table extends React.PureComponent<TableProps, TableState> {
         }
 
         return (
-            <div className={b()}>
+            <div className={b({size})}>
                 <div
                     className={b(
                         'body',
@@ -180,7 +189,12 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             return null;
         }
 
+        if (isWrappedHTML(title)) {
+            return <WrappedHTMLNode as="div" className={b('title')} value={title} />;
+        }
+
         const tableTitle = typeof title === 'string' ? {text: title} : title;
+
         return (
             <div className={b('title')} style={camelCaseCss(tableTitle.style)}>
                 {tableTitle.text}

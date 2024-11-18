@@ -14,7 +14,8 @@ export const SET_CURRENT_PAGE_ENTRY = Symbol('asideHeader/SET_CURRENT_PAGE_ENTRY
 export const SET_ASIDE_HEADER_SETTINGS = Symbol('asideHeader/SET_ASIDE_HEADER_SETTINGS');
 export const RESET_ASIDE_HEADER_SETTINGS = Symbol('asideHeader/RESET_ASIDE_HEADER_SETTINGS');
 export const REQUEST_USER_SETTINGS = Symbol('asideHeader/REQUEST_USER_SETTINGS');
-export const SET_IS_COMPACT = Symbol('asideHeader/IS_COMPACT');
+export const SET_IS_COMPACT = Symbol('asideHeader/SET_IS_COMPACT');
+export const SET_IS_HIDDEN = Symbol('asideHeader/SET_IS_HIDDEN');
 
 type SetAsideHeaderDataAction = {
     type: typeof SET_ASIDE_HEADER_DATA;
@@ -89,6 +90,18 @@ export const setIsCompact = (isCompact: boolean): SetIsCompactAction => {
     };
 };
 
+type SetIsHiddenAction = {
+    type: typeof SET_IS_HIDDEN;
+    isHidden: boolean;
+};
+
+export const setIsHidden = (isHidden: boolean): SetIsHiddenAction => {
+    return {
+        type: SET_IS_HIDDEN,
+        isHidden,
+    };
+};
+
 export const updateAsideHeaderIsCompact = (isCompact: boolean) => {
     return (dispatch: AppDispatch) => {
         dispatch(setIsCompact(isCompact));
@@ -109,4 +122,5 @@ export type AsideHeaderAction =
     | SetCurrentPageEntryAction
     | SetAsideHeaderSettingsAction
     | ResetAsideHeaderSettingsAction
-    | SetIsCompactAction;
+    | SetIsCompactAction
+    | SetIsHiddenAction;

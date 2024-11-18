@@ -4,6 +4,9 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
+import {WizardVisualizationId} from '../../../../src/shared';
+
+const chartNamePattern = 'e2e-wizard-filters';
 
 const setupFilters = async (wizardPage: WizardPage) => {
     await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'city');
@@ -17,21 +20,27 @@ const setupFilters = async (wizardPage: WizardPage) => {
 
 datalensTest.describe('Wizard filters', () => {
     datalensTest.beforeEach(async ({page, config}) => {
-        const wizardPage = new WizardPage({page});
-
         await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+    });
 
-        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'city');
+    datalensTest.afterEach(async ({page}) => {
+        await page.reload();
+        const pageUrl = page.url();
 
-        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'city');
-
-        await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'city');
+        if (pageUrl.includes(chartNamePattern)) {
+            const wizardPage = new WizardPage({page});
+            await wizardPage.deleteEntry();
+        }
     });
 
     datalensTest(
         'All chart filters must be taken into account in the color dialog',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'city');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'city');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'city');
 
             await wizardPage.colorDialog.open();
 
@@ -50,6 +59,36 @@ datalensTest.describe('Wizard filters', () => {
             expect(valuesWithoutFilters).not.toEqual(valuesWithFilters);
 
             expect(valuesWithFilters).toEqual(['Los Angeles']);
+        },
+    );
+
+    datalensTest(
+        'Two or more values of the Date field from the dashboard filter section should use IN operation by default',
+        async ({page}: {page: Page}) => {
+            const dateFilterValues = ['2015-01-01', '2016-01-01'];
+            const wizardPage = new WizardPage({page});
+            await wizardPage.setVisualization(WizardVisualizationId.PieD3);
+
+            await wizardPage.createNewFieldWithFormula(
+                'order_year',
+                `DATETRUNC([Order_date], 'year')`,
+            );
+            await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'order_year',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'sum');
+
+            await wizardPage.saveWizardEntry(wizardPage.getUniqueEntryName(chartNamePattern));
+
+            const pageUrl = new URL(page.url());
+            dateFilterValues.forEach((d) => pageUrl.searchParams.append('order_year', d));
+            await page.goto(pageUrl.toString());
+
+            await wizardPage.colorDialog.open();
+            await wizardPage.colorDialog.checkFieldValues(dateFilterValues);
+            await wizardPage.colorDialog.close();
         },
     );
 });

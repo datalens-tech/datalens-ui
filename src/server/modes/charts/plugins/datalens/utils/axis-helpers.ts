@@ -97,6 +97,10 @@ export const applyPlaceholderSettingsToAxis = (
             axis.minorGridLineWidth = 0;
         }
 
+        if (placeholder.settings?.axisVisibility === 'hide') {
+            axis.visible = false;
+        }
+
         const tickPixelInterval = getTickPixelInterval(placeholder.settings);
         if (tickPixelInterval) {
             axis.tickPixelInterval = tickPixelInterval;

@@ -3,7 +3,6 @@ import isSet from 'lodash/isSet';
 import isFunction from 'lodash/isFunction';
 import transform from 'lodash/transform';
 
-import type {AnyAction} from 'redux';
 import type {Delta as JDPDelta} from 'jsondiffpatch';
 
 import type {EditHistoryAction} from '../actions/editHistory';
@@ -19,11 +18,11 @@ import type {CreateJDPOptions} from '../utils/jdp';
 
 export type Diff = JDPDelta;
 
-export type EditHistoryUnit = {
+export type EditHistoryUnit<T = unknown> = {
     diffs: Diff[];
     pointIndex: number;
-    pointState?: unknown;
-    setState: ({state}: {state: unknown}) => AnyAction;
+    pointState?: T;
+    setState: ({state}: {state: T}) => void;
     options: CreateJDPOptions;
 };
 

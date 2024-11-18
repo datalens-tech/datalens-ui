@@ -1,3 +1,5 @@
+import type {EntryUpdateMode} from '../../..';
+
 import type {EntryFieldData, EntryFieldLinks, EntryFieldMeta, EntryFields} from './fields';
 
 export interface CreateEditorChartResponse extends EntryFields {
@@ -11,6 +13,7 @@ export interface CreateEditorChartArgs {
     meta?: EntryFieldMeta;
     workbookId?: string;
     name?: string;
+    mode?: EntryUpdateMode;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {

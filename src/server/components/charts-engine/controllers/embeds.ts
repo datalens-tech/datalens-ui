@@ -1,23 +1,66 @@
+/* eslint-disable complexity */
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AxiosError} from 'axios';
 import jwt from 'jsonwebtoken';
 import {isObject} from 'lodash';
 
 import type {ChartsEngine} from '..';
+import type {
+    DashTab,
+    DashTabItemControlData,
+    DashTabItemControlDataset,
+    DashTabItemControlManual,
+} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
+    DashTabItemControlSourceType,
+    DashTabItemType,
     EntryScope,
     ErrorCode,
     isEnabledServerFeature,
 } from '../../../../shared';
-import {resolveConfig} from '../components/storage';
+import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
-import type {ReducedResolvedConfig} from '../components/storage/types';
+import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
+};
+
+const isControlDisabled = (
+    controlData: DashTabItemControlData,
+    embeddingInfo: EmbeddingInfo,
+    controlTab: DashTab,
+) => {
+    if (
+        controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
+        controlData.sourceType !== DashTabItemControlSourceType.Manual
+    ) {
+        return false;
+    }
+    const controlSource = controlData.source as
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source'];
+
+    const controlParam =
+        'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
+
+    const tabAliases = controlTab.aliases[controlData.namespace];
+
+    const aliasesParamsList = tabAliases
+        ? tabAliases.find((alias) => alias.includes(controlParam))
+        : null;
+
+    if (embeddingInfo.embed.publicParamsMode) {
+        // dash doesn't support publicParamsMode
+        return false;
+    } else {
+        return aliasesParamsList
+            ? aliasesParamsList.some((alias) => embeddingInfo.embed.privateParams.includes(alias))
+            : embeddingInfo.embed.privateParams.includes(controlParam);
+    }
 };
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
@@ -88,7 +131,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
         // 3. it's selector from embedded dash, id is not used, dash is resolved by
         // token to get embeddedInfo and check token
         const configPromise = ctx.call('configLoading', (cx) =>
-            resolveConfig(cx, configResolveArgs),
+            resolveEmbedConfig(cx, configResolveArgs),
         );
 
         ctx.log('CHARTS_ENGINE_LOADING_CONFIG', {embedId});
@@ -172,24 +215,35 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     );
 
                     const controlWidgetConfig = controlTab?.items.find(
-                        ({id, type}) =>
-                            id === controlWidgetId &&
-                            (type === 'group_control' || type === 'control'),
+                        ({id}) => id === controlWidgetId,
                     );
 
-                    if (!controlWidgetConfig) {
+                    if (
+                        !controlTab ||
+                        !controlWidgetConfig ||
+                        (controlWidgetConfig.type !== DashTabItemType.Control &&
+                            controlWidgetConfig.type !== DashTabItemType.GroupControl)
+                    ) {
                         return res.status(404).send({
                             error: 'Сonfig was not found',
                         });
                     }
 
-                    const sharedData =
-                        controlWidgetConfig.type === 'group_control'
+                    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
+                        controlWidgetConfig.type === DashTabItemType.GroupControl
                             ? controlWidgetConfig.data.group.find(({id}) => id === controlData.id)
                             : controlWidgetConfig.data;
 
+                    if (!sharedData) {
+                        return res.status(404).send({
+                            error: 'Сonfig was not found',
+                        });
+                    }
+
+                    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
+
                     entry = {
-                        data: {shared: sharedData as object},
+                        data: {shared: sharedData},
                         meta: {stype: ControlType.Dash},
                     } as ReducedResolvedConfig;
                 } else if (embeddingInfo.entry.scope === EntryScope.Widget) {
@@ -233,6 +287,11 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
                 req.body.config = entry;
                 req.body.key = entry.key;
+
+                req.body.widgetConfig = {
+                    ...req.body.widgetConfig,
+                    enableExport: embeddingInfo.embed.settings?.enableExport === true,
+                };
 
                 return runnerFound.handler(ctx, {
                     chartsEngine,

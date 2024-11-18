@@ -9,15 +9,15 @@ import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {registry} from 'ui/registry';
-import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
-import {setSelectorDialogItem} from 'units/dash/store/actions/dashTyped';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,
     selectSelectorDefaultValue,
     selectSelectorDialog,
     selectSelectorValidation,
-} from 'units/dash/store/selectors/dashTypedSelectors';
+} from 'ui/store/selectors/controlDialog';
+import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
 
 import type {FilterValue} from '../../../../../../../../shared/modules';
 import {

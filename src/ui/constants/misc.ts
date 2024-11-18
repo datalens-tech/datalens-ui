@@ -136,6 +136,7 @@ export const REDO_HOTKEY = [MOD_KEY, 'shift', 'z'];
 export const HOTKEYS_SCOPES = {
     GLOBAL: 'global',
     WIZARD: 'wizard',
+    QL: 'ql',
 };
 
 export {
@@ -159,5 +160,3 @@ export {
     WIZARD_DATASET_ID_PARAMETER_KEY,
     DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG,
 };
-
-export const CLUSTERS_DATE_FORMAT_DATE = 'MM/DD/YYYY';

@@ -35,7 +35,7 @@ const reporter: ReporterDescription[] = [
     ['list'],
 ];
 
-const updateSnapshots = process.env.E2E_UPDATE_SNAPSHOTS === '1' ? 'all' : undefined;
+const updateSnapshots = process.env.E2E_UPDATE_SNAPSHOTS === '1' ? 'all' : 'none';
 const forbidOnly = process.env.E2E_FORBID_ONLY !== '0';
 
 // While we are too lazy to add expect to each file.
@@ -50,7 +50,15 @@ const globalSetupPath = './utils/playwright/datalens/e2e/setup-e2e';
 
 console.log(`Base URL for tests is: ${baseURL}`);
 
-const testTimeout = 60000 * 1.5;
+const testTimeout = process.env.E2E_TEST_TIMEOUT
+    ? parseInt(process.env.E2E_TEST_TIMEOUT, 10)
+    : 60000 * 1.5;
+const expectTimeout = process.env.E2E_EXPECT_TIMEOUT
+    ? parseInt(process.env.E2E_EXPECT_TIMEOUT, 10)
+    : testTimeout;
+const actionTimeout = process.env.E2E_ACTION_TIMEOUT
+    ? parseInt(process.env.E2E_ACTION_TIMEOUT, 10)
+    : testTimeout;
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
@@ -63,8 +71,9 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     forbidOnly,
     snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
     updateSnapshots,
+    outputDir: './test-results',
     expect: {
-        timeout: testTimeout,
+        timeout: expectTimeout,
     },
     use: {
         browserName: 'chromium',
@@ -76,7 +85,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         ignoreHTTPSErrors: true,
         viewport: {width: 1920, height: 1080},
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
-        actionTimeout: testTimeout,
+        actionTimeout: actionTimeout,
         testIdAttribute: 'data-qa',
         storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
     },

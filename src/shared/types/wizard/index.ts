@@ -6,8 +6,10 @@ import type {
     FilterField,
     HierarchyField,
     Link,
+    ServerCommonSharedExtraSettings,
     ServerDatasetField,
     ServerTooltipConfig,
+    WidgetSizeType,
 } from '../';
 import type {
     ColorMode,
@@ -33,6 +35,7 @@ export * from './background-settings';
 export * from './misc';
 export * from './placeholder';
 export * from './sub-totals';
+export * from './export';
 
 export type VisualizationIconProps = Omit<IconProps, 'data'> & {
     id: IconId;
@@ -99,6 +102,7 @@ export interface CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
     pagination?: 'on' | 'off';
@@ -115,6 +119,7 @@ export interface CommonSharedExtraSettings {
     labelsPosition?: LabelsPositions;
     qlAutoExecuteChart?: 'on' | 'off';
     pinnedColumns?: number;
+    size?: WidgetSizeType;
 }
 
 interface CommonShared {
@@ -202,7 +207,8 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
             | WizardVisualizationId.ScatterD3
-            | WizardVisualizationId.Treemap;
+            | WizardVisualizationId.Treemap
+            | WizardVisualizationId.TreemapD3;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;

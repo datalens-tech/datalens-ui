@@ -19,8 +19,6 @@ import type {PrepareFunctionDataRow} from '../../types';
 
 import type {BarValueOptions} from './types';
 
-// CHARTS-6452
-const BAR_HEIGHT = 19;
 const getMinAndMaxValues = (columnValues: PrepareFunctionDataRow) => {
     const parsedValues: number[] = columnValues.filter((v) => v !== null).map(Number);
     const min = Math.min(...parsedValues);
@@ -104,7 +102,6 @@ export const getBarSettingsViewOptions = (args: {
     const barViewOptions: BarViewOptions = {
         view: 'bar',
         showLabel: barsSettings.showLabels,
-        barHeight: BAR_HEIGHT,
     };
 
     let min: number | undefined, max: number | undefined;

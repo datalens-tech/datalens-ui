@@ -261,6 +261,18 @@ export function setEntryCurrentRevId(
     };
 }
 
+export const SET_IS_RENAME_WITHOUT_RELOAD = Symbol('entryContent/SET_IS_RENAME_WITHOUT_RELOAD');
+interface SetIsRenameAction {
+    type: typeof SET_IS_RENAME_WITHOUT_RELOAD;
+    isRenameWithoutReload: boolean;
+}
+export const setIsRenameWithoutReload = (isRenameWithoutReload: boolean): SetIsRenameAction => {
+    return {
+        type: SET_IS_RENAME_WITHOUT_RELOAD,
+        isRenameWithoutReload,
+    };
+};
+
 export function reloadRevisionsOnSave(needClose?: boolean) {
     return async (dispatch: EntryContentDispatch) => {
         if (needClose) {
@@ -297,6 +309,7 @@ export type EntryContentAction =
     | SetRevisionsListModeAction
     | SetRevisionsAction
     | CleanRevisionsAction
-    | RevisionsLoadingStatusAction;
+    | RevisionsLoadingStatusAction
+    | SetIsRenameAction;
 
 type EntryContentDispatch = ThunkDispatch<DatalensGlobalState, void, EntryContentAction>;

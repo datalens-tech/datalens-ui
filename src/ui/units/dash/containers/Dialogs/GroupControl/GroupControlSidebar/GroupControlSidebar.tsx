@@ -6,30 +6,29 @@ import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
 import {
     DashTabItemControlSourceType,
     DashTabItemType,
     DialogGroupControlQa,
     TitlePlacementOption,
 } from 'shared';
-import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
-import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {
     addSelectorToGroup,
-    copyControlToStorage,
     setActiveSelectorIndex,
+    setSelectorDialogItem,
     updateSelectorsGroup,
-} from 'ui/units/dash/store/actions/controls/actions';
-import type {SelectorsGroupDialogState} from 'ui/units/dash/store/actions/controls/types';
+} from 'ui/store/actions/controlDialog';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     getSelectorDialogFromData,
     getSelectorGroupDialogFromData,
-} from 'ui/units/dash/store/reducers/dash';
-import {
-    selectActiveSelectorIndex,
-    selectSelectorsGroup,
-} from 'units/dash/store/selectors/controls/selectors';
+} from 'ui/store/reducers/controlDialog';
+import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
+import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
+import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
+import {copyControlToStorage} from 'ui/units/dash/store/actions/controls/actions';
 
 import {TabMenu} from '../../../../../../components/DialogChartWidget/TabMenu/TabMenu';
 import type {
@@ -37,7 +36,6 @@ import type {
     UpdateState,
 } from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {type SelectorDialogState, setSelectorDialogItem} from '../../../../store/actions/dashTyped';
 import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
 
 import './../GroupControl.scss';
@@ -71,8 +69,15 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     }
 
     const pasteItems = pasteConfig?.data.group
-        ? getSelectorGroupDialogFromData(pasteConfig?.data).group
-        : [getSelectorDialogFromData(pasteConfig.data, pasteConfig.defaults)];
+        ? getSelectorGroupDialogFromData(
+              pasteConfig?.data as unknown as DashTabItemGroupControlData,
+          ).group
+        : [
+              getSelectorDialogFromData(
+                  pasteConfig.data as unknown as DashTabItemControlData,
+                  pasteConfig.defaults,
+              ),
+          ];
 
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };

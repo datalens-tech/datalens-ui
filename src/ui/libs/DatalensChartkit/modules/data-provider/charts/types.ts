@@ -6,6 +6,7 @@ import type {
     ChartsInsightsItem,
     DashLoadPriority,
     DashTabItemControlSourceType,
+    DashWidgetConfig,
     DatasetFieldCalcMode,
     DatasetFieldType,
     EntryPublicAuthor,
@@ -21,6 +22,7 @@ import type {
     GraphWidget,
     MarkdownWidget,
     MarkupWidget,
+    SingleControl,
     TableWidgetData,
     WithControls,
 } from '../../../types';
@@ -148,7 +150,7 @@ export interface ChartsProps {
     forceShowSafeChart?: boolean;
 }
 
-export interface ChartsData {
+export interface ChartsData extends DashWidgetConfig {
     entryId: string;
     key: string;
     usedParams: StringParams;
@@ -318,7 +320,7 @@ interface ResponseSuccessWizardBase
 interface ResponseSuccessGraphWizard extends ResponseSuccessWizardBase, Comments {}
 interface ResponseSuccessMetricWizard extends ResponseSuccessWizardBase {}
 
-export interface ResponseSuccessNodeBase {
+export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     params: StringParams;
     usedParams: StringParams;
     unresolvedParams?: StringParams;
@@ -353,8 +355,17 @@ export interface ResponseSuccessControls
     extends ResponseSuccessNodeBase,
         UI,
         Partial<WithControls> {
-    extra: ResponseSuccessNodeBase['extra'] & WizardNode['extra'];
+    extra: ResponseSuccessNodeBase['extra'] & ResponseControlsExtra['extra'];
 }
+
+export type ResponseSuccessSingleControl = ResponseSuccessNodeBase &
+    ResponseControlsExtra & {
+        uiScheme: {controls: SingleControl[]; lineBreaks?: 'wrap' | 'nowrap'};
+    };
+
+export type ResponseControlsExtra = {
+    extra: WizardNode['extra'];
+};
 
 interface ResponseSuccessNodeBaseWithData extends ResponseSuccessNodeBase {
     config: string;

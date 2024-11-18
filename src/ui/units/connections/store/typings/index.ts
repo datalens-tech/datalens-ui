@@ -17,6 +17,7 @@ import type {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
+    SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
     SET_FILE_COLUMN_FILTER,
@@ -150,6 +151,11 @@ export type SetEntry = {
         entry: ConnectionsReduxState['entry'];
         error?: DataLensApiError;
     };
+};
+
+export type SetConnectionKey = {
+    type: typeof SET_CONNECTION_KEY;
+    payload: string;
 };
 
 export type SetForm = {
@@ -356,6 +362,7 @@ export type ConnectionsReduxAction =
     | SetFlattenConnectors
     | SetConectorData
     | SetEntry
+    | SetConnectionKey
     | SetForm
     | SetInitialForm
     | SetInnerForm

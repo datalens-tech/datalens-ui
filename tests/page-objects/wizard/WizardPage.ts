@@ -218,7 +218,7 @@ class WizardPage extends ChartPage {
 
         await expect(
             datasetFields.locator(slct(SectionDatasetQA.ItemTitle), {
-                hasText: fieldName,
+                hasText: new RegExp(`^${fieldName}$`, 'i'),
             }),
         ).toBeVisible();
     }

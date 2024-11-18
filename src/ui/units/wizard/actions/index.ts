@@ -3,6 +3,7 @@ import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
+import uniqWith from 'lodash/uniqWith';
 import type {
     ColorsConfig,
     Dataset,
@@ -55,7 +56,7 @@ import {
 import history from 'ui/utils/history';
 import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
-import uuid from 'uuid/v1';
+import {v1 as uuidv1} from 'uuid';
 
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
 import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
@@ -1211,7 +1212,7 @@ export function updateDatasetByValidation({
 
 const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[]}) => {
     return async (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
-        const preparedUpdates = updates.map((update) => {
+        let preparedUpdates = updates.map((update) => {
             const {field} = update;
             Object.keys(field).forEach((key: string) => {
                 if ((field as Record<string, any>)[key] === null) {
@@ -1221,6 +1222,7 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
 
             return update;
         });
+        preparedUpdates = uniqWith(preparedUpdates, isEqual);
 
         const workbookId = selectWizardWorkbookId(getState());
 
@@ -1343,7 +1345,7 @@ export const createFieldFromVisualization = ({
         }
 
         // New random guid
-        field.guid = uuid();
+        field.guid = uuidv1();
 
         // ONLY-client flag indicating that this is a local field
         field.local = true;

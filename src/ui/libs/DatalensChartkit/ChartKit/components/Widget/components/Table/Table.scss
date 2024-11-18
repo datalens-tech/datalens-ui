@@ -6,6 +6,41 @@
     height: 100%;
     overflow: auto;
 
+    &_size {
+        &_l {
+            --data-table-row-height: 30px;
+            --dl-table-font-size: 13px;
+            --data-table-header-vertical-padding: 4px;
+            --data-table-cell-vertical-padding: 5px;
+            --data-table-cell-horizontal-padding: 10px;
+            --dl-table-cell-bar-height: 19px;
+            --chartkit-bg-bar-offset-width: 10px;
+            line-height: 16px;
+        }
+
+        &_m {
+            --data-table-row-height: 24px;
+            --dl-table-font-size: 12px;
+            --data-table-header-vertical-padding: 3px;
+            --data-table-cell-vertical-padding: 4px;
+            --data-table-cell-horizontal-padding: 6px;
+            --chartkit-bg-bar-offset-width: 6px;
+            --dl-table-cell-bar-height: 17px;
+            line-height: 15px;
+        }
+
+        &_s {
+            --data-table-row-height: 20px;
+            --dl-table-font-size: 11px;
+            --data-table-header-vertical-padding: 2px;
+            --data-table-cell-vertical-padding: 3px;
+            --data-table-cell-horizontal-padding: 4px;
+            --chartkit-bg-bar-offset-width: 4px;
+            --dl-table-cell-bar-height: 15px;
+            line-height: 13px;
+        }
+    }
+
     &__body {
         overflow: auto;
         flex-grow: 0;
@@ -28,7 +63,7 @@
 
     &__cell {
         height: 100%;
-        font-size: 10pt;
+        font-size: var(--dl-table-font-size);
         box-sizing: border-box;
 
         &_type_bar {
@@ -86,7 +121,7 @@
     }
 
     &__diff {
-        font-size: 8pt;
+        font-size: 0.8em;
 
         &_pos {
             color: #008000;
@@ -172,12 +207,20 @@
         }
     }
 
+    thead tr {
+        height: var(--data-table-row-height);
+    }
+
+    &__box_sticky-head_moving thead tr {
+        height: 0px;
+    }
+
     &__td {
         // safari(15) cannot apply 100% row height to a cell
         height: auto;
     }
 
     &__th {
-        font-size: 10pt;
+        font-size: var(--dl-table-font-size);
     }
 }

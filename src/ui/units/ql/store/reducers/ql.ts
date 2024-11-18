@@ -6,7 +6,7 @@ import {QLChartType} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
 import {QlConfigVersions} from 'shared/types/ql/versions';
 import type {DatalensGlobalState} from 'ui';
-import {DL} from 'ui';
+import {DL} from 'ui/constants';
 import {
     selectVisualization as getWizardVisualization,
     selectColors,
@@ -43,6 +43,7 @@ import {
     SET_CONNECTION_STATUS,
     SET_DEFAULT_PATH,
     SET_ENTRY,
+    SET_ENTRY_KEY,
     SET_ERROR,
     SET_EXTRA_SETTINGS,
     SET_QUERY_METADATA,
@@ -71,6 +72,7 @@ import type {
     QLActionSetConnectionStatus,
     QLActionSetDefaultPath,
     QLActionSetEntry,
+    QLActionSetEntryKey,
     QLActionSetError,
     QLActionSetExtraSettings,
     QLActionSetQueryMetadata,
@@ -558,6 +560,18 @@ export default function ql(state: QLState = initialState, action: QLAction) {
             return {
                 ...state,
                 entry,
+            };
+        }
+
+        case SET_ENTRY_KEY: {
+            const {payload} = action as QLActionSetEntryKey;
+
+            return {
+                ...state,
+                entry: {
+                    ...state.entry,
+                    key: payload,
+                },
             };
         }
 

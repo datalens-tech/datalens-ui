@@ -3,17 +3,13 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import logger from '../../../../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../../../../libs/schematic-sdk';
-import {
-    setLastUsedConnectionId,
-    setSelectorDialogItem,
-} from '../../../../../../../../store/actions/dashTyped';
-import {
-    selectDashWorkbookId,
-    selectSelectorDialog,
-} from '../../../../../../../../store/selectors/dashTypedSelectors';
+import {setLastUsedConnectionId} from '../../../../../../../../store/actions/dashTyped';
+import {selectDashWorkbookId} from '../../../../../../../../store/selectors/dashTypedSelectors';
 import {ELEMENT_TYPE} from '../../../../../../Control/constants';
 import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 

@@ -41,6 +41,8 @@ export enum WidgetKind {
     Control = 'control',
     Markdown = 'markdown',
     Markup = 'markup',
+    D3 = 'd3',
+    BlankChart = 'blank-chart',
 }
 
 export type WidgetType = LegacyEditorType | EditorType | WizardType;

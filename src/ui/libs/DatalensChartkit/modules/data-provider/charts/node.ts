@@ -256,6 +256,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         extra,
         requestId,
         traceId,
+        widgetConfig,
     } = loaded;
 
     try {
@@ -283,6 +284,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             isOldWizard: false,
             isEditor: loadedType in EDITOR_CHART_NODE,
             isQL: loadedType in QL_CHART_NODE,
+            widgetConfig,
         };
 
         if ('unresolvedParams' in loaded) {
@@ -333,9 +335,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     sandbox: uiSandbox,
                     options: uiSandboxOptions,
                 };
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
-                unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.config});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.libraryConfig});
+                await unwrapPossibleFunctions({...unwrapFnArgs, target: result.data});
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
@@ -447,6 +449,7 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
 
         try {
             unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'series.data', []));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

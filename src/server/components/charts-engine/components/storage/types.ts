@@ -66,6 +66,9 @@ export type EmbeddingInfo = {
         createdBy: string;
         createdAt: string;
         publicParamsMode: boolean;
+        settings: {
+            enableExport?: boolean;
+        };
     };
     entry: ChartEntryData | DashEntryData;
 };

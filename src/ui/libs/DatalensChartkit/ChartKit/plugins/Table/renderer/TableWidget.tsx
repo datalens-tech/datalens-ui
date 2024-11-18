@@ -37,7 +37,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         const [dimensions, setDimensions] = React.useState<WidgetDimensions | undefined>();
         const handleResize = React.useCallback(() => {
             if (ref.current) {
-                const {width, height} = ref.current.getBoundingClientRect();
+                const {clientWidth: width, clientHeight: height} = ref.current;
+
                 setDimensions({width, height});
             }
         }, []);

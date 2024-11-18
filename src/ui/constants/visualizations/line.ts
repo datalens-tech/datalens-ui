@@ -37,6 +37,7 @@ const LineXPlaceholder = {
         holidays: 'off',
         axisFormatMode: 'auto',
         axisModeMap: {},
+        axisVisibility: 'show',
     },
     transform: prepareFieldToDimensionTransformation,
 };
@@ -64,6 +65,7 @@ const LineYPlaceholder = {
         labelsView: 'auto',
         nulls: AxisNullsMode.Connect,
         axisFormatMode: 'auto',
+        axisVisibility: 'show',
     },
     transform: prepareFieldToMeasureTransformation,
 };
@@ -104,7 +106,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     availableLabelModes: ['absolute'],
     onDesignItemsChange: onLineChartDesignItemsChange,
     placeholders: [
-        LineXPlaceholder,
+        {...LineXPlaceholder},
         LineYPlaceholder,
         {
             allowedTypes: ITEM_TYPES.DIMENSIONS_AND_MEASURES,
@@ -129,6 +131,7 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
                 labelsView: 'auto',
                 nulls: AxisNullsMode.Connect,
                 axisFormatMode: 'auto',
+                axisVisibility: 'show',
             },
             transform: prepareFieldToMeasureTransformation,
         },

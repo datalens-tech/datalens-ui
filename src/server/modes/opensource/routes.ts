@@ -10,6 +10,7 @@ import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
 import {exportEntries} from '../../controllers/export-entries';
 import {printEntry} from '../../controllers/print-entry';
+import {getConnectorIconsMiddleware} from '../../middlewares';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -75,7 +76,7 @@ function getDataLensRoutes({
 }) {
     const ui: Omit<ExtendedAppRouteDescription, 'handler' | 'route'> = {
         beforeAuth,
-        afterAuth,
+        afterAuth: [...afterAuth, getConnectorIconsMiddleware()],
         ui: true,
     };
 

@@ -1,10 +1,11 @@
+import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 
-import type {ChartKitHtmlItem, WrappedHTML} from '../../../../../../shared';
+import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
@@ -16,6 +17,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
+import {validateUrl} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -143,15 +145,49 @@ function clearVmProp(prop: unknown) {
     return prop;
 }
 
-const getUnwrappedFunction = (args: {
+async function getUiSandboxLibs(libs: string[]) {
+    const modules = await Promise.all(
+        libs.map(async (lib) => {
+            switch (lib) {
+                case 'date-utils@2.3.0': {
+                    // eslint-disable-next-line import/no-extraneous-dependencies
+                    const module = await import(
+                        // @ts-ignore
+                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.3.0.js?raw'
+                    );
+                    return module.default;
+                }
+                case 'date-utils':
+                case 'date-utils@2.5.3': {
+                    // eslint-disable-next-line import/no-extraneous-dependencies
+                    const module = await import(
+                        // @ts-ignore
+                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.5.3.js?raw'
+                    );
+                    return module.default;
+                }
+                default: {
+                    throw new ChartKitCustomError(null, {
+                        details: `The library '${lib}' is not available`,
+                    });
+                }
+            }
+        }),
+    );
+
+    return modules.filter(Boolean).join('');
+}
+
+async function getUnwrappedFunction(args: {
     sandbox: QuickJSWASMModule;
     wrappedFn: UISandboxWrappedFunction;
     options?: UiSandboxRuntimeOptions;
     entryId: string;
     entryType: string;
-}) => {
+}) {
     const {sandbox, wrappedFn, options, entryId, entryType} = args;
-    return function (this: unknown, ...args: unknown[]) {
+    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    return function (this: unknown, ...restArgs: unknown[]) {
         if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
                 code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
@@ -166,7 +202,7 @@ const getUnwrappedFunction = (args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        const fnArgs = [...args, ...preparedUserArgs].map((a) => clearVmProp(a));
+        const fnArgs = [...restArgs, ...preparedUserArgs].map((a) => clearVmProp(a));
 
         // prepare function context
         const fnContext = clearVmProp(this);
@@ -179,9 +215,15 @@ const getUnwrappedFunction = (args: {
                 log: (...logArgs: unknown[]) => console.log(...logArgs),
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
-            Highcharts: {
-                numberFormat: window.Highcharts.numberFormat,
-                dateFormat: window.Highcharts.dateFormat,
+            window: {
+                open: function (url: string, target?: string) {
+                    try {
+                        validateUrl(url);
+                        window.open(url, target === '_self' ? '_self' : '_blank');
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
             },
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
@@ -206,9 +248,23 @@ const getUnwrappedFunction = (args: {
                     numberFormat: window.Highcharts.numberFormat,
                     dateFormat: window.Highcharts.dateFormat,
                 },
-                ChartEditor: {
-                    getChartClientRect: () => {
+                Chart: {
+                    getBoundingClientRect: () => {
                         return getCurrentChart()?.container.getBoundingClientRect();
+                    },
+                    appendElements: (node: unknown) => {
+                        const chart = getCurrentChart();
+
+                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const container = chart.container;
+                        const wrapper = document.createElement('div');
+                        wrapper.insertAdjacentHTML('beforeend', html);
+                        const nodes = Array.from(wrapper.childNodes);
+
+                        return nodes.map((node) => {
+                            const el = container.appendChild(node) as HTMLElement;
+                            return el.getBoundingClientRect();
+                        });
                     },
                     updateSeries: (seriesIndex: number, data: any) => {
                         processHtmlFields(data);
@@ -218,9 +274,36 @@ const getUnwrappedFunction = (args: {
                         processHtmlFields(data);
                         getCurrentChart()?.title?.update(data);
                     },
-                    appendElement: (value: WrappedHTML) => {
-                        const container = getCurrentChart()?.container;
-                        container?.insertAdjacentHTML('beforeend', unwrapHtml(value) as string);
+                    updatePoints: (updates: PointOptionsType, match?: Record<string, unknown>) => {
+                        const seriesOptions: [string, unknown][] = [];
+                        const pointOptions: [string, unknown][] = [];
+                        Object.entries(match ?? {}).forEach(([key, value]) => {
+                            if (key.startsWith('series.')) {
+                                seriesOptions.push([key.replace('series.', ''), value]);
+                            } else {
+                                pointOptions.push([key, value]);
+                            }
+                        });
+
+                        let shouldRedraw = false;
+                        const chart = getCurrentChart();
+                        const chartSeries = chart.series;
+                        chartSeries.forEach((s) => {
+                            if (seriesOptions.every(([key, value]) => get(s, key) === value)) {
+                                s.points?.forEach((p) => {
+                                    if (
+                                        pointOptions.every(([key, value]) => get(p, key) === value)
+                                    ) {
+                                        p.update(updates, false);
+                                        shouldRedraw = true;
+                                    }
+                                });
+                            }
+                        });
+
+                        if (shouldRedraw) {
+                            chart.redraw();
+                        }
                     },
                     findPoint: (fn: (point: unknown) => boolean) => {
                         const chartSeries = getCurrentChart()?.series ?? [];
@@ -247,6 +330,7 @@ const getUnwrappedFunction = (args: {
             fnContext,
             fnArgs,
             globalApi,
+            libs,
         });
 
         const performance = Performance.getDuration(runId);
@@ -256,39 +340,61 @@ const getUnwrappedFunction = (args: {
 
         return unwrapHtml(result);
     };
-};
+}
 
-export const unwrapPossibleFunctions = (args: {
+export async function unwrapPossibleFunctions(args: {
     entryId: string;
     entryType: string;
     sandbox: QuickJSWASMModule;
     target: TargetValue;
     options?: UiSandboxRuntimeOptions;
-}) => {
+}) {
     const {sandbox, target, options, entryId, entryType} = args;
     if (!target || typeof target !== 'object') {
         return;
     }
 
-    Object.keys(target).forEach((key) => {
-        const value = target[key];
+    await Promise.all(
+        Object.keys(target).map(async (key) => {
+            const value = target[key];
 
-        if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
-            const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
-            // TODO: it will become unnecessary after removal Feature.NoJsonFn
-            wrappedFn.fn = String(wrappedFn.fn);
-            // Do argument mutation on purpose
-            // eslint-disable-next-line no-param-reassign
-            target[key] = getUnwrappedFunction({sandbox, wrappedFn, options, entryId, entryType});
-        } else if (Array.isArray(value)) {
-            value.forEach((item) =>
-                unwrapPossibleFunctions({entryId, sandbox, options, target: item, entryType}),
-            );
-        } else if (value && typeof value === 'object') {
-            unwrapPossibleFunctions({entryId, sandbox, options, target: value, entryType});
-        }
-    });
-};
+            if (value && typeof value === 'object' && WRAPPED_FN_KEY in value) {
+                const wrappedFn = value[WRAPPED_FN_KEY] as UISandboxWrappedFunction;
+                // TODO: it will become unnecessary after removal Feature.NoJsonFn
+                wrappedFn.fn = String(wrappedFn.fn);
+                // Do argument mutation on purpose
+                // eslint-disable-next-line no-param-reassign
+                target[key] = await getUnwrappedFunction({
+                    sandbox,
+                    wrappedFn,
+                    options,
+                    entryId,
+                    entryType,
+                });
+            } else if (Array.isArray(value)) {
+                await Promise.all(
+                    value.map((item) =>
+                        unwrapPossibleFunctions({
+                            entryId,
+                            sandbox,
+                            options,
+                            target: item,
+                            entryType,
+                        }),
+                    ),
+                );
+            } else if (value && typeof value === 'object') {
+                await unwrapPossibleFunctions({
+                    entryId,
+                    sandbox,
+                    options,
+                    target: value,
+                    entryType,
+                });
+            }
+        }),
+    );
+}
 
 export const shouldUseUISandbox = (target: TargetValue) => {
     if (!target || typeof target !== 'object') {

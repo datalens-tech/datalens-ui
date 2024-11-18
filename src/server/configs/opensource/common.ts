@@ -1,6 +1,8 @@
 import type {AppEnvironment} from '../../../shared';
 import {
     AppInstallation,
+    CSP_HEADER,
+    CSP_REPORT_TO_HEADER,
     DL_CONTEXT_HEADER,
     Language,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
@@ -38,6 +40,7 @@ export default {
     regionalEnvConfig: {
         defaultLang: Language.En,
         allowLanguages: [Language.En, Language.Ru],
+        langQueryParamName: '_lang',
     },
 
     csp: 'disabled',
@@ -167,6 +170,7 @@ export default {
             enabled: isTrueArg(process.env.HC),
             external: true,
             domain: process.env.HC_ENDPOINT || 'code.highcharts.com',
+            protocol: process.env.HC_PROTOCOL || 'https',
             modules: process.env.HC_MODULES
                 ? process.env.HC_MODULES.split(',').map((m) => m.trim())
                 : [
@@ -201,8 +205,8 @@ export default {
         },
     },
 
-    appSensitiveKeys: [SERVICE_USER_ACCESS_TOKEN_HEADER],
-    appSensitiveHeaders: [SERVICE_USER_ACCESS_TOKEN_HEADER],
+    appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
+    appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
 
     isZitadelEnabled: isTrueArg(process.env.ZITADEL),
 
@@ -247,4 +251,5 @@ export default {
     oidc_secret_4: process.env.OIDC_SECRET_4 || '',
     oidc_name_4: process.env.OIDC_NAME_4 || '',
     runEndpoint: '/api/run',
+    apiPrefix: '/api',
 };

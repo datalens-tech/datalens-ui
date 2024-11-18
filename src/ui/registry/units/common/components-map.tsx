@@ -3,6 +3,7 @@ import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
 import Timings from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Timings/Timings';
+import type {WorkbookEntriesTableTabsProps} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import {Example} from './components/Example/Example';
@@ -13,7 +14,6 @@ import type {AclSubjectProps} from './types/components/AclSubject';
 import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest';
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
-import type {CloudTreeSelectBaseProps} from './types/components/CloudTreeSelectBase';
 import type {DialogAddParticipantsProps} from './types/components/DialogAddParticipants';
 import type {DialogImageWidgetLinkHintProps} from './types/components/DialogImageWidgetLinkHint';
 import type {DialogRelatedEntitiesRadioHintProps} from './types/components/DialogRelatedEntitiesRadioHint';
@@ -33,7 +33,6 @@ import type {YfmWrapperProps} from './types/components/YfmWrapper';
 
 export const commonComponentsMap = {
     [EXAMPLE_COMPONENT]: Example,
-    CloudTreeSelectBase: makeDefaultEmpty<CloudTreeSelectBaseProps>(),
     DownloadScreenshot: makeDefaultEmpty<DownloadScreenshotProps>(),
     YfmWrapperContent: makeDefaultEmpty<YfmWrapperProps>(),
     ActionPanelEntrySelect: makeDefaultEmpty<ActionPanelEntrySelectProps>(),
@@ -61,4 +60,5 @@ export const commonComponentsMap = {
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
+    WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
 } as const;

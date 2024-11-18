@@ -187,7 +187,7 @@ describe('actualizeUpdates', () => {
 
         const expectedResult = [{field: {guid: '7', quickFormula: true}}, {field: {guid: '4'}}];
 
-        const MOCKED_ON_UPDATES_ITEMS_GUIDS = ['4', '7'];
+        const MOCKED_ON_UPDATES_ITEMS_GUIDS = [{guid: '4'}, {guid: '7'}];
 
         const result = actualizeUpdates({
             updates,
