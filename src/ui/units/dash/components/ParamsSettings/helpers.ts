@@ -1,4 +1,4 @@
-import {registry} from 'ui/registry';
+import {registry} from '../../../../registry';
 
 import type {ParamsSettingData} from './types';
 
