@@ -2,11 +2,12 @@ import React from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffectOnce} from 'ui';
+import DialogChartWidget from 'ui/components/DialogChartWidget/DialogChartWidget';
+import DialogExternalControl from 'ui/components/DialogExternalControl/DialogExternalControl';
+import {DialogTextWidgetWrapper} from 'ui/components/DialogTextWidget';
+import DialogTitleWidget from 'ui/components/DialogTitleWidget/DialogTitleWidget';
 import {registry} from 'ui/registry';
 
-import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
-import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
-import DialogTitleWidget from '../../../../components/DialogTitleWidget/DialogTitleWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
@@ -19,7 +20,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 
 import Connections from './Connections/Connections';
-import Control2 from './Control2/Control2';
 import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
@@ -106,7 +106,7 @@ export function Dialogs() {
                 />
             );
         case DIALOG_TYPE.CONTROL:
-            return <Control2 />;
+            return <DialogExternalControl />;
         case DIALOG_TYPE.GROUP_CONTROL:
             return <GroupControl />;
         case DIALOG_TYPE.SETTINGS:
