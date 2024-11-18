@@ -11,11 +11,11 @@ import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {BackButton} from 'ui/units/dash/components/BackButton/BackButton';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../../../../../constants/dialogs';
+import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
 
-import './ControlsPlacementDialog.scss';
+import './DialogControlsPlacement.scss';
 
 export const DIALOG_SELECTORS_PLACEMENT = Symbol('DIALOG_SELECTORS_PLACEMENT');
 
@@ -37,7 +37,7 @@ const resetAutoValues = (group: SelectorDialogState[]) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
-const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
+const DialogControlsPlacement = ({onClose}: ControlsPlacementDialogProps) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
@@ -170,4 +170,4 @@ const ControlsPlacementDialog = ({onClose}: ControlsPlacementDialogProps) => {
     );
 };
 
-DialogManager.registerDialog(DIALOG_SELECTORS_PLACEMENT, ControlsPlacementDialog);
+DialogManager.registerDialog(DIALOG_SELECTORS_PLACEMENT, DialogControlsPlacement);

@@ -6,9 +6,9 @@ import {I18n} from 'i18n';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 import {EMPTY_VALUE} from 'ui/units/dash/modules/constants';
 
-import {CONTROLS_PLACEMENT_MODE} from '../../../../../../../constants/dialogs';
+import {CONTROLS_PLACEMENT_MODE} from '../../../constants/dialogs';
 
-import './../ControlsPlacementDialog.scss';
+import '../DialogControlsPlacement.scss';
 
 const b = block('controls-placement-dialog');
 

@@ -36,7 +36,7 @@ import type {
     UpdateState,
 } from '../../../../../../components/DialogChartWidget/TabMenu/types';
 import {TabActionType} from '../../../../../../components/DialogChartWidget/TabMenu/types';
-import {DIALOG_SELECTORS_PLACEMENT} from '../ControlsPlacementDialog/ControlsPlacementDialog';
+import {DIALOG_SELECTORS_PLACEMENT} from '../../../../../../components/DialogControlsPlacement/DialogControlsPlacement';
 
 import './../GroupControl.scss';
 
