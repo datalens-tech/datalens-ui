@@ -260,6 +260,7 @@
   "label_should-be-less-than-right": "This value should be less than max",
   "label_show": "Show",
   "label_sort-overflow": "The maximum number of sorts is set",
+  "label_stacking": "Stacking",
   "label_string": "String",
   "label_sub-totals-switcher": "Sub-totals",
   "label_sum": "Sum",

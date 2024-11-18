@@ -111,6 +111,12 @@ export const buildHighchartsConfigPrivate = (args: {
         });
     });
 
+    if (shared.visualization.id === 'area') {
+        plotOptions.area = {
+            stacking: shared.extraSettings?.stacking !== 'off' ? 'normal' : undefined,
+        };
+    }
+
     if (shared.visualization.id === 'scatter') {
         plotOptions.series = {turboThreshold: 100000};
         plotOptions.scatter = {
@@ -363,12 +369,6 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
         case 'bar100p':
             plotOptions.bar = plotOptions.bar || {};
             plotOptions.bar.stacking = 'percent';
-            break;
-
-        case 'area':
-            plotOptions.area = {
-                stacking: 'normal',
-            };
             break;
 
         case 'area100p':
