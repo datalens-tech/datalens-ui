@@ -251,6 +251,7 @@ class Body extends React.PureComponent<BodyProps> {
         fixedHeaderCollapsed: {},
         isGlobalDragging: false,
         hasCopyInBuffer: null,
+        isExportLoading: false,
         prevMeta: {tabId: null, entryId: null},
         loaded: false,
         loadedItemsMap: new Map<string, boolean>(),
