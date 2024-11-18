@@ -64,6 +64,7 @@ export interface V11CommonSharedExtraSettings {
     totals?: 'on' | 'off';
     pivotFallback?: 'on' | 'off';
     pivotInlineSort?: 'on' | 'off';
+    stacking?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
     navigatorSettings?: V11NavigatorSettings;
