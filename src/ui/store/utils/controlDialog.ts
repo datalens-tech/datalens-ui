@@ -9,8 +9,9 @@ import type {
 } from 'ui/store/typings/controlDialog';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
 import {addOperationForValue} from 'ui/units/dash/modules/helpers';
-import {CheckboxControlValue, ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
+import {CheckboxControlValue} from 'ui/store/constants/controlDialog';
 import type {DashTab, DashTabItemGroupControl} from 'shared/types';
+import {ELEMENT_TYPE} from '../constants/controlDialog';
 
 export const getActualUniqueFieldNameValidation = (
     group: SelectorDialogState[],

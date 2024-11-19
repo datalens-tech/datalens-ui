@@ -5,8 +5,7 @@ import type {SelectOption} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {DialogControlQa} from 'shared/constants/qa';
-
-import {ELEMENT_TYPE} from '../../../../../units/dash/containers/Dialogs/Control/constants';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 

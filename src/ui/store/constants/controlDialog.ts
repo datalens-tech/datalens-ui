@@ -36,3 +36,24 @@ export const DATEPICKER_OPERATIONS = [...BASE_EQUALITY_OPERATIONS, ...BASE_COMPA
 export const DATEPICKER_RANGE_OPERATIONS = [
     ...BASE_DATE_OPERATIONS.map((item) => ({...item, range: true})),
 ];
+
+export const ELEMENT_TYPE: {
+    SELECT: 'select';
+    DATE: 'date';
+    INPUT: 'input';
+    CHECKBOX: 'checkbox';
+} = {
+    SELECT: 'select',
+    DATE: 'date',
+    INPUT: 'input',
+    CHECKBOX: 'checkbox',
+};
+
+export const DATE_FORMAT = 'DD.MM.YYYY';
+
+export const DATETIME_FORMAT = 'DD.MM.YYYY HH:mm:ss';
+
+export enum CheckboxControlValue {
+    TRUE = 'true',
+    FALSE = 'false',
+}

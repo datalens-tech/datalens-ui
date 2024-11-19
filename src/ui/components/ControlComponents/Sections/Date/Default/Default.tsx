@@ -13,11 +13,8 @@ import {
     getParsedRelativeDate,
 } from 'shared';
 import {RelativeDatesPicker} from 'ui';
+import {DATETIME_FORMAT, DATE_FORMAT} from 'ui/store/constants/controlDialog';
 
-import {
-    DATETIME_FORMAT,
-    DATE_FORMAT,
-} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import Dialog from '../../../Dialog/Dialog';
 
 import './Default.scss';

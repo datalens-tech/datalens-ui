@@ -14,10 +14,10 @@ import {
 } from 'shared';
 import logger from 'ui/libs/logger';
 import {setLastUsedDatasetId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
 
-import {ELEMENT_TYPE} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import {DatasetField} from '../../Switchers/DatasetField/DatasetField';
 import {EntrySelector} from '../EntrySelector/EntrySelector';
 

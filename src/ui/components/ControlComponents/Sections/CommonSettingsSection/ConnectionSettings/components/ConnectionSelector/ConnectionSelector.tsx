@@ -4,11 +4,11 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
 import {setLastUsedConnectionId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import logger from '../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../libs/schematic-sdk';
-import {ELEMENT_TYPE} from '../../../../../../../units/dash/containers/Dialogs/Control/constants';
 import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 
 import {prepareConnectionData} from './helpers';

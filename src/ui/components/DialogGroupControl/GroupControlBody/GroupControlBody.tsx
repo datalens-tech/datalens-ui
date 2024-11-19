@@ -15,10 +15,9 @@ import {OperationSelector} from 'ui/components/ControlComponents/Sections/Operat
 import {RequiredValueCheckbox} from 'ui/components/ControlComponents/Sections/ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
 import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
 import Utils from 'ui/utils/utils';
-
-import {ELEMENT_TYPE} from '../../../units/dash/containers/Dialogs/Control/constants';
 
 import '../DialogGroupControl.scss';
 

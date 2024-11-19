@@ -3,7 +3,6 @@ import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import type {
     DashTabItem,
-    DashTabItemControl,
     DashTabItemGroupControl,
     DashTabItemImage,
     DashTabItemText,
@@ -69,9 +68,8 @@ type DialogEditGroupControlProps = {
 
 type DialogEditExternalControlProps = {
     type: typeof ITEM_TYPE.CONTROL;
-    // TODO to many | in source
-    // openedItemData: React.ComponentProps<typeof DialogExternalControl>['openedItemData'];
     setItemData: React.ComponentProps<typeof DialogExternalControl>['setItemData'];
+    openedItemData: any;
     widgetType: any;
     widgetsCurrentTab: any;
     openedItemDefaults: StringParams;
@@ -211,7 +209,6 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case ITEM_TYPE.CONTROL:
             return (
                 <DialogExternalControl
-                    openedItemData={openedItemData as DashTabItemControl['data']}
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}

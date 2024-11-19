@@ -8,7 +8,6 @@ import type {
 import {DashTabItemControlSourceType, DashTabItemType, TitlePlacementOption} from 'shared';
 import type {SelectorDialogState, SelectorsGroupDialogState} from '../typings/controlDialog';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
-import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
 import {
@@ -33,6 +32,7 @@ import type {
 } from '../actions/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
+import {ELEMENT_TYPE} from '../constants/controlDialog';
 
 const i18n = I18n.keyset('dash.store.view');
 
