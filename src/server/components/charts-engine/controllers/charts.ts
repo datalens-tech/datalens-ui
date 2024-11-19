@@ -94,6 +94,7 @@ export const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
         ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+        ...(req.headers['x-rpc-authorization'] ? { 'x-request-id': ('{{' + req.headers['x-rpc-authorization'] + '}}.' + req.headers['x-request-id']) } : {}),
     };
 
     return headers;

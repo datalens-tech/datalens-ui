@@ -38,7 +38,7 @@ export const getDatasetFieldsById = async (
             ? await requestDatasetFieldsByToken({
                   ctx: req.ctx,
                   headers,
-                  requestId: req.id,
+                  requestId: headers['x-request-id'] ? headers['x-request-id']: req.id,
                   args: {
                       dataSetId: datasetId,
                   },
@@ -46,7 +46,7 @@ export const getDatasetFieldsById = async (
             : await requestDatasetFields({
                   ctx: req.ctx,
                   headers,
-                  requestId: req.id,
+                  requestId: headers['x-request-id'] ? headers['x-request-id']: req.id,
                   authArgs: {iamToken},
                   args: {
                       dataSetId: datasetId,

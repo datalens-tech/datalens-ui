@@ -38,7 +38,7 @@ const LOGO_DEFAULT_SIZE = 32;
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
 const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
-const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
+const GITHUB_URL = 'https://github.com/akrasnov87/datalens';
 
 export const DOCUMENTATION_LINK = `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
 
