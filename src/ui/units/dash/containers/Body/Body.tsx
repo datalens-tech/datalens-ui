@@ -929,6 +929,22 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
+    private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
+        if (isMounted) {
+            this.state.loadedItemsMap.set(item.id, false);
+        }
+    };
+
+    private handleItemRender = (item: ConfigItem) => {
+        const {loadedItemsMap} = this.state;
+
+        if (loadedItemsMap.get(item.id) !== true) {
+            loadedItemsMap.set(item.id, true);
+
+            this.setState({loaded: Array.from(loadedItemsMap.values()).every(Boolean)});
+        }
+    };
+
     private exportDashboard = async () => {
         const links = Object.keys(this.props.entry.links);
         const result = await Promise.allSettled(

@@ -129,9 +129,9 @@ export const isExportPdfVisible = ({
     }
 
     const data = loadedData?.data;
-    const type = loadedData?.type;
+    const type = loadedData?.type as WidgetKind;
     return (
-        !isEmpty(data) && [CHARTKIT_WIDGET_TYPE.D3].includes(type)
+        !isEmpty(data) && [WidgetKind.D3].includes(type)
     );
 };
 

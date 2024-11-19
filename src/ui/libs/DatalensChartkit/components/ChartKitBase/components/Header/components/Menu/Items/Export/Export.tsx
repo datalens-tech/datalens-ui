@@ -208,7 +208,7 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_ODS,
             title: i18n('format_ods'),
             isVisible: ({loadedData, error}: MenuItemArgs) => isExportVisible({loadedData, error}),
-            action: directExportAction(chartsDataProvider, EXPORT_FORMATS.ODS, onExportLoading),
+            action: directExportAction(EXPORT_FORMATS.ODS, onExportLoading),
         },
         {
             id: MenuItemsIds.EXPORT_CSV,
