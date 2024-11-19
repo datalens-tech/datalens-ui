@@ -1,4 +1,42 @@
+import type {
+    DashTabItemControlData,
+    DashTabItemGroupControlData,
+    DashTabItemType,
+    StringParams,
+} from 'shared';
 import type {SelectorsGroupDialogState, SetSelectorDialogItemArgs} from '../typings/controlDialog';
+
+export const INIT_DIALOG = Symbol('controlDialog/INIT_DIALOG');
+
+export type InitDialogAction = {
+    type: typeof INIT_DIALOG;
+    payload: {
+        id: string | null;
+        data: DashTabItemControlData | DashTabItemGroupControlData;
+        namespace: string | null;
+        type: DashTabItemType;
+        defaults?: StringParams | null;
+    };
+};
+
+export const initControlDialog = (payload: InitDialogAction['payload']): InitDialogAction => {
+    return {
+        type: INIT_DIALOG,
+        payload,
+    };
+};
+
+export const RESET_DIALOG = Symbol('controlDialog/RESET_DIALOG');
+
+export type ResetDialogAction = {
+    type: typeof RESET_DIALOG;
+};
+
+export const resetControlDialog = (): ResetDialogAction => {
+    return {
+        type: RESET_DIALOG,
+    };
+};
 
 export const ADD_SELECTOR_TO_GROUP = Symbol('controlDialog/ADD_SELECTOR_TO_GROUP');
 

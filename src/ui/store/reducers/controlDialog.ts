@@ -5,10 +5,17 @@ import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
+import {
+    INIT_DIALOG,
+    RESET_DIALOG,
+    type InitDialogAction,
+    type ResetDialogAction,
+} from '../actions/controlDialog';
 export interface ControlDialogState {
     activeSelectorIndex: number;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
+    openedDialog: DashTabItemType | null;
 }
 
 export function getSelectorDialogInitialState(
@@ -52,16 +59,16 @@ export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState 
 
 export function getSelectorDialogFromData(
     data: DashTabItemControlData & {source: {[key: string]: any}},
-    defaults: StringParams = {},
+    defaults?: StringParams | null,
 ): SelectorDialogState {
     let selectorParameters;
 
     switch (data.sourceType) {
         case DashTabItemControlSourceType.Connection:
-            selectorParameters = extractTypedQueryParams(defaults, data.source.fieldName);
+            selectorParameters = extractTypedQueryParams(defaults ?? {}, data.source.fieldName);
             break;
         case DashTabItemControlSourceType.External:
-            selectorParameters = defaults;
+            selectorParameters = defaults ?? {};
             break;
         default:
             selectorParameters = {};
@@ -71,7 +78,7 @@ export function getSelectorDialogFromData(
         validation: {},
         isManualTitle: true,
 
-        defaults,
+        defaults: defaults ?? {},
 
         title: data.title,
         sourceType: data.sourceType,
@@ -112,6 +119,7 @@ export function getSelectorDialogFromData(
 
 export function getSelectorGroupDialogFromData(data: DashTabItemGroupControlData) {
     return {
+        updateControlsOnChange: false,
         ...data,
         group: data.group.map((item) => getSelectorDialogFromData(item)),
     };
@@ -121,8 +129,58 @@ const getInitialState = (): ControlDialogState => ({
     activeSelectorIndex: 0,
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
+    openedDialog: null,
 });
 
-export function controlDialog(state: ControlDialogState = getInitialState()): ControlDialogState {
+export function controlDialog(
+    state: ControlDialogState = getInitialState(),
+    action: InitDialogAction | ResetDialogAction,
+): ControlDialogState {
+    const {type} = action;
+    switch (type) {
+        case INIT_DIALOG: {
+            const payload = action.payload;
+            const {id: openedItemId, data, defaults} = payload;
+            let {type: openedDialog} = payload;
+
+            const newState = {
+                ...state,
+                openedItemId,
+                activeSelectorIndex: 0,
+            };
+
+            if (
+                openedDialog === DashTabItemType.Control &&
+                (data as DashTabItemControlData).sourceType !== 'external'
+            ) {
+                const selectorDialog = getSelectorDialogFromData(data as DashTabItemControlData);
+
+                // migration forward to group
+                openedDialog = DashTabItemType.GroupControl;
+                newState.selectorsGroup = {
+                    ...getGroupSelectorDialogInitialState(),
+                    group: [selectorDialog],
+                };
+                newState.selectorDialog = selectorDialog;
+            } else if (openedDialog === DashTabItemType.GroupControl) {
+                newState.selectorsGroup = getSelectorGroupDialogFromData(
+                    data as DashTabItemGroupControlData,
+                );
+                newState.selectorDialog = newState.selectorsGroup.group[0];
+            } else if (openedDialog === DashTabItemType.Control) {
+                newState.selectorDialog = getSelectorDialogFromData(
+                    data as DashTabItemControlData,
+                    defaults,
+                );
+            }
+
+            newState.openedDialog = openedDialog;
+
+            return newState;
+        }
+        case RESET_DIALOG: {
+            return getInitialState();
+        }
+    }
     return state;
 }

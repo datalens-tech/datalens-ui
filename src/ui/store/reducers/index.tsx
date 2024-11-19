@@ -8,8 +8,8 @@ import colorPaletteEditor from 'store/reducers/colorPaletteEditor';
 import {collectionsStructure} from 'store/reducers/collectionsStructure';
 import {migrationToWorkbook} from 'ui/store/reducers/migrationToWorkbook';
 import {copyEntriesToWorkbook} from 'ui/store/reducers/copyEntriesToWorkbook';
-
-import {editHistory} from './editHistory';
+import {editHistory} from 'ui/store/reducers/editHistory';
+import {controlDialog} from 'ui/store/reducers/controlDialog';
 
 export default {
     user,
@@ -20,6 +20,7 @@ export default {
     entryContent,
     colorPaletteEditor,
     collectionsStructure,
+    controlDialog,
     migrationToWorkbook,
     copyEntriesToWorkbook,
     editHistory,

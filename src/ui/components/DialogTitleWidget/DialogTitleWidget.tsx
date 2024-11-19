@@ -40,7 +40,11 @@ interface DialogTitleWidgetState {
     backgroundColor?: string;
 }
 
-interface DialogTitleWidgetProps {
+export interface DialogTitleWidgetFeatureProps {
+    enableAutoheight?: boolean;
+    enableShowInTOC?: boolean;
+}
+interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
     openedItemData: DashTabItemTitle['data'];
     dialogIsVisible: boolean;

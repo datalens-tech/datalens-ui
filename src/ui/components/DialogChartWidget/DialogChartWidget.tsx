@@ -79,7 +79,14 @@ function Line(props: LineProps) {
 
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
-export interface DialogChartWidgetProps {
+export interface DialogChartWidgetFeatureProps {
+    withoutSidebar?: boolean;
+
+    enableAutoheight?: boolean;
+    enableBackgroundColor?: boolean;
+    enableFilteringSetting?: boolean;
+}
+export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     openedItemId: string | null;
     openedItemData: DashTabItemWidget['data'];
     dialogIsVisible: boolean;
@@ -91,12 +98,6 @@ export interface DialogChartWidgetProps {
     widgetsCurrentTab: {
         [key: string]: string;
     };
-
-    withoutSidebar?: boolean;
-
-    enableAutoheight?: boolean;
-    enableBackgroundColor?: boolean;
-    enableFilteringSetting?: boolean;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;

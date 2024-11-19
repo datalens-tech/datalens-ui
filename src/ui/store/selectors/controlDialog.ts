@@ -15,37 +15,44 @@ import {
     SELECTOR_OPERATIONS,
 } from '../constants/controlDialog';
 
-export const selectSelectorsGroup = (state: DatalensGlobalState) => state.dash.selectorsGroup;
+export const selectOpenedDialogType = (state: DatalensGlobalState) =>
+    state.controlDialog.openedDialog;
+
+export const selectControlDialogState = (state: DatalensGlobalState) => state.dash;
+
+export const selectSelectorsGroup = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).selectorsGroup;
 
 export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
-    state.dash.activeSelectorIndex || 0;
+    selectControlDialogState(state).activeSelectorIndex || 0;
 
-export const selectSelectorDialog = (state: DatalensGlobalState) => state.dash.selectorDialog;
+export const selectSelectorDialog = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).selectorDialog;
 
 export const selectSelectorSourceType = (state: DatalensGlobalState) =>
-    state.dash.selectorDialog.sourceType;
+    selectControlDialogState(state).selectorDialog.sourceType;
 
 export const selectSelectorControlType = (state: DatalensGlobalState) =>
-    state.dash.selectorDialog.elementType;
+    selectControlDialogState(state).selectorDialog.elementType;
 
 export const selectSelectorDefaultValue = (state: DatalensGlobalState) =>
-    state.dash.selectorDialog.defaultValue;
+    selectControlDialogState(state).selectorDialog.defaultValue;
 
 export const selectSelectorRequired = (state: DatalensGlobalState) =>
-    state.dash.selectorDialog.required;
+    selectControlDialogState(state).selectorDialog.required;
 
 export const selectSelectorValidation = (state: DatalensGlobalState) =>
-    state.dash.selectorDialog.validation;
+    selectControlDialogState(state).selectorDialog.validation;
 
 export const getDatasetField = (state: DatalensGlobalState) => {
-    const {dataset, datasetFieldId} = state.dash.selectorDialog;
+    const {dataset, datasetFieldId} = selectControlDialogState(state).selectorDialog;
     return (dataset?.dataset?.result_schema || dataset?.result_schema || [])?.find(
         (item) => item.guid === datasetFieldId,
     );
 };
 
 export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState) => {
-    const selectorDialog = state.dash.selectorDialog;
+    const selectorDialog = selectControlDialogState(state).selectorDialog;
 
     switch (selectorDialog.sourceType) {
         case DashTabItemControlSourceType.Dataset:
@@ -58,7 +65,8 @@ export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState)
 };
 
 export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): boolean => {
-    const {sourceType, connectionId, connectionQueryTypes} = state.dash.selectorDialog;
+    const {sourceType, connectionId, connectionQueryTypes} =
+        selectControlDialogState(state).selectorDialog;
 
     switch (sourceType) {
         case DashTabItemControlSourceType.Connection:
@@ -73,7 +81,7 @@ export const selectIsParametersSectionAvailable = (state: DatalensGlobalState): 
 export const selectAvailableOperationsDict = (
     state: DatalensGlobalState,
 ): Record<Operations, boolean> | undefined => {
-    const {dataset, datasetFieldId} = state.dash.selectorDialog;
+    const {dataset, datasetFieldId} = selectControlDialogState(state).selectorDialog;
 
     if (!dataset) {
         return undefined;
@@ -104,7 +112,7 @@ export const selectAvailableOperationsDict = (
 
 export const selectInputOperations = (state: DatalensGlobalState) => {
     const {multiselectable, isRange, elementType, fieldType, sourceType, datasetFieldId} =
-        state.dash.selectorDialog;
+        selectControlDialogState(state).selectorDialog;
 
     if (sourceType !== 'dataset' && elementType === 'checkbox') {
         return BOOLEAN_OPERATIONS;
