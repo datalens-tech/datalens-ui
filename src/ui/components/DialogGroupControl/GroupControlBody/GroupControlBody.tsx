@@ -25,7 +25,10 @@ import '../DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-export const GroupControlBody: React.FC<{}> = () => {
+export const GroupControlBody: React.FC<{
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}> = (props) => {
     const elementType = useSelector(selectSelectorControlType);
 
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;
@@ -36,7 +39,11 @@ export const GroupControlBody: React.FC<{}> = () => {
                 <SelectorTypeSelect showExternalType={false} mode="select" />
             </FormRow>
             <div className={b('section')}>
-                <CommonSettingsSection hideCommonFields={true} />
+                <CommonSettingsSection
+                    hideCommonFields={true}
+                    navigationPath={props.navigationPath}
+                    changeNavigationPath={props.changeNavigationPath}
+                />
             </div>
             <div className={b('section', {'top-divider': true})}>
                 <InputTypeSelector />

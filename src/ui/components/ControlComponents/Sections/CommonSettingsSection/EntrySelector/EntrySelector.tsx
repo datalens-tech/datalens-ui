@@ -2,12 +2,9 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared/types';
 import NavigationInput from 'ui/units/dash/components/NavigationInput/NavigationInput';
 import type {EntryTypeNode} from 'ui/units/dash/modules/constants';
-import {changeNavigationPath} from 'ui/units/dash/store/actions/dashTyped';
-import {selectNavigationPath} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 import {FieldWrapper} from '../../../../FieldWrapper/FieldWrapper';
 
@@ -33,6 +30,8 @@ type EntrySelectorProps = {
     workbookId?: string | null;
     includeClickableType?: EntryTypeNode;
     getEntryLink?: (entryId: string) => string;
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
@@ -46,14 +45,9 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
         isInvalid,
         getEntryLink,
         includeClickableType,
+        navigationPath,
+        changeNavigationPath,
     } = props;
-
-    const dispatch = useDispatch();
-    const navigationPath = useSelector(selectNavigationPath);
-
-    const handleChangeNavigationPath = (newNavigationPath: string) => {
-        dispatch(changeNavigationPath(newNavigationPath));
-    };
 
     return (
         <FormRow label={label}>
@@ -69,7 +63,7 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
                     getEntryLink={getEntryLink}
                     includeClickableType={includeClickableType}
                     navigationPath={navigationPath}
-                    changeNavigationPath={handleChangeNavigationPath}
+                    changeNavigationPath={changeNavigationPath}
                 />
             </FieldWrapper>
         </FormRow>

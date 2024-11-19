@@ -39,6 +39,8 @@ type OwnProps = {
     dialogIsVisible: boolean;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
 };
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -83,6 +85,7 @@ class DialogExternalControl extends React.Component<Props> {
     private renderBody() {
         const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
         const showParametersSection = this.props.isParametersSectionAvailable;
+        const {navigationPath, changeNavigationPath} = this.props;
 
         return (
             <React.Fragment>
@@ -96,7 +99,10 @@ class DialogExternalControl extends React.Component<Props> {
                 )}
                 <div className={b('section')}>
                     <SectionWrapper title={controlI18n('label_common-settings')}>
-                        <CommonSettingsSection />
+                        <CommonSettingsSection
+                            navigationPath={navigationPath}
+                            changeNavigationPath={changeNavigationPath}
+                        />
                     </SectionWrapper>
                 </div>
                 {showParametersSection && (

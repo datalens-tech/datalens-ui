@@ -14,7 +14,10 @@ import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 import {prepareConnectionData} from './helpers';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
-export const ConnectionSelector = () => {
+export const ConnectionSelector = (props: {
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}) => {
     const dispatch = useDispatch();
     const {connectionId} = useSelector(selectSelectorDialog);
     const {workbookId} = useSelector(selectOpenedItemMeta);
@@ -89,6 +92,8 @@ export const ConnectionSelector = () => {
             isInvalid={isEntryInvalid}
             errorText={unsupportedConnectionError}
             workbookId={workbookId}
+            navigationPath={props.navigationPath}
+            changeNavigationPath={props.changeNavigationPath}
         />
     );
 };

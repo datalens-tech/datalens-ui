@@ -25,7 +25,10 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 
-function DatasetSelector() {
+function DatasetSelector(props: {
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}) {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
@@ -137,6 +140,8 @@ function DatasetSelector() {
                 isInvalid={isInvalid}
                 workbookId={workbookId}
                 getEntryLink={getDatasetLink}
+                navigationPath={props.navigationPath}
+                changeNavigationPath={props.changeNavigationPath}
             />
             <FormRow label={i18n('field_field')}>
                 <FieldWrapper error={validation.datasetFieldId}>

@@ -25,12 +25,16 @@ export type DialogGroupControlProps = {
     dialogIsVisible: boolean;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
 };
 
 export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     dialogIsVisible,
     closeDialog,
     setItemData,
+    navigationPath,
+    changeNavigationPath,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -64,7 +68,13 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             sidebar={<GroupControlSidebar handleCopyItem={handleCopyItem} />}
             bodyHeader={i18n('label_selector-settings')}
             // key for rerendering form on tab change
-            body={<GroupControlBody key={draftId || id} />}
+            body={
+                <GroupControlBody
+                    key={draftId || id}
+                    navigationPath={navigationPath}
+                    changeNavigationPath={changeNavigationPath}
+                />
+            }
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
             contentClassMixin={b('content')}
             bodyClassMixin={b('body')}

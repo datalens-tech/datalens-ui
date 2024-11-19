@@ -69,7 +69,8 @@ type DialogEditGroupControlProps = {
 
 type DialogEditExternalControlProps = {
     type: typeof ITEM_TYPE.CONTROL;
-    openedItemData: React.ComponentProps<typeof DialogExternalControl>['openedItemData'];
+    // TODO to many | in source
+    // openedItemData: React.ComponentProps<typeof DialogExternalControl>['openedItemData'];
     setItemData: React.ComponentProps<typeof DialogExternalControl>['setItemData'];
     widgetType: any;
     widgetsCurrentTab: any;
@@ -102,6 +103,7 @@ export type DialogEditItemProps = {
     openedItemNamespace: string;
     changeNavigationPath: (newNavigationPath: string) => void;
     features?: DialogEditItemFeaturesProp;
+    openedItemData: DashTabItem['data'];
 } & (
     | DialogEditTitleProps
     | DialogEditTextProps
@@ -144,7 +146,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
             initControlDialog({
                 type,
                 id: openedItemId,
-                data: openedItemData as DashTabItem['data'],
+                data: openedItemData,
                 defaults: openedItemDefaults,
                 openedItemMeta: {
                     scope,
@@ -213,6 +215,8 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
+                    navigationPath={navigationPath}
+                    changeNavigationPath={changeNavigationPath}
                 />
             );
         case ITEM_TYPE.GROUP_CONTROL:
@@ -222,6 +226,8 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
+                    navigationPath={navigationPath}
+                    changeNavigationPath={changeNavigationPath}
                 />
             );
 
