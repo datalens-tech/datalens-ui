@@ -13,11 +13,9 @@ import {
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {setLastUsedDatasetId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
-import {setLastUsedDatasetId} from 'units/dash/store/actions/dashTyped';
-import {selectDashWorkbookId} from 'units/dash/store/selectors/dashTypedSelectors';
 
 import {ELEMENT_TYPE} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import {DatasetField} from '../../Switchers/DatasetField/DatasetField';
@@ -31,7 +29,7 @@ function DatasetSelector() {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
-    const workbookId = useSelector(selectDashWorkbookId);
+    const {workbookId} = useSelector(selectOpenedItemMeta);
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {

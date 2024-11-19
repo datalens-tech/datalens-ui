@@ -53,7 +53,6 @@ const initialState = {
     error: null,
 
     isFullscreenMode: new URLSearchParams(window.location.search).get('mode') === EMBEDDED_MODE.TV,
-    lastUsedDatasetId: null,
 
     skipReload: false,
 

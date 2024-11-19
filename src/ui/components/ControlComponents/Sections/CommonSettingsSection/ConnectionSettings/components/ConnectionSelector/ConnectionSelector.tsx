@@ -3,14 +3,12 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {setLastUsedConnectionId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import logger from '../../../../../../../libs/logger';
 import {getSdk} from '../../../../../../../libs/schematic-sdk';
 import {ELEMENT_TYPE} from '../../../../../../../units/dash/containers/Dialogs/Control/constants';
-import {setLastUsedConnectionId} from '../../../../../../../units/dash/store/actions/dashTyped';
-import {selectDashWorkbookId} from '../../../../../../../units/dash/store/selectors/dashTypedSelectors';
 import {EntrySelector} from '../../../EntrySelector/EntrySelector';
 
 import {prepareConnectionData} from './helpers';
@@ -19,7 +17,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 export const ConnectionSelector = () => {
     const dispatch = useDispatch();
     const {connectionId} = useSelector(selectSelectorDialog);
-    const workbookId = useSelector(selectDashWorkbookId);
+    const {workbookId} = useSelector(selectOpenedItemMeta);
 
     const [isInvalid, setIsInvalid] = React.useState(false);
     const [unsupportedConnectionError, setUnsupportedConnectionError] = React.useState<

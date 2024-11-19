@@ -18,12 +18,18 @@ import {
     SET_ACTIVE_SELECTOR_INDEX,
     SET_SELECTOR_DIALOG_ITEM,
     UPDATE_SELECTORS_GROUP,
-    type InitDialogAction,
-    type ResetDialogAction,
-    type SetSelectorDialogItemAction,
-    type SetActiveSelectorIndexAction,
-    type UpdateSelectorsGroupAction,
-    type AddSelectorToGroupAction,
+    SET_LAST_USED_DATASET_ID,
+    SET_LAST_USED_CONNECTION_ID,
+} from '../actions/controlDialog';
+import type {
+    SetLastUsedDatasetIdAction,
+    SetLastUsedConnectionIdAction,
+    InitDialogAction,
+    ResetDialogAction,
+    SetSelectorDialogItemAction,
+    SetActiveSelectorIndexAction,
+    UpdateSelectorsGroupAction,
+    AddSelectorToGroupAction,
 } from '../actions/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
@@ -178,7 +184,9 @@ export function controlDialog(
         | SetSelectorDialogItemAction
         | SetActiveSelectorIndexAction
         | UpdateSelectorsGroupAction
-        | AddSelectorToGroupAction,
+        | AddSelectorToGroupAction
+        | SetLastUsedDatasetIdAction
+        | SetLastUsedConnectionIdAction,
 ): ControlDialogState {
     const {type} = action;
     switch (type) {
@@ -379,6 +387,20 @@ export function controlDialog(
         case RESET_DIALOG: {
             return getInitialState();
         }
+
+        case SET_LAST_USED_DATASET_ID:
+            return {
+                ...state,
+                lastUsedDatasetId: action.payload,
+            };
+
+        case SET_LAST_USED_CONNECTION_ID:
+            return {
+                ...state,
+                lastUsedConnectionId: action.payload,
+            };
+
+        default:
+            return state;
     }
-    return state;
 }
