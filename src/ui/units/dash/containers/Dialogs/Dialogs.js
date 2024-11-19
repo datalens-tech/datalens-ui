@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {useDispatch, useSelector} from 'react-redux';
 import {EntryScope} from 'shared';
 import {useEffectOnce} from 'ui';
@@ -13,6 +14,7 @@ import {
     selectCurrentTabId,
     selectDashWorkbookId,
     selectEntryId,
+    selectNavigationPath,
     selectOpenedItem,
     selectOpenedItemData,
     selectWidgetsCurrentTab,
@@ -32,12 +34,12 @@ export function Dialogs() {
     const openedDialog = useSelector((state) => state.dash.openedDialog);
     const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
     const openedItemId = useSelector((state) => state.dash.openedItemId);
-    const openedItemData = useSelector((state) => selectOpenedItemData(state));
-    const openedItem = useSelector((state) => selectOpenedItem(state));
-    const currentTabId = useSelector((state) => selectCurrentTabId(state));
-    const workbookId = useSelector((state) => selectDashWorkbookId(state));
-    const widgetsCurrentTab = useSelector((state) => selectWidgetsCurrentTab(state));
-    const navigationPath = useSelector((state) => state.dash.navigationPath);
+    const openedItemData = useSelector(selectOpenedItemData);
+    const openedItem = useSelector(selectOpenedItem);
+    const currentTabId = useSelector(selectCurrentTabId);
+    const workbookId = useSelector(selectDashWorkbookId);
+    const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
+    const navigationPath = useSelector(selectNavigationPath);
 
     useEffectOnce(() => {
         return () => {
@@ -70,7 +72,7 @@ export function Dialogs() {
                 entryId={entryId}
                 type={openedDialog}
                 openedItemId={openedItemId}
-                openedItemNamespace={openedItem?.namespace ?? 'default'}
+                openedItemNamespace={openedItem?.namespace ?? DEFAULT_NAMESPACE}
                 openedItemDefaults={openedItem?.defaults ?? null}
                 openedItemData={openedItemData}
                 widgetType={widgetType}
