@@ -1,7 +1,8 @@
 import type {
+    DashTabItem,
     DashTabItemControlData,
     DashTabItemGroupControlData,
-    DashTabItemImage,
+    EntryScope,
     StringParams,
 } from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, TitlePlacementOption} from 'shared';
@@ -24,18 +25,27 @@ import {
     type UpdateSelectorsGroupAction,
     type AddSelectorToGroupAction,
 } from '../actions/controlDialog';
-import {getInitialDefaultValue} from 'ui/units/dash/store/utils';
-import {getActualUniqueFieldNameValidation} from '../utils/controlDialog';
+import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
 
 const i18n = I18n.keyset('dash.store.view');
 
+export type ControlDialogStateItemMeta = {
+    scope: EntryScope;
+    currentTabId: string | null;
+    entryId: string | null;
+    workbookId: string | null;
+    namespace: string | null;
+};
 export interface ControlDialogState {
     activeSelectorIndex: number;
     selectorsGroup: SelectorsGroupDialogState;
     selectorDialog: SelectorDialogState;
     openedDialog: DashTabItemType | null;
-    openedItemData: DashTabItemImage['data'] | null;
+    openedItemId: string | null;
+    openedItemData: DashTabItem['data'] | null;
+    openedItemMeta: ControlDialogStateItemMeta | null;
+
     lastUsedDatasetId?: string;
     lastUsedConnectionId?: string;
 }
@@ -154,7 +164,9 @@ const getInitialState = (): ControlDialogState => ({
     selectorsGroup: getGroupSelectorDialogInitialState(),
     selectorDialog: getSelectorDialogInitialState(),
     openedDialog: null,
+    openedItemId: null,
     openedItemData: null,
+    openedItemMeta: null,
 });
 
 // eslint-disable-next-line complexity
@@ -172,14 +184,14 @@ export function controlDialog(
     switch (type) {
         case INIT_DIALOG: {
             const payload = action.payload;
-            const {id: openedItemId, data, defaults} = payload;
-            const {type: openedDialog} = payload;
+            const {id: openedItemId, type: openedDialog, data, defaults, openedItemMeta} = payload;
 
             const newState = {
                 ...state,
                 openedItemData: {...data},
                 openedDialog,
                 openedItemId,
+                openedItemMeta,
                 activeSelectorIndex: 0,
             };
 

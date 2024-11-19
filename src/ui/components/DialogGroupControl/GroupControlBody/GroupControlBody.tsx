@@ -25,7 +25,7 @@ import '../DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
-export const GroupControlBody = () => {
+export const GroupControlBody: React.FC<{}> = () => {
     const elementType = useSelector(selectSelectorControlType);
 
     const isTypeNotCheckbox = elementType !== ELEMENT_TYPE.CHECKBOX;

@@ -7,6 +7,7 @@ import type {DatalensGlobalState} from 'index';
 import {Utils} from 'index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import type {DashTabItemControl} from 'shared';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
 import {AppearanceSection} from 'ui/components/ControlComponents/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
@@ -34,6 +35,8 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
 type OwnProps = {
+    openedItemData: DashTabItemControl['data'];
+    dialogIsVisible: boolean;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
 };
@@ -44,7 +47,7 @@ const b = block('dl-dialog-add-control');
 
 class DialogExternalControl extends React.Component<Props> {
     render() {
-        const {isEdit, validation} = this.props;
+        const {isEdit, validation, dialogIsVisible} = this.props;
         const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
         //TODO: raname 'label_control' after enabling feature flag
         const caption = dashI18n('button_edit-panel-editor-selector');
@@ -52,7 +55,7 @@ class DialogExternalControl extends React.Component<Props> {
         return (
             <Dialog
                 onClose={this.handleClose}
-                open={true}
+                open={dialogIsVisible}
                 className={b()}
                 size={'m'}
                 qa={ControlQA.dialogControl}

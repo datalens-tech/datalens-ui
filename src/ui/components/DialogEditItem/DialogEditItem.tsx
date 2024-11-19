@@ -1,7 +1,18 @@
 import React from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
-import type {EntryScope, StringParams, WidgetType} from 'shared';
+import type {
+    DashTabItem,
+    DashTabItemControl,
+    DashTabItemGroupControl,
+    DashTabItemImage,
+    DashTabItemText,
+    DashTabItemTitle,
+    DashTabItemWidget,
+    EntryScope,
+    StringParams,
+    WidgetType,
+} from 'shared';
 import {DashTabItemType} from 'shared';
 import {ITEM_TYPE} from 'ui/constants/dialogs';
 import {useEffectOnce} from 'ui/hooks';
@@ -58,10 +69,8 @@ type DialogEditGroupControlProps = {
 
 type DialogEditExternalControlProps = {
     type: typeof ITEM_TYPE.CONTROL;
-    // openedItemData: React.ComponentProps<typeof DialogExternalControl>['openedItemData'];
-    // setItemData: React.ComponentProps<typeof DialogExternalControl>['setItemData'];
-    openedItemData: any;
-    setItemData: any;
+    openedItemData: React.ComponentProps<typeof DialogExternalControl>['openedItemData'];
+    setItemData: React.ComponentProps<typeof DialogExternalControl>['setItemData'];
     widgetType: any;
     widgetsCurrentTab: any;
     openedItemDefaults: StringParams;
@@ -76,6 +85,12 @@ type DialogEditImageProps = {
     openedItemDefaults: any;
 };
 
+export type DialogEditItemFeaturesProp = {
+    [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
+    [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
+    [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
+};
+
 export type DialogEditItemProps = {
     entryId: string | null;
     scope: EntryScope;
@@ -86,11 +101,7 @@ export type DialogEditItemProps = {
     navigationPath: string | null;
     openedItemNamespace: string;
     changeNavigationPath: (newNavigationPath: string) => void;
-    features?: {
-        [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
-        [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
-        [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
-    };
+    features?: DialogEditItemFeaturesProp;
 } & (
     | DialogEditTitleProps
     | DialogEditTextProps
@@ -104,9 +115,6 @@ export const isDialogEditItemType = (type: string): type is DashTabItemType =>
     Object.values(ITEM_TYPE).includes(type as DashTabItemType);
 
 export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
-    const dispatch = useDispatch();
-    const openedDialog = useSelector(selectOpenedDialogType);
-
     const {
         features,
         scope,
@@ -126,6 +134,9 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         setItemData,
     } = props;
 
+    const dispatch = useDispatch();
+    const openedDialog = useSelector(selectOpenedDialogType);
+
     const [isOpenedDialog, setOpenedDialog] = React.useState(false);
 
     useEffectOnce(() => {
@@ -133,25 +144,33 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
             initControlDialog({
                 type,
                 id: openedItemId,
-                data: openedItemData,
-                namespace: openedItemNamespace,
+                data: openedItemData as DashTabItem['data'],
                 defaults: openedItemDefaults,
+                openedItemMeta: {
+                    scope,
+                    entryId,
+                    namespace: openedItemNamespace,
+                    currentTabId,
+                    workbookId,
+                },
             }),
         );
-        setOpenedDialog(true);
 
         return () => {
             dispatch(resetControlDialog());
-            setOpenedDialog(false);
         };
     });
+
+    React.useEffect(() => {
+        setOpenedDialog(Boolean(openedDialog));
+    }, [dispatch, openedDialog]);
 
     switch (openedDialog) {
         case ITEM_TYPE.TITLE:
             return (
                 <DialogTitleWidget
                     openedItemId={openedItemId}
-                    openedItemData={openedItemData}
+                    openedItemData={openedItemData as DashTabItemTitle['data']}
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
@@ -162,7 +181,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
             return (
                 <DialogTextWidgetWrapper
                     openedItemId={openedItemId}
-                    openedItemData={openedItemData}
+                    openedItemData={openedItemData as DashTabItemText['data']}
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
@@ -174,7 +193,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
             return (
                 <DialogChartWidget
                     openedItemId={openedItemId}
-                    openedItemData={openedItemData}
+                    openedItemData={openedItemData as DashTabItemWidget['data']}
                     widgetType={widgetType}
                     currentTabId={currentTabId}
                     dialogIsVisible={isOpenedDialog}
@@ -190,32 +209,19 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case ITEM_TYPE.CONTROL:
             return (
                 <DialogExternalControl
-                    // openedItemId={openedItemId}
-                    // openedItemData={openedItemData}
-                    // currentTabId={currentTabId}
-                    // dialogIsVisible={dialogChartIsVisible}
-                    // workbookId={workbookId}
+                    openedItemData={openedItemData as DashTabItemControl['data']}
+                    dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
-                    // navigationPath={navigationPath}
-                    // changeNavigationPath={changeNavigationPathHandle}
                 />
             );
         case ITEM_TYPE.GROUP_CONTROL:
             return (
                 <DialogGroupControl
-                    scope={scope}
-                    entryId={entryId}
-                    namespace={openedItemNamespace}
-                    openedItemId={openedItemId}
-                    openedItemData={openedItemData}
-                    currentTabId={currentTabId}
+                    openedItemData={openedItemData as DashTabItemGroupControl['data']}
                     dialogIsVisible={isOpenedDialog}
-                    workbookId={workbookId}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
-                    navigationPath={navigationPath}
-                    changeNavigationPath={changeNavigationPath}
                 />
             );
 
@@ -224,12 +230,14 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                 <DialogImageWidget
                     scope={scope}
                     openedItemId={openedItemId}
-                    openedItemData={openedItemData}
+                    openedItemData={openedItemData as DashTabItemImage['data']}
                     dialogIsVisible={isOpenedDialog}
                     onClose={closeDialog}
                     onApply={setItemData}
                 />
             );
+        default: {
+            return null;
+        }
     }
-    return null;
 };

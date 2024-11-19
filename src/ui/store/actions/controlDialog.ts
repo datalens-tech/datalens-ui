@@ -3,8 +3,6 @@ import type {
     DashTabItem,
     DashTabItemControlData,
     DashTabItemGroupControl,
-    DashTabItemImage,
-    EntryScope,
     StringParams,
 } from 'shared';
 import type {SelectorsGroupDialogState, SetSelectorDialogItemArgs} from '../typings/controlDialog';
@@ -21,6 +19,7 @@ import {
 } from 'ui/units/dash/store/actions/helpers';
 import {showToast} from './toaster';
 import {I18n} from 'i18n';
+import type {ControlDialogStateItemMeta} from '../reducers/controlDialog';
 import {getGroupSelectorDialogInitialState} from '../reducers/controlDialog';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
@@ -34,6 +33,9 @@ import type {DatalensGlobalState} from 'ui/index';
 import {
     selectActiveSelectorIndex,
     selectIsControlSourceTypeHasChanged,
+    selectOpenedItemData,
+    selectOpenedItemId,
+    selectOpenedItemMeta,
     selectSelectorDialog,
     selectSelectorsGroup,
 } from '../selectors/controlDialog';
@@ -46,10 +48,10 @@ export type InitDialogAction = {
     type: typeof INIT_DIALOG;
     payload: {
         id: string | null;
-        data: DashTabItemImage['data'];
-        namespace: string | null;
+        data: DashTabItem['data'];
         type: DashTabItemType;
         defaults?: StringParams | null;
+        openedItemMeta: ControlDialogStateItemMeta;
     };
 };
 
@@ -141,19 +143,17 @@ export const setSelectorDialogItem = (
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
-    selectorsGroup,
-    activeSelectorIndex,
-    openedItemId,
-    openedItemData,
 }: {
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
-    selectorsGroup: SelectorsGroupDialogState;
-    activeSelectorIndex: number;
-    openedItemId: string | null;
-    openedItemData: DashTabItem['data'];
 }) => {
-    return (dispatch: AppDispatch) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorsGroup = selectSelectorsGroup(state);
+        const activeSelectorIndex = selectActiveSelectorIndex(state);
+        const openedItemData = selectOpenedItemData(state);
+        const openedItemId = selectOpenedItemId(state);
+
         let firstInvalidIndex: number | null = null;
         const groupFieldNames: Record<string, string[]> = {};
         selectorsGroup.group.forEach((groupItem) => {
@@ -254,27 +254,23 @@ export const applyGroupControlDialog = ({
     };
 };
 
-export const copyControlToStorage = (
-    {
-        workbookId,
-        scope,
-        entryId,
-        namespace,
-        tabId,
-    }: {
-        workbookId?: string | null;
-        scope: EntryScope;
-        entryId: string | null;
-        namespace: string;
-        tabId: string | null;
-    },
-    controlIndex: number,
-) => {
+export const copyControlToStorage = (controlIndex: number) => {
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         const selectorsGroup = selectSelectorsGroup(state);
         const activeSelectorIndex = selectActiveSelectorIndex(state);
+        const {
+            workbookId,
+            scope,
+            entryId,
+            namespace,
+            currentTabId: tabId,
+        } = selectOpenedItemMeta(state);
         const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+
+        if (!scope) {
+            return;
+        }
 
         if (!isEmpty(validation)) {
             if (activeSelectorIndex !== controlIndex) {

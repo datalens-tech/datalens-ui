@@ -24,8 +24,20 @@ export const selectControlDialogState = (state: DatalensGlobalState) => state.co
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
     selectControlDialogState(state).selectorsGroup;
 
+export const selectOpenedItemMeta = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).openedItemMeta || {
+        scope: null,
+        workbookId: null,
+        entryId: null,
+        currentTabId: null,
+        namespace: null,
+    };
+
 export const selectOpenedItemData = (state: DatalensGlobalState) =>
     selectControlDialogState(state).openedItemData || {};
+
+export const selectOpenedItemId = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).openedItemId;
 
 export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
     selectControlDialogState(state).activeSelectorIndex || 0;
