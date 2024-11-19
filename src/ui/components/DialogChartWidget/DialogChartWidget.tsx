@@ -396,6 +396,7 @@ class DialogChartWidget extends React.PureComponent<
                 tabs: {
                     [tabIndex]: {
                         background: {
+                            enabled: {$set: true},
                             color: {$set: color},
                         },
                     },
@@ -725,12 +726,10 @@ class DialogChartWidget extends React.PureComponent<
                         >
                             {i18n('dash.widget-dialog.edit', 'field_background-enable')}
                         </Checkbox>
-                        {Boolean(background?.enabled) && (
-                            <PaletteBackground
-                                color={background?.color}
-                                onSelect={this.handleBackgroundColorSelected}
-                            />
-                        )}
+                        <PaletteBackground
+                            color={background?.color}
+                            onSelect={this.handleBackgroundColorSelected}
+                        />
                     </Line>
                 )}
                 {enableFilteringSetting && this.renderFilteringCharts()}

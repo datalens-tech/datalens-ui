@@ -161,12 +161,10 @@ class DialogTitleWidget extends React.PureComponent<
                         >
                             {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                         </Checkbox>
-                        {Boolean(hasBackground) && (
-                            <PaletteBackground
-                                color={backgroundColor}
-                                onSelect={this.handleHasBackgroundSelected}
-                            />
-                        )}
+                        <PaletteBackground
+                            color={backgroundColor}
+                            onSelect={this.handleHasBackgroundSelected}
+                        />
                     </div>
                 </Dialog.Body>
                 <Dialog.Footer
@@ -227,7 +225,7 @@ class DialogTitleWidget extends React.PureComponent<
     };
 
     handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color});
+        this.setState({backgroundColor: color, hasBackground: true});
     };
 }
 
