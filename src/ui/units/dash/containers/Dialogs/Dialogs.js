@@ -12,6 +12,7 @@ import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
+    selectEntryId,
     selectOpenedItem,
     selectOpenedItemData,
     selectWidgetsCurrentTab,
@@ -27,6 +28,7 @@ import Tabs from './Tabs/Tabs';
 export function Dialogs() {
     const dispatch = useDispatch();
 
+    const entryId = useSelector(selectEntryId);
     const openedDialog = useSelector((state) => state.dash.openedDialog);
     const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
     const openedItemId = useSelector((state) => state.dash.openedItemId);
@@ -65,6 +67,7 @@ export function Dialogs() {
         return (
             <DialogEditItem
                 scope={EntryScope.Dash}
+                entryId={entryId}
                 type={openedDialog}
                 openedItemId={openedItemId}
                 openedItemNamespace={openedItem?.namespace ?? 'default'}

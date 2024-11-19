@@ -2,7 +2,7 @@ import type {Operation} from 'components/DialogFilter/constants';
 import {BOOLEAN_OPERATIONS} from 'components/DialogFilter/constants';
 import {getAvailableOperations} from 'components/DialogFilter/utils';
 import {getFilterOperations} from 'libs/datasetHelper';
-import type {Operations} from 'shared';
+import type {DashTabItemControlData, Operations} from 'shared';
 import {DashTabItemControlSourceType, DATASET_FIELD_TYPES} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import {
@@ -14,14 +14,18 @@ import {
     MULTISELECT_OPERATIONS,
     SELECTOR_OPERATIONS,
 } from '../constants/controlDialog';
+import {createSelector} from 'reselect';
 
 export const selectOpenedDialogType = (state: DatalensGlobalState) =>
     state.controlDialog.openedDialog;
 
-export const selectControlDialogState = (state: DatalensGlobalState) => state.dash;
+export const selectControlDialogState = (state: DatalensGlobalState) => state.controlDialog;
 
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
     selectControlDialogState(state).selectorsGroup;
+
+export const selectOpenedItemData = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).openedItemData || {};
 
 export const selectActiveSelectorIndex = (state: DatalensGlobalState) =>
     selectControlDialogState(state).activeSelectorIndex || 0;
@@ -50,6 +54,18 @@ export const getDatasetField = (state: DatalensGlobalState) => {
         (item) => item.guid === datasetFieldId,
     );
 };
+
+export const selectIsControlSourceTypeHasChanged = createSelector(
+    [selectOpenedItemData, selectSelectorSourceType],
+    (openedItemData, sourceType) => {
+        // New item
+        if (!openedItemData) {
+            return false;
+        }
+
+        return (openedItemData as DashTabItemControlData).sourceType !== sourceType;
+    },
+);
 
 export const selectIsControlConfigurationDisabled = (state: DatalensGlobalState) => {
     const selectorDialog = selectControlDialogState(state).selectorDialog;

@@ -77,6 +77,7 @@ type DialogEditImageProps = {
 };
 
 export type DialogEditItemProps = {
+    entryId: string | null;
     scope: EntryScope;
     openedItemId: string | null;
     currentTabId: string | null;
@@ -109,6 +110,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
     const {
         features,
         scope,
+        entryId,
         type,
         openedItemId,
         openedItemNamespace,
@@ -188,20 +190,23 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
         case ITEM_TYPE.CONTROL:
             return (
                 <DialogExternalControl
-                // openedItemId={openedItemId}
-                // openedItemData={openedItemData}
-                // currentTabId={currentTabId}
-                // dialogIsVisible={dialogChartIsVisible}
-                // workbookId={workbookId}
-                // closeDialog={closeDialog}
-                // setItemData={setItemData}
-                // navigationPath={navigationPath}
-                // changeNavigationPath={changeNavigationPathHandle}
+                    // openedItemId={openedItemId}
+                    // openedItemData={openedItemData}
+                    // currentTabId={currentTabId}
+                    // dialogIsVisible={dialogChartIsVisible}
+                    // workbookId={workbookId}
+                    closeDialog={closeDialog}
+                    setItemData={setItemData}
+                    // navigationPath={navigationPath}
+                    // changeNavigationPath={changeNavigationPathHandle}
                 />
             );
         case ITEM_TYPE.GROUP_CONTROL:
             return (
                 <DialogGroupControl
+                    scope={scope}
+                    entryId={entryId}
+                    namespace={openedItemNamespace}
                     openedItemId={openedItemId}
                     openedItemData={openedItemData}
                     currentTabId={currentTabId}

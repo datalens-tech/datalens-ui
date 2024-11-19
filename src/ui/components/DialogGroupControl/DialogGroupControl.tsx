@@ -3,11 +3,15 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashTabItemWidget} from 'shared';
+import type {DashTabItemWidget, EntryScope} from 'shared';
 import {ControlQA} from 'shared/constants/qa';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {applyGroupControlDialog, copyControlToStorage} from 'ui/store/actions/controlDialog';
+import {
+    selectActiveSelectorIndex,
+    selectSelectorDialog,
+    selectSelectorsGroup,
+} from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
-import {applyGroupControlDialog} from 'units/dash/store/actions/controls/actions';
 
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
 
@@ -21,28 +25,78 @@ const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export type DialogGroupControlProps = {
+    scope: EntryScope;
+    namespace: string;
     openedItemId: string | null;
     openedItemData: DashTabItemWidget['data'];
     dialogIsVisible: boolean;
     currentTabId: string | null;
     workbookId: string | null;
+    entryId: string | null;
     navigationPath: string | null;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
     changeNavigationPath: (newNavigationPath: string) => void;
 };
 
-export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({closeDialog}) => {
+export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
+    closeDialog,
+    setItemData,
+    openedItemId,
+    openedItemData,
+    entryId,
+    workbookId,
+    scope,
+    currentTabId,
+    namespace,
+}) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
-    const dispatch = useDispatch();
+    const selectorsGroup = useSelector(selectSelectorsGroup);
+    const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
-    const handleApply = () => {
-        dispatch(applyGroupControlDialog());
-    };
+    const dispatch = useDispatch();
+    const handleApply = React.useCallback(() => {
+        dispatch(
+            applyGroupControlDialog({
+                selectorsGroup,
+                openedItemId,
+                activeSelectorIndex,
+                openedItemData,
+                setItemData,
+                closeDialog,
+            }),
+        );
+    }, [
+        activeSelectorIndex,
+        closeDialog,
+        dispatch,
+        openedItemData,
+        openedItemId,
+        selectorsGroup,
+        setItemData,
+    ]);
 
     const handleClose = React.useCallback(() => {
         closeDialog();
     }, [closeDialog]);
+
+    const handleCopyItem = React.useCallback(
+        (itemIndex: number) => {
+            dispatch(
+                copyControlToStorage(
+                    {
+                        entryId,
+                        workbookId,
+                        scope,
+                        tabId: currentTabId,
+                        namespace,
+                    },
+                    itemIndex,
+                ),
+            );
+        },
+        [currentTabId, dispatch, entryId, namespace, scope, workbookId],
+    );
 
     return (
         <TwoColumnDialog
@@ -50,7 +104,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({closeDial
             open={true}
             onClose={handleClose}
             sidebarHeader={i18n('label_selectors-list')}
-            sidebar={<GroupControlSidebar />}
+            sidebar={<GroupControlSidebar handleCopyItem={handleCopyItem} />}
             bodyHeader={i18n('label_selector-settings')}
             // key for rerendering form on tab change
             body={<GroupControlBody key={draftId || id} />}

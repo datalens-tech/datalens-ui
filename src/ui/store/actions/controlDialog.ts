@@ -1,10 +1,44 @@
+import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
+    DashTabItem,
     DashTabItemControlData,
-    DashTabItemGroupControlData,
-    DashTabItemType,
+    DashTabItemGroupControl,
+    DashTabItemImage,
+    EntryScope,
     StringParams,
 } from 'shared';
 import type {SelectorsGroupDialogState, SetSelectorDialogItemArgs} from '../typings/controlDialog';
+import type {AppDispatch} from '..';
+import {
+    getControlDefaultsForField,
+    getControlValidation,
+    getItemDataSource,
+} from '../utils/controlDialog';
+import isEmpty from 'lodash/isEmpty';
+import {
+    getBeforeCloseDialogItemAction,
+    getExtendedItemDataAction,
+} from 'ui/units/dash/store/actions/helpers';
+import {showToast} from './toaster';
+import {I18n} from 'i18n';
+import {getGroupSelectorDialogInitialState} from '../reducers/controlDialog';
+import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
+import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
+import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
+import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
+import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
+import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
+import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
+import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {DatalensGlobalState} from 'ui/index';
+import {
+    selectActiveSelectorIndex,
+    selectIsControlSourceTypeHasChanged,
+    selectSelectorDialog,
+    selectSelectorsGroup,
+} from '../selectors/controlDialog';
+
+const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const INIT_DIALOG = Symbol('controlDialog/INIT_DIALOG');
 
@@ -12,7 +46,7 @@ export type InitDialogAction = {
     type: typeof INIT_DIALOG;
     payload: {
         id: string | null;
-        data: DashTabItemControlData | DashTabItemGroupControlData;
+        data: DashTabItemImage['data'];
         namespace: string | null;
         type: DashTabItemType;
         defaults?: StringParams | null;
@@ -101,5 +135,256 @@ export const setSelectorDialogItem = (
     return {
         type: SET_SELECTOR_DIALOG_ITEM,
         payload,
+    };
+};
+
+export const applyGroupControlDialog = ({
+    setItemData,
+    closeDialog,
+    selectorsGroup,
+    activeSelectorIndex,
+    openedItemId,
+    openedItemData,
+}: {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+    selectorsGroup: SelectorsGroupDialogState;
+    activeSelectorIndex: number;
+    openedItemId: string | null;
+    openedItemData: DashTabItem['data'];
+}) => {
+    return (dispatch: AppDispatch) => {
+        let firstInvalidIndex: number | null = null;
+        const groupFieldNames: Record<string, string[]> = {};
+        selectorsGroup.group.forEach((groupItem) => {
+            if (groupItem.fieldName) {
+                const itemName = groupItem.title;
+                if (groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName].push(itemName);
+                }
+
+                if (!groupFieldNames[groupItem.fieldName] && itemName) {
+                    groupFieldNames[groupItem.fieldName] = [itemName];
+                }
+            }
+        });
+
+        const validatedSelectorsGroup = Object.assign({}, selectorsGroup);
+
+        // check validation for every control
+        for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
+            const validation = getControlValidation(
+                validatedSelectorsGroup.group[i],
+                groupFieldNames,
+            );
+
+            if (!isEmpty(validation) && firstInvalidIndex === null) {
+                firstInvalidIndex = i;
+            }
+
+            validatedSelectorsGroup.group[i].validation = validation;
+        }
+
+        if (firstInvalidIndex !== null) {
+            const activeSelectorValidation =
+                validatedSelectorsGroup.group[activeSelectorIndex].validation;
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+
+            if (!isEmpty(activeSelectorValidation)) {
+                dispatch(
+                    setSelectorDialogItem({
+                        validation: activeSelectorValidation,
+                    }),
+                );
+                return;
+            }
+            dispatch(setActiveSelectorIndex({activeSelectorIndex: firstInvalidIndex}));
+            return;
+        }
+
+        const isSingleControl = selectorsGroup.group.length === 1;
+        const autoHeight =
+            !isSingleControl ||
+            selectorsGroup.buttonApply ||
+            selectorsGroup.buttonReset ||
+            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
+                ? selectorsGroup.autoHeight
+                : false;
+        const updateControlsOnChange =
+            !isSingleControl && selectorsGroup.buttonApply
+                ? selectorsGroup.updateControlsOnChange
+                : false;
+
+        const data = {
+            autoHeight,
+            buttonApply: selectorsGroup.buttonApply,
+            buttonReset: selectorsGroup.buttonReset,
+            updateControlsOnChange,
+            group: selectorsGroup.group.map((selector) => {
+                let hasChangedSourceType = false;
+                if (openedItemId) {
+                    const configSelectorItem = (
+                        openedItemData as DashTabItemGroupControl['data']
+                    ).group?.find(({id}) => id === selector.id);
+
+                    // we check changing of sourceType only if selector was already saved and it's not the old one
+                    hasChangedSourceType = configSelectorItem
+                        ? configSelectorItem.sourceType !== selector.sourceType
+                        : false;
+                }
+
+                return {
+                    id: selector.id,
+                    title: selector.title,
+                    sourceType: selector.sourceType,
+                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
+                    placementMode: isSingleControl ? 'auto' : selector.placementMode,
+                    width: isSingleControl ? '' : selector.width,
+                    defaults: getControlDefaultsForField(selector, hasChangedSourceType),
+                    namespace: selector.namespace,
+                };
+            }),
+        };
+
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(getExtendedItemData({data}));
+
+        setItemData(itemData);
+        closeDialog();
+    };
+};
+
+export const copyControlToStorage = (
+    {
+        workbookId,
+        scope,
+        entryId,
+        namespace,
+        tabId,
+    }: {
+        workbookId?: string | null;
+        scope: EntryScope;
+        entryId: string | null;
+        namespace: string;
+        tabId: string | null;
+    },
+    controlIndex: number,
+) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorsGroup = selectSelectorsGroup(state);
+        const activeSelectorIndex = selectActiveSelectorIndex(state);
+        const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+
+        if (!isEmpty(validation)) {
+            if (activeSelectorIndex !== controlIndex) {
+                dispatch(setActiveSelectorIndex({activeSelectorIndex: controlIndex}));
+            }
+
+            dispatch(
+                setSelectorDialogItem({
+                    validation,
+                }),
+            );
+
+            dispatch(
+                showToast({
+                    type: 'danger',
+                    title: dialogI18n('label_copy-invalid-control'),
+                }),
+            );
+
+            return;
+        }
+
+        // logic is copied from dashkit
+        const selectorToCopy = selectorsGroup.group[controlIndex];
+
+        const copiedItem = {
+            id: selectorToCopy.id,
+            title: selectorToCopy.title,
+            sourceType: selectorToCopy.sourceType,
+            source: getItemDataSource(selectorToCopy) as DashTabItemControlData['source'],
+            defaults: getControlDefaultsForField(selectorToCopy),
+            namespace: namespace || DEFAULT_NAMESPACE,
+            width: '',
+            placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
+        };
+
+        const options: PreparedCopyItemOptions<CopiedConfigContext> = {
+            timestamp: Date.now(),
+            data: {
+                ...getGroupSelectorDialogInitialState(),
+                group: [copiedItem as unknown as ConfigItemGroup],
+            },
+            type: DashTabItemType.GroupControl,
+            defaults: copiedItem.defaults,
+            namespace: copiedItem.namespace,
+            layout: DEFAULT_CONTROL_LAYOUT,
+            targetId: selectorToCopy.id,
+        };
+
+        const preparedOptions = getPreparedCopyItemOptions(options, null, {
+            workbookId: workbookId ?? null,
+            fromScope: scope,
+            targetDashTabId: tabId,
+            targetEntryId: entryId,
+        });
+
+        localStorage.setItem(COPIED_WIDGET_STORAGE_KEY, JSON.stringify(preparedOptions));
+        // https://stackoverflow.com/questions/35865481/storage-event-not-firing
+        window.dispatchEvent(new Event('storage'));
+    };
+};
+
+export const applyExternalControlDialog = ({
+    closeDialog,
+    setItemData,
+}: {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+}) => {
+    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
+        const state = getState();
+        const selectorDialog = selectSelectorDialog(state);
+        const {title, sourceType, autoHeight} = selectorDialog;
+
+        const validation = getControlValidation(selectorDialog);
+
+        if (!isEmpty(validation)) {
+            dispatch(
+                setSelectorDialogItem({
+                    validation,
+                }),
+            );
+            return;
+        }
+
+        const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
+        const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
+
+        const data = {
+            title,
+            sourceType,
+            autoHeight,
+            source: getItemDataSource(selectorDialog),
+        };
+        const getExtendedItemData = getExtendedItemDataAction();
+        const itemData = dispatch(getExtendedItemData({data, defaults}));
+
+        setItemData({
+            data: itemData.data,
+            type: DashTabItemType.Control,
+            defaults: itemData.defaults,
+        });
+        closeDialog();
+    };
+};
+
+export const closeExternalControlDialog = ({closeDialog}: {closeDialog: () => void}) => {
+    return (dispatch: AppDispatch) => {
+        const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
+        dispatch(beforeCloseDialogItem());
+        closeDialog();
     };
 };

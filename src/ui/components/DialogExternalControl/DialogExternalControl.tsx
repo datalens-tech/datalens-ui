@@ -6,7 +6,6 @@ import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {Utils} from 'index';
 import {connect} from 'react-redux';
-import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
 import {AppearanceSection} from 'ui/components/ControlComponents/Sections/AppearanceSection/AppearanceSection';
@@ -15,11 +14,16 @@ import {ParametersSection} from 'ui/components/ControlComponents/Sections/Parame
 import {SelectorPreview} from 'ui/components/ControlComponents/SelectorPreview/SelectorPreview';
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
+import type {AppDispatch} from 'ui/store';
+import {
+    applyExternalControlDialog,
+    closeExternalControlDialog,
+} from 'ui/store/actions/controlDialog';
 import {
     selectIsParametersSectionAvailable,
     selectSelectorDialog,
 } from 'ui/store/selectors/controlDialog';
-import {applyControl2Dialog, closeControl2Dialog} from 'units/dash/store/actions/dashTyped';
+import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 
 import './DialogExternalControl.scss';
 
@@ -29,7 +33,10 @@ const dashI18n = I18n.keyset('dash.main.view');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-type OwnProps = {};
+type OwnProps = {
+    closeDialog: () => void;
+    setItemData: (newItemData: SetItemDataArgs) => void;
+};
 
 type Props = OwnProps & DispatchProps & StateProps;
 
@@ -40,9 +47,7 @@ class DialogExternalControl extends React.Component<Props> {
         const {isEdit, validation} = this.props;
         const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
         //TODO: raname 'label_control' after enabling feature flag
-        const caption = Utils.isEnabledFeature(Feature.GroupControls)
-            ? dashI18n('button_edit-panel-editor-selector')
-            : controlI18n('label_control');
+        const caption = dashI18n('button_edit-panel-editor-selector');
 
         return (
             <Dialog
@@ -116,11 +121,11 @@ class DialogExternalControl extends React.Component<Props> {
     }
 
     private handleClose = () => {
-        this.props.actions.closeControl2Dialog();
+        this.props.actions.closeDialog();
     };
 
     private handleApply = () => {
-        this.props.actions.applyControl2Dialog();
+        this.props.actions.applyChanges();
     };
 }
 
@@ -134,12 +139,19 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (dispatch: AppDispatch, props: OwnProps) => {
     return {
         actions: bindActionCreators(
             {
-                applyControl2Dialog,
-                closeControl2Dialog,
+                closeDialog: () =>
+                    closeExternalControlDialog({
+                        closeDialog: props.closeDialog,
+                    }),
+                applyChanges: () =>
+                    applyExternalControlDialog({
+                        closeDialog: props.closeDialog,
+                        setItemData: props.setItemData,
+                    }),
             },
             dispatch,
         ),
