@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ChartColumn} from '@gravity-ui/icons';
 import type {PaletteOption} from '@gravity-ui/uikit';
-import {ActionTooltip, Icon, Palette, Popover} from '@gravity-ui/uikit';
+import {ActionTooltip, Icon, Palette, Popover, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {DashCommonQa} from 'shared';
@@ -21,25 +21,29 @@ const PALETTE_HINTS = {
     [CustomPaletteColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
 } as const;
 
-const ColorItem = ({
-    color,
-    isSelected,
-    classNameMod,
-    isPreview,
-    qa,
-}: {
-    color: string;
-    classNameMod?: string;
-    isSelected?: boolean;
-    isPreview?: boolean;
-    qa?: string;
-}) => {
+const ColorItem = React.forwardRef(function ColorItem(
+    {
+        color,
+        isSelected,
+        classNameMod,
+        isPreview,
+        qa,
+    }: {
+        color: string;
+        classNameMod?: string;
+        isSelected?: boolean;
+        isPreview?: boolean;
+        qa?: string;
+    },
+    ref: React.ForwardedRef<HTMLSpanElement>,
+) {
     const isTransparent = color === CustomPaletteColors.NONE;
     const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
 
     return (
         <span
+            ref={ref}
             style={{backgroundColor: isLikeChartBg ? '' : `${color}`}}
             className={b('color-item', {
                 transparent: isTransparent,
@@ -57,7 +61,7 @@ const ColorItem = ({
             )}
         </span>
     );
-};
+});
 
 const colors = [
     'var(--g-color-base-info-light)',
@@ -133,15 +137,18 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
     return (
         <Popover
             className={b()}
+            openOnHover={false}
             content={<PaletteList onSelect={handleSelectColor} selectedColor={selectedColor} />}
         >
-            <ColorItem
-                color={selectedColor}
-                isSelected={true}
-                classNameMod={'small'}
-                isPreview={true}
-                qa={DashCommonQa.WidgetSelectBackgroundButton}
-            />
+            <Tooltip content={i18n('dash.palette-background', 'tooltip_click-to-select')}>
+                <ColorItem
+                    color={selectedColor}
+                    isSelected={true}
+                    classNameMod={'small'}
+                    isPreview={true}
+                    qa={DashCommonQa.WidgetSelectBackgroundButton}
+                />
+            </Tooltip>
         </Popover>
     );
 };
