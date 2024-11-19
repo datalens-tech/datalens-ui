@@ -162,12 +162,10 @@ export function DialogImageWidget(props: Props) {
                         >
                             {i18n('dash.widget-dialog.edit', 'field_background-enable')}
                         </Checkbox>
-                        {data.background?.enabled && (
-                            <PaletteBackground
-                                color={data.background?.color}
-                                onSelect={(color) => updateData({background: {color}})}
-                            />
-                        )}
+                        <PaletteBackground
+                            color={data.background?.color}
+                            onSelect={(color) => updateData({background: {color, enabled: true}})}
+                        />
                     </Flex>
                 </FormRow>
             </Dialog.Body>
