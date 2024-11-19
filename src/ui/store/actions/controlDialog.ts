@@ -271,7 +271,7 @@ export const applyGroupControlDialog = ({
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data}));
 
-        setItemData(itemData);
+        setItemData({...itemData, type: DashTabItemType.GroupControl});
         closeDialog();
     };
 };
