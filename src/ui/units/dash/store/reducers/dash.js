@@ -83,7 +83,7 @@ function dash(state = initialState, action) {
             return {
                 ...state,
                 openedItemId: payload.id ?? null,
-                openedDialog: payload.type ?? null,
+                openedDialog: payload.type,
             };
         }
         case actionTypes.OPEN_DIALOG: {
