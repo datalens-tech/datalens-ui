@@ -5,6 +5,7 @@ import {useDispatch} from 'react-redux';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {showToast} from 'ui/store/actions/toaster';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
+import {getRenderMarkdownFn} from 'ui/utils';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -103,12 +104,24 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const onAction = React.useCallback((actionArgs: {data?: any} = {}) => {
+    const onAction = React.useCallback(async (actionArgs: {data?: any} = {}) => {
         const {action, ...args} = actionArgs.data ?? {};
 
         switch (action) {
             case 'toast': {
-                dispatch(showToast({...args}));
+                const renderMarkdown = await getRenderMarkdownFn();
+                dispatch(
+                    showToast({
+                        ...args,
+                        content: (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: renderMarkdown(args.content ?? ''),
+                                }}
+                            />
+                        ),
+                    }),
+                );
                 break;
             }
             case 'setPatams': {

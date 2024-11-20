@@ -1,7 +1,7 @@
 import {DL} from 'constants/common';
 
 import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
-import type {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
+import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
 import Highcharts from 'highcharts';
@@ -603,7 +603,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
-        const loaded = await this.load<ResponseSuccess>({
+        const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
@@ -655,8 +655,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const includeLogs = this.settings.includeLogs || isEditMode;
 
         try {
+            const apiPrefix = DL.API_PREFIX ?? '/api';
             const result = await this.makeRequest({
-                url: `${DL.API_PREFIX}/run-action`,
+                url: `${apiPrefix}/run-action`,
                 data: {
                     id,
                     key,
@@ -680,20 +681,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             const responseData: ResponseSuccess = result.data;
             const headers = result.headers;
 
-            // TODO: return output when receiving onLoad
-            if (includeLogs && 'logs_v2' in responseData) {
-                ChartsDataProvider.printLogs((responseData as ResponseSuccessNodeBase).logs_v2);
-            }
-
-            if (headers[REQUEST_ID_HEADER]) {
-                responseData.requestId = headers[REQUEST_ID_HEADER];
-            }
-
-            if (headers[TRACE_ID_HEADER]) {
-                responseData.traceId = headers[TRACE_ID_HEADER];
-            }
-
-            return responseData;
+            return this.getExtendedResponse({responseData, headers, includeLogs});
         } catch (error) {
             return this.processError({
                 error,
@@ -715,7 +703,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
-        const loaded = await this.load<ResponseSuccessControls>({
+        const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
@@ -847,6 +835,29 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
+    private getExtendedResponse<T extends ResponseSuccess | ResponseSuccessControls>(args: {
+        responseData: T;
+        headers: AxiosResponse<any, any>['headers'];
+        includeLogs: boolean;
+    }) {
+        const {responseData, headers, includeLogs} = args;
+
+        // TODO: return output when receiving onLoad
+        if (includeLogs && 'logs_v2' in responseData) {
+            ChartsDataProvider.printLogs((responseData as ResponseSuccessNodeBase).logs_v2);
+        }
+
+        if (headers[REQUEST_ID_HEADER]) {
+            responseData.requestId = headers[REQUEST_ID_HEADER];
+        }
+
+        if (headers[TRACE_ID_HEADER]) {
+            responseData.traceId = headers[TRACE_ID_HEADER];
+        }
+
+        return responseData;
+    }
+
     private getLoadHeaders(requestId: string, contextHeaders?: DashChartRequestContext) {
         const headers: Record<string, string | null> = {
             ...(contextHeaders ?? {}),
@@ -921,7 +932,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         throw DatalensChartkitCustomError.wrap(error, {debug, extra});
     }
 
-    private async load<T extends ResponseSuccess | ResponseSuccessControls>({
+    private async load({
         data,
         contextHeaders,
         requestId,
@@ -979,23 +990,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest(requestOptions);
-            const responseData: T = result.data;
-            const headers = result.headers;
-
-            // TODO: return output when receiving onLoad
-            if (includeLogs && 'logs_v2' in responseData) {
-                // Wizard configs don't have logs_v2
-                // TODO: it's not possible to separate the configs from the Node configs above in the Wizard condition
-                ChartsDataProvider.printLogs((responseData as ResponseSuccessNodeBase).logs_v2);
-            }
-
-            if (headers[REQUEST_ID_HEADER]) {
-                responseData.requestId = headers[REQUEST_ID_HEADER];
-            }
-
-            if (headers[TRACE_ID_HEADER]) {
-                responseData.traceId = headers[TRACE_ID_HEADER];
-            }
+            const responseData = this.getExtendedResponse({
+                responseData: result.data,
+                headers: result.headers,
+                includeLogs,
+            });
 
             if (this.settings.includeUnresolvedParams) {
                 responseData.unresolvedParams = cloneDeep(params);
