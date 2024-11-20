@@ -77,6 +77,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'navigatorSettings',
     'pivotInlineSort',
     'size',
+    'stacking',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -184,6 +185,7 @@ interface State {
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
+    stacking: string;
     size?: WidgetSizeType;
 }
 
@@ -232,6 +234,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             pivotFallback = 'off',
             qlAutoExecuteChart,
             pivotInlineSort = CHART_SETTINGS.PIVOT_INLINE_SORT.ON,
+            stacking = CHART_SETTINGS.STACKING.ON,
             tooltip,
             size,
         } = extraSettings;
@@ -292,6 +295,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 ? CHART_SETTINGS.D3_FALLBACK.OFF
                 : CHART_SETTINGS.D3_FALLBACK.ON,
             tooltip,
+            stacking,
             size,
         };
     }
@@ -513,6 +517,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     handlePivotInlineSortUpdate = (value: string) => {
         this.setState({
             pivotInlineSort: value,
+        });
+    };
+
+    handleStackingUpdate = (value: string) => {
+        this.setState({
+            stacking: value,
         });
     };
 
@@ -965,6 +975,26 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderStackingSwitch() {
+        const {visualization} = this.props;
+
+        if (visualization.id !== VISUALIZATION_IDS.AREA) {
+            return null;
+        }
+
+        const {stacking} = this.state;
+
+        return (
+            <SettingSwitcher
+                currentValue={stacking}
+                checkedValue={CHART_SETTINGS.STACKING.ON}
+                uncheckedValue={CHART_SETTINGS.STACKING.OFF}
+                onChange={this.handleStackingUpdate}
+                title={i18n('wizard', 'label_stacking')}
+            />
+        );
+    }
+
     renderModalBody() {
         const {navigatorSettings} = this.state;
         const {isPreviewLoading} = this.props;
@@ -992,6 +1022,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderD3Switch()}
                 {this.renderQlAutoExecutionChart()}
                 {this.renderInlineSortSwitch()}
+                {this.renderStackingSwitch()}
             </div>
         );
     }

@@ -8,12 +8,14 @@ import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/q
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
     placeholderIndex,
+    shared,
 }: {
     visualization: ServerVisualization;
     placeholderIndex: number;
+    shared: QlConfig;
 }) => {
     const stacking =
-        visualization.id === 'area' ||
+        (visualization.id === 'area' && shared.extraSettings?.stacking !== 'off') ||
         visualization.id === 'area100p' ||
         visualization.id === 'column' ||
         visualization.id === 'column100p';
@@ -63,10 +65,15 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
 
     const visualization = config.visualization as ServerVisualization;
 
-    const {scale: yScale} = applyPlaceholderSettingsToYAxis({visualization, placeholderIndex: 1});
+    const {scale: yScale} = applyPlaceholderSettingsToYAxis({
+        visualization,
+        placeholderIndex: 1,
+        shared,
+    });
     const {scale: yRightScale} = applyPlaceholderSettingsToYAxis({
         visualization,
         placeholderIndex: 2,
+        shared,
     });
 
     const isLegendEnabled = Boolean(

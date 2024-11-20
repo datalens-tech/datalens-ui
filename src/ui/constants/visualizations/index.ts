@@ -170,6 +170,10 @@ export const CHART_SETTINGS = {
         ON: 'on',
         OFF: 'off',
     },
+    STACKING: {
+        ON: 'on',
+        OFF: 'off',
+    },
 };
 
 export const VISUALIZATION_IDS = {

@@ -12,6 +12,7 @@ import {
     LabelsPositions,
     LegendDisplayMode,
     VISUALIZATIONS_WITH_LABELS_POSITION,
+    WizardVisualizationId,
     isDateField,
 } from '../../../../../../shared';
 import type {IgnoreProps} from '../utils/axis-helpers';
@@ -69,7 +70,7 @@ export const buildHighchartsConfigPrivate = (args: {
         zoomType: 'x',
     };
 
-    if (shared.visualization.id === 'combined-chart') {
+    if (shared.visualization.id === WizardVisualizationId.CombinedChart) {
         chart.type = '';
     }
 
@@ -87,16 +88,16 @@ export const buildHighchartsConfigPrivate = (args: {
 
     visualizationsIds.forEach((visualizationId) => {
         switch (visualizationId) {
-            case 'line': {
+            case WizardVisualizationId.Line: {
                 chart.zoomType = 'xy';
                 legend.symbolWidth = 38;
                 break;
             }
-            case 'column':
-            case 'column100p':
-            case 'bar':
-            case 'bar100p':
-            case 'combined-chart': {
+            case WizardVisualizationId.Column:
+            case WizardVisualizationId.Column100p:
+            case WizardVisualizationId.Bar:
+            case WizardVisualizationId.Bar100p:
+            case WizardVisualizationId.CombinedChart: {
                 chart.zoomType = 'xy';
 
                 legend.labelFormatter = ChartkitHandlers.WizardLabelFormatter;
@@ -111,7 +112,13 @@ export const buildHighchartsConfigPrivate = (args: {
         });
     });
 
-    if (shared.visualization.id === 'scatter') {
+    if (shared.visualization.id === WizardVisualizationId.Area) {
+        plotOptions.area = {
+            stacking: shared.extraSettings?.stacking !== 'off' ? 'normal' : undefined,
+        };
+    }
+
+    if (shared.visualization.id === WizardVisualizationId.Scatter) {
         plotOptions.series = {turboThreshold: 100000};
         plotOptions.scatter = {
             tooltip: {
@@ -158,7 +165,7 @@ export const buildHighchartsConfigPrivate = (args: {
         }
     }
 
-    if (shared.visualization.id === 'treemap') {
+    if (shared.visualization.id === WizardVisualizationId.Treemap) {
         chart.zoomType = undefined;
         plotOptions.treemap = {
             tooltip: {
@@ -212,7 +219,7 @@ export const buildHighchartsConfigPrivate = (args: {
     };
 
     switch (shared.visualization.id) {
-        case 'column': {
+        case WizardVisualizationId.Column: {
             set(navigator, 'yAxis.softMin', 0);
             break;
         }
@@ -261,21 +268,21 @@ const applyCommonAxisSettings = ({
 
     // Apply common settings for axes
     if (
-        visualization.id === 'line' ||
-        visualization.id === 'area' ||
-        visualization.id === 'area100p' ||
-        visualization.id === 'column' ||
-        visualization.id === 'column100p' ||
-        visualization.id === 'bar' ||
-        visualization.id === 'bar100p' ||
-        visualization.id === 'scatter' ||
-        visualization.id === 'combined-chart'
+        visualization.id === WizardVisualizationId.Line ||
+        visualization.id === WizardVisualizationId.Area ||
+        visualization.id === WizardVisualizationId.Area100p ||
+        visualization.id === WizardVisualizationId.Column ||
+        visualization.id === WizardVisualizationId.Column100p ||
+        visualization.id === WizardVisualizationId.Bar ||
+        visualization.id === WizardVisualizationId.Bar100p ||
+        visualization.id === WizardVisualizationId.Scatter ||
+        visualization.id === WizardVisualizationId.CombinedChart
     ) {
         let x: ServerPlaceholder | undefined;
         let y: ServerPlaceholder | undefined;
         let y2: ServerPlaceholder | undefined;
 
-        if (visualization.id === 'combined-chart') {
+        if (visualization.id === WizardVisualizationId.CombinedChart) {
             visualization.layers?.forEach((layer) => {
                 const placeholders = layer.placeholders;
 
@@ -345,43 +352,37 @@ type ExtendPlotOptionsPayload = {
 
 const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayload) => {
     switch (visualizationId) {
-        case 'column':
+        case WizardVisualizationId.Column:
             plotOptions.column = plotOptions.column || {};
             plotOptions.column.stacking = 'normal';
             break;
 
-        case 'bar':
+        case WizardVisualizationId.Bar:
             plotOptions.bar = plotOptions.bar || {};
             plotOptions.bar.stacking = 'normal';
             break;
 
-        case 'column100p':
+        case WizardVisualizationId.Column100p:
             plotOptions.column = plotOptions.column || {};
             plotOptions.column.stacking = 'percent';
             break;
 
-        case 'bar100p':
+        case WizardVisualizationId.Bar100p:
             plotOptions.bar = plotOptions.bar || {};
             plotOptions.bar.stacking = 'percent';
             break;
 
-        case 'area':
-            plotOptions.area = {
-                stacking: 'normal',
-            };
-            break;
-
-        case 'area100p':
+        case WizardVisualizationId.Area100p:
             plotOptions.area = {
                 stacking: 'percent',
             };
             break;
-        case 'pie':
+        case WizardVisualizationId.Pie:
             plotOptions.pie = {
                 allowPointSelect: false,
             };
             break;
-        case 'donut':
+        case WizardVisualizationId.Donut:
             plotOptions.pie = {
                 allowPointSelect: false,
                 innerSize: '50%',
@@ -390,10 +391,10 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
     }
 
     switch (visualizationId) {
-        case 'column':
-        case 'column100p':
-        case 'bar':
-        case 'bar100p': {
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p: {
             plotOptions.column = plotOptions.column || {};
             plotOptions.column.dataGrouping = plotOptions.column.dataGrouping || {};
             // CHARTS-6460

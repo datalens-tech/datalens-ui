@@ -119,6 +119,7 @@ export interface CommonSharedExtraSettings {
     labelsPosition?: LabelsPositions;
     qlAutoExecuteChart?: 'on' | 'off';
     pinnedColumns?: number;
+    stacking?: 'on' | 'off';
     size?: WidgetSizeType;
 }
 
