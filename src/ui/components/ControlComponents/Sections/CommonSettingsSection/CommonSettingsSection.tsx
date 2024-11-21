@@ -14,10 +14,12 @@ export const CommonSettingsSection = ({
     hideCommonFields,
     navigationPath,
     changeNavigationPath,
+    enableAutoheightDefault,
 }: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     hideCommonFields?: boolean;
+    enableAutoheightDefault?: boolean;
 }) => {
     const {sourceType} = useSelector(selectSelectorDialog);
 
@@ -27,6 +29,7 @@ export const CommonSettingsSection = ({
                 <ExternalSelectorSettings
                     changeNavigationPath={changeNavigationPath}
                     navigationPath={navigationPath}
+                    enableAutoheightDefault={enableAutoheightDefault}
                 />
             );
         case DashTabItemControlSourceType.Manual:
