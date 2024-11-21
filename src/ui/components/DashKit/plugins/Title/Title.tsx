@@ -69,9 +69,7 @@ const titlePlugin = {
         const content = <PluginTitle {...props} ref={forwardedRef} />;
 
         const showBgColor = Boolean(
-            data.background?.enabled &&
-                data.background?.color &&
-                data.background?.color !== 'transparent',
+            data.background?.color && data.background?.color !== 'transparent',
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
@@ -92,7 +90,6 @@ const titlePlugin = {
             currentLayout.w,
             classMod,
             data.background?.color,
-            data.background?.enabled,
             data.size,
             data.text,
         ]);
