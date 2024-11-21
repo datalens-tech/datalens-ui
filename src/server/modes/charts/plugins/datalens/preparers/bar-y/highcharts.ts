@@ -122,8 +122,8 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         }
 
         if (layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            if (customConfig.axesFormatting.yAxis.length === 0) {
-                customConfig.axesFormatting.yAxis.push({});
+            if (customConfig.axesFormatting.xAxis.length === 0) {
+                customConfig.axesFormatting.xAxis.push({});
             }
 
             customConfig.axesFormatting.xAxis.push(
