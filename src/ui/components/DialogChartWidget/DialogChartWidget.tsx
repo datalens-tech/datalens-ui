@@ -362,7 +362,6 @@ class DialogChartWidget extends React.PureComponent<
                 tabs: {
                     [tabIndex]: {
                         background: {
-                            enabled: {$set: true},
                             color: {$set: color},
                         },
                     },

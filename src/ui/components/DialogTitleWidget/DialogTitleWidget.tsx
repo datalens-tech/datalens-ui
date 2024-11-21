@@ -228,7 +228,7 @@ class DialogTitleWidget extends React.PureComponent<
     };
 
     handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color, hasBackground: true});
+        this.setState({backgroundColor: color});
     };
 }
 

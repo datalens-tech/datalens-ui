@@ -160,7 +160,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     };
 
     handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color, hasBackground: true});
+        this.setState({backgroundColor: color});
     };
 }
 
