@@ -59,15 +59,10 @@ export const getActionPanelItems = ({
         if (filterItem && filterItem(item)) {
             return result;
         } else {
-            if (item.dragProps?.type && !item.onClick) {
-                // eslint-disable-next-line no-param-reassign
-                item.onClick = () =>
-                    openDialog(
-                        TYPES_TO_DIALOGS_MAP[
-                            item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP
-                        ],
-                    );
-            }
+            item.onClick = () =>
+                openDialog(
+                    TYPES_TO_DIALOGS_MAP[item.dragProps?.type as keyof typeof TYPES_TO_DIALOGS_MAP],
+                );
 
             return [...result, item];
         }
