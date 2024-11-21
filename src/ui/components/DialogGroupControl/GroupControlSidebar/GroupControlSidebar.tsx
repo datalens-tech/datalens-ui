@@ -13,6 +13,7 @@ import {
     DialogGroupControlQa,
     TitlePlacementOption,
 } from 'shared';
+import {useEffectOnce} from 'ui/hooks';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -78,9 +79,10 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
-export const GroupControlSidebar: React.FC<{handleCopyItem: (itemIndex: number) => void}> = (
-    props,
-) => {
+export const GroupControlSidebar: React.FC<{
+    handleCopyItem: (itemIndex: number) => void;
+    enableAutoheightDefault?: boolean;
+}> = ({enableAutoheightDefault, handleCopyItem}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
@@ -174,30 +176,43 @@ export const GroupControlSidebar: React.FC<{handleCopyItem: (itemIndex: number) 
         [dispatch, selectorsGroup],
     );
 
-    const handleChangeUpdateControls = (value: boolean) => {
-        dispatch(
-            updateSelectorsGroup({
-                ...selectorsGroup,
-                updateControlsOnChange: value,
-            }),
-        );
-    };
+    const handleChangeUpdateControls = React.useCallback(
+        (value: boolean) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    updateControlsOnChange: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
 
-    const handleUpdateItem = (title: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                title,
-            }),
-        );
-    };
+    const handleUpdateItem = React.useCallback(
+        (title: string) => {
+            dispatch(
+                setSelectorDialogItem({
+                    title,
+                }),
+            );
+        },
+        [dispatch],
+    );
+
+    useEffectOnce(() => {
+        if (enableAutoheightDefault) {
+            handleChangeAutoHeight(true);
+        }
+    });
 
     const showAutoHeight =
-        isMultipleSelectors ||
-        selectorsGroup.buttonApply ||
-        selectorsGroup.buttonReset ||
-        // until we have supported automatic height adjustment for case with top title placement,
-        // we allow to enable autoheight
-        selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
+        (isMultipleSelectors ||
+            selectorsGroup.buttonApply ||
+            selectorsGroup.buttonReset ||
+            // until we have supported automatic height adjustment for case with top title placement,
+            // we allow to enable autoheight
+            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top) &&
+        !enableAutoheightDefault;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
@@ -214,7 +229,7 @@ export const GroupControlSidebar: React.FC<{handleCopyItem: (itemIndex: number) 
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
-                    onCopyItem={props.handleCopyItem}
+                    onCopyItem={handleCopyItem}
                     onUpdateItem={handleUpdateItem}
                 />
             </div>
