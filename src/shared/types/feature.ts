@@ -78,8 +78,6 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
-    /** Setting to control the density of the table - font size and cell margins */
-    TableSize = 'TableSize',
 }
 
 export type FeatureConfig = Record<string, boolean>;
