@@ -274,6 +274,7 @@ function dash(state = initialState, action) {
                     type: action.payload.type || state.openedDialog,
                     data: action.payload.data,
                     namespace: action.payload.namespace,
+                    layout: state.dragOperationProps?.itemLayout,
                     ...(action.payload.defaults ? {defaults: action.payload.defaults} : null),
                 },
                 config: {...tab, salt: data.salt, counter: data.counter},

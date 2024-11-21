@@ -20,6 +20,10 @@ import './DialogGroupControl.scss';
 const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
+export type DialogGroupControlFeaturesProps = {
+    enableAutoheightDefault?: boolean;
+};
+
 export type DialogGroupControlProps = {
     openedItemData: DashTabItemGroupControl['data'];
     dialogIsVisible: boolean;
@@ -27,7 +31,7 @@ export type DialogGroupControlProps = {
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
-};
+} & DialogGroupControlFeaturesProps;
 
 export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     dialogIsVisible,
@@ -35,6 +39,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     setItemData,
     navigationPath,
     changeNavigationPath,
+    enableAutoheightDefault,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -65,7 +70,12 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             open={dialogIsVisible}
             onClose={handleClose}
             sidebarHeader={i18n('label_selectors-list')}
-            sidebar={<GroupControlSidebar handleCopyItem={handleCopyItem} />}
+            sidebar={
+                <GroupControlSidebar
+                    enableAutoheightDefault={enableAutoheightDefault}
+                    handleCopyItem={handleCopyItem}
+                />
+            }
             bodyHeader={i18n('label_selector-settings')}
             // key for rerendering form on tab change
             body={

@@ -20,7 +20,9 @@ import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 
 import type {DialogChartWidgetFeatureProps} from '../DialogChartWidget/DialogChartWidget';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
+import type {DialogExternalControlFeaturesProps} from '../DialogExternalControl/DialogExternalControl';
 import DialogExternalControl from '../DialogExternalControl/DialogExternalControl';
+import type {DialogGroupControlFeaturesProps} from '../DialogGroupControl/DialogGroupControl';
 import {DialogGroupControl} from '../DialogGroupControl/DialogGroupControl';
 import {DialogImageWidget} from '../DialogImageWidget';
 import {DialogTextWidgetWrapper} from '../DialogTextWidget';
@@ -88,6 +90,8 @@ export type DialogEditItemFeaturesProp = {
     [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
     [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
     [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
+    [DashTabItemType.GroupControl]?: DialogGroupControlFeaturesProps;
+    [DashTabItemType.Control]?: DialogExternalControlFeaturesProps;
 };
 
 export type DialogEditItemProps = {
@@ -214,6 +218,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     setItemData={setItemData}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    {...features?.[DashTabItemType.Control]}
                 />
             );
         case ITEM_TYPE.GROUP_CONTROL:
@@ -225,6 +230,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     setItemData={setItemData}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    {...features?.[DashTabItemType.GroupControl]}
                 />
             );
 
