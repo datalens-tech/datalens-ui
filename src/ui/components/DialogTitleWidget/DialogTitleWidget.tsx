@@ -150,8 +150,12 @@ class DialogTitleWidget extends React.PureComponent<
                             </Checkbox>
                         </div>
                     )}
-                    <div className={b('setting-row')}>
-                        <span className={b('background-label')}>
+                    <div className={b('setting-row', {type: 'background'})}>
+                        <span
+                            className={b('background-label', {
+                                'no-checkbox-compensation': !enableShowInTOC && !enableAutoheight,
+                            })}
+                        >
                             {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                         </span>
                         <PaletteBackground

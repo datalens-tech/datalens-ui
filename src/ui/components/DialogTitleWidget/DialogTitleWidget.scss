@@ -41,11 +41,19 @@
     }
 
     &__setting-row + &__setting-row {
-        margin-top: 10px;
+        margin-top: var(--g-spacing-5);
+
+        &_type_background {
+            margin-top: var(--g-spacing-3);
+        }
     }
 
     &__background-label {
         display: inline-block;
         margin-inline: 19px var(--g-spacing-2);
+
+        &_no-checkbox-compensation {
+            margin-inline-start: 0;
+        }
     }
 }
