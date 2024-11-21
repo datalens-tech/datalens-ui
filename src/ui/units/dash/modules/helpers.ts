@@ -176,7 +176,7 @@ export function addOperationForValue(args: {
 
 export function getChartEditLink(entryId: string) {
     return Utils.isEnabledFeature(Feature.UseNavigation)
-        ? `${window.DL.endpoints.charts}/navigation/${entryId}`
+        ? `${window.DL.endpoints.charts}/navigate/${entryId}`
         : `${window.DL.endpoints.wizard}/${entryId}`;
 }
 

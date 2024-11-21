@@ -176,7 +176,7 @@ export const getEditMenuItem = ({
             window.open(
                 (dataProvider || chartsDataProvider)?.getGoAwayLink(
                     {loadedData, propsData},
-                    {idPrefix: '/navigation/'},
+                    {idPrefix: '/navigate/'},
                 ),
             );
         }),
