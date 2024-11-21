@@ -345,6 +345,9 @@ export class Table extends React.PureComponent<TableProps, TableState> {
                 nullBeforeNumbers
                 // To avoid drawing No Data line when after pagination there is only a footer
                 renderEmptyRow={onlyFooterExists ? () => null : undefined}
+                onError={(error) => {
+                    throw error;
+                }}
             />
         );
     }
