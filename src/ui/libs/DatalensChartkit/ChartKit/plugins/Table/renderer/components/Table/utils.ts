@@ -3,6 +3,8 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
+import {rgb} from 'd3';
+import type {RGBColor} from 'd3';
 import get from 'lodash/get';
 import round from 'lodash/round';
 import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
@@ -222,8 +224,46 @@ export function getTableSizes(table: HTMLTableElement) {
     }, []);
 }
 
-export function getCellCustomStyle(cellData: unknown) {
-    const css = camelCaseCss(get(cellData, 'css', {})) as Record<string | number, unknown>;
+function toSolidColor(color: RGBColor, bg: RGBColor) {
+    return color
+        .copy({
+            r: (1 - color.opacity) * bg.r + color.opacity * color.r,
+            g: (1 - color.opacity) * bg.g + color.opacity * color.g,
+            b: (1 - color.opacity) * bg.b + color.opacity * color.b,
+            opacity: 1,
+        })
+        .formatRgb();
+}
+
+function varToColor(value: string) {
+    if (value.startsWith('var(')) {
+        const bodyStyles = window.getComputedStyle(document.body);
+        return bodyStyles.getPropertyValue(value.slice(4, -1));
+    }
+
+    return value;
+}
+
+export function getElementBackgroundColor(el?: HTMLElement | null): RGBColor {
+    if (!el) {
+        const baseColor = window
+            .getComputedStyle(document.body)
+            .getPropertyValue('background-color');
+        return rgb(baseColor);
+    }
+
+    const color = window.getComputedStyle(el).getPropertyValue('background-color');
+    const rgbColor = rgb(color);
+
+    if (rgbColor.opacity < 1 && el.tagName !== 'BODY') {
+        return getElementBackgroundColor(el.parentElement);
+    }
+
+    return rgbColor;
+}
+
+export function getCellCustomStyle(cellData: unknown, tableBgColor?: RGBColor) {
+    const css = {...camelCaseCss(get(cellData, 'css', {}))};
 
     // Since the table is created with flex/grid instead of standard table layout,
     // some of styles will not work as expected - we replace them here
@@ -240,9 +280,14 @@ export function getCellCustomStyle(cellData: unknown) {
         }
     }
 
-    if (css.backgroundColor) {
-        css['--dl-table-cell-bg-color'] = css.backgroundColor;
-        css.backgroundColor = undefined;
+    if (css.backgroundColor && tableBgColor) {
+        css.backgroundColor = varToColor(String(css.backgroundColor));
+        const rgbColor = rgb(css.backgroundColor as string);
+        if (rgbColor.opacity < 1) {
+            // Due to special cases like sticky row/column,
+            // we cannot use cell background with alpha chanel - the content begins to "shine through"
+            css.backgroundColor = toSolidColor(rgbColor, tableBgColor);
+        }
     }
 
     return css;

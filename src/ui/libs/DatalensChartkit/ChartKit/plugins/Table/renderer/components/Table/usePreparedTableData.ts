@@ -30,7 +30,12 @@ import type {
     THead,
     TableViewData,
 } from './types';
-import {createTableColumns, getCellCustomStyle, getColumnId} from './utils';
+import {
+    createTableColumns,
+    getCellCustomStyle,
+    getColumnId,
+    getElementBackgroundColor,
+} from './utils';
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -352,6 +357,11 @@ export const usePreparedTableData = (props: {
         },
     };
 
+    const tableBgColor = React.useMemo(
+        () => getElementBackgroundColor(tableContainerRef?.current ?? null),
+        [],
+    );
+
     const rows = React.useMemo(() => {
         if (!virtualItems.length) {
             const colSpan = headers[headers.length - 1]?.headers?.length;
@@ -397,7 +407,7 @@ export const usePreparedTableData = (props: {
                     left = leftPositions[originalHeadData?.index ?? -1];
                 }
                 const cellStyle: React.CSSProperties = {
-                    ...getCellCustomStyle(originalCellData),
+                    ...getCellCustomStyle(originalCellData, tableBgColor),
                     ...additionalStyles,
                     left,
                 };
