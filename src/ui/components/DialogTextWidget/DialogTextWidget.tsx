@@ -5,7 +5,10 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {
+    CustomPaletteColors,
+    PaletteBackground,
+} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {TextEditor} from '../TextEditor/TextEditor';
@@ -29,7 +32,6 @@ interface DialogTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
-    hasBackground?: boolean;
     backgroundColor?: string;
 }
 
@@ -39,7 +41,6 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
         openedItemData: {
             text: '',
             autoHeight: false,
-            hasBackground: false,
             backgroundColor: 'transparent',
         },
     };
@@ -56,7 +57,6 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
             prevVisible: nextProps.dialogIsVisible,
             text: nextProps.openedItemData.text,
             autoHeight: Boolean(nextProps.openedItemData.autoHeight),
-            hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
             backgroundColor: nextProps.openedItemData.background?.color || '',
         };
     }
@@ -65,7 +65,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
 
     render() {
         const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
-        const {text, autoHeight, hasBackground, backgroundColor} = this.state;
+        const {text, autoHeight, backgroundColor} = this.state;
 
         return (
             <Dialog
@@ -92,12 +92,9 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                         </div>
                     )}
                     <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={Boolean(hasBackground)}
-                            onChange={this.handleHasBackgroundChanged}
-                        >
+                        <span className={b('background-label')}>
                             {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                        </Checkbox>
+                        </span>
                         <PaletteBackground
                             color={backgroundColor}
                             onSelect={this.handleHasBackgroundSelected}
@@ -123,14 +120,14 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     onTextUpdate = (text: string) => this.setState({text});
 
     onApply = () => {
-        const {text, autoHeight, hasBackground, backgroundColor} = this.state;
+        const {text, autoHeight, backgroundColor} = this.state;
 
         this.props.setItemData({
             data: {
                 text,
                 autoHeight,
                 background: {
-                    enabled: hasBackground,
+                    enabled: backgroundColor !== CustomPaletteColors.NONE,
                     color: backgroundColor,
                 },
             },
@@ -142,12 +139,8 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
         this.setState({autoHeight: !this.state.autoHeight});
     };
 
-    handleHasBackgroundChanged = () => {
-        this.setState({hasBackground: !this.state.hasBackground});
-    };
-
     handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color, hasBackground: true});
+        this.setState({backgroundColor: color});
     };
 }
 

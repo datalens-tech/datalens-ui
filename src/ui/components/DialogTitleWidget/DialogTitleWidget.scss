@@ -1,6 +1,10 @@
 .dialog-title {
     width: 700px;
 
+    &__size-selector {
+        margin-block-start: var(--g-spacing-4);
+    }
+
     &__input {
         &.g-text-input .g-text-input__control {
             transition: font-size 0.2s ease;
@@ -38,5 +42,10 @@
 
     &__setting-row + &__setting-row {
         margin-top: 10px;
+    }
+
+    &__background-label {
+        display: inline-block;
+        margin-inline: 19px var(--g-spacing-2);
     }
 }

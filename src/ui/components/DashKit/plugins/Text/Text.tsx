@@ -149,9 +149,7 @@ const textPlugin = {
         const data = props.data as DashTabItemText['data'];
 
         const showBgColor = Boolean(
-            data.background?.enabled &&
-                data.background?.color &&
-                data.background?.color !== 'transparent',
+            data.background?.color && data.background?.color !== 'transparent',
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
@@ -186,7 +184,6 @@ const textPlugin = {
             currentLayout.w,
             classMod,
             data.background?.color,
-            data.background?.enabled,
         ]);
 
         /**

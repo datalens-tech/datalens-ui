@@ -24,7 +24,6 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
     background: {
-        enabled: false,
         color: 'transparent',
     },
     preserveAspectRatio: true,
@@ -154,19 +153,10 @@ export function DialogImageWidget(props: Props) {
                     fieldId={INPUT_BG_ENABLED_ID}
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
-                    <Flex>
-                        <Checkbox
-                            id={INPUT_BG_ENABLED_ID}
-                            checked={data.background?.enabled}
-                            onUpdate={(enabled) => updateData({background: {enabled}})}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                        </Checkbox>
-                        <PaletteBackground
-                            color={data.background?.color}
-                            onSelect={(color) => updateData({background: {color, enabled: true}})}
-                        />
-                    </Flex>
+                    <PaletteBackground
+                        color={data.background?.color}
+                        onSelect={(color) => updateData({background: {color}})}
+                    />
                 </FormRow>
             </Dialog.Body>
             <Dialog.Footer

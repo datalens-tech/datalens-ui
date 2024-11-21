@@ -140,7 +140,6 @@ class DialogChartWidget extends React.PureComponent<
                     isDefault: true,
                     description: '',
                     background: {
-                        enabled: false,
                         color: 'transparent',
                     },
                 },
@@ -364,29 +363,6 @@ class DialogChartWidget extends React.PureComponent<
         });
     };
 
-    handleBackgroundEnabledChanged = () => {
-        const {data, tabIndex} = this.state;
-
-        if (!data.tabs[tabIndex].background) {
-            data.tabs[tabIndex].background = {
-                enabled: false,
-                color: 'transparent',
-            };
-        }
-
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {
-                        background: {
-                            enabled: {$set: !data.tabs[tabIndex].background?.enabled},
-                        },
-                    },
-                },
-            }),
-        });
-    };
-
     handleBackgroundColorSelected = (color: string) => {
         const {data, tabIndex} = this.state;
 
@@ -395,7 +371,6 @@ class DialogChartWidget extends React.PureComponent<
                 tabs: {
                     [tabIndex]: {
                         background: {
-                            enabled: {$set: true},
                             color: {$set: color},
                         },
                     },
@@ -718,13 +693,6 @@ class DialogChartWidget extends React.PureComponent<
                             </div>
                         }
                     >
-                        <Checkbox
-                            checked={Boolean(background?.enabled)}
-                            onChange={this.handleBackgroundEnabledChanged}
-                            qa={DashCommonQa.WidgetEnableBackgroundCheckbox}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                        </Checkbox>
                         <PaletteBackground
                             color={background?.color}
                             onSelect={this.handleBackgroundColorSelected}

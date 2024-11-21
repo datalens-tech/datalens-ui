@@ -30,9 +30,7 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         h: null,
         w: null,
     };
-    const backgroundEnabled = Boolean(
-        background?.enabled && background?.color && background?.color !== 'transparent',
-    );
+    const backgroundEnabled = Boolean(background?.color && background?.color !== 'transparent');
     const {classMod, style} = React.useMemo(() => {
         return getPreparedWrapSettings(backgroundEnabled, background?.color);
     }, [backgroundEnabled, background?.color]);

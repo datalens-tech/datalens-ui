@@ -14,4 +14,9 @@
         display: flex;
         align-items: center;
     }
+
+    &__background-label {
+        display: inline-block;
+        margin-inline: 19px var(--g-spacing-2);
+    }
 }
