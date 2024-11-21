@@ -11,10 +11,12 @@ import './PaletteBackground.scss';
 
 const b = block('widget-palette-background');
 
-export enum CustomPaletteColors {
-    LIKE_CHART = 'like-chart-bg',
-    NONE = 'transparent',
-}
+export const CustomPaletteColors = {
+    LIKE_CHART: 'like-chart-bg',
+    NONE: 'transparent',
+};
+
+type CustomPaletteColor = keyof typeof CustomPaletteColors;
 
 const PALETTE_HINTS = {
     [CustomPaletteColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
@@ -55,7 +57,7 @@ const ColorItem = React.forwardRef(function ColorItem(
         >
             {isLikeChartBg && <Icon data={ChartColumn} className={b('color-icon')} />}
             {!isPreview && color in PALETTE_HINTS && (
-                <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColors]}>
+                <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColor]}>
                     <span className={b('tooltip-trigger')} />
                 </ActionTooltip>
             )}
@@ -144,7 +146,6 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
                 <ColorItem
                     color={selectedColor}
                     isSelected={true}
-                    classNameMod={'small'}
                     isPreview={true}
                     qa={DashCommonQa.WidgetSelectBackgroundButton}
                 />

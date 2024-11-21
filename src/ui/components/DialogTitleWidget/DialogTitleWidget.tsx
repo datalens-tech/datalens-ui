@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Checkbox, Dialog, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
@@ -11,21 +11,21 @@ import {
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
-import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {
+    CustomPaletteColors,
+    PaletteBackground,
+} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
-
-import HoverRadioButton from './HoverRadioButton/HoverRadioButton';
 
 import './DialogTitleWidget.scss';
 
 const SIZES = [
-    DashTabItemTitleSize.L,
-    DashTabItemTitleSize.M,
-    DashTabItemTitleSize.S,
-    DashTabItemTitleSize.XS,
+    {value: DashTabItemTitleSize.L, content: 'Large'},
+    {value: DashTabItemTitleSize.M, content: 'Medium'},
+    {value: DashTabItemTitleSize.S, content: 'Small'},
+    {value: DashTabItemTitleSize.XS, content: 'XSmall'},
 ];
-const RADIO_TEXT = ['Large', 'Medium', 'Small', 'XSmall'];
 
 const b = block('dialog-title');
 
@@ -36,7 +36,6 @@ interface DialogTitleWidgetState {
     size?: DashTabItemTitleSize;
     showInTOC?: boolean;
     autoHeight?: boolean;
-    hasBackground?: boolean;
     backgroundColor?: string;
 }
 
@@ -65,10 +64,9 @@ class DialogTitleWidget extends React.PureComponent<
         enableShowInTOC: true,
         openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
-            size: SIZES[0],
+            size: SIZES[0].value,
             showInTOC: true,
             autoHeight: false,
-            hasBackground: false,
             backgroundColor: 'transparent',
         },
     };
@@ -88,7 +86,6 @@ class DialogTitleWidget extends React.PureComponent<
             size: nextProps.openedItemData.size,
             showInTOC: nextProps.openedItemData.showInTOC,
             autoHeight: Boolean(nextProps.openedItemData.autoHeight),
-            hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
             backgroundColor: nextProps.openedItemData.background?.color || '',
         };
     }
@@ -97,8 +94,7 @@ class DialogTitleWidget extends React.PureComponent<
 
     render() {
         const {openedItemId, dialogIsVisible, enableAutoheight, enableShowInTOC} = this.props;
-        const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
-            this.state;
+        const {text, size, showInTOC, validation, autoHeight, backgroundColor} = this.state;
 
         return (
             <Dialog
@@ -120,11 +116,11 @@ class DialogTitleWidget extends React.PureComponent<
                             qa={DialogDashTitleQA.Input}
                         />
                     </FieldWrapper>
-                    <HoverRadioButton
+                    <RadioButton
+                        className={b('size-selector')}
                         value={size}
-                        values={SIZES}
-                        radioText={RADIO_TEXT}
-                        onChange={this.onSizeChange}
+                        options={SIZES}
+                        onUpdate={this.onSizeChange}
                     />
                     {enableShowInTOC && (
                         <div className={b('setting-row')}>
@@ -155,12 +151,9 @@ class DialogTitleWidget extends React.PureComponent<
                         </div>
                     )}
                     <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={Boolean(hasBackground)}
-                            onChange={this.handleHasBackgroundChanged}
-                        >
+                        <span className={b('background-label')}>
                             {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                        </Checkbox>
+                        </span>
                         <PaletteBackground
                             color={backgroundColor}
                             onSelect={this.handleHasBackgroundSelected}
@@ -192,7 +185,7 @@ class DialogTitleWidget extends React.PureComponent<
     onSizeChange = (size?: string) => this.setState({size: size as DashTabItemTitleSize});
 
     onApply = () => {
-        const {text, size, showInTOC, autoHeight, hasBackground, backgroundColor} = this.state;
+        const {text, size, showInTOC, autoHeight, backgroundColor} = this.state;
         if (text?.trim()) {
             this.props.setItemData({
                 data: {
@@ -201,7 +194,7 @@ class DialogTitleWidget extends React.PureComponent<
                     showInTOC,
                     autoHeight,
                     background: {
-                        enabled: hasBackground,
+                        enabled: this.state.backgroundColor !== CustomPaletteColors.NONE,
                         color: backgroundColor,
                     },
                 },
@@ -220,12 +213,8 @@ class DialogTitleWidget extends React.PureComponent<
         this.setState({autoHeight: !this.state.autoHeight});
     };
 
-    handleHasBackgroundChanged = () => {
-        this.setState({hasBackground: !this.state.hasBackground});
-    };
-
     handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color, hasBackground: true});
+        this.setState({backgroundColor: color});
     };
 }
 
