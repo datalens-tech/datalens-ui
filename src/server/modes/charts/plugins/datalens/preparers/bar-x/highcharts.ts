@@ -110,6 +110,10 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
                 !isSegmentsExists
             ) {
+                if (customConfig.axesFormatting.yAxis.length === 0) {
+                    customConfig.axesFormatting.yAxis.push({});
+                }
+
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerY2Placeholder, visualizationId),
                 );

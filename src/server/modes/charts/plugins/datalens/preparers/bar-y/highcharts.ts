@@ -122,6 +122,10 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         }
 
         if (layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
+            if (customConfig.axesFormatting.yAxis.length === 0) {
+                customConfig.axesFormatting.yAxis.push({});
+            }
+
             customConfig.axesFormatting.xAxis.push(
                 getAxisFormattingByField(layerY2Placeholder, visualizationId),
             );
