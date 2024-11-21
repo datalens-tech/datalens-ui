@@ -21,6 +21,7 @@ import {
 } from 'ui/store/actions/controlDialog';
 import {
     selectIsParametersSectionAvailable,
+    selectOpenedItemData,
     selectSelectorDialog,
 } from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
@@ -33,13 +34,17 @@ const dashI18n = I18n.keyset('dash.main.view');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
+export type DialogExternalControlFeaturesProps = {
+    enableAutoheightDefault?: boolean;
+};
+
 type OwnProps = {
     dialogIsVisible: boolean;
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
-};
+} & DialogExternalControlFeaturesProps;
 
 type Props = OwnProps & DispatchProps & StateProps;
 
@@ -83,7 +88,7 @@ class DialogExternalControl extends React.Component<Props> {
     private renderBody() {
         const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
         const showParametersSection = this.props.isParametersSectionAvailable;
-        const {navigationPath, changeNavigationPath} = this.props;
+        const {navigationPath, changeNavigationPath, enableAutoheightDefault} = this.props;
 
         return (
             <React.Fragment>
@@ -100,6 +105,7 @@ class DialogExternalControl extends React.Component<Props> {
                         <CommonSettingsSection
                             navigationPath={navigationPath}
                             changeNavigationPath={changeNavigationPath}
+                            enableAutoheightDefault={enableAutoheightDefault}
                         />
                     </SectionWrapper>
                 </div>
@@ -138,8 +144,10 @@ class DialogExternalControl extends React.Component<Props> {
 
 const mapStateToProps = (state: DatalensGlobalState) => {
     const {sourceType, validation} = selectSelectorDialog(state);
+    const openedItemId = selectOpenedItemData(state);
+
     return {
-        isEdit: Boolean(state.dash.openedItemId),
+        isEdit: Boolean(openedItemId),
         sourceType,
         isParametersSectionAvailable: selectIsParametersSectionAvailable(state),
         validation,
