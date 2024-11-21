@@ -14,12 +14,14 @@ import './DialogTextWidget.scss';
 
 const b = block('dialog-text');
 
-export interface DialogTextWidgetProps {
+export interface DialogTextWidgetFeatureProps {
+    enableAutoheight?: boolean;
+}
+
+export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
     openedItemId: string | null;
     openedItemData: DashTabItemText['data'];
     dialogIsVisible: boolean;
-
-    enableAutoheight?: boolean;
 
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;

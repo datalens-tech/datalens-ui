@@ -13,6 +13,7 @@ import {
 } from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,
@@ -20,7 +21,6 @@ import {
 } from 'ui/store/selectors/controlDialog';
 import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 
-import {ELEMENT_TYPE} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import {getElementOptions} from '../helpers/input-type-select';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');

@@ -4,8 +4,8 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import moment from 'moment';
 import {registry} from 'ui/registry';
+import {DATE_FORMAT} from 'ui/store/constants/controlDialog';
 
-import {DATE_FORMAT} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import Dialog from '../../../Dialog/Dialog';
 import Button from '../../Switchers/Button/Button';
 

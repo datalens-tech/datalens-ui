@@ -14,12 +14,23 @@ import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const ConnectionSettings = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
+export const ConnectionSettings = ({
+    hideCommonFields,
+    navigationPath,
+    changeNavigationPath,
+}: {
+    hideCommonFields?: boolean;
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
 
     return (
         <React.Fragment>
-            <ConnectionSelector />
+            <ConnectionSelector
+                navigationPath={navigationPath}
+                changeNavigationPath={changeNavigationPath}
+            />
             {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
                     <ParameterNameInput label={i18n('field_parameter-name')} />

@@ -1,13 +1,7 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import type {
-    DashTabItem,
-    DashTabItemControlData,
-    DashTabItemWidget,
-    DashTabItemWidgetTab,
-} from 'shared';
-import {selectSelectorSourceType} from 'ui/store/selectors/controlDialog';
+import type {DashTabItem, DashTabItemWidget, DashTabItemWidgetTab} from 'shared';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -186,18 +180,6 @@ export const selectOpenedItem = createSelector(
     },
 );
 
-export const selectIsControlSourceTypeHasChanged = createSelector(
-    [selectOpenedItemData, selectSelectorSourceType],
-    (openedItemData, sourceType) => {
-        // New item
-        if (!openedItemData) {
-            return false;
-        }
-
-        return (openedItemData as DashTabItemControlData).sourceType !== sourceType;
-    },
-);
-
 export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab], (currentTab) => {
     if (!currentTab) {
         return undefined;
@@ -264,4 +246,4 @@ export const selectCurrentTabAliases = createSelector(
     (currentTab) => currentTab?.aliases || null,
 );
 
-export const selectNavigationPath = (state: DatalensGlobalState) => state.dash.navigationPath;
+export const selectNavigationPath = (state: DatalensGlobalState) => state.dash?.navigationPath;

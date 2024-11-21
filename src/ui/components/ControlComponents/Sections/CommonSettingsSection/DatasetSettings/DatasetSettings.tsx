@@ -6,10 +6,21 @@ import {ValueSelector} from '../../ValueSelector/ValueSelector';
 import {DatasetSelector} from '../DatasetSelector/DatasetSelector';
 import {InputTypeSelector} from '../InputTypeSelector/InputTypeSelector';
 
-const DatasetSettings = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
+const DatasetSettings = ({
+    hideCommonFields,
+    navigationPath,
+    changeNavigationPath,
+}: {
+    hideCommonFields?: boolean;
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}) => {
     return (
         <React.Fragment>
-            <DatasetSelector />
+            <DatasetSelector
+                navigationPath={navigationPath}
+                changeNavigationPath={changeNavigationPath}
+            />
             {!hideCommonFields && (
                 <React.Fragment>
                     <InputTypeSelector />

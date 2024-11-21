@@ -10,6 +10,7 @@ import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {registry} from 'ui/registry';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {CheckboxControlValue} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorControlType,
@@ -21,7 +22,6 @@ import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
 
 import type {FilterValue} from '../../../../../shared/modules';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from '../../../../../shared/types';
-import {CheckboxControlValue} from '../../../../units/dash/containers/Dialogs/Control/constants';
 import {getDistinctsByTypedQuery} from '../CommonSettingsSection/ConnectionSettings/helpers/get-distincts-by-typed-query';
 import {
     DEFAULT_PAGE_SIZE,

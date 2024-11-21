@@ -28,7 +28,10 @@ imm.extend('$auto', (value, object) => {
     return object ? update(object, value) : update({}, value);
 });
 
-const ExternalSelectorSettings = () => {
+const ExternalSelectorSettings: React.FC<{
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}> = (props) => {
     const dispatch = useDispatch();
     const {autoHeight, chartId, title, selectorParameters, validation, selectorParametersGroup} =
         useSelector(selectSelectorDialog);
@@ -98,6 +101,8 @@ const ExternalSelectorSettings = () => {
                 entryId={chartId}
                 onChange={handleChartIdChange}
                 includeClickableType={EntryTypeNode.CONTROL_NODE}
+                navigationPath={props.navigationPath}
+                changeNavigationPath={props.changeNavigationPath}
             />
 
             <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>

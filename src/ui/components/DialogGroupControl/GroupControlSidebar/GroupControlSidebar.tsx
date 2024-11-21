@@ -28,7 +28,6 @@ import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selector
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
-import {copyControlToStorage} from 'ui/units/dash/store/actions/controls/actions';
 
 import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
@@ -79,7 +78,9 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
-export const GroupControlSidebar = () => {
+export const GroupControlSidebar: React.FC<{handleCopyItem: (itemIndex: number) => void}> = (
+    props,
+) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
@@ -182,10 +183,6 @@ export const GroupControlSidebar = () => {
         );
     };
 
-    const handleCopyItem = (itemIndex: number) => {
-        dispatch(copyControlToStorage(itemIndex));
-    };
-
     const handleUpdateItem = (title: string) => {
         dispatch(
             setSelectorDialogItem({
@@ -217,7 +214,7 @@ export const GroupControlSidebar = () => {
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
                     addButtonView="outlined"
-                    onCopyItem={handleCopyItem}
+                    onCopyItem={props.handleCopyItem}
                     onUpdateItem={handleUpdateItem}
                 />
             </div>
