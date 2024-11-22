@@ -58,9 +58,6 @@ export const getChartkitMenuByType = (props?: GetChartkitMenuByType) => {
             },
             [MenuItemsIds.EDIT]: {
                 title: i18n('dash.chartkit-menu.view', 'button_edit'),
-                action: ({propsData: {id, params}}) => {
-                    window.open(`/navigate/${id}?${stringify(params)}`);
-                },
                 ...isEditVisible,
             },
             [MenuItemsIds.EXPORT]: {
