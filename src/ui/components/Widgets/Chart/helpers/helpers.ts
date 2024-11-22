@@ -482,7 +482,7 @@ export const updateImmediateLayout = ({
 
 export const isAllParamsEmpty = (params?: StringParams | null) => {
     const res = Object.values(params || {}).every((item) => {
-        if (typeof item === 'string') {
+        if (!Array.isArray(item)) {
             return isEmpty(item.trim());
         } else {
             return isEmpty(item.filter((val) => !isEmpty(val.trim())));
