@@ -285,6 +285,11 @@ export const usePreparedTableData = (props: {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [colSizes, data.head]);
 
+    const tableBgColor = React.useMemo(
+        () => getElementBackgroundColor(tableContainerRef.current),
+        [tableContainerRef.current],
+    );
+
     const headerRows = React.useMemo(() => {
         return headers
             .map((headerGroup) => {
@@ -312,7 +317,7 @@ export const usePreparedTableData = (props: {
                         }
 
                         const cellStyle: React.CSSProperties = {
-                            ...getCellCustomStyle(originalCellData),
+                            ...getCellCustomStyle(originalCellData, tableBgColor),
                             left,
                         };
 
@@ -354,13 +359,9 @@ export const usePreparedTableData = (props: {
         rows: headerRows,
         style: {
             gridTemplateColumns,
+            backgroundColor: tableBgColor,
         },
     };
-
-    const tableBgColor = React.useMemo(
-        () => getElementBackgroundColor(tableContainerRef?.current ?? null),
-        [],
-    );
 
     const rows = React.useMemo(() => {
         if (!virtualItems.length) {

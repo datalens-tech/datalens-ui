@@ -244,25 +244,32 @@ function varToColor(value: string) {
     return value;
 }
 
-export function getElementBackgroundColor(el?: HTMLElement | null): RGBColor {
+function getPageBgColor() {
+    return window.getComputedStyle(document.body).getPropertyValue('background-color');
+}
+
+export function getElementBackgroundColor(el?: HTMLElement | null): string {
     if (!el) {
-        const baseColor = window
-            .getComputedStyle(document.body)
-            .getPropertyValue('background-color');
-        return rgb(baseColor);
+        return getPageBgColor();
     }
 
     const color = window.getComputedStyle(el).getPropertyValue('background-color');
     const rgbColor = rgb(color);
 
-    if (rgbColor.opacity < 1 && el.tagName !== 'BODY') {
-        return getElementBackgroundColor(el.parentElement);
+    if (el.tagName !== 'BODY') {
+        if (!rgbColor.opacity) {
+            return getElementBackgroundColor(el.parentElement);
+        }
+
+        if (rgbColor.opacity < 1) {
+            return toSolidColor(rgbColor, rgb(getPageBgColor()));
+        }
     }
 
-    return rgbColor;
+    return rgbColor.toString();
 }
 
-export function getCellCustomStyle(cellData: unknown, tableBgColor?: RGBColor) {
+export function getCellCustomStyle(cellData: unknown, tableBgColor?: string) {
     const css = {...camelCaseCss(get(cellData, 'css', {}))};
 
     // Since the table is created with flex/grid instead of standard table layout,
@@ -286,7 +293,7 @@ export function getCellCustomStyle(cellData: unknown, tableBgColor?: RGBColor) {
         if (rgbColor.opacity < 1) {
             // Due to special cases like sticky row/column,
             // we cannot use cell background with alpha chanel - the content begins to "shine through"
-            css.backgroundColor = toSolidColor(rgbColor, tableBgColor);
+            css.backgroundColor = toSolidColor(rgbColor, rgb(tableBgColor));
         }
     }
 
