@@ -30,6 +30,7 @@ async function resolveEntryByLink({
         const idOrKeyOrReport =
             url.pathname
                 .replace(/^\/navigation\//, '')
+                .replace(/^\/navigate\//, '')
                 .replace(/^\/wizard\/preview\//, '')
                 .replace(
                     /^(\/(ChartPreview|preview))?(\/(ChartWizard|wizard|ChartEditor|editor))?\/?/,
