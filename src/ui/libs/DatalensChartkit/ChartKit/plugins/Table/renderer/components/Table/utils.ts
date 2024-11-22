@@ -224,7 +224,10 @@ export function getTableSizes(table: HTMLTableElement) {
     }, []);
 }
 
-function toSolidColor(color: RGBColor, bg: RGBColor) {
+export function toSolidColor(current: string | RGBColor, background?: RGBColor) {
+    const bg = background ?? rgb(getPageBgColor());
+    const color = typeof current === 'string' ? rgb(varToColor(current)) : current;
+
     return color
         .copy({
             r: (1 - color.opacity) * bg.r + color.opacity * color.r,

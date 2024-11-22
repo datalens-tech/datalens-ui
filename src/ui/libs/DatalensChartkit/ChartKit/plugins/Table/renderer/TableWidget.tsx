@@ -25,6 +25,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onChange,
             onLoad,
             data: {data: originalData, config},
+            backgroundColor,
         } = props;
 
         const generatedId = React.useMemo(
@@ -95,6 +96,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         dimensions={dimensions}
                         onChangeParams={handleChangeParams}
                         onReady={handleTableReady}
+                        backgroundColor={backgroundColor}
                     />
                 ) : (
                     <Loader />
