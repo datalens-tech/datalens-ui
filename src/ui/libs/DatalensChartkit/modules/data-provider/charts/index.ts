@@ -37,6 +37,7 @@ import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/type
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import Utils from '../../../../../utils';
+import {getNormalizedParams} from '../../../ChartKit/helpers/action-params-handlers';
 import {chartToTable} from '../../../ChartKit/helpers/d3-chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
@@ -948,13 +949,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const {
             id,
             source,
-            params,
+            params: rawParams,
             widgetType,
             widgetConfig,
             config: {type, data: configData, key, createdAt, sandbox_version} = {},
             workbookId,
         } = data;
 
+        const params = rawParams ? getNormalizedParams(rawParams) : undefined;
         const isEditMode = Boolean(type && configData);
         const includeLogs = this.settings.includeLogs || isEditMode;
 

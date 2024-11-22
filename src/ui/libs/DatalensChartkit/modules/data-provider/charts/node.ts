@@ -11,6 +11,7 @@ import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
+import {getNormalizedParams} from 'ui/libs/DatalensChartkit/ChartKit/helpers/action-params-handlers';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import type {Optional} from 'utility-types';
 
@@ -246,7 +247,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 ): Promise<R & ChartsData> {
     const {
         type: loadedType,
-        params,
+        params: rawParams,
         defaultParams,
         id,
         key,
@@ -260,6 +261,8 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         traceId,
         widgetConfig,
     } = loaded;
+
+    const params = getNormalizedParams(rawParams);
 
     try {
         const showSafeChartInfo =
@@ -275,7 +278,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             defaultParams,
             entryId: id ?? `fake_${getRandomCKId()}`,
             key,
-            usedParams,
             sources,
             logs_v2,
             timings,
@@ -289,8 +291,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             widgetConfig,
         };
 
-        if ('unresolvedParams' in loaded) {
-            result.unresolvedParams = unresolvedParams;
+        if (unresolvedParams) {
+            result.unresolvedParams = getNormalizedParams(unresolvedParams);
+        }
+        if (usedParams) {
+            result.usedParams = getNormalizedParams(usedParams);
         }
 
         if ('publicAuthor' in loaded) {
@@ -325,7 +330,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             ) {
                 const uiSandbox = await getUISandbox();
                 const uiSandboxOptions: UiSandboxRuntimeOptions = {};
-                if (!get(loaded.params, SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
+                if (!get(params, SHARED_URL_OPTIONS.WITHOUT_UI_SANDBOX_LIMIT)) {
                     // creating an object for mutation
                     // so that we can calculate the total execution time of the sandbox
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;

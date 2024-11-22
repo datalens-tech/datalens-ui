@@ -5,6 +5,7 @@ import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import omit from 'lodash/omit';
 import moment from 'moment';
+import {getNormalizedParams} from 'ui/libs/DatalensChartkit/ChartKit/helpers/action-params-handlers';
 
 import {registry} from '../../../../../registry';
 import {LINE_BREAKS_OPTIONS} from '../../constants/constants';
@@ -348,7 +349,7 @@ function run(loaded) {
     } = loaded;
 
     try {
-        const params = omit(fullParams, 'name');
+        const params = getNormalizedParams(omit(fullParams, 'name'));
 
         let result = {
             type: type.match(/^[^_]*/)[0],
@@ -356,7 +357,7 @@ function run(loaded) {
             params,
             entryId,
             key: key,
-            usedParams,
+            usedParams: {},
             sources,
             requestId,
             traceId,
@@ -367,7 +368,11 @@ function run(loaded) {
         };
 
         if (unresolvedParams) {
-            result.unresolvedParams = unresolvedParams;
+            result.unresolvedParams = getNormalizedParams(unresolvedParams);
+        }
+
+        if (usedParams) {
+            result.usedParams = getNormalizedParams(usedParams);
         }
 
         if (publicAuthor) {

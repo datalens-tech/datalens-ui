@@ -4,6 +4,7 @@ import type {Point, PointOptionsObject} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
+import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 import uniq from 'lodash/uniq';
 
@@ -286,4 +287,14 @@ export function handleSeriesClickForActionParams(args: {
         true,
         true,
     );
+}
+
+export function getNormalizedParams(params: Record<string, unknown>) {
+    return mapValues(params, (value) => {
+        if (Array.isArray(value)) {
+            return value.map(String);
+        } else {
+            return String(value);
+        }
+    });
 }
