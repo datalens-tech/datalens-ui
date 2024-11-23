@@ -80,6 +80,11 @@ $fullscreenZIndex: 999;
         flex-direction: row;
         align-items: center;
         cursor: pointer;
+
+        &_float {
+            top: 6px;
+            right: 10px;
+        }
     }
 
     &__body {
@@ -206,7 +211,7 @@ $fullscreenZIndex: 999;
                 top: calc(-1 * var(--dl-dk-charts-padding));
             }
 
-            #{$class}__chart-header {
+            #{$class}__chart-header:not(#{$class}__chart-header_float) {
                 top: calc(-1 * var(--dl-dk-charts-padding) + var(--dl-dk-header-offset));
             }
         }
@@ -214,7 +219,7 @@ $fullscreenZIndex: 999;
         #{$class}__container_table {
             padding-top: var(--dl-dk-table-padding);
 
-            #{$class}__chart-header {
+            #{$class}__chart-header:not(#{$class}__chart-header_float) {
                 top: calc(-1 * var(--dl-dk-table-padding) + var(--dl-dk-header-offset));
             }
         }
@@ -222,7 +227,7 @@ $fullscreenZIndex: 999;
         #{$class}__container_metric2 {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
 
-            #{$class}__chart-header {
+            #{$class}__chart-header:not(#{$class}__chart-header_float) {
                 top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
             }
         }
@@ -230,7 +235,7 @@ $fullscreenZIndex: 999;
         #{$class}__container_markup {
             padding: calc(var(--dl-dk-metric-padding) / 2) var(--dl-dk-metric-padding);
 
-            #{$class}__chart-header {
+            #{$class}__chart-header:not(#{$class}__chart-header_float) {
                 top: calc(-1 * var(--dl-dk-metric-padding) + var(--dl-dk-header-offset));
             }
         }
@@ -238,14 +243,14 @@ $fullscreenZIndex: 999;
         #{$class}__container_ymap {
             padding: 0;
 
-            #{$class}__chart-header {
+            #{$class}__chart-header:not(#{$class}__chart-header_float) {
                 top: calc(-1 * var(--dl-dk-map-padding) + var(--dl-dk-header-offset));
             }
         }
     }
 
     // Temporarily redefine styles and use similar with production (until designers process the ellipsis in CHARTS-5432)
-    &__container &__chart-header {
+    &__container &__chart-header:not(#{$class}__chart-header_float) {
         top: -4px;
         right: 3px;
     }

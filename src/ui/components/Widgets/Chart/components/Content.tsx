@@ -67,6 +67,8 @@ export const Content = (props: ChartContentProps) => {
         widgetDashState,
         rootNodeRef,
         backgroundColor,
+        showActionParamsFilter,
+        onFiltersClear,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -110,26 +112,30 @@ export const Content = (props: ChartContentProps) => {
                 veil={showLoaderVeil}
                 delay={loaderDelay}
             />
-            <ChartHeader
-                dataProvider={dataProvider}
-                chartsInsightsData={chartsInsightsData}
-                menuType={menuType}
-                customMenuOptions={customMenuOptions}
-                menuChartkitConfig={menuChartkitConfig}
-                isMenuAvailable={!noControls}
-                error={error}
-                dataProps={dataProps}
-                requestId={requestId}
-                loadedData={loadedData}
-                widgetDataRef={widgetDataRef}
-                widgetRenderTimeRef={widgetRenderTimeRef}
-                yandexMapAPIWaiting={yandexMapAPIWaiting}
-                onChange={onChange}
-                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                onExportLoading={handleExportLoading}
-                enableActionParams={enableActionParams}
-                onFullscreenClick={onFullscreenClick}
-            />
+            {props.needRenderContentControls && (
+                <ChartHeader
+                    dataProvider={dataProvider}
+                    chartsInsightsData={chartsInsightsData}
+                    menuType={menuType}
+                    customMenuOptions={customMenuOptions}
+                    menuChartkitConfig={menuChartkitConfig}
+                    isMenuAvailable={!noControls}
+                    error={error}
+                    dataProps={dataProps}
+                    requestId={requestId}
+                    loadedData={loadedData}
+                    widgetDataRef={widgetDataRef}
+                    widgetRenderTimeRef={widgetRenderTimeRef}
+                    yandexMapAPIWaiting={yandexMapAPIWaiting}
+                    onChange={onChange}
+                    isWidgetMenuDataChanged={isWidgetMenuDataChanged}
+                    onExportLoading={handleExportLoading}
+                    enableActionParams={enableActionParams}
+                    onFullscreenClick={onFullscreenClick}
+                    showActionParamsFilter={showActionParamsFilter}
+                    onFiltersClear={onFiltersClear}
+                />
+            )}
             <div
                 className={b(
                     'body',

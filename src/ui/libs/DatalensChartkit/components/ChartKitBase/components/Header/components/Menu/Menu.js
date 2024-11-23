@@ -6,8 +6,9 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
-import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
+import {ChartkitMenuDialogsQA, Feature, MenuItemsIds} from 'shared';
 import {DL, SHEET_IDS} from 'ui/constants';
+import Utils from 'ui/utils';
 
 import {getVisibleItems} from '../../../../helpers';
 
@@ -18,8 +19,12 @@ const i18n = I18n.keyset('chartkit.menu');
 const b = block('chartkit-menu');
 
 const SwitcherButton = (props) => {
+    const showFlatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+    const view = showFlatControls ? 'normal' : 'flat-secondary';
+    const buttonSize = showFlatControls ? 'm' : 'l';
+
     return (
-        <Button {...props} view="flat-secondary" size="l" className={b('switcher')}>
+        <Button {...props} view={view} size={buttonSize} className={b('switcher', {'flat': showFlatControls})}>
             <Icon data={Ellipsis} size={16} />
         </Button>
     );

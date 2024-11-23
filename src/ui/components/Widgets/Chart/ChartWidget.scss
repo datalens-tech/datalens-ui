@@ -67,4 +67,36 @@ $dashPublicContainerClassName: '.dash';
     #{$dashContainerClassName} &_autoheight .datalens-chartkit-error {
         height: auto;
     }
+
+    /** styles for flat controls */
+    &__controls-corner-wrapper {
+        background-color: transparent;
+        border-radius: var(--g-border-radius-l);
+        margin-left: 8px;
+        padding: 2px;
+        display: flex;
+        column-gap: 2px;
+        opacity: 0.5;
+        transition: opacity 0.3s ease-out;
+
+        & .chartkit-insights__button::before,
+        & .dl-widget__filter-button::before,
+        & .chartkit-menu__switcher_flat {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+    }
+
+    .widget-header_mobile &__controls-corner-wrapper,
+    &:hover &__controls-corner-wrapper {
+        opacity: 1;
+        background-color: var(--g-color-base-background);
+        box-shadow: 0 1px 6px 0 rgba(0,0,0,0.1);
+
+        & .chartkit-insights__button::before,
+        & .dl-widget__filter-button::before,
+        & .chartkit-menu__switcher_flat {
+            opacity: 1;
+        }
+    }
 }

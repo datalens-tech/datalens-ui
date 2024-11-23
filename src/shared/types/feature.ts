@@ -4,6 +4,8 @@ export enum Feature {
     Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
+    /** Enable redesign of dash controls */
+    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',

@@ -8,8 +8,10 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import type {StringParams} from 'shared';
+import {Feature} from 'shared/types/feature';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
+import Utils from 'ui/utils/utils';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
@@ -80,6 +82,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
         widgetDashState,
         onBeforeChartLoad,
     } = props;
+
+    const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
     const prevInnerParams = usePrevious(innerParamsRef?.current);
@@ -286,6 +290,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                needRenderContentControls={!showFloatControls}
             />
         </div>
     );

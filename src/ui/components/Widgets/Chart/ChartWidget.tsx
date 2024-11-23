@@ -14,7 +14,9 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
+import {Feature} from 'shared/types/feature';
 import {setWidgetCurrentTab} from 'ui/units/dash/store/actions/dashTyped';
+import Utils from 'ui/utils/utils';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
@@ -26,7 +28,7 @@ import {getPreparedWrapSettings} from '../../DashKit/utils';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
-import {WidgetHeader} from './components/WidgetHeader';
+import {HeaderWithControlsProps, WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
     getTabIndex,
@@ -508,6 +510,42 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const disableControls = noControls || urlNoControls;
 
+    const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+
+    const commonHeaderContentProps = {
+        compactLoader,
+        loaderDelay,
+        menuType: "dash",
+        menuChartkitConfig,
+        dataProvider,
+        error,
+        dataProps,
+        requestId,
+        loadedData,
+        widgetDataRef,
+        widgetRenderTimeRef,
+        yandexMapAPIWaiting,
+        enableActionParams,
+        isWidgetMenuDataChanged,
+        onChange: handleChange,
+        onFullscreenClick: handleToggleFullscreenMode,
+        showActionParamsFilter,
+        noControls: disableControls,
+        onFiltersClear: handleFiltersClear,
+    };
+
+    const widgetHeaderProps = {
+        isFullscreen,
+        editMode,
+        hideTabs,
+        tabsItems: adaptiveTabsItems,
+        currentTab,
+        onSelectTab: handleSelectTab,
+        widgetId,
+        hideDebugTool: true,
+        ...commonHeaderContentProps,
+    };
+
     return (
         <div
             ref={rootNodeRef}
@@ -529,58 +567,32 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 ]}
             />
             <WidgetHeader
-                isFullscreen={isFullscreen}
-                onFullscreenClick={handleToggleFullscreenMode}
-                editMode={editMode}
-                hideTabs={hideTabs}
-                tabsItems={adaptiveTabsItems}
-                currentTab={currentTab}
-                onSelectTab={handleSelectTab}
-                widgetId={widgetId}
-                hideDebugTool={true}
-                showActionParamsFilter={showActionParamsFilter}
-                onFiltersClear={handleFiltersClear}
-                noControls={disableControls}
+                {...(widgetHeaderProps as HeaderWithControlsProps)}
             />
             <Content
                 initialParams={initialParams}
-                dataProps={dataProps}
-                dataProvider={dataProvider}
                 showLoader={showLoader}
-                onFullscreenClick={handleToggleFullscreenMode}
                 showOverlayWithControlsOnEdit={showOverlayWithControlsOnEdit}
-                compactLoader={compactLoader}
                 veil={veil}
-                loaderDelay={loaderDelay}
                 widgetBodyClassName={widgetBodyClassName}
                 hasHiddenClassMod={hasHiddenClassMod}
                 chartId={chartId}
-                noControls={disableControls}
                 transformLoadedData={transformLoadedData}
                 splitTooltip={splitTooltip || isFullscreen}
                 nonBodyScroll={nonBodyScroll}
-                requestId={requestId}
-                error={error}
                 onRender={handleRenderChart}
-                onChange={handleChange}
                 onRetry={handleRetry}
                 onError={handleError}
-                loadedData={loadedData}
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}
-                menuType="dash"
-                menuChartkitConfig={menuChartkitConfig}
-                widgetDataRef={widgetDataRef}
-                widgetRenderTimeRef={widgetRenderTimeRef}
-                yandexMapAPIWaiting={yandexMapAPIWaiting}
-                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                enableActionParams={enableActionParams}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
+                needRenderContentControls={!showFloatControls}
+                {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter
