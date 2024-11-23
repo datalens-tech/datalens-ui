@@ -33,7 +33,10 @@ const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay, className
     }
 
     return (
-        <div className={b({veil, [String(classNameMod)]: Boolean(classNameMod)})} data-qa={ChartKitQa.Loader}>
+        <div
+            className={b({veil, [String(classNameMod)]: Boolean(classNameMod)})}
+            data-qa={ChartKitQa.Loader}
+        >
             <div className={b('loader', {compact})}>
                 <CommonLoader size="m" />
             </div>

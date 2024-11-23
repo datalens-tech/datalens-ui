@@ -54,7 +54,10 @@ $dashPublicContainerClassName: '.dash';
 
     // styles for widgets without tabs below
 
-    #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float),
+    #{$dashPublicContainerClassName}
+        &_no-tabs
+        &__container
+        &__chart-header:not(&__chart-header_float),
     #{$dashContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float) {
         top: -4px;
     }

@@ -263,7 +263,9 @@ $fullscreenZIndex: 999;
         top: -35px;
         right: 35px;
     }
-    &__container_table .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
+    &__container_table
+        .chartkit-loader:not(.chartkit-loader_widget)
+        .chartkit-loader__loader_compact {
         top: -46px;
         right: 12px;
     }
