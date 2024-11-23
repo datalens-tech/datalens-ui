@@ -24,14 +24,14 @@ $dashPublicContainerClassName: '.dash';
 
     // styles for widgets with tabs below
 
-    #{$dashPublicContainerClassName} &__container &__chart-header,
-    #{$dashContainerClassName} &__container &__chart-header {
+    #{$dashPublicContainerClassName} &__container &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &__container &__chart-header:not(&__chart-header_float) {
         top: -40px;
         right: 8px;
     }
 
-    #{$dashPublicContainerClassName} &__container_table &__chart-header,
-    #{$dashContainerClassName} &__container_table &__chart-header {
+    #{$dashPublicContainerClassName} &__container_table &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &__container_table &__chart-header:not(&__chart-header_float) {
         top: -46px;
         right: 8px;
     }
@@ -54,8 +54,8 @@ $dashPublicContainerClassName: '.dash';
 
     // styles for widgets without tabs below
 
-    #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header,
-    #{$dashContainerClassName} &_no-tabs &__container &__chart-header {
+    #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float) {
         top: -4px;
     }
 

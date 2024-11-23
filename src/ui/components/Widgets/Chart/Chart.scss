@@ -130,6 +130,11 @@ $fullscreenZIndex: 999;
         top: 0;
     }
 
+    & .chartkit-loader.chartkit-loader_widget .chartkit-loader__loader_compact {
+        right: 10px;
+        top: 7px;
+    }
+
     // for widgets-metrics indentation should be different
     #{$class}__body {
         padding: 0 var(--dl-dk-charts-padding) var(--dl-dk-charts-padding);
@@ -141,7 +146,7 @@ $fullscreenZIndex: 999;
             top: calc(-1 * var(--dl-dk-charts-tabs-height) + var(--dl-dk-header-offset));
         }
 
-        & .chartkit-loader__loader_compact {
+        & .chartkit-loader__loader_compact:not(.chartkit-loader_widget) {
             right: calc(-1 * var(--dl-dk-charts-padding));
             top: -44px;
         }
@@ -198,7 +203,7 @@ $fullscreenZIndex: 999;
 
         // block below: without tabs, maps and metrics
 
-        .chartkit-loader__loader_compact {
+        .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
             top: -2px;
         }
 
@@ -207,7 +212,7 @@ $fullscreenZIndex: 999;
         #{$class}__container {
             padding-top: var(--dl-dk-charts-padding);
 
-            .chartkit-loader__loader_compact {
+            .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
                 top: calc(-1 * var(--dl-dk-charts-padding));
             }
 
@@ -254,15 +259,15 @@ $fullscreenZIndex: 999;
         top: -4px;
         right: 3px;
     }
-    & .chartkit-loader__loader_compact {
+    & .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
         top: -35px;
         right: 35px;
     }
-    &__container_table .chartkit-loader__loader_compact {
+    &__container_table .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
         top: -46px;
         right: 12px;
     }
-    &_no-controls .chartkit-loader__loader_compact {
+    &_no-controls .chartkit-loader:not(.chartkit-loader_widget) .chartkit-loader__loader_compact {
         right: 15px;
     }
 }

@@ -206,6 +206,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             compact={headerWithControlsProps.compactLoader}
                             veil={showLoaderVeil}
                             delay={headerWithControlsProps.loaderDelay}
+                            classNameMod={'widget'}
                         />
                         <ChartHeader
                             dataProvider={headerWithControlsProps.dataProvider}

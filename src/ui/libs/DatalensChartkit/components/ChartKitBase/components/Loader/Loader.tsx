@@ -12,11 +12,12 @@ interface LoaderProps {
     compact?: boolean;
     veil?: boolean;
     delay?: number;
+    classNameMod?: string;
 }
 
 const b = block('chartkit-loader');
 
-const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay}) => {
+const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay, classNameMod}) => {
     const [showLoader, setShowLoader] = React.useState(typeof delay !== 'number');
 
     React.useEffect(() => {
@@ -32,7 +33,7 @@ const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay}) => {
     }
 
     return (
-        <div className={b({veil})} data-qa={ChartKitQa.Loader}>
+        <div className={b({veil, [String(classNameMod)]: Boolean(classNameMod)})} data-qa={ChartKitQa.Loader}>
             <div className={b('loader', {compact})}>
                 <CommonLoader size="m" />
             </div>
