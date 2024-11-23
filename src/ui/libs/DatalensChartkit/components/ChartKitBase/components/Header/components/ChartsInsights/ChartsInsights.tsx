@@ -1,16 +1,16 @@
 import React from 'react';
 
-import block from 'bem-cn-lite';
 import type {PopoverInstanceProps} from '@gravity-ui/uikit';
 import {Button, Loader, Popover} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
-import {Feature, type ChartsInsightsItem} from 'shared';
+import {type ChartsInsightsItem, Feature} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
-import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 import Utils from 'ui/utils';
+import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
 import type {ChartsInsightsData} from '../../../../../../types/widget';

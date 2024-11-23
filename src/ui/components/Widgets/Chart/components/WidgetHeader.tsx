@@ -11,19 +11,19 @@ import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils';
+import {MOBILE_SIZE} from 'ui/utils/mobile';
+
 import Loader from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {
     CombinedError,
-    LoadedWidgetData,
     ControlWidget,
+    LoadedWidgetData,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
-
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
-import type {ChartProviderPropsWithRefProps, DataProps, ChartWidgetDataRef} from '../types';
+import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
 
 import {Header as ChartHeader} from './Header';
 
@@ -53,27 +53,33 @@ export type HeaderProps = {
     noControls?: boolean;
 };
 
-export type HeaderWithControlsProps = HeaderProps & Pick<ChartProviderPropsWithRefProps, 'compactLoader'| 'loaderDelay'| 'menuType'| 'menuChartkitConfig'| 'dataProvider'> & {
-    error: CombinedError | null;
-    dataProps?: DataProps;
-    requestId: ChartsData['requestId'];
+export type HeaderWithControlsProps = HeaderProps &
+    Pick<
+        ChartProviderPropsWithRefProps,
+        'compactLoader' | 'loaderDelay' | 'menuType' | 'menuChartkitConfig' | 'dataProvider'
+    > & {
+        error: CombinedError | null;
+        dataProps?: DataProps;
+        requestId: ChartsData['requestId'];
 
-    loadedData:
+        loadedData:
             | LoadedWidgetData<ChartsData>
             | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
-    widgetDataRef: ChartWidgetDataRef;
-    widgetRenderTimeRef: React.MutableRefObject<number | null>;
-    yandexMapAPIWaiting?: number | null;
-    enableActionParams?: boolean;
-    isWidgetMenuDataChanged?: boolean;
-    showLoader?: boolean;
-    veil?: boolean;
+        widgetDataRef: ChartWidgetDataRef;
+        widgetRenderTimeRef: React.MutableRefObject<number | null>;
+        yandexMapAPIWaiting?: number | null;
+        enableActionParams?: boolean;
+        isWidgetMenuDataChanged?: boolean;
+        showLoader?: boolean;
+        veil?: boolean;
 
-    onChange: (changedData: OnChangeData,
-        _state: {forceUpdate: boolean},
-        callExternalOnChange?: boolean,
-        callChangeByClick?: boolean,) => void;
-};
+        onChange: (
+            changedData: OnChangeData,
+            _state: {forceUpdate: boolean},
+            callExternalOnChange?: boolean,
+            callChangeByClick?: boolean,
+        ) => void;
+    };
 
 const b = block('widget-header');
 
@@ -94,7 +100,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
         noControls,
     } = props;
 
-    const headerWithControlsProps = (props as HeaderWithControlsProps);
+    const headerWithControlsProps = props as HeaderWithControlsProps;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
@@ -203,9 +209,13 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         />
                         <ChartHeader
                             dataProvider={headerWithControlsProps.dataProvider}
-                            chartsInsightsData={headerWithControlsProps.loadedData?.chartsInsightsData}
+                            chartsInsightsData={
+                                headerWithControlsProps.loadedData?.chartsInsightsData
+                            }
                             menuType={headerWithControlsProps.menuType}
-                            customMenuOptions={{} as unknown as ChartProviderPropsWithRefProps['customMenuOptions']}
+                            customMenuOptions={
+                                {} as unknown as ChartProviderPropsWithRefProps['customMenuOptions']
+                            }
                             menuChartkitConfig={headerWithControlsProps.menuChartkitConfig}
                             isMenuAvailable={!noControls}
                             error={headerWithControlsProps.error || null}
@@ -216,7 +226,9 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             widgetRenderTimeRef={headerWithControlsProps.widgetRenderTimeRef}
                             yandexMapAPIWaiting={headerWithControlsProps.yandexMapAPIWaiting}
                             onChange={headerWithControlsProps.onChange}
-                            isWidgetMenuDataChanged={headerWithControlsProps.isWidgetMenuDataChanged}
+                            isWidgetMenuDataChanged={
+                                headerWithControlsProps.isWidgetMenuDataChanged
+                            }
                             onExportLoading={handleExportLoading}
                             enableActionParams={headerWithControlsProps.enableActionParams}
                             onFullscreenClick={onFullscreenClick}

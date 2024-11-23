@@ -11,8 +11,8 @@ import type {StringParams} from 'shared';
 import {Feature} from 'shared/types/feature';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
-import Utils from 'ui/utils/utils';
 import {isEmbeddedMode} from 'ui/utils/embedded';
+import Utils from 'ui/utils/utils';
 
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';

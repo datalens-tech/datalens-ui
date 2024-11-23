@@ -4,7 +4,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {useSelector} from 'react-redux';
-import {ControlQA,  Feature, type StringParams} from 'shared';
+import {ControlQA, Feature, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
@@ -129,22 +129,22 @@ export const Header = (props: HeaderProps) => {
     const showFiltersClear = showActionParamsFilter && onFiltersClear && showFloatControls;
 
     return (
-        <div className={b('chart-header', {'float': showFloatControls})}>
+        <div className={b('chart-header', {float: showFloatControls})}>
             {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
             {!showFloatControls && chartsInsightsData && (
-                    <ChartsInsights
-                        items={chartsInsightsData.items}
-                        messagesByLocator={chartsInsightsData.messagesByLocator}
-                        locators={chartsInsightsData.locators}
-                    />
-                )}
+                <ChartsInsights
+                    items={chartsInsightsData.items}
+                    messagesByLocator={chartsInsightsData.messagesByLocator}
+                    locators={chartsInsightsData.locators}
+                />
+            )}
             <ChartActionPanelButton
                 menuType={menuType}
                 loadedData={loadedData}
                 widgetDataRef={widgetDataRef}
                 chartData={chartData}
             />
-            
+
             <div className={showFloatControls ? b('controls-corner-wrapper') : undefined}>
                 {showFloatControls && chartsInsightsData && (
                     <ChartsInsights
@@ -156,7 +156,11 @@ export const Header = (props: HeaderProps) => {
                 {showFiltersClear && props.showFilters && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
-                            <Button qa={ControlQA.filtersClear} onClick={onFiltersClear} className={b('filter-button')}>
+                            <Button
+                                qa={ControlQA.filtersClear}
+                                onClick={onFiltersClear}
+                                className={b('filter-button')}
+                            >
                                 <Icon
                                     data={iconClearActionParams}
                                     size={16}

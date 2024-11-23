@@ -28,7 +28,8 @@ import {getPreparedWrapSettings} from '../../DashKit/utils';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
-import {HeaderWithControlsProps, WidgetHeader} from './components/WidgetHeader';
+import type {HeaderWithControlsProps} from './components/WidgetHeader';
+import {WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
     getTabIndex,
@@ -515,7 +516,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const commonHeaderContentProps = {
         compactLoader,
         loaderDelay,
-        menuType: "dash",
+        menuType: 'dash',
         menuChartkitConfig,
         dataProvider,
         error,
@@ -566,9 +567,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                     {label: 'chartId', value: chartId},
                 ]}
             />
-            <WidgetHeader
-                {...(widgetHeaderProps as HeaderWithControlsProps)}
-            />
+            <WidgetHeader {...(widgetHeaderProps as HeaderWithControlsProps)} />
             <Content
                 initialParams={initialParams}
                 showLoader={showLoader}

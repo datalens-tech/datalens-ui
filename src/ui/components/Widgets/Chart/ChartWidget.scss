@@ -91,7 +91,7 @@ $dashPublicContainerClassName: '.dash';
     &:hover &__controls-corner-wrapper {
         opacity: 1;
         background-color: var(--g-color-base-background);
-        box-shadow: 0 1px 6px 0 rgba(0,0,0,0.1);
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1);
 
         & .chartkit-insights__button::before,
         & .dl-widget__filter-button::before,

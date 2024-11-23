@@ -24,7 +24,12 @@ const SwitcherButton = (props) => {
     const buttonSize = showFlatControls ? 'm' : 'l';
 
     return (
-        <Button {...props} view={view} size={buttonSize} className={b('switcher', {'flat': showFlatControls})}>
+        <Button
+            {...props}
+            view={view}
+            size={buttonSize}
+            className={b('switcher', {flat: showFlatControls})}
+        >
             <Icon data={Ellipsis} size={16} />
         </Button>
     );
