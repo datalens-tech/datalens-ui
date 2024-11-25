@@ -82,12 +82,16 @@ const middlewareAction = (
 const debouncedTmpAction = debounce(middlewareAction);
 let lastInvocationTimestamp = Date.now();
 
-export const editHistoryMiddleware: Middleware = (store) => (next) => (action) => {
+function isDatasetAction(value: unknown): value is symbol {
+    return typeof value === 'symbol' && value.toString().startsWith('Symbol(dataset');
+}
+
+export const editHistoryDsMiddleware: Middleware = (store) => (next) => (action) => {
     // We should dispatch history action after target action in middleware
     // eslint-disable-next-line callback-return
     next(action);
 
-    if (typeof action?.type !== 'symbol' || !action.type.toString().startsWith('Symbol(dataset')) {
+    if (!isDatasetAction(action?.type)) {
         return;
     }
 
@@ -104,6 +108,10 @@ export const editHistoryMiddleware: Middleware = (store) => (next) => (action) =
         }
 
         const state = store.getState();
+        // Stacked actions are also those actions that do not have this attribute initially,
+        // but are called at the time of deferred validation. This is necessary so that all changes
+        // collapse into one point in the history, so that when switching between points,
+        // the state of the dataset corresponds to the result of validation that worked with this state.
         const stacked =
             stackedByDefault ||
             (state.dataset.savingDataset.disabled &&
