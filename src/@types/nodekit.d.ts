@@ -43,13 +43,6 @@ export interface SharedAppConfig {
     useIPV6?: boolean;
     workers?: number;
 
-    errorBooster?: {
-        server?: {
-            enabled?: boolean;
-            project?: string;
-        };
-    };
-
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;
