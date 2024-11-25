@@ -573,7 +573,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             [WizardVisualizationId.FlatTable, WizardVisualizationId.PivotTable] as string[]
         ).includes(visualization.id);
 
-        if (!isTableWidget || !Utils.isEnabledFeature(Feature.TableSize)) {
+        if (!isTableWidget) {
             return null;
         }
 

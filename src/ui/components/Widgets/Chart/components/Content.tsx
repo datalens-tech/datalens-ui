@@ -69,6 +69,7 @@ export const Content = (props: ChartContentProps) => {
         widgetDashState,
         rootNodeRef,
         runAction,
+        backgroundColor,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -214,6 +215,7 @@ export const Content = (props: ChartContentProps) => {
                     paneSplitOrientation={paneSplitOrientation}
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
+                    backgroundColor={backgroundColor}
                 />
                 {showChartOverlay && (
                     <div

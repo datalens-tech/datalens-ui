@@ -27,6 +27,7 @@ type ChartProps = Pick<
     Pick<State, 'loadedData' | 'error'> &
     Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> & {
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
+        backgroundColor?: string;
     };
 
 export const Chart = (props: ChartProps) => {
@@ -67,6 +68,7 @@ export const Chart = (props: ChartProps) => {
                 paneSplitOrientation={props.paneSplitOrientation}
                 widgetDashState={props.widgetDashState}
                 rootNodeRef={props.rootNodeRef}
+                backgroundColor={props.backgroundColor}
             />
         );
     }

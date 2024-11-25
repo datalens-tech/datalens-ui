@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import {ControlQA, TitlePlacementOption, resolveIntervalDate, resolveRelativeDate} from 'shared';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
-import {CheckboxControlValue} from 'ui/units/dash/containers/Dialogs/Control/constants';
+import {CheckboxControlValue} from 'ui/store/constants/controlDialog';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {YCSelect} from '../../../../../components/common/YCSelect/YCSelect';

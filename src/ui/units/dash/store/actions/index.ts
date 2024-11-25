@@ -23,8 +23,6 @@ import type {
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
     SetItemDataAction,
-    SetLastUsedConnectionIdAction,
-    SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
     SetPageTabAction,
@@ -55,7 +53,6 @@ export type DashAction<T = unknown> =
     | SetStateHashIdAction
     | SetErrorModeAction
     | ToggleTableOfContentAction
-    | SetLastUsedDatasetIdAction
     | SetSelectorDialogItemAction
     | AddSelectorToGroupAction
     | UpdateSelectorsGroupAction
@@ -79,7 +76,6 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | SetLastUsedConnectionIdAction
     | SetSettingsAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

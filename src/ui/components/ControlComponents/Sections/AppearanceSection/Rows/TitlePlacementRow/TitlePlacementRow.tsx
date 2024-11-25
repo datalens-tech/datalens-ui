@@ -7,11 +7,11 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {TitlePlacementOption} from 'shared/types/dash';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'ui/store/selectors/controlDialog';
-import {ELEMENT_TYPE} from 'ui/units/dash/containers/Dialogs/Control/constants';
 
 import '../../AppearanceSection.scss';
 

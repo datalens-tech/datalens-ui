@@ -367,6 +367,12 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
             plotOptions.column.stacking = 'percent';
             break;
 
+        case 'area':
+            plotOptions.area = {
+                stacking: 'normal',
+            };
+            break;
+
         case WizardVisualizationId.Bar100p:
             plotOptions.bar = plotOptions.bar || {};
             plotOptions.bar.stacking = 'percent';

@@ -5,11 +5,13 @@ import type {
     ItemDataSource,
     SelectorDialogState,
     SelectorDialogValidation,
+    SelectorElementType,
 } from 'ui/store/typings/controlDialog';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
 import {addOperationForValue} from 'ui/units/dash/modules/helpers';
-import {ELEMENT_TYPE} from 'units/dash/containers/Dialogs/Control/constants';
+import {CheckboxControlValue} from 'ui/store/constants/controlDialog';
 import type {DashTab, DashTabItemGroupControl} from 'shared/types';
+import {ELEMENT_TYPE} from '../constants/controlDialog';
 
 export const getActualUniqueFieldNameValidation = (
     group: SelectorDialogState[],
@@ -285,4 +287,13 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
     }
 
     return source;
+};
+
+export const getInitialDefaultValue = (elementType: SelectorElementType) => {
+    switch (elementType) {
+        case ELEMENT_TYPE.CHECKBOX:
+            return CheckboxControlValue.FALSE;
+        default:
+            return undefined;
+    }
 };

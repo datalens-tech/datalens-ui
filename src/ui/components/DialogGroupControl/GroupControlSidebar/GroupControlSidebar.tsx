@@ -13,6 +13,7 @@ import {
     DialogGroupControlQa,
     TitlePlacementOption,
 } from 'shared';
+import {useEffectOnce} from 'ui/hooks';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -28,7 +29,6 @@ import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selector
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
-import {copyControlToStorage} from 'ui/units/dash/store/actions/controls/actions';
 
 import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
@@ -79,7 +79,10 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
     return pasteItems as TabMenuItemData<SelectorDialogState>[];
 };
 
-export const GroupControlSidebar = () => {
+export const GroupControlSidebar: React.FC<{
+    handleCopyItem: (itemIndex: number) => void;
+    enableAutoheightDefault?: boolean;
+}> = ({enableAutoheightDefault, handleCopyItem}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
@@ -173,34 +176,43 @@ export const GroupControlSidebar = () => {
         [dispatch, selectorsGroup],
     );
 
-    const handleChangeUpdateControls = (value: boolean) => {
-        dispatch(
-            updateSelectorsGroup({
-                ...selectorsGroup,
-                updateControlsOnChange: value,
-            }),
-        );
-    };
+    const handleChangeUpdateControls = React.useCallback(
+        (value: boolean) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    updateControlsOnChange: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
 
-    const handleCopyItem = (itemIndex: number) => {
-        dispatch(copyControlToStorage(itemIndex));
-    };
+    const handleUpdateItem = React.useCallback(
+        (title: string) => {
+            dispatch(
+                setSelectorDialogItem({
+                    title,
+                }),
+            );
+        },
+        [dispatch],
+    );
 
-    const handleUpdateItem = (title: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                title,
-            }),
-        );
-    };
+    useEffectOnce(() => {
+        if (enableAutoheightDefault) {
+            handleChangeAutoHeight(true);
+        }
+    });
 
     const showAutoHeight =
-        isMultipleSelectors ||
-        selectorsGroup.buttonApply ||
-        selectorsGroup.buttonReset ||
-        // until we have supported automatic height adjustment for case with top title placement,
-        // we allow to enable autoheight
-        selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
+        (isMultipleSelectors ||
+            selectorsGroup.buttonApply ||
+            selectorsGroup.buttonReset ||
+            // until we have supported automatic height adjustment for case with top title placement,
+            // we allow to enable autoheight
+            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top) &&
+        !enableAutoheightDefault;
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (

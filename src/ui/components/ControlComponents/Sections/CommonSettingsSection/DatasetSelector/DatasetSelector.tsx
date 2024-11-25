@@ -13,13 +13,11 @@ import {
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {setLastUsedDatasetId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
+import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
-import {setLastUsedDatasetId} from 'units/dash/store/actions/dashTyped';
-import {selectDashWorkbookId} from 'units/dash/store/selectors/dashTypedSelectors';
 
-import {ELEMENT_TYPE} from '../../../../../units/dash/containers/Dialogs/Control/constants';
 import {DatasetField} from '../../Switchers/DatasetField/DatasetField';
 import {EntrySelector} from '../EntrySelector/EntrySelector';
 
@@ -27,11 +25,14 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 
-function DatasetSelector() {
+function DatasetSelector(props: {
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+}) {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
-    const workbookId = useSelector(selectDashWorkbookId);
+    const {workbookId} = useSelector(selectOpenedItemMeta);
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
@@ -139,6 +140,8 @@ function DatasetSelector() {
                 isInvalid={isInvalid}
                 workbookId={workbookId}
                 getEntryLink={getDatasetLink}
+                navigationPath={props.navigationPath}
+                changeNavigationPath={props.changeNavigationPath}
             />
             <FormRow label={i18n('field_field')}>
                 <FieldWrapper error={validation.datasetFieldId}>

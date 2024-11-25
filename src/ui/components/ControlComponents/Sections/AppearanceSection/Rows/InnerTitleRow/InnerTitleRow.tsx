@@ -7,13 +7,12 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
 } from 'ui/store/selectors/controlDialog';
 import type {SelectorSourceType} from 'ui/store/typings/controlDialog';
-
-import {ELEMENT_TYPE} from '../../../../../../units/dash/containers/Dialogs/Control/constants';
 
 import '../../AppearanceSection.scss';
 

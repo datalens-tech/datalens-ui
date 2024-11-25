@@ -10,17 +10,45 @@ import {ExternalSelectorSettings} from './ExternalSelectorSettings/ExternalSelec
 import {InputSettings} from './InputSettings/InputSettings';
 
 // TODO: Remove hideCommonFields and related fields after enabling DLPROJECTS-93
-export const CommonSettingsSection = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
+export const CommonSettingsSection = ({
+    hideCommonFields,
+    navigationPath,
+    changeNavigationPath,
+    enableAutoheightDefault,
+}: {
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+    hideCommonFields?: boolean;
+    enableAutoheightDefault?: boolean;
+}) => {
     const {sourceType} = useSelector(selectSelectorDialog);
 
     switch (sourceType) {
         case DashTabItemControlSourceType.External:
-            return <ExternalSelectorSettings />;
+            return (
+                <ExternalSelectorSettings
+                    changeNavigationPath={changeNavigationPath}
+                    navigationPath={navigationPath}
+                    enableAutoheightDefault={enableAutoheightDefault}
+                />
+            );
         case DashTabItemControlSourceType.Manual:
             return <InputSettings hideCommonFields={hideCommonFields} />;
         case DashTabItemControlSourceType.Connection:
-            return <ConnectionSettings hideCommonFields={hideCommonFields} />;
+            return (
+                <ConnectionSettings
+                    hideCommonFields={hideCommonFields}
+                    changeNavigationPath={changeNavigationPath}
+                    navigationPath={navigationPath}
+                />
+            );
         default:
-            return <DatasetSettings hideCommonFields={hideCommonFields} />;
+            return (
+                <DatasetSettings
+                    hideCommonFields={hideCommonFields}
+                    changeNavigationPath={changeNavigationPath}
+                    navigationPath={navigationPath}
+                />
+            );
     }
 };

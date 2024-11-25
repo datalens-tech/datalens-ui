@@ -10,6 +10,7 @@ import update, {Context} from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {ControlQA} from 'shared';
+import {useEffectOnce} from 'ui/hooks';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
@@ -28,22 +29,25 @@ imm.extend('$auto', (value, object) => {
     return object ? update(object, value) : update({}, value);
 });
 
-const ExternalSelectorSettings = () => {
+const ExternalSelectorSettings: React.FC<{
+    navigationPath: string | null;
+    changeNavigationPath: (newNavigationPath: string) => void;
+    enableAutoheightDefault?: boolean;
+}> = (props) => {
     const dispatch = useDispatch();
     const {autoHeight, chartId, title, selectorParameters, validation, selectorParametersGroup} =
         useSelector(selectSelectorDialog);
 
-    React.useEffect(() => {
-        dispatch(setSelectorDialogItem({selectorParametersGroup: 0}));
-    }, []);
-
-    const handleAutoHeightUpdate = React.useCallback((value: boolean) => {
-        dispatch(
-            setSelectorDialogItem({
-                autoHeight: value,
-            }),
-        );
-    }, []);
+    const handleAutoHeightUpdate = React.useCallback(
+        (value: boolean) => {
+            dispatch(
+                setSelectorDialogItem({
+                    autoHeight: value,
+                }),
+            );
+        },
+        [dispatch],
+    );
 
     const handleChartIdChange = React.useCallback(
         (value: {entryId: string; name: string; params?: StringParams}) => {
@@ -73,13 +77,26 @@ const ExternalSelectorSettings = () => {
         [selectorParameters, dispatch, title, selectorParametersGroup],
     );
 
-    const handleTitleUpdate = React.useCallback((newTitle: string) => {
-        dispatch(
-            setSelectorDialogItem({
-                title: newTitle,
-            }),
-        );
-    }, []);
+    const handleTitleUpdate = React.useCallback(
+        (newTitle: string) => {
+            dispatch(
+                setSelectorDialogItem({
+                    title: newTitle,
+                }),
+            );
+        },
+        [dispatch],
+    );
+
+    React.useEffect(() => {
+        dispatch(setSelectorDialogItem({selectorParametersGroup: 0}));
+    }, [dispatch]);
+
+    useEffectOnce(() => {
+        if (props.enableAutoheightDefault) {
+            handleAutoHeightUpdate(true);
+        }
+    });
 
     return (
         <React.Fragment>
@@ -98,16 +115,20 @@ const ExternalSelectorSettings = () => {
                 entryId={chartId}
                 onChange={handleChartIdChange}
                 includeClickableType={EntryTypeNode.CONTROL_NODE}
+                navigationPath={props.navigationPath}
+                changeNavigationPath={props.changeNavigationPath}
             />
 
-            <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>
-                <Checkbox
-                    className={b('checkbox-option')}
-                    checked={autoHeight}
-                    onUpdate={handleAutoHeightUpdate}
-                    size="l"
-                />
-            </FormRow>
+            {!props.enableAutoheightDefault && (
+                <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>
+                    <Checkbox
+                        className={b('checkbox-option')}
+                        checked={autoHeight}
+                        onUpdate={handleAutoHeightUpdate}
+                        size="l"
+                    />
+                </FormRow>
+            )}
         </React.Fragment>
     );
 };

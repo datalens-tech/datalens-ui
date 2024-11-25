@@ -19,19 +19,15 @@ import type {
     DashSettings,
     DashTab,
     DashTabItem,
+    DashTabItemControl,
+    DashTabItemGroupControl,
     DashTabItemImage,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {DashTabItemType, EntryScope, EntryUpdateMode} from 'shared';
+import {EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import type {ItemDataSource, SelectorDialogState} from 'ui/store/typings/controlDialog';
-import {
-    getControlDefaultsForField,
-    getControlValidation,
-    getItemDataSource,
-} from 'ui/store/utils/controlDialog';
+import type {ItemDataSource} from 'ui/store/typings/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -55,16 +51,10 @@ import {
     selectDashData,
     selectDashEntry,
     selectEntryId,
-    selectIsControlSourceTypeHasChanged,
 } from '../selectors/dashTypedSelectors';
 
 import {save} from './base/actions';
-import {closeDialog as closeDashDialog} from './dialogs/actions';
-import {
-    getBeforeCloseDialogItemAction,
-    getExtendedItemDataAction,
-    migrateDataSettings,
-} from './helpers';
+import {migrateDataSettings} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -324,28 +314,6 @@ export const toggleTableOfContent = (expanded?: boolean): ToggleTableOfContentAc
     payload: expanded,
 });
 
-export const SET_LAST_USED_DATASET_ID = Symbol('dash/SET_LAST_USED_DATASET_ID');
-export type SetLastUsedDatasetIdAction = {
-    type: typeof SET_LAST_USED_DATASET_ID;
-    payload: string;
-};
-
-export const setLastUsedDatasetId = (datasetId: string): SetLastUsedDatasetIdAction => ({
-    type: SET_LAST_USED_DATASET_ID,
-    payload: datasetId,
-});
-
-export const SET_LAST_USED_CONNECTION_ID = Symbol('dash/SET_LAST_USED_CONNECTION_ID');
-export type SetLastUsedConnectionIdAction = {
-    type: typeof SET_LAST_USED_CONNECTION_ID;
-    payload: string;
-};
-
-export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnectionIdAction => ({
-    type: SET_LAST_USED_CONNECTION_ID,
-    payload: connectionId,
-});
-
 type SetItemDataBase = {
     title?: string;
     sourceType?: string;
@@ -354,11 +322,13 @@ type SetItemDataBase = {
 };
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
+export type SetItemDataGroupControl = Partial<DashTabItemGroupControl['data']> & SetItemDataBase;
+export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & SetItemDataBase;
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle | SetItemDataImage;
+    data: SetItemDataText | SetItemDataTitle | SetItemDataImage | SetItemDataGroupControl;
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
@@ -377,47 +347,6 @@ export const setItemData = (data: SetItemDataArgs) => {
         });
 
         getState().dash.dragOperationProps?.commit();
-    };
-};
-
-export const applyControl2Dialog = () => {
-    return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
-        const state = getState();
-        const selectorDialog = state.dash.selectorDialog as SelectorDialogState;
-        const {title, sourceType, autoHeight} = selectorDialog;
-
-        const validation = getControlValidation(selectorDialog);
-
-        if (!isEmpty(validation)) {
-            dispatch(
-                setSelectorDialogItem({
-                    validation,
-                }),
-            );
-            return;
-        }
-
-        const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
-        const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
-
-        const data = {
-            title,
-            sourceType,
-            autoHeight,
-            source: getItemDataSource(selectorDialog),
-        };
-        const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data, defaults}));
-
-        dispatch(
-            setItemData({
-                data: itemData.data,
-                type: DashTabItemType.Control,
-                defaults: itemData.defaults,
-            }),
-        );
-
-        dispatch(closeDashDialog());
     };
 };
 
@@ -926,14 +855,6 @@ export const setWidgetCurrentTab = (
     type: SET_WIDGET_CURRENT_TAB,
     payload,
 });
-
-export const closeControl2Dialog = () => {
-    return (dispatch: AppDispatch) => {
-        const beforeCloseDialogItem = getBeforeCloseDialogItemAction();
-        dispatch(beforeCloseDialogItem());
-        dispatch(closeDashDialog());
-    };
-};
 
 export function updateDeprecatedDashConfig() {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
