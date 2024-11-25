@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {FormRow} from '@gravity-ui/components';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -36,6 +37,9 @@ interface DialogTextWidgetState {
     autoHeight?: boolean;
     backgroundColor?: string;
 }
+
+const INPUT_TEXT_ID = 'widgetTextField';
+const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
 class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, DialogTextWidgetState> {
     static defaultProps = {
@@ -77,31 +81,45 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 disableFocusTrap={true}
                 qa={DialogDashWidgetItemQA.Text}
             >
-                <Dialog.Header caption={i18n('dash.text-dialog.edit', 'label_text')} />
+                <Dialog.Header
+                    caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')}
+                />
                 <Dialog.Body className={b()}>
-                    <TextEditor autofocus onTextUpdate={this.onTextUpdate} text={text} />
+                    <FormRow
+                        fieldId={INPUT_TEXT_ID}
+                        label={i18n('dash.text-dialog.edit', 'label_text')}
+                    >
+                        <TextEditor
+                            id={INPUT_TEXT_ID}
+                            autofocus
+                            onTextUpdate={this.onTextUpdate}
+                            text={text}
+                        />
+                    </FormRow>
                     {enableAutoheight && (
-                        <div className={b('setting-row')}>
+                        <FormRow
+                            fieldId={INPUT_AUTOHEIGHT_ID}
+                            label={i18n(
+                                'dash.dashkit-plugin-common.view',
+                                'label_autoheight-checkbox',
+                            )}
+                        >
                             <Checkbox
+                                id={INPUT_AUTOHEIGHT_ID}
+                                className={b('checkbox')}
                                 checked={Boolean(autoHeight)}
                                 onChange={this.handleAutoHeightChanged}
-                            >
-                                {i18n(
-                                    'dash.dashkit-plugin-common.view',
-                                    'label_autoheight-checkbox',
-                                )}
-                            </Checkbox>
-                        </div>
+                            />
+                        </FormRow>
                     )}
-                    <div className={b('setting-row')}>
-                        <span className={b('background-label')}>
-                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                        </span>
+                    <FormRow
+                        label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                    >
                         <PaletteBackground
                             color={backgroundColor}
                             onSelect={this.handleHasBackgroundSelected}
                         />
-                    </div>
+                    </FormRow>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}

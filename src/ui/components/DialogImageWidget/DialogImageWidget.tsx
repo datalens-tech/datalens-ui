@@ -18,7 +18,6 @@ import './DialogImageWidget.scss';
 const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
-const INPUT_BG_ENABLED_ID = 'dialog-image-input-bg-enabled';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
@@ -150,7 +149,6 @@ export function DialogImageWidget(props: Props) {
                 </FormRow>
                 <FormRow
                     className={b('row')}
-                    fieldId={INPUT_BG_ENABLED_ID}
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
                     <PaletteBackground

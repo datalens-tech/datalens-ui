@@ -12,6 +12,7 @@ import {
 } from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
+import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
@@ -149,7 +150,7 @@ const textPlugin = {
         const data = props.data as DashTabItemText['data'];
 
         const showBgColor = Boolean(
-            data.background?.color && data.background?.color !== 'transparent',
+            data.background?.color && data.background?.color !== CustomPaletteColors.NONE,
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
