@@ -9,14 +9,12 @@
         margin-top: 10px;
     }
 
-    &__setting-row {
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-    }
-
     &__background-label {
         display: inline-block;
         margin-inline: 19px var(--g-spacing-2);
+    }
+
+    &__checkbox {
+        margin-block-start: var(--g-spacing-2);
     }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {Checkbox, Dialog, Link, Popup, Text, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -62,21 +62,6 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     );
 };
 
-type LineProps = {
-    className?: string;
-    caption: React.ReactNode;
-    children?: React.ReactNode;
-};
-
-function Line(props: LineProps) {
-    return (
-        <div className={b('line', props.className)}>
-            <div className={b('line-caption')}>{props.caption}</div>
-            <div className={b('line-content')}>{props.children}</div>
-        </div>
-    );
-}
-
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
 export interface DialogChartWidgetFeatureProps {
@@ -121,6 +106,11 @@ type DialogChartWidgetState = {
     visualizationType?: WizardVisualizationId;
     hierarchies?: HierarchyField[];
 };
+
+const INPUT_FILTERING_ID = 'chartFilteringField';
+const INPUT_NAME_ID = 'chartNameField';
+const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
+const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 
 // TODO: put in defaultPath navigation key from entry
 class DialogChartWidget extends React.PureComponent<
@@ -527,32 +517,31 @@ class DialogChartWidget extends React.PureComponent<
             canUseFiltration && data.tabs[tabIndex].enableActionParams,
         );
 
-        const caption = (
-            <div className={b('caption')}>
-                <span className={b('caption-text')}>
-                    {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
-                </span>
-                <HelpPopover
-                    className={b('help-tooltip')}
-                    content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                />
-            </div>
+        const helpPopover = (
+            <HelpPopover
+                className={b('help-tooltip')}
+                content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+            />
         );
 
         return (
-            <Line caption={caption}>
+            <FormRow
+                fieldId={INPUT_FILTERING_ID}
+                label={i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
+                labelHelpPopover={helpPopover}
+            >
                 <div>
                     <Checkbox
+                        className={b('checkbox')}
+                        id={INPUT_FILTERING_ID}
                         size="m"
                         onChange={this.handleChangeFiltering}
                         checked={enableActionParams}
                         disabled={!canUseFiltration}
-                    >
-                        {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
-                    </Checkbox>
+                    />
                     {this.getHierarchyWarning()}
                 </div>
-            </Line>
+            </FormRow>
         );
     };
 
@@ -567,27 +556,23 @@ class DialogChartWidget extends React.PureComponent<
             changeNavigationPath,
         } = this.props;
 
-        const autoHeightCheckboxCaption = (
-            <div className={b('caption')}>
-                <span className={b('caption-text')}>
-                    {i18n('dash.widget-dialog.edit', 'field_autoheight')}
-                </span>
-                <HelpPopover
-                    className={b('help-tooltip')}
-                    content={i18n(
-                        'dash.widget-dialog.edit',
-                        'context_autoheight-availability-hint',
-                    )}
-                />
-            </div>
+        const autoHeightHelpPopover = (
+            <HelpPopover
+                className={b('help-tooltip')}
+                content={i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
+            />
         );
 
         const {title, chartId, description, autoHeight, background} = data.tabs[tabIndex];
 
         return (
             <React.Fragment>
-                <Line caption={i18n('dash.widget-dialog.edit', 'field_title')}>
+                <FormRow
+                    fieldId={INPUT_NAME_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_title')}
+                >
                     <TextInput
+                        id={INPUT_NAME_ID}
                         size="m"
                         className={b('input')}
                         placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
@@ -608,6 +593,7 @@ class DialogChartWidget extends React.PureComponent<
                     {data.tabs.length === 1 && (
                         <div className={b('visibility-toggle')}>
                             <Checkbox
+                                className={b('checkbox')}
                                 size="m"
                                 onChange={this.onVisibilityCheckboxToggle}
                                 checked={!this.state.hideTitle}
@@ -617,9 +603,9 @@ class DialogChartWidget extends React.PureComponent<
                             </Checkbox>
                         </div>
                     )}
-                </Line>
-                <Line
-                    caption={i18n('dash.widget-dialog.edit', 'field_widget')}
+                </FormRow>
+                <FormRow
+                    label={i18n('dash.widget-dialog.edit', 'field_widget')}
                     className={b('line-widget')}
                 >
                     <div className={b('navigation-input-container')} ref={this.navigationInputRef}>
@@ -645,48 +631,51 @@ class DialogChartWidget extends React.PureComponent<
                             {i18n('dash.widget-dialog.edit', 'toast_required-field')}
                         </div>
                     </Popup>
-                </Line>
-                <Line caption={i18n('dash.widget-dialog.edit', 'field_description')}>
-                    <div className={b('textarea-wrapper')}>
-                        <TextArea
-                            size="m"
-                            className={b('input')}
-                            value={description}
-                            placeholder={i18n(
-                                'dash.widget-dialog.edit',
-                                'context_fill-description',
-                            )}
-                            onUpdate={(value) =>
-                                this.setState({
-                                    data: update(data, {
-                                        tabs: {
-                                            [tabIndex]: {
-                                                description: {$set: value},
-                                            },
+                </FormRow>
+                <FormRow
+                    fieldId={INPUT_DESCRIPTION_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_description')}
+                >
+                    <TextArea
+                        id={INPUT_DESCRIPTION_ID}
+                        size="m"
+                        className={b('textarea')}
+                        value={description}
+                        placeholder={i18n('dash.widget-dialog.edit', 'context_fill-description')}
+                        onUpdate={(value) =>
+                            this.setState({
+                                data: update(data, {
+                                    tabs: {
+                                        [tabIndex]: {
+                                            description: {$set: value},
                                         },
-                                    }),
-                                })
-                            }
-                            rows={3}
-                        />
-                    </div>
-                </Line>
+                                    },
+                                }),
+                            })
+                        }
+                        rows={3}
+                    />
+                </FormRow>
                 {enableAutoheight && (
-                    <Line caption={autoHeightCheckboxCaption}>
+                    <FormRow
+                        fieldId={INPUT_AUTOHEIGHT_ID}
+                        label={i18n('dash.widget-dialog.edit', 'field_autoheight')}
+                        labelHelpPopover={autoHeightHelpPopover}
+                    >
                         <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_AUTOHEIGHT_ID}
                             size="m"
                             onChange={this.onAutoHeightRadioButtonChange}
                             disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
                             checked={Boolean(autoHeight)}
                             qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
-                        </Checkbox>
-                    </Line>
+                        />
+                    </FormRow>
                 )}
                 {enableBackgroundColor && (
-                    <Line
-                        caption={
+                    <FormRow
+                        label={
                             <div className={b('caption')}>
                                 <span className={b('caption-text')}>
                                     {i18n('dash.widget-dialog.edit', 'field_background')}
@@ -698,7 +687,7 @@ class DialogChartWidget extends React.PureComponent<
                             color={background?.color}
                             onSelect={this.handleBackgroundColorSelected}
                         />
-                    </Line>
+                    </FormRow>
                 )}
                 {enableFilteringSetting && this.renderFilteringCharts()}
                 {this.renderParams()}
@@ -751,10 +740,9 @@ class DialogChartWidget extends React.PureComponent<
             <Collapse
                 className={b('params-collapse')}
                 title={
-                    <Line
-                        className={b('params-title')}
-                        caption={i18n('dash.widget-dialog.edit', 'field_params')}
-                    />
+                    <Text variant="subheader-3">
+                        {i18n('dash.widget-dialog.edit', 'field_params')}
+                    </Text>
                 }
                 arrowPosition="left"
                 arrowQa={ParamsSettingsQA.Open}

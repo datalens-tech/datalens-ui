@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {FormRow} from '@gravity-ui/components';
 import {Checkbox, Dialog, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
@@ -55,6 +56,10 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
 
+const INPUT_TITLE_ID = 'widgetTitleField';
+const INPUT_SHOW_IN_TOC_ID = 'widgetShowInTOCField';
+const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
+
 class DialogTitleWidget extends React.PureComponent<
     DialogTitleWidgetProps,
     DialogTitleWidgetState
@@ -103,66 +108,71 @@ class DialogTitleWidget extends React.PureComponent<
                 onEnterKeyDown={this.onApply}
                 qa={DialogDashWidgetItemQA.Title}
             >
-                <Dialog.Header caption={i18n('dash.title-dialog.edit', 'label_title')} />
+                <Dialog.Header
+                    caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')}
+                />
                 <Dialog.Body className={b()}>
-                    <FieldWrapper error={validation?.text}>
-                        <TextInput
-                            size="l"
-                            value={text}
-                            autoFocus
-                            placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
-                            onUpdate={this.onTextUpdate}
-                            className={b('input', {size: this.state.size})}
-                            qa={DialogDashTitleQA.Input}
+                    <FormRow
+                        fieldId={INPUT_TITLE_ID}
+                        label={i18n('dash.title-dialog.edit', 'label_title')}
+                    >
+                        <FieldWrapper error={validation?.text}>
+                            <TextInput
+                                id={INPUT_TITLE_ID}
+                                size="l"
+                                value={text}
+                                autoFocus
+                                placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
+                                onUpdate={this.onTextUpdate}
+                                className={b('input', {size: this.state.size})}
+                                qa={DialogDashTitleQA.Input}
+                            />
+                        </FieldWrapper>
+                    </FormRow>
+                    <FormRow label={i18n('dash.title-dialog.edit', 'label_size')}>
+                        <RadioButton value={size} options={SIZES} onUpdate={this.onSizeChange} />
+                    </FormRow>
+                    <FormRow
+                        label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                    >
+                        <PaletteBackground
+                            color={backgroundColor}
+                            onSelect={this.handleHasBackgroundSelected}
                         />
-                    </FieldWrapper>
-                    <RadioButton
-                        className={b('size-selector')}
-                        value={size}
-                        options={SIZES}
-                        onUpdate={this.onSizeChange}
-                    />
+                    </FormRow>
                     {enableShowInTOC && (
-                        <div className={b('setting-row')}>
+                        <FormRow
+                            fieldId={INPUT_SHOW_IN_TOC_ID}
+                            label={i18n('dash.title-dialog.edit', 'field_show-in-toc')}
+                        >
                             <Checkbox
+                                className={b('checkbox')}
+                                id={INPUT_SHOW_IN_TOC_ID}
                                 checked={showInTOC}
                                 onChange={() =>
                                     this.setState((prevState) => ({
                                         showInTOC: !prevState.showInTOC,
                                     }))
                                 }
-                                className={b('checkbox')}
-                            >
-                                {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
-                            </Checkbox>
-                        </div>
+                            />
+                        </FormRow>
                     )}
                     {enableAutoheight && (
-                        <div className={b('setting-row')}>
+                        <FormRow
+                            fieldId={INPUT_AUTOHEIGHT_ID}
+                            label={i18n(
+                                'dash.dashkit-plugin-common.view',
+                                'label_autoheight-checkbox',
+                            )}
+                        >
                             <Checkbox
+                                className={b('checkbox')}
+                                id={INPUT_AUTOHEIGHT_ID}
                                 checked={Boolean(autoHeight)}
                                 onChange={this.handleAutoHeightChanged}
-                            >
-                                {i18n(
-                                    'dash.dashkit-plugin-common.view',
-                                    'label_autoheight-checkbox',
-                                )}
-                            </Checkbox>
-                        </div>
+                            />
+                        </FormRow>
                     )}
-                    <div className={b('setting-row', {type: 'background'})}>
-                        <span
-                            className={b('background-label', {
-                                'no-checkbox-compensation': !enableShowInTOC && !enableAutoheight,
-                            })}
-                        >
-                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                        </span>
-                        <PaletteBackground
-                            color={backgroundColor}
-                            onSelect={this.handleHasBackgroundSelected}
-                        />
-                    </div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}

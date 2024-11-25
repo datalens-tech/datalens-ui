@@ -5,6 +5,7 @@ import type {PaletteOption} from '@gravity-ui/uikit';
 import {ActionTooltip, Icon, Palette, Popover, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import type {ValueOf} from 'shared';
 import {DashCommonQa} from 'shared';
 
 import './PaletteBackground.scss';
@@ -14,9 +15,13 @@ const b = block('widget-palette-background');
 export const CustomPaletteColors = {
     LIKE_CHART: 'like-chart-bg',
     NONE: 'transparent',
-};
+} as const;
 
-type CustomPaletteColor = keyof typeof CustomPaletteColors;
+type CustomPaletteColor = ValueOf<typeof CustomPaletteColors>;
+
+function isCustomPaletteColor(color: string): color is CustomPaletteColor {
+    return Object.keys(CustomPaletteColors).includes(color as CustomPaletteColor);
+}
 
 const PALETTE_HINTS = {
     [CustomPaletteColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
@@ -46,7 +51,7 @@ const ColorItem = React.forwardRef(function ColorItem(
     return (
         <span
             ref={ref}
-            style={{backgroundColor: isLikeChartBg ? '' : `${color}`}}
+            style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
             className={b('color-item', {
                 transparent: isTransparent,
                 selected: isSelected,
@@ -56,8 +61,8 @@ const ColorItem = React.forwardRef(function ColorItem(
             data-qa={qa}
         >
             {isLikeChartBg && <Icon data={ChartColumn} className={b('color-icon')} />}
-            {!isPreview && color in PALETTE_HINTS && (
-                <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColor]}>
+            {!isPreview && isCustomPaletteColor(color) && (
+                <ActionTooltip title={PALETTE_HINTS[color]}>
                     <span className={b('tooltip-trigger')} />
                 </ActionTooltip>
             )}
