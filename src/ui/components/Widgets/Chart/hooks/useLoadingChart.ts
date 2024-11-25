@@ -13,7 +13,6 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
-import {getNormalizedParams} from 'ui/libs/DatalensChartkit/ChartKit/helpers/action-params-handlers';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -809,9 +808,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 let newParams = null;
                 let additionalParams = {};
                 if ('params' in changedData.data) {
-                    const changedParams = getNormalizedParams(changedData.data.params);
                     // reset _page param on hierarchy level changed
-                    const newDrillDownLevel = Number(changedParams.drillDownLevel);
+                    const newDrillDownLevel = Number(changedData.data.params.drillDownLevel);
                     if (
                         !isNaN(newDrillDownLevel) &&
                         (currentDrillDownLevel || newDrillDownLevel) &&
@@ -821,7 +819,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                             _page: String(START_PAGE),
                         };
                     }
-                    newParams = {...changedParams, ...additionalParams};
+                    newParams = {...changedData.data.params, ...additionalParams};
                     if (!enableActionParams) {
                         newParams = pickExceptActionParamsFromParams(newParams);
                     }
@@ -885,8 +883,8 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 // call only for widgets with callback (only on dash)
                 const res = {...changedData};
                 if (enableActionParams && 'params' in res.data) {
-                    res.data.params = getNormalizedParams(
-                        pickExceptActionParamsFromParams(res.data.params as StringParams),
+                    res.data.params = pickExceptActionParamsFromParams(
+                        res.data.params as StringParams,
                     );
                 }
                 handleChangeCallback(res);

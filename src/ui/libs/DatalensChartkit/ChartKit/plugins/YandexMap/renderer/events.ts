@@ -195,7 +195,9 @@ export function applyEventHandlers(args: ApplyEventsArgs) {
                             return;
                         }
 
-                        const params = transformParamsToActionParams(newActionParams);
+                        const params = transformParamsToActionParams(
+                            newActionParams as StringParams,
+                        );
 
                         onChange?.(
                             {
