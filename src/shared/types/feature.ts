@@ -72,6 +72,8 @@ export enum Feature {
     EnableBIConnectorIcons = 'EnableBIConnectorIcons',
     /** Enable undo/redo buttons & hotkeys in ql */
     EnableEditHistoryQL = 'EnableEditHistoryQL',
+    /** Enable undo/redo buttons & hotkeys in datasets */
+    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Depends on US feature UseMovePermAction.
      * It checks admin permission for move entries instead of edit permission.
      */

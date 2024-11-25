@@ -11,11 +11,10 @@ import {
     addField,
     batchDeleteFields,
     batchUpdateFields,
-    disableSaveDataset,
     duplicateField,
     editorSetItemsToDisplay,
-    enableSaveDataset,
     toggleFieldEditorModuleLoader,
+    toggleSaveDataset,
     updateDatasetByValidation,
     updateField,
     updateRLS,
@@ -26,6 +25,7 @@ import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
 import RLSDialog from '../../components/RLSDialog/RLSDialog';
+import {DATASET_VALIDATION_TIMEOUT} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -131,11 +131,11 @@ class DatasetEditor extends React.Component {
         this.props.closeDialog();
     };
 
-    debouncedUpdate2000 = _debounce(this.props.updateDatasetByValidation, 2000);
+    debouncedUpdate = _debounce(this.props.updateDatasetByValidation, DATASET_VALIDATION_TIMEOUT);
 
     updateDataset = ({debounce, updatePreview, validateEnabled}) => {
         if (debounce) {
-            this.debouncedUpdate2000({
+            this.debouncedUpdate({
                 updatePreview,
                 validateEnabled,
             });
@@ -147,14 +147,6 @@ class DatasetEditor extends React.Component {
         }
     };
 
-    setValidateSaveDataset = (validateEnabled) => {
-        if (validateEnabled) {
-            this.props.disableSaveDataset();
-        } else {
-            this.props.enableSaveDataset();
-        }
-    };
-
     batchModifyFields = ({
         actionType,
         fields,
@@ -163,7 +155,7 @@ class DatasetEditor extends React.Component {
         validateEnabled = true,
     }) => {
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
-            this.setValidateSaveDataset(validateEnabled);
+            this.props.toggleSaveDataset({enable: !validateEnabled, validationPending: debounce});
 
             switch (actionType) {
                 case 'delete': {
@@ -194,7 +186,7 @@ class DatasetEditor extends React.Component {
 
     modifyFields = ({actionType, field, updatePreview = false, validateEnabled = true}) => {
         if (field.guid) {
-            this.setValidateSaveDataset(validateEnabled);
+            this.props.toggleSaveDataset({enable: !validateEnabled});
 
             switch (actionType) {
                 case 'duplicate': {
@@ -357,8 +349,7 @@ DatasetEditor.propTypes = {
     addField: PropTypes.func.isRequired,
     duplicateField: PropTypes.func.isRequired,
     updateField: PropTypes.func.isRequired,
-    disableSaveDataset: PropTypes.func.isRequired,
-    enableSaveDataset: PropTypes.func.isRequired,
+    toggleSaveDataset: PropTypes.func.isRequired,
     updateRLS: PropTypes.func.isRequired,
     toggleFieldEditorModuleLoader: PropTypes.func.isRequired,
     editorSetItemsToDisplay: PropTypes.func.isRequired,
@@ -414,8 +405,7 @@ const mapDispatchToProps = {
     updateField,
     batchUpdateFields,
     updateRLS,
-    disableSaveDataset,
-    enableSaveDataset,
+    toggleSaveDataset,
     toggleFieldEditorModuleLoader,
     editorSetItemsToDisplay,
     openDialog,

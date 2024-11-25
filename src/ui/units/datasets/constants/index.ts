@@ -9,6 +9,8 @@ import iconJoinInner from '../icons/join-inner.svg';
 import iconJoinLeft from '../icons/join-left.svg';
 import iconJoinRight from '../icons/join-right.svg';
 
+export * from './datasets';
+
 const _getSelectItemTitle = (): Record<string, string> => ({
     visits: i18n('connections.form', 'value_counter-source-visits'),
     hits: i18n('connections.form', 'value_counter-source-hits'),
@@ -251,4 +253,7 @@ export const SUBSELECT_SOURCE_TYPES = [
     'YQ_SUBSELECT',
 ];
 
-export * from './datasets';
+export const DATASETS_EDIT_HISTORY_UNIT_ID = 'datsets';
+
+/** This timeout uses for batching operations to decrease validation invocations count */
+export const DATASET_VALIDATION_TIMEOUT = 2000;

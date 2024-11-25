@@ -87,3 +87,5 @@ export const EDITOR_SET_FILTER = Symbol('dataset/EDITOR_SET_FILTER');
 export const EDITOR_SET_ITEMS_TO_DISPLAY = Symbol('dataset/EDITOR_SET_ITEMS_TO_DISPLAY');
 
 export const RENAME_DATASET = Symbol('dataset/RENAME_DATASET');
+
+export const SET_EDIT_HISTORY_STATE = Symbol('dataset/SET_EDIT_HISTORY_STATE');

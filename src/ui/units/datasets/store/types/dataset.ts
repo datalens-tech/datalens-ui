@@ -56,6 +56,7 @@ import type {
     RESET_DATASET_STATE,
     SET_ASIDE_HEADER_WIDTH,
     SET_DATASET_REVISION_MISMATCH,
+    SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
@@ -294,6 +295,7 @@ export type DatasetReduxState = {
     };
     validation: {
         isLoading: boolean;
+        isPending: boolean;
         error: DatasetError;
     };
     savingDataset: {
@@ -515,10 +517,11 @@ type ChangeAmountPreviewRows = {
     };
 };
 
-type ToggleAllowanceSave = {
+export type ToggleAllowanceSave = {
     type: typeof TOGGLE_ALLOWANCE_SAVE;
     payload: {
         enable: boolean;
+        validationPending?: boolean;
     };
 };
 
@@ -749,6 +752,13 @@ type RenameDataset = {
     payload: string;
 };
 
+export type SetEditHistoryState = {
+    type: typeof SET_EDIT_HISTORY_STATE;
+    payload: {
+        state: DatasetReduxState;
+    };
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -813,4 +823,5 @@ export type DatasetReduxAction =
     | FieldTypesFetchSuccess
     | EditorSetFilter
     | EditorSetItemsToDisplay
-    | RenameDataset;
+    | RenameDataset
+    | SetEditHistoryState;

@@ -103,6 +103,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 waitingForOpenFieldEditor: false,
             });
         }
+
+        if (this.props.fields !== prevProps.fields && Object.keys(this.state.selectedRows).length) {
+            this.resetSelection();
+        }
     }
 
     render() {
