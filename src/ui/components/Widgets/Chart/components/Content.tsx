@@ -114,6 +114,7 @@ export const Content = (props: ChartContentProps) => {
                 dispatch(
                     showToast({
                         title: args?.title,
+                        type: args?.type,
                         content: (
                             <div
                                 dangerouslySetInnerHTML={{
