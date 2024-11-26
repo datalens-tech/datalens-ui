@@ -1,3 +1,5 @@
+import type {AppConfig} from '@gravity-ui/nodekit';
+
 import type {AppEnvironment} from '../../../shared';
 import {
     AppInstallation,
@@ -19,12 +21,9 @@ export default {
     // DATALENS MODE
     serviceName: SERVICE_NAME_DATALENS,
 
-    csrf: null,
-
     expressCookieSecret: process.env.COOKIE_SECRET,
 
     appAuthPolicy: 'redirect',
-    authMethods: [],
     runResponseWhitelist: [
         'sourceId',
         'sourceType',
@@ -40,10 +39,9 @@ export default {
     regionalEnvConfig: {
         defaultLang: Language.En,
         allowLanguages: [Language.En, Language.Ru],
-        langQueryParamName: '_lang',
     },
 
-    csp: 'disabled',
+    appLangQueryParamName: '_lang',
 
     expressBodyParserRawConfig: {
         type: 'multipart/form-data',
@@ -129,14 +127,6 @@ export default {
     },
 
     redis: null,
-
-    axiosDefaults: {},
-
-    defaultTenantMode: {
-        foldersEnabled: true,
-        workbooksEnabled: false,
-        collectionsEnabled: false,
-    },
 
     iamResources: {
         collection: {
@@ -224,4 +214,4 @@ export default {
     serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
 
     apiPrefix: '/api',
-};
+} satisfies Partial<AppConfig>;
