@@ -3,6 +3,7 @@ import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
+import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 
 import type {ChartKitHtmlItem} from '../../../../../../shared';
@@ -17,7 +18,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
-import {validateUrl} from '../../html-generator/utils';
+import {getParseHtmlFn, validateUrl} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -146,35 +147,36 @@ function clearVmProp(prop: unknown) {
 }
 
 async function getUiSandboxLibs(libs: string[]) {
-    const modules = await Promise.all(
-        libs.map(async (lib) => {
-            switch (lib) {
-                case 'date-utils@2.3.0': {
-                    // eslint-disable-next-line import/no-extraneous-dependencies
-                    const module = await import(
-                        // @ts-ignore
-                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.3.0.js?raw'
-                    );
-                    return module.default;
-                }
-                case 'date-utils':
-                case 'date-utils@2.5.3': {
-                    // eslint-disable-next-line import/no-extraneous-dependencies
-                    const module = await import(
-                        // @ts-ignore
-                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.5.3.js?raw'
-                    );
-                    return module.default;
-                }
-                default: {
-                    throw new ChartKitCustomError(null, {
-                        details: `The library '${lib}' is not available`,
-                    });
-                }
+    const getModule = (name: string) =>
+        import(`@datalens-tech/ui-sandbox-modules/dist/${name}.js?raw`).then(
+            (module) => module.default,
+        );
+    const additionalModules = libs.map((lib) => {
+        switch (lib) {
+            case 'date-utils@2.3.0': {
+                return getModule('@gravity-ui/date-utils/v2.3.0');
             }
-        }),
-    );
+            case 'date-utils':
+            case 'date-utils@2.5.3': {
+                return getModule('@gravity-ui/date-utils/v2.5.3');
+            }
+            case 'd3@7.9.0':
+            case 'd3': {
+                return getModule('d3/v7.9.0');
+            }
+            case 'd3-chord@3.0.1':
+            case 'd3-chord': {
+                return getModule('d3-chord/v3.0.1');
+            }
+            default: {
+                throw new ChartKitCustomError(null, {
+                    details: `The library '${lib}' is not available`,
+                });
+            }
+        }
+    });
 
+    const modules = await Promise.all([getModule('dom-api'), ...additionalModules]);
     return modules.filter(Boolean).join('');
 }
 
@@ -187,6 +189,8 @@ async function getUnwrappedFunction(args: {
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType} = args;
     const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    const parseHtml = await getParseHtmlFn();
+
     return function (this: unknown, ...restArgs: unknown[]) {
         if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
             throw new ChartKitCustomError('The allowed execution time has been exceeded', {
@@ -322,7 +326,8 @@ async function getUnwrappedFunction(args: {
             });
         }
 
-        const execTimeout = Math.min(UI_SANDBOX_FN_TIME_LIMIT, options?.totalTimeLimit ?? Infinity);
+        const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
+        const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
         const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
         const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
         const result = runtime.callFunction({
@@ -338,7 +343,7 @@ async function getUnwrappedFunction(args: {
             options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
         }
 
-        return unwrapHtml(result);
+        return unwrapHtml(result, parseHtml);
     };
 }
 
@@ -432,42 +437,49 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-export function processHtmlFields(target: unknown, options?: {allowHtml: boolean}) {
+export function processHtmlFields(
+    target: unknown,
+    options?: {allowHtml: boolean; parseHtml?: (value: string) => unknown},
+) {
     const allowHtml = Boolean(options?.allowHtml);
+
+    const processValue = (key: string | number, value: unknown, item: object) => {
+        if (value && typeof value === 'object') {
+            if (WRAPPED_HTML_KEY in value) {
+                let content = value[WRAPPED_HTML_KEY];
+                if (typeof content === 'string' && typeof options?.parseHtml === 'function') {
+                    content = options.parseHtml(content);
+                }
+                set(item, key, generateHtml(content as ChartKitHtmlItem));
+            } else {
+                processHtmlFields(value, options);
+            }
+        } else if (typeof value === 'string' && !allowHtml) {
+            set(item, key, escape(value));
+        }
+    };
 
     if (target && typeof target === 'object') {
         if (Array.isArray(target)) {
             target.forEach((item, index) => {
-                if (item && typeof item === 'object') {
-                    if (WRAPPED_HTML_KEY in item) {
-                        target[index] = generateHtml(item[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
-                    } else {
-                        processHtmlFields(item, options);
-                    }
-                } else if (typeof item === 'string' && !allowHtml) {
-                    target[index] = escape(item);
-                }
+                processValue(index, item, target);
             });
         } else {
             const config = target as Record<string, unknown>;
             Object.entries(config).forEach(([key, value]) => {
-                if (value && typeof value === 'object') {
-                    if (WRAPPED_HTML_KEY in value) {
-                        config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
-                    } else {
-                        processHtmlFields(value, options);
-                    }
-                } else if (typeof value === 'string' && !allowHtml) {
-                    config[key] = escape(value);
-                }
+                processValue(key, value, config);
             });
         }
     }
 }
 
-export function unwrapHtml(value: unknown) {
+export function unwrapHtml(value: unknown, parseHtml?: (value: string) => unknown) {
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
-        return generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+        let content = value[WRAPPED_HTML_KEY];
+        if (typeof content === 'string' && typeof parseHtml === 'function') {
+            content = parseHtml(content);
+        }
+        return generateHtml(content as ChartKitHtmlItem);
     }
 
     if (typeof value === 'string') {
