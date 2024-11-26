@@ -1,26 +1,26 @@
 import React from 'react';
 
+import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {useDispatch, useSelector} from 'react-redux';
+import {EntryScope} from 'shared';
 import {useEffectOnce} from 'ui';
+import {DialogEditItem, isDialogEditItemType} from 'ui/components/DialogEditItem/DialogEditItem';
 import {registry} from 'ui/registry';
 
-import DialogChartWidget from '../../../../components/DialogChartWidget/DialogChartWidget';
-import {DialogTextWidgetWrapper} from '../../../../components/DialogTextWidget';
-import DialogTitleWidget from '../../../../components/DialogTitleWidget/DialogTitleWidget';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
     selectCurrentTabId,
     selectDashWorkbookId,
-    selectIsDialogVisible,
+    selectEntryId,
+    selectNavigationPath,
+    selectOpenedItem,
     selectOpenedItemData,
     selectWidgetsCurrentTab,
 } from '../../store/selectors/dashTypedSelectors';
 
 import Connections from './Connections/Connections';
-import Control2 from './Control2/Control2';
-import {GroupControl} from './GroupControl/GroupControl';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 
@@ -30,24 +30,16 @@ import Tabs from './Tabs/Tabs';
 export function Dialogs() {
     const dispatch = useDispatch();
 
+    const entryId = useSelector(selectEntryId);
     const openedDialog = useSelector((state) => state.dash.openedDialog);
     const widgetType = useSelector((state) => state.dash.openedItemWidgetType);
     const openedItemId = useSelector((state) => state.dash.openedItemId);
-    const openedItemData = useSelector((state) => selectOpenedItemData(state));
-    const currentTabId = useSelector((state) => selectCurrentTabId(state));
-    const workbookId = useSelector((state) => selectDashWorkbookId(state));
-    const widgetsCurrentTab = useSelector((state) => selectWidgetsCurrentTab(state));
-    const navigationPath = useSelector((state) => state.dash.navigationPath);
-
-    const dialogTextIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.TEXT),
-    );
-    const dialogTitleIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.TITLE),
-    );
-    const dialogChartIsVisible = useSelector((state) =>
-        selectIsDialogVisible(state, DIALOG_TYPE.WIDGET),
-    );
+    const openedItemData = useSelector(selectOpenedItemData);
+    const openedItem = useSelector(selectOpenedItem);
+    const currentTabId = useSelector(selectCurrentTabId);
+    const workbookId = useSelector(selectDashWorkbookId);
+    const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
+    const navigationPath = useSelector(selectNavigationPath);
 
     useEffectOnce(() => {
         return () => {
@@ -55,60 +47,51 @@ export function Dialogs() {
         };
     });
 
+    const setItemDataHandle = React.useCallback(
+        (newItemData) => {
+            dispatch(setItemData(newItemData));
+        },
+        [dispatch],
+    );
+
+    const closeDialogHandle = React.useCallback(() => {
+        dispatch(closeDialog());
+    }, [dispatch]);
+
+    const changeNavigationPathHandle = React.useCallback(
+        (newNavigationPath) => {
+            dispatch(changeNavigationPath(newNavigationPath));
+        },
+        [dispatch],
+    );
+
+    if (openedDialog && isDialogEditItemType(openedDialog)) {
+        return (
+            <DialogEditItem
+                scope={EntryScope.Dash}
+                entryId={entryId}
+                type={openedDialog}
+                openedItemId={openedItemId}
+                openedItemNamespace={openedItem?.namespace ?? DEFAULT_NAMESPACE}
+                openedItemDefaults={openedItem?.defaults ?? null}
+                openedItemData={openedItemData}
+                widgetType={widgetType}
+                currentTabId={currentTabId}
+                workbookId={workbookId}
+                widgetsCurrentTab={widgetsCurrentTab}
+                closeDialog={closeDialogHandle}
+                setItemData={setItemDataHandle}
+                navigationPath={navigationPath}
+                changeNavigationPath={changeNavigationPathHandle}
+            />
+        );
+    }
+
     switch (openedDialog) {
         case DIALOG_TYPE.CONNECTIONS:
             return <Connections />;
         case DIALOG_TYPE.TABS:
             return <Tabs />;
-        case DIALOG_TYPE.TITLE:
-            return (
-                <DialogTitleWidget
-                    openedItemId={openedItemId}
-                    openedItemData={openedItemData}
-                    dialogIsVisible={dialogTitleIsVisible}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
-                />
-            );
-        case DIALOG_TYPE.TEXT: {
-            return (
-                <DialogTextWidgetWrapper
-                    openedItemId={openedItemId}
-                    openedItemData={openedItemData}
-                    dialogIsVisible={dialogTextIsVisible}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
-                />
-            );
-        }
-        case DIALOG_TYPE.WIDGET:
-            return (
-                <DialogChartWidget
-                    openedItemId={openedItemId}
-                    openedItemData={openedItemData}
-                    widgetType={widgetType}
-                    currentTabId={currentTabId}
-                    dialogIsVisible={dialogChartIsVisible}
-                    workbookId={workbookId}
-                    widgetsCurrentTab={widgetsCurrentTab}
-                    closeDialog={() => dispatch(closeDialog())}
-                    setItemData={(newItemData) => {
-                        dispatch(setItemData(newItemData));
-                    }}
-                    navigationPath={navigationPath}
-                    changeNavigationPath={(newNavigationPath) => {
-                        dispatch(changeNavigationPath(newNavigationPath));
-                    }}
-                />
-            );
-        case DIALOG_TYPE.CONTROL:
-            return <Control2 />;
-        case DIALOG_TYPE.GROUP_CONTROL:
-            return <GroupControl />;
         case DIALOG_TYPE.SETTINGS:
             return <Settings />;
         case DIALOG_TYPE.SELECT_STATE: {

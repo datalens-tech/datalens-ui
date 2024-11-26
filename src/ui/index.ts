@@ -6,7 +6,9 @@ import type {LandingState} from 'store/reducers/landing';
 import type {AsideHeaderState} from 'store/typings/asideHeader';
 import type {EntryGlobalState} from 'store/typings/entryContent';
 import type {UserState} from 'store/typings/user';
+import type {ControlDialogState} from 'ui/store/reducers/controlDialog';
 import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
+import type {EditHistoryState} from 'ui/store/reducers/editHistory';
 import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbook';
 import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
@@ -18,7 +20,6 @@ import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
-import type {EditHistoryState} from './store/reducers/editHistory';
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
 
 export {default as ActionPanel} from './components/ActionPanel/ActionPanel';
@@ -58,6 +59,7 @@ export type DatalensGlobalState = {
     dash: DashState;
     dataset: DatasetReduxState;
     ql: QLState;
+    controlDialog: ControlDialogState;
     collections: CollectionsState;
     collectionsStructure: CollectionsStructureState;
     workbooks: WorkbooksState;

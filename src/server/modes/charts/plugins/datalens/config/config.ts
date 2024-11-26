@@ -197,7 +197,7 @@ export const buildChartsConfigPrivate = (
 
     if (isTableWidget) {
         const size = widgetConfig?.size ?? shared?.extraSettings?.size;
-        if (size && features[Feature.TableSize]) {
+        if (size) {
             set(config, 'size', size);
         }
 

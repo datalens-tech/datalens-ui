@@ -581,6 +581,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 enableActionParams={enableActionParams}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                backgroundColor={style?.backgroundColor}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

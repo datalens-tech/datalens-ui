@@ -30,12 +30,12 @@ import {
     updateParamValue,
     validateParamTitle,
 } from '../../units/dash/components/ParamsSettings/helpers';
-import TwoColumnDialog from '../../units/dash/components/TwoColumnDialog/TwoColumnDialog';
 import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
+import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
 
 import {TabMenu} from './TabMenu/TabMenu';
 import type {UpdateState} from './TabMenu/types';
@@ -79,7 +79,14 @@ function Line(props: LineProps) {
 
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
-export interface DialogChartWidgetProps {
+export interface DialogChartWidgetFeatureProps {
+    withoutSidebar?: boolean;
+
+    enableAutoheight?: boolean;
+    enableBackgroundColor?: boolean;
+    enableFilteringSetting?: boolean;
+}
+export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     openedItemId: string | null;
     openedItemData: DashTabItemWidget['data'];
     dialogIsVisible: boolean;
@@ -91,12 +98,6 @@ export interface DialogChartWidgetProps {
     widgetsCurrentTab: {
         [key: string]: string;
     };
-
-    withoutSidebar?: boolean;
-
-    enableAutoheight?: boolean;
-    enableBackgroundColor?: boolean;
-    enableFilteringSetting?: boolean;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;

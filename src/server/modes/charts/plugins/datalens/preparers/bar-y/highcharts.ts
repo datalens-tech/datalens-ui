@@ -113,17 +113,11 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             customConfig.tooltipHeaderFormatter = getFakeTitleOrTitle(x);
         }
 
-        const [layerYPlaceholder, layerY2Placeholder] = getYPlaceholders(args);
+        const [layerYPlaceholder] = getYPlaceholders(args);
 
         if (layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             customConfig.axesFormatting.xAxis.push(
                 getAxisFormattingByField(layerYPlaceholder, visualizationId),
-            );
-        }
-
-        if (layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            customConfig.axesFormatting.xAxis.push(
-                getAxisFormattingByField(layerY2Placeholder, visualizationId),
             );
         }
     }

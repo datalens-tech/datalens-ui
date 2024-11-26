@@ -30,7 +30,13 @@ import type {
     THead,
     TableViewData,
 } from './types';
-import {createTableColumns, getCellCustomStyle, getColumnId} from './utils';
+import {
+    createTableColumns,
+    getCellCustomStyle,
+    getColumnId,
+    getElementBackgroundColor,
+    toSolidColor,
+} from './utils';
 
 function getNoDataRow(colSpan = 1): BodyRowViewData {
     return {
@@ -51,7 +57,13 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
     };
 }
 
-function getFooterRows(table: Table<TData>, leftPositions: (number | undefined)[]) {
+function getFooterRows(args: {
+    table: Table<TData>;
+    leftPositions: (number | undefined)[];
+    bgColor?: string;
+}) {
+    const {table, leftPositions, bgColor} = args;
+
     return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
         const cells = f.headers.map<FooterCellViewData>((cell) => {
             const columnDef = cell.column.columnDef;
@@ -62,13 +74,11 @@ function getFooterRows(table: Table<TData>, leftPositions: (number | undefined)[
                 ? null
                 : flexRender(columnDef.footer, cell.getContext());
 
-            let left: number | undefined;
+            const cellStyle: React.CSSProperties = {};
             if (pinned) {
-                left = leftPositions[originalHeadData?.index ?? -1];
+                cellStyle.left = leftPositions[originalHeadData?.index ?? -1];
+                cellStyle.backgroundColor = bgColor;
             }
-            const cellStyle: React.CSSProperties = {
-                left,
-            };
 
             return {
                 id: cell.id,
@@ -129,6 +139,7 @@ export const usePreparedTableData = (props: {
     getCellAdditionStyles?: (cell: TableCell, row: TData) => React.CSSProperties;
     cellMinSizes: number[] | null;
     sortingState?: SortingState;
+    backgroundColor?: string;
 }): TableViewData => {
     const {
         dimensions,
@@ -139,6 +150,7 @@ export const usePreparedTableData = (props: {
         getCellAdditionStyles,
         cellMinSizes,
         sortingState,
+        backgroundColor,
     } = props;
 
     const columns = React.useMemo(() => {
@@ -280,6 +292,10 @@ export const usePreparedTableData = (props: {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [colSizes, data.head]);
 
+    const tableBgColor = backgroundColor
+        ? toSolidColor(backgroundColor)
+        : getElementBackgroundColor(tableContainerRef.current);
+
     const headerRows = React.useMemo(() => {
         return headers
             .map((headerGroup) => {
@@ -300,16 +316,18 @@ export const usePreparedTableData = (props: {
                         const colSpan = header.colSpan > 1 ? header.colSpan : undefined;
                         const sortable = header.column.getCanSort();
                         const pinned = Boolean(originalCellData?.pinned);
+                        const cellStyle: React.CSSProperties = getCellCustomStyle(
+                            originalCellData,
+                            tableBgColor,
+                        );
 
-                        let left: number | undefined;
                         if (pinned) {
-                            left = leftPositions[originalCellData?.index ?? -1];
-                        }
+                            cellStyle.left = leftPositions[originalCellData?.index ?? -1];
 
-                        const cellStyle: React.CSSProperties = {
-                            ...getCellCustomStyle(originalCellData),
-                            left,
-                        };
+                            if (!cellStyle.backgroundColor) {
+                                cellStyle.backgroundColor = tableBgColor;
+                            }
+                        }
 
                         if (typeof originalCellData?.width !== 'undefined') {
                             cellStyle.whiteSpace = cellStyle.whiteSpace ?? 'normal';
@@ -341,7 +359,7 @@ export const usePreparedTableData = (props: {
             })
             .filter(Boolean) as HeadRowViewData[];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [columns, leftPositions, sorting]);
+    }, [columns, leftPositions, sorting, tableBgColor]);
 
     const colgroup = colSizes.map((size) => ({width: `${size}px`}));
     const gridTemplateColumns = colgroup.map((h) => h.width).join(' ');
@@ -349,6 +367,7 @@ export const usePreparedTableData = (props: {
         rows: headerRows,
         style: {
             gridTemplateColumns,
+            backgroundColor: tableBgColor,
         },
     };
 
@@ -392,15 +411,19 @@ export const usePreparedTableData = (props: {
                 const additionalStyles = getCellAdditionStyles
                     ? getCellAdditionStyles(originalCellData as TableCell, row.original)
                     : {};
-                let left: number | undefined;
-                if (pinned) {
-                    left = leftPositions[originalHeadData?.index ?? -1];
-                }
+
                 const cellStyle: React.CSSProperties = {
-                    ...getCellCustomStyle(originalCellData),
+                    ...getCellCustomStyle(originalCellData, tableBgColor),
                     ...additionalStyles,
-                    left,
                 };
+
+                if (pinned) {
+                    cellStyle.left = leftPositions[originalHeadData?.index ?? -1];
+
+                    if (!cellStyle.backgroundColor) {
+                        cellStyle.backgroundColor = tableBgColor;
+                    }
+                }
 
                 if (typeof originalHeadData?.width !== 'undefined') {
                     cellStyle.whiteSpace = 'normal';
@@ -456,7 +479,7 @@ export const usePreparedTableData = (props: {
     const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
     const hasFooter = isEndOfPage && columns.some((column) => column.footer);
     const footer: TableViewData['footer'] = {
-        rows: hasFooter ? getFooterRows(table, leftPositions) : [],
+        rows: hasFooter ? getFooterRows({table, leftPositions, bgColor: tableBgColor}) : [],
         style: {gridTemplateColumns, transform},
     };
 

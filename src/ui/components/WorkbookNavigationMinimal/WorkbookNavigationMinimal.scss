@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-core-workbook-navigation-minimal {
     width: 416px;
     height: 540px;
@@ -25,6 +27,7 @@
         padding-right: 0;
         display: flex;
         width: 100%;
+        overflow: hidden;
     }
 
     &__popup {
@@ -47,6 +50,10 @@
         overflow: hidden;
         min-width: 100px;
         color: var(--g-color-text-primary);
+
+        span {
+            @include overflow-ellipsis();
+        }
     }
 
     &__name-line {

@@ -21,6 +21,8 @@ export const TYPES_TO_DIALOGS_MAP = {
     [DashTabItemType.Image]: DIALOG_TYPE.IMAGE,
 };
 
+export const ITEM_PASTE_ITEM_ID = 'paste';
+
 export const getActionPanelItems = ({
     copiedData,
     onPasteItem,
@@ -40,7 +42,7 @@ export const getActionPanelItems = ({
 
     if (copiedData) {
         items.push({
-            id: 'paste',
+            id: ITEM_PASTE_ITEM_ID,
             icon: <Icon data={CopyPlus} />,
             title: i18n('dash.main.view', 'button_edit-panel-paste'),
             className: bEditPanelItem(),
@@ -59,7 +61,7 @@ export const getActionPanelItems = ({
         if (filterItem && filterItem(item)) {
             return result;
         } else {
-            if (item.dragProps?.type && !item.onClick) {
+            if (item.id !== ITEM_PASTE_ITEM_ID) {
                 // eslint-disable-next-line no-param-reassign
                 item.onClick = () =>
                     openDialog(

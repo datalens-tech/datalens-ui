@@ -285,6 +285,7 @@ export type ChartContentProps = Pick<
         initialParams: StringParams;
         enableActionParams?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
+        backgroundColor?: string;
     };
 
 export type WidgetDataRef = React.MutableRefObject<

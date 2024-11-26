@@ -4,17 +4,7 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
-import {
-    ADD_SELECTOR_TO_GROUP,
-    SET_ACTIVE_SELECTOR_INDEX,
-    SET_SELECTOR_DIALOG_ITEM,
-    UPDATE_SELECTORS_GROUP,
-} from 'ui/store/actions/controlDialog';
-import {getSelectorDialogInitialState} from 'ui/store/reducers/controlDialog';
-import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
-import {getActualUniqueFieldNameValidation} from 'ui/store/utils/controlDialog';
 
-import {ELEMENT_TYPE} from '../../containers/Dialogs/Control/constants';
 import {Mode} from '../../modules/constants';
 import type {DashUpdateStatus} from '../../typings/dash';
 import type {TabsHashStates} from '../actions/dashTyped';
@@ -32,8 +22,6 @@ import {
     SET_ERROR_MODE,
     SET_HASH_STATE,
     SET_INITIAL_PAGE_TABS_ITEMS,
-    SET_LAST_USED_CONNECTION_ID,
-    SET_LAST_USED_DATASET_ID,
     SET_LOADING_EDIT_MODE,
     SET_PAGE_DEFAULT_TAB_ITEMS,
     SET_PAGE_TAB,
@@ -47,7 +35,6 @@ import {
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
-import {getInitialDefaultValue} from '../utils';
 
 import {TAB_PROPERTIES} from './dash';
 
@@ -64,7 +51,6 @@ export type DashState = {
     openedDialog: null; // TODO: clarify types
     openedItemId: string | null;
     showTableOfContent: boolean;
-    lastUsedDatasetId: null | string;
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
@@ -73,9 +59,6 @@ export type DashState = {
     permissions?: Permissions;
     lockToken: string | null;
     isFullscreenMode?: boolean;
-    selectorDialog: SelectorDialogState;
-    selectorsGroup: SelectorsGroupDialogState;
-    activeSelectorIndex: number;
     isLoadingEditMode: boolean;
     isNewRelationsOpened?: boolean;
     skipReload?: boolean;
@@ -230,151 +213,6 @@ export function dashTypedReducer(
                 showTableOfContent:
                     action.payload === undefined ? !state.showTableOfContent : action.payload,
             };
-
-        case SET_LAST_USED_DATASET_ID:
-            return {
-                ...state,
-                lastUsedDatasetId: action.payload,
-            };
-
-        case SET_LAST_USED_CONNECTION_ID:
-            return {
-                ...state,
-                lastUsedConnectionId: action.payload,
-            };
-
-        case SET_SELECTOR_DIALOG_ITEM: {
-            const {selectorDialog, selectorsGroup, activeSelectorIndex} = state;
-            const {payload} = action;
-
-            const elementTypeChanged =
-                payload.elementType && selectorDialog.elementType !== payload.elementType;
-            const defaultValue = elementTypeChanged
-                ? getInitialDefaultValue(payload.elementType!)
-                : selectorDialog.defaultValue;
-            const isElementTypeWithoutRequired =
-                elementTypeChanged && payload.elementType === ELEMENT_TYPE.CHECKBOX;
-            const required = isElementTypeWithoutRequired ? false : selectorDialog.required;
-
-            const validation: SelectorDialogState['validation'] = {
-                title:
-                    selectorDialog.title === payload.title
-                        ? selectorDialog.validation.title
-                        : undefined,
-                uniqueFieldName:
-                    selectorDialog.fieldName === payload.fieldName
-                        ? getActualUniqueFieldNameValidation(
-                              selectorsGroup.group,
-                              payload.fieldName,
-                              selectorDialog.validation.fieldName,
-                          )
-                        : undefined,
-                fieldName:
-                    selectorDialog.fieldName === payload.fieldName
-                        ? selectorDialog.validation.fieldName
-                        : undefined,
-                datasetFieldId:
-                    selectorDialog.datasetFieldId === payload.datasetFieldId
-                        ? selectorDialog.validation.datasetFieldId
-                        : undefined,
-                defaultValue:
-                    !isElementTypeWithoutRequired &&
-                    selectorDialog.defaultValue === payload.defaultValue
-                        ? selectorDialog.validation.defaultValue
-                        : undefined,
-            };
-
-            const newSelectorState = {
-                ...state.selectorDialog,
-                defaultValue,
-                validation,
-                required,
-                ...payload,
-            };
-
-            const newSelectorsGroupState = {
-                ...selectorsGroup,
-            };
-
-            if (state.selectorsGroup.group.length) {
-                newSelectorsGroupState.group = [...selectorsGroup.group];
-                newSelectorsGroupState.group[activeSelectorIndex] = newSelectorState;
-            }
-
-            return {
-                ...state,
-                selectorDialog: newSelectorState,
-                selectorsGroup: newSelectorsGroupState,
-            };
-        }
-
-        case ADD_SELECTOR_TO_GROUP: {
-            const {payload} = action;
-            const newSelector = getSelectorDialogInitialState(
-                state.lastUsedDatasetId
-                    ? {
-                          lastUsedDatasetId: state.lastUsedDatasetId,
-                      }
-                    : {},
-            );
-
-            // if current length is 1, the added selector will be the second so we enable autoHeight
-            const autoHeight =
-                state.selectorsGroup.group.length === 1 ? true : state.selectorsGroup.autoHeight;
-
-            return {
-                ...state,
-                selectorsGroup: {
-                    ...state.selectorsGroup,
-                    group: [...state.selectorsGroup.group, {...newSelector, title: payload.title}],
-                    autoHeight,
-                },
-            };
-        }
-
-        case UPDATE_SELECTORS_GROUP: {
-            const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
-                action.payload;
-
-            // if the number of selectors has increased from 1 to several, we enable autoHeight
-            const updatedAutoHeight =
-                selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
-
-            return {
-                ...state,
-                selectorsGroup: {
-                    ...selectorsGroup,
-                    group,
-                    autoHeight: updatedAutoHeight,
-                    buttonApply,
-                    buttonReset,
-                    updateControlsOnChange,
-                },
-            };
-        }
-
-        case SET_ACTIVE_SELECTOR_INDEX: {
-            const newCurrentSelector =
-                state.selectorsGroup.group[action.payload.activeSelectorIndex];
-
-            return {
-                ...state,
-                activeSelectorIndex: action.payload.activeSelectorIndex,
-                selectorDialog: {
-                    ...newCurrentSelector,
-                    validation: {
-                        ...newCurrentSelector.validation,
-                        // check if validation with non-unique uniqueFieldName is still valid
-                        uniqueFieldName: getActualUniqueFieldNameValidation(
-                            state.selectorsGroup.group,
-                            newCurrentSelector.fieldName,
-                            newCurrentSelector.validation.uniqueFieldName,
-                        ),
-                    },
-                },
-            };
-        }
 
         case SET_DASH_VIEW_MODE: {
             const entryData = state.convertedEntryData || state.entry.data;

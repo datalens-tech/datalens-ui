@@ -1,18 +1,10 @@
 import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
-import {I18n} from 'i18n';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemType, Feature} from 'shared';
-import {
-    getGroupSelectorDialogInitialState,
-    getSelectorDialogFromData,
-    getSelectorDialogInitialState,
-    getSelectorGroupDialogFromData,
-} from 'ui/store/reducers/controlDialog';
+import {DashTabItemType} from 'shared';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
-import Utils from 'utils';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -20,8 +12,6 @@ import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {dashTypedReducer} from './dashTypedReducer';
-
-const i18n = I18n.keyset('dash.store.view');
 
 export const TAB_PROPERTIES = [
     'id',
@@ -63,11 +53,6 @@ const initialState = {
     error: null,
 
     isFullscreenMode: new URLSearchParams(window.location.search).get('mode') === EMBEDDED_MODE.TV,
-    lastUsedDatasetId: null,
-
-    selectorDialog: getSelectorDialogInitialState(),
-    selectorsGroup: getGroupSelectorDialogInitialState(),
-    activeSelectorIndex: 0,
 
     skipReload: false,
 
@@ -87,40 +72,23 @@ function dash(state = initialState, action) {
         case actionTypes.CLOSE_DIALOG: {
             return {
                 ...state,
-                selectorsGroup: getGroupSelectorDialogInitialState(),
                 ...action.payload,
                 dragOperationProps: null,
             };
         }
-        case actionTypes.OPEN_DIALOG: {
-            const selectorGroup = getGroupSelectorDialogInitialState();
-            const selectorDialog =
-                action.payload?.openedDialog === DashTabItemType.Control ||
-                action.payload?.openedDialog === DashTabItemType.GroupControl
-                    ? getSelectorDialogInitialState({
-                          lastUsedDatasetId: state.lastUsedDatasetId,
-                          lastUsedConnectionId: state.lastUsedConnectionId,
-                          openedDialog: action.payload?.openedDialog,
-                      })
-                    : state.selectorDialog;
-
-            if (
-                Utils.isEnabledFeature(Feature.GroupControls) &&
-                action.payload?.openedDialog === DashTabItemType.GroupControl
-            ) {
-                // TODO: move to getSelectorDialogInitialState after the release of the feature
-                selectorDialog.title = i18n('label_selector-dialog');
-            }
+        case actionTypes.OPEN_ITEM_DIALOG: {
+            const payload = action.payload;
 
             return {
                 ...state,
+                openedItemId: payload.id ?? null,
+                openedDialog: payload.type,
+            };
+        }
+        case actionTypes.OPEN_DIALOG: {
+            return {
+                ...state,
                 ...action.payload,
-                selectorDialog,
-                selectorsGroup: {
-                    ...selectorGroup,
-                    group: [selectorDialog],
-                },
-                activeSelectorIndex: 0,
                 dragOperationProps: action.payload.dragOperationProps ?? null,
             };
         }
@@ -306,7 +274,6 @@ function dash(state = initialState, action) {
                     type: action.payload.type || state.openedDialog,
                     data: action.payload.data,
                     namespace: action.payload.namespace,
-                    operation: action.payload.operation,
                     layout: state.dragOperationProps?.itemLayout,
                     ...(action.payload.defaults ? {defaults: action.payload.defaults} : null),
                 },
@@ -341,42 +308,6 @@ function dash(state = initialState, action) {
                     counter: {$set: tabData.counter},
                 }),
             };
-        }
-        case actionTypes.OPEN_ITEM_DIALOG: {
-            const payload = action.payload;
-            const {id: openedItemId, data, defaults} = payload;
-            let {type: openedDialog} = tab.items.find(({id}) => id === openedItemId);
-
-            const newState = {
-                ...state,
-                openedItemId,
-                activeSelectorIndex: 0,
-            };
-
-            if (
-                Utils.isEnabledFeature(Feature.GroupControls) &&
-                openedDialog === DashTabItemType.Control &&
-                data.sourceType !== 'external'
-            ) {
-                const selectorDialog = getSelectorDialogFromData(data);
-
-                // migration forward to group
-                openedDialog = DashTabItemType.GroupControl;
-                newState.selectorsGroup = {
-                    ...getGroupSelectorDialogInitialState(),
-                    group: [selectorDialog],
-                };
-                newState.selectorDialog = selectorDialog;
-            } else if (openedDialog === DashTabItemType.GroupControl) {
-                newState.selectorsGroup = getSelectorGroupDialogFromData(data);
-                newState.selectorDialog = newState.selectorsGroup.group[0];
-            } else if (openedDialog === DashTabItemType.Control) {
-                newState.selectorDialog = getSelectorDialogFromData(data, defaults);
-            }
-
-            newState.openedDialog = openedDialog;
-
-            return newState;
         }
 
         default:
