@@ -3,7 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import {showToast} from 'ui/store/actions/toaster';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
+import {getRenderMarkdownFn} from 'ui/utils';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -66,6 +68,7 @@ export const Content = (props: ChartContentProps) => {
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
+        runAction,
         backgroundColor,
     } = props;
 
@@ -101,6 +104,41 @@ export const Content = (props: ChartContentProps) => {
 
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
+
+    const onAction = React.useCallback(async (actionArgs: {data?: any} = {}) => {
+        const {action, ...args} = actionArgs.data || {};
+
+        switch (action) {
+            case 'toast': {
+                const renderMarkdown = await getRenderMarkdownFn();
+                dispatch(
+                    showToast({
+                        title: args?.title,
+                        type: args?.type,
+                        content: (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: renderMarkdown(String(args.content ?? '')),
+                                }}
+                            />
+                        ),
+                    }),
+                );
+                break;
+            }
+            case 'setPatams': {
+                if (onChange) {
+                    onChange(
+                        {type: 'PARAMS_CHANGED', data: {params: args}},
+                        {forceUpdate: true},
+                        true,
+                    );
+                }
+
+                break;
+            }
+        }
+    }, []);
 
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
@@ -148,6 +186,8 @@ export const Content = (props: ChartContentProps) => {
                         getControls={getControls}
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
+                        runAction={runAction}
+                        onAction={onAction}
                     />
                 )}
                 {Boolean(drillDownData) && (

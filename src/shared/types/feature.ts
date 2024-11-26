@@ -78,6 +78,8 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
+    /** Additional chart config for making requests by widget events */
+    ChartActions = 'ChartActions',
 }
 
 export type FeatureConfig = Record<string, boolean>;
