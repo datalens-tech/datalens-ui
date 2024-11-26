@@ -175,7 +175,7 @@ function setActionParamsByClick(args: {
         return;
     }
 
-    const params = transformParamsToActionParams(newActionParams as StringParams);
+    const params = transformParamsToActionParams(newActionParams);
     onChange?.(
         {
             type: 'PARAMS_CHANGED',

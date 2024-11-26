@@ -85,16 +85,19 @@ export function addParams(params: StringParams, addition: StringParams = {}) {
             acc[key] = [];
         }
 
-        if (!Array.isArray(acc[key])) {
-            acc[key] = [acc[key] as string];
-        }
+        let currentKeyValue: string[];
 
-        if ((acc[key] as string[]).every(isEmptyParam)) {
-            acc[key] = [];
+        if (!Array.isArray(acc[key])) {
+            currentKeyValue = [String(acc[key])];
+        } else {
+            currentKeyValue = acc[key];
+            if (acc[key].every(isEmptyParam)) {
+                currentKeyValue = [];
+            }
         }
 
         const value = Array.isArray(val) ? val.map(String) : String(val);
-        acc[key] = uniq((acc[key] as string[]).concat(value));
+        acc[key] = uniq(currentKeyValue).concat(value);
         return acc;
     }, result);
 }
@@ -277,7 +280,7 @@ export function handleSeriesClickForActionParams(args: {
         return;
     }
 
-    const params = transformParamsToActionParams(newActionParams as StringParams);
+    const params = transformParamsToActionParams(newActionParams);
     onChange?.(
         {
             type: 'PARAMS_CHANGED',

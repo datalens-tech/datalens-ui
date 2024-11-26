@@ -7,7 +7,6 @@ import debounce from 'lodash/debounce';
 import type {StringParams} from 'shared';
 import {ChartKitTableQa} from 'shared';
 
-import {getNormalizedParams} from '../../../helpers/action-params-handlers';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
 import type {WidgetDimensions} from '../renderer/types';
@@ -83,11 +82,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         const handleChangeParams = React.useCallback(
             (params: StringParams) => {
                 if (onChange) {
-                    onChange(
-                        {type: 'PARAMS_CHANGED', data: {params: getNormalizedParams(params)}},
-                        {forceUpdate: true},
-                        true,
-                    );
+                    onChange({type: 'PARAMS_CHANGED', data: {params}}, {forceUpdate: true}, true);
                 }
             },
             [onChange],
