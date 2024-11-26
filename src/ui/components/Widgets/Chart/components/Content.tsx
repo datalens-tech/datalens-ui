@@ -106,18 +106,18 @@ export const Content = (props: ChartContentProps) => {
     const showLoaderVeil = veil && !isExportLoading;
 
     const onAction = React.useCallback(async (actionArgs: {data?: any} = {}) => {
-        const {action, ...args} = actionArgs.data ?? {};
+        const {action, ...args} = actionArgs.data || {};
 
         switch (action) {
             case 'toast': {
                 const renderMarkdown = await getRenderMarkdownFn();
                 dispatch(
                     showToast({
-                        ...args,
+                        title: args?.title,
                         content: (
                             <div
                                 dangerouslySetInnerHTML={{
-                                    __html: renderMarkdown(args.content ?? ''),
+                                    __html: renderMarkdown(String(args.content ?? '')),
                                 }}
                             />
                         ),

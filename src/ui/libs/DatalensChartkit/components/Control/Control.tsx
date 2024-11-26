@@ -154,14 +154,12 @@ class Control<TProviderData> extends React.PureComponent<
     }
 
     async runAction(args: StringParams) {
-        const {runAction, onAction} = this.props;
-
-        if (!runAction || !onAction) {
+        if (!this.props.runAction || !this.props.onAction) {
             return;
         }
 
-        const responseData = await runAction({...this.state.params, ...args});
-        onAction({data: get(responseData, 'data')});
+        const responseData = await this.props.runAction({...this.state.params, ...args});
+        this.props.onAction({data: get(responseData, 'data')});
     }
 
     onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
@@ -186,7 +184,7 @@ class Control<TProviderData> extends React.PureComponent<
             return;
         }
 
-        if (type === 'button' && control.onClick?.action === 'useAction') {
+        if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTION) {
             this.runAction(control.onClick.args);
             return;
         }

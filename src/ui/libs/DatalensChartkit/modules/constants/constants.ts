@@ -39,7 +39,7 @@ export type ExportFormatsType = (typeof EXPORT_FORMATS)[keyof typeof EXPORT_FORM
 export const CLICK_ACTION_TYPE = {
     SET_PARAMS: 'setParams',
     SET_INITIAL_PARAMS: 'setInitialParams',
-    USE_ACTION: 'useAction',
+    RUN_ACTION: 'runAction',
 };
 
 export const REQUEST_ID_HEADER = 'x-request-id';
