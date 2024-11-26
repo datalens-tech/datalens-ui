@@ -1,6 +1,6 @@
 import type {OutgoingHttpHeaders} from 'http';
 
-import type {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
+import type {AppMiddleware, AppRouteDescription, Request, Response} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
 
 import type {EDITOR_TYPE_CONFIG_TABS} from '../../../shared';
@@ -186,12 +186,16 @@ export interface PluginRoute {
         body?: Object;
     };
 }
+
+export type ChartEngineController = (req: Request, res: Response) => Promise<void> | unknown;
+
 export interface Plugin {
     middlewares?: Middleware[];
     sources?: Record<string, SourceConfig>;
     runners?: Runner[];
     processorHooks?: Record<string, any>[];
     routes?: PluginRoute[];
+    controllers?: Record<string, (chartsEngine: any) => ChartEngineController>;
 }
 
 export type ChartStorageType = keyof typeof EDITOR_TYPE_CONFIG_TABS;
