@@ -2,7 +2,6 @@ import React from 'react';
 
 import {ArrowUturnCcwLeft, ArrowUturnCwRight} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
-import type {Options} from 'react-hotkeys-hook';
 import {useDispatch, useSelector} from 'react-redux';
 import {Feature} from 'shared';
 import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
@@ -42,12 +41,9 @@ const canGoForwardSelector = (state: DatalensGlobalState) => {
 
 export function useHistoryActions() {
     const dispatch = useDispatch();
-    const enabled = Utils.isEnabledFeature(Feature.EnableEditHistoryDatasets);
+    const featureEnabled = Utils.isEnabledFeature(Feature.EnableEditHistoryDatasets);
     const canGoBack = useSelector(canGoBackSelector);
     const canGoForward = useSelector(canGoForwardSelector);
-    const options: Options = React.useMemo(() => {
-        return {enabled, scopes: HOTKEYS_SCOPES.DATASETS};
-    }, [enabled]);
 
     const handleGoBack = React.useCallback(() => {
         if (canGoBack) {
@@ -62,7 +58,7 @@ export function useHistoryActions() {
     }, [canGoForward, dispatch]);
 
     const items: AdditionalButtonTemplate[] = React.useMemo(() => {
-        if (!enabled) {
+        if (!featureEnabled) {
             return [];
         }
 
@@ -86,11 +82,19 @@ export function useHistoryActions() {
                 hotkey: REDO_HOTKEY.join('+'),
             },
         ];
-    }, [canGoBack, canGoForward, enabled, handleGoBack, handleGoForward]);
+    }, [canGoBack, canGoForward, featureEnabled, handleGoBack, handleGoForward]);
     const actions = useAdditionalItems({items});
 
-    useBindHotkey({key: UNDO_HOTKEY, handler: handleGoBack, options});
-    useBindHotkey({key: REDO_HOTKEY, handler: handleGoForward, options});
+    useBindHotkey({
+        key: UNDO_HOTKEY,
+        handler: handleGoBack,
+        options: {enabled: featureEnabled && canGoBack, scopes: HOTKEYS_SCOPES.DATASETS},
+    });
+    useBindHotkey({
+        key: REDO_HOTKEY,
+        handler: handleGoForward,
+        options: {enabled: featureEnabled && canGoForward, scopes: HOTKEYS_SCOPES.DATASETS},
+    });
 
     return actions;
 }
