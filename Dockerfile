@@ -7,8 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/cert.pem
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
-    apt-get -y install python3.9 python3-pip
+    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+    #DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
+    #apt-get -y install python3.9 python3-pip
 
 # node
 RUN apt-get -y install ca-certificates curl gnupg
