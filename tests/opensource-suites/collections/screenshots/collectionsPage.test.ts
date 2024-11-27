@@ -3,7 +3,6 @@ import {Page} from '@playwright/test';
 import {CollectionsPageQa} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {setViewportSizeAsContent} from '../../utils';
 
 datalensTest.describe('Collections page', () => {
     datalensTest(
@@ -15,7 +14,7 @@ datalensTest.describe('Collections page', () => {
 
             const pageContainer = page.locator(slct(CollectionsPageQa.PageContainer));
 
-            await setViewportSizeAsContent(page, slct(CollectionsPageQa.PageContainer));
+            await page.setViewportSize({width: 1200, height: 500});
 
             await expect(pageContainer).toHaveScreenshot();
         },

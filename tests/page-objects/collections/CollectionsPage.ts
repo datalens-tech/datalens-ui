@@ -7,7 +7,7 @@ import {ContentTableRow} from './ContentTableRow';
 type CollectionsPageProps = BasePageProps;
 
 export class CollectionsPage extends BasePage {
-    private readonly root = CollectionsPageQa.PageContainer;
+    private readonly root = slct(CollectionsPageQa.PageContainer);
 
     private readonly collectionRow: ContentTableRow;
     private readonly workbookRow: ContentTableRow;
