@@ -74,6 +74,7 @@ export type ChartsInsightsData = {
 };
 
 export type UiSandboxRuntimeOptions = {
+    fnExecTimeLimit?: number;
     totalTimeLimit?: number;
 };
 

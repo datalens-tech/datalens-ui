@@ -1,12 +1,19 @@
 import isFunction from 'lodash/isFunction';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY, isObjectWith} from 'shared';
+import {EDITOR_TYPE} from 'shared/constants/entry';
 
 function isHtmlString(value: unknown) {
     return typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
 export function isPotentiallyUnsafeChart(chartType: string) {
-    const chartTypesToCheck = ['graph_node', 'map_node', 'ymap_node', 'timeseries_node'];
+    const chartTypesToCheck = [
+        EDITOR_TYPE.GRAPH_NODE,
+        EDITOR_TYPE.MAP_NODE,
+        EDITOR_TYPE.YMAP_NODE,
+        EDITOR_TYPE.TIMESERIES_NODE,
+        EDITOR_TYPE.BLANK_CHART_NODE,
+    ];
     return chartTypesToCheck.includes(chartType);
 }
 

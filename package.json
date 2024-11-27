@@ -54,7 +54,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
-    "@datalens-tech/ui-sandbox-modules": "^0.24.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@diplodoc/latex-extension": "^1.1.0",
     "@diplodoc/mermaid-extension": "^1.2.3",
@@ -69,8 +68,6 @@
     "@gravity-ui/i18n": "^1.6.0",
     "@gravity-ui/nodekit": "^1.7.0",
     "@node-rs/crc32": "^1.7.2",
-    "@tanstack/react-table": "^8.12.0",
-    "@tanstack/react-virtual": "^3.8.1",
     "ajv": "^8.12.0",
     "axios": "^1.7.7",
     "axios-retry": "^3.2.0",
@@ -112,6 +109,9 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
+    "@datalens-tech/ui-sandbox-modules": "^0.32.0",
+    "@tanstack/react-table": "^8.12.0",
+    "@tanstack/react-virtual": "^3.8.1",
     "@gravity-ui/app-builder": "^0.13.0",
     "@gravity-ui/components": "^3.12.3",
     "@gravity-ui/date-components": "^2.10.2",
@@ -178,6 +178,7 @@
     "eslint": "^8.56.0",
     "highcharts": "^8.2.2",
     "history": "^4.10.1",
+    "htmlparser2": "^8.0.2",
     "http-proxy": "^1.18.1",
     "husky": "^8.0.3",
     "immutability-helper": "^3.1.1",
