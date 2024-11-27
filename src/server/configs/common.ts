@@ -1,4 +1,5 @@
 import {DEFAULT_PROXY_HEADERS} from '@gravity-ui/gateway/build/constants';
+import type {AppConfig} from '@gravity-ui/nodekit';
 
 import {
     AuthHeader,
@@ -43,4 +44,4 @@ export default {
     ],
     headersMap: {},
     requestIdHeaderName: 'x-request-id',
-};
+} satisfies Partial<AppConfig>;

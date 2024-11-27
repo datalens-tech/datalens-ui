@@ -1,14 +1,12 @@
+import type {AppConfig} from '@gravity-ui/nodekit';
 import Redis from 'ioredis';
 
 export type RedisConfig = {
-    redis?: {
-        password: string;
-        role: 'master' | 'slave';
-        sentinels: {host: string; port: number}[];
-        family: number;
-        name: string;
-    };
-    appInstallation?: string;
+    password: string;
+    role: 'master' | 'slave';
+    sentinels: {host: string; port: number}[];
+    family: number;
+    name: string;
 };
 
 export type CacheStatus =
@@ -41,7 +39,7 @@ export class CacheClient {
     _debug = false;
     client: Redis.Redis | null = null;
 
-    constructor({config}: {config: RedisConfig}) {
+    constructor({config}: {config: AppConfig}) {
         this._debug = config.appInstallation === 'development';
 
         if (config.redis && config.redis.password) {
