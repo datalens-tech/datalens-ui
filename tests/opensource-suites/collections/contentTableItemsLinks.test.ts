@@ -17,7 +17,7 @@ datalensTest.describe('Collections page', () => {
             await page.waitForURL(WorkbooksUrls.E2EWorkbook);
         });
 
-        datalensTest('Collection row link leads to workbook page', async ({page}) => {
+        datalensTest('Collection row link leads to collection page', async ({page}) => {
             const collectionsPage = new CollectionsPage({page});
 
             await collectionsPage.clickCollectionRowLink();
