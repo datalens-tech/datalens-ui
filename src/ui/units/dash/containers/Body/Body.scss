@@ -27,6 +27,7 @@ $actionPanelDefaultBottom: 20px;
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
+        background-color: var(--g-color-base-generic-ultralight);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -128,5 +129,9 @@ $actionPanelDefaultBottom: 20px;
 
     .edit-panel-item {
         width: 108px;
+    }
+
+    &__fixed-header-settings-switcher {
+        width: inherit;
     }
 }

@@ -23,7 +23,6 @@ $fixedSectionOffset: 8px;
 
 .dash-fixed-header {
     &__controls {
-        display: flex;
         flex: 1;
         padding: 8px 0;
         min-height: 60px;
@@ -35,7 +34,7 @@ $fixedSectionOffset: 8px;
             top: 40px;
             background-color: var(
                 --dl-color-fixed-header-background,
-                var(--g-color-base-background)
+                var(--g-color-base-simple-hover-solid)
             );
             padding-left: 24px;
             padding-right: 24px;
@@ -48,9 +47,14 @@ $fixedSectionOffset: 8px;
         height: 60px;
         display: flex;
         flex-direction: row;
+
+        &_hidden {
+            display: none;
+        }
     }
 
     &__controls-grid {
+        position: relative;
         display: flex;
         flex-grow: 1;
 
@@ -58,18 +62,10 @@ $fixedSectionOffset: 8px;
     }
 
     &__controls-settings {
-        width: math.div(100%, 36) * 1;
-        flex-shrink: 0;
-        position: relative;
-    }
-
-    &__controls-settings-wrapper {
+        width: 20px;
         position: absolute;
-        inset: 0px 0px 0px 8px;
-        display: flex;
-        min-width: 28px;
-        align-items: center;
-        justify-content: end;
+        left: -24px;
+        top: 0;
     }
 
     &__container-placeholder {
@@ -102,7 +98,7 @@ $fixedSectionOffset: 8px;
             top: 100px;
             background-color: var(
                 --dl-color-fixed-header-background,
-                var(--g-color-base-background)
+                var(--g-color-base-simple-hover-solid)
             );
             border-bottom: 1px solid var(--g-color-line-generic);
             padding-left: 24px;
