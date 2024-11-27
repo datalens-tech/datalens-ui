@@ -49,6 +49,7 @@ export const initialState: DatasetReduxState = {
     },
     validation: {
         isLoading: false,
+        isPending: false,
         error: null,
     },
     savingDataset: {

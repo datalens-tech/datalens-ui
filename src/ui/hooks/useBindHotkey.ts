@@ -1,4 +1,5 @@
 import {useHotkeys} from 'react-hotkeys-hook';
+import type {Options} from 'react-hotkeys-hook';
 
 import {MOD_KEY} from '../constants/misc';
 import {getMetaKey} from '../utils';
@@ -13,7 +14,7 @@ export function useBindHotkey({
 }: {
     key: string[];
     handler: () => void;
-    options: Record<string, string>;
+    options: Options;
 }) {
     const fullKey = key.map((keyPart) => (keyPart === MOD_KEY ? getMetaKey() : keyPart)).join('+');
 

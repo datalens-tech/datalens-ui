@@ -19,7 +19,7 @@ import type {CreateJDPOptions} from '../utils/jdp';
 export type Diff = JDPDelta;
 
 export type EditHistoryUnit<T = unknown> = {
-    diffs: Diff[];
+    diffs: (Diff | Diff[])[];
     pointIndex: number;
     pointState?: T;
     setState: ({state}: {state: T}) => void;
@@ -93,7 +93,7 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
             };
         }
         case ADD_EDIT_HISTORY_POINT: {
-            const {unitId, diff, state: newState} = action;
+            const {unitId, diff, state: newState, stacked} = action;
 
             const editHistoryUnit = state.units[unitId];
 
@@ -106,6 +106,20 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                 editHistoryUnit.options.pathIgnoreList,
             );
 
+            const nextPointIndex = pointIndex + (stacked ? 0 : 1);
+            let nextDiffs: (Diff | Diff[])[];
+
+            if (stacked) {
+                if (!Array.isArray(prevDiffs[prevDiffs.length - 1])) {
+                    prevDiffs[prevDiffs.length - 1] = [prevDiffs[prevDiffs.length - 1]];
+                }
+
+                (prevDiffs[prevDiffs.length - 1] as Diff[]).push(diff);
+                nextDiffs = [...prevDiffs];
+            } else {
+                nextDiffs = [...prevDiffs, diff];
+            }
+
             return {
                 units: {
                     ...state.units,
@@ -113,10 +127,9 @@ export function editHistory(state = initialState, action: EditHistoryAction): Ed
                         ...editHistoryUnit,
 
                         // Force current history point index to latest state
-                        pointIndex: pointIndex + 1,
+                        pointIndex: nextPointIndex,
 
-                        // Remove all missed diffs
-                        diffs: [...prevDiffs, diff],
+                        diffs: nextDiffs,
 
                         pointState: storedNewState,
                     },
