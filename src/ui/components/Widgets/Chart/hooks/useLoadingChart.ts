@@ -896,11 +896,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     const handleRetry = React.useCallback(
         (data?: OnChangeData['data']) => {
             if (data) {
-                handleChange(
-                    {type: 'PARAMS_CHANGED', data} as OnChangeData,
-                    {forceUpdate: true},
-                    false,
-                );
+                if ('params' in data) {
+                    handleChange({type: 'PARAMS_CHANGED', data}, {forceUpdate: true}, false);
+                }
             } else {
                 loadChartData();
             }

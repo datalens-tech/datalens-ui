@@ -4,6 +4,7 @@ import type {Point, PointOptionsObject} from 'highcharts';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
+import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 import uniq from 'lodash/uniq';
 
@@ -84,16 +85,19 @@ export function addParams(params: StringParams, addition: StringParams = {}) {
             acc[key] = [];
         }
 
-        if (!Array.isArray(acc[key])) {
-            acc[key] = [acc[key] as string];
-        }
+        let currentKeyValue: string[];
 
-        if ((acc[key] as string[]).every(isEmptyParam)) {
-            acc[key] = [];
+        if (!Array.isArray(acc[key])) {
+            currentKeyValue = [String(acc[key])];
+        } else {
+            currentKeyValue = acc[key];
+            if (acc[key].every(isEmptyParam)) {
+                currentKeyValue = [];
+            }
         }
 
         const value = Array.isArray(val) ? val.map(String) : String(val);
-        acc[key] = uniq((acc[key] as string[]).concat(value));
+        acc[key] = uniq(currentKeyValue).concat(value);
         return acc;
     }, result);
 }
@@ -276,7 +280,7 @@ export function handleSeriesClickForActionParams(args: {
         return;
     }
 
-    const params = transformParamsToActionParams(newActionParams as StringParams);
+    const params = transformParamsToActionParams(newActionParams);
     onChange?.(
         {
             type: 'PARAMS_CHANGED',
@@ -286,4 +290,14 @@ export function handleSeriesClickForActionParams(args: {
         true,
         true,
     );
+}
+
+export function getNormalizedParams(params: Record<string, unknown>) {
+    return mapValues(params, (value) => {
+        if (Array.isArray(value)) {
+            return value.map(String);
+        } else {
+            return String(value);
+        }
+    });
 }
