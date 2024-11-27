@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
-import {Feature} from 'shared';
+import {CollectionsPageQa, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -245,7 +245,7 @@ export const CollectionPage = () => {
     const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})}>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={CollectionsPageQa.PageContainer}>
             <div className={b('filters', {hidden: isFiltersHidden})}>
                 <CollectionFilters
                     filters={filters}
