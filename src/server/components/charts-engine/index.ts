@@ -25,7 +25,7 @@ const defaultControllers = {
     embeddedEntry: embeddedEntryController,
 };
 import type {Runner} from './runners';
-import type {Plugin, SourceConfig, TelemetryCallbacks} from './types';
+import type {ChartEngineController, Plugin, SourceConfig, TelemetryCallbacks} from './types';
 import {MiddlewareStage} from './types';
 
 type Controllers = {
@@ -137,6 +137,16 @@ class ChartsEngine {
                 // Apply sandbox hooks
                 if (Array.isArray(plugin.processorHooks)) {
                     this.processorHooks = [...this.processorHooks, ...plugin.processorHooks];
+                }
+
+                if (plugin.controllers) {
+                    const controllers = Object.entries(plugin.controllers).reduce<
+                        Record<string, ChartEngineController>
+                    >((acc, [key, value]) => {
+                        acc[key] = value(this);
+                        return acc;
+                    }, {});
+                    Object.assign(this.controllers, controllers);
                 }
             });
         }

@@ -1,5 +1,5 @@
 import type {Request} from '@gravity-ui/expresskit';
-import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {StringParams} from '../../../../shared';
 
@@ -122,10 +122,6 @@ module.exports = result;
 `,
 };
 
-type ConfigWithChartTemplates = AppConfig & {
-    chartTemplates: ChartTemplates;
-};
-
 export type ChartTemplates = {
     datalens: ChartTemplate;
     sql: ChartTemplate;
@@ -167,8 +163,8 @@ export const chartGenerator = {
         req: Request;
         ctx: AppContext;
     }) => {
-        const config = ctx.config as ConfigWithChartTemplates;
-        const chartTemplates = config.chartTemplates;
+        const config = ctx.config;
+        const chartTemplates = config.chartTemplates as ChartTemplates;
         const chart: Chart = {...commonTemplate};
 
         const chartOldType = data.type;

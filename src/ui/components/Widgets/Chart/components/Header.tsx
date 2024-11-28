@@ -94,6 +94,7 @@ export const Header = (props: HeaderProps) => {
     const hideChartComments = Boolean((loadedData?.config as GraphWidget['config'])?.hideComments);
 
     const canBeShownMenu = isMenuAvailable && widgetDataRef;
+
     const configMenu = menuType
         ? getChartkitMenu({
               type: menuType,
@@ -105,6 +106,7 @@ export const Header = (props: HeaderProps) => {
               onFullscreenClick,
               isEditAvaible,
               extraOptions: {enableActionParams},
+              widgetConfig: loadedData?.widgetConfig,
           })
         : settings.menu;
 

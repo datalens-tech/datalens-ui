@@ -62,7 +62,7 @@
         &_highlight-rows {
             tbody tr:not(.dl-table__tr_no-data):hover td:not(.dl-table__td_pinned),
             tbody tr:not(.dl-table__tr_no-data):hover td:before {
-                background: var(--dl-table-cell-bg-color, var(--g-color-base-simple-hover));
+                background: var(--g-color-base-simple-hover);
             }
         }
 
@@ -85,7 +85,6 @@
         border-top: 0;
         border-left: 0;
         font-size: var(--dl-table-font-size);
-        background: var(--dl-table-cell-bg-color);
 
         &_clickable {
             cursor: pointer;
@@ -138,10 +137,6 @@
     }
 
     &__header {
-        background: var(--dl-table-header-bg-color);
-        position: sticky;
-        top: 0;
-        z-index: 1;
         border-left: 1px solid var(--dl-table-border-color);
 
         /* stylelint-disable */
@@ -151,6 +146,11 @@
         /* stylelint-enable */
 
         &_sticky {
+            top: 0;
+            z-index: 1;
+            position: sticky;
+            background: var(--dl-table-header-bg-color);
+
             th {
                 @include stickyCellBg();
             }
@@ -225,7 +225,6 @@
         vertical-align: var(--dl-table-footer-cell-vertical-align);
         white-space: nowrap;
         font-weight: 500;
-        background: var(--dl-table-cell-bg-color);
     }
 
     &__footer .chartkit-table-bar {
@@ -236,13 +235,11 @@
     &__body &__td_pinned,
     &__footer &__td_pinned {
         left: 0;
-        background: var(--dl-table-body-bg-color);
         position: sticky;
         z-index: 1;
 
         @include stickyCellBg();
         &:before {
-            background: var(--dl-table-cell-bg-color);
             border-left: 1px solid var(--dl-table-border-color);
             z-index: -1;
         }

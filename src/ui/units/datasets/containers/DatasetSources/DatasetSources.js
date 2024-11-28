@@ -19,11 +19,10 @@ import {
     deleteAvatar,
     deleteConnection,
     deleteSource,
-    disableSaveDataset,
-    enableSaveDataset,
     getSources,
     replaceConnection,
     replaceSource,
+    toggleSaveDataset,
     updateDatasetByValidation,
     updateRelation,
     updateSource,
@@ -277,11 +276,7 @@ class DatasetSources extends React.Component {
         validateEnabled = true,
         // eslint-disable-next-line consistent-return
     }) => {
-        if (validateEnabled) {
-            this.props.disableSaveDataset();
-        } else {
-            this.props.enableSaveDataset();
-        }
+        this.props.toggleSaveDataset({enable: !validateEnabled});
 
         switch (type) {
             case DATASET_UPDATE_ACTIONS.AVATAR_ADD: {
@@ -739,8 +734,7 @@ DatasetSources.propTypes = {
     updateDatasetByValidation: PropTypes.func.isRequired,
     clickConnection: PropTypes.func.isRequired,
     addAvatarPrototypes: PropTypes.func.isRequired,
-    disableSaveDataset: PropTypes.func.isRequired,
-    enableSaveDataset: PropTypes.func.isRequired,
+    toggleSaveDataset: PropTypes.func.isRequired,
     ui: PropTypes.object.isRequired,
     freeformSources: PropTypes.array.isRequired,
     avatars: PropTypes.array,
@@ -785,8 +779,7 @@ const mapDispatchToProps = {
     deleteConnection,
     clickConnection,
     addAvatarPrototypes,
-    disableSaveDataset,
-    enableSaveDataset,
+    toggleSaveDataset,
     showToast,
 };
 

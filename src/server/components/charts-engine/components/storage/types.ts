@@ -24,6 +24,7 @@ export type ResolvedConfig = {
         statface_graph: string;
         map?: string;
         ymap?: string;
+        actions?: string;
     };
     key: string;
     links?: string[];
@@ -66,6 +67,9 @@ export type EmbeddingInfo = {
         createdBy: string;
         createdAt: string;
         publicParamsMode: boolean;
+        settings: {
+            enableExport?: boolean;
+        };
     };
     entry: ChartEntryData | DashEntryData;
 };

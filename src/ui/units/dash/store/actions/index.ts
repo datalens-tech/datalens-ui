@@ -1,13 +1,14 @@
 import type {ThunkDispatch} from 'redux-thunk';
 import type {DatalensGlobalState} from 'ui';
-
-import type {EntryContentAction} from '../../../../store/actions/entryContent';
-
 import type {
     AddSelectorToGroupAction,
     SetActiveSelectorIndexAction,
+    SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
-} from './controls/actions';
+} from 'ui/store/actions/controlDialog';
+
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
+
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
@@ -22,13 +23,10 @@ import type {
     SetHashStateAction,
     SetInitialPageTabsItemsAction,
     SetItemDataAction,
-    SetLastUsedConnectionIdAction,
-    SetLastUsedDatasetIdAction,
     SetLoadingEditModeAction,
     SetPageDefaultTabItemsAction,
     SetPageTabAction,
     SetPageTabsItemsAction,
-    SetSelectorDialogItemAction,
     SetSettingsAction,
     SetSkipReloadAction,
     SetStateAction,
@@ -55,7 +53,6 @@ export type DashAction<T = unknown> =
     | SetStateHashIdAction
     | SetErrorModeAction
     | ToggleTableOfContentAction
-    | SetLastUsedDatasetIdAction
     | SetSelectorDialogItemAction
     | AddSelectorToGroupAction
     | UpdateSelectorsGroupAction
@@ -79,7 +76,6 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | SetLastUsedConnectionIdAction
     | SetSettingsAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

@@ -11,6 +11,9 @@ export type Embed = {
     updatedAt: string;
     updatedBy: string;
     publicParamsMode: boolean;
+    settings: {
+        enableExport?: boolean;
+    };
 };
 
 export type CreateEmbedArgs = {

@@ -11,16 +11,6 @@
         justify-content: center;
     }
 
-    &__settings-cog {
-        margin-left: auto;
-        margin-right: 10px;
-    }
-
-    &__create-widget-btn {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
-
     &__tabs {
         width: 300px;
     }
@@ -49,5 +39,10 @@
         &_right {
             overflow-x: auto;
         }
+    }
+
+    &__actions-panel-right-items {
+        display: flex;
+        column-gap: 8px;
     }
 }

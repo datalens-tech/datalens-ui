@@ -8,6 +8,7 @@ export type GetChartkitMenuByType = GetChartkitMenuItems & {
     onFullscreenClick?: () => void;
     isEditAvaible?: boolean;
     extraOptions?: Record<string, unknown>;
+    widgetConfig?: Record<string, unknown>;
 };
 
 export type GetChartkitMenuItems = {

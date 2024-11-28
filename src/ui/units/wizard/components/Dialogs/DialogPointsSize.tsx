@@ -20,7 +20,7 @@ const DEFAULT_MIN_RADIUS_PERCENT = 2;
 const DEFAULT_MAX_RADIUS_PERCENT = 8;
 const RANGE_INPUT_STEP = 1;
 const RANGE_INPUT_MIN = 1;
-const RANGE_INPUT_MAX = 20;
+const RANGE_INPUT_MAX = 40;
 const PERCENT_RANGE = {min: 1, max: 20};
 const RADIUS_RANGE = {min: 0.5, max: 10};
 

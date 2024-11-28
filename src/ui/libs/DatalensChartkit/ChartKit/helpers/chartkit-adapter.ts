@@ -92,6 +92,12 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
 
             break;
         }
+
+        case 'blank-chart': {
+            chartkitType = 'blank-chart';
+
+            break;
+        }
     }
 
     return chartkitType;

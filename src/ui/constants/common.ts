@@ -228,8 +228,13 @@ export const DL = {
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
+    // TODO: delete
     get RUN_ENDPOINT() {
         return window.DL.runEndpoint || '/api/run';
+    },
+    // TODO: add fallback
+    get API_PREFIX() {
+        return window.DL.apiPrefix;
     },
     get CONNECTOR_ICONS() {
         return window.DL.connectorIcons || [];
@@ -280,8 +285,6 @@ export enum Scope {
 export const ALL_SCOPES: string[] = Object.values(Scope);
 
 export const COPIED_WIDGET_STORAGE_KEY = 'dashCopiedItem';
-
-export const CURRENT_CLOUD_STORE_KEY = 'dl_current_cloud';
 
 export const RUBLE = '₽';
 

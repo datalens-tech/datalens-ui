@@ -3,10 +3,8 @@ import {I18n} from 'i18n';
 import type {FakeDashData} from 'shared/types/dash';
 import {DashLoadPriority} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
-import type {SelectorElementType} from 'ui/store/typings/controlDialog';
 import Utils from 'ui/utils';
 
-import {CheckboxControlValue, ELEMENT_TYPE} from '../containers/Dialogs/Control/constants';
 import {Mode} from '../modules/constants';
 
 const storeI18n = I18n.keyset('dash.store.view');
@@ -71,13 +69,4 @@ export const getFakeDashEntry = (workbookId?: string) => {
         },
         navigationPath: Utils.getNavigationPathFromKey(initialKey),
     };
-};
-
-export const getInitialDefaultValue = (elementType: SelectorElementType) => {
-    switch (elementType) {
-        case ELEMENT_TYPE.CHECKBOX:
-            return CheckboxControlValue.FALSE;
-        default:
-            return undefined;
-    }
 };

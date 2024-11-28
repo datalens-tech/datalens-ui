@@ -26,8 +26,6 @@ export enum ErrorCode {
     ReferencedEntryAccessDenied = 'ERR.DS_API.REFERENCED_ENTRY_ACCESS_DENIED',
     PlatformPermissionRequired = 'ERR.DS_API.PLATFORM_PERMISSION_REQUIRED',
     NeedReset = 'NEED_RESET',
-    MigrationOrgExists = 'MIGRATION_ORG_EXISTS',
-    MigrationDenied = 'MIGRATION_DENIED',
     EntryIsLocked = 'ERR.US.ENTRY_IS_LOCKED',
     EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',

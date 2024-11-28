@@ -156,4 +156,5 @@ export const commonFunctionsMap = {
             };
         }
     >(),
+    getRestrictedParamNames: makeFunctionTemplate<() => string[]>(),
 } as const;

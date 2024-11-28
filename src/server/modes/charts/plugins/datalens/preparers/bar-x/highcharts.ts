@@ -95,7 +95,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 );
             }
 
-            const [layerYPlaceholder, layerY2Placeholder] = getYPlaceholders(args);
+            const [layerYPlaceholder] = getYPlaceholders(args);
 
             if (
                 layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
@@ -103,15 +103,6 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
             ) {
                 customConfig.axesFormatting.yAxis.push(
                     getAxisFormattingByField(layerYPlaceholder, visualizationId),
-                );
-            }
-
-            if (
-                layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
-                !isSegmentsExists
-            ) {
-                customConfig.axesFormatting.yAxis.push(
-                    getAxisFormattingByField(layerY2Placeholder, visualizationId),
                 );
             }
 

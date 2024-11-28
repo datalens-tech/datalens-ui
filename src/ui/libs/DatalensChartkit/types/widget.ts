@@ -74,6 +74,7 @@ export type ChartsInsightsData = {
 };
 
 export type UiSandboxRuntimeOptions = {
+    fnExecTimeLimit?: number;
     totalTimeLimit?: number;
 };
 
@@ -188,6 +189,8 @@ type AlertWidget = WidgetBase & {
 };
 
 type D3Widget = WidgetBase & {type: 'd3'};
+
+type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
 
 type WidgetComponentProps =
     | GraphWidget
@@ -354,7 +357,8 @@ export type Widget =
     | YMapWidget
     | TextWidget
     | TimeseriesWidget
-    | MarkupWidget;
+    | MarkupWidget
+    | BlankChartWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';

@@ -65,7 +65,7 @@ export interface ControlRangeDatepicker extends ControlBase {
 interface ControlButton extends ControlBase {
     type: 'button';
     onClick?: {
-        action: 'setParams' | 'setInitialParams';
+        action: 'setParams' | 'setInitialParams' | 'runAction';
         args: StringParams;
     };
 }

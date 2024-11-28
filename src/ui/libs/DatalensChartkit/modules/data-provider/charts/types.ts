@@ -6,6 +6,7 @@ import type {
     ChartsInsightsItem,
     DashLoadPriority,
     DashTabItemControlSourceType,
+    DashWidgetConfig,
     DatasetFieldCalcMode,
     DatasetFieldType,
     EntryPublicAuthor,
@@ -149,7 +150,7 @@ export interface ChartsProps {
     forceShowSafeChart?: boolean;
 }
 
-export interface ChartsData {
+export interface ChartsData extends DashWidgetConfig {
     entryId: string;
     key: string;
     usedParams: StringParams;
@@ -318,7 +319,7 @@ interface ResponseSuccessWizardBase
 interface ResponseSuccessGraphWizard extends ResponseSuccessWizardBase, Comments {}
 interface ResponseSuccessMetricWizard extends ResponseSuccessWizardBase {}
 
-export interface ResponseSuccessNodeBase {
+export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     params: StringParams;
     usedParams: StringParams;
     unresolvedParams?: StringParams;

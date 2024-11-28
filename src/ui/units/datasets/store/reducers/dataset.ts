@@ -51,6 +51,7 @@ import {
     RENAME_DATASET,
     SET_ASIDE_HEADER_WIDTH,
     SET_DATASET_REVISION_MISMATCH,
+    SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
@@ -336,6 +337,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 validation: {
                     ...state.validation,
                     isLoading: true,
+                    isPending: false,
                 },
                 ui: {
                     ...state.ui,
@@ -847,7 +849,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ({id}) => id === relationId,
             );
 
-            // TODO: antipattern
             avatarRelations!.splice(updatedAvatarRelationIndex, 1, relation);
 
             const update = {
@@ -978,14 +979,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case TOGGLE_ALLOWANCE_SAVE: {
-            const {enable} = action.payload;
-            const {savingDataset} = state;
+            const {enable, validationPending} = action.payload;
 
             return {
                 ...state,
                 savingDataset: {
-                    ...savingDataset,
+                    ...state.savingDataset,
                     disabled: !enable,
+                },
+                validation: {
+                    ...state.validation,
+                    ...(typeof validationPending === 'boolean' && {isPending: validationPending}),
                 },
             };
         }
@@ -1322,6 +1326,9 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ...state,
                 key: action.payload,
             };
+        }
+        case SET_EDIT_HISTORY_STATE: {
+            return action.payload.state;
         }
         default: {
             return state;

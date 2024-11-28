@@ -1,8 +1,12 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
+import {DL} from 'ui/constants';
 import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/d3-chart-to-table';
+import {registry} from 'ui/registry';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {
+    DL_EMBED_TOKEN_HEADER,
     WidgetKind,
     getFormatOptions,
     getXlsxNumberFormat,
@@ -37,7 +41,8 @@ const TABLE_DATE_FORMAT_BY_SCALE = {
     y: 'YYYY',
 };
 
-const API = '/api/export';
+//TODO: use only api_prefix
+const API = DL.API_PREFIX ? `${DL.API_PREFIX}/export` : '/api/export';
 
 function tableHeadToGraphs(head, prefix) {
     return head.reduce((result, column) => {
@@ -394,7 +399,6 @@ function convertDataToWiki({widget, data, widgetType}) {
 
 async function exportWidget({
     widget,
-    path,
     data,
     widgetType,
     options,
@@ -403,7 +407,6 @@ async function exportWidget({
     downloadName,
 }) {
     const params = {
-        chartUrl: path,
         formSettings: options,
         lang: settings.lang,
         // downloadConfig: props.downloadConfig,
@@ -413,12 +416,19 @@ async function exportWidget({
 
     const stringifyData = encodeURIComponent(JSON.stringify(params));
 
+    const headers = {};
+
+    if (isEmbeddedEntry()) {
+        const getSecureEmbeddingToken = registry.chart.functions.get('getSecureEmbeddingToken');
+        headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
+    }
+
     const request = {
         url: `${chartsDataProvider.endpoint}${API}`,
         method: 'post',
         data: {data: stringifyData, exportFilename},
         responseType: 'blob',
-        headers: {},
+        headers,
     };
 
     // append and remove are needed in particular for FireFox
@@ -446,7 +456,6 @@ async function exportWidget({
 export default async ({
     widget,
     widgetDataRef,
-    path,
     data,
     widgetType,
     options = getStorageState(),
@@ -477,7 +486,6 @@ export default async ({
         default: {
             return exportWidget({
                 widget: widgetDataRef?.current || widget,
-                path,
                 data,
                 widgetType,
                 options,

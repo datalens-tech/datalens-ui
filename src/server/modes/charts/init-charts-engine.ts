@@ -3,7 +3,12 @@ import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import get from 'lodash/get';
 import sizeof from 'object-sizeof';
 
-import {Feature, isEnabledServerFeature, isObjectWithFunction} from '../../../shared';
+import {
+    AppEnvironment,
+    Feature,
+    isEnabledServerFeature,
+    isObjectWithFunction,
+} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
@@ -158,7 +163,17 @@ export function initChartsEngine({
     };
 
     const {appEnv, endpoints, chartsEngineConfig} = config;
-    config.sources = config.getSourcesByEnv(appEnv as string);
+    if (!appEnv) {
+        throw new Error('App environment is not defined');
+    }
+
+    const typedAppEnv = appEnv as AppEnvironment;
+
+    if (!Object.values(AppEnvironment).includes(typedAppEnv)) {
+        throw new Error(`Unknown app environment: ${appEnv}`);
+    }
+
+    config.sources = config.getSourcesByEnv(typedAppEnv);
     config.usEndpoint = endpoints.api.us + chartsEngineConfig.usEndpointPostfix;
 
     const cacheClient = new CacheClient({config});

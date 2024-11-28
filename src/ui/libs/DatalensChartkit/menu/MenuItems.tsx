@@ -176,7 +176,11 @@ export const getEditMenuItem = ({
             window.open(
                 (dataProvider || chartsDataProvider)?.getGoAwayLink(
                     {loadedData, propsData},
-                    {idPrefix: '/navigation/'},
+                    {
+                        idPrefix: Utils.isEnabledFeature(Feature.UseNavigation)
+                            ? '/navigation/'
+                            : '/navigate/',
+                    },
                 ),
             );
         }),
