@@ -1,22 +1,28 @@
 import React from 'react';
 
-import {useBodyScrollLock} from '@gravity-ui/uikit';
+import {useBodyScrollLock, useForkRef} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {FixedHeaderQa} from 'shared';
 
 import './FixedHeader.scss';
 
-type FixedHeaderContainerProps = {
+type CommonFixedHeaderProps = {
     isEmpty: boolean;
     isCollapsed: boolean;
     isEmbedded?: boolean;
     isPublic?: boolean;
     editMode: boolean;
+    wrapperRef?: React.RefObject<HTMLDivElement>;
 };
 
-type FixedHeaderControlsProps = FixedHeaderContainerProps & {
+type FixedHeaderControlsProps = CommonFixedHeaderProps & {
     controls: React.ReactNode;
+    containerRef?: React.RefObject<HTMLDivElement>;
+};
+
+type FixedHeaderContainerProps = CommonFixedHeaderProps & {
+    controlsRef?: React.RefObject<HTMLDivElement>;
 };
 
 const b = block('dash-fixed-header');
@@ -32,6 +38,7 @@ const CONTAINER_PADDING_OFFSET = 48;
 const calculateOffset = (
     pageOptions: {isEmbedded?: boolean; isPublic?: boolean},
     blockType: 'controls' | 'content' = 'controls',
+    containerTopOffset: number = CONTAINER_TOP_OFFSET,
 ) => {
     let globalOffset = CONTROLS_TOP_DEFAULT_NAV_OFFSET;
     if (pageOptions.isEmbedded) {
@@ -41,7 +48,7 @@ const calculateOffset = (
     }
 
     if (blockType === 'content') {
-        return globalOffset + CONTAINER_TOP_OFFSET;
+        return globalOffset + containerTopOffset;
     }
 
     return globalOffset;
@@ -101,6 +108,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
 
 export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) => {
     const rootRef = React.useRef<HTMLDivElement>(null);
+    const placeholderRef = useForkRef(rootRef, props.wrapperRef);
     const {editMode, isEmpty} = props;
     const topOffset = calculateOffset({isEmbedded: props.isEmbedded, isPublic: props.isPublic});
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
@@ -116,7 +124,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
         );
 
     return (
-        <div ref={rootRef} className={b('controls-placeholder')}>
+        <div ref={placeholderRef} className={b('controls-placeholder', {hidden: !content})}>
             <div
                 style={style}
                 className={b('controls', {
@@ -125,9 +133,9 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
                 })}
                 data-qa={FixedHeaderQa.Controls}
             >
-                <div className={b('controls-grid')}>{content}</div>
-                <div className={b('controls-settings')}>
-                    <div className={b('controls-settings-wrapper')}>{props.controls}</div>
+                <div className={b('controls-grid')}>
+                    {content}
+                    <div className={b('controls-settings')}>{props.controls}</div>
                 </div>
             </div>
         </div>
@@ -137,10 +145,12 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
 export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props) => {
     const {editMode, isEmpty} = props;
     const rootRef = React.useRef<HTMLDivElement>(null);
+    const placeholderRef = useForkRef(rootRef, props.wrapperRef);
     const containerRef = React.useRef<HTMLDivElement>(null);
     const topOffset = calculateOffset(
         {isEmbedded: props.isEmbedded, isPublic: props.isPublic},
         'content',
+        props.controlsRef?.current?.getBoundingClientRect().height,
     );
     const [isScrollLocked, setScrollLock] = React.useState(false);
 
@@ -191,7 +201,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
 
     return (
         <div
-            ref={rootRef}
+            ref={placeholderRef}
             className={b('container-placeholder', {'edit-mode': editMode})}
             style={{height: containerHeight}}
         >

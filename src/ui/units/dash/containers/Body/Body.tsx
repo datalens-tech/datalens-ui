@@ -17,8 +17,8 @@ import type {
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
-    ChevronsDown,
-    ChevronsUp,
+    ArrowChevronDown,
+    ArrowChevronUp,
     Gear,
     Pin,
     PinSlash,
@@ -53,9 +53,9 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {
+    DASHKIT_COLS_AMOUNT,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
-    FIXED_HEADER_GROUP_COLS,
     FIXED_HEADER_GROUP_LINE_MAX_ROWS,
 } from 'ui/components/DashKit/constants';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
@@ -178,6 +178,13 @@ type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: Me
 type GetPreparedCopyItemOptions<T extends object = {}> = (
     itemToCopy: PreparedCopyItemOptions<T>,
 ) => PreparedCopyItemOptions<T>;
+type DashKitGroupWithContextProps = Omit<DashKitGroup, 'render'> & {
+    render?: (
+        id: string,
+        children: React.ReactNode,
+        props: DashkitGroupRenderWithContextProps,
+    ) => React.ReactNode;
+};
 
 const GROUPS_WEIGHT = {
     [FIXED_GROUP_HEADER_ID]: 2,
@@ -285,6 +292,8 @@ class Body extends React.PureComponent<BodyProps> {
         byId: {},
         columns: 0,
     };
+    _fixedHeaderControlsRef: React.RefObject<HTMLDivElement>;
+    _fixedHeaderContainerRef: React.RefObject<HTMLDivElement>;
 
     state: DashBodyState = {
         fixedHeaderCollapsed: {},
@@ -298,40 +307,38 @@ class Body extends React.PureComponent<BodyProps> {
         lastDelayedScrollTop: null,
     };
 
-    groups: DashKitGroup[] = [
-        {
-            id: FIXED_GROUP_HEADER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupHeader(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: (props) => {
-                return {
-                    ...props,
-                    cols: FIXED_HEADER_GROUP_COLS,
-                    maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                    autoSize: false,
-                    compactType: 'horizontal-nowrap',
-                };
+    groups: DashKitGroupWithContextProps[];
+
+    constructor(props: BodyProps) {
+        super(props);
+
+        this.groups = [
+            {
+                id: FIXED_GROUP_HEADER_ID,
+                render: this.renderFixedGroupHeader,
+                gridProperties: (props) => {
+                    return {
+                        ...props,
+                        maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+                        autoSize: false,
+                        compactType: 'horizontal-nowrap',
+                    };
+                },
             },
-        },
-        {
-            id: FIXED_GROUP_CONTAINER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupContainer(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-        {
-            id: DEFAULT_GROUP,
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-    ];
+            {
+                id: FIXED_GROUP_CONTAINER_ID,
+                render: this.renderFixedGroupContainer,
+                gridProperties: getPropertiesWithResizeHandles,
+            },
+            {
+                id: DEFAULT_GROUP,
+                gridProperties: getPropertiesWithResizeHandles,
+            },
+        ];
+
+        this._fixedHeaderControlsRef = React.createRef();
+        this._fixedHeaderContainerRef = React.createRef();
+    }
 
     componentDidMount() {
         // if localStorage already have a dash item, we need to set it to state
@@ -528,7 +535,7 @@ class Body extends React.PureComponent<BodyProps> {
                             memo -= item.w;
                         }
                         return memo;
-                    }, FIXED_HEADER_GROUP_COLS);
+                    }, DASHKIT_COLS_AMOUNT);
 
                     const parentId =
                         itemCopy.h <= FIXED_HEADER_GROUP_LINE_MAX_ROWS && itemCopy.w <= leftSpace
@@ -641,8 +648,9 @@ class Body extends React.PureComponent<BodyProps> {
         if (mode === Mode.Edit) {
             return (
                 <DropdownMenu
+                    switcherWrapperClassName={b('fixed-header-settings-switcher')}
                     renderSwitcher={(props) => (
-                        <Button {...props} view={'raised'}>
+                        <Button {...props} view="raised" size="xl" width="max" pin="brick-round">
                             <Icon size={16} data={Gear} />
                         </Button>
                     )}
@@ -672,13 +680,26 @@ class Body extends React.PureComponent<BodyProps> {
             );
         } else if (hasFixedContainerElements) {
             return (
-                <Button onClick={this.toggleFixedHeader} view={'flat'}>
-                    <Icon data={isCollapsed ? ChevronsDown : ChevronsUp} />
+                <Button
+                    onClick={this.toggleFixedHeader}
+                    view="flat"
+                    size="xl"
+                    width="max"
+                    pin="brick-round"
+                >
+                    <Icon data={isCollapsed ? ArrowChevronDown : ArrowChevronUp} />
                 </Button>
             );
         } else {
             return (
-                <Button onClick={this.toggleFixedHeader} view={'flat'} disabled={true}>
+                <Button
+                    onClick={this.toggleFixedHeader}
+                    view="flat"
+                    size="xl"
+                    width="max"
+                    pin="brick-round"
+                    disabled={true}
+                >
                     <Icon data={Pin} />
                 </Button>
             );
@@ -702,6 +723,8 @@ class Body extends React.PureComponent<BodyProps> {
 
         return (
             <FixedHeaderControls
+                wrapperRef={this._fixedHeaderControlsRef}
+                containerRef={this._fixedHeaderContainerRef}
                 isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
                 isCollapsed={fixedHeaderCollapsed}
@@ -730,6 +753,8 @@ class Body extends React.PureComponent<BodyProps> {
 
         return (
             <FixedHeaderContainer
+                wrapperRef={this._fixedHeaderContainerRef}
+                controlsRef={this._fixedHeaderControlsRef}
                 isEmpty={isEmpty}
                 key={`${id}_${this.props.tabId}`}
                 isCollapsed={fixedHeaderCollapsed}
