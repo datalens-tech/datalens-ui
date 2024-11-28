@@ -13,10 +13,20 @@ const OFFSETS_QA = [
     DatalensHeaderQa.DesktopContainer,
 ];
 
-export const scrollIntoView = (id: string) => {
+export const scrollIntoView = (id: string, lastTop?: number | null) => {
+    if (!id) {
+        return null;
+    }
+
     const element = document.getElementById(id);
+
     if (!element) {
-        return;
+        return null;
+    }
+    const currentTop = element.getBoundingClientRect().top;
+
+    if (lastTop && currentTop === lastTop) {
+        return lastTop;
     }
 
     const offsets = OFFSETS_QA.map(
@@ -28,4 +38,6 @@ export const scrollIntoView = (id: string) => {
     element.style.scrollMarginTop = offset + 5 + 'px';
 
     element.scrollIntoView();
+
+    return currentTop;
 };

@@ -158,6 +158,7 @@ type DashBodyState = {
     loadedItemsMap: Map<string, boolean>;
     hash: string;
     delayedScrollId: string | null;
+    lastDelayedScrollTop: number | null;
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -184,13 +185,6 @@ const GROUPS_WEIGHT = {
     [DEFAULT_GROUP]: 0,
 } as const;
 
-const ITEMS_STATE_STATUS = {
-    MOUNTED: 'mounted',
-    LOADED: 'loaded',
-} as const;
-
-type ItemStateStatus = (typeof ITEMS_STATE_STATUS)[keyof typeof ITEMS_STATE_STATUS];
-
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
@@ -212,16 +206,23 @@ class Body extends React.PureComponent<BodyProps> {
             isItemsUnmounted = true;
         }
 
-        const newHash = props.location.hash;
-        if (newHash !== state.hash) {
-            newState.hash = newHash;
+        const currentHash = props.location.hash;
+        const hasHashChanged = currentHash !== state.hash;
 
-            if (isItemsUnmounted) {
-                newState.delayedScrollId = newHash.replace('#', '');
-            } else if (state.loaded || (state.mounted && props.settings.loadOnlyVisibleCharts)) {
-                scrollIntoView(newHash.replace('#', ''));
-                newState.delayedScrollId = null;
-            }
+        if (hasHashChanged) {
+            newState.hash = currentHash;
+        }
+
+        if (!currentHash && state.delayedScrollId) {
+            newState.delayedScrollId = null;
+            newState.lastDelayedScrollTop = null;
+        } else if (!isItemsUnmounted && hasHashChanged) {
+            scrollIntoView(currentHash.replace('#', ''));
+            newState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
+            newState.lastDelayedScrollTop = null;
+        } else if (currentHash && isItemsUnmounted) {
+            newState.delayedScrollId = currentHash.replace('#', '');
+            newState.lastDelayedScrollTop = null;
         }
 
         return Object.keys(newState).length ? newState : null;
@@ -261,6 +262,16 @@ class Body extends React.PureComponent<BodyProps> {
         });
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
+    scrollIntoViewWithDebounce = debounce(() => {
+        if (this.state.delayedScrollId) {
+            const lastDelayedScrollTop = scrollIntoView(
+                this.state.delayedScrollId,
+                this.state.lastDelayedScrollTop,
+            );
+            this.setState({lastDelayedScrollTop});
+        }
+    }, 400);
+
     _memoizedContext: MemoContext = {};
     _memoizedControls: DashKitProps['overlayControls'];
     _memoizedMenu: DashKitProps['overlayMenuItems'];
@@ -286,6 +297,7 @@ class Body extends React.PureComponent<BodyProps> {
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
         delayedScrollId: null,
+        lastDelayedScrollTop: null,
     };
 
     groups: DashKitGroup[] = [
@@ -332,6 +344,8 @@ class Body extends React.PureComponent<BodyProps> {
         }
 
         window.addEventListener('storage', this.storageHandler);
+        window.addEventListener('wheel', this.interruptAutoScroll);
+        window.addEventListener('touchmove', this.interruptAutoScroll);
     }
 
     componentDidUpdate() {
@@ -347,6 +361,8 @@ class Body extends React.PureComponent<BodyProps> {
 
     componentWillUnmount() {
         window.removeEventListener('storage', this.storageHandler);
+        window.removeEventListener('wheel', this.interruptAutoScroll);
+        window.removeEventListener('touchmove', this.interruptAutoScroll);
     }
 
     render() {
@@ -732,6 +748,12 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({hasCopyInBuffer: getPastedWidgetData()});
     };
 
+    interruptAutoScroll = (event: Event) => {
+        if (event.isTrusted && this.state.delayedScrollId) {
+            this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+        }
+    };
+
     getContext = () => {
         const memoContext = this._memoizedContext;
         const isCollapsed = this.getFixedHeaderCollapsedState();
@@ -967,27 +989,13 @@ class Body extends React.PureComponent<BodyProps> {
         this.setState({isGlobalDragging: false});
     };
 
-    private executeDelayedScroll = (status: ItemStateStatus) => {
-        if (!this.state.delayedScrollId) {
-            return;
-        }
-
-        if (
-            status === ITEMS_STATE_STATUS.LOADED ||
-            (status === ITEMS_STATE_STATUS.MOUNTED && this.props.settings.loadOnlyVisibleCharts)
-        ) {
-            scrollIntoView(this.state.delayedScrollId);
-            this.setState({delayedScrollId: null});
-        }
-    };
-
     private handleItemMountChange = (item: ConfigItem, {isMounted}: {isMounted: boolean}) => {
         if (isMounted) {
             this.state.loadedItemsMap.set(item.id, false);
 
             if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
+                this.scrollIntoViewWithDebounce();
                 this.setState({mounted: true});
-                this.executeDelayedScroll(ITEMS_STATE_STATUS.MOUNTED);
             }
         }
     };
@@ -998,12 +1006,18 @@ class Body extends React.PureComponent<BodyProps> {
         if (loadedItemsMap.get(item.id) !== true) {
             loadedItemsMap.set(item.id, true);
 
-            const isLoaded = Array.from(loadedItemsMap.values()).every(Boolean);
+            const isLoaded =
+                loadedItemsMap.size === this.props.tabData?.items.length &&
+                Array.from(loadedItemsMap.values()).every(Boolean);
 
-            if (isLoaded) {
-                this.executeDelayedScroll(ITEMS_STATE_STATUS.LOADED);
+            if (isLoaded && this.state.delayedScrollId) {
+                scrollIntoView(this.state.delayedScrollId, this.state.lastDelayedScrollTop);
+                this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+            } else {
+                // if the dash is not fully loaded, we are starting a scroll chain
+                // that will try to scroll to the title after each item rendering
+                this.scrollIntoViewWithDebounce();
             }
-
             this.setState({loaded: isLoaded});
         }
     };
@@ -1011,14 +1025,14 @@ class Body extends React.PureComponent<BodyProps> {
     private handleTocItemClick = (itemTitle: string, hasTabChanged: boolean) => {
         if (this.props.disableHashNavigation) {
             if (hasTabChanged) {
-                this.setState({delayedScrollId: encodeURIComponent(itemTitle)});
+                this.setState({
+                    delayedScrollId: encodeURIComponent(itemTitle),
+                    lastDelayedScrollTop: null,
+                });
                 return;
             }
 
-            if (
-                this.state.loaded ||
-                (this.state.mounted && this.props.settings.loadOnlyVisibleCharts)
-            ) {
+            if (this.state.loaded) {
                 scrollIntoView(encodeURIComponent(itemTitle));
             }
         }
