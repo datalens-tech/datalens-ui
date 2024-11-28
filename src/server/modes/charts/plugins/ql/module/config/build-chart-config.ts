@@ -8,9 +8,15 @@ import {
     WizardVisualizationId,
 } from '../../../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
+import type {DashWidgetConfig} from '../../../../../../../shared/types/charts';
 import {log} from '../../utils/misc-helpers';
 
-type BuildChartsConfigArgs = {shared: QlConfig; ChartEditor: IChartEditor; features: FeatureConfig};
+type BuildChartsConfigArgs = {
+    shared: QlConfig;
+    ChartEditor: IChartEditor;
+    features: FeatureConfig;
+    widgetConfig?: DashWidgetConfig['widgetConfig'];
+};
 type QlChartConfig = Pick<
     HighchartsWidgetData['config'],
     'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip' | 'enableSum'
@@ -19,7 +25,7 @@ type QlChartConfig = Pick<
 };
 
 export function buildChartConfig(args: BuildChartsConfigArgs) {
-    const {shared, ChartEditor, features} = args;
+    const {shared, ChartEditor, features, widgetConfig} = args;
     const qlConfig = mapQlConfigToLatestVersion(shared, {
         i18n: ChartEditor.getTranslation,
     });
@@ -46,6 +52,11 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
     const isTableWidget = visualizationId === WizardVisualizationId.FlatTable;
 
     if (isTableWidget) {
+        const size = widgetConfig?.size ?? shared?.extraSettings?.size;
+        if (size) {
+            set(config, 'size', size);
+        }
+
         set(config, 'settings.width', 'max-content');
     }
 
