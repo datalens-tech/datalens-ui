@@ -655,9 +655,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         const includeLogs = this.settings.includeLogs || isEditMode;
 
         try {
-            const apiPrefix = DL.API_PREFIX ?? '/api';
             const result = await this.makeRequest({
-                url: `${apiPrefix}/run-action`,
+                url: `${DL.API_PREFIX}/run-action`,
                 data: {
                     id,
                     key,
@@ -798,12 +797,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
 
-        // TODO: use only api prefix
-        const url = DL.API_PREFIX ? `${DL.API_PREFIX}/run` : DL.RUN_ENDPOINT;
-
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${url}`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}`,
                 method: 'post',
                 ...requestOptions,
                 headers,

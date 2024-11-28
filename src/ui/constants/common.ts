@@ -228,13 +228,8 @@ export const DL = {
     get HIDE_NAVIGATION() {
         return window.DL.hideNavigation;
     },
-    // TODO: delete
-    get RUN_ENDPOINT() {
-        return window.DL.runEndpoint || '/api/run';
-    },
-    // TODO: add fallback
     get API_PREFIX() {
-        return window.DL.apiPrefix;
+        return window.DL.apiPrefix || '/api';
     },
     get CONNECTOR_ICONS() {
         return window.DL.connectorIcons || [];
