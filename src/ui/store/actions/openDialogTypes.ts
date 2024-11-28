@@ -17,7 +17,7 @@ import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogC
 import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
 import type {OpenDialogDatasetFieldInspectorArgs} from '../../units/datasets/components/dialogs/DatasetFieldInspector/DatasetFieldInspector';
 import type {OpenDialogParameterArgs} from '../../components/DialogParameter/DialogParameter';
-import type {OpenDialogMultidatasetArgs} from 'units/wizard/components/Dialogs/DialogMultidataset';
+import type {OpenDialogMultidatasetArgs} from '../../units/wizard/components/Dialogs/DialogMultidataset';
 import type {OpenDialogRelationsArgs} from '../../units/dash/containers/Dialogs/DialogRelations/DialogRelations';
 import type {OpenDialogAliasesArgs} from '../../units/dash/containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
 import type {OpenDialogColumnSettingsArgs} from '../../units/wizard/components/Dialogs/DialogColumnSettings/DialogColumnSettings';
