@@ -347,7 +347,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            if (isPotentiallyUnsafeChart(loadedType)) {
+            if (isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml) {
                 const parseHtml = await getParseHtmlFn();
                 processHtmlFields(result.data, {allowHtml: enableJsAndHtml, parseHtml});
                 processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml, parseHtml});

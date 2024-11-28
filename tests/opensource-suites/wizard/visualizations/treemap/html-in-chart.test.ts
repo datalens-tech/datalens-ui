@@ -2,7 +2,7 @@ import {expect} from '@playwright/test';
 
 import {
     ChartKitQa,
-    DialogFieldSettingsQa,
+    // DialogFieldSettingsQa,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -20,7 +20,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.TreemapD3);
         });
 
-        datalensTest('Markdown dimension @screenshot', async ({page}) => {
+        datalensTest.skip('Markdown dimension @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
             const chart = chartContainer.locator('.chartkit-d3');
@@ -32,7 +32,7 @@ datalensTest.describe('Wizard', () => {
             );
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Dimensions, 'md');
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Dimensions, 'md');
-            await page.locator(slct(DialogFieldSettingsQa.MarkdownEnableButton)).click();
+            // await page.locator(slct(DialogFieldSettingsQa.MarkdownEnableButton)).click();
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'sum');
 

@@ -14,6 +14,7 @@ import {
     getXAxisMode,
     isDateField,
     isDimensionField,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureField,
@@ -114,6 +115,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const labelsLength = labels && labels.length;
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
@@ -332,7 +334,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     id: line.id,
                     title: line.title || 'Null',
                     tooltip: line.tooltip,
-                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel || isMarkupLabel},
+                    dataLabels: {
+                        ...line.dataLabels,
+                        useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
+                    },
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -385,6 +390,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                             point.label = getLabelValue(innerLabels?.[category], {
                                 isMarkdownLabel,
                                 isMarkupLabel,
+                                isHtmlLabel,
                             });
 
                             if (isActionParamsEnable) {
@@ -483,6 +489,10 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
         if (isMarkupLabel) {
             ChartEditor.updateConfig({useMarkup: true});
+        }
+
+        if (isHtmlLabel) {
+            ChartEditor.updateConfig({useHtml: true});
         }
 
         if (isXCategoryAxis) {

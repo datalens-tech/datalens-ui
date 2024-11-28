@@ -11,11 +11,14 @@ import type {
 } from '../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
+    MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
     getFakeTitleOrTitle,
+    isHtmlField,
     isMarkdownField,
 } from '../../../../../../shared';
+import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {hexToRgb} from '../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import type {Coordinate} from '../utils/geo-helpers';
@@ -241,16 +244,23 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         const itemTitle = shouldUseFieldTitle ? getFakeTitleOrTitle(tooltip as ServerField) : '';
         const tooltipText = itemTitle ? `${itemTitle}: ${formattedText}` : formattedText;
         const isMarkupField = tooltip?.data_type === DATASET_FIELD_TYPES.MARKUP;
+        const useHtml = isHtmlField(tooltip);
 
-        if (isMarkupField || isMarkdownField(tooltip)) {
+        if (isMarkupField || isMarkdownField(tooltip) || useHtml) {
             polygon.properties.rawText = true;
+        }
+
+        if (useHtml) {
+            ChartEditor.updateConfig({useHtml: true});
         }
 
         let tooltipData;
         if (isMarkupField) {
             tooltipData = {key: itemTitle, value: formattedText};
-        } else if (tooltip?.isMarkdown) {
+        } else if (tooltip?.markupType === MARKUP_TYPE.markdown) {
             tooltipData = {[WRAPPED_MARKDOWN_KEY]: tooltipText};
+        } else if (tooltip?.markupType === MARKUP_TYPE.html) {
+            tooltipData = {text: wrapHtml(tooltipText)};
         } else {
             tooltipData = {text: tooltipText};
         }

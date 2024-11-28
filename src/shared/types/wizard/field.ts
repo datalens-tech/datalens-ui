@@ -1,3 +1,4 @@
+import {MARKUP_TYPE, type MarkupType} from '../..';
 import type {FilterBody} from '../charts';
 import type {ServerField} from '../config/wizard';
 import type {DatasetField, DatasetFieldType} from '../dataset';
@@ -44,7 +45,7 @@ export interface WizardDatasetField extends DatasetField {
     backgroundSettings?: TableFieldBackgroundSettings;
     distincts?: string[];
     hintSettings?: HintSettings;
-    isMarkdown?: boolean;
+    markupType?: MarkupType;
 }
 
 export type HintSettings = {
@@ -118,8 +119,12 @@ export function isStringField(field: {data_type: string}) {
     return field.data_type === DATASET_FIELD_TYPES.STRING;
 }
 
-export function isMarkdownField(field?: {data_type: string; isMarkdown?: boolean}) {
-    return field && isStringField(field) && field.isMarkdown;
+export function isMarkdownField(field?: {data_type: string; markupType?: MarkupType}) {
+    return field && isStringField(field) && field.markupType === MARKUP_TYPE.markdown;
+}
+
+export function isHtmlField(field?: {data_type: string; markupType?: MarkupType}) {
+    return field && isStringField(field) && field.markupType === MARKUP_TYPE.html;
 }
 
 export function isNumberField(field?: {data_type: string}): field is NumberField {

@@ -6,6 +6,7 @@ import {
     getDistinctValue,
     getFakeTitleOrTitle,
     isFieldHierarchy,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureValue,
@@ -14,6 +15,7 @@ import {
     wrapMarkupValue,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import type {ChartColorsConfig} from '../../types';
 import type {ColorValue} from '../../utils/color-helpers';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -129,6 +131,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
         : -1;
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const measureIndex = findIndexInOrder(order, measure, idToTitle[measure.guid]);
     const measureDataType = idToDataType[measure.guid] || measure.data_type;
@@ -183,7 +186,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
                               ? MINIMUM_FRACTION_DIGITS
                               : 0,
                   }),
-            useHTML: isMarkdownLabel || isMarkupLabel,
+            useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
         },
     };
 
@@ -248,6 +251,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
                 point.label = wrapMarkdownValue(labelValue);
             } else if (labelValue && isMarkupLabel) {
                 point.label = wrapMarkupValue(labelValue);
+            } else if (labelValue && isHtmlLabel) {
+                point.label = wrapHtml(labelValue);
             } else {
                 point.label = getFormattedValue(labelValue, {
                     ...labelField,
@@ -300,6 +305,10 @@ export function preparePieData(args: PrepareFunctionArgs) {
 
     if (isMarkupLabel) {
         ChartEditor.updateConfig({useMarkup: true});
+    }
+
+    if (isHtmlLabel) {
+        ChartEditor.updateConfig({useHtml: true});
     }
 
     return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};
