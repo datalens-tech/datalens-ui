@@ -56,7 +56,7 @@ const TableOfContent = React.memo(
         onItemClick,
     }: {
         disableHashNavigation?: boolean;
-        onItemClick: (itemTitle: string, hasTabChanged: boolean) => void;
+        onItemClick: (itemTitle: string) => void;
     }) => {
         const dispatch = useDispatch();
         const location = useLocation();
@@ -90,7 +90,7 @@ const TableOfContent = React.memo(
                 if (DL.IS_MOBILE) {
                     handleToggleTableOfContent();
                 }
-                onItemClick(itemTitle, !isSelectedTab(tabId));
+                onItemClick(itemTitle);
             },
             [isSelectedTab, onItemClick, dispatch, handleToggleTableOfContent],
         );

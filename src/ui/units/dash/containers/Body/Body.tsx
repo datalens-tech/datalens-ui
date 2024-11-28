@@ -48,6 +48,7 @@ import {
     DashTabItemType,
     Feature,
     LOADED_DASH_CLASS,
+    SCROLL_TITLE_DEBOUNCE_TIME,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -153,7 +154,6 @@ type DashBodyState = {
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
-    mounted: boolean;
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
     hash: string;
@@ -188,44 +188,43 @@ const GROUPS_WEIGHT = {
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
-        let newState: Partial<DashBodyState> = {};
+        let updatedState: Partial<DashBodyState> = {};
 
         const {
             prevMeta: {entryId, tabId},
         } = state;
-        let isItemsUnmounted = false;
+        let isTabUnmount = false;
         // reset loaded before new tab/entry items are mounted
         if (props.entryId !== entryId || props.tabId !== tabId) {
             state.loadedItemsMap.clear();
-            newState = {
+            updatedState = {
                 prevMeta: {tabId: props.tabId, entryId: props.entryId},
                 loaded: false,
-                mounted: false,
             };
 
-            isItemsUnmounted = true;
+            isTabUnmount = true;
         }
 
         const currentHash = props.location.hash;
         const hasHashChanged = currentHash !== state.hash;
 
         if (hasHashChanged) {
-            newState.hash = currentHash;
+            updatedState.hash = currentHash;
         }
 
         if (!currentHash && state.delayedScrollId) {
-            newState.delayedScrollId = null;
-            newState.lastDelayedScrollTop = null;
-        } else if (!isItemsUnmounted && hasHashChanged) {
+            updatedState.delayedScrollId = null;
+            updatedState.lastDelayedScrollTop = null;
+        } else if (!isTabUnmount && hasHashChanged) {
             scrollIntoView(currentHash.replace('#', ''));
-            newState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
-            newState.lastDelayedScrollTop = null;
-        } else if (currentHash && isItemsUnmounted) {
-            newState.delayedScrollId = currentHash.replace('#', '');
-            newState.lastDelayedScrollTop = null;
+            updatedState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
+            updatedState.lastDelayedScrollTop = null;
+        } else if (currentHash && isTabUnmount) {
+            updatedState.delayedScrollId = currentHash.replace('#', '');
+            updatedState.lastDelayedScrollTop = null;
         }
 
-        return Object.keys(newState).length ? newState : null;
+        return Object.keys(updatedState).length ? updatedState : null;
     }
 
     dashKitRef = React.createRef<DashKitComponent>();
@@ -270,7 +269,7 @@ class Body extends React.PureComponent<BodyProps> {
             );
             this.setState({lastDelayedScrollTop});
         }
-    }, 400);
+    }, SCROLL_TITLE_DEBOUNCE_TIME);
 
     _memoizedContext: MemoContext = {};
     _memoizedControls: DashKitProps['overlayControls'];
@@ -293,7 +292,6 @@ class Body extends React.PureComponent<BodyProps> {
         hasCopyInBuffer: null,
         prevMeta: {tabId: null, entryId: null},
         loaded: false,
-        mounted: false,
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
         delayedScrollId: null,
@@ -995,7 +993,6 @@ class Body extends React.PureComponent<BodyProps> {
 
             if (this.state.loadedItemsMap.size === this.props.tabData?.items.length) {
                 this.scrollIntoViewWithDebounce();
-                this.setState({mounted: true});
             }
         }
     };
@@ -1022,19 +1019,16 @@ class Body extends React.PureComponent<BodyProps> {
         }
     };
 
-    private handleTocItemClick = (itemTitle: string, hasTabChanged: boolean) => {
+    private handleTocItemClick = (itemTitle: string) => {
         if (this.props.disableHashNavigation) {
-            if (hasTabChanged) {
-                this.setState({
-                    delayedScrollId: encodeURIComponent(itemTitle),
-                    lastDelayedScrollTop: null,
-                });
-                return;
-            }
-
             if (this.state.loaded) {
                 scrollIntoView(encodeURIComponent(itemTitle));
             }
+
+            this.setState({
+                delayedScrollId: scrollIntoView(encodeURIComponent(itemTitle)),
+                lastDelayedScrollTop: null,
+            });
         }
     };
 
