@@ -87,6 +87,7 @@ export interface SharedAppConfig {
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
     apiPrefix: string;
+    preloadList?: string[];
 }
 
 export interface SharedAppDynamicConfig {
