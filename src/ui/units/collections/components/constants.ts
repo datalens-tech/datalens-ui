@@ -19,3 +19,7 @@ export const DEFAULT_FILTERS: {
     mode: 'all',
     onlyMy: false,
 };
+
+export enum EmptyPlaceholderActionId {
+    ConnectYourData = 'connectYourData',
+}
