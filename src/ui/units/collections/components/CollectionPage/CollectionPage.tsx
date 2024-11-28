@@ -110,6 +110,26 @@ export const CollectionPage = () => {
         );
     }, [curCollectionId, dispatch, history]);
 
+    const handleCreateWorkbookWithConnection = React.useCallback(() => {
+        dispatch(
+            openDialog({
+                id: DIALOG_CREATE_WORKBOOK,
+                props: {
+                    open: true,
+                    collectionId: curCollectionId,
+                    onApply: (result) => {
+                        if (result) {
+                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}/connections/new`);
+                        }
+                    },
+                    onClose: () => {
+                        dispatch(closeDialog());
+                    },
+                },
+            }),
+        );
+    }, [curCollectionId, dispatch, history]);
+
     const handleMoveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
         const collectionIds: string[] = [];
@@ -270,7 +290,7 @@ export const CollectionPage = () => {
                     getStructureItemsRecursively={getStructureItemsRecursively}
                     fetchStructureItems={fetchStructureItems}
                     onCloseMoveDialog={handeCloseMoveDialog}
-                    onCreateWorkbookClick={handleCreateWorkbook}
+                    onCreateWorkbookWithConnectionClick={handleCreateWorkbookWithConnection}
                     onClearFiltersClick={() => {
                         updateFilters({
                             ...DEFAULT_FILTERS,
