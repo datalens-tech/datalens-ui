@@ -203,7 +203,7 @@ export type DLGlobalData = {
               mode: 'chart';
           }
         | boolean;
-    apiPrefix: string;
+    apiPrefix?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
     extraPalettes?: Record<string, Palette>;
