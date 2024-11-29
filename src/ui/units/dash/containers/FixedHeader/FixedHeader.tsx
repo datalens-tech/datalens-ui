@@ -3,6 +3,7 @@ import React from 'react';
 import {useBodyScrollLock, useForkRef} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {FixedHeaderQa} from 'shared';
 
 import './FixedHeader.scss';
 
@@ -125,13 +126,17 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
     return (
         <div ref={placeholderRef} className={b('controls-placeholder', {hidden: !content})}>
             <div
+                data-qa={FixedHeaderQa.StaticFixedHeaderGroupWrapper}
                 style={style}
                 className={b('controls', {
                     fixed: isFixed && !editMode,
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('controls-grid')}>
+                <div
+                    className={b('controls-grid')}
+                    data-qa={FixedHeaderQa.StaticFixedHeaderGroupContent}
+                >
                     {content}
                     <div className={b('controls-settings')}>{props.controls}</div>
                 </div>
@@ -204,6 +209,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
             style={{height: containerHeight}}
         >
             <div
+                data-qa={FixedHeaderQa.HidableFixedHeaderGroupWrapper}
                 ref={containerRef}
                 style={style}
                 className={b('container', {
@@ -212,7 +218,12 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
                     'edit-mode': editMode,
                 })}
             >
-                <div className={b('container-wrapper')}>{content}</div>
+                <div
+                    data-qa={FixedHeaderQa.HidableFixedHeaderGroupContent}
+                    className={b('container-wrapper', {'edit-mode': editMode})}
+                >
+                    {content}
+                </div>
             </div>
         </div>
     );

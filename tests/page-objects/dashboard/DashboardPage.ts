@@ -66,6 +66,7 @@ import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import ControlActions from './ControlActions';
 import {getUrlStateParam} from '../../suites/dash/helpers';
+import {FixedHeader} from './FixedHeader';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -112,6 +113,7 @@ class DashboardPage extends BasePage {
     dialogCreateEntry: DialogCreateEntry;
     editEntityButton: EditEntityButton;
     controlActions: ControlActions;
+    fixedHeader: FixedHeader;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -123,6 +125,7 @@ class DashboardPage extends BasePage {
         this.dialogCreateEntry = new DialogCreateEntry(page);
         this.editEntityButton = new EditEntityButton(page);
         this.controlActions = new ControlActions(page);
+        this.fixedHeader = new FixedHeader(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
