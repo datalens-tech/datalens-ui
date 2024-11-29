@@ -224,6 +224,7 @@ export function FixedHeaderWrapper({
                 })}
                 style={style}
                 ref={wrapperRef}
+                data-qa={FixedHeaderQa.Wrapper}
             >
                 <div className={b('content')}>
                     <div className={b('scrollable-container')}>
