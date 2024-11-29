@@ -84,6 +84,14 @@ export enum DashCommonQa {
     RelationsRowPopover = 'dialog-relations-row-popover',
 }
 
+export enum FixedHeaderQa {
+    ExpandCollapseFixedHeaderButton = 'expand-collapse-fixed-header-button',
+    StaticFixedHeaderGroupWrapper = 'static-fixed-header-group-wrapper',
+    StaticFixedHeaderGroupContent = 'static-fixed-header-group-content',
+    HidableFixedHeaderGroupWrapper = 'hidable-fixed-header-group-wrapper',
+    HidableFixedHeaderGroupContent = 'hidable-fixed-header-group-content',
+}
+
 export enum DashRelationTypes {
     output = 'relation-type-option-output',
     input = 'relation-type-option-input',

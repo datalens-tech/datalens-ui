@@ -73,14 +73,15 @@ $fixedSectionOffset: 8px;
 
         &_edit-mode {
             border-bottom: 1px solid var(--g-color-line-generic);
+            padding-bottom: $fixedSectionOffset;
         }
     }
 
     &__container-wrapper {
         display: flex;
-        padding-bottom: $fixedSectionOffset;
         flex-direction: row;
         flex: 1;
+        position: relative;
 
         @include flexReactGridLayout;
     }
@@ -89,6 +90,7 @@ $fixedSectionOffset: 8px;
         display: flex;
         flex-direction: row;
         min-height: 52px;
+        padding-bottom: $fixedSectionOffset;
 
         @include dndHighlight;
 
@@ -112,6 +114,7 @@ $fixedSectionOffset: 8px;
             overflow: clip;
             min-height: 0;
             max-height: 0;
+            padding: 0;
         }
     }
 
@@ -124,10 +127,5 @@ $fixedSectionOffset: 8px;
         pointer-events: none;
         color: var(--g-color-text-hint);
         text-align: center;
-
-        &.with-offset {
-            top: calc(50% - #{$fixedSectionOffset});
-            transform: translateY(calc(-1 * calc(50% - calc(#{$fixedSectionOffset}) / 2)));
-        }
     }
 }

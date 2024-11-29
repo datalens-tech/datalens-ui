@@ -47,6 +47,7 @@ import {
     DashKitOverlayMenuQa,
     DashTabItemType,
     Feature,
+    FixedHeaderQa,
     LOADED_DASH_CLASS,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
@@ -635,6 +636,11 @@ class Body extends React.PureComponent<BodyProps> {
                     size="xl"
                     width="max"
                     pin="brick-round"
+                    title={i18n(
+                        'dash.main.view',
+                        isCollapsed ? 'tooltip_expand-fixed-group' : 'tooltip_collapse-fixed-group',
+                    )}
+                    qa={FixedHeaderQa.ExpandCollapseFixedHeaderButton}
                 >
                     <Icon data={isCollapsed ? ArrowChevronDown : ArrowChevronUp} />
                 </Button>
