@@ -71,7 +71,7 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
 
         const containerRef = React.useRef<HTMLDivElement | null>(null);
         const {opened, tabs, currentTabId, hashStates} = useShallowEqualSelector(selectState);
-        const [offsets, setOffsets] = React.useState({top: '0px', bottom: '0px'});
+        const [offsets, setOffsets] = React.useState({top: '0px', bottom: '0px', left: '0px'});
 
         const isSelectedTab = React.useCallback(
             (tabId: string) => tabId === currentTabId,
@@ -154,12 +154,17 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                 const scrollTop = document.documentElement.scrollTop;
                 const windowHeight = window.innerHeight;
 
+                const leftOffset = `${containerRect.left}px`;
                 const topOffset = `${containerRect.top + scrollTop}px`;
                 const bottomOffset = `${Math.max(0, windowHeight - containerRect.bottom)}px`;
 
                 setOffsets((state) => {
-                    if (state.top !== topOffset || state.bottom !== bottomOffset) {
-                        return {top: topOffset, bottom: bottomOffset};
+                    if (
+                        state.top !== topOffset ||
+                        state.bottom !== bottomOffset ||
+                        state.left !== leftOffset
+                    ) {
+                        return {top: topOffset, bottom: bottomOffset, left: leftOffset};
                     }
 
                     return state;

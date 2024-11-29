@@ -1,5 +1,6 @@
 .table-of-content {
     display: flex;
+    border-right: 1px solid var(--g-color-line-generic);
     background-color: var(--g-color-base-background);
     position: relative;
     flex: 1;
@@ -16,13 +17,11 @@
         left: -250px;
         overflow: hidden;
         padding: 24px 0 24px 8px;
-        width: 250px;
+        width: 249px;
         height: 100%;
-        border-right: 1px solid var(--g-color-line-generic);
 
         &_opened {
             position: fixed;
-            left: var(--gn-aside-header-size);
             display: block;
             height: auto;
         }
@@ -46,7 +45,7 @@
     }
 
     &__tabs {
-        max-height: 97%;
+        height: calc(100% - 28px);
         overflow-y: scroll;
         overflow-x: hidden;
     }
