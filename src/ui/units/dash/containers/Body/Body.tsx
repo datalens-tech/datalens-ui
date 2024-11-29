@@ -212,16 +212,18 @@ class Body extends React.PureComponent<BodyProps> {
             updatedState.hash = currentHash;
         }
 
-        if (!currentHash && state.delayedScrollId) {
-            updatedState.delayedScrollId = null;
-            updatedState.lastDelayedScrollTop = null;
-        } else if (!isTabUnmount && hasHashChanged) {
-            scrollIntoView(currentHash.replace('#', ''));
-            updatedState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
-            updatedState.lastDelayedScrollTop = null;
-        } else if (currentHash && isTabUnmount) {
-            updatedState.delayedScrollId = currentHash.replace('#', '');
-            updatedState.lastDelayedScrollTop = null;
+        if (!props.disableHashNavigation) {
+            if (!currentHash && state.delayedScrollId) {
+                updatedState.delayedScrollId = null;
+                updatedState.lastDelayedScrollTop = null;
+            } else if (!isTabUnmount && hasHashChanged) {
+                scrollIntoView(currentHash.replace('#', ''));
+                updatedState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
+                updatedState.lastDelayedScrollTop = null;
+            } else if (currentHash && isTabUnmount) {
+                updatedState.delayedScrollId = currentHash.replace('#', '');
+                updatedState.lastDelayedScrollTop = null;
+            }
         }
 
         return Object.keys(updatedState).length ? updatedState : null;
@@ -337,7 +339,7 @@ class Body extends React.PureComponent<BodyProps> {
         // if localStorage already have a dash item, we need to set it to state
         this.storageHandler();
 
-        if (this.props.location.hash) {
+        if (this.props.location.hash && !this.props.disableHashNavigation) {
             this.setState({delayedScrollId: this.props.location.hash.replace('#', '')});
         }
 
@@ -1026,7 +1028,7 @@ class Body extends React.PureComponent<BodyProps> {
             }
 
             this.setState({
-                delayedScrollId: scrollIntoView(encodeURIComponent(itemTitle)),
+                delayedScrollId: encodeURIComponent(itemTitle),
                 lastDelayedScrollTop: null,
             });
         }
