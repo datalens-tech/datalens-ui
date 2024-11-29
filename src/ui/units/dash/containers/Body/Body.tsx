@@ -1027,7 +1027,7 @@ class Body extends React.PureComponent<BodyProps> {
     private handleItemRender = (item: ConfigItem) => {
         const {loadedItemsMap} = this.state;
 
-        if (loadedItemsMap.get(item.id) !== true) {
+        if (loadedItemsMap.has(item.id) && loadedItemsMap.get(item.id) !== true) {
             loadedItemsMap.set(item.id, true);
 
             const isLoaded =
