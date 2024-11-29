@@ -116,6 +116,7 @@
             overflow: clip;
             min-height: 0;
             max-height: 0;
+            padding: 0;
         }
     }
 
@@ -128,10 +129,5 @@
         pointer-events: none;
         color: var(--g-color-text-hint);
         text-align: center;
-
-        &.with-offset {
-            top: calc(50% - #{$fixedSectionOffset});
-            transform: translateY(calc(-1 * calc(50% - calc(#{$fixedSectionOffset}) / 2)));
-        }
     }
 }
