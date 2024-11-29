@@ -133,6 +133,7 @@ const worker: WizardWorker = {
                 shared: shared as QlConfig,
                 ChartEditor: context.ChartEditor,
                 features,
+                widgetConfig,
             }),
             runtimeMetadata: context.__runtimeMetadata,
             logs: console.getLogs(),
