@@ -33,21 +33,20 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export const getConfiguredDashKit = (
-    pluginDefaultsGetter: typeof currentDefaultsGetter = null,
-    options?: {disableHashNavigation?: boolean},
-) => {
-    const controlSettings = {
-        getDistincts: getDistinctsAction(),
-    };
-
+export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null, options?: {disableHashNavigation?: boolean},) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const textSettings = {
+            apiHandler: MarkdownProvider.getMarkdown,
+        };
+
+        const controlSettings = {
+            getDistincts: getDistinctsAction(),
+        };
+
         const plugins = wrapPlugins(
             [
                 getTitlePlugin(options?.disableHashNavigation),
-                textPlugin.setSettings({
-                    apiHandler: MarkdownProvider.getMarkdown,
-                }),
+                textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
                 widgetPlugin,
