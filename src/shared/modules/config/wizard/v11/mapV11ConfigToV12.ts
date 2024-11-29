@@ -1,8 +1,7 @@
 import set from 'lodash/set';
 
-import {MARKUP_TYPE} from '../../../../constants';
 import type {V11ChartsConfig, V12ChartsConfig} from '../../../../types';
-import {ChartsConfigVersion} from '../../../../types';
+import {ChartsConfigVersion, MARKUP_TYPE} from '../../../../types';
 
 function replaceObjectField(item: unknown) {
     if (item && typeof item === 'object') {

@@ -97,11 +97,3 @@ export const EDITOR_TYPE_CONFIG_TABS = {
     module: '',
     control_dash: ControlType.Dash,
 };
-
-export const MARKUP_TYPE = {
-    none: 'none',
-    markdown: 'md',
-    html: 'html',
-};
-
-export type MarkupType = (typeof MARKUP_TYPE)[keyof typeof MARKUP_TYPE];

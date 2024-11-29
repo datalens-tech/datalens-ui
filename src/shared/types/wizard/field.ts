@@ -1,5 +1,5 @@
-import {MARKUP_TYPE, type MarkupType} from '../..';
-import type {FilterBody} from '../charts';
+import {MARKUP_TYPE} from '../charts';
+import type {type FilterBody, MarkupType} from '../charts';
 import type {ServerField} from '../config/wizard';
 import type {DatasetField, DatasetFieldType} from '../dataset';
 import {DATASET_FIELD_TYPES} from '../dataset';
@@ -120,11 +120,11 @@ export function isStringField(field: {data_type: string}) {
 }
 
 export function isMarkdownField(field?: {data_type: string; markupType?: MarkupType}) {
-    return field && isStringField(field) && field.markupType === MARKUP_TYPE.markdown;
+    return Boolean(field && isStringField(field) && field.markupType === MARKUP_TYPE.markdown);
 }
 
 export function isHtmlField(field?: {data_type: string; markupType?: MarkupType}) {
-    return field && isStringField(field) && field.markupType === MARKUP_TYPE.html;
+    return Boolean(field && isStringField(field) && field.markupType === MARKUP_TYPE.html);
 }
 
 export function isNumberField(field?: {data_type: string}): field is NumberField {

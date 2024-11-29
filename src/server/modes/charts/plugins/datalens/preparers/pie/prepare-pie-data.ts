@@ -186,7 +186,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
                               ? MINIMUM_FRACTION_DIGITS
                               : 0,
                   }),
-            useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
+            useHTML: (isMarkdownLabel || isMarkupLabel || isHtmlLabel) ?? undefined,
         },
     };
 
