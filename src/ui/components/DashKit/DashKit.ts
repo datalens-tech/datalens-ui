@@ -34,17 +34,19 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
 };
 
 export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null) => {
-    const controlSettings = {
-        getDistincts: getDistinctsAction(),
-    };
-
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const textSettings = {
+            apiHandler: MarkdownProvider.getMarkdown,
+        };
+
+        const controlSettings = {
+            getDistincts: getDistinctsAction(),
+        };
+
         const plugins = wrapPlugins(
             [
                 pluginTitle,
-                textPlugin.setSettings({
-                    apiHandler: MarkdownProvider.getMarkdown,
-                }),
+                textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
                 widgetPlugin,
