@@ -1,5 +1,5 @@
 import {MARKUP_TYPE} from '../charts';
-import type {type FilterBody, MarkupType} from '../charts';
+import type {FilterBody, MarkupType} from '../charts';
 import type {ServerField} from '../config/wizard';
 import type {DatasetField, DatasetFieldType} from '../dataset';
 import {DATASET_FIELD_TYPES} from '../dataset';
