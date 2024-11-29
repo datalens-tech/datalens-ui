@@ -21,8 +21,10 @@
         border-right: 1px solid var(--g-color-line-generic);
 
         &_opened {
+            position: fixed;
+            left: var(--gn-aside-header-size);
             display: block;
-            left: 0;
+            height: auto;
         }
     }
 

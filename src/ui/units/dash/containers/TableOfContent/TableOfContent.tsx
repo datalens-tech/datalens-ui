@@ -7,6 +7,7 @@ import type {Hash} from 'history';
 import {useShallowEqualSelector} from 'hooks';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
+import throttle from 'lodash/throttle';
 import {useDispatch} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
@@ -68,7 +69,9 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
         const dispatch = useDispatch();
         const location = useLocation();
 
+        const containerRef = React.useRef<HTMLDivElement | null>(null);
         const {opened, tabs, currentTabId, hashStates} = useShallowEqualSelector(selectState);
+        const [offsets, setOffsets] = React.useState({top: '0px', bottom: '0px'});
 
         const isSelectedTab = React.useCallback(
             (tabId: string) => tabId === currentTabId,
@@ -135,6 +138,45 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
             dispatchResize(dispatchResizeTimeout);
         }, [opened]);
 
+        React.useEffect(() => {
+            if (DL.IS_MOBILE || !opened) {
+                return;
+            }
+
+            const handler = throttle(() => {
+                const containerEl = containerRef.current;
+
+                if (!containerEl) {
+                    return;
+                }
+
+                const containerRect = containerEl.getBoundingClientRect();
+                const scrollTop = document.documentElement.scrollTop;
+                const windowHeight = window.innerHeight;
+
+                const topOffset = `${containerRect.top + scrollTop}px`;
+                const bottomOffset = `${Math.max(0, windowHeight - containerRect.bottom)}px`;
+
+                setOffsets((state) => {
+                    if (state.top !== topOffset || state.bottom !== bottomOffset) {
+                        return {top: topOffset, bottom: bottomOffset};
+                    }
+
+                    return state;
+                });
+            });
+
+            window.addEventListener('scroll', handler);
+            window.addEventListener('resize', handler);
+            handler();
+
+            // eslint-disable-next-line consistent-return
+            return () => {
+                window.removeEventListener('scroll', handler);
+                window.removeEventListener('resize', handler);
+            };
+        }, [opened]);
+
         const localTabs = memoizedGetLocalTabs(tabs);
 
         const tabsItems = React.useMemo(
@@ -182,9 +224,13 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                         <div className={b('tabs')}>{tabsItems}</div>
                     </Sheet>
                 ) : (
-                    <div className={b()} data-qa={TableOfContentQa.TableOfContent}>
+                    <div
+                        className={b()}
+                        ref={containerRef}
+                        data-qa={TableOfContentQa.TableOfContent}
+                    >
                         <div className={b('wrapper', {opened})}>
-                            <div className={b('sidebar', {opened})}>
+                            <div className={b('sidebar', {opened})} style={offsets}>
                                 <div className={b('header')}>
                                     <span className={b('header-title')}>
                                         {i18n('label_table-of-content')}
