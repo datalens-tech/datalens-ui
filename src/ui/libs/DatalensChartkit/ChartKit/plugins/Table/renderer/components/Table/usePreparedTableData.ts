@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ColumnDef, Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
+import type {ColumnDef, Row, SortingState, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -11,7 +11,7 @@ import {
 import {useVirtualizer} from '@tanstack/react-virtual';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableHead} from 'shared';
+import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 
 import type {TableData} from '../../../../../../types';
@@ -58,21 +58,27 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
 }
 
 function getFooterRows(args: {
-    table: Table<TData>;
+    data: TableData;
     leftPositions: (number | undefined)[];
     bgColor?: string;
+    columns: ColumnDef<TData>[];
 }) {
-    const {table, leftPositions, bgColor} = args;
+    const {data, leftPositions, bgColor, columns} = args;
+    const footerRows = (data.footer ?? []) as TableCellsRow[];
 
-    return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
-        const cells = f.headers.map<FooterCellViewData>((cell) => {
-            const columnDef = cell.column.columnDef;
-            const originalHeadData = columnDef.meta?.head;
-            const originalFooterData = columnDef?.meta?.footer;
+    return footerRows.reduce<FooterRowViewData[]>((acc, rowData, rowIndex) => {
+        const cells = rowData.cells.map<FooterCellViewData>((footerCellData, cellIndex) => {
+            const cellData = footerCellData as TableCommonCell;
+            const col = findColumn(columns, (column) => get(column, 'index') === cellIndex);
+            const originalHeadData = col?.meta?.head;
             const pinned = Boolean(originalHeadData?.pinned);
-            const content = cell.isPlaceholder
-                ? null
-                : flexRender(columnDef.footer, cell.getContext());
+            let content = null;
+            if (!get(cellData, 'isPlaceholder')) {
+                const formattedValue = get(cellData, 'formattedValue', String(cellData.value));
+                content = originalHeadData?.cell
+                    ? originalHeadData?.cell(cellData)
+                    : formattedValue;
+            }
 
             const cellStyle: React.CSSProperties = {};
             if (pinned) {
@@ -81,9 +87,9 @@ function getFooterRows(args: {
             }
 
             return {
-                id: cell.id,
+                id: get(cellData, 'id', String(cellIndex)),
                 style: cellStyle,
-                contentStyle: getCellCustomStyle(originalFooterData),
+                contentStyle: getCellCustomStyle(cellData),
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
@@ -92,7 +98,7 @@ function getFooterRows(args: {
 
         if (cells.some((c) => c.content)) {
             acc.push({
-                id: f.id,
+                id: String(rowIndex),
                 cells,
             });
         }
@@ -108,19 +114,19 @@ function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
     return isEqual(prev, current);
 }
 
-function findCell(
+function findColumn(
     cols: ColumnDef<TData>[],
     predicate: (col: ColumnDef<TData>) => boolean,
-): THead | undefined {
+): ColumnDef<TData> | undefined {
     for (let i = 0; i < cols.length; i++) {
         const col = cols[i];
         if (predicate(col)) {
-            return col.meta?.head;
+            return col;
         }
 
         const subColumns = get(col, 'columns', []);
         if (subColumns.length) {
-            const subCol = findCell(subColumns, predicate);
+            const subCol = findColumn(subColumns, predicate);
             if (subCol) {
                 return subCol;
             }
@@ -128,6 +134,14 @@ function findCell(
     }
 
     return undefined;
+}
+
+function findCell(
+    cols: ColumnDef<TData>[],
+    predicate: (col: ColumnDef<TData>) => boolean,
+): THead | undefined {
+    const col = findColumn(cols, predicate);
+    return col?.meta?.head;
 }
 
 export const usePreparedTableData = (props: {
@@ -477,9 +491,9 @@ export const usePreparedTableData = (props: {
 
     const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
     const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
-    const hasFooter = isEndOfPage && columns.some((column) => column.footer);
+    const hasFooter = isEndOfPage && data.footer?.length > 0;
     const footer: TableViewData['footer'] = {
-        rows: hasFooter ? getFooterRows({table, leftPositions, bgColor: tableBgColor}) : [],
+        rows: hasFooter ? getFooterRows({data, columns, leftPositions, bgColor: tableBgColor}) : [],
         style: {gridTemplateColumns, transform},
     };
 
