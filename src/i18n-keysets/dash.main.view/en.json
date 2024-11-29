@@ -16,5 +16,7 @@
   "label_updating": "Updating",
   "toast_paste-invalid-workbook-entry": "Pasting widgets linked to objects from another workbook is forbidden",
   "toast_unsaved": "There are unsaved changes on the page. Are you sure?",
+  "tooltip_collapse-fixed-group": "Collapse pinned group",
+  "tooltip_expand-fixed-group": "Expand pinned group",
   "warning_paste-invalid-workbook-entry": "To work with this object within another workbook, please migrate all linked objects from the source workbook. <link>Migrating objects to workbooks</link>"
 }
