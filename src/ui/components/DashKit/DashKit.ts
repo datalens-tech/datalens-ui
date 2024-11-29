@@ -33,7 +33,10 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null, options?: {disableHashNavigation?: boolean},) => {
+export const getConfiguredDashKit = (
+    pluginDefaultsGetter: typeof currentDefaultsGetter = null,
+    options?: {disableHashNavigation?: boolean},
+) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
         const textSettings = {
             apiHandler: MarkdownProvider.getMarkdown,
