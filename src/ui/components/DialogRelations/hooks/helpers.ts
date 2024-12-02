@@ -506,7 +506,7 @@ const getCurrentWidgetTabShortInfo = (
     }
 
     const currentPlugin = data.metaRef?.current?.pluginsRefs?.find(
-        (item) => item.props.id === widget.id,
+        (item) => item?.props.id === widget.id,
     );
 
     const currentWidgetId =

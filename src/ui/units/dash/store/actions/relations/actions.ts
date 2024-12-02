@@ -1,24 +1,49 @@
 import type {Dispatch} from 'redux';
-import type {AliasClickHandlerArgs} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
+import type {AliasClickHandlerArgs} from 'ui/components/DialogRelations/types';
+import type {DatalensGlobalState} from 'ui/index';
 
+import type {DialogRelationsProps} from '../../../../../components/DialogRelations/DialogRelations';
+import {DIALOG_RELATIONS} from '../../../../../components/DialogRelations/DialogRelations';
+import type {DialogAliasesProps} from '../../../../../components/DialogRelations/components/DialogAliases/DialogAliases';
+import {DIALOG_ALIASES} from '../../../../../components/DialogRelations/components/DialogAliases/DialogAliases';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import type {DialogRelationsProps} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
-import {DIALOG_RELATIONS} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
-import type {DialogAliasesProps} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
-import {DIALOG_ALIASES} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
+import {
+    selectCurrentTabAliases,
+    selectCurrentTabRelationDataItems,
+    selectDashWorkbookId,
+} from '../../selectors/dashTypedSelectors';
+import {updateCurrentTabData} from '../dashTyped';
 
-export const openDialogRelations = ({widget, dashKitRef, onClose}: DialogRelationsProps) => {
-    return function (dispatch: Dispatch) {
+export const openDialogRelations = ({
+    widget,
+    dashKitRef,
+    onApply,
+    onClose,
+}: Omit<DialogRelationsProps, 'dashTabAliases' | 'workbookId' | 'allWidgets' | 'onApply'> & {
+    onApply?: () => void;
+}) => {
+    return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
+        const state = getState();
+        const dashTabAliases = selectCurrentTabAliases(state);
+        const workbookId = selectDashWorkbookId(state);
+        const allWidgets = selectCurrentTabRelationDataItems(state);
+
         const openDialogRelationsParams: DialogRelationsProps = {
             onClose: () => {
                 onClose();
                 dispatch(closeDialog());
             },
-            onApply: () => {
+            onApply: (newData) => {
+                onApply?.();
+                dispatch(updateCurrentTabData(newData));
+                onClose();
                 dispatch(closeDialog());
             },
             widget,
             dashKitRef,
+            dashTabAliases,
+            workbookId,
+            allWidgets,
         };
 
         dispatch(
