@@ -2,10 +2,7 @@ import type React from 'react';
 
 import type {DashTabConnectionKind} from 'shared';
 
-import type {
-    DashkitMetaDataItemBase,
-    DatasetsFieldsListData,
-} from '../../../../../components/DashKit/plugins/types';
+import type {DashkitMetaDataItemBase, DatasetsFieldsListData} from '../DashKit/plugins/types';
 
 import type {RELATIONS_CHARTS_ICONS_DICT, RELATION_TYPES} from './constants';
 

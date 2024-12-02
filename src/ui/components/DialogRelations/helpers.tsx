@@ -7,10 +7,10 @@ import block from 'bem-cn-lite';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 
-import type {DashTabItem} from '../../../../../../shared';
-import {DashTabItemType} from '../../../../../../shared';
-import {IconById} from '../../../../../components/IconById/IconById';
-import {VISUALIZATIONS_BY_ID} from '../../../../../constants/visualizations';
+import type {DashTabItem} from '../../../shared';
+import {DashTabItemType} from '../../../shared';
+import {VISUALIZATIONS_BY_ID} from '../../constants/visualizations';
+import {IconById} from '../IconById/IconById';
 
 import {
     DEFAULT_ALIAS_NAMESPACE,
