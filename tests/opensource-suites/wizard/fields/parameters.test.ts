@@ -61,7 +61,7 @@ datalensTest.describe('Wizard', () => {
                 const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
-                const chart = chartContainer.locator('.chartkit-graph,.chartkit-d3');
+                const chart = chartContainer.locator('.chartkit-graph,.gcharts-d3');
                 const noData = chartContainer.locator(slct('ERR.CK.NO_DATA'));
 
                 // Create parameter (value = 1)
