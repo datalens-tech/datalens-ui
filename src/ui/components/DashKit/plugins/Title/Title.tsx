@@ -165,7 +165,7 @@ const titlePlugin: PluginTitle = {
         ]);
 
         React.useEffect(() => {
-            if (showAnchor) {
+            if (!showAnchor) {
                 return undefined;
             }
 
