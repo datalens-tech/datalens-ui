@@ -189,6 +189,8 @@ export type GetDistinctsApiV2TransformedResponse = {
     };
 };
 
+export type GetDistinctsApiV2InfoHeadersArg = Record<string, string>;
+
 export type GetDistinctsApiV2Args = Omit<
     ApiV2RequestBody,
     'pivot' | 'order_by' | 'disable_group_by' | 'with_totals' | 'autofill_legend'

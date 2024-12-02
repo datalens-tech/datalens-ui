@@ -22,7 +22,7 @@ datalensTest.describe('Wizard', () => {
                 await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
                 const wizardPage = new WizardPage({page});
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-                const chart = chartContainer.locator('.chartkit-d3');
+                const chart = chartContainer.locator('.gcharts-d3');
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
                 await wizardPage.createNewFieldWithFormula(

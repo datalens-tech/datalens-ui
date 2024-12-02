@@ -183,7 +183,10 @@ export const actions = {
         path: ({datasetId}) => `${API_DATA_V2}/datasets/${datasetId}/values/distinct`,
         params: ({datasetId: _datasetId, workbookId, ...body}, headers) => ({
             body,
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+            },
         }),
         transformResponseData: transformApiV2DistinctsResponse,
         timeout: TIMEOUT_95_SEC,

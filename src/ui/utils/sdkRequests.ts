@@ -2,6 +2,7 @@ import type {
     CollectChartkitStatsArgs,
     CollectDashStatsArgs,
     GetDistinctsApiV2Args,
+    GetDistinctsApiV2InfoHeadersArg,
     GetDistinctsApiV2TransformedResponse,
 } from 'shared/schema/types';
 import {Feature} from 'shared/types';
@@ -12,10 +13,11 @@ import Utils from './utils';
 
 export const fetchDistinctsByApi = (
     params: GetDistinctsApiV2Args,
+    headers?: GetDistinctsApiV2InfoHeadersArg,
 ): Promise<GetDistinctsApiV2TransformedResponse> => {
     return Utils.isEnabledFeature(Feature.UsePublicDistincts)
-        ? getSdk().bi.getPublicDistinctsApiV2(params)
-        : getSdk().bi.getDistinctsApiV2(params);
+        ? getSdk().bi.getPublicDistinctsApiV2(params, {headers})
+        : getSdk().bi.getDistinctsApiV2(params, {headers});
 };
 
 export const fetchBatchRenderedMarkdown = (texts: Record<string, string>) => {
