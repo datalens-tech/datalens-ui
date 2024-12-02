@@ -10,7 +10,7 @@ import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import {pluginImage} from './plugins/Image/Image';
 import textPlugin from './plugins/Text/Text';
-import getTitlePlugin from './plugins/Title/Title';
+import titlePlugin from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
 
 let isConfigured = false;
@@ -38,6 +38,10 @@ export const getConfiguredDashKit = (
     options?: {disableHashNavigation?: boolean},
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const titleSettings = {
+            hideAnchor: options?.disableHashNavigation,
+        };
+
         const textSettings = {
             apiHandler: MarkdownProvider.getMarkdown,
         };
@@ -48,7 +52,7 @@ export const getConfiguredDashKit = (
 
         const plugins = wrapPlugins(
             [
-                getTitlePlugin(options?.disableHashNavigation),
+                titlePlugin.setSettings(titleSettings),
                 textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),

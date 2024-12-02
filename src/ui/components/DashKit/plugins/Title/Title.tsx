@@ -1,7 +1,11 @@
 import React from 'react';
 
-import type {PluginTitleProps} from '@gravity-ui/dashkit';
-import {PLUGIN_ROOT_ATTR_NAME, PluginTitle, pluginTitle} from '@gravity-ui/dashkit';
+import {
+    PluginTitle as DashKitPluginTitle,
+    PLUGIN_ROOT_ATTR_NAME,
+    pluginTitle,
+} from '@gravity-ui/dashkit';
+import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemTitle} from 'shared';
@@ -19,7 +23,14 @@ import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
 
-type Props = PluginTitleProps;
+type PluginTitleObjectSettings = {hideAnchor?: boolean};
+
+type Props = PluginTitleProps & PluginTitleObjectSettings;
+
+type PluginTitle = Plugin<Props> & {
+    setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
+    hideAnchor?: boolean;
+};
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 const MAX_ANCHOR_WIDTH = 28;
@@ -27,11 +38,16 @@ const MAX_ANCHOR_WIDTH = 28;
 // in which case a small negative offset is needed
 const MIN_AVAILABLE_ANCHOR_OFFSET = -5;
 
-const getTitlePlugin = (disableHashNavigation?: boolean) => ({
+const titlePlugin: PluginTitle = {
     ...pluginTitle,
+    setSettings(settings: PluginTitleObjectSettings) {
+        const {hideAnchor} = settings;
+        titlePlugin.hideAnchor = hideAnchor;
+        return titlePlugin;
+    },
     renderer: function Wrapper(
         props: Props,
-        forwardedRef: React.LegacyRef<PluginTitle> | undefined,
+        forwardedRef: React.LegacyRef<DashKitPluginTitle> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
@@ -76,7 +92,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             adjustLayout(!data.autoHeight);
         }, [adjustLayout, data.autoHeight, props.data?.text, props.data?.size]);
 
-        const content = <PluginTitle {...props} ref={forwardedRef} />;
+        const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
         const showBgColor = Boolean(
             data.background?.enabled &&
@@ -108,7 +124,7 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             data.text,
         ]);
 
-        const showAnchor = !disableHashNavigation && !props.editMode;
+        const showAnchor = !titlePlugin.hideAnchor && !props.editMode;
         const withInlineAnchor = showAnchor && isInlineAnchor;
         const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
@@ -187,6 +203,6 @@ const getTitlePlugin = (disableHashNavigation?: boolean) => ({
             </RendererWrapper>
         );
     },
-});
+};
 
-export default getTitlePlugin;
+export default titlePlugin;
