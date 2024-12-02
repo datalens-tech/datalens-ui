@@ -29,17 +29,15 @@ export const AnchorLink = ({size, to, show, absolute, top}: AnchorLinkProps) => 
     }
 
     return (
-        <React.Fragment>
-            <Link
-                className={b('anchor', {
-                    size,
-                    absolute,
-                })}
-                to={link}
-                style={{top}}
-            >
-                #
-            </Link>
-        </React.Fragment>
+        <Link
+            className={b('anchor', {
+                size,
+                absolute,
+            })}
+            to={link}
+            style={{top}}
+        >
+            #
+        </Link>
     );
 };

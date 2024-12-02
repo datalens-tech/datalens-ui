@@ -128,8 +128,8 @@ const titlePlugin: PluginTitle = {
         const withInlineAnchor = showAnchor && isInlineAnchor;
         const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
 
-        const calculateAnchor = React.useCallback((showAnchor) => {
-            if (showAnchor && contentRef.current && rootNodeRef.current) {
+        const calculateAnchor = React.useCallback(() => {
+            if (contentRef.current && rootNodeRef.current) {
                 const contentRect = contentRef.current.getBoundingClientRect();
                 const rootRect = rootNodeRef.current.getBoundingClientRect();
 
@@ -144,13 +144,15 @@ const titlePlugin: PluginTitle = {
 
                 setAnchorTop(calculatedAnchorTop);
                 setIsInlineAnchor(enableInlineAnchor);
-            } else {
-                setIsInlineAnchor(false);
             }
         }, []);
 
         React.useLayoutEffect(() => {
-            calculateAnchor(showAnchor);
+            if (showAnchor) {
+                calculateAnchor();
+            } else {
+                setIsInlineAnchor(false);
+            }
         }, [
             currentLayout.x,
             currentLayout.h,
@@ -163,6 +165,10 @@ const titlePlugin: PluginTitle = {
         ]);
 
         React.useEffect(() => {
+            if (showAnchor) {
+                return undefined;
+            }
+
             const debouncedCalculateAnchor = debounce(
                 calculateAnchor,
                 WIDGET_RESIZE_DEBOUNCE_TIMEOUT,
@@ -172,7 +178,7 @@ const titlePlugin: PluginTitle = {
             return () => {
                 window.removeEventListener('resize', debouncedCalculateAnchor);
             };
-        }, [calculateAnchor]);
+        }, [calculateAnchor, showAnchor]);
 
         return (
             <RendererWrapper
