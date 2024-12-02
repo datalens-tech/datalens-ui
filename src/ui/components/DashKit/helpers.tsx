@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
@@ -10,9 +8,8 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
-import {Utils} from 'ui';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
@@ -58,10 +55,7 @@ export function getEditLink(configItem: ConfigItem, params: StringParams, state:
     }
 
     // does not work properly in DEV mode without navigator
-    const endpoint = getEndpointForNavigation(
-        DL.ENDPOINTS,
-        Utils.isEnabledFeature(Feature.UseNavigation),
-    );
+    const endpoint = getEndpointForNavigation();
 
     const linkParams = removeEmptyParams(params);
 

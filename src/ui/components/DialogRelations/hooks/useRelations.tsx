@@ -6,8 +6,8 @@ import {useSelector} from 'react-redux';
 import type {DashTabItem, WorkbookId} from 'shared';
 import {selectWidgetsCurrentTab} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
-import type {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
-import {getSdk} from '../../../../../../libs/schematic-sdk';
+import type {GetEntriesDatasetsFieldsResponse} from '../../../../shared/schema';
+import {getSdk} from '../../../libs/schematic-sdk';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import type {
