@@ -1,5 +1,3 @@
-@import 'Chart';
-
 $dashContainerClassName: '.dash-body';
 $dashPublicContainerClassName: '.dash';
 
@@ -57,6 +55,13 @@ $dashPublicContainerClassName: '.dash';
     #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header,
     #{$dashContainerClassName} &_no-tabs &__container &__chart-header {
         top: -4px;
+    }
+
+    // styles for mobile dash widgets chart header
+    // for supporting full display of titles
+    #{$dashPublicContainerClassName} &_default-mobile &__chart-header,
+    #{$dashContainerClassName} &_default-mobile &__chart-header {
+        top: 2px;
     }
 
     // style for widgets with auto height

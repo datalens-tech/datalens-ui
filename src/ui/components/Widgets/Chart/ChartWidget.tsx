@@ -346,7 +346,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isFullscreen,
         isAutoHeightEnabled,
         description,
-        hideTabs,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -516,6 +515,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 autoheight: isAutoHeightEnabled,
                 classMod,
                 ['wait-for-init']: !isInit,
+                'default-mobile': DL.IS_MOBILE && !isFullscreen,
             })}`}
             style={style}
             data-qa="chart-widget"
@@ -532,7 +532,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 isFullscreen={isFullscreen}
                 onFullscreenClick={handleToggleFullscreenMode}
                 editMode={editMode}
-                hideTabs={hideTabs}
+                hideTitle={Boolean(data.hideTitle)}
                 tabsItems={adaptiveTabsItems}
                 currentTab={currentTab}
                 onSelectTab={handleSelectTab}

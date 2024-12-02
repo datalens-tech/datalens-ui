@@ -267,7 +267,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         veil,
         showLoader,
         isFullscreen,
-        hideTabs,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,
@@ -284,7 +283,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 history,
                 widgetId,
                 hideTitle: Boolean(data.hideTitle),
-                tabsLength: tabs.length,
             }),
         [
             isLoading,
@@ -298,6 +296,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             history.location.search,
             hasHideTitleChanged,
             widgetId,
+            data.hideTitle,
+            isSilentReload,
         ],
     );
 
@@ -681,7 +681,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         error,
         handleRenderChart,
         description,
-        hideTabs,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,
