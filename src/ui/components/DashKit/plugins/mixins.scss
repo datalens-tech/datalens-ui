@@ -8,7 +8,7 @@
     background: linear-gradient(
         to right,
         transparent,
-        color-mix(in sRGB, var(--g-color-base-generic-ultralight) 95%, transparent),
+        var(--g-color-base-generic-ultralight) 50%,
         var(--g-color-base-generic-ultralight)
     );
 }
