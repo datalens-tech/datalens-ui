@@ -98,14 +98,6 @@ function createColumn(args: {
         };
     }
 
-    if (footerCell) {
-        if (cell) {
-            options.footer = () => cell(footerCell);
-        } else {
-            options.footer = footerCell.formattedValue ?? (footerCell.value as string);
-        }
-    }
-
     return options;
 }
 

@@ -10,8 +10,6 @@ import type {USProvider} from './united-storage/provider';
 
 const DEFAULT_PRELOAD_FETCHING_INTERVAL = 120e3;
 
-type Config = AppConfig & {preloadList?: string[]};
-
 export type ResolveConfigProps = {
     id?: string;
     key: string;
@@ -78,7 +76,7 @@ export class BaseStorage {
     }
 
     async refreshPreloaded(
-        parentCtx: AppContext & {config: Config},
+        parentCtx: AppContext & {config: AppConfig},
         callback: (configs: Record<string, ResolvedConfig>) => void,
     ) {
         const requestId = uuidv4();

@@ -86,6 +86,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     // a quick loader for imitating action by clicking on apply button
     _quickActionTimer: ReturnType<typeof setTimeout> | null = null;
+    _getDistinctsMemo: ControlSettings['getDistincts'];
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
@@ -679,9 +680,30 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
     };
 
+    private getDistinctsWithHeaders() {
+        if (this.props.getDistincts) {
+            this._getDistinctsMemo =
+                this._getDistinctsMemo ||
+                ((params) => {
+                    const {getDistincts} = this.props;
+                    const headers = this?.context?.dataProviderContextGetter?.();
+
+                    return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
+                        params,
+                        headers,
+                    );
+                });
+        } else {
+            this._getDistinctsMemo = undefined;
+        }
+
+        return this._getDistinctsMemo;
+    }
+
     private renderControl(item: DashTabItemControlSingle) {
-        const {getDistincts, workbookId} = this.props;
+        const {workbookId} = this.props;
         const {silentLoading} = this.state;
+        const dataProviderContextGetter = this?.context?.dataProviderContextGetter?.();
 
         return (
             <Control
@@ -691,12 +713,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 params={this.state.stateParams[item.id] || {}}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
-                getDistincts={getDistincts}
+                getDistincts={this.getDistinctsWithHeaders()}
                 onChange={this.onChange}
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
                 groupId={this.props.id}
+                requestHeaders={dataProviderContextGetter}
             />
         );
     }
