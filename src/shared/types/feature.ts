@@ -14,7 +14,6 @@ export enum Feature {
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
     RevisionsListNoLimit = 'RevisionsListNoLimit',
-    UseNavigation = 'UseNavigation',
     AuthUpdateWithTimeout = 'AuthUpdateWithTimeout',
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
