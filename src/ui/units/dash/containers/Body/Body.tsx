@@ -771,10 +771,8 @@ class Body extends React.PureComponent<BodyProps> {
                             this.props.openDialogRelations({
                                 widget,
                                 dashKitRef: this.dashKitRef,
-                                onApply: () => {},
                                 onClose: () => {
                                     this.props.setNewRelations(false);
-                                    this.props.closeDialogRelations();
                                 },
                             });
                         },
