@@ -6,7 +6,6 @@ import type {DialogRelationsProps} from '../../../containers/Dialogs/DialogRelat
 import {DIALOG_RELATIONS} from '../../../containers/Dialogs/DialogRelations/DialogRelations';
 import type {DialogAliasesProps} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
 import {DIALOG_ALIASES} from '../../../containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
-import * as actionTypes from '../../constants/dashActionTypes';
 
 export const openDialogRelations = ({widget, dashKitRef, onClose}: DialogRelationsProps) => {
     return function (dispatch: Dispatch) {
@@ -58,12 +57,13 @@ export const openDialogAliases = (props: AliasClickHandlerArgs) => {
     };
 };
 
+export const SET_NEW_RELATIONS = Symbol('dash/SET_NEW_RELATIONS');
 export type SetNewRelationsAction = {
-    type: typeof actionTypes.SET_NEW_RELATIONS;
+    type: typeof SET_NEW_RELATIONS;
     payload: boolean;
 };
 
 export const setNewRelations = (data: SetNewRelationsAction['payload']) => ({
-    type: actionTypes.SET_NEW_RELATIONS,
+    type: SET_NEW_RELATIONS,
     payload: data,
 });

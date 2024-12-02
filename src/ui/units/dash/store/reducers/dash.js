@@ -67,31 +67,6 @@ function dash(state = initialState, action) {
     const tab = tabIndex === -1 ? null : data.tabs[tabIndex];
 
     switch (action.type) {
-        case actionTypes.SAVE_DASH_SUCCESS:
-        case actionTypes.SAVE_DASH_ERROR:
-        case actionTypes.CLOSE_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: null,
-            };
-        }
-        case actionTypes.OPEN_ITEM_DIALOG: {
-            const payload = action.payload;
-
-            return {
-                ...state,
-                openedItemId: payload.id ?? null,
-                openedDialog: payload.type,
-            };
-        }
-        case actionTypes.OPEN_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: action.payload.dragOperationProps ?? null,
-            };
-        }
         case actionTypes.SET_TABS: {
             let counter = data.counter;
 
