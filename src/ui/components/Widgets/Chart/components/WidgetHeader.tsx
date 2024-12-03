@@ -64,7 +64,7 @@ export const WidgetHeader = (props: HeaderProps) => {
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
     const renderTabs = () => {
-        if (DL.IS_MOBILE && (!hideTitle || isFullscreen)) {
+        if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
             return <div className={b('mobile-title')}>{widgetTitle}</div>;
         }
 

@@ -97,6 +97,10 @@
     }
 
     &_mobile {
+        #{$class}__tabs {
+            @include text-subheader-3();
+        }
+
         &#{$class}_fullscreen #{$class}__filters-controls {
             top: 50px;
             right: 16px;
