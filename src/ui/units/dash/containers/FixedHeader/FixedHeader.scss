@@ -19,98 +19,98 @@
     }
 }
 
-$fixedSectionOffset: 8px;
-
 .dash-fixed-header {
-    &__controls {
-        display: flex;
-        flex: 1;
-        padding: 8px 0;
-        min-height: 60px;
+    $class: &;
 
-        @include dndHighlight;
+    $fixed-header-background: var(
+        --dl-color-fixed-header-background,
+        var(--g-color-base-simple-hover-solid)
+    );
 
+    --dash-inline-padding: var(--g-spacing-6);
+
+    margin-bottom: 20px;
+
+    &__wrapper {
         &_fixed {
             position: fixed;
             top: 40px;
-            background-color: var(
-                --dl-color-fixed-header-background,
-                var(--g-color-base-background)
-            );
-            padding-left: 24px;
-            padding-right: 24px;
-            margin-left: -24px;
+
+            margin-inline: calc(-1 * var(--dash-inline-padding));
             z-index: 10;
+            max-height: calc(100vh - 40px);
+
+            box-shadow: 0px 1px 5px 0px var(--g-color-sfx-shadow);
+            background-color: $fixed-header-background;
+            display: flex;
+            flex-direction: row;
+
+            #{$class}__scrollable-container {
+                padding-inline: var(--dash-inline-padding);
+            }
+            #{$class}__controls-settings {
+                right: 0;
+            }
         }
-    }
-
-    &__controls-placeholder {
-        height: 60px;
-        display: flex;
-        flex-direction: row;
-    }
-
-    &__controls-grid {
-        display: flex;
-        flex-grow: 1;
-
-        @include flexReactGridLayout;
-    }
-
-    &__controls-settings {
-        width: math.div(100%, 36) * 1;
-        flex-shrink: 0;
-        position: relative;
-    }
-
-    &__controls-settings-wrapper {
-        position: absolute;
-        inset: 0px 0px 0px 8px;
-        display: flex;
-        min-width: 28px;
-        align-items: center;
-        justify-content: end;
-    }
-
-    &__container-placeholder {
-        margin-bottom: 20px;
 
         &_edit-mode {
             border-bottom: 1px solid var(--g-color-line-generic);
         }
     }
 
-    &__container-wrapper {
-        display: flex;
-        padding-bottom: $fixedSectionOffset;
-        flex-direction: row;
-        flex: 1;
+    &_hidden {
+        margin: 0;
+        height: 0;
+    }
 
+    &__controls-settings {
+        width: 20px;
+        position: absolute;
+        right: calc(-1 * var(--dash-inline-padding));
+        top: var(--g-spacing-2);
+    }
+
+    &__content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    &__scrollable-container {
+        overflow: auto;
+        flex: 1;
+    }
+
+    &__controls {
+        min-height: 60px;
+        padding-block: var(--g-spacing-2);
+
+        padding-block-end: var(--g-spacing-2);
+        @include dndHighlight;
         @include flexReactGridLayout;
+
+        &_hidden {
+            display: none;
+        }
     }
 
     &__container {
         display: flex;
         flex-direction: row;
-        min-height: 52px;
+        min-height: 68px;
+        padding-block: var(--g-spacing-2);
 
         @include dndHighlight;
+        @include flexReactGridLayout;
 
-        &_fixed {
-            position: fixed;
-            overflow: auto;
-            top: 100px;
-            background-color: var(
-                --dl-color-fixed-header-background,
-                var(--g-color-base-background)
-            );
-            border-bottom: 1px solid var(--g-color-line-generic);
-            padding-left: 24px;
-            padding-right: 24px;
-            margin-left: -24px;
-            z-index: 10;
-            max-height: calc(100vh - 100px);
+        &_hidden {
+            display: none;
         }
+    }
+
+    &__container-placeholder {
+        position: relative;
 
         &_collapsed {
             overflow: clip;
