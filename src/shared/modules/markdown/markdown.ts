@@ -73,9 +73,12 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         plugins.push(...additionalPlugins);
     }
 
+    // temp bug fix with terms until the editor supports transform plugin
+    const preparedText = text.replace(new RegExp(/\\\[\\\*(\S+)\\\]/), '[*$1]');
+
     const {
         result: {html, meta},
-    } = yfmTransform(text, {
+    } = yfmTransform(preparedText, {
         plugins,
         lang,
         vars: {},
