@@ -88,6 +88,7 @@ import {
     setErrorMode,
     setHashState,
     setStateHashId,
+    setWidgetCurrentTab,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
@@ -974,6 +975,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onItemMountChange={this.handleItemMountChange}
                 onItemRender={this.handleItemRender}
                 hideErrorDetails={this.props.hideErrorDetails}
+                setWidgetCurrentTab={this.props.setWidgetCurrentTab}
                 dataProviderContextGetter={this.dataProviderContextGetter}
             />
         );
@@ -1156,6 +1158,7 @@ const mapDispatchToProps = {
     setNewRelations,
     openDialog,
     showToast,
+    setWidgetCurrentTab,
 };
 
 export default compose<BodyProps, OwnProps>(

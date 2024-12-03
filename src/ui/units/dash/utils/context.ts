@@ -10,4 +10,5 @@ export const ExtendedDashKitContext = createContext<{
     defaultGlobalParams?: DashSettingsGlobalParams;
     hideErrorDetails?: boolean;
     dataProviderContextGetter?: () => DashChartRequestContext;
+    setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
 } | null>(null);

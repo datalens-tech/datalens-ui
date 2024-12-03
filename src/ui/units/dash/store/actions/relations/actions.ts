@@ -11,22 +11,29 @@ import {
     selectCurrentTabAliases,
     selectCurrentTabRelationDataItems,
     selectDashWorkbookId,
+    selectWidgetsCurrentTab,
 } from '../../selectors/dashTypedSelectors';
 import {updateCurrentTabData} from '../dashTyped';
+
+type OpenDialogRelationsProps = Omit<
+    DialogRelationsProps,
+    'dashTabAliases' | 'workbookId' | 'allWidgets' | 'onApply' | 'widgetsCurrentTab'
+> & {
+    onApply?: () => void;
+};
 
 export const openDialogRelations = ({
     widget,
     dashKitRef,
     onApply,
     onClose,
-}: Omit<DialogRelationsProps, 'dashTabAliases' | 'workbookId' | 'allWidgets' | 'onApply'> & {
-    onApply?: () => void;
-}) => {
+}: OpenDialogRelationsProps) => {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const state = getState();
         const dashTabAliases = selectCurrentTabAliases(state);
         const workbookId = selectDashWorkbookId(state);
         const allWidgets = selectCurrentTabRelationDataItems(state);
+        const widgetsCurrentTab = selectWidgetsCurrentTab(state);
 
         const openDialogRelationsParams: DialogRelationsProps = {
             onClose: () => {
@@ -42,6 +49,7 @@ export const openDialogRelations = ({
             widget,
             dashKitRef,
             dashTabAliases,
+            widgetsCurrentTab,
             workbookId,
             allWidgets,
         };
