@@ -124,6 +124,7 @@ export class MonacoUtils {
                     onModuleClick(matchRequire);
                 } else {
                     try {
+                        // fix module resolve without navigation service
                         const {entryId} = await getSdk().us.getEntryByKey({key: matchRequire.key});
                         window.open(`${DL.ENDPOINTS.charts}/editor/${entryId}`, '_blank');
                     } catch (error) {
