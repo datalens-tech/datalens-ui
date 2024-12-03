@@ -5,14 +5,14 @@ import {slct} from '../../utils';
 
 type ContentTableRowProps = ElementPOProps;
 
-export class ContentTableRow extends ElementPO {
-    private readonly rowTitleCell: ElementPO;
-
+export class ContentTableRowPO extends ElementPO {
     constructor({page, selectors}: ContentTableRowProps) {
         super({page, selectors});
+    }
 
-        this.rowTitleCell = new ElementPO({
-            page,
+    get rowTitleCell() {
+        return new ElementPO({
+            page: this.page,
             selectors: {
                 parent: this.getSelector(),
                 root: slct(CollectionContentTableQa.CollectionTitleCell),

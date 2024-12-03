@@ -1,41 +1,28 @@
-import {CollectionContentTableQa, CollectionsPageQa} from '../../../src/shared';
 import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
-import {slct} from '../../utils';
-import {ContentTableRow} from './ContentTableRow';
+import {ContentTablePO} from './ContentTable';
+import {EmptyStatePO} from './EmptyState';
 
 type CollectionsPageProps = BasePageProps;
 
-export class CollectionsPage extends BasePage {
-    private readonly root = slct(CollectionsPageQa.PageContainer);
-
-    private readonly collectionRow: ContentTableRow;
-    private readonly workbookRow: ContentTableRow;
+export class CollectionsPagePO extends BasePage {
+    private readonly root = '.dl-collections-navigation-layout';
 
     constructor({page}: CollectionsPageProps) {
         super({page});
+    }
 
-        this.collectionRow = new ContentTableRow({
-            page,
-            selectors: {
-                parent: this.root,
-                root: slct(CollectionContentTableQa.CollectionLinkRow),
-            },
-        });
-        this.workbookRow = new ContentTableRow({
-            page,
-            selectors: {
-                parent: this.root,
-                root: slct(CollectionContentTableQa.WorkbookLinkRow),
-            },
+    get emptyState() {
+        return new EmptyStatePO({
+            page: this.page,
+            parent: this.root,
         });
     }
 
-    async clickCollectionRowLink() {
-        await this.collectionRow.clickRowLink();
-    }
-
-    async clickWorkbookRowLink() {
-        await this.workbookRow.clickRowLink();
+    get contentTable() {
+        return new ContentTablePO({
+            page: this.page,
+            parent: this.root,
+        });
     }
 }

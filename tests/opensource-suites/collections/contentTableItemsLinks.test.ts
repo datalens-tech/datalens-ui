@@ -1,6 +1,7 @@
 import {openTestPage} from '../../utils';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
-import {CollectionsPage} from '../../page-objects/collections';
+import {CollectionsPagePO} from '../../page-objects/collections';
+import {Workbook} from '../../page-objects/workbook/Workbook';
 import {WorkbooksUrls, CollectionsUrls} from '../../constants/constants';
 
 datalensTest.describe('Collections page', () => {
@@ -10,19 +11,25 @@ datalensTest.describe('Collections page', () => {
         });
 
         datalensTest('Workbook row link leads to workbook page', async ({page}) => {
-            const collectionsPage = new CollectionsPage({page});
+            const {contentTable} = new CollectionsPagePO({page});
 
-            await collectionsPage.clickWorkbookRowLink();
+            await contentTable.clickWorkbookRowLink();
 
             await page.waitForURL(WorkbooksUrls.E2EWorkbook);
+
+            const {filters} = new Workbook(page);
+
+            await filters.waitForVisible();
         });
 
         datalensTest('Collection row link leads to collection page', async ({page}) => {
-            const collectionsPage = new CollectionsPage({page});
+            const {contentTable, emptyState} = new CollectionsPagePO({page});
 
-            await collectionsPage.clickCollectionRowLink();
+            await contentTable.clickCollectionRowLink();
 
             await page.waitForURL(CollectionsUrls.E2ECollection);
+
+            await emptyState.waitForVisible();
         });
     });
 });

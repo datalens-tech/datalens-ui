@@ -1,1 +1,1 @@
-export {CollectionsPage} from './CollectionsPage';
+export {CollectionsPagePO} from './CollectionsPage';
