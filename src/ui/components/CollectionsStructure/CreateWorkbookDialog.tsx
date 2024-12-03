@@ -23,13 +23,15 @@ export type OpenDialogCreateWorkbookArgs = {
 type Props = {
     collectionId: string | null;
     open: boolean;
+    dialogTitle?: string;
+    defaultWorkbookTitle?: string;
     onClose: () => void;
-    onApply?: (result: CreateWorkbookResponse | null) => void;
+    onApply?: (result: CreateWorkbookResponse | null) => void | Promise<void>;
 };
 
 export const CreateWorkbookDialog: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
-    const {open, onClose} = props;
+    const {open, dialogTitle, defaultWorkbookTitle, onClose} = props;
 
     const handleApply = async ({title, description}: {title: string; description?: string}) => {
         const {collectionId, onApply} = props;
@@ -43,7 +45,10 @@ export const CreateWorkbookDialog: React.FC<Props> = (props) => {
         );
 
         if (onApply) {
-            onApply(result);
+            const promise = onApply(result);
+            if (promise) {
+                await promise;
+            }
         }
 
         return result;
@@ -53,10 +58,11 @@ export const CreateWorkbookDialog: React.FC<Props> = (props) => {
 
     return (
         <WorkbookDialog
-            title={i18n('action_create-workbook')}
+            title={dialogTitle ?? i18n('action_create-workbook')}
             textButtonApply={i18n('action_create')}
             open={open}
             isLoading={isLoading}
+            titleValue={defaultWorkbookTitle}
             onApply={handleApply}
             onClose={onClose}
             titleAutoFocus
