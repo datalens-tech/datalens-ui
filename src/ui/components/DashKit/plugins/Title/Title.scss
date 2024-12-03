@@ -1,10 +1,11 @@
+@import '../mixins.scss';
+
 .dashkit-plugin-title-container {
+    $class: &;
     height: fit-content;
-    overflow: hidden;
+    overflow: clip;
 
     &_with-auto-height {
-        overflow-y: auto;
-
         [data-plugin-root-el='title'] {
             height: fit-content;
         }
@@ -14,14 +15,74 @@
     &_with-color {
         display: flex;
 
-        & .dashkit-plugin-title {
+        .dashkit-plugin-title {
             padding: 5px 10px;
             align-items: center;
         }
+
+        #{$class}__anchor {
+            padding: 5px;
+        }
+    }
+
+    &_with-inline-anchor {
+        display: flex;
+
+        .dashkit-plugin-title {
+            padding-right: 0;
+        }
+    }
+
+    &:has(&__anchor_absolute:focus-visible)::after {
+        @include with-fade-effect;
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
         // it has own color bg for contrast in edit mod
         background-color: transparent;
+    }
+
+    &__anchor {
+        opacity: 0;
+        padding: 0 5px 5px;
+        position: relative;
+        height: fit-content;
+        text-decoration: none;
+        color: var(--g-color-text-link);
+
+        &:focus-visible {
+            opacity: 1;
+        }
+
+        &:hover {
+            color: var(--g-color-text-link-hover);
+        }
+
+        &_absolute {
+            position: absolute;
+            padding: 0 5px;
+            right: 0;
+            z-index: 1;
+        }
+
+        &_size_l {
+            font-size: 24px;
+            line-height: 28px;
+        }
+
+        &_size_m {
+            font-size: 20px;
+            line-height: 24px;
+        }
+
+        &_size_s {
+            font-size: var(--g-text-body-3-font-size);
+            line-height: 24px;
+        }
+
+        &_size_xs {
+            font-size: 15px;
+            line-height: 20px;
+        }
     }
 }

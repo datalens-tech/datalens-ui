@@ -3,6 +3,7 @@ import React from 'react';
 import {useBodyScrollLock} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {FixedHeaderQa} from 'shared';
 
 import './FixedHeader.scss';
 
@@ -122,6 +123,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
                     fixed: isFixed && !editMode,
                     'edit-mode': editMode,
                 })}
+                data-qa={FixedHeaderQa.Controls}
             >
                 <div className={b('controls-grid')}>{content}</div>
                 <div className={b('controls-settings')}>
@@ -201,6 +203,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props)
                     collapsed: (!editMode && props.isCollapsed) || isRenderEmpty,
                     'edit-mode': editMode,
                 })}
+                data-qa={FixedHeaderQa.Container}
             >
                 <div className={b('container-wrapper')}>{content}</div>
             </div>
