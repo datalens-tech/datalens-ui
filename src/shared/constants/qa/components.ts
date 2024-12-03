@@ -179,3 +179,8 @@ export enum DatalensTabs {
     Item = 'dash-tab-item',
     SwitcherItem = 'dash-tab-switcher-item',
 }
+
+export enum DatalensHeaderQa {
+    DesktopContainer = 'datalens-header-desktop-container',
+    MobileContainer = 'datalens-header-mobile-container',
+}
