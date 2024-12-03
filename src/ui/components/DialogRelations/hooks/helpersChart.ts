@@ -1,5 +1,5 @@
 import intersection from 'lodash/intersection';
-import {getDefaultTypeByIgnore} from 'ui/units/dash/containers/Dialogs/DialogRelations/hooks/helpers';
+import {getDefaultTypeByIgnore} from 'ui/components/DialogRelations/hooks/helpers';
 import type {FilteringWidgetType} from 'ui/units/dash/modules/constants';
 import {DASH_FILTERING_CHARTS_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
 

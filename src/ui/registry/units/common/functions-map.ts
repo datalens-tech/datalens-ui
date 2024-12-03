@@ -10,6 +10,7 @@ import type {
     CollectDashStatsArgs,
     CollectDashStatsResponse,
     GetDistinctsApiV2Args,
+    GetDistinctsApiV2InfoHeadersArg,
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
 } from 'shared/schema';
@@ -120,7 +121,10 @@ export const commonFunctionsMap = {
         >(),
     fetchDistinctsByApi:
         makeFunctionTemplate<
-            (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>
+            (
+                params: GetDistinctsApiV2Args,
+                headers?: GetDistinctsApiV2InfoHeadersArg,
+            ) => Promise<GetDistinctsApiV2TransformedResponse>
         >(),
     requestCollectDashStats:
         makeFunctionTemplate<

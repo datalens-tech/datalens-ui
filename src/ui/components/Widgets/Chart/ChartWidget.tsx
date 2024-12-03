@@ -12,14 +12,12 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
-import {setWidgetCurrentTab} from 'ui/units/dash/store/actions/dashTyped';
+import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
-import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {getPreparedWrapSettings} from '../../DashKit/utils';
@@ -82,9 +80,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         workbookId,
     } = props;
 
-    const skipReload = useSelector(selectSkipReload);
-
-    const dispatch = useDispatch();
+    const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const skipReload = extDashkitContext?.skipReload ?? false;
+    const setWidgetCurrentTab = extDashkitContext?.setWidgetCurrentTab;
 
     const [isWizardChart, setIsWizardChart] = React.useState(false);
 
@@ -436,8 +434,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     // Update currentTab in dash state after dashkit item state update
     React.useEffect(() => {
-        dispatch(setWidgetCurrentTab({widgetId, tabId: currentTab.id}));
-    }, [currentTab, widgetId, dispatch]);
+        setWidgetCurrentTab?.({widgetId, tabId: currentTab.id});
+    }, [currentTab, setWidgetCurrentTab, widgetId]);
 
     const adaptiveTabsItems = React.useMemo(
         () =>

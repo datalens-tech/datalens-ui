@@ -12,18 +12,12 @@ import intersection from 'lodash/intersection';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashTab, DashTabItem, DatasetField} from 'shared';
+import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 
-import {updateCurrentTabData} from '../../../store/actions/dashTyped';
-import {openDialogAliases} from '../../../store/actions/relations/actions';
-import {
-    selectCurrentTabAliases,
-    selectCurrentTabRelationDataItems,
-    selectDashWorkbookId,
-} from '../../../store/selectors/dashTypedSelectors';
+import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -59,9 +53,13 @@ export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 
 export type DialogRelationsProps = {
     onClose: () => void;
-    onApply: (item: DatasetField) => void;
+    onApply: (item: {aliases?: DashTab['aliases']; connections?: Config['connections']}) => void;
     widget: DashTabItem;
+    allWidgets?: DashTabItem[];
     dashKitRef: React.RefObject<DashKit>;
+    dashTabAliases: DashTabAliases | null;
+    workbookId: string | null;
+    widgetsCurrentTab: Record<string, string>;
 };
 
 export type OpenDialogRelationsArgs = {
@@ -73,13 +71,17 @@ const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={op
 
 const DialogRelations = (props: DialogRelationsProps) => {
     const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
-    const {dashKitRef, onClose} = props;
+    const {
+        dashKitRef,
+        dashTabAliases,
+        workbookId,
+        widgetsCurrentTab,
+        allWidgets: widgets,
+        onClose,
+        onApply,
+    } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
-    const dashTabAliases = useSelector(selectCurrentTabAliases);
-    const workbookId = useSelector(selectDashWorkbookId);
-
-    const widgets = useSelector(selectCurrentTabRelationDataItems);
 
     const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
 
@@ -101,6 +103,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dialogAliases: aliases,
             workbookId,
             itemId,
+            widgetsCurrentTab,
         });
 
     const widgetsIconMap = React.useMemo(() => {
@@ -458,11 +461,12 @@ const DialogRelations = (props: DialogRelationsProps) => {
             newData.aliases = isEmpty(aliases?.[DEFAULT_ALIAS_NAMESPACE]) ? {} : aliases;
         }
 
-        if (!isEmpty(newData)) {
-            dispatch(updateCurrentTabData(newData));
+        if (isEmpty(newData)) {
+            onClose();
+        } else {
+            onApply(newData);
         }
-        onClose();
-    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, dispatch, onClose]);
+    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 

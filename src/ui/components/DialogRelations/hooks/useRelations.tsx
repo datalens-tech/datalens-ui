@@ -2,12 +2,10 @@ import React from 'react';
 
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
-import {useSelector} from 'react-redux';
 import type {DashTabItem, WorkbookId} from 'shared';
-import {selectWidgetsCurrentTab} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
-import type {GetEntriesDatasetsFieldsResponse} from '../../../../../../../shared/schema';
-import {getSdk} from '../../../../../../libs/schematic-sdk';
+import type {GetEntriesDatasetsFieldsResponse} from '../../../../shared/schema';
+import {getSdk} from '../../../libs/schematic-sdk';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import type {
@@ -33,12 +31,14 @@ export const useRelations = ({
     dialogAliases,
     workbookId,
     itemId,
+    widgetsCurrentTab,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem;
     dialogAliases: Record<string, string[][]>;
     workbookId: WorkbookId;
     itemId: string | null;
+    widgetsCurrentTab: Record<string, string>;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -55,8 +55,6 @@ export const useRelations = ({
 
     const [prevItemId, setPrevItemId] = React.useState(itemId);
     const [prevWidgetId, setPrevWidgetId] = React.useState(widget.id);
-
-    const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
 
     const getCurrentWidgetInfo = React.useCallback(
         (

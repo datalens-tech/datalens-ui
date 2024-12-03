@@ -49,7 +49,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             const cell = {
                 value: th.markup ?? th.name,
                 // Remove condition after wrappedHTML being supported for new Table
-                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : undefined,
+                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : th.name,
                 type: th.markup ? 'markup' : columnType,
             };
             return (

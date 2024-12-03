@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
@@ -10,9 +8,8 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
-import {Utils} from 'ui';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
@@ -58,10 +55,7 @@ export function getEditLink(configItem: ConfigItem, params: StringParams, state:
     }
 
     // does not work properly in DEV mode without navigator
-    const endpoint = getEndpointForNavigation(
-        DL.ENDPOINTS,
-        Utils.isEnabledFeature(Feature.UseNavigation),
-    );
+    const endpoint = getEndpointForNavigation();
 
     const linkParams = removeEmptyParams(params);
 
@@ -120,6 +114,7 @@ interface DashkitWrapperProps extends DashKitProps {
     hideErrorDetails?: boolean;
     // Extended headers context for widgets
     dataProviderContextGetter?: () => DashChartRequestContext;
+    setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
 }
 
 export const DashkitWrapper: React.FC<
@@ -130,7 +125,13 @@ export const DashkitWrapper: React.FC<
         )
 > = React.forwardRef(
     (
-        {skipReload = false, isNewRelations = false, dataProviderContextGetter, ...props},
+        {
+            skipReload = false,
+            isNewRelations = false,
+            dataProviderContextGetter,
+            setWidgetCurrentTab,
+            ...props
+        },
         ref: React.ForwardedRef<DashKit>,
     ) => {
         const contextValue = React.useMemo(() => {
@@ -139,6 +140,7 @@ export const DashkitWrapper: React.FC<
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
                 isNewRelations,
+                setWidgetCurrentTab,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
             };
@@ -147,6 +149,7 @@ export const DashkitWrapper: React.FC<
             props.defaultGlobalParams,
             skipReload,
             isNewRelations,
+            setWidgetCurrentTab,
             dataProviderContextGetter,
             props.hideErrorDetails,
         ]);

@@ -7,7 +7,7 @@ import {I18n, i18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
 import {useDispatch} from 'react-redux';
-import {ChartkitMenuDialogsQA, ErrorCode, Feature} from 'shared';
+import {ChartkitMenuDialogsQA, ErrorCode} from 'shared';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {DL, Interpolate, Utils} from '../../..';
@@ -169,10 +169,7 @@ const ChartKitError: React.FC<any> = (props) => {
                 iconData = Lock;
                 const entryId = error?.debug?.entryId;
                 if (entryId) {
-                    const endpoint = getEndpointForNavigation(
-                        DL.ENDPOINTS,
-                        Utils.isEnabledFeature(Feature.UseNavigation),
-                    );
+                    const endpoint = getEndpointForNavigation();
                     const text = i18n('component.chartkit-error.codes', code);
                     const href = `${endpoint}/${entryId}`;
 
