@@ -10,6 +10,7 @@ import partial from 'lodash/partial';
 import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
+import {WidgetKind} from 'shared/types/widget';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import type {Optional} from 'utility-types';
 
@@ -36,6 +37,7 @@ import type {
     WithControls,
 } from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {getParseHtmlFn} from '../../html-generator/utils';
 
 import {ChartkitHandlersDict} from './chartkit-handlers';
 import {getChartsInsightsData} from './helpers';
@@ -329,6 +331,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
+                if (result.type === WidgetKind.BlankChart) {
+                    uiSandboxOptions.fnExecTimeLimit = 1000;
+                }
+
                 const unwrapFnArgs = {
                     entryId: result.entryId,
                     entryType: loadedType,
@@ -342,8 +348,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             }
 
             if (isPotentiallyUnsafeChart(loadedType)) {
-                processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
-                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+                const parseHtml = await getParseHtmlFn();
+                processHtmlFields(result.data, {allowHtml: enableJsAndHtml, parseHtml});
+                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml, parseHtml});
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});

@@ -7,6 +7,7 @@ import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHist
 
 import type {CreateJDPOptions} from '../utils/jdp';
 import {createJDP} from '../utils/jdp';
+import type {Delta} from 'jsondiffpatch';
 
 export const INIT_EDIT_HISTORY_UNIT = Symbol('editHistory/INIT_EDIT_HISTORY_UNIT');
 export const RESET_EDIT_HISTORY_UNIT = Symbol('editHistory/RESET_EDIT_HISTORY_UNIT');
@@ -19,18 +20,21 @@ interface AddEditHistoryPointAction {
     unitId: string;
     diff: Diff;
     state: unknown;
+    stacked?: boolean;
 }
 
 function _addEditHistoryPoint({
     unitId,
     diff,
     state,
+    stacked,
 }: Omit<AddEditHistoryPointAction, 'type'>): AddEditHistoryPointAction {
     return {
         type: ADD_EDIT_HISTORY_POINT,
         unitId,
         diff,
         state,
+        stacked,
     };
 }
 
@@ -104,7 +108,13 @@ function _setEditHistoryCurrentState({
     };
 }
 
-export function addEditHistoryPoint({unitId, newState}: {unitId: string; newState: unknown}) {
+type AddEditHistoryPointArgs = {
+    unitId: string;
+    newState: unknown;
+    stacked?: boolean;
+};
+
+export function addEditHistoryPoint({unitId, newState, stacked}: AddEditHistoryPointArgs) {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
         const {
@@ -127,7 +137,7 @@ export function addEditHistoryPoint({unitId, newState}: {unitId: string; newStat
                 diff = jdp.diff(oldState, newState);
             }
 
-            dispatch(_addEditHistoryPoint({unitId, diff, state: newState}));
+            dispatch(_addEditHistoryPoint({unitId, diff, state: newState, stacked}));
         } catch (error) {
             console.warn(error);
         }
@@ -163,9 +173,15 @@ export function goBack({unitId}: {unitId: string}) {
         }
 
         const jdp = createJDP(unit.options);
+        let targetState: unknown;
 
-        // Unapply last diff
-        const targetState = jdp.unpatch(pointState, targetDiff);
+        if (Array.isArray(targetDiff)) {
+            ([...targetDiff] as Delta[]).reverse().forEach((diff) => {
+                targetState = jdp.unpatch(pointState, diff);
+            });
+        } else {
+            targetState = jdp.unpatch(pointState, targetDiff);
+        }
 
         batch(() => {
             dispatch(
@@ -202,9 +218,15 @@ export function goForward({unitId}: {unitId: string}) {
         }
 
         const jdp = createJDP(unit.options);
+        let targetState: unknown;
 
-        // Apply next diff
-        const targetState = jdp.patch(pointState, targetDiff);
+        if (Array.isArray(targetDiff)) {
+            ([...targetDiff] as Delta[]).forEach((diff) => {
+                targetState = jdp.patch(pointState, diff);
+            });
+        } else {
+            targetState = jdp.patch(pointState, targetDiff);
+        }
 
         batch(() => {
             dispatch(

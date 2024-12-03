@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.TableSize,
+    name: Feature.ChartActions,
     state: {
-        development: true,
+        development: false,
         production: false,
     },
 });

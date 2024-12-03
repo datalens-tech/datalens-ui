@@ -14,7 +14,6 @@ export enum Feature {
     EnableAutocreateDataset = 'EnableAutocreateDataset',
     ShowCreateEntryWithMenu = 'ShowCreateEntryWithMenu',
     RevisionsListNoLimit = 'RevisionsListNoLimit',
-    UseNavigation = 'UseNavigation',
     AuthUpdateWithTimeout = 'AuthUpdateWithTimeout',
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
@@ -72,14 +71,16 @@ export enum Feature {
     EnableBIConnectorIcons = 'EnableBIConnectorIcons',
     /** Enable undo/redo buttons & hotkeys in ql */
     EnableEditHistoryQL = 'EnableEditHistoryQL',
+    /** Enable undo/redo buttons & hotkeys in datasets */
+    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Depends on US feature UseMovePermAction.
      * It checks admin permission for move entries instead of edit permission.
      */
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
-    /** Setting to control the density of the table - font size and cell margins */
-    TableSize = 'TableSize',
+    /** Additional chart config for making requests by widget events */
+    ChartActions = 'ChartActions',
 }
 
 export type FeatureConfig = Record<string, boolean>;

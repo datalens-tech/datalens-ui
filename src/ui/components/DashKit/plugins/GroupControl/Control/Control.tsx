@@ -99,6 +99,7 @@ type ControlProps = {
     }) => void;
     silentLoading: boolean;
     getDistincts?: ControlSettings['getDistincts'];
+    requestHeaders?: Record<string, string>;
     onChange: ({
         params,
         callChangeByClick,
@@ -121,6 +122,7 @@ export const Control = ({
     silentLoading,
     onStatusChanged,
     getDistincts,
+    requestHeaders,
     onChange,
     needReload,
     workbookId,
@@ -224,6 +226,7 @@ export const Control = ({
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
+                headers: requestHeaders,
             };
 
             cancelCurrentRunRequest();

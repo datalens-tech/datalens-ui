@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.UseNavigation,
+    name: Feature.EnableEditHistoryDatasets,
     state: {
-        development: false,
+        development: true,
         production: false,
     },
 });

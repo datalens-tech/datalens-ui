@@ -896,16 +896,25 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     const handleRetry = React.useCallback(
         (data?: OnChangeData['data']) => {
             if (data) {
-                handleChange(
-                    {type: 'PARAMS_CHANGED', data} as OnChangeData,
-                    {forceUpdate: true},
-                    false,
-                );
+                if ('params' in data) {
+                    handleChange({type: 'PARAMS_CHANGED', data}, {forceUpdate: true}, false);
+                }
             } else {
                 loadChartData();
             }
         },
         [loadChartData, handleChange],
+    );
+
+    const runAction = React.useCallback(
+        (params: StringParams) => {
+            return dataProvider.runAction({
+                props: {...initialData, params},
+                requestId,
+                ...(dataProviderContextGetter ? {contextHeaders: dataProviderContextGetter()} : {}),
+            });
+        },
+        [dataProvider, initialData, requestId, dataProviderContextGetter],
     );
 
     return {
@@ -931,5 +940,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
+        runAction,
     };
 };

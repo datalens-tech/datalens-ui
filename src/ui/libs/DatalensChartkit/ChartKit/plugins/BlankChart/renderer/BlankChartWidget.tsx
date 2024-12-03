@@ -39,7 +39,7 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
         if (dimensions && originalData?.render) {
             const content = originalData.render({...dimensions});
             if (contentRef.current) {
-                contentRef.current.innerHTML = content ?? '';
+                contentRef.current.innerHTML = String(content ?? '');
 
                 const widgetRendering = Performance.getDuration(generatedId);
                 if (onLoad && widgetRendering) {

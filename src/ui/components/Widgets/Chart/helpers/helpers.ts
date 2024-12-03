@@ -482,10 +482,10 @@ export const updateImmediateLayout = ({
 
 export const isAllParamsEmpty = (params?: StringParams | null) => {
     const res = Object.values(params || {}).every((item) => {
-        if (typeof item === 'string') {
-            return isEmpty(item.trim());
+        if (Array.isArray(item)) {
+            return isEmpty(item.filter((val) => !isEmpty(String(val).trim())));
         } else {
-            return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+            return isEmpty(String(item).trim());
         }
     });
     return Boolean(res);

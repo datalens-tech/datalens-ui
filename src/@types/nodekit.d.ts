@@ -1,6 +1,9 @@
 import type {Link, Meta} from '@gravity-ui/app-layout';
 import type {Request, Response} from '@gravity-ui/expresskit';
 
+import type {RedisConfig} from '../server/components/cache-client';
+import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
+import type {AppEnvironment} from '../shared';
 import type {FeaturesConfig} from '../src/components/features/types';
 
 export interface SharedAppConfig {
@@ -21,7 +24,7 @@ export interface SharedAppConfig {
     serviceName: string;
     // CHARTS ENGINE -- START
     usEndpoint: string;
-    getSourcesByEnv: (appEnv: string) => Record<string, SourceConfig>;
+    getSourcesByEnv: (appEnv: AppEnvironment) => Record<string, SourceConfig>;
     sources: Record<string, SourceConfig>;
     appMode?: string;
 
@@ -42,13 +45,6 @@ export interface SharedAppConfig {
 
     useIPV6?: boolean;
     workers?: number;
-
-    errorBooster?: {
-        server?: {
-            enabled?: boolean;
-            project?: string;
-        };
-    };
 
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
@@ -87,6 +83,11 @@ export interface SharedAppConfig {
 
     serviceClientId?: string;
     serviceClientSecret?: string;
+
+    chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
+    redis: RedisConfig | null;
+    apiPrefix: string;
+    preloadList?: string[];
 }
 
 export interface SharedAppDynamicConfig {

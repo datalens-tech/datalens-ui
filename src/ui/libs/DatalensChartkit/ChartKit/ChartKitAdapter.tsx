@@ -33,6 +33,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
         renderPluginLoader,
         paneSplitOrientation,
         widgetDashState,
+        backgroundColor,
     } = props;
 
     const chartkitType = React.useMemo(() => {
@@ -72,6 +73,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
             renderPluginLoader,
             paneSplitOrientation,
             widgetDashState,
+            backgroundColor,
             ...additionalProps,
         } as ChartKitProps<typeof chartkitType>;
     }, [
@@ -121,6 +123,7 @@ const ChartkitWidget = React.forwardRef<ChartKit, ChartkitWidgetProps>((props, r
             onChange={onChange}
             paneSplitOrientation={paneSplitOrientation}
             widgetDashState={widgetDashState}
+            backgroundColor={backgroundColor}
         />
     );
 });

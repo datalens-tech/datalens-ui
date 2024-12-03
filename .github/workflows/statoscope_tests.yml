@@ -18,7 +18,7 @@ jobs:
       - name: Build
         run: npm run build:analyze && cp ./dist/public/build/stats.json ./input.json
       - name: Download reference stats
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: statoscope_upload_main_stats.yml
           workflow_conclusion: success

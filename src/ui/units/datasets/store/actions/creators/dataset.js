@@ -1,10 +1,16 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import {batch} from 'react-redux';
 import {TIMEOUT_65_SEC} from 'shared';
+import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
+import {
+    ComponentErrorType,
+    DATASETS_EDIT_HISTORY_UNIT_ID,
+    SUBSELECT_SOURCE_TYPES,
+} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils from '../../../helpers/utils';
@@ -13,15 +19,16 @@ import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
     addAvatarPrototypes,
+    addEditHistoryPointDs,
     clearDatasetPreview,
     clearToasters,
     closePreview,
-    disableSaveDataset,
     fetchPreviewDataset,
     queuePreviewToOpen,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
+    toggleSaveDataset,
     toggleSourcesLoader,
     validateDataset,
 } from './datasetTyped';
@@ -357,7 +364,7 @@ export function saveDataset({
                 });
             }
 
-            dispatch(disableSaveDataset());
+            dispatch(toggleSaveDataset({enable: false}));
 
             if (isAuto) {
                 history.replace(`/datasets/${datasetId}`);
@@ -365,6 +372,10 @@ export function saveDataset({
             } else if (isCreationProcess) {
                 history.push(`/datasets/${datasetId}`);
             }
+
+            dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
+            // Set initial history point, this is necessary so that the first change after saving can be reversed
+            dispatch(addEditHistoryPointDs());
         } catch (error) {
             logger.logError('dataset: saveDataset failed', error);
             dispatch({
@@ -485,7 +496,11 @@ export function getSources(connectionId, workbookId) {
                 dispatch(setSourcesLoadingError(error));
             }
         } finally {
-            dispatch(toggleSourcesLoader(false));
+            batch(() => {
+                dispatch(toggleSourcesLoader(false));
+                // Set initial history point
+                dispatch(addEditHistoryPointDs());
+            });
         }
 
         return sources;

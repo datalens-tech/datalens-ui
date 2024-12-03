@@ -135,3 +135,27 @@ export function getThemeStyle(value: unknown, dataThemeId: string) {
 
     return `<style>${themes.join('')}</style>`;
 }
+
+export async function getParseHtmlFn() {
+    const htmlparser2 = await import(/* webpackChunkName: "htmlparser2" */ 'htmlparser2');
+
+    return function (value: string) {
+        const root = htmlparser2.parseDocument(value);
+        return root.children.map(mapElementToJson);
+    };
+}
+
+function mapElementToJson(element: any) {
+    if (element.type === 'tag') {
+        const {style = '', ...attributes} = element.attribs;
+
+        return {
+            tag: element.name,
+            content: element.children.map(mapElementToJson),
+            attributes,
+            style: Object.fromEntries(style.split(';').map((item: string) => item.split(':'))),
+        };
+    }
+
+    return element.data ?? '';
+}

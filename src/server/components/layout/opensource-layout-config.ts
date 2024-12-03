@@ -71,6 +71,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         isZitadelEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
+        apiPrefix: config.apiPrefix,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

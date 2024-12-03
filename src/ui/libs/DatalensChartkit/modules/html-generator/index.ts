@@ -1,5 +1,3 @@
-import type {HtmlElement} from '@litejs/dom';
-import {document as sandboxDocument} from '@litejs/dom';
 import escape from 'lodash/escape';
 
 import type {ChartKitHtmlItem} from '../../../../../shared';
@@ -24,13 +22,13 @@ type GenerateHtmlOptions = {
     tooltipId?: string;
 };
 
-function jsonToHtml(
-    item?: ChartKitHtmlItem | string | (ChartKitHtmlItem | string)[],
+export function generateHtml(
+    item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string,
     options: GenerateHtmlOptions = {},
 ): string {
     if (item) {
         if (Array.isArray(item)) {
-            return item.map((it) => jsonToHtml(it, options)).join('');
+            return item.map((it) => generateHtml(it, options)).join('');
         }
 
         if (typeof item === 'string') {
@@ -103,62 +101,10 @@ function jsonToHtml(
             themeStyle = getThemeStyle(theme, dataThemeId);
         }
 
-        elem.innerHTML = `${themeStyle}${jsonToHtml(content, nextOptions)}`;
+        elem.innerHTML = `${themeStyle}${generateHtml(content, nextOptions)}`;
 
         return elem.outerHTML;
     }
 
     return '';
-}
-
-function nodeToJson(node: HtmlElement) {
-    if (!node?.tagName) {
-        return node.textContent ?? '';
-    }
-
-    const attrs: string[] | undefined = node.attributes?.names();
-    const style = node?.getAttribute('style');
-
-    let content: any = Array.from(node.childNodes).map((childNode) =>
-        nodeToJson(childNode as HtmlElement),
-    );
-    if (content?.length === 1) {
-        content = content[0];
-    }
-
-    const result: ChartKitHtmlItem = {
-        tag: node.tagName.toLowerCase(),
-        content,
-        attributes: attrs?.reduce((acc, attr) => {
-            return {
-                ...acc,
-                [attr]: node?.getAttribute(attr),
-            };
-        }, {}),
-        style: style
-            ? Object.fromEntries(style?.split(';').map((rule) => rule.split(':')))
-            : undefined,
-    };
-    return result;
-}
-
-function convertHtmlToJson(value: string) {
-    const fragment = sandboxDocument.createElement('div');
-    fragment.innerHTML = value;
-    const elements = Array.from(fragment.childNodes) as HtmlElement[];
-
-    if (elements.length > 1) {
-        return elements.map(nodeToJson);
-    }
-
-    return elements.length ? nodeToJson(elements[0]) : '';
-}
-
-export function generateHtml(item?: ChartKitHtmlItem | ChartKitHtmlItem[] | string): string {
-    if (typeof item === 'string') {
-        const json = convertHtmlToJson(item);
-        return jsonToHtml(json);
-    }
-
-    return jsonToHtml(item);
 }

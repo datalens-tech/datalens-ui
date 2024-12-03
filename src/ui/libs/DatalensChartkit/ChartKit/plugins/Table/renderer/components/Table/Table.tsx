@@ -44,10 +44,17 @@ type Props = {
     dimensions: WidgetDimensions;
     onChangeParams?: (params: StringParams) => void;
     onReady?: () => void;
+    backgroundColor?: string;
 };
 
 export const Table = React.memo<Props>((props: Props) => {
-    const {dimensions: widgetDimensions, widgetData, onChangeParams, onReady} = props;
+    const {
+        dimensions: widgetDimensions,
+        widgetData,
+        onChangeParams,
+        onReady,
+        backgroundColor,
+    } = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
     const isPaginationEnabled = Boolean(config?.paginator?.enabled);
@@ -143,6 +150,7 @@ export const Table = React.memo<Props>((props: Props) => {
         getCellAdditionStyles,
         cellMinSizes,
         sortingState: initialSortingState,
+        backgroundColor,
     });
 
     React.useEffect(() => {

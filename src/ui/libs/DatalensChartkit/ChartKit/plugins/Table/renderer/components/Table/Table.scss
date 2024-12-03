@@ -55,7 +55,6 @@
     border-collapse: collapse;
     min-width: 100%;
     width: max-content;
-    background: var(--dl-table-body-bg-color);
 
     &__table-wrapper {
         width: 100%;
@@ -138,10 +137,6 @@
     }
 
     &__header {
-        background: var(--dl-table-header-bg-color);
-        position: sticky;
-        top: 0;
-        z-index: 1;
         border-left: 1px solid var(--dl-table-border-color);
 
         /* stylelint-disable */
@@ -151,6 +146,11 @@
         /* stylelint-enable */
 
         &_sticky {
+            top: 0;
+            z-index: 1;
+            position: sticky;
+            background: var(--dl-table-header-bg-color);
+
             th {
                 @include stickyCellBg();
             }
@@ -235,7 +235,6 @@
     &__body &__td_pinned,
     &__footer &__td_pinned {
         left: 0;
-        background: var(--dl-table-body-bg-color);
         position: sticky;
         z-index: 1;
 

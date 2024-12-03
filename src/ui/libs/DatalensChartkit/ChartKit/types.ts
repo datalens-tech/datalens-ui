@@ -39,6 +39,7 @@ export type ChartKitAdapterProps = {
     noControls?: boolean;
     onRetry?: () => void;
     rootNodeRef: React.RefObject<HTMLDivElement | null>;
+    backgroundColor?: string;
 } & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
 
 declare module '@gravity-ui/chartkit' {
