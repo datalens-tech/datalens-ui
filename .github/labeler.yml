@@ -10,7 +10,7 @@ component/general:
           - package.json
           - package-lock.json
 
-type/chore:
+type/deps:
   - changed-files:
       - any-glob-to-any-file:
           - package.json
