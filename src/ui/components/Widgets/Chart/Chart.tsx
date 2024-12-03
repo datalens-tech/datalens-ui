@@ -81,6 +81,8 @@ export const Chart = (props: ChartNoWidgetProps) => {
         onBeforeChartLoad,
     } = props;
 
+    //const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
     const prevInnerParams = usePrevious(innerParamsRef?.current);
 
@@ -288,6 +290,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                needRenderContentControls={true}
             />
         </div>
     );
