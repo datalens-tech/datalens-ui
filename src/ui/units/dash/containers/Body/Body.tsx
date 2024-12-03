@@ -798,7 +798,11 @@ class Body extends React.PureComponent<BodyProps> {
                     {
                         allWidgetsControls: true,
                         title: i18n('dash.main.view', 'button_links'),
-                        excludeWidgetsTypes: ['title', 'text'],
+                        excludeWidgetsTypes: [
+                            DashTabItemType.Text,
+                            DashTabItemType.Title,
+                            DashTabItemType.Image,
+                        ],
                         icon: iconRelations,
                         qa: ControlQA.controlLinks,
                         handler: (widget: DashTabItem) => {
