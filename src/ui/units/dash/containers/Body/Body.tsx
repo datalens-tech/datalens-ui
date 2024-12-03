@@ -88,6 +88,7 @@ import {
     setErrorMode,
     setHashState,
     setStateHashId,
+    setWidgetCurrentTab,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {
@@ -797,7 +798,11 @@ class Body extends React.PureComponent<BodyProps> {
                     {
                         allWidgetsControls: true,
                         title: i18n('dash.main.view', 'button_links'),
-                        excludeWidgetsTypes: ['title', 'text'],
+                        excludeWidgetsTypes: [
+                            DashTabItemType.Text,
+                            DashTabItemType.Title,
+                            DashTabItemType.Image,
+                        ],
                         icon: iconRelations,
                         qa: ControlQA.controlLinks,
                         handler: (widget: DashTabItem) => {
@@ -974,6 +979,7 @@ class Body extends React.PureComponent<BodyProps> {
                 onItemMountChange={this.handleItemMountChange}
                 onItemRender={this.handleItemRender}
                 hideErrorDetails={this.props.hideErrorDetails}
+                setWidgetCurrentTab={this.props.setWidgetCurrentTab}
                 dataProviderContextGetter={this.dataProviderContextGetter}
             />
         );
@@ -1156,6 +1162,7 @@ const mapDispatchToProps = {
     setNewRelations,
     openDialog,
     showToast,
+    setWidgetCurrentTab,
 };
 
 export default compose<BodyProps, OwnProps>(
