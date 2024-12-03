@@ -349,8 +349,17 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if (isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml) {
                 const parseHtml = await getParseHtmlFn();
-                processHtmlFields(result.data, {allowHtml: enableJsAndHtml, parseHtml});
-                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml, parseHtml});
+                const ignoreInvalidValues = result.isNewWizard || result.isQL;
+                processHtmlFields(result.data, {
+                    allowHtml: enableJsAndHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
+                processHtmlFields(result.libraryConfig, {
+                    allowHtml: enableJsAndHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});
