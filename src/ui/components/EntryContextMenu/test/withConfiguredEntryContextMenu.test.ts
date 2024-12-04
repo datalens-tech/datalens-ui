@@ -143,7 +143,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: 'rev',
             },
         },
-        result: ['revisions', 'copy-link', 'show-related-entities'],
+        result: ['copy-link', 'show-related-entities'],
     },
     {
         testId: 4,
@@ -166,7 +166,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'copy-link', 'show-related-entities'],
+        result: ['copy-link', 'show-related-entities'],
     },
     {
         testId: 5,
@@ -414,7 +414,7 @@ const testDataContextMenu: Array<TestData> = [
                 revId: null,
             },
         },
-        result: ['revisions', 'copy', 'copy-link', 'show-related-entities'],
+        result: ['copy', 'copy-link', 'show-related-entities'],
     },
     {
         testId: 15,
