@@ -56,7 +56,7 @@ export default async (req: Request, res: Response) => {
 
                 return res.redirect(302, wizardUrl);
             } else if (ENTRY_TYPES.editor.includes(type)) {
-                const editorUrl = reqUrl.replace('navigate', 'ql');
+                const editorUrl = reqUrl.replace('navigate', 'editor');
 
                 req.ctx.log('Navigate to editor', {editorUrl});
 

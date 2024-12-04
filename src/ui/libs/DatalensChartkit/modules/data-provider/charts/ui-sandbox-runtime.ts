@@ -13,6 +13,7 @@ type UiSandboxRuntimeProps = {
     fnContext: unknown;
     globalApi: object;
     libs: string;
+    name?: string;
 };
 
 export class UiSandboxRuntime {
@@ -31,15 +32,14 @@ export class UiSandboxRuntime {
     }
 
     callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi, libs} = props;
+        const {fn, fnContext, fnArgs, globalApi, libs, name} = props;
 
         this.defineVmArguments(fnArgs);
         this.defineVmContext(fnContext);
         this.defineVmApi(globalApi);
-        const result = this.vm.evalCode(
-            `
-            ${libs}
-            (${fn}).call(JSON.parse(context), ...(args.length
+        const code = `${libs}
+            const __fn = ${fn};
+            __fn.call(JSON.parse(context), ...(args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
@@ -48,11 +48,22 @@ export class UiSandboxRuntime {
                     }
                     return arg;
                 })
-                : []))`,
-        );
+                : []))`;
+        const result = this.vm.evalCode(code, 'fn');
+        const lines = code?.split('\n') ?? [];
+        const startPoint = lines.findIndex((row) => row.trim().startsWith('const __fn')) + 1;
 
         if (result.error) {
             const errorMsg = this.vm.dump(result.error);
+            errorMsg.stack = errorMsg.stack
+                .replace('__fn', name)
+                .split('\n')
+                .map((s: string) =>
+                    s.replace(/\d+(?=\D*$)/, (val) => String(parseInt(val) - startPoint)),
+                )
+                .filter((s: string) => Boolean(s.trim()))
+                .slice(0, -2)
+                .join('\n');
             result.error.dispose();
             throw errorMsg;
         }
