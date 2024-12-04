@@ -75,7 +75,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
 
     // temp terms bug fix until the editor supports transform plugin
     const preparedText = text.replace(
-        new RegExp(/^\s*?\\\[\\\*(\w+)\\\]:(.*?\S+?.*?)$/gm),
+        new RegExp(/^\s*?\\\[\\\*(\w+)\\\]:(.*?\S+?.*?)$/gmu),
         '[*$1]:$2',
     );
 
