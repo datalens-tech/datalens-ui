@@ -4,7 +4,8 @@ import type {CancellablePromise} from '@gravity-ui/sdk';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 import {Waypoint} from 'react-waypoint';
 import {DL} from 'ui/constants/common';
 
@@ -19,6 +20,8 @@ import type {StructureItemsFilters} from '../../../../components/CollectionFilte
 import {CollectionPageViewMode} from '../../../../components/CollectionFilters';
 import {PlaceholderIllustration} from '../../../../components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from '../../../../components/SmartLoader/SmartLoader';
+import {registry} from '../../../../registry';
+import type {AppDispatch} from '../../../../store';
 import {
     selectStructureItemsError,
     selectStructureItemsIsLoading,
@@ -29,7 +32,8 @@ import {CollectionBatchPanel} from '../CollectionBatchPanel/CollectionBatchPanel
 import {CollectionContentGrid} from '../CollectionContentGrid';
 import {CollectionContentTable} from '../CollectionContentTable';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
-import {DEFAULT_FILTERS, PAGE_SIZE} from '../constants';
+import {DEFAULT_FILTERS, EmptyPlaceholderActionId, PAGE_SIZE} from '../constants';
+import type {EmptyPlaceholderAction} from '../types';
 
 import {useActions} from './hooks';
 
@@ -54,7 +58,7 @@ interface Props {
     ) => CancellablePromise<GetStructureItemsResponse | null>;
     fetchStructureItems: () => void;
     onCloseMoveDialog: (structureChanged: boolean) => void;
-    onCreateWorkbookClick: () => void;
+    onCreateWorkbookWithConnectionClick: () => void;
     onClearFiltersClick: () => void;
     onMoveSelectedEntitiesClick: () => void;
     onDeleteSelectedEntitiesClick: () => void;
@@ -77,7 +81,7 @@ export const CollectionContent: React.FC<Props> = ({
     getStructureItemsRecursively,
     fetchStructureItems,
     onCloseMoveDialog,
-    onCreateWorkbookClick,
+    onCreateWorkbookWithConnectionClick,
     onClearFiltersClick,
     onMoveSelectedEntitiesClick,
     onDeleteSelectedEntitiesClick,
@@ -85,6 +89,9 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateAllCheckboxesClick,
     resetSelected,
 }) => {
+    const dispatch: AppDispatch = useDispatch();
+    const history = useHistory();
+
     const isStructureItemsLoading = useSelector(selectStructureItemsIsLoading);
     const structureItemsError = useSelector(selectStructureItemsError);
     const nextPageToken = useSelector(selectStructureItemsNextPageToken);
@@ -153,21 +160,53 @@ export const CollectionContent: React.FC<Props> = ({
 
     if (isEmptyItems) {
         if (isDefaultFilters || DL.IS_MOBILE) {
+            const actions: EmptyPlaceholderAction[] = [];
+
+            if (canCreateWorkbook) {
+                actions.push({
+                    id: EmptyPlaceholderActionId.ConnectYourData,
+                    title: i18n('action_connect-your-data'),
+                    view: 'action',
+                    handler: onCreateWorkbookWithConnectionClick,
+                });
+            }
+
+            const {customizeEmptyPlaceholder} = registry.collections.functions.getAll();
+
+            const {
+                title: emptyPlaceholderTitle,
+                description: emptyPlaceholderDescription,
+                actions: emptyPlaceholderActions,
+            } = customizeEmptyPlaceholder({
+                dispatch,
+                history,
+                curCollectionId,
+                canCreateWorkbook,
+                title: i18n('label_empty-list'),
+                description: canCreateWorkbook ? i18n('section_create-first') : undefined,
+                actions,
+            });
+
             return (
                 <AnimateBlock className={b('empty-state')}>
                     <PlaceholderIllustration
                         name="template"
-                        title={i18n('label_empty-list')}
-                        description={canCreateWorkbook ? i18n('section_create-first') : undefined}
+                        title={emptyPlaceholderTitle}
+                        description={emptyPlaceholderDescription}
                         renderAction={() => {
-                            if (canCreateWorkbook) {
+                            if (emptyPlaceholderActions.length > 0) {
                                 return (
-                                    <Button
-                                        className={b('placeholder-controls')}
-                                        onClick={onCreateWorkbookClick}
-                                    >
-                                        {i18n('action_create-workbook')}
-                                    </Button>
+                                    <div className={b('placeholder-controls')}>
+                                        {emptyPlaceholderActions.map((action) => (
+                                            <Button
+                                                key={action.id}
+                                                view={action.view}
+                                                onClick={action.handler}
+                                            >
+                                                {action.title}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 );
                             }
                             return null;

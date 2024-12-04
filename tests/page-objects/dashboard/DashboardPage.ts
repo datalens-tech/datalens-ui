@@ -57,7 +57,7 @@ import Description from './Description';
 import TableOfContent from './TableOfContent';
 import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
-import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
+import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
@@ -298,13 +298,13 @@ class DashboardPage extends BasePage {
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
-        await this.page.locator(slct(WorkbookPage.MenuItemDuplicate)).click();
+        await this.page.locator(slct(WorkbookPageQa.MenuItemDuplicate)).click();
 
         // waiting for the dialog to open, specify the name, save
         await workbookPO.dialogCreateEntry.createEntryWithName(newDashName);
 
         await this.page
-            .locator(`${slct(WorkbookPage.ListItem)}:has-text('${newDashName}')`)
+            .locator(`${slct(WorkbookPageQa.ListItem)}:has-text('${newDashName}')`)
             .click();
     }
 

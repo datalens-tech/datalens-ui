@@ -460,7 +460,7 @@ export const copyTemplate = ({
 }: {
     templateName: string;
     workbookId: string;
-    productId: string;
+    productId?: string;
     connectionId?: string;
 }) => {
     return (dispatch: CollectionsStructureDispatch) => {

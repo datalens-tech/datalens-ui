@@ -6,7 +6,7 @@ import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import type {ConnectorType} from 'shared/constants/connections';
-import {WorkbookPage} from 'shared/constants/qa/workbooks';
+import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
@@ -58,7 +58,7 @@ export const EntryActions = ({
                   {
                       action: onDuplicateEntry,
                       text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
-                      qa: WorkbookPage.MenuItemDuplicate,
+                      qa: WorkbookPageQa.MenuItemDuplicate,
                   },
               ]
             : []),
@@ -100,7 +100,7 @@ export const EntryActions = ({
         <DropdownMenu
             size="m"
             items={items}
-            defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
+            defaultSwitcherProps={{qa: WorkbookPageQa.MenuDropDownBtn}}
         />
     );
 };
