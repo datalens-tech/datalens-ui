@@ -30,6 +30,7 @@ import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
+import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -41,7 +42,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, Feature} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -481,8 +482,11 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         const items: RadioButtonOption[] = [
             {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
             {value: MARKUP_TYPE.markdown, content: i18n('wizard', 'label_markdown')},
-            {value: MARKUP_TYPE.html, content: i18n('wizard', 'label_html')},
         ];
+
+        if (Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+            items.push({value: MARKUP_TYPE.html, content: i18n('wizard', 'label_html')});
+        }
 
         return (
             <React.Fragment>

@@ -18,6 +18,7 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
+    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -347,7 +348,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            if (isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml) {
+            const shouldProcessHtmlFields =
+                isPotentiallyUnsafeChart(loadedType) ||
+                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+            if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
                 const ignoreInvalidValues = result.isNewWizard || result.isQL;
                 processHtmlFields(result.data, {
