@@ -1,3 +1,5 @@
+@import '../mixins.scss';
+
 .dashkit-plugin-container {
     &__wrapper {
         height: 100%;
@@ -10,16 +12,27 @@
             background-color: var(--g-color-base-float);
         }
 
+        .dashkit-grid-item__item_editMode &_text,
+        .dashkit-grid-item__item_editMode &_title {
+            background-color: var(--g-color-base-float);
+        }
+
         &_title {
-            overflow: hidden;
+            scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
+            overflow: clip;
             display: flex;
             align-items: center;
             max-height: 100%;
         }
 
-        .dashkit-grid-item__item_editMode &_text,
-        .dashkit-grid-item__item_editMode &_title {
-            background-color: var(--g-color-base-float);
+        &_title:hover {
+            .dashkit-plugin-title-container__anchor {
+                opacity: 1;
+            }
+
+            .dashkit-plugin-title-container_with-absolute-anchor::after {
+                @include with-fade-effect;
+            }
         }
     }
 }

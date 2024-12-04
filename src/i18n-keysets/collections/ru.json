@@ -5,6 +5,7 @@
   "action_add-learning-materials-workbook": "Добавить учебные материалы",
   "action_cancel": "Отменить",
   "action_clear-filters": "Очистить фильтры",
+  "action_connect-your-data": "Подключить свои данные",
   "action_copy": "Копировать",
   "action_create": "Создать",
   "action_create-collection": "Коллекцию",
@@ -24,6 +25,6 @@
   "label_not-found": "Ничего не найдено",
   "label_root-title": "Коллекции и воркбуки",
   "label_title": "Название",
-  "section_create-first": "Начните выстраивать иерархию ресурсов, например, с воркбука",
+  "section_create-first": "Вы можете создать воркбук и подключить свои данные",
   "section_incorrect-filters": "Попробуйте указать другие значения в фильтрах"
 }

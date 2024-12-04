@@ -9,7 +9,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {DEFAULT_DATE_FORMAT} from 'shared';
-import {WorkbookPage} from 'shared/constants/qa/workbooks';
+import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import {registry} from 'ui/registry/index';
 import type {AppDispatch} from 'ui/store';
@@ -81,7 +81,7 @@ const Row: React.FC<RowProps> = ({
                 to={url}
                 className={b({mobile: true})}
                 style={mobileRowStyle}
-                data-qa={WorkbookPage.ListItem}
+                data-qa={WorkbookPageQa.ListItem}
             >
                 <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                     <div className={b('title-col')}>
@@ -101,7 +101,7 @@ const Row: React.FC<RowProps> = ({
     }
 
     return (
-        <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPage.ListItem}>
+        <Link to={url} className={b()} style={defaultRowStyle} data-qa={WorkbookPageQa.ListItem}>
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} width={24} height={24} />
