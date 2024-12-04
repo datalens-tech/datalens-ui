@@ -59,6 +59,7 @@ export type DialogRelationsProps = {
     dashKitRef: React.RefObject<DashKit>;
     dashTabAliases: DashTabAliases | null;
     workbookId: string | null;
+    widgetsCurrentTab: Record<string, string>;
 };
 
 export type OpenDialogRelationsArgs = {
@@ -70,7 +71,15 @@ const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={op
 
 const DialogRelations = (props: DialogRelationsProps) => {
     const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
-    const {dashKitRef, dashTabAliases, workbookId, allWidgets: widgets, onClose, onApply} = props;
+    const {
+        dashKitRef,
+        dashTabAliases,
+        workbookId,
+        widgetsCurrentTab,
+        allWidgets: widgets,
+        onClose,
+        onApply,
+    } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
 
@@ -94,6 +103,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             dialogAliases: aliases,
             workbookId,
             itemId,
+            widgetsCurrentTab,
         });
 
     const widgetsIconMap = React.useMemo(() => {

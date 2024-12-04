@@ -4,6 +4,7 @@ import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput/DebouncedInput';
 import {I18n} from 'i18n';
+import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
 
 import type {WorkbookEntriesFilters} from '../../types';
@@ -94,7 +95,7 @@ export const WorkbookFilters = ({className, filters, onChange}: Props) => {
 
     return (
         <div className={b(null, className)}>
-            <div className={b('controls')}>
+            <div className={b('controls')} data-qa={WorkbookPageQa.Filters}>
                 <DebouncedInput
                     className={b('filter-string')}
                     value={filterString}
