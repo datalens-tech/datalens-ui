@@ -817,7 +817,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         },
         {extraParams = {}, urlPostfix = '', idPrefix = ''},
     ) {
-        let url = urlPostfix;
+        let url = '/' + urlPostfix;
 
         let id = propsData.id;
         if (!id && loadedData && 'entryId' in loadedData) {
