@@ -17,4 +17,10 @@
     &__checkbox {
         margin-block-start: var(--g-spacing-2);
     }
+
+    &__row {
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
 }

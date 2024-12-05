@@ -2,8 +2,10 @@
 
 .widget-palette-background {
     $class: &;
+    display: block;
     position: relative;
     line-height: 0;
+    width: fit-content;
 
     &__hint {
         @include text-body-1();
@@ -31,12 +33,6 @@
                 var(--g-color-base-background) 0 50%
             );
             outline: 1px solid var(--g-color-base-generic-medium);
-            color: var(--g-color-line-generic-active);
-            font-size: 10px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         &_widget-bg {
