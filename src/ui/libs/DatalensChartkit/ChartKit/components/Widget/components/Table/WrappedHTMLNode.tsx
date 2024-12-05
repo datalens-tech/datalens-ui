@@ -16,7 +16,7 @@ export function isWrappedHTML(value: unknown): value is WrappedHTML {
         return false;
     }
 
-    return Object.keys(value).length === 1 && WRAPPED_HTML_KEY in value;
+    return WRAPPED_HTML_KEY in value;
 }
 
 export function WrappedHTMLNode<T extends React.ElementType = 'div'>(props: Props<T>) {
