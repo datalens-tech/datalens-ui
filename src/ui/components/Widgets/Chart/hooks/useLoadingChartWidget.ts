@@ -211,6 +211,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         setLoadedWidgetType(data?.loadedData?.type as string);
     }, []);
 
+    /**
+     * Memoised dataProviderContextGetter with widget id
+     */
+    const requestHeadersGetter = React.useMemo(() => {
+        return dataProviderContextGetter?.bind(this, widgetId);
+    }, [widgetId, dataProviderContextGetter]);
+
     const {
         loadedData,
         isLoading,
@@ -235,7 +242,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
     } = useLoadingChart({
         dataProvider,
-        dataProviderContextGetter,
+        requestHeadersGetter,
         initialData,
         requestId,
         requestCancellationRef,
