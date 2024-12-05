@@ -143,6 +143,7 @@ export type ChartBuilderResult = {
 };
 
 export type ChartBuilder = {
+    type?: 'CHART_EDITOR' | 'WIZARD' | 'CONTROL';
     buildShared: () => Promise<void>;
     buildModules: (args: {
         subrequestHeaders: Record<string, string>;
