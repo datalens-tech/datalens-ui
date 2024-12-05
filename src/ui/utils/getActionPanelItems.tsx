@@ -4,6 +4,7 @@ import type {ActionPanelItem as DashkitActionPanelItem, ItemDropProps} from '@gr
 import {CopyPlus} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import type {DLUserSettings} from 'shared';
 import {DashTabItemType} from 'shared';
 
 import {DIALOG_TYPE} from '../constants/dialogs';
@@ -28,6 +29,8 @@ export const getActionPanelItems = ({
     onPasteItem,
     openDialog,
     filterItem,
+    userSettings,
+    scope,
 }: {
     copiedData: CopiedConfigData | null;
     onPasteItem: (item: CopiedConfigData) => void;
@@ -36,9 +39,11 @@ export const getActionPanelItems = ({
         dragOperationProps?: ItemDropProps | undefined,
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
+    userSettings?: DLUserSettings;
+    scope: string;
 }) => {
     const {getBasicActionPanelItems} = registry.common.functions.getAll();
-    const items = getBasicActionPanelItems();
+    const items = getBasicActionPanelItems({userSettings, scope});
 
     if (copiedData) {
         items.push({
