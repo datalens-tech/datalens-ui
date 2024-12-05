@@ -20,7 +20,7 @@ import {Loader} from '../../../Loader/Loader';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import Paginator from './Paginator/Paginator';
-import {WrappedHTMLNode} from './WrappedHTMLNode';
+import {WrappedHTMLNode, isWrappedHTML} from './WrappedHTMLNode';
 import type {TableProps} from './types';
 import {
     camelCaseCss,
@@ -28,7 +28,6 @@ import {
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
-    isWrappedHTML,
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
