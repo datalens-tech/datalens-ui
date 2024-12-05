@@ -10,13 +10,4 @@
     &__checkbox {
         margin-block-start: var(--g-spacing-2);
     }
-
-    &__background-label {
-        display: inline-block;
-        margin-inline: 19px var(--g-spacing-2);
-
-        &_no-checkbox-compensation {
-            margin-inline-start: 0;
-        }
-    }
 }
