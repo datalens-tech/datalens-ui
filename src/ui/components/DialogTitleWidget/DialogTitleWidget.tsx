@@ -113,6 +113,7 @@ class DialogTitleWidget extends React.PureComponent<
                 />
                 <Dialog.Body className={b()}>
                     <FormRow
+                        className={b('row')}
                         fieldId={INPUT_TITLE_ID}
                         label={i18n('dash.title-dialog.edit', 'label_title')}
                     >
@@ -124,15 +125,18 @@ class DialogTitleWidget extends React.PureComponent<
                                 autoFocus
                                 placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
                                 onUpdate={this.onTextUpdate}
-                                className={b('input', {size: this.state.size})}
                                 qa={DialogDashTitleQA.Input}
                             />
                         </FieldWrapper>
                     </FormRow>
-                    <FormRow label={i18n('dash.title-dialog.edit', 'label_size')}>
+                    <FormRow
+                        className={b('row')}
+                        label={i18n('dash.title-dialog.edit', 'label_size')}
+                    >
                         <RadioButton value={size} options={SIZES} onUpdate={this.onSizeChange} />
                     </FormRow>
                     <FormRow
+                        className={b('row')}
                         label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                     >
                         <PaletteBackground
@@ -140,8 +144,26 @@ class DialogTitleWidget extends React.PureComponent<
                             onSelect={this.handleHasBackgroundSelected}
                         />
                     </FormRow>
+                    {enableAutoheight && (
+                        <FormRow
+                            className={b('row')}
+                            fieldId={INPUT_AUTOHEIGHT_ID}
+                            label={i18n(
+                                'dash.dashkit-plugin-common.view',
+                                'label_autoheight-checkbox',
+                            )}
+                        >
+                            <Checkbox
+                                className={b('checkbox')}
+                                id={INPUT_AUTOHEIGHT_ID}
+                                checked={Boolean(autoHeight)}
+                                onChange={this.handleAutoHeightChanged}
+                            />
+                        </FormRow>
+                    )}
                     {enableShowInTOC && (
                         <FormRow
+                            className={b('row')}
                             fieldId={INPUT_SHOW_IN_TOC_ID}
                             label={i18n('dash.title-dialog.edit', 'field_show-in-toc')}
                         >
@@ -154,22 +176,6 @@ class DialogTitleWidget extends React.PureComponent<
                                         showInTOC: !prevState.showInTOC,
                                     }))
                                 }
-                            />
-                        </FormRow>
-                    )}
-                    {enableAutoheight && (
-                        <FormRow
-                            fieldId={INPUT_AUTOHEIGHT_ID}
-                            label={i18n(
-                                'dash.dashkit-plugin-common.view',
-                                'label_autoheight-checkbox',
-                            )}
-                        >
-                            <Checkbox
-                                className={b('checkbox')}
-                                id={INPUT_AUTOHEIGHT_ID}
-                                checked={Boolean(autoHeight)}
-                                onChange={this.handleAutoHeightChanged}
                             />
                         </FormRow>
                     )}

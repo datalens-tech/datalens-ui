@@ -86,6 +86,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 />
                 <Dialog.Body className={b()}>
                     <FormRow
+                        className={b('row')}
                         fieldId={INPUT_TEXT_ID}
                         label={i18n('dash.text-dialog.edit', 'label_text')}
                     >
@@ -96,8 +97,18 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                             text={text}
                         />
                     </FormRow>
+                    <FormRow
+                        className={b('row')}
+                        label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                    >
+                        <PaletteBackground
+                            color={backgroundColor}
+                            onSelect={this.handleHasBackgroundSelected}
+                        />
+                    </FormRow>
                     {enableAutoheight && (
                         <FormRow
+                            className={b('row')}
                             fieldId={INPUT_AUTOHEIGHT_ID}
                             label={i18n(
                                 'dash.dashkit-plugin-common.view',
@@ -112,14 +123,6 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                             />
                         </FormRow>
                     )}
-                    <FormRow
-                        label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                    >
-                        <PaletteBackground
-                            color={backgroundColor}
-                            onSelect={this.handleHasBackgroundSelected}
-                        />
-                    </FormRow>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonApply={this.onApply}
