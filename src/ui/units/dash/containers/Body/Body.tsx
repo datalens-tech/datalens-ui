@@ -46,6 +46,7 @@ import {
     DashEntryQa,
     DashKitOverlayMenuQa,
     DashTabItemType,
+    EntryScope,
     Feature,
     LOADED_DASH_CLASS,
     SCROLL_TITLE_DEBOUNCE_TIME,
@@ -61,6 +62,7 @@ import {
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {selectUserSettings} from 'ui/store/selectors/user';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -1112,6 +1114,8 @@ class Body extends React.PureComponent<BodyProps> {
                                     onPasteItem: this.props.onPasteItem,
                                     openDialog: this.props.openDialog,
                                     filterItem: (item) => item.id === DashTabItemType.Image,
+                                    userSettings: this.props.userSettings,
+                                    scope: EntryScope.Dash,
                                 })}
                                 className={b('edit-panel', {
                                     'aside-opened': isSidebarOpened,
@@ -1148,6 +1152,7 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     error: selectDashError(state),
     skipReload: selectSkipReload(state),
     isNewRelations: selectIsNewRelations(state),
+    userSettings: selectUserSettings(state),
 });
 
 const mapDispatchToProps = {
