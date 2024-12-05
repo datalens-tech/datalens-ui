@@ -1,36 +1,9 @@
 .dialog-title {
     width: 700px;
 
-    &__size-selector {
-        margin-block-start: var(--g-spacing-4);
-    }
-
-    &__input {
-        &.g-text-input .g-text-input__control {
-            transition: font-size 0.2s ease;
-            font-weight: 500;
-        }
-
-        &_size {
-            &_l.g-text-input .g-text-input__control {
-                font-size: var(--g-text-header-2-font-size);
-                line-height: var(--g-text-header-2-line-height);
-            }
-
-            &_m.g-text-input .g-text-input__control {
-                font-size: var(--g-text-header-1-font-size);
-                line-height: var(--g-text-header-1-line-height);
-            }
-
-            &_s.g-text-input .g-text-input__control {
-                font-size: var(--g-text-body-3-font-size);
-                line-height: var(--g-text-body-3-line-height);
-            }
-
-            &_xs.g-text-input .g-text-input__control {
-                font-size: var(--g-text-body-2-font-size);
-                line-height: var(--g-text-body-2-line-height);
-            }
+    &__row {
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 
