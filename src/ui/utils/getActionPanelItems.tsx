@@ -40,7 +40,7 @@ export const getActionPanelItems = ({
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
     userSettings?: DLUserSettings;
-    scope: string;
+    scope?: string;
 }) => {
     const {getBasicActionPanelItems} = registry.common.functions.getAll();
     const items = getBasicActionPanelItems({userSettings, scope});
