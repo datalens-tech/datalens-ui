@@ -640,6 +640,7 @@ export function getChartEditorTypes(type: string) {
         },
         [EDITOR_TYPE.BLANK_CHART_NODE]: {
             get name() {
+                // @ts-ignore
                 return i18n('label_blank-chart');
             },
             tabs: [
