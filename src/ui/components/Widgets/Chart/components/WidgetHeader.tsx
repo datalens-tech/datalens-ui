@@ -28,7 +28,7 @@ type HeaderProps = {
     isFullscreen: boolean;
     onFullscreenClick: () => void;
     editMode: boolean;
-    hideTabs: boolean;
+    hideTitle?: boolean;
     tabsItems?: Array<TabItem>;
     currentTab?: CurrentTab;
     onSelectTab?: (param: string) => void;
@@ -47,7 +47,7 @@ export const WidgetHeader = (props: HeaderProps) => {
         isFullscreen,
         onFullscreenClick,
         editMode,
-        hideTabs,
+        hideTitle,
         tabsItems,
         currentTab,
         onSelectTab,
@@ -60,20 +60,26 @@ export const WidgetHeader = (props: HeaderProps) => {
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
-    const showTabs = !hideTabs && tabsItems && currentTab && onSelectTab;
-
     const widgetTitle = currentTab?.title || title;
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
-    const renderTabs = () => (
-        <div
-            className={b(
-                'tabs',
-                {'edit-mode': editMode, 'no-controls': noControls},
-                DRAGGABLE_HANDLE_CLASS_NAME,
-            )}
-        >
-            {showTabs && (
+    const renderTabs = () => {
+        if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
+            return <div className={b('mobile-title')}>{widgetTitle}</div>;
+        }
+
+        if (hideTitle || !tabsItems || !currentTab || !onSelectTab || !widgetTitle) {
+            return null;
+        }
+
+        return (
+            <div
+                className={b(
+                    'tabs',
+                    {'edit-mode': editMode, 'no-controls': noControls},
+                    DRAGGABLE_HANDLE_CLASS_NAME,
+                )}
+            >
                 <AdaptiveTabs
                     size={size}
                     items={tabsItems}
@@ -102,9 +108,9 @@ export const WidgetHeader = (props: HeaderProps) => {
                         );
                     }}
                 />
-            )}
-        </div>
-    );
+            </div>
+        );
+    };
 
     return (
         <React.Fragment>
@@ -124,7 +130,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
+                {renderTabs()}
                 {showFiltersClear && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
