@@ -51,7 +51,12 @@ export default function xDlContext(
         }
 
         req.headers[DL_CONTEXT_HEADER] = JSON.stringify(
-            plugins.reduce<DlContext>((memo, plugin) => ({...memo, ...plugin(req, memo)}), context),
+            plugins.length > 0
+                ? plugins.reduce<DlContext>(
+                      (memo, plugin) => ({...memo, ...plugin(req, memo)}),
+                      context,
+                  )
+                : context,
         );
 
         req.originalContext.set(
