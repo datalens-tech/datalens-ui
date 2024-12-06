@@ -343,7 +343,7 @@ async function getUnwrappedFunction(args: {
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {
-                if (performance > options?.totalTimeLimit) {
+                if (options?.totalTimeLimit && performance > options?.totalTimeLimit) {
                     throw new ChartKitCustomError('The allowed execution time has been exceeded', {
                         code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
                     });
