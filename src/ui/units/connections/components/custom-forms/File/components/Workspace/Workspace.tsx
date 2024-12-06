@@ -172,7 +172,7 @@ export const Workspace = ({item, columnFilter}: WorkspaceProps) => {
     }
 
     return (
-        <div className={b('workspace', {standalone})} data-qa={ConnectionsWorkspaceQA}>
+        <div className={b('workspace', {standalone})} data-qa={ConnectionsWorkspaceQA.WORKSPACE}>
             {content}
             {itemPolling && <Veil />}
         </div>
