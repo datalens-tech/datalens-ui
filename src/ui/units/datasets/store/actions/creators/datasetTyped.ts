@@ -15,7 +15,9 @@ import type {
 import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import type {GetPreviewResponse, ValidateDatasetResponse} from 'shared/schema';
 import {sdk} from 'ui';
-import {addEditHistoryPoint} from 'ui/store/actions/editHistory';
+import {BI_ERRORS} from 'ui/constants';
+import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import Utils from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
 import logger from '../../../../../libs/logger';
@@ -74,8 +76,11 @@ export function setFreeformSources(freeformSources: FreeformSource[]) {
 }
 
 export function resetDatasetState() {
-    return {
-        type: DATASET_ACTION_TYPES.RESET_DATASET_STATE,
+    return (dispatch: Dispatch) => {
+        batch(() => {
+            dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
+            dispatch({type: DATASET_ACTION_TYPES.RESET_DATASET_STATE});
+        });
     };
 }
 
@@ -782,8 +787,10 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
                 const activateSaveButton = compareContent
                     ? isContendChanged(prevContent, content)
                     : true;
+                const isFatalError =
+                    Utils.parseErrorResponse(error).code === BI_ERRORS.VALIDATION_FATAL;
 
-                if (!initial && error.status === 400 && activateSaveButton) {
+                if (!initial && error.status === 400 && activateSaveButton && !isFatalError) {
                     dispatch(toggleSaveDataset({enable: true}));
                 }
 

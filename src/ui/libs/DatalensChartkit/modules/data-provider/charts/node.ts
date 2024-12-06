@@ -500,6 +500,7 @@ async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data'
 
         try {
             unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'series.data', []));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

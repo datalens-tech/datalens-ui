@@ -496,7 +496,7 @@ export const getRelationsData = ({
 const getCurrentWidgetTabShortInfo = (
     data: DashKit | null,
     widget: DashTabItem,
-    tabId?: string,
+    tabId?: string | null,
 ) => {
     if (widget.type === DashTabItemType.Control || widget.type === DashTabItemType.GroupControl) {
         return widget;
@@ -506,7 +506,7 @@ const getCurrentWidgetTabShortInfo = (
     }
 
     const currentPlugin = data.metaRef?.current?.pluginsRefs?.find(
-        (item) => item.props.id === widget.id,
+        (item) => item?.props.id === widget.id,
     );
 
     const currentWidgetId =
@@ -534,7 +534,7 @@ export const getCurrentWidgetMeta = ({
     widget: DashTabItem;
     // current item id for widgets with multiple items
     itemId: string | null;
-    tabId?: string;
+    tabId?: string | null;
 }): DashkitMetaDataItem => {
     if (itemId) {
         return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;

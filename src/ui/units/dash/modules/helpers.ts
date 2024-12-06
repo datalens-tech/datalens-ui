@@ -23,7 +23,7 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {DashTabItemType, Feature, resolveOperation} from 'shared';
+import {DashTabItemType, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {registry} from 'ui/registry';
 import {collectWidgetItemIds} from 'ui/utils/copyItems';
@@ -175,9 +175,7 @@ export function addOperationForValue(args: {
 }
 
 export function getChartEditLink(entryId: string) {
-    return Utils.isEnabledFeature(Feature.UseNavigation)
-        ? `${window.DL.endpoints.charts}/navigation/${entryId}`
-        : `/navigate/${entryId}`;
+    return `/navigate/${entryId}`;
 }
 
 export function deepAssign(...args: any) {

@@ -4,9 +4,18 @@ import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
 import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import type {DIALOG_TYPE} from 'ui/constants/dialogs';
+import type {ValuesType} from 'utility-types';
 
 import {Mode} from '../../modules/constants';
 import type {DashUpdateStatus} from '../../typings/dash';
+import {
+    CLOSE_DIALOG,
+    OPEN_DIALOG,
+    OPEN_ITEM_DIALOG,
+    SAVE_DASH_ERROR,
+    SAVE_DASH_SUCCESS,
+} from '../actions/dash';
 import type {TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
@@ -34,7 +43,7 @@ import {
     TOGGLE_TABLE_OF_CONTENT,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
-import {SET_NEW_RELATIONS} from '../constants/dashActionTypes';
+import {SET_NEW_RELATIONS} from '../actions/relations/actions';
 
 import {TAB_PROPERTIES} from './dash';
 
@@ -48,7 +57,7 @@ export type DashState = {
     navigationPath: null | string;
     dashKitRef: null | React.RefObject<DashKit>;
     error: null | Error;
-    openedDialog: null; // TODO: clarify types
+    openedDialog: null | ValuesType<typeof DIALOG_TYPE>;
     openedItemId: string | null;
     showTableOfContent: boolean;
     lastUsedConnectionId: undefined | string;
@@ -79,6 +88,47 @@ export function dashTypedReducer(
     const tabIndex = data ? data.tabs.findIndex(({id}) => id === tabId) : -1;
 
     switch (action.type) {
+        case SAVE_DASH_SUCCESS: {
+            return {
+                ...state,
+                ...action.payload,
+                dragOperationProps: null,
+            };
+        }
+
+        case SAVE_DASH_ERROR: {
+            return {
+                ...state,
+                dragOperationProps: null,
+            };
+        }
+
+        case OPEN_DIALOG: {
+            return {
+                ...state,
+                ...action.payload,
+                dragOperationProps: action.payload.dragOperationProps ?? null,
+            };
+        }
+
+        case CLOSE_DIALOG: {
+            return {
+                ...state,
+                ...action.payload,
+                dragOperationProps: null,
+            };
+        }
+
+        case OPEN_ITEM_DIALOG: {
+            const payload = action.payload;
+
+            return {
+                ...state,
+                openedItemId: payload.id ?? null,
+                openedDialog: payload.type,
+            };
+        }
+
         case SET_STATE:
         case SET_PAGE_TAB:
         case CHANGE_NAVIGATION_PATH:

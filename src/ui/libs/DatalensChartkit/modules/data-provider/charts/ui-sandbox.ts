@@ -186,8 +186,9 @@ async function getUnwrappedFunction(args: {
     options?: UiSandboxRuntimeOptions;
     entryId: string;
     entryType: string;
+    name?: string;
 }) {
-    const {sandbox, wrappedFn, options, entryId, entryType} = args;
+    const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
     const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
 
@@ -336,6 +337,7 @@ async function getUnwrappedFunction(args: {
             fnArgs,
             globalApi,
             libs,
+            name,
         });
 
         const performance = Performance.getDuration(runId);
@@ -375,6 +377,7 @@ export async function unwrapPossibleFunctions(args: {
                     options,
                     entryId,
                     entryType,
+                    name: key,
                 });
             } else if (Array.isArray(value)) {
                 await Promise.all(

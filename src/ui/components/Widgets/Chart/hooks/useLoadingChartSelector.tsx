@@ -172,6 +172,13 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         [adjustLayout, props.data.autoHeight],
     );
 
+    /**
+     * Memoised dataProviderContextGetter with widget id
+     */
+    const requestHeadersGetter = React.useMemo(() => {
+        return dataProviderContextGetter?.bind(this, widgetId);
+    }, [widgetId, dataProviderContextGetter]);
+
     const {
         loadedData,
         isLoading,
@@ -191,7 +198,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         loadControls,
     } = useLoadingChart({
         dataProvider,
-        dataProviderContextGetter,
+        requestHeadersGetter,
         initialData,
         requestId,
         requestCancellationRef,

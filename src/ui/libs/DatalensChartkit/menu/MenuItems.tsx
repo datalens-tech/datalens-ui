@@ -177,9 +177,7 @@ export const getEditMenuItem = ({
                 (dataProvider || chartsDataProvider)?.getGoAwayLink(
                     {loadedData, propsData},
                     {
-                        idPrefix: Utils.isEnabledFeature(Feature.UseNavigation)
-                            ? '/navigation/'
-                            : '/navigate/',
+                        idPrefix: '/navigate/',
                     },
                 ),
             );

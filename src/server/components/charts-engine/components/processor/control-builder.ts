@@ -41,6 +41,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
     };
 
     const ChartBuilder: ChartBuilder = {
+        type: 'CONTROL',
         buildShared: async () => {
             if (typeof config.data.shared === 'string') {
                 shared = JSON.parse(config.data.shared);
