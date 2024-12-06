@@ -10,9 +10,11 @@ import {
 
 type DlContext = Record<string, string | string[] | undefined>;
 
-export default function xDlContext(
-    plugins: Array<(req: Request, context: DlContext) => DlContext> = [],
-) {
+export default function xDlContext({
+    plugins = [],
+}: {
+    plugins?: Array<(req: Request, context: DlContext) => DlContext>;
+} = {}) {
     return function xDlContextMiddleware(req: Request, _: Response, next: NextFunction) {
         const {folderId: folderIdHeader} = req.ctx.config.headersMap;
 
