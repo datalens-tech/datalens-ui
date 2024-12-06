@@ -332,7 +332,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 }
 
                 if (result.type === WidgetKind.BlankChart) {
-                    uiSandboxOptions.fnExecTimeLimit = 1000;
+                    uiSandboxOptions.fnExecTimeLimit = 1500;
                 }
 
                 const unwrapFnArgs = {
