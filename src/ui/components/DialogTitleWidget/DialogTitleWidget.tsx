@@ -22,10 +22,10 @@ import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import './DialogTitleWidget.scss';
 
 const SIZES = [
-    {value: DashTabItemTitleSize.L, content: 'Large'},
-    {value: DashTabItemTitleSize.M, content: 'Medium'},
-    {value: DashTabItemTitleSize.S, content: 'Small'},
     {value: DashTabItemTitleSize.XS, content: 'XSmall'},
+    {value: DashTabItemTitleSize.S, content: 'Small'},
+    {value: DashTabItemTitleSize.M, content: 'Medium'},
+    {value: DashTabItemTitleSize.L, content: 'Large'},
 ];
 
 const b = block('dialog-title');
