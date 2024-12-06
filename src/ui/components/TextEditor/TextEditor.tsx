@@ -13,10 +13,11 @@ export type TextareaEditorProps = {
     placeholder?: string;
     onTextUpdate: (val: string) => void;
     text?: string;
+    id?: string;
 };
 const b = block('text-editor');
 export const TextEditor = (props: TextareaEditorProps) => {
-    const {autofocus, placeholder, onTextUpdate, text, className} = props;
+    const {autofocus, placeholder, onTextUpdate, text, id, className} = props;
 
     const handleUpdate = React.useCallback(
         (val) => {
@@ -28,6 +29,7 @@ export const TextEditor = (props: TextareaEditorProps) => {
     return (
         <div className={b(null, className)}>
             <TextArea
+                id={id}
                 autoFocus={autofocus}
                 value={text}
                 placeholder={placeholder || i18n('dash.text-dialog.edit', 'context_fill-text')}

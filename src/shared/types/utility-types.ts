@@ -40,3 +40,5 @@ export type NonNullableBy<T, K extends keyof T> = Omit<T, K> & NoUndefinedField<
 type ObjectKeys<T extends object> = `${Exclude<keyof T, symbol>}`;
 
 export const objectKeys = Object.keys as <T extends object>(value: T) => Array<ObjectKeys<T>>;
+
+export type ValueOf<T extends object> = T[keyof T];
