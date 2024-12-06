@@ -75,12 +75,12 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
 
     // temp terms bug fix until the editor supports transform plugin
     const preparedTextWithTermDefs = text.replace(
-        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gimu,
+        /^\s*?\\\[\\\*([\wа-я]+)\\\]:(.*?\S+?.*?)$/gim,
         '[*$1]:$2',
     );
 
     const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
-        new RegExp(/(\[.+?\])\(\*(%.+?)\)/gu),
+        new RegExp(/(\[.+?\])\(\*(%.+?)\)/g),
         (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
     );
 
