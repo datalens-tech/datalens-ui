@@ -700,13 +700,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this._getDistinctsMemo;
     }
 
-    private requestHeadersGetter() {
-        if (this?.context?.dataProviderContextGetter) {
+    private requestHeadersGetter = () => {
+        if (this.context?.dataProviderContextGetter) {
             return this.context.dataProviderContextGetter(this.props.id);
         }
 
         return {};
-    }
+    };
 
     private renderControl(item: DashTabItemControlSingle) {
         const {workbookId} = this.props;
