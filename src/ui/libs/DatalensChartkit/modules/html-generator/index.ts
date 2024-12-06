@@ -20,6 +20,7 @@ const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
 type GenerateHtmlOptions = {
     tooltipId?: string;
+    ignoreInvalidValues?: boolean;
 };
 
 export function generateHtml(
@@ -38,9 +39,17 @@ export function generateHtml(
         const {tag, attributes = {}, style = {}, content, theme} = item;
 
         if (!ALLOWED_TAGS.includes(tag)) {
-            throw new ChartKitCustomError(null, {
-                details: `Tag '${tag}' is not allowed`,
+            const msg = `Tag '${tag}' is not allowed`;
+            if (options?.ignoreInvalidValues) {
+                console.warn(msg);
+                return '';
+            }
+
+            const error = new ChartKitCustomError(null, {
+                details: msg,
             });
+            delete error.stack;
+            throw error;
         }
 
         const isDLTooltip = tag === TAG_DL_TOOLTIP;
@@ -65,9 +74,17 @@ export function generateHtml(
 
         Object.entries(attributes).forEach(([key, value]) => {
             if (!ALLOWED_ATTRIBUTES.includes(key?.toLowerCase())) {
-                throw new ChartKitCustomError(null, {
-                    details: `Attribute '${key}' is not allowed`,
+                const msg = `Attribute '${key}' is not allowed`;
+                if (options?.ignoreInvalidValues) {
+                    console.warn(msg);
+                    return;
+                }
+
+                const error = new ChartKitCustomError(null, {
+                    details: msg,
                 });
+                delete error.stack;
+                throw error;
             }
 
             if (ATTRS_WITH_REF_VALIDATION.includes(key)) {

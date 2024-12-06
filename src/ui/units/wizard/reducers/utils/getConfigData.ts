@@ -34,7 +34,7 @@ export const getConfigData = (state: ConfigDataState): ClientChartsConfig => {
         shapes: state.shapes,
         shapesConfig: state.shapesConfig,
         segments: state.segments,
-        version: ChartsConfigVersion.V11,
+        version: ChartsConfigVersion.V12,
         datasetsIds: datasetsIds,
         datasetsPartialFields: datasetsPartialFields,
     });

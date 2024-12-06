@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {RadioButtonOption} from '@gravity-ui/uikit';
 import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -11,11 +12,13 @@ import type {Dispatch} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
+    MarkupType,
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
 import {
     DialogFieldSettingsQa,
+    MARKUP_TYPE,
     PlaceholderId,
     WizardVisualizationId,
     getDefaultFormatting,
@@ -27,6 +30,7 @@ import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
+import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -38,7 +42,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, Feature} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -47,6 +51,7 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
@@ -105,7 +110,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     hintSettings?: HintSettings;
-    isMarkdown?: boolean;
+    markupType?: MarkupType;
 };
 
 const b = block('wizard-dialog-field');
@@ -150,7 +155,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             ),
             isErrorOccurred: false,
             currentPlaceholder,
-            isMarkdown: props.item?.isMarkdown,
+            markupType: props.item?.markupType,
         };
 
         if (initialState.isBarsSettingsEnabled && props.item) {
@@ -474,18 +479,28 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             return null;
         }
 
+        const items: RadioButtonOption[] = [
+            {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
+            {value: MARKUP_TYPE.markdown, content: i18n('wizard', 'label_markdown')},
+        ];
+
+        if (Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+            items.push({value: MARKUP_TYPE.html, content: i18n('wizard', 'label_html')});
+        }
+
         return (
             <React.Fragment>
                 <DialogFieldRow
-                    title={i18n('wizard', 'label_markdown')}
-                    tooltipText={i18n('wizard', 'label_markdown-tooltip')}
+                    title={i18n('wizard', 'label_markup-type')}
+                    tooltipText={i18n('wizard', 'label_markup-type-tooltip')}
                     setting={
-                        <Switch
-                            onUpdate={(checked) => {
-                                this.setState({isMarkdown: checked});
+                        <DialogRadioButtons
+                            qa={DialogFieldSettingsQa.MarkupTypeRadioButtons}
+                            items={items}
+                            value={this.state.markupType}
+                            onUpdate={(value: string) => {
+                                this.setState({markupType: value});
                             }}
-                            checked={this.state.isMarkdown ?? false}
-                            qa={DialogFieldSettingsQa.MarkdownEnableButton}
                         />
                     }
                 />

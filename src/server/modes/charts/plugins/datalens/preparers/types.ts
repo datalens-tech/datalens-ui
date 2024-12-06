@@ -14,6 +14,7 @@ import type {
     ServerSort,
     ServerTooltip,
     ServerTooltipConfig,
+    WrappedHTML,
     WrappedMarkup,
 } from '../../../../../../shared';
 import type {ApiV2RequestField} from '../../../../../../shared/types/bi-api/v2';
@@ -94,6 +95,6 @@ export type PiePoint = {
     color?: string;
     colorGuid?: string;
     colorValue?: string | number;
-    label?: string | number | null | WrappedMarkdown | WrappedMarkup;
+    label?: string | number | null | WrappedMarkdown | WrappedMarkup | WrappedHTML;
     custom?: object;
 };

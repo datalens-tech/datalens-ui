@@ -24,6 +24,7 @@ import {
     wrapMarkupValue,
 } from '../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
+import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
 import type {
     ChartColorsConfig,
@@ -379,9 +380,9 @@ export function isLegendEnabled(chartSetting?: ServerCommonSharedExtraSettings) 
 
 export function getLabelValue(
     value: undefined | string,
-    options: {isMarkdownLabel?: boolean; isMarkupLabel?: boolean} = {},
+    options: {isMarkdownLabel?: boolean; isMarkupLabel?: boolean; isHtmlLabel?: boolean} = {},
 ) {
-    const {isMarkdownLabel, isMarkupLabel} = options;
+    const {isMarkdownLabel, isMarkupLabel, isHtmlLabel} = options;
 
     if (value === undefined) {
         return '';
@@ -393,6 +394,10 @@ export function getLabelValue(
 
     if (isMarkupLabel) {
         return wrapMarkupValue(value);
+    }
+
+    if (isHtmlLabel) {
+        return wrapHtml(value);
     }
 
     return value;

@@ -25,4 +25,6 @@ export enum ChartsConfigVersion {
     V10 = '10',
     // Added new field for displaying the title in the indicator charts.
     V11 = '11',
+    // isMarkdown boolean field is converted to a string markupType.
+    V12 = '12',
 }
