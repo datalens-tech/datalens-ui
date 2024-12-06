@@ -120,7 +120,6 @@ class DialogTitleWidget extends React.PureComponent<
                         <FieldWrapper error={validation?.text}>
                             <TextInput
                                 id={INPUT_TITLE_ID}
-                                size="l"
                                 value={text}
                                 autoFocus
                                 placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
