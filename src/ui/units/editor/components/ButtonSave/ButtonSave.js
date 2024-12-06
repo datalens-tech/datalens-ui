@@ -18,6 +18,7 @@ import {
 } from 'ui';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
+import {EditorPageQA} from '../../../../../shared';
 import {
     DIALOG_RESOLVE_STATUS,
     ENTRY_ACTION,
@@ -164,6 +165,7 @@ function ButtonSave({
         <div className={b()}>
             <NavigationPrompt when={!disabledSave && !isRenameWithoutReload} />
             <Button
+                qa={EditorPageQA.SaveButton}
                 view={getBtnSaveTheme()}
                 size="m"
                 disabled={disabledSave}
