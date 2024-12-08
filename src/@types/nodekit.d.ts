@@ -4,7 +4,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {AppEnvironment} from '../shared';
-import type {FeaturesConfig} from '../src/components/features/types';
+import type {FeatureConfig} from '../shared/types';
 
 export interface SharedAppConfig {
     endpoints: Endpoints;
@@ -91,7 +91,7 @@ export interface SharedAppConfig {
 }
 
 export interface SharedAppDynamicConfig {
-    features?: FeaturesConfig;
+    features?: FeatureConfig;
 }
 
 export interface SharedAppContextParams {
