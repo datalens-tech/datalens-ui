@@ -193,12 +193,6 @@ async function getUnwrappedFunction(args: {
     const parseHtml = await getParseHtmlFn();
 
     return function (this: unknown, ...restArgs: unknown[]) {
-        if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
-            throw new ChartKitCustomError('The allowed execution time has been exceeded', {
-                code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
-            });
-        }
-
         const runId = getRandomCKId();
         Performance.mark(runId);
 
@@ -331,21 +325,46 @@ async function getUnwrappedFunction(args: {
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
         const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
         const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
-        const result = runtime.callFunction({
-            fn: wrappedFn.fn,
-            fnContext,
-            fnArgs,
-            globalApi,
-            libs,
-            name,
-        });
+        try {
+            const result = runtime.callFunction({
+                fn: wrappedFn.fn,
+                fnContext,
+                fnArgs,
+                globalApi,
+                libs,
+                name,
+            });
+            const performance = Performance.getDuration(runId);
+            if (options?.totalTimeLimit) {
+                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+            }
 
-        const performance = Performance.getDuration(runId);
-        if (options?.totalTimeLimit) {
-            options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+            return unwrapHtml(result, parseHtml);
+        } catch (e) {
+            const performance = Performance.getDuration(runId);
+            if (performance && e?.message === 'interrupted') {
+                if (options?.totalTimeLimit && performance > options?.totalTimeLimit) {
+                    throw new ChartKitCustomError('The allowed execution time has been exceeded', {
+                        code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
+                    });
+                }
+
+                if (performance > oneRunTimeLimit) {
+                    const msg = `The "${name}" function takes too long to execute. Try to optimize the code.`;
+                    const error = new ChartKitCustomError(msg, {
+                        code: ERROR_CODE.UI_SANDBOX_FN_EXECUTION_TIMEOUT,
+                        details: {
+                            stackTrace: `Execution time: ${performance}ms`,
+                        },
+                    });
+                    error.stack = undefined;
+
+                    throw error;
+                }
+            }
+
+            throw e;
         }
-
-        return unwrapHtml(result, parseHtml);
     };
 }
 
@@ -440,10 +459,13 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-export function processHtmlFields(
-    target: unknown,
-    options?: {allowHtml: boolean; parseHtml?: (value: string) => unknown},
-) {
+type ProcessHtmlOptions = {
+    allowHtml: boolean;
+    parseHtml?: (value: string) => unknown;
+    ignoreInvalidValues?: boolean;
+};
+
+export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
     const allowHtml = Boolean(options?.allowHtml);
 
     const processValue = (key: string | number, value: unknown, item: object) => {
@@ -453,7 +475,13 @@ export function processHtmlFields(
                 if (typeof content === 'string' && typeof options?.parseHtml === 'function') {
                     content = options.parseHtml(content);
                 }
-                set(item, key, generateHtml(content as ChartKitHtmlItem));
+                set(
+                    item,
+                    key,
+                    generateHtml(content as ChartKitHtmlItem, {
+                        ignoreInvalidValues: options?.ignoreInvalidValues,
+                    }),
+                );
             } else {
                 processHtmlFields(value, options);
             }

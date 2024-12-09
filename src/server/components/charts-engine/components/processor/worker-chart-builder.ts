@@ -64,6 +64,7 @@ export const getWizardChartBuilder = async (
         };
 
     const chartBuilder: ChartBuilder = {
+        type: 'WIZARD',
         buildShared: async () => {
             if (typeof config.data.shared === 'string') {
                 shared = JSON.parse(config.data.shared);

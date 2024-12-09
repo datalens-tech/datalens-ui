@@ -156,11 +156,11 @@ const ChartKitError: React.FC<any> = (props) => {
             iconModes['no-data'] = true;
             break;
         case ERROR_CODE.TOO_MANY_LINES:
-            iconData = ChartMixed;
-            break;
         case ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT:
+        case ERROR_CODE.UI_SANDBOX_FN_EXECUTION_TIMEOUT: {
             iconData = ChartMixed;
             break;
+        }
         case ERROR_CODE.DATA_PROVIDER_ERROR:
             iconData = Database;
             break;

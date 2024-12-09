@@ -10,6 +10,7 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureField,
@@ -99,6 +100,7 @@ export function prepareBarYData({
     const labelItem = labels?.[0];
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
     const isColorizeByMeasure = isMeasureField(colorItem);
@@ -312,7 +314,7 @@ export function prepareBarYData({
                     dataLabels: {
                         enabled: Boolean(labelItem),
                         ...line.dataLabels,
-                        useHTML: isMarkdownLabel || isMarkupLabel,
+                        useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
                     },
                     data: categories
                         .map((category, i) => {
@@ -353,6 +355,7 @@ export function prepareBarYData({
                             point.label = getLabelValue(innerLabels?.[category], {
                                 isMarkdownLabel,
                                 isMarkupLabel,
+                                isHtmlLabel,
                             });
 
                             if (isActionParamsEnable) {
@@ -446,6 +449,10 @@ export function prepareBarYData({
 
         if (isMarkupLabel) {
             ChartEditor.updateConfig({useMarkup: true});
+        }
+
+        if (isHtmlLabel) {
+            ChartEditor.updateConfig({useHtml: true});
         }
 
         if (isXCategoryAxis) {

@@ -39,7 +39,7 @@ export function buildLibraryConfig({shared, ChartEditor, features}: BuildLibrary
                 hierarchies: [],
                 links: [],
                 updates: [],
-                version: ChartsConfigVersion.V11,
+                version: ChartsConfigVersion.V12,
                 datasetsIds: [],
                 datasetsPartialFields: [],
             } as ServerChartsConfig,

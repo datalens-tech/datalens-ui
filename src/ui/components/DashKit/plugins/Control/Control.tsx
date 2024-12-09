@@ -427,7 +427,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const {workbookId} = this.props;
 
             const payloadCancellation = chartsDataProvider.getRequestCancellation();
-            const dataProviderContextGetter = this.context?.dataProviderContextGetter?.();
+            const dataProviderContextGetter = this.context?.dataProviderContextGetter?.(
+                this.props.id,
+            );
 
             const payload = {
                 data: {
@@ -561,7 +563,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 this._getDistinctsMemo ||
                 ((params) => {
                     const {getDistincts} = this.props;
-                    const headers = this?.context?.dataProviderContextGetter?.();
+                    const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
 
                     return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
                         params,

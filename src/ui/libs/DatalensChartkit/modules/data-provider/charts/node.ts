@@ -18,6 +18,7 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
+    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -332,7 +333,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 }
 
                 if (result.type === WidgetKind.BlankChart) {
-                    uiSandboxOptions.fnExecTimeLimit = 1000;
+                    uiSandboxOptions.fnExecTimeLimit = 1500;
                 }
 
                 const unwrapFnArgs = {
@@ -347,10 +348,22 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            if (isPotentiallyUnsafeChart(loadedType)) {
+            const shouldProcessHtmlFields =
+                isPotentiallyUnsafeChart(loadedType) ||
+                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+            if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
-                processHtmlFields(result.data, {allowHtml: enableJsAndHtml, parseHtml});
-                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml, parseHtml});
+                const ignoreInvalidValues = result.isNewWizard || result.isQL;
+                processHtmlFields(result.data, {
+                    allowHtml: enableJsAndHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
+                processHtmlFields(result.libraryConfig, {
+                    allowHtml: enableJsAndHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});
@@ -500,6 +513,7 @@ async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data'
 
         try {
             unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'series.data', []));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

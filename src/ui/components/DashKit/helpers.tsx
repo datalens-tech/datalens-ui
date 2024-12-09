@@ -113,7 +113,7 @@ interface DashkitWrapperProps extends DashKitProps {
     isNewRelations?: boolean;
     hideErrorDetails?: boolean;
     // Extended headers context for widgets
-    dataProviderContextGetter?: () => DashChartRequestContext;
+    dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
 }
 
