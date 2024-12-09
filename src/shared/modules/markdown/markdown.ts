@@ -80,7 +80,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
     );
 
     const preparedTextWithTermLinks = preparedTextWithTermDefs.replace(
-        new RegExp(/(\[.+?\])\(\*(%.+?)\)/g),
+        /(\[.+?\])\(\*(%.+?)\)/g,
         (_, p1, p2) => `${p1}(*${decodeURIComponent(p2)})`,
     );
 
