@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ChartKitWidgetData, TreemapSeriesData} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetData, PieSeriesData, TreemapSeriesData} from '@gravity-ui/chartkit';
 import type {
     ChartKitWidgetTooltip,
     ScatterSeries,
@@ -8,6 +8,7 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import {formatNumber} from 'shared/modules/format-units/index';
 
 import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
@@ -92,6 +93,29 @@ function treemapTooltipRenderer(
     );
 }
 
+function pieTooltipRenderer(_widgetData: ChartKitWidgetData, data: Parameters<TooltipRenderer>[0]) {
+    const point = data?.hovered[0]?.data as PieSeriesData | undefined;
+
+    if (!point) {
+        return null;
+    }
+
+    const value = get(point, 'formattedValue', point.value);
+    let percentage = get(point, 'percentage');
+    percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
+
+    return (
+        <div className={b('row')}>
+            <div className={b('block')}>
+                <span className={b('color')} style={{backgroundColor: point.color}} />
+            </div>
+            <div className={b('block')}>{point.name}</div>
+            <div className={b('block')}>{percentage}</div>
+            <div className={b('block')}>{value}</div>
+        </div>
+    );
+}
+
 export const getTooltipRenderer = (widgetData: ChartKitWidgetData): TooltipRenderer | undefined => {
     const seriesTypes = (widgetData?.series?.data || []).map((s) => s.type);
 
@@ -104,6 +128,10 @@ export const getTooltipRenderer = (widgetData: ChartKitWidgetData): TooltipRende
             case 'treemap': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
                     treemapTooltipRenderer(widgetData, data);
+            }
+            case 'pie': {
+                return (data: Parameters<TooltipRenderer>[0]) =>
+                    pieTooltipRenderer(widgetData, data);
             }
             default: {
                 return undefined;

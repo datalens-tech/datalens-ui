@@ -1,6 +1,5 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
-import type {DASH_INFO_HEADER} from '../constants';
 import type {Operations} from '../modules';
 
 import type {ClientChartsConfig, Dictionary, Entry, EntryScope, StringParams} from './index';
@@ -9,7 +8,7 @@ export enum ControlType {
     Dash = 'control_dash',
 }
 
-export type DashChartRequestContext = Record<typeof DASH_INFO_HEADER, string>;
+export type DashChartRequestContext = Record<string, string>;
 
 export enum DashTabItemType {
     Title = 'title',
@@ -122,7 +121,6 @@ export type DashTabItem =
 
 type BackgroundSettings = {
     color: string;
-    enabled: boolean;
 };
 
 export interface DashTabItemBase {

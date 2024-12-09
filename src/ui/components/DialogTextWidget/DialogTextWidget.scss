@@ -9,9 +9,15 @@
         margin-top: 10px;
     }
 
-    &__setting-row {
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
+    &__checkbox {
+        margin-block-start: var(--g-spacing-2);
+    }
+
+    &__row {
+        margin-bottom: var(--g-spacing-2);
+
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }

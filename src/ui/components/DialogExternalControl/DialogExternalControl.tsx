@@ -4,15 +4,13 @@ import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
-import {Utils} from 'index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
+import {ControlQA, DashTabItemControlSourceType} from 'shared';
 import {AppearanceSection} from 'ui/components/ControlComponents/Sections/AppearanceSection/AppearanceSection';
 import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
 import {ParametersSection} from 'ui/components/ControlComponents/Sections/ParametersSection/ParametersSection';
 import {SelectorPreview} from 'ui/components/ControlComponents/SelectorPreview/SelectorPreview';
-import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import type {AppDispatch} from 'ui/store';
 import {
@@ -86,7 +84,6 @@ class DialogExternalControl extends React.Component<Props> {
     }
 
     private renderBody() {
-        const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
         const showParametersSection = this.props.isParametersSectionAvailable;
         const {navigationPath, changeNavigationPath, enableAutoheightDefault} = this.props;
 
@@ -95,11 +92,6 @@ class DialogExternalControl extends React.Component<Props> {
                 <div className={b('section')}>
                     <SelectorPreview />
                 </div>
-                {showTypeSelect && (
-                    <div className={b('section')}>
-                        <SelectorTypeSelect />
-                    </div>
-                )}
                 <div className={b('section')}>
                     <SectionWrapper title={controlI18n('label_common-settings')}>
                         <CommonSettingsSection

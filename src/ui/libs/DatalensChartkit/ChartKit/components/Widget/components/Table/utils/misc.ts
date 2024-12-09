@@ -3,7 +3,6 @@ import type React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {Comparator, SortedDataItem} from '@gravity-ui/react-data-table';
 import isEqual from 'lodash/isEqual';
-import {WRAPPED_HTML_KEY} from 'shared';
 import type {
     BarTableCell,
     BarViewOptions,
@@ -14,7 +13,6 @@ import type {
     TableCommonCell,
     TableHead,
     TableRow,
-    WrappedHTML,
 } from 'shared';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
@@ -302,12 +300,4 @@ export function getTreeSetColumnSortAscending(
 
         return sortComparisonValue;
     };
-}
-
-export function isWrappedHTML(value: unknown): value is WrappedHTML {
-    if (!value || typeof value !== 'object') {
-        return false;
-    }
-
-    return Object.keys(value).length === 1 && WRAPPED_HTML_KEY in value;
 }

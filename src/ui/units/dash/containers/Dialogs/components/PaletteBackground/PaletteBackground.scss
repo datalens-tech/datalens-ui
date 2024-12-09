@@ -2,9 +2,10 @@
 
 .widget-palette-background {
     $class: &;
+    display: block;
     position: relative;
-    margin-left: 8px;
     line-height: 0;
+    width: fit-content;
 
     &__hint {
         @include text-body-1();
@@ -17,34 +18,21 @@
     }
 
     &__color-item {
+        display: inline-block;
         position: relative;
         border-radius: 4px;
-        height: 100%;
-        width: 100%;
+        width: 28px;
+        height: 28px;
         cursor: pointer;
 
         $colorItem: &;
 
         &_transparent {
-            background-color: var(--g-color-base-generic);
+            background-image: repeating-conic-gradient(
+                var(--g-color-base-generic) 0 25%,
+                var(--g-color-base-background) 0 50%
+            );
             outline: 1px solid var(--g-color-base-generic-medium);
-            color: var(--g-color-line-generic-active);
-            font-size: 10px;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            &::before {
-                width: 36px;
-                height: 1px;
-                transform: rotate(45deg);
-                transform-origin: 0 0;
-                background-color: var(--g-color-base-danger-heavy);
-                content: '';
-                position: absolute;
-                inset: 1px 0 0 1px;
-            }
         }
 
         &_widget-bg {

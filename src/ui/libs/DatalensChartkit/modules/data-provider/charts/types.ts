@@ -165,6 +165,7 @@ export interface ChartsData extends DashWidgetConfig {
     traceId: string;
     isNewWizard: boolean;
     isOldWizard: boolean;
+    isQL?: boolean;
     extra: {
         exportFilename?: string;
         dataExportForbidden?: boolean;

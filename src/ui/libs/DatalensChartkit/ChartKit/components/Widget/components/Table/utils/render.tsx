@@ -30,7 +30,7 @@ import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import type {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
-import {WrappedHTMLNode} from '../WrappedHTMLNode';
+import {WrappedHTMLNode, isWrappedHTML} from '../WrappedHTMLNode';
 import type {TableProps} from '../types';
 
 import {getAdditionalStyles, getRowActionParams} from './action-params';
@@ -42,7 +42,6 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
-    isWrappedHTML,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,
@@ -127,7 +126,11 @@ export function valueFormatter(
             (options as NumberTableColumn).view === 'bar' || (cell as BarTableCell).view === 'bar';
 
         if ('formattedValue' in cell && cell.formattedValue && !shouldUseBar) {
-            resultValue = cell.formattedValue;
+            resultValue = isWrappedHTML(cell.formattedValue) ? (
+                <WrappedHTMLNode value={cell.formattedValue} />
+            ) : (
+                cell.formattedValue
+            );
         } else if (cell.value === null) {
             resultValue = 'null';
         } else if (isMarkupItem(cell.value)) {
