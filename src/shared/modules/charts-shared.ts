@@ -1,6 +1,5 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils';
-import isFunction from 'lodash/isFunction';
 
 import type {ServerDatasetField} from '../types';
 
@@ -348,8 +347,4 @@ export function isObjectWith(
     }
 
     return false;
-}
-
-export function isObjectWithFunction(value: unknown) {
-    return isObjectWith(value, isFunction, []);
 }

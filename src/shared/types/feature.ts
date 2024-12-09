@@ -19,6 +19,7 @@ export enum Feature {
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
     EmptySelector = 'emptySelector',
+    // Check access rights when processing ChartEditor charts
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
     QLMonitoring = 'QLMonitoring',
@@ -28,12 +29,16 @@ export enum Feature {
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
     GSheetsV2Enabled = 'GSheetsV2Enabled',
+    // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
+    // Prohibiting the serialization of functions in the chart configs
     NoJsonFn = 'NoJsonFn',
     GSheetGoogleAuthEnabled = 'GSheetGoogleAuthEnabled',
     DatasetsRLS = 'DatasetsRLS',
+    // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
+    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
@@ -58,7 +63,6 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    ChartWithFnLogging = 'ChartWithFnLogging',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
     /* Enable dashboard fixed header */
