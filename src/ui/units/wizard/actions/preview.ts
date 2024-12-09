@@ -209,12 +209,14 @@ export function updatePreviewAndClientChartsConfig(
             if (isRedrawDone && !preview.previewEntryId) {
                 dispatch(updateClientChartsConfig(updateClientChartsConfigArgs));
 
-                dispatch(
-                    addEditHistoryPoint({
-                        unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
-                        newState: getState().wizard,
-                    }),
-                );
+                if (!preview.qlMode) {
+                    dispatch(
+                        addEditHistoryPoint({
+                            unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
+                            newState: getState().wizard,
+                        }),
+                    );
+                }
             }
         });
     };
@@ -255,6 +257,7 @@ function _updatePreview(preview: UpdatePreviewArgs): UpdatePreviewAction {
 type UpdateClientChartsConfigArgs = {
     withoutRerender?: boolean;
     isInitialPreview?: boolean;
+    qlMode?: boolean;
 };
 
 type UpdateClientChartsConfigAction = {
