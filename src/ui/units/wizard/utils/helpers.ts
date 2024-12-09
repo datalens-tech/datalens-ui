@@ -289,7 +289,7 @@ export function versionExtractor(this: any, key: string, value: any) {
                     backgroundSettings,
                     subTotalsSettings,
                     hintSettings,
-                    isMarkdown: item.isMarkdown,
+                    markupType: item.markupType,
                 };
             }),
         );
@@ -311,7 +311,11 @@ export function versionExtractor(this: any, key: string, value: any) {
         return JSON.stringify(
             target.map((item: Field) => {
                 const formatting: CommonNumberFormattingOptions = item.formatting || {};
-                return {guid: item.guid, formatting};
+                return {
+                    guid: item.guid,
+                    formatting,
+                    markupType: item.markupType,
+                };
             }),
         );
     }
@@ -335,9 +339,9 @@ export function versionExtractor(this: any, key: string, value: any) {
     if (key === 'tooltips') {
         return JSON.stringify(
             target.map((item: Field) => {
-                const {fakeTitle, format, formatting = {}, isMarkdown = false} = item;
+                const {fakeTitle, format, formatting = {}, markupType} = item;
 
-                return {guid: item.guid, fakeTitle, format, formatting, isMarkdown};
+                return {guid: item.guid, fakeTitle, format, formatting, markupType};
             }),
         );
     }

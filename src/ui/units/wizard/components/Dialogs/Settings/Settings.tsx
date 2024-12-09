@@ -585,7 +585,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             return null;
         }
 
-        const sizes = Object.values(WidgetSize);
+        const sizes = [WidgetSize.S, WidgetSize.M, WidgetSize.L];
         const selected = this.state.size ?? DEFAULT_WIDGET_SIZE;
 
         return (

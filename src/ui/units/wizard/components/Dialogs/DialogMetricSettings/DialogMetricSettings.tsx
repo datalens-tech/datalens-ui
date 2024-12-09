@@ -21,9 +21,9 @@ import './DialogMetricSettings.scss';
 
 const i18n = I18n.keyset('container.metric-dialog');
 
-const SIZES = ['xl', 'l', 'm', 's'];
+const SIZES = ['s', 'm', 'l', 'xl'];
 const DEFAULT_SIZE = 'm';
-const RADIO_TEXT = ['L', 'M', 'S', 'XS'];
+const RADIO_TEXT = ['XS', 'S', 'M', 'L'];
 
 const b = block('dialog-metric-settings');
 

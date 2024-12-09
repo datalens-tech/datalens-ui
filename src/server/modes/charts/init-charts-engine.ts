@@ -3,12 +3,7 @@ import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
 import get from 'lodash/get';
 import sizeof from 'object-sizeof';
 
-import {
-    AppEnvironment,
-    Feature,
-    isEnabledServerFeature,
-    isObjectWithFunction,
-} from '../../../shared';
+import {AppEnvironment} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
@@ -30,7 +25,6 @@ export function initChartsEngine({
     afterAuth: AppMiddleware[];
 }) {
     const getTime = () => new Date().toISOString().replace('T', ' ').split('.')[0];
-    const shouldLogChartWithFunction = isEnabledServerFeature(ctx, Feature.ChartWithFnLogging);
 
     const telemetryCallbacks: TelemetryCallbacks = {
         onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
@@ -116,22 +110,9 @@ export function initChartsEngine({
         },
 
         onTabsExecuted: ({result, entryId}) => {
-            const {
-                config: chartConfig,
-                highchartsConfig,
-                sources,
-                sourceData,
-                processedData,
-            } = result;
+            const {sources, sourceData, processedData} = result;
             const chartEntryId = entryId || '';
             const datetime = Date.now();
-
-            if (
-                shouldLogChartWithFunction &&
-                (isObjectWithFunction(chartConfig) || isObjectWithFunction(highchartsConfig))
-            ) {
-                ctx.stats('chartsWithFn', {datetime, entryId: chartEntryId});
-            }
 
             let rowsCount = 0;
             let columnsCount = 0;
