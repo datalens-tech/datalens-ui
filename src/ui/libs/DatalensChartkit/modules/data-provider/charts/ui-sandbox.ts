@@ -459,10 +459,13 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-export function processHtmlFields(
-    target: unknown,
-    options?: {allowHtml: boolean; parseHtml?: (value: string) => unknown},
-) {
+type ProcessHtmlOptions = {
+    allowHtml: boolean;
+    parseHtml?: (value: string) => unknown;
+    ignoreInvalidValues?: boolean;
+};
+
+export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
     const allowHtml = Boolean(options?.allowHtml);
 
     const processValue = (key: string | number, value: unknown, item: object) => {
@@ -472,7 +475,13 @@ export function processHtmlFields(
                 if (typeof content === 'string' && typeof options?.parseHtml === 'function') {
                     content = options.parseHtml(content);
                 }
-                set(item, key, generateHtml(content as ChartKitHtmlItem));
+                set(
+                    item,
+                    key,
+                    generateHtml(content as ChartKitHtmlItem, {
+                        ignoreInvalidValues: options?.ignoreInvalidValues,
+                    }),
+                );
             } else {
                 processHtmlFields(value, options);
             }
