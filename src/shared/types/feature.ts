@@ -34,7 +34,6 @@ export enum Feature {
     DatasetsRLS = 'DatasetsRLS',
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    GroupControls = 'GroupControls',
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
