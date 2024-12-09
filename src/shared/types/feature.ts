@@ -38,7 +38,6 @@ export enum Feature {
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    GroupControls = 'GroupControls',
     // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
