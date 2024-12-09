@@ -21,6 +21,11 @@ datalensTest.describe('Wizard', () => {
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             await wizardPage.createNewFieldWithFormula('Null', 'float(null)');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.PivotTableColumns,
+                'Null',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Null');
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'Null');
 
             await expect(previewLoader).not.toBeVisible();
