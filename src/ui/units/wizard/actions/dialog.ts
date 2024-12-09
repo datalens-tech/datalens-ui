@@ -372,13 +372,14 @@ export function openDialogChartSettings({
                     extraSettings,
                     qlMode,
                     onCancel: () => dispatch(closeDialog()),
-                    onApply: ({extraSettings, visualization, isSettingsEqual}) => {
+                    onApply: ({extraSettings, visualization, isSettingsEqual, qlMode}) => {
                         dispatch(setExtraSettings(extraSettings));
                         dispatch(setVisualization({visualization}));
 
                         dispatch(
                             updatePreviewAndClientChartsConfig({
                                 withoutRerender: isSettingsEqual,
+                                qlMode,
                             }),
                         );
 

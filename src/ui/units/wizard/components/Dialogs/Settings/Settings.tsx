@@ -34,6 +34,8 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
+import {VisualizationStatus} from 'ui/units/ql/constants';
+import {getVisualizationStatus} from 'ui/units/ql/store/reducers/ql';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
 import type {WidgetData} from 'units/wizard/actions/widget';
 import {selectHighchartsWidget, selectIsLoading} from 'units/wizard/selectors/preview';
@@ -152,6 +154,7 @@ interface GeneralProps {
         visualization: Shared['visualization'];
         extraSettings: CommonSharedExtraSettings;
         isSettingsEqual: boolean;
+        qlMode?: boolean;
     }) => void;
     onCancel: () => void;
     dataset?: Dataset;
@@ -463,7 +466,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             isSettingsEqual = false;
         }
 
-        this.props.onApply({extraSettings, visualization, isSettingsEqual});
+        this.props.onApply({
+            extraSettings,
+            visualization,
+            isSettingsEqual,
+            qlMode: this.props.qlMode,
+        });
     };
 
     getNewVisualizationId = () => {
@@ -997,11 +1005,15 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
     renderModalBody() {
         const {navigatorSettings} = this.state;
-        const {isPreviewLoading} = this.props;
+        const {visualizationLoadingStatusWizard, visualizationStatusQL, qlMode} = this.props;
 
         const isNavigatorAvailable = navigatorSettings.isNavigatorAvailable;
 
-        if (isPreviewLoading && isNavigatorAvailable) {
+        if (qlMode) {
+            if (visualizationStatusQL !== VisualizationStatus.Ready) {
+                return this.renderLoader();
+            }
+        } else if (visualizationLoadingStatusWizard && isNavigatorAvailable) {
             return this.renderLoader();
         }
 
@@ -1062,8 +1074,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
-        isPreviewLoading: selectIsLoading(state),
         highchartsWidget: selectHighchartsWidget(state),
+
+        visualizationLoadingStatusWizard: selectIsLoading(state),
+        visualizationStatusQL: getVisualizationStatus(state),
     };
 };
 
