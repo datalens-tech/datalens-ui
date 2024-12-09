@@ -62,8 +62,9 @@ jobs:
         run: |
           mkdir -p ./workflow_ref
           echo "${{ env.NEW_BRANCH }}" > ./workflow_ref/ref
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: workflow_ref
           path: ./workflow_ref/
           retention-days: 30
+          overwrite: true

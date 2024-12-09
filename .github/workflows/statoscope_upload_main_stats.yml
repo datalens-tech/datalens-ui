@@ -21,3 +21,4 @@ jobs:
         with:
           name: main-stats
           path: ./reference.json
+          overwrite: true
