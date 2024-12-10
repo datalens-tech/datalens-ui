@@ -96,7 +96,9 @@ const titlePlugin: PluginTitle = {
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
         const showBgColor = Boolean(
-            data.background?.color && data.background?.color !== CustomPaletteColors.NONE,
+            data.background?.enabled !== false &&
+                data.background?.color &&
+                data.background?.color !== CustomPaletteColors.NONE,
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
