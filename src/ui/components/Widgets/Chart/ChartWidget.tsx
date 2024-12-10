@@ -497,7 +497,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     }, [editMode, widgetType]);
 
     const showBgColor = Boolean(
-        currentTab.background?.color && currentTab.background?.color !== 'transparent',
+        currentTab?.enabled !== false &&
+            currentTab.background?.color &&
+            currentTab.background?.color !== 'transparent',
     );
 
     const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
