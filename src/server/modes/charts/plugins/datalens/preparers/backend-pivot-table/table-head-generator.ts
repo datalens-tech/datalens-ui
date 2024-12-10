@@ -123,12 +123,15 @@ export const getRowHeaderCellMetadata = (args: GetHeaderCellMetadataArgs): Chart
     // Formatting a column cell
     if (isNumericalDataType(field.data_type)) {
         cell.type = 'number';
-        cell.value = isNaN(Number(value)) ? value : Number(value);
-        cell.formattedValue = chartKitFormatNumberWrapper(cell.value, {
-            lang: 'ru',
-            ...getFormatOptions(field),
-        });
         cell.fieldId = field.guid;
+
+        if (value !== null) {
+            cell.value = isNaN(Number(value)) ? value : Number(value);
+            cell.formattedValue = chartKitFormatNumberWrapper(cell.value, {
+                lang: 'ru',
+                ...getFormatOptions(field),
+            });
+        }
     } else if (isDateField(field) && value) {
         cell.formattedValue = formatDate({
             valueType: field.data_type,

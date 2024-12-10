@@ -496,7 +496,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     }, [editMode, widgetType]);
 
     const showBgColor = Boolean(
-        currentTab.background?.enabled &&
+        currentTab?.enabled !== false &&
             currentTab.background?.color &&
             currentTab.background?.color !== 'transparent',
     );
