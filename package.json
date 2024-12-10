@@ -110,7 +110,7 @@
   },
   "devDependencies": {
     "@datalens-tech/ui-sandbox-modules": "^0.32.0",
-    "@gravity-ui/app-builder": "^0.13.0",
+    "@gravity-ui/app-builder": "^0.13.1",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",
     "@gravity-ui/eslint-config": "^3.2.0",
