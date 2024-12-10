@@ -41,3 +41,4 @@ jobs:
           name: statoscope-report
           path: ./report/statoscope/
           retention-days: 1
+          overwrite: true
