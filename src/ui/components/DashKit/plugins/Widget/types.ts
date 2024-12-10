@@ -21,7 +21,6 @@ export type CurrentTab = {
     autoHeight?: boolean;
     enableActionParams?: boolean;
     background?: {
-        enabled: boolean;
         color: string;
     };
 };
