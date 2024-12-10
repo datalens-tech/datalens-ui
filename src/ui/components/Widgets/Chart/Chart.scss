@@ -180,6 +180,12 @@ $fullscreenZIndex: 999;
         --highcharts-series-border: var(--g-color-base-float);
     }
 
+    &_default-mobile {
+        #{$class}__container {
+            position: static;
+        }
+    }
+
     &_no-tabs {
         // On mobile devices to trigger intersection observer we need at least 1px of height
         &#{$class}_wait-for-init {
