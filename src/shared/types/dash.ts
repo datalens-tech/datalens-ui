@@ -231,6 +231,8 @@ export enum TitlePlacementOption {
     Top = 'top',
 }
 
+export type AccentTypeValue = 'info' | null;
+
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
     titlePlacement?: TitlePlacementOption;
@@ -242,7 +244,7 @@ export interface DashTabItemControlElementBase {
     required?: boolean;
     showHint?: boolean;
     hint?: string;
-    accentType?: 'info' | null;
+    accentType?: AccentTypeValue;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
