@@ -34,8 +34,6 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
-import {VisualizationStatus} from 'ui/units/ql/constants';
-import {getVisualizationStatus} from 'ui/units/ql/store/reducers/ql';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
 import type {WidgetData} from 'units/wizard/actions/widget';
 import {selectHighchartsWidget, selectIsLoading} from 'units/wizard/selectors/preview';
@@ -1005,15 +1003,11 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
     renderModalBody() {
         const {navigatorSettings} = this.state;
-        const {visualizationLoadingStatusWizard, visualizationStatusQL, qlMode} = this.props;
+        const {isPreviewLoading, qlMode} = this.props;
 
         const isNavigatorAvailable = navigatorSettings.isNavigatorAvailable;
 
-        if (qlMode) {
-            if (visualizationStatusQL !== VisualizationStatus.Ready) {
-                return this.renderLoader();
-            }
-        } else if (visualizationLoadingStatusWizard && isNavigatorAvailable) {
+        if (!qlMode && isPreviewLoading && isNavigatorAvailable) {
             return this.renderLoader();
         }
 
@@ -1076,8 +1070,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         highchartsWidget: selectHighchartsWidget(state),
 
-        visualizationLoadingStatusWizard: selectIsLoading(state),
-        visualizationStatusQL: getVisualizationStatus(state),
+        isPreviewLoading: selectIsLoading(state),
     };
 };
 
