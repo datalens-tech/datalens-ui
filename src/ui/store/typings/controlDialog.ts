@@ -41,6 +41,7 @@ export type ItemDataSource = {
     chartId?: string;
     showTitle?: boolean;
     titlePlacement?: TitlePlacementOption;
+    accentType?: 'info' | null;
     elementType?: string;
     defaultValue?: string | string[];
     datasetId?: string;
@@ -70,6 +71,7 @@ export type AcceptableValue = {
 export type SelectorDialogState = {
     title?: string;
     titlePlacement?: TitlePlacementOption;
+
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
@@ -106,6 +108,7 @@ export type SelectorDialogState = {
     namespace?: string;
     showHint?: boolean;
     hint?: string;
+    accentType?: 'info' | null;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
 };

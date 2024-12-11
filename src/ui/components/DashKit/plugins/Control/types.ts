@@ -84,6 +84,7 @@ export interface SelectControlProps {
     innerLabel: string;
     labelPlacement?: TitlePlacementOption;
     limitLabel?: boolean;
+    accentType?: 'info' | null;
     param: string;
     multiselect: boolean;
     type: ControlType;

@@ -17,6 +17,7 @@
   "error_unsupported-connection": "Connection not supported",
   "field_acceptable-values": "Possible values",
   "field_autoheight": "Auto height",
+  "field_color-accent": "Color accent",
   "field_connection": "Connection",
   "field_control": "Selector",
   "field_dataset": "Dataset",

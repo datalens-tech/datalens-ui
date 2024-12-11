@@ -242,6 +242,7 @@ export interface DashTabItemControlElementBase {
     required?: boolean;
     showHint?: boolean;
     hint?: string;
+    accentType?: 'info' | null;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {

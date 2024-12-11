@@ -45,7 +45,7 @@ export const TitlePlacementRow = () => {
 
     return (
         <FormRow label={i18n('label_title-placement')}>
-            <div className={b('operation-container')}>
+            <div className={b('setting-container')}>
                 <RadioButton
                     options={TITLE_PLACEMENT_OPTIONS}
                     value={titlePlacement}
