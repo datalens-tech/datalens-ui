@@ -84,11 +84,8 @@
     &__mobile-title {
         @include text-subheader-3();
         color: var(--g-color-text-primary);
-        font-size: 15px;
         text-decoration: none;
-
         width: 100%;
-
         padding: 8px 50px 8px 16px;
         overflow: visible;
         white-space: normal;
