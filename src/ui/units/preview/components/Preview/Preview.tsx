@@ -232,7 +232,6 @@ const Preview: React.FC<PreviewProps> = (props) => {
                     <WidgetHeader
                         isFullscreen={true}
                         editMode={false}
-                        hideTabs={true}
                         widgetId={possibleEntryId || ''}
                         hideDebugTool={true}
                         onFullscreenClick={() => {
