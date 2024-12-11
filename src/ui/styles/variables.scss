@@ -45,6 +45,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-dataset: #0abe05;
     --dl-color-entity-dashboard: #ff8c3c;
 
+    --dl-color-fixed-header-background: var(--g-color-base-simple-hover-solid);
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 
     &_theme_light {
@@ -55,7 +56,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
         --dl-color-base-workbook-icon: #d1dfff;
-        --dl-color-fixed-header-background: rgb(242, 242, 242);
     }
 
     &_theme_light-hc {
@@ -66,7 +66,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
         --dl-color-base-workbook-icon: #a8c3ff;
-        --dl-color-fixed-header-background: rgb(242, 242, 242);
     }
 
     &_theme_dark {
@@ -77,7 +76,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
         --dl-color-base-workbook-icon: #c2d0f0;
-        --dl-color-fixed-header-background: rgb(45, 40, 45);
     }
 
     &_theme_dark-hc {
@@ -88,6 +86,5 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
         --dl-color-base-workbook-icon: #c0d3fd;
-        --dl-color-fixed-header-background: rgb(30, 29, 30);
     }
 }
