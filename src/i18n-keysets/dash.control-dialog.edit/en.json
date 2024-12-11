@@ -18,6 +18,7 @@
   "field_acceptable-values": "Possible values",
   "field_autoheight": "Auto height",
   "field_color-accent": "Color accent",
+  "field_color-accent-note": "The setting makes the background of the selector more noticeable.",
   "field_connection": "Connection",
   "field_control": "Selector",
   "field_dataset": "Dataset",

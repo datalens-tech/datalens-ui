@@ -18,6 +18,7 @@
   "field_acceptable-values": "Возможные значения",
   "field_autoheight": "Автовысота",
   "field_color-accent": "Цветовой акцент",
+  "field_color-accent-note": "Настройка делает фон селектора более заметным.",
   "field_connection": "Подключение",
   "field_control": "Селектор",
   "field_dataset": "Датасет",
