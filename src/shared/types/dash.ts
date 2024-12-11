@@ -120,8 +120,8 @@ export type DashTabItem =
     | DashTabItemImage;
 
 type BackgroundSettings = {
+    enabled?: boolean;
     color: string;
-    enabled: boolean;
 };
 
 export interface DashTabItemBase {

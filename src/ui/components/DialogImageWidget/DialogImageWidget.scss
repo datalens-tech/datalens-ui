@@ -3,6 +3,7 @@
 
     &__row {
         align-items: center;
+        margin-bottom: var(--g-spacing-2);
 
         &:last-child {
             margin-bottom: 0;
