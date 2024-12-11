@@ -101,8 +101,12 @@ function getChartProps(chart: unknown) {
     return pick(chart, 'chartHeight', 'chartWidth', 'index');
 }
 
-function clearVmProp(prop: unknown) {
+function clearVmProp(prop: unknown): unknown {
     if (prop && typeof prop === 'object') {
+        if (Array.isArray(prop)) {
+            return prop.map(clearVmProp);
+        }
+
         if ('angular' in prop) {
             // It looks like it's Highcharts.Chart - preparing a minimum of attributes for the entity
             return getChartProps(prop);
@@ -201,7 +205,10 @@ async function getUnwrappedFunction(args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        const fnArgs = [...restArgs, ...preparedUserArgs].map((a) => clearVmProp(a));
+        let fnArgs: unknown[] = [...restArgs, ...preparedUserArgs];
+        if (entryType === 'graph_node') {
+            fnArgs = fnArgs.map((a) => clearVmProp(a));
+        }
 
         // prepare function context
         const fnContext = clearVmProp(this);
