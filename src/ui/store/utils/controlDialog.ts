@@ -96,6 +96,7 @@ export const getControlValidation = (
     const {
         title,
         sourceType,
+        chartId,
         datasetFieldId,
         fieldName,
         defaultValue,
@@ -108,6 +109,10 @@ export const getControlValidation = (
 
     if (!title) {
         validation.title = i18n('dash.control-dialog.edit', 'validation_required');
+    }
+
+    if (sourceType === DashTabItemControlSourceType.External && !chartId) {
+        validation.chartId = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
     if (sourceType === DashTabItemControlSourceType.Connection && !connectionQueryContent) {

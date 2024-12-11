@@ -113,6 +113,8 @@ const ExternalSelectorSettings: React.FC<{
             <EntrySelector
                 label={i18n('dash.control-dialog.edit', 'field_source')}
                 entryId={chartId}
+                errorText={validation.chartId}
+                isInvalid={Boolean(validation.chartId)}
                 onChange={handleChartIdChange}
                 includeClickableType={EntryTypeNode.CONTROL_NODE}
                 navigationPath={props.navigationPath}
