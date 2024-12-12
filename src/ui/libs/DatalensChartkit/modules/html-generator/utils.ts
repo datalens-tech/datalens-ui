@@ -147,13 +147,25 @@ export async function getParseHtmlFn() {
 
 function mapElementToJson(element: any) {
     if (element.type === 'tag') {
-        const {style = '', ...attributes} = element.attribs;
+        const {style: styleAttr = '', ...attributes} = element.attribs;
+        const style = String(styleAttr)
+            .split(';')
+            .reduce(
+                (acc, item) => {
+                    const [key, value] = item?.split(':').map((str) => str.trim()) || [];
+                    if (key && value) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                },
+                {} as Record<string, string>,
+            );
 
         return {
-            tag: element.name,
+            tag: element.name.toLowerCase(),
             content: element.children.map(mapElementToJson),
             attributes,
-            style: Object.fromEntries(style.split(';').map((item: string) => item.split(':'))),
+            style,
         };
     }
 

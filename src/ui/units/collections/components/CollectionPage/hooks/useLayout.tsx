@@ -175,7 +175,8 @@ export const useLayout = ({
     ]);
 
     const handleCreateCollection = React.useCallback(() => {
-        if ((isRootCollection && rootCollectionPermissions?.createCollectionInRoot) ||
+        if (
+            (isRootCollection && rootCollectionPermissions?.createCollectionInRoot) ||
             (isCorrectCollection && collection?.permissions?.createCollection)
         ) {
             dispatch(
@@ -186,9 +187,7 @@ export const useLayout = ({
                         parentId: curCollectionId,
                         onApply: (result: CreateCollectionResponse | null) => {
                             if (result) {
-                                history.push(
-                                    `${COLLECTIONS_PATH}/${result.collectionId}`,
-                                );
+                                history.push(`${COLLECTIONS_PATH}/${result.collectionId}`);
                             }
                         },
                         onClose: () => {
@@ -205,16 +204,16 @@ export const useLayout = ({
                         visible: true,
                         onClose: () => {
                             dispatch(closeDialog());
-                        }
-                    }
-                })
-            )
+                        },
+                    },
+                }),
+            );
         }
-        
-    }, [dispatch, isCorrectCollection, isRootCollection, collection, rootCollectionPermissions])
+    }, [dispatch, isCorrectCollection, isRootCollection, collection, rootCollectionPermissions]);
 
     React.useEffect(() => {
-        if ((isRootCollection && rootCollectionPermissions) ||
+        if (
+            (isRootCollection && rootCollectionPermissions) ||
             (isCorrectCollection && collection && collection?.permissions)
         ) {
             setLayout({

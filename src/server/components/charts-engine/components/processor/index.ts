@@ -48,7 +48,7 @@ import type {
     UiTabExports,
     UserConfig,
 } from './types';
-import {getMessageFromUnknownError, isChartWithJSAndHtmlAllowed} from './utils';
+import {cleanJSONFn, getMessageFromUnknownError, isChartWithJSAndHtmlAllowed} from './utils';
 
 const {
     CONFIG_LOADING_ERROR,
@@ -794,13 +794,13 @@ export class Processor {
 
             if (!uiOnly && jsTabResults) {
                 result.data = processedData;
-                const resultConfig = merge(
+                let resultConfig = merge(
                     {},
                     userConfig,
                     jsTabResults.runtimeMetadata.userConfigOverride,
                 );
 
-                const resultLibraryConfig = mergeWith(
+                let resultLibraryConfig = mergeWith(
                     {},
                     libraryConfig,
                     jsTabResults.runtimeMetadata.libraryConfigOverride,
@@ -823,13 +823,17 @@ export class Processor {
                 if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
                     resultConfig.enableJsAndHtml = false;
                 }
-                const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', true);
-                const stringify =
+                const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
+                const disableJSONFn =
                     isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
                     req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE ||
-                    enableJsAndHtml === false
-                        ? JSON.stringify
-                        : JSONfn.stringify;
+                    enableJsAndHtml === false;
+                const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;
+
+                if (builder.type === 'CHART_EDITOR' && disableJSONFn) {
+                    resultConfig = cleanJSONFn(resultConfig);
+                    resultLibraryConfig = cleanJSONFn(resultLibraryConfig);
+                }
 
                 result.config = stringify(resultConfig);
                 result.publicAuthor = config.publicAuthor;

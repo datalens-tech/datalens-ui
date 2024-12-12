@@ -96,6 +96,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             scopes: getAllEntryScopes(),
             isSpecific: true,
             isOnEditMode: false,
+            permissions: () => ({admin: true, edit: true, read: false, execute: false}),
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 

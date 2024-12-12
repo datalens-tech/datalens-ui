@@ -3,6 +3,7 @@ import {expect} from '@playwright/test';
 import {
     ChartKitQa,
     DialogFieldSettingsQa,
+    MARKUP_TYPE,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -32,7 +33,10 @@ datalensTest.describe('Wizard', () => {
             );
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Dimensions, 'md');
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Dimensions, 'md');
-            await page.locator(slct(DialogFieldSettingsQa.MarkdownEnableButton)).click();
+            await page
+                .locator(slct(DialogFieldSettingsQa.MarkupTypeRadioButtons))
+                .locator(`[value="${MARKUP_TYPE.markdown}"]`)
+                .click();
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'sum');
 

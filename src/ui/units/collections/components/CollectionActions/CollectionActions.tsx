@@ -52,13 +52,9 @@ export const CollectionActions = React.memo<Props>(
 
         const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
-        const showCreateCollection = collection
-            ? collection.permissions?.createCollection
-            : true;
+        const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
-        const showCreateWorkbook = collection
-            ? collection.permissions?.createWorkbook
-            : true;
+        const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
 
         const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
         const showAddLearningMaterialsWorkbook =

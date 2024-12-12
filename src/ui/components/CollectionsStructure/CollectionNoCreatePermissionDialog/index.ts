@@ -1,1 +1,1 @@
-export * from './CollectionNoCreatePermissionDialog'
+export * from './CollectionNoCreatePermissionDialog';

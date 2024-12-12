@@ -686,7 +686,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 this._getDistinctsMemo ||
                 ((params) => {
                     const {getDistincts} = this.props;
-                    const headers = this?.context?.dataProviderContextGetter?.();
+                    const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
 
                     return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
                         params,
@@ -700,10 +700,17 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this._getDistinctsMemo;
     }
 
+    private requestHeadersGetter = () => {
+        if (this.context?.dataProviderContextGetter) {
+            return this.context.dataProviderContextGetter(this.props.id);
+        }
+
+        return {};
+    };
+
     private renderControl(item: DashTabItemControlSingle) {
         const {workbookId} = this.props;
         const {silentLoading} = this.state;
-        const dataProviderContextGetter = this?.context?.dataProviderContextGetter?.();
 
         return (
             <Control
@@ -719,7 +726,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
                 groupId={this.props.id}
-                requestHeaders={dataProviderContextGetter}
+                requestHeaders={this.requestHeadersGetter}
             />
         );
     }

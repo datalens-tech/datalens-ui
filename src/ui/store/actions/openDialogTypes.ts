@@ -54,7 +54,7 @@ import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/Collect
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
-import type { OpenDialogCollectionNoCreatePermissionArgs } from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
+import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogMetricSettingsArgs

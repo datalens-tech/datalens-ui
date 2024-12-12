@@ -10,17 +10,11 @@ import {
     TabMenuQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
-import {
-    clickGSelectOption,
-    fillDatePicker,
-    getControlByTitle,
-    isEnabledFeature,
-    slct,
-} from '../../utils';
+import {clickGSelectOption, fillDatePicker, getControlByTitle, slct} from '../../utils';
 
 import {BasePageProps} from '../BasePage';
 
-import {DashTabItemControlSourceType, DialogControlQa, Feature} from '../../../src/shared';
+import {DashTabItemControlSourceType, DialogControlQa} from '../../../src/shared';
 
 import {
     DashboardAddWidgetQa,
@@ -83,13 +77,7 @@ class ControlActions {
     }
 
     async clickAddSelector() {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
-        if (isEnabledGroupControls) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
-            return;
-        }
-        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+        await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
     }
 
     async addDateRangeSelector({
@@ -250,18 +238,11 @@ class ControlActions {
         sourceType = DashTabItemControlSourceType.Manual,
         ...setting
     }: SelectorSettings = {}) {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
         await this.dialogControl.waitForVisible();
 
         if (sourceType) {
-            if (isEnabledGroupControls) {
-                await this.dialogControl.sourceTypeSelect.click();
-                await this.dialogControl.sourceTypeSelect.selectListItemByQa(slct(sourceType));
-            } else {
-                // will be removed after enabling of GroupControls
-                await this.dialogControl.sourceType.selectByName(sourceType);
-            }
+            await this.dialogControl.sourceTypeSelect.click();
+            await this.dialogControl.sourceTypeSelect.selectListItemByQa(slct(sourceType));
         }
 
         if (sourceType === DashTabItemControlSourceType.Manual) {

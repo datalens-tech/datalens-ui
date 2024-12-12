@@ -1,13 +1,14 @@
+import type {WrappedHTML} from '../../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import type {ExtendedPointOptionsObject} from '../../utils/color-helpers';
 
 export type ScatterPoint = ExtendedPointOptionsObject & {
-    xLabel?: string | WrappedMarkdown;
-    yLabel?: string | WrappedMarkdown;
-    cLabel?: string | null | WrappedMarkdown;
-    sLabel?: string | WrappedMarkdown;
+    xLabel?: string | WrappedMarkdown | WrappedHTML;
+    yLabel?: string | WrappedMarkdown | WrappedHTML;
+    cLabel?: string | null | WrappedMarkdown | WrappedHTML;
+    sLabel?: string | WrappedMarkdown | WrappedHTML;
     sizeValue?: number | null;
-    sizeLabel?: string | null | WrappedMarkdown;
+    sizeLabel?: string | null | WrappedMarkdown | WrappedHTML;
     x?: number;
     y?: number;
     value?: number;

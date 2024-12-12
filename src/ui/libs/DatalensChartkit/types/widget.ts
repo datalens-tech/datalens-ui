@@ -101,6 +101,7 @@ export interface WidgetBase {
         unsafe?: boolean;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
     libraryConfig?: Highcharts.Options | Record<string, any>;
     requestId?: string;
@@ -166,6 +167,7 @@ export type GraphWidget = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            useHtml?: boolean;
         };
         libraryConfig: Highcharts.Options;
         comments?: HighchartsComment[];
@@ -269,6 +271,7 @@ export type TableWidgetData = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            useHtml?: boolean;
             size?: WidgetSizeType;
         };
         unresolvedParams?: StringParams;
@@ -316,6 +319,7 @@ type MetricWidget = WidgetBaseWithData & {
         drillDown?: DrillDownConfig;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
 };
 
@@ -327,6 +331,7 @@ export interface Metric2Widget extends WidgetBaseWithData {
         drillDown?: DrillDownConfig;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
 }
 

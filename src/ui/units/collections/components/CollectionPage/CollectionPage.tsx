@@ -119,11 +119,11 @@ export const CollectionPage = () => {
                     visible: true,
                     onClose: () => {
                         dispatch(closeDialog());
-                    }
-                }
-            })
-        )
-    }, [dispatch])
+                    },
+                },
+            }),
+        );
+    }, [dispatch]);
 
     const handleCreateWorkbookWithConnection = React.useCallback(() => {
         dispatch(
@@ -233,14 +233,16 @@ export const CollectionPage = () => {
         fetchStructureItems,
     ]);
 
-    const isRootCollection = curCollectionId === null
+    const isRootCollection = curCollectionId === null;
 
     const hasPermissionToCreate =
         curCollectionId && collection
             ? Boolean(collection.permissions?.createWorkbook)
             : Boolean(rootCollectionPermissions?.createWorkbookInRoot);
 
-    const showCreateWorkbookButton = DL.IS_MOBILE ? false : (hasPermissionToCreate || isRootCollection);
+    const showCreateWorkbookButton = DL.IS_MOBILE
+        ? false
+        : hasPermissionToCreate || isRootCollection;
 
     const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
 
@@ -256,7 +258,9 @@ export const CollectionPage = () => {
         resetSelected,
         fetchCollectionInfo,
         fetchStructureItems,
-        handleCreateWorkbook: hasPermissionToCreate ? handleCreateWorkbook : handleShowNoPermissionsDialog,
+        handleCreateWorkbook: hasPermissionToCreate
+            ? handleCreateWorkbook
+            : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,
     });
@@ -308,7 +312,11 @@ export const CollectionPage = () => {
                     getStructureItemsRecursively={getStructureItemsRecursively}
                     fetchStructureItems={fetchStructureItems}
                     onCloseMoveDialog={handeCloseMoveDialog}
-                    onCreateWorkbookWithConnectionClick={hasPermissionToCreate ? handleCreateWorkbookWithConnection : handleShowNoPermissionsDialog}
+                    onCreateWorkbookWithConnectionClick={
+                        hasPermissionToCreate
+                            ? handleCreateWorkbookWithConnection
+                            : handleShowNoPermissionsDialog
+                    }
                     onClearFiltersClick={() => {
                         updateFilters({
                             ...DEFAULT_FILTERS,

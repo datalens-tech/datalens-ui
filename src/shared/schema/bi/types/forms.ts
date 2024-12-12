@@ -4,7 +4,6 @@ import type {
     CheckboxProps,
     RadioButtonProps,
     RadioGroupProps,
-    SelectOption,
     SelectProps,
     TextAreaProps,
     TextInputProps,
@@ -52,7 +51,7 @@ export type SelectItem = BaseItem &
     BaseControlItem & {
         id: 'select';
         // option.data?.description is occupied for meta information in the select option.
-        availableValues?: SelectOption[];
+        availableValues?: SelectProps['options'];
         hintText?: MarkdownString;
         controlProps?: Partial<SelectProps>;
         loading?: boolean;

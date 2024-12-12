@@ -211,6 +211,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         setLoadedWidgetType(data?.loadedData?.type as string);
     }, []);
 
+    /**
+     * Memoised dataProviderContextGetter with widget id
+     */
+    const requestHeadersGetter = React.useMemo(() => {
+        return dataProviderContextGetter?.bind(this, widgetId);
+    }, [widgetId, dataProviderContextGetter]);
+
     const {
         loadedData,
         isLoading,
@@ -235,7 +242,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
     } = useLoadingChart({
         dataProvider,
-        dataProviderContextGetter,
+        requestHeadersGetter,
         initialData,
         requestId,
         requestCancellationRef,
@@ -267,7 +274,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         veil,
         showLoader,
         isFullscreen,
-        hideTabs,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,
@@ -284,7 +290,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 history,
                 widgetId,
                 hideTitle: Boolean(data.hideTitle),
-                tabsLength: tabs.length,
             }),
         [
             isLoading,
@@ -298,6 +303,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             history.location.search,
             hasHideTitleChanged,
             widgetId,
+            data.hideTitle,
+            isSilentReload,
         ],
     );
 
@@ -681,7 +688,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         error,
         handleRenderChart,
         description,
-        hideTabs,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,
