@@ -2,10 +2,11 @@
 
 .widget-palette-background {
     $class: &;
-    display: block;
+    display: inline-block;
     position: relative;
     line-height: 0;
     width: fit-content;
+    vertical-align: text-top;
 
     &__hint {
         @include text-body-1();
@@ -21,8 +22,8 @@
         display: inline-block;
         position: relative;
         border-radius: 4px;
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         cursor: pointer;
 
         $colorItem: &;
@@ -62,10 +63,7 @@
         &_selected:not(&_small)::after {
             content: '';
             position: absolute;
-            top: -1px;
-            left: -1px;
-            width: 30px;
-            height: 30px;
+            inset: -1px;
             border: 1px solid var(--g-color-line-misc);
             border-radius: 6px;
             z-index: 0;
