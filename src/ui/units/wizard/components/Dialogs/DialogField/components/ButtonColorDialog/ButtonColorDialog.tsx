@@ -77,6 +77,7 @@ export const ButtonColorDialog: React.FC<ButtonColorDialogProps> = (
                         extra: extraSettings,
                         onApply: onApplyDialogColor,
                         isColorModeChangeAvailable: false,
+                        canSetNullMode: false,
                     }),
                 )
             }

@@ -1,4 +1,5 @@
-import {pick} from 'lodash';
+import omit from 'lodash/omit';
+import pick from 'lodash/pick';
 import type {
     ColorsConfig,
     Field,
@@ -9,6 +10,7 @@ import type {
 } from 'shared';
 import {WizardVisualizationId, isParameter, isVisualizationWithLayers} from 'shared';
 
+import {ALLOWED_FOR_NULL_MODE_VISUALIZATIONS} from '../../constants/dialogColor';
 import {getSelectedLayer} from '../../utils/helpers';
 
 const VISUALIZATION_FIELDS_KEYS: Array<keyof VisualizationFields> = [
@@ -72,7 +74,11 @@ type PrepareColorsItems = {
     colorsConfig?: ColorsConfig;
 };
 
-function prepareColors(visualization: any, colors: Field[]): PrepareColorsItems {
+function prepareColors(
+    visualization: any,
+    colors: Field[],
+    colorsConfig: ColorsConfig,
+): PrepareColorsItems {
     const isPieOrDonut = [
         WizardVisualizationId.Donut,
         WizardVisualizationId.Pie,
@@ -94,8 +100,13 @@ function prepareColors(visualization: any, colors: Field[]): PrepareColorsItems 
             });
         });
 
+        const updatedColorsConfig = ALLOWED_FOR_NULL_MODE_VISUALIZATIONS.includes(visualization?.id)
+            ? colorsConfig
+            : omit(colorsConfig, 'nullMode');
+
         return {
             colors: updatedColors,
+            colorsConfig: updatedColorsConfig,
         };
     } else {
         return {
@@ -188,7 +199,7 @@ function prepareVisualizationItems(
         ? prepareShapes(currentVisualization, items.shapes)
         : undefined;
 
-    const preparedColors = prepareColors(currentVisualization, items.colors);
+    const preparedColors = prepareColors(currentVisualization, items.colors, items.colorsConfig);
 
     const preparedLabels = prepareLabels(currentVisualization, items.labels);
 
