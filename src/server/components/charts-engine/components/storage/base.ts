@@ -16,6 +16,7 @@ export type ResolveConfigProps = {
     headers: Request['headers'];
     unreleased?: boolean;
     noCache?: boolean;
+    requestId?: string;
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
     workbookId?: WorkbookId;
