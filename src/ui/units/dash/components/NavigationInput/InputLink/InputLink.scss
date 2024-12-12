@@ -9,15 +9,13 @@
     }
 
     &__button {
-        width: 75px;
-
         &:not(:last-child) {
-            margin-right: 10px;
+            margin-right: var(--g-spacing-2);
         }
     }
 
     &__error {
         color: var(--g-color-text-danger);
-        padding: 10px;
+        padding: var(--g-spacing-2);
     }
 }
