@@ -31,8 +31,8 @@ const MANUAL = 'manual';
 const TOOLTIP_DELAY_CLOSING = 250;
 
 const NULLS_OPTIONS = [
-    {value: 'ignore', content: i18n('wizard', 'label_ignore')},
-    {value: 'as-0', content: i18n('wizard', 'label_as-0')},
+    {value: 'ignore', content: i18n('wizard', 'label_painting-ignore')},
+    {value: 'as-0', content: i18n('wizard', 'label_painting-as-0')},
 ];
 
 function prepareNumericStringValue(value: number | null) {
@@ -114,7 +114,7 @@ class DialogColorGradientBody extends React.Component<Props> {
 
         return (
             <React.Fragment>
-                {canSetNullMode ? (
+                {canSetNullMode && (
                     <FormRow className={b('row')} label={i18n('wizard', 'label_nulls')}>
                         <RadioButton
                             options={NULLS_OPTIONS}
@@ -126,7 +126,7 @@ class DialogColorGradientBody extends React.Component<Props> {
                             }}
                         />
                     </FormRow>
-                ) : null}
+                )}
                 <FormRow className={b('row')} label={i18n('wizard', 'label_gradient-type')}>
                     <RadioButton
                         size="m"
