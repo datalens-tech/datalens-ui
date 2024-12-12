@@ -67,6 +67,7 @@ type DataFetcherOptions = {
         | null;
     subrequestHeaders: Record<string, string>;
     userId?: string | null;
+    userLogin?: string | null;
     iamToken?: string | null;
     workbookId?: WorkbookId;
 };
@@ -153,6 +154,7 @@ export class DataFetcher {
         postprocess = null,
         subrequestHeaders,
         userId,
+        userLogin,
         iamToken,
         workbookId,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
@@ -191,6 +193,7 @@ export class DataFetcher {
                               processingRequests,
                               rejectFetchingSource: reject,
                               userId,
+                              userLogin,
                               iamToken,
                               workbookId,
                           })
@@ -404,6 +407,7 @@ export class DataFetcher {
         processingRequests,
         rejectFetchingSource,
         userId,
+        userLogin,
         iamToken,
         workbookId,
     }: {
@@ -416,6 +420,7 @@ export class DataFetcher {
         processingRequests: PromiseWithAbortController[];
         rejectFetchingSource: () => void;
         userId?: string | null;
+        userLogin?: string | null;
         iamToken?: string | null;
         workbookId?: WorkbookId;
     }) {
@@ -449,14 +454,8 @@ export class DataFetcher {
             isEnabledServerFeature(ctx, Feature.UseChartsEngineLogin),
         );
 
-        if (
-            useChartsEngineLogin &&
-            'blackbox' in req &&
-            isObject(req.blackbox) &&
-            'login' in req.blackbox &&
-            isString(req.blackbox.login)
-        ) {
-            loggedInfo.login = req.blackbox.login;
+        if (useChartsEngineLogin && userLogin) {
+            loggedInfo.login = userLogin;
         }
 
         ctx.log('FETCHER_REQUEST', loggedInfo);
@@ -635,7 +634,7 @@ export class DataFetcher {
         }
 
         if (req.headers.referer) {
-            headers.referer = req.ctx.utils.redactSensitiveQueryParams(req.headers.referer);
+            headers.referer = ctx.utils.redactSensitiveQueryParams(req.headers.referer);
         }
 
         const proxyHeaders = ctx.config.chartsEngineConfig.dataFetcherProxiedHeaders || [

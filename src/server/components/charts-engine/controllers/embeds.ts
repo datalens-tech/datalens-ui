@@ -122,7 +122,6 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 ...res.locals.subrequestHeaders,
                 ...ctx.getMetadata(),
             },
-            requestId: req.id,
         };
 
         // 1. it's embedded chart, id is not used, chart is resolved by token
