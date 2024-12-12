@@ -48,6 +48,7 @@ type OwnProps = {
     onColorModeChange: (value: ColorMode) => void;
     isColorModeChangeAvailable: boolean;
     colorSectionFields?: Field[];
+    canSetNullMode?: boolean;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
