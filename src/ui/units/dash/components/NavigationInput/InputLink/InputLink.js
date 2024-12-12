@@ -141,6 +141,7 @@ class InputLink extends React.PureComponent {
                 />
                 <div>
                     <Button
+                        view="action"
                         className={b('button')}
                         qa={NavigationInputQA.Apply}
                         disabled={this.state.progress}

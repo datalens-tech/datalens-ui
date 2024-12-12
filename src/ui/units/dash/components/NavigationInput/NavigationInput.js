@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
@@ -103,7 +103,7 @@ class NavigationInput extends React.PureComponent {
                         </Button>
                     )}
                 </div>
-                <div className={b('row', linkMixin)}>
+                <Flex gap={2} className={b('row', linkMixin)}>
                     {showInput ? (
                         <InputLink
                             onApply={({entry, params}) => {
@@ -127,7 +127,7 @@ class NavigationInput extends React.PureComponent {
                             {i18n('dash.navigation-input.edit', 'button_use-link')}
                         </Button>
                     )}
-                </div>
+                </Flex>
             </React.Fragment>
         );
     }

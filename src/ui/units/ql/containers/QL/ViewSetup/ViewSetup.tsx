@@ -169,12 +169,14 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                         Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
                                     }
                                 >
-                                    <EntryIcon
-                                        entry={connection}
-                                        size={24}
-                                        className={b('entry-icon')}
-                                    />
-                                    {connection.name}
+                                    <div className={b('connection-select-btn-content')}>
+                                        <EntryIcon
+                                            entry={connection}
+                                            size={24}
+                                            className={b('entry-icon')}
+                                        />
+                                        {connection.name}
+                                    </div>
                                 </Button>
                             </div>
                         ) : (
