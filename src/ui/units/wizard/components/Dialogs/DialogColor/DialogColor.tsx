@@ -20,6 +20,7 @@ import {
     isGradientDialog,
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
+    selectDialogColorVisualizationId,
 } from '../../../selectors/dialogColor';
 
 import ColorSettingsContainer from './ColorSettingsContainer/ColorSettingsContainer';
@@ -117,6 +118,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                             colorMode={this.state.colorMode}
                             isColorModeChangeAvailable={isColorModeChangeAvailable}
                             onColorModeChange={this.onColorModeChange}
+                            visualizationId={this.props.visualizationId}
                         />
                     </Dialog.Body>
                     <Dialog.Footer
@@ -183,6 +185,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                 leftThreshold,
                 middleThreshold,
                 rightThreshold,
+                nullMode,
             } = this.props.gradientState;
 
             config = {
@@ -191,10 +194,11 @@ class DialogColorComponent extends React.Component<Props, State> {
                 polygonBorders,
                 reversed,
                 thresholdsMode,
-                leftThreshold,
-                middleThreshold,
-                rightThreshold,
+                leftThreshold: leftThreshold ? leftThreshold : undefined,
+                middleThreshold: middleThreshold ? middleThreshold : undefined,
+                rightThreshold: rightThreshold ? rightThreshold : undefined,
                 colorMode,
+                nullMode,
             };
 
             return config;
@@ -228,6 +232,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         dataset: selectDataset(state),
         gradientState: selectDialogColorGradientState(state),
         paletteState: selectDialogColorPaletteState(state),
+        visualizationId: selectDialogColorVisualizationId(state),
     };
 };
 

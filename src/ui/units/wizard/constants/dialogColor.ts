@@ -1,10 +1,11 @@
 import {getAvailableClientPalettesMap, selectDefaultClientGradient} from 'constants/common';
 
-import {DEFAULT_PALETTE, GradientType} from 'shared';
+import {DEFAULT_PALETTE, GradientNullModes, GradientType} from 'shared';
 
 export const DEFAULT_BORDERS = 'show';
 export const DEFAULT_THRESHOLDS_MODE = 'auto';
 export const DEFAULT_GRADIENT_MODE = GradientType.TWO_POINT;
+export const DEFAULT_NULL_MODE = GradientNullModes.Ignore;
 
 export const AVAILABLE_CLIENT_PALETTES_DICT = getAvailableClientPalettesMap();
 export const DEFAULT_TWO_POINT_GRADIENT = selectDefaultClientGradient(DEFAULT_GRADIENT_MODE);
@@ -25,4 +26,5 @@ export const DEFAULT_GRADIENT_STATE = {
     middleThreshold: undefined,
     rightThreshold: undefined,
     gradientPalette: DEFAULT_TWO_POINT_GRADIENT,
+    nullMode: DEFAULT_NULL_MODE,
 };

@@ -1,17 +1,17 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {FormRow, HelpPopover} from '@gravity-ui/components';
 import {ArrowRightArrowLeft} from '@gravity-ui/icons';
-import {Button, Checkbox, Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
+import {Button, Checkbox, Flex, Icon, RadioButton, Select} from '@gravity-ui/uikit';
+import {unstable_NumberInput as NumberInput} from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
-import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, GradientPalettes} from 'shared';
-import {DialogColorQa, GradientType, isMeasureValue} from 'shared';
+import {DialogColorQa, GradientType, WizardVisualizationId, isMeasureValue} from 'shared';
 import {selectAvailableClientGradients, selectDefaultClientGradient} from 'ui';
 import type {GradientState} from 'units/wizard/actions/dialogColor';
 import {setDialogColorGradientState} from 'units/wizard/actions/dialogColor';
@@ -30,6 +30,15 @@ export const AUTO = 'auto';
 const MANUAL = 'manual';
 const TOOLTIP_DELAY_CLOSING = 250;
 
+const NULLS_OPTIONS = [
+    {value: 'ignore', content: i18n('wizard', 'label_ignore')},
+    {value: 'as-0', content: i18n('wizard', 'label_as-0')},
+];
+
+function prepareNumericStringValue(value: number | null) {
+    return value === null ? '' : String(value);
+}
+
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
@@ -40,6 +49,7 @@ interface Props extends StateProps, DispatchProps {
     };
     setGradientState: (newGradientState: Partial<GradientState>) => void;
     item: Field;
+    visualizationId?: string;
 }
 
 class DialogColorGradientBody extends React.Component<Props> {
@@ -70,15 +80,23 @@ class DialogColorGradientBody extends React.Component<Props> {
             polygonBorders,
             reversed,
             thresholdsMode,
-            leftThreshold,
-            middleThreshold,
-            rightThreshold,
+            leftThreshold: left,
+            middleThreshold: middle,
+            rightThreshold: right,
             validationStatus,
         } = this.props.gradientState;
-        const {extra = {}, item, gradients} = this.props;
+        const {extra = {}, item, gradients, visualizationId} = this.props;
 
         const currentPalette = this.getCurrentGradientPalette(gradients);
         const options = getGradientSelectorItems(gradients);
+
+        const canSetNullMode =
+            visualizationId === WizardVisualizationId.FlatTable ||
+            visualizationId === WizardVisualizationId.PivotTable;
+
+        const leftThreshold = left ? Number(left) : null;
+        const middleThreshold = middle ? Number(middle) : null;
+        const rightThreshold = right ? Number(right) : null;
 
         if (!currentPalette) {
             return null;
@@ -90,15 +108,30 @@ class DialogColorGradientBody extends React.Component<Props> {
             colors.reverse();
         }
 
+        const leftThresholdError = validationStatus?.left?.text;
+        const middleThresholdError = validationStatus?.middle?.text;
+        const rightThresholdError = validationStatus?.right?.text;
+
         return (
             <React.Fragment>
-                <div className={b('row')}>
-                    <span className={b('label')}>{i18n('wizard', 'label_gradient-type')}</span>
+                {canSetNullMode ? (
+                    <FormRow className={b('row')} label={i18n('wizard', 'label_nulls')}>
+                        <RadioButton
+                            options={NULLS_OPTIONS}
+                            value={this.props.gradientState.nullMode}
+                            onUpdate={(nullMode) => {
+                                this.props.setGradientState({
+                                    nullMode,
+                                });
+                            }}
+                        />
+                    </FormRow>
+                ) : null}
+                <FormRow className={b('row')} label={i18n('wizard', 'label_gradient-type')}>
                     <RadioButton
                         size="m"
                         value={gradientMode}
-                        onChange={(event) => {
-                            const gradientType = event.target.value as GradientType;
+                        onUpdate={(gradientType) => {
                             this.props.setGradientState({
                                 gradientMode: gradientType,
                                 gradientPalette: selectDefaultClientGradient(gradientType),
@@ -113,10 +146,9 @@ class DialogColorGradientBody extends React.Component<Props> {
                             {i18n('wizard', 'label_3-point')}
                         </RadioButton.Option>
                     </RadioButton>
-                </div>
+                </FormRow>
                 {extra.polygonBorders && (
-                    <div className={b('row')}>
-                        <span className={b('label')}>{i18n('wizard', 'label_borders')}</span>
+                    <FormRow className={b('row')} label={i18n('wizard', 'label_borders')}>
                         <RadioButton
                             size="m"
                             value={polygonBorders}
@@ -134,9 +166,9 @@ class DialogColorGradientBody extends React.Component<Props> {
                                 {i18n('wizard', 'label_hide')}
                             </RadioButton.Option>
                         </RadioButton>
-                    </div>
+                    </FormRow>
                 )}
-                <div className={b('row')}>
+                <Flex alignItems="center" className={b('row')}>
                     <div className={b('palette-select')}>
                         <Select
                             value={[gradientPalette]}
@@ -169,113 +201,109 @@ class DialogColorGradientBody extends React.Component<Props> {
                     >
                         <Icon data={ArrowRightArrowLeft} width={24} />
                     </Button>
-                </div>
+                </Flex>
                 {!isMeasureValue(item) && (
-                    <div className={b('row')}>
-                        <Checkbox
-                            className={b('thresholds-checkbox')}
-                            size="m"
-                            onChange={() => {
-                                this.props.setGradientState({
-                                    thresholdsMode: thresholdsMode === AUTO ? MANUAL : AUTO,
-                                });
-                            }}
-                            checked={thresholdsMode === MANUAL}
-                        >
-                            <span>
-                                {i18n('wizard', 'label_thresholds')}
-                                <HelpPopover
-                                    delayClosing={TOOLTIP_DELAY_CLOSING}
-                                    placement={['bottom']}
-                                    className={b('hint-icon')}
-                                    content={
-                                        <span>{i18n('wizard', 'label_tooltip-thresholds')}</span>
-                                    }
-                                />
-                            </span>
-                        </Checkbox>
+                    <FormRow
+                        className={b('row')}
+                        label={
+                            <Checkbox
+                                className={b('thresholds-checkbox')}
+                                size="m"
+                                onChange={() => {
+                                    this.props.setGradientState({
+                                        thresholdsMode: thresholdsMode === AUTO ? MANUAL : AUTO,
+                                    });
+                                }}
+                                checked={thresholdsMode === MANUAL}
+                            >
+                                <span>
+                                    {i18n('wizard', 'label_thresholds')}
+                                    <HelpPopover
+                                        delayClosing={TOOLTIP_DELAY_CLOSING}
+                                        placement={['bottom']}
+                                        className={b('hint-icon')}
+                                        content={
+                                            <span>
+                                                {i18n('wizard', 'label_tooltip-thresholds')}
+                                            </span>
+                                        }
+                                    />
+                                </span>
+                            </Checkbox>
+                        }
+                    >
                         {thresholdsMode === MANUAL && (
                             <div className={b('threshold-inputs-wrapper')}>
                                 <div className={b('threshold-input')}>
-                                    <FieldWrapper
-                                        error={
-                                            validationStatus &&
-                                            validationStatus.left &&
-                                            validationStatus.left.text
-                                        }
-                                    >
-                                        <TextInput
-                                            type="number"
-                                            pin="round-round"
-                                            size="m"
-                                            value={leftThreshold}
-                                            onUpdate={(value) => {
-                                                this.props.setGradientState({
+                                    <NumberInput
+                                        pin="round-round"
+                                        size="m"
+                                        value={leftThreshold}
+                                        validationState={leftThresholdError ? 'invalid' : undefined}
+                                        errorMessage={leftThresholdError}
+                                        errorPlacement="inside"
+                                        hiddenControls
+                                        onUpdate={(val) => {
+                                            const value = prepareNumericStringValue(val);
+                                            this.props.setGradientState({
+                                                leftThreshold: value,
+                                                validationStatus: this._validateManualThresholds({
                                                     leftThreshold: value,
-                                                    validationStatus:
-                                                        this._validateManualThresholds({
-                                                            leftThreshold: value,
-                                                        }),
-                                                });
-                                            }}
-                                        />
-                                    </FieldWrapper>
+                                                }),
+                                            });
+                                        }}
+                                    />
                                 </div>
                                 {gradientMode === GradientType.THREE_POINT && (
                                     <div className={b('threshold-input')}>
-                                        <FieldWrapper
-                                            error={
-                                                validationStatus &&
-                                                validationStatus.middle &&
-                                                validationStatus.middle.text
-                                            }
-                                        >
-                                            <TextInput
-                                                type="number"
-                                                size="m"
-                                                pin="round-round"
-                                                value={middleThreshold}
-                                                onUpdate={(value) => {
-                                                    this.props.setGradientState({
-                                                        middleThreshold: value,
-                                                        validationStatus:
-                                                            this._validateManualThresholds({
-                                                                middleThreshold: value,
-                                                            }),
-                                                    });
-                                                }}
-                                            />
-                                        </FieldWrapper>
-                                    </div>
-                                )}
-                                <div className={b('threshold-input')}>
-                                    <FieldWrapper
-                                        error={
-                                            validationStatus &&
-                                            validationStatus.right &&
-                                            validationStatus.right.text
-                                        }
-                                    >
-                                        <TextInput
-                                            type="number"
-                                            pin="round-round"
+                                        <NumberInput
                                             size="m"
-                                            value={rightThreshold}
-                                            onUpdate={(value) => {
+                                            pin="round-round"
+                                            value={middleThreshold}
+                                            validationState={
+                                                middleThresholdError ? 'invalid' : undefined
+                                            }
+                                            errorMessage={middleThresholdError}
+                                            errorPlacement="inside"
+                                            hiddenControls
+                                            onUpdate={(val) => {
+                                                const value = prepareNumericStringValue(val);
                                                 this.props.setGradientState({
-                                                    rightThreshold: value,
+                                                    middleThreshold: value,
                                                     validationStatus:
                                                         this._validateManualThresholds({
-                                                            rightThreshold: value,
+                                                            middleThreshold: value,
                                                         }),
                                                 });
                                             }}
                                         />
-                                    </FieldWrapper>
+                                    </div>
+                                )}
+                                <div className={b('threshold-input')}>
+                                    <NumberInput
+                                        pin="round-round"
+                                        size="m"
+                                        value={rightThreshold}
+                                        validationState={
+                                            rightThresholdError ? 'invalid' : undefined
+                                        }
+                                        errorMessage={rightThresholdError}
+                                        errorPlacement="inside"
+                                        hiddenControls
+                                        onUpdate={(val) => {
+                                            const value = prepareNumericStringValue(val);
+                                            this.props.setGradientState({
+                                                rightThreshold: value,
+                                                validationStatus: this._validateManualThresholds({
+                                                    rightThreshold: value,
+                                                }),
+                                            });
+                                        }}
+                                    />
                                 </div>
                             </div>
                         )}
-                    </div>
+                    </FormRow>
                 )}
             </React.Fragment>
         );

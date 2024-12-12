@@ -17,6 +17,9 @@ export const selectDialogColorPaletteState = (state: DatalensGlobalState) =>
 export const selectDialogColorGradientState = (state: DatalensGlobalState) =>
     state.wizard.dialogColor.gradientState;
 
+export const selectDialogColorVisualizationId = (state: DatalensGlobalState) =>
+    state.wizard.visualization.visualization?.id;
+
 export const selectClientPaletteColors = (state: DatalensGlobalState) => {
     const {palette} = state.wizard.dialogColor.paletteState;
     const {colorPalettes} = state.colorPaletteEditor;

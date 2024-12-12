@@ -48,6 +48,7 @@ type OwnProps = {
     onColorModeChange: (value: ColorMode) => void;
     isColorModeChangeAvailable: boolean;
     colorSectionFields?: Field[];
+    visualizationId?: string;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
