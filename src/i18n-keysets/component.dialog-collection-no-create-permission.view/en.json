@@ -1,0 +1,4 @@
+{
+  "title": "Not enough permissions",
+  "description": "To create collections and workbooks you need the <code>datalens.editor</code> role, please contact your administrator."
+}
