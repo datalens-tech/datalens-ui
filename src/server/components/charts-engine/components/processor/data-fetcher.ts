@@ -4,6 +4,8 @@ import querystring from 'querystring';
 import url from 'url';
 
 import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
+import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
@@ -21,7 +23,7 @@ import {
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
 import type {ChartsEngine} from '../../index';
-import type {Source} from '../../types';
+import type {Source, SourceConfig} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
@@ -59,6 +61,7 @@ type DataFetcherOptions = {
     chartsEngine: ChartsEngine;
     sources: Record<string, Source | string>;
     req: Request;
+    ctx?: AppContext;
     postprocess?:
         | ((
               data: Record<string, DataFetcherResult>,
@@ -151,6 +154,7 @@ export class DataFetcher {
         chartsEngine,
         sources,
         req,
+        ctx,
         postprocess = null,
         subrequestHeaders,
         userId,
@@ -158,6 +162,10 @@ export class DataFetcher {
         iamToken,
         workbookId,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
+        // TODO: remove aftex extension will be migrated
+        if (ctx === undefined) {
+            ctx = req.ctx;
+        }
         const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
@@ -185,6 +193,7 @@ export class DataFetcher {
                     source
                         ? DataFetcher.fetchSource({
                               req,
+                              ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
                               chartsEngine,
@@ -401,6 +410,7 @@ export class DataFetcher {
         sourceName,
         source,
         req,
+        ctx,
         chartsEngine,
         fetchingStartTime,
         subrequestHeaders,
@@ -414,6 +424,7 @@ export class DataFetcher {
         sourceName: string;
         source: Source;
         req: Request;
+        ctx: AppContext;
         chartsEngine: ChartsEngine;
         fetchingStartTime: number;
         subrequestHeaders: Record<string, string>;
@@ -424,7 +435,6 @@ export class DataFetcher {
         iamToken?: string | null;
         workbookId?: WorkbookId;
     }) {
-        const ctx = req.ctx;
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
@@ -533,7 +543,12 @@ export class DataFetcher {
 
         const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
 
-        if (sourceConfig.allowedMethods && !sourceConfig.allowedMethods.includes(sourceMethod)) {
+        if (
+            sourceConfig.allowedMethods &&
+            !sourceConfig.allowedMethods.includes(
+                sourceMethod as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+            )
+        ) {
             const message = `This HTTP method (${sourceMethod}) is not allowed for this source: ${sourceName}`;
 
             ctx.logError(message);
@@ -546,35 +561,15 @@ export class DataFetcher {
         }
 
         if (sourceConfig.check) {
-            try {
-                const checkResult = await sourceConfig.check(req, targetUri, req.body.params);
-                if (checkResult === true) {
-                    ctx.log('Access to source allowed');
-                } else if (checkResult === false) {
-                    ctx.log('Access to source forbidden');
-
-                    return {
-                        sourceId: sourceName,
-                        sourceType,
-                        message: 'Access to source forbidden',
-                    };
-                } else {
-                    ctx.logError('Source access check failed');
-
-                    return {
-                        sourceId: sourceName,
-                        sourceType,
-                        message: 'Source access check failed',
-                    };
-                }
-            } catch (error) {
-                ctx.logError('Failed to run source check', error);
-
-                return {
-                    sourceId: sourceName,
-                    sourceType,
-                    message: 'Failed to run source check',
-                };
+            const result = await sourceConfigCheck({
+                ctx,
+                targetUri,
+                sourceConfig,
+                sourceName,
+                sourceType,
+            });
+            if (result.valid === false) {
+                return result;
             }
         }
 
@@ -593,9 +588,8 @@ export class DataFetcher {
             return sourceConfig.adapter({
                 targetUri: croppedTargetUri,
                 sourceName,
-                source,
-                fetchingStartTime,
                 req,
+                ctx,
             });
         }
 
@@ -804,7 +798,7 @@ export class DataFetcher {
                     onDataFetchingFailed(error, {
                         sourceName: dataSourceName,
                         statusCode,
-                        requestId: req.id,
+                        requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                         latency,
                         traceId,
                         tenantId,
@@ -911,7 +905,7 @@ export class DataFetcher {
                         onDataFetched({
                             sourceName: dataSourceName,
                             statusCode: response.statusCode,
-                            requestId: req.id,
+                            requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                             latency,
                             url: publicTargetUri,
                             traceId,
@@ -1014,5 +1008,72 @@ export class DataFetcher {
 
             processingRequests.push([currentRequest, abortController]);
         });
+    }
+}
+
+type SourceCheckResult = {
+    valid: boolean;
+    meta?: {
+        sourceId: string;
+        sourceType?: string;
+        message: string;
+    };
+};
+
+async function sourceConfigCheck({
+    ctx,
+    sourceName,
+    sourceType,
+    sourceConfig,
+    targetUri,
+}: {
+    ctx: AppContext;
+    sourceName: string;
+    sourceType?: string;
+    sourceConfig: SourceConfig;
+    targetUri: string;
+}): Promise<SourceCheckResult> {
+    if (!sourceConfig.check) {
+        return {valid: true};
+    }
+    try {
+        const checkResult = await sourceConfig.check(targetUri);
+        if (checkResult === true) {
+            ctx.log('Access to source allowed');
+            return {valid: true};
+        } else if (checkResult === false) {
+            ctx.log('Access to source forbidden');
+
+            return {
+                valid: false,
+                meta: {
+                    sourceId: sourceName,
+                    sourceType,
+                    message: 'Access to source forbidden',
+                },
+            };
+        } else {
+            ctx.logError('Source access check failed');
+
+            return {
+                valid: false,
+                meta: {
+                    sourceId: sourceName,
+                    sourceType,
+                    message: 'Source access check failed',
+                },
+            };
+        }
+    } catch (error) {
+        ctx.logError('Failed to run source check', error);
+
+        return {
+            valid: false,
+            meta: {
+                sourceId: sourceName,
+                sourceType,
+                message: 'Failed to run source check',
+            },
+        };
     }
 }
