@@ -37,7 +37,6 @@ jobs:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
 
-      - uses: actions/checkout@v4
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v3
         with:
@@ -64,11 +63,16 @@ jobs:
             DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
             echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
           fi
+          echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.GITHUB_BASE_REF ||  env.UI_REF }}
 
       - name: Check docker compose Config
         run: npm run test:e2e:docker:check
@@ -159,7 +163,7 @@ jobs:
           echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
           echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: playwright-report
