@@ -28,12 +28,10 @@ export enum Feature {
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
-    GSheetsV2Enabled = 'GSheetsV2Enabled',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
     // Prohibiting the serialization of functions in the chart configs
     NoJsonFn = 'NoJsonFn',
-    GSheetGoogleAuthEnabled = 'GSheetGoogleAuthEnabled',
     DatasetsRLS = 'DatasetsRLS',
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
@@ -70,10 +68,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
-    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
-    /** Enable undo/redo buttons & hotkeys in ql */
-    EnableEditHistoryQL = 'EnableEditHistoryQL',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Depends on US feature UseMovePermAction.

@@ -3,7 +3,12 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
 import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../shared';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {
+    DISABLE,
+    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
+    Feature,
+    isEnabledServerFeature,
+} from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import type {ChartBuilder} from '../components/processor/types';
@@ -184,6 +189,10 @@ export function commonRunner({
 
     const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
 
+    const configName = req.body.key;
+    const configId = req.body.id;
+    const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -200,6 +209,9 @@ export function commonRunner({
         cacheToken: req.headers['x-charts-cache-token'] || null,
         builder,
         forbiddenFields,
+        configName,
+        configId,
+        disableJSONFnByCookie,
     };
 
     if (req.body.unreleased === 1) {

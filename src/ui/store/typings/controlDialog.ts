@@ -17,6 +17,7 @@ export type SelectorDialogValidation = {
     uniqueFieldName?: string;
     fieldName?: string;
     datasetFieldId?: string;
+    chartId?: string;
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;

@@ -1,6 +1,6 @@
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import type {Request} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
+import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
 import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
@@ -15,13 +15,7 @@ import type {
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {
-    DISABLE,
-    DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
-    DL_CONTEXT_HEADER,
-    Feature,
-    isEnabledServerFeature,
-} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
 import {config as configConstants} from '../../constants';
@@ -168,6 +162,9 @@ export type ProcessorParams = {
     workbookId?: WorkbookId;
     builder: ChartBuilder;
     forbiddenFields?: (keyof ProcessorSuccessResponse)[];
+    disableJSONFnByCookie: boolean;
+    configName: string;
+    configId: string;
 };
 
 export class Processor {
@@ -180,6 +177,7 @@ export class Processor {
         configOverride,
         useUnreleasedConfig,
         userLang,
+        userLogin,
         userId = null,
         iamToken = null,
         req,
@@ -191,12 +189,13 @@ export class Processor {
         workbookId,
         builder,
         forbiddenFields,
+        disableJSONFnByCookie,
+        configName,
+        configId,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
-        const configName = req.body.key;
-        const configId = req.body.id;
-
+        const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
         const logs: ProcessorLogs = {
             modules: [],
         };
@@ -299,7 +298,6 @@ export class Processor {
                         unreleased: useUnreleasedConfig,
                         key: configName,
                         headers: {...subrequestHeaders},
-                        requestId: req.id,
                         workbookId,
                     }));
             } catch (e) {
@@ -539,7 +537,7 @@ export class Processor {
                 if (configOverride?.entryId || configId) {
                     let dlContext: Record<string, string> = {};
                     if (subrequestHeaders[DL_CONTEXT_HEADER]) {
-                        const dlContextHeader = req.headers[DL_CONTEXT_HEADER];
+                        const dlContextHeader = subrequestHeaders[DL_CONTEXT_HEADER];
                         dlContext = JSON.parse(
                             dlContextHeader && !Array.isArray(dlContextHeader)
                                 ? dlContextHeader
@@ -563,6 +561,7 @@ export class Processor {
                     iamToken,
                     subrequestHeaders,
                     userId,
+                    userLogin,
                     workbookId,
                 });
 
@@ -712,7 +711,7 @@ export class Processor {
 
                 onCodeExecuted({
                     id: `${config.entryId || configId}:${config.key || configName}`,
-                    requestId: req.id,
+                    requestId,
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
 
@@ -826,7 +825,7 @@ export class Processor {
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
                 const disableJSONFn =
                     isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
-                    req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE ||
+                    disableJSONFnByCookie ||
                     enableJsAndHtml === false;
                 const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;
 
@@ -991,7 +990,7 @@ export class Processor {
 
                     onCodeExecuted({
                         id: `${configId}:${configName}`,
-                        requestId: req.id,
+                        requestId,
                         latency: executionResult.executionTiming
                             ? (executionResult.executionTiming[0] * 1e9 +
                                   executionResult.executionTiming[1]) /

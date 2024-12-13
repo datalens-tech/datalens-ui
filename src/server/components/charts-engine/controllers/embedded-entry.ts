@@ -49,7 +49,6 @@ export const embeddedEntryController = (req: Request, res: Response) => {
             ...res.locals.subrequestHeaders,
             ...ctx.getMetadata(),
         },
-        requestId: req.id,
     };
 
     const configPromise = ctx.call('configLoading', (cx) =>
