@@ -248,7 +248,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     }, [reloadChart]);
 
     return (
-        <div ref={rootNodeRef} className={`${b(mods)}`}>
+        <div ref={rootNodeRef} className={b(mods)}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />
             <Content
                 initialParams={initialParams}

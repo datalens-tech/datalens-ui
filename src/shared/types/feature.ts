@@ -72,8 +72,6 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
     EnableBIConnectorIcons = 'EnableBIConnectorIcons',
-    /** Enable undo/redo buttons & hotkeys in ql */
-    EnableEditHistoryQL = 'EnableEditHistoryQL',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Depends on US feature UseMovePermAction.

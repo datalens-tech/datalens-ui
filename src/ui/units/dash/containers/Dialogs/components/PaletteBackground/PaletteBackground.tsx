@@ -150,7 +150,6 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
             <Tooltip content={i18n('dash.palette-background', 'tooltip_click-to-select')}>
                 <ColorItem
                     color={selectedColor}
-                    isSelected={true}
                     isPreview={true}
                     qa={DashCommonQa.WidgetSelectBackgroundButton}
                 />

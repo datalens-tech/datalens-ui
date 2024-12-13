@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Link, Popup, Text, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, Link, Popup, Text, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -573,38 +573,40 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_NAME_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_title')}
                 >
-                    <TextInput
-                        id={INPUT_NAME_ID}
-                        size="m"
-                        className={b('input')}
-                        placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
-                        value={title}
-                        onUpdate={(value) =>
-                            this.setState({
-                                isManualTitle: true,
-                                data: update(data, {
-                                    tabs: {
-                                        [tabIndex]: {
-                                            title: {$set: value},
+                    <Flex gap={2}>
+                        <TextInput
+                            id={INPUT_NAME_ID}
+                            size="m"
+                            className={b('input')}
+                            placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
+                            value={title}
+                            onUpdate={(value) =>
+                                this.setState({
+                                    isManualTitle: true,
+                                    data: update(data, {
+                                        tabs: {
+                                            [tabIndex]: {
+                                                title: {$set: value},
+                                            },
                                         },
-                                    },
-                                }),
-                            })
-                        }
-                    />
-                    {data.tabs.length === 1 && (
-                        <div className={b('visibility-toggle')}>
-                            <Checkbox
-                                className={b('checkbox')}
-                                size="m"
-                                onChange={this.onVisibilityCheckboxToggle}
-                                checked={!this.state.hideTitle}
-                                qa={DashCommonQa.WidgetShowTitleCheckbox}
-                            >
-                                {i18n('dash.widget-dialog.edit', 'field_show-title')}
-                            </Checkbox>
-                        </div>
-                    )}
+                                    }),
+                                })
+                            }
+                        />
+                        {data.tabs.length === 1 && (
+                            <div className={b('visibility-toggle')}>
+                                <Checkbox
+                                    className={b('checkbox')}
+                                    size="m"
+                                    onChange={this.onVisibilityCheckboxToggle}
+                                    checked={!this.state.hideTitle}
+                                    qa={DashCommonQa.WidgetShowTitleCheckbox}
+                                >
+                                    {i18n('dash.widget-dialog.edit', 'field_show-title')}
+                                </Checkbox>
+                            </div>
+                        )}
+                    </Flex>
                 </FormRow>
                 <FormRow
                     className={b('row', {type: 'line-widget'})}
