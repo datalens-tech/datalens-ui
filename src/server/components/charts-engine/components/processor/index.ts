@@ -351,7 +351,6 @@ export class Processor {
             hrStart = process.hrtime();
             try {
                 processedModules = await builder.buildModules({
-                    req,
                     ctx,
                     subrequestHeaders,
                     onModuleBuild: ({executionTiming, filename}) => {
@@ -558,6 +557,7 @@ export class Processor {
                     chartsEngine,
                     sources,
                     req,
+                    ctx,
                     iamToken,
                     subrequestHeaders,
                     userId,
