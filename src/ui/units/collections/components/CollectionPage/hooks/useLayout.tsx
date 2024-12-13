@@ -196,7 +196,10 @@ export const useLayout = ({
                     },
                 }),
             );
-        } else if (isRootCollection && !rootCollectionPermissions?.createCollectionInRoot) {
+        } else if (
+            isRootCollection &&
+            Boolean(rootCollectionPermissions?.createCollectionInRoot) === false
+        ) {
             dispatch(
                 openDialog({
                     id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
@@ -209,12 +212,20 @@ export const useLayout = ({
                 }),
             );
         }
-    }, [dispatch, isCorrectCollection, isRootCollection, collection, rootCollectionPermissions]);
+    }, [
+        dispatch,
+        isCorrectCollection,
+        isRootCollection,
+        collection,
+        rootCollectionPermissions,
+        curCollectionId,
+        history,
+    ]);
 
     React.useEffect(() => {
         if (
             (isRootCollection && rootCollectionPermissions) ||
-            (isCorrectCollection && collection && collection?.permissions)
+            (isCorrectCollection && collection && collection.permissions)
         ) {
             setLayout({
                 actionsPanelRightBlock: {
@@ -355,6 +366,8 @@ export const useLayout = ({
         curCollectionId,
         rootCollectionPermissions,
         fetchCollectionInfo,
+        goToParentCollection,
+        handleCreateCollection,
     ]);
 
     React.useEffect(() => {

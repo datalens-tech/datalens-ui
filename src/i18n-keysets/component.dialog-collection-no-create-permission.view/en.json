@@ -1,4 +1,5 @@
 {
-  "title": "Not enough permissions",
-  "description": "To create collections and workbooks you need the <code>datalens.editor</code> role, please contact your administrator."
+  "label_title": "Not enough permissions",
+  "section_description": "To create collections and workbooks you need the <code>datalens.editor</code> role, please contact your administrator.",
+  "button_ok": "Ok"
 }
