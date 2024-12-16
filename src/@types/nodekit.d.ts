@@ -3,6 +3,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 
 import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
+import type {SourceConfig} from '../server/components/charts-engine/types';
 import type {AppEnvironment} from '../shared';
 import type {FeatureConfig} from '../shared/types';
 
