@@ -139,7 +139,7 @@ export type SourceConfig = {
     uiEndpointFormatter?: (url: string, sourceData?: Source['data']) => string | null;
     uiEndpoint?: string;
     passedCredentials?: Record<string, boolean>;
-    extraHeaders?: Record<string, string | undefined> | ((req: Request) => Record<string, string>);
+    extraHeaders?: Record<string, string | undefined> | (() => Record<string, string>);
     sourceType?: string;
     dataEndpoint?: string;
     preprocess?: (url: string) => string;

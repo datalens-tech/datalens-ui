@@ -186,6 +186,8 @@ export class DataFetcher {
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
 
+            const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
+
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
 
@@ -205,6 +207,7 @@ export class DataFetcher {
                               userLogin,
                               iamToken,
                               workbookId,
+                              isEmbed,
                           })
                         : {
                               sourceId: sourceName,
@@ -420,6 +423,7 @@ export class DataFetcher {
         userLogin,
         iamToken,
         workbookId,
+        isEmbed,
     }: {
         sourceName: string;
         source: Source;
@@ -434,6 +438,7 @@ export class DataFetcher {
         userLogin?: string | null;
         iamToken?: string | null;
         workbookId?: WorkbookId;
+        isEmbed: boolean;
     }) {
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -528,7 +533,7 @@ export class DataFetcher {
         const sourceConfig = DataFetcher.getSourceConfig({
             chartsEngine,
             sourcePath: targetUri,
-            isEmbed: req.headers[DL_EMBED_TOKEN_HEADER] !== undefined,
+            isEmbed,
         });
 
         if (!sourceConfig) {
@@ -678,7 +683,7 @@ export class DataFetcher {
 
         if (extraHeaders) {
             if (typeof extraHeaders === 'function') {
-                const extraHeadersResult = extraHeaders(req);
+                const extraHeadersResult = extraHeaders();
 
                 Object.assign(headers, extraHeadersResult);
             } else if (typeof extraHeaders === 'object') {
