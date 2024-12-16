@@ -2,6 +2,7 @@ import type {OutgoingHttpHeaders} from 'http';
 
 import type {AppMiddleware, AppRouteDescription, Request, Response} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {EDITOR_TYPE_CONFIG_TABS} from '../../../shared';
 import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
@@ -138,30 +139,26 @@ export type SourceConfig = {
     uiEndpointFormatter?: (url: string, sourceData?: Source['data']) => string | null;
     uiEndpoint?: string;
     passedCredentials?: Record<string, boolean>;
-    extraHeaders?: Record<string, string> | ((req: Request) => Record<string, string>);
+    extraHeaders?: Record<string, string | undefined> | ((req: Request) => Record<string, string>);
     sourceType?: string;
     dataEndpoint?: string;
     preprocess?: (url: string) => string;
-    allowedMethods?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    allowedMethods?: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
 
     adapter?: ({
         targetUri,
         sourceName,
         req,
+        ctx,
     }: {
         targetUri: string;
         sourceName: string;
-        source: Source;
         req: Request;
-        fetchingStartTime: number;
-    }) => Promise<unknown>;
+        ctx: AppContext;
+    }) => unknown;
 
     middlewareAdapter?: (args: MiddlewareSourceAdapterArgs) => Promise<any>;
-    check?: (
-        req: Request,
-        targetUri: string,
-        params: Request['body']['params'],
-    ) => Promise<boolean>;
+    check?: (targetUri: string, params?: Request['body']['params']) => Promise<boolean>;
 
     args?: Record<string, string | number | (string | number)[]>;
     maxRedirects?: number;

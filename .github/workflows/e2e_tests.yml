@@ -64,11 +64,16 @@ jobs:
             DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
             echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
           fi
+          echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
         env:
           US_VERSION: ${{ env.US_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || env.UI_REF }}
 
       - name: Check docker compose Config
         run: npm run test:e2e:docker:check

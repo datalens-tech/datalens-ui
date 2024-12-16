@@ -12,6 +12,7 @@ import {
 } from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
+import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
 import controlDashChartTemplate from '../shared/control-dash-chart-template';
 import datalensChartTemplate from '../shared/datalens-chart-template';
@@ -59,7 +60,7 @@ export default {
         control_dash: controlDashChartTemplate,
     },
 
-    getSourcesByEnv: (env: AppEnvironment) => {
+    getSourcesByEnv: (env: AppEnvironment): Record<string, SourceConfig> => {
         const sources = resolveSource(AppInstallation.Opensource, env);
 
         return {
