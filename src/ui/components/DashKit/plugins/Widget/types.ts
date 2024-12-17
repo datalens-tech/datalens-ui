@@ -15,7 +15,7 @@ export type CurrentTab = {
     id: string;
     title: string;
     description: string;
-    displayedTitle?: string | React.ReactNode; 
+    displayedTitle?: string | React.ReactNode;
     hint?: string;
     chartId: string;
     isDefault: boolean;

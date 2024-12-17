@@ -74,7 +74,7 @@ export const WidgetHeader = (props: HeaderProps) => {
             return null;
         }
 
-        const displayedTabItems = tabsItems.map(item => ({
+        const displayedTabItems = tabsItems.map((item) => ({
             ...item,
             title: item.displayedTitle || item.title || '',
         }));
