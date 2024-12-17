@@ -206,6 +206,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         sourceType,
 
         titlePlacement,
+        accentType,
         showTitle,
         showInnerTitle,
         innerTitle,
@@ -247,6 +248,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         required,
         showHint,
         hint,
+        accentType: elementType === ELEMENT_TYPE.CHECKBOX ? undefined : accentType,
     };
 
     switch (sourceType) {

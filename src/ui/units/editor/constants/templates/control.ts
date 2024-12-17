@@ -18,6 +18,7 @@ export default {
         // updateControlsOnChange: true,
         // required: true,
         hint: 'description',
+        // accentType: 'info',
     },
     {
         type: 'input',
@@ -29,6 +30,7 @@ export default {
         // required: true,
         // hint: 'description',
         // labelPlacement: 'top',
+        // accentType: 'info',
     },
     {
         type: 'datepicker',
@@ -39,6 +41,7 @@ export default {
         // required: true,
         // hint: 'description',
         // labelPlacement: 'top',
+        // accentType: 'info',
     },
     {
         type: 'range-datepicker',
@@ -50,6 +53,7 @@ export default {
         // required: true,
         // hint: 'description',
         // labelPlacement: 'top',
+        // accentType: 'info',
     },
     {
         type: 'checkbox',

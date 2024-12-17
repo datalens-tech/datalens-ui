@@ -75,7 +75,7 @@ type ControlItemSelectProps = {
     renderOverlay?: () => React.ReactNode;
     selectProps: Pick<
         SelectControlProps,
-        'style' | 'innerLabel' | 'label' | 'limitLabel' | 'labelPlacement'
+        'style' | 'innerLabel' | 'label' | 'limitLabel' | 'labelPlacement' | 'accentType'
     >;
 };
 
