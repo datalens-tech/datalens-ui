@@ -46,11 +46,14 @@ class Utils {
         return pick(headers, headersList);
     }
 
-    static pickZitadelHeaders(req: Request) {
-        return {
-            authorization: 'Bearer ' + req.user?.accessToken,
-            [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-        };
+    static pickZitadelHeaders(ctx: AppContext) {
+        const zitadelParams = ctx.get('zitadel');
+        return zitadelParams
+            ? {
+                  authorization: 'Bearer ' + zitadelParams.accessToken,
+                  [SERVICE_USER_ACCESS_TOKEN_HEADER]: zitadelParams.serviceUserAccessToken,
+              }
+            : {};
     }
 
     static pickSuperuserHeaders(headers: IncomingHttpHeaders) {
@@ -71,7 +74,7 @@ class Utils {
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
-            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+            ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req.ctx)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };
     }

@@ -12,17 +12,17 @@ function navigateDefault(reqPath: string, res: Response) {
 
 // eslint-disable-next-line complexity
 export default async (req: Request, res: Response) => {
-    const {url: reqUrl} = req;
+    const {url: reqUrl, ctx} = req;
 
-    req.ctx.log('Navigate init', {reqUrl});
+    ctx.log('Navigate init', {reqUrl});
 
     try {
-        req.ctx.log('Navigate redirect', {reqUrl});
+        ctx.log('Navigate redirect', {reqUrl});
 
         const possibleEntryId = req.params.entryId;
 
         if (!isEntryId(possibleEntryId)) {
-            req.ctx.log('Invalid entry id, navigate default', {reqUrl});
+            ctx.log('Invalid entry id, navigate default', {reqUrl});
 
             return navigateDefault(reqUrl, res);
         }
@@ -30,11 +30,11 @@ export default async (req: Request, res: Response) => {
         const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
         const {responseData: entryMeta} = await gatewayApi.us._getEntryMeta({
-            ctx: req.ctx,
+            ctx,
             headers: {
                 ...req.headers,
                 [TENANT_ID_HEADER]: res.locals.currentTenantId,
-                ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+                ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(ctx)} : {}),
             },
             requestId: req.id,
             authArgs: {iamToken: res.locals.iamToken},
@@ -46,33 +46,33 @@ export default async (req: Request, res: Response) => {
             if (type.includes('ql')) {
                 const qlUrl = reqUrl.replace('navigate', 'ql');
 
-                req.ctx.log('Navigate to ql', {qlUrl});
+                ctx.log('Navigate to ql', {qlUrl});
 
                 return res.redirect(302, qlUrl);
             } else if (type.includes('wizard')) {
                 const wizardUrl = reqUrl.replace('navigate', 'wizard');
 
-                req.ctx.log('Navigate to wizard', {wizardUrl});
+                ctx.log('Navigate to wizard', {wizardUrl});
 
                 return res.redirect(302, wizardUrl);
             } else if (ENTRY_TYPES.editor.includes(type)) {
                 const editorUrl = reqUrl.replace('navigate', 'editor');
 
-                req.ctx.log('Navigate to editor', {editorUrl});
+                ctx.log('Navigate to editor', {editorUrl});
 
                 return res.redirect(302, editorUrl);
             } else {
-                req.ctx.log('Unknown widget type, navigate default', {reqUrl});
+                ctx.log('Unknown widget type, navigate default', {reqUrl});
 
                 return navigateDefault(reqUrl, res);
             }
         } else {
-            req.ctx.log('Entry is not widget, navigate default', {reqUrl});
+            ctx.log('Entry is not widget, navigate default', {reqUrl});
 
             return navigateDefault(reqUrl, res);
         }
     } catch (error) {
-        req.ctx.logError(
+        ctx.logError(
             'Error occured in navigate',
             ((error as GatewayApiErrorResponse<Error>).error || error) as Error,
         );

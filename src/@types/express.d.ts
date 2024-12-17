@@ -15,8 +15,6 @@ declare global {
             nonce?: string;
 
             user?: User | undefined;
-
-            serviceUserAccessToken?: string;
         }
         interface Response {
             renderDatalensLayout: <T>(params: RenderParams<T>) => string;

@@ -651,14 +651,18 @@ export class DataFetcher {
             headers[WORKBOOK_ID_HEADER] = workbookId;
         }
 
-        if (req.user?.accessToken) {
-            Object.assign(headers, {authorization: `Bearer ${req.user.accessToken}`});
-        }
+        const zitadelParams = ctx.get('zitadel');
 
-        if (req.serviceUserAccessToken) {
-            Object.assign(headers, {
-                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-            });
+        if (zitadelParams) {
+            if (zitadelParams.accessToken) {
+                Object.assign(headers, {authorization: `Bearer ${zitadelParams.accessToken}`});
+            }
+
+            if (zitadelParams.serviceUserAccessToken) {
+                Object.assign(headers, {
+                    [SERVICE_USER_ACCESS_TOKEN_HEADER]: zitadelParams.serviceUserAccessToken,
+                });
+            }
         }
 
         if (passedCredentials) {

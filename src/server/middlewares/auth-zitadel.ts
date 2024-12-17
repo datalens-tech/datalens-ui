@@ -18,10 +18,17 @@ async function authZitadel(req: Request, res: Response, next: NextFunction) {
     if (isAuthenticated) {
         req.originalContext.set('userId', req.user.userId);
 
-        req.serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.userId);
-
+        const serviceUserAccessToken = await generateServiceAccessUserToken(ctx, req.user.userId);
         const accessToken = req.user.accessToken;
         const refreshToken = req.user.refreshToken;
+
+        const zitadelParams = {
+            serviceUserAccessToken,
+            accessToken,
+            refreshToken,
+        };
+
+        req.originalContext.set('zitadel', zitadelParams);
 
         let introspectResult = await introspect(ctx, accessToken);
 
@@ -45,6 +52,10 @@ async function authZitadel(req: Request, res: Response, next: NextFunction) {
             if (tokens.accessToken && tokens.refreshToken) {
                 req.user.accessToken = tokens.accessToken;
                 req.user.refreshToken = tokens.refreshToken;
+
+                zitadelParams.accessToken = tokens.accessToken;
+                zitadelParams.refreshToken = tokens.refreshToken;
+                req.originalContext.set('zitadel', zitadelParams);
 
                 await saveUserToSession(req);
                 introspectResult = await introspect(ctx, req.user.accessToken);

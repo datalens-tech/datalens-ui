@@ -43,7 +43,7 @@ export async function resolveChartConfig(args: LoadChartConfigArgs) {
         headers: {
             ...subrequestHeaders,
             ...ctx.getMetadata(),
-            ...(ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(request)} : {}),
+            ...(ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(ctx)} : {}),
         },
         requestId: request.id,
         ...extraSettings,

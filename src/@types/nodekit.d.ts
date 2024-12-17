@@ -116,6 +116,11 @@ export interface SharedAppContextParams {
 
     i18n: ServerI18n;
     tenantId?: string;
+    zitadel?: {
+        serviceUserAccessToken?: string;
+        accessToken: string;
+        refreshToken: string;
+    };
 }
 
 declare module '@gravity-ui/nodekit' {

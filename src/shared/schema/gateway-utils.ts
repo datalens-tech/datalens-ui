@@ -18,10 +18,13 @@ type AuthArgsData = {
 };
 
 export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
-    return {
-        userAccessToken: req.user?.accessToken,
-        serviceUserAccessToken: req.serviceUserAccessToken,
-    };
+    const zitadelParams = req.ctx.get('zitadel');
+    return zitadelParams
+        ? {
+              userAccessToken: zitadelParams.accessToken,
+              serviceUserAccessToken: zitadelParams.serviceUserAccessToken,
+          }
+        : {};
 };
 
 const createGetAuthHeaders: () => GetAuthHeaders<AuthArgsData> = () => (params) => {
