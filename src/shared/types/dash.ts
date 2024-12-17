@@ -163,6 +163,7 @@ export interface DashTabItemWidgetTab {
     title: string;
     description: string;
     hint?: string;
+    enableHint?: boolean;
     chartId: string;
     isDefault: boolean;
     params: StringParams;

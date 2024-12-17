@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Flex, Link, Popup, Text, TextArea, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -216,6 +216,19 @@ class DialogChartWidget extends React.PureComponent<
         return Boolean(this.props.openedItemId);
     }
 
+    handleUpdateField = (field: keyof DashTabItemWidgetTab, value: string| boolean) => {
+        const {data, tabIndex} = this.state;
+        this.setState({
+            data: update(data, {
+                tabs: {
+                    [tabIndex]: {
+                        [field]: {$set: value},
+                    },
+                },
+            }),
+        });
+    };
+
     onApply = () => {
         const isValidateParamTitle = Utils.isEnabledFeature(
             Feature.DashBoardWidgetParamsStrictValidation,
@@ -344,29 +357,21 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     onAutoHeightRadioButtonChange = () => {
-        const {data, tabIndex} = this.state;
-        const currentCondition = this.state.data.tabs[tabIndex].autoHeight;
+        const currentCondition = this.state.data.tabs[this.state.tabIndex].autoHeight;
 
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {autoHeight: {$set: !currentCondition}},
-                },
-            }),
-        });
+        this.handleUpdateField('autoHeight', !currentCondition);
+    };
+
+    handleUpdateEnableHint = (val: boolean) => {
+        this.handleUpdateField('enableHint', val);
+    };
+
+    handleUpdateDescription = (val: string) => {
+        this.handleUpdateField('description', val);
     };
 
     handleUpdateHint = (val: string) => {
-        const {data, tabIndex} = this.state;
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {
-                        hint: {$set: val},
-                    },
-                },
-            }),
-        });
+        this.handleUpdateField('hint', val);
     };
 
     handleBackgroundColorSelected = (color: string) => {
@@ -386,16 +391,8 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     handleChangeFiltering = () => {
-        const {data, tabIndex} = this.state;
-        const currentCondition = this.state.data.tabs[tabIndex].enableActionParams;
-
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {enableActionParams: {$set: !currentCondition}},
-                },
-            }),
-        });
+        const currentCondition = this.state.data.tabs[this.state.tabIndex].enableActionParams;
+        this.handleUpdateField('enableActionParams', !currentCondition);
     };
 
     updateTabMenu = ({items, selectedItemIndex, action}: UpdateState<DashTabItemWidgetTab>) => {
@@ -579,7 +576,7 @@ class DialogChartWidget extends React.PureComponent<
             />
         );
 
-        const {title, chartId, description, autoHeight, background, hint} = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, background, hint, enableHint} = data.tabs[tabIndex];
 
         const {MarkdownControl} = registry.common.components.getAll();
 
@@ -658,24 +655,10 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_DESCRIPTION_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_description')}
                 >
-                    <TextArea
-                        id={INPUT_DESCRIPTION_ID}
-                        size="m"
-                        className={b('textarea')}
-                        value={description}
-                        placeholder={i18n('dash.widget-dialog.edit', 'context_fill-description')}
-                        onUpdate={(value) =>
-                            this.setState({
-                                data: update(data, {
-                                    tabs: {
-                                        [tabIndex]: {
-                                            description: {$set: value},
-                                        },
-                                    },
-                                }),
-                            })
-                        }
-                        rows={3}
+                    <MarkdownControl
+                        value={description || ''}
+                        onChange={this.handleUpdateDescription}
+                        disabled={false}
                     />
                 </FormRow>
                 <FormRow
@@ -683,11 +666,21 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                 >
-                    <MarkdownControl
-                        value={hint || ''}
-                        onChange={this.handleUpdateHint}
-                        disabled={false}
-                    />
+                    <div className={b('settings-container')}>
+                        <Checkbox
+                            onUpdate={this.handleUpdateEnableHint}
+                            checked={enableHint}
+                            size="m"
+                            className={b('checkbox')}
+                        />
+                        {enableHint && 
+                            (<MarkdownControl
+                                value={hint || ''}
+                                onChange={this.handleUpdateHint}
+                                disabled={!enableHint}
+                            />)
+                        }
+                    </div>
                 </FormRow>
                 {enableAutoheight && (
                     <FormRow

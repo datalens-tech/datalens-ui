@@ -448,7 +448,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                             {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
                                 '\u2014'}
                         </span>
-                        {item.hint && (
+                        {item.enableHint && item.hint && (
                             <HelpPopover content={item.hint} className={b('chart-title-hint')} />
                         )}
                     </span>
