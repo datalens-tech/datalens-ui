@@ -3,6 +3,8 @@ import React from 'react';
 import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import merge from 'lodash/merge';
+import pick from 'lodash/pick';
 import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 
 import {ChartQa} from '../../../../../../../shared';
@@ -13,6 +15,8 @@ import type {BlankChartWidgetProps, WidgetDimensions} from '../types';
 import './BlankChartWidget.scss';
 
 const b = block('chartkit-blank-chart-widget');
+
+export const chartStorage = new Map<string, any>();
 
 const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const {
@@ -35,19 +39,62 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
         }
     }, []);
 
-    React.useEffect(() => {
-        if (dimensions && originalData?.render) {
-            const content = originalData.render({...dimensions});
-            if (contentRef.current) {
-                contentRef.current.innerHTML = String(content ?? '');
+    const chartState = React.useRef<any>({});
 
-                const widgetRendering = Performance.getDuration(generatedId);
-                if (onLoad && widgetRendering) {
-                    onLoad({widget: props.data, widgetRendering});
+    React.useEffect(() => {
+        chartStorage.set(generatedId, {
+            chartId: generatedId,
+            getState: () => chartState.current,
+            setState: (value: any, options?: {silent: boolean}) => {
+                chartState.current = merge({}, chartState.current, value);
+
+                if (!options?.silent) {
+                    render();
                 }
+            },
+        });
+
+        return () => {
+            chartStorage.delete(generatedId);
+        };
+    }, [generatedId, dimensions]);
+
+    const render = () => {
+        if (!originalData?.render) {
+            return;
+        }
+
+        if (contentRef.current && dimensions) {
+            const context = chartStorage.get(generatedId);
+            const content = originalData.render.call(context, dimensions);
+            contentRef.current.innerHTML = String(content ?? '');
+        }
+    };
+
+    React.useEffect(() => {
+        if (dimensions) {
+            render();
+            const widgetRendering = Performance.getDuration(generatedId);
+            if (onLoad && widgetRendering) {
+                onLoad({widget: props.data, widgetRendering});
             }
         }
-    }, [dimensions, generatedId, onLoad, originalData, props.data]);
+    }, [dimensions, generatedId, onLoad, props.data]);
+
+    const handleClick = React.useCallback((_event) => {
+        if (originalData?.events?.click) {
+            const context = chartStorage.get(generatedId);
+            originalData.events.click.call(context, {});
+        }
+    }, []);
+
+    const handleKeyDown = React.useCallback((event) => {
+        if (originalData?.events?.keydown) {
+            const context = chartStorage.get(generatedId);
+            const eventProps = pick(event, 'which');
+            originalData.events.keydown.call(context, eventProps);
+        }
+    }, []);
 
     const debuncedHandleResize = React.useMemo(() => debounce(handleResize, 100), [handleResize]);
 
@@ -70,7 +117,13 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
     }
 
     return (
-        <div className={b()} ref={ref}>
+        <div
+            className={b()}
+            ref={ref}
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            tabIndex={-1}
+        >
             <div data-qa={ChartQa.Chart} className={b('content')} ref={contentRef}>
                 <Loader />
             </div>
