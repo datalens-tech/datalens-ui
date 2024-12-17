@@ -20,6 +20,7 @@ export enum DashTabItemType {
 }
 
 export enum DashTabItemTitleSize {
+    XL = 'xl',
     L = 'l',
     M = 'm',
     S = 's',
