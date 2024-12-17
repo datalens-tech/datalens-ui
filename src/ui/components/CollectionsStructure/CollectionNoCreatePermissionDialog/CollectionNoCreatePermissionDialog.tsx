@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import DialogWarning from 'ui/components/DialogWarning/DialogWarning';
 
+import {registry} from '../../../registry';
 import DialogManager from '../../DialogManager/DialogManager';
 import {YfmWrapperContent as YfmWrapper} from '../../YfmWrapper/YfmWrapperContent';
 
@@ -23,6 +24,12 @@ export type OpenDialogCollectionNoCreatePermissionArgs = {
 };
 
 export const CollectionNoCreatePermissionDialog = React.memo<Props>(({visible, onClose}) => {
+    const {customizeNoCreatePermissionDialog} = registry.collections.functions.getAll();
+
+    const {message} = customizeNoCreatePermissionDialog({
+        message: <YfmWrapper content={i18n('section_message')} setByInnerHtml={true} />,
+    });
+
     return (
         <DialogWarning
             visible={visible}
@@ -31,7 +38,7 @@ export const CollectionNoCreatePermissionDialog = React.memo<Props>(({visible, o
             closeOnEnterPress={true}
             headerText={i18n('label_title')}
             buttonText={i18n('button_ok')}
-            message={<YfmWrapper content={i18n('section_description')} setByInnerHtml={true} />}
+            message={message}
         />
     );
 });

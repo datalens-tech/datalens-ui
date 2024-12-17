@@ -1,5 +1,5 @@
 {
+  "button_ok": "Ok",
   "label_title": "Недостаточно прав",
-  "section_description": "Для создания коллекций и воркбуков необходима роль <code>datalens.editor</code>, обратитесь к администратору.",
-  "button_ok": "Ok"
+  "section_message": "Для создания коллекций и воркбуков необходима роль <code>datalens.editor</code>, обратитесь к администратору."
 }

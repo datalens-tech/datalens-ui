@@ -174,54 +174,6 @@ export const useLayout = ({
         setLayout,
     ]);
 
-    const handleCreateCollection = React.useCallback(() => {
-        if (
-            (isRootCollection && rootCollectionPermissions?.createCollectionInRoot) ||
-            (isCorrectCollection && collection?.permissions?.createCollection)
-        ) {
-            dispatch(
-                openDialog({
-                    id: DIALOG_CREATE_COLLECTION,
-                    props: {
-                        open: true,
-                        parentId: curCollectionId,
-                        onApply: (result: CreateCollectionResponse | null) => {
-                            if (result) {
-                                history.push(`${COLLECTIONS_PATH}/${result.collectionId}`);
-                            }
-                        },
-                        onClose: () => {
-                            dispatch(closeDialog());
-                        },
-                    },
-                }),
-            );
-        } else if (
-            isRootCollection &&
-            Boolean(rootCollectionPermissions?.createCollectionInRoot) === false
-        ) {
-            dispatch(
-                openDialog({
-                    id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
-                    props: {
-                        visible: true,
-                        onClose: () => {
-                            dispatch(closeDialog());
-                        },
-                    },
-                }),
-            );
-        }
-    }, [
-        dispatch,
-        isCorrectCollection,
-        isRootCollection,
-        collection,
-        rootCollectionPermissions,
-        curCollectionId,
-        history,
-    ]);
-
     React.useEffect(() => {
         if (
             (isRootCollection && rootCollectionPermissions) ||
@@ -249,7 +201,47 @@ export const useLayout = ({
                                     );
                                 }
                             }}
-                            onCreateCollectionClick={handleCreateCollection}
+                            onCreateCollectionClick={() => {
+                                if (
+                                    isRootCollection &&
+                                    Boolean(rootCollectionPermissions?.createCollectionInRoot) ===
+                                        false
+                                ) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
+                                            props: {
+                                                visible: true,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                } else {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_CREATE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                parentId: curCollectionId,
+                                                onApply: (
+                                                    result: CreateCollectionResponse | null,
+                                                ) => {
+                                                    if (result) {
+                                                        history.push(
+                                                            `${COLLECTIONS_PATH}/${result.collectionId}`,
+                                                        );
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
+                                            },
+                                        }),
+                                    );
+                                }
+                            }}
                             onAddDemoWorkbookClick={() => {
                                 if (DL.TEMPLATE_WORKBOOK_ID) {
                                     dispatch(
@@ -367,7 +359,6 @@ export const useLayout = ({
         rootCollectionPermissions,
         fetchCollectionInfo,
         goToParentCollection,
-        handleCreateCollection,
     ]);
 
     React.useEffect(() => {

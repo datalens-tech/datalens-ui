@@ -1,6 +1,7 @@
 import {
     customizeCollectionsActions,
     customizeEmptyPlaceholder,
+    customizeNoCreatePermissionDialog,
     customizeWorkbooksActions,
 } from '../../../units/collections/components/CollectionContent/utils';
 import {registry} from '../../index';
@@ -10,5 +11,6 @@ export const registerCollectionsPlugins = () => {
         customizeWorkbooksActions,
         customizeCollectionsActions,
         customizeEmptyPlaceholder,
+        customizeNoCreatePermissionDialog,
     });
 };
