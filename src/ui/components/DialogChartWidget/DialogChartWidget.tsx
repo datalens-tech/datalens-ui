@@ -580,8 +580,16 @@ class DialogChartWidget extends React.PureComponent<
             />
         );
 
-        const {title, chartId, description, autoHeight, background, hint, enableHint, enableDescription} =
-            data.tabs[tabIndex];
+        const {
+            title,
+            chartId,
+            description,
+            autoHeight,
+            background,
+            hint,
+            enableHint,
+            enableDescription,
+        } = data.tabs[tabIndex];
 
         const hasDesc = enableDescription === undefined ? Boolean(description) : enableDescription;
 
@@ -682,6 +690,12 @@ class DialogChartWidget extends React.PureComponent<
                     className={b('row')}
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
+                    labelHelpPopover={
+                        <HelpPopover
+                            className={b('help-tooltip')}
+                            content={i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                        />
+                    }
                 >
                     <div className={b('settings-container')}>
                         <Checkbox
