@@ -1,6 +1,8 @@
 $dashContainerClassName: '.dash-body';
 $dashPublicContainerClassName: '.dash';
 
+$hintOffset: 3px;
+
 .dl-widget {
     #{$dashContainerClassName} &,
     #{$dashPublicContainerClassName} & {
@@ -20,11 +22,22 @@ $dashPublicContainerClassName: '.dash';
         }
     }
 
-    /* max-width: calc(100% - 16px);
-    text-overflow: ellipsis;
-    display: inline-block;
-    vertical-align: middle;
-    overflow: hidden; */
+    &__chart-title-text {
+
+        &_with-hint {
+            text-overflow: ellipsis;
+            display: inline-block;
+            vertical-align: middle;
+            overflow: hidden;
+            max-width: calc(100% - #{$hintOffset} - 16px);
+        }
+    }
+
+    &__chart-title-hint {
+        margin-left: $hintOffset;
+        display: inline-block;
+        vertical-align: middle;
+    }
 
     // styles for widgets with tabs below
 

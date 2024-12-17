@@ -443,7 +443,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 id: item.id,
                 title: (
                     <span className={b('chart-title-wrap')}>
-                        <span className={b('chart-title-text')}>
+                        <span className={b('chart-title-text', {'with-hint': Boolean(item.hint)})}>
                             {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
                                 '\u2014'}
                         </span>
