@@ -216,7 +216,7 @@ class DialogChartWidget extends React.PureComponent<
         return Boolean(this.props.openedItemId);
     }
 
-    handleUpdateField = (field: keyof DashTabItemWidgetTab, value: string| boolean) => {
+    handleUpdateField = (field: keyof DashTabItemWidgetTab, value: string | boolean) => {
         const {data, tabIndex} = this.state;
         this.setState({
             data: update(data, {
@@ -576,7 +576,8 @@ class DialogChartWidget extends React.PureComponent<
             />
         );
 
-        const {title, chartId, description, autoHeight, background, hint, enableHint} = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, background, hint, enableHint} =
+            data.tabs[tabIndex];
 
         const {MarkdownControl} = registry.common.components.getAll();
 
@@ -673,13 +674,13 @@ class DialogChartWidget extends React.PureComponent<
                             size="m"
                             className={b('checkbox')}
                         />
-                        {enableHint && 
-                            (<MarkdownControl
+                        {enableHint && (
+                            <MarkdownControl
                                 value={hint || ''}
                                 onChange={this.handleUpdateHint}
                                 disabled={!enableHint}
-                            />)
-                        }
+                            />
+                        )}
                     </div>
                 </FormRow>
                 {enableAutoheight && (
