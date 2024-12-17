@@ -2,13 +2,11 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
 } from '@gravity-ui/dashkit/helpers';
-import {
-    HelpPopover
-} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEmpty from 'lodash/isEmpty';
@@ -445,8 +443,13 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 id: item.id,
                 title: (
                     <span className={b('chart-title-wrap')}>
-                        <span className={b('chart-title-text')}>{(typeof item.title === 'string' ? item.title.trim() : item.title) || '\u2014'}</span>
-                        {item.hint && <HelpPopover content={item.hint} className={b('chart-title-hint')} />}
+                        <span className={b('chart-title-text')}>
+                            {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
+                                '\u2014'}
+                        </span>
+                        {item.hint && (
+                            <HelpPopover content={item.hint} className={b('chart-title-hint')} />
+                        )}
                     </span>
                 ),
                 disabled: Boolean(isLoading),

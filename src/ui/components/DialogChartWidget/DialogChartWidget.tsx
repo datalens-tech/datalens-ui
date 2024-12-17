@@ -21,6 +21,7 @@ import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants/common';
 
+import {registry} from '../../registry';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
 import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
 import {
@@ -36,7 +37,7 @@ import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constan
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
-import {registry} from '../../registry';
+
 import {TabMenu} from './TabMenu/TabMenu';
 import type {UpdateState} from './TabMenu/types';
 import {TabActionType} from './TabMenu/types';
