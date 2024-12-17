@@ -36,7 +36,7 @@ import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constan
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
-
+import {registry} from '../../registry';
 import {TabMenu} from './TabMenu/TabMenu';
 import type {UpdateState} from './TabMenu/types';
 import {TabActionType} from './TabMenu/types';
@@ -111,6 +111,7 @@ const INPUT_FILTERING_ID = 'chartFilteringField';
 const INPUT_NAME_ID = 'chartNameField';
 const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
+const INPUT_HINT_ID = 'chartHintField';
 
 // TODO: put in defaultPath navigation key from entry
 class DialogChartWidget extends React.PureComponent<
@@ -354,6 +355,19 @@ class DialogChartWidget extends React.PureComponent<
         });
     };
 
+    handleUpdateHint = (val: string) => {
+        const {data, tabIndex} = this.state;
+        this.setState({
+            data: update(data, {
+                tabs: {
+                    [tabIndex]: {
+                        hint: {$set: val},
+                    },
+                },
+            }),
+        });
+    };
+
     handleBackgroundColorSelected = (color: string) => {
         const {data, tabIndex} = this.state;
 
@@ -564,7 +578,9 @@ class DialogChartWidget extends React.PureComponent<
             />
         );
 
-        const {title, chartId, description, autoHeight, background} = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, background, hint} = data.tabs[tabIndex];
+
+        const {MarkdownControl} = registry.common.components.getAll();
 
         return (
             <React.Fragment>
@@ -659,6 +675,17 @@ class DialogChartWidget extends React.PureComponent<
                             })
                         }
                         rows={3}
+                    />
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_HINT_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_hint')}
+                >
+                    <MarkdownControl
+                        value={hint || ''}
+                        onChange={this.handleUpdateHint}
+                        disabled={false}
                     />
                 </FormRow>
                 {enableAutoheight && (

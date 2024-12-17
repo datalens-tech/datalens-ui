@@ -20,6 +20,12 @@ $dashPublicContainerClassName: '.dash';
         }
     }
 
+    /* max-width: calc(100% - 16px);
+    text-overflow: ellipsis;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden; */
+
     // styles for widgets with tabs below
 
     #{$dashPublicContainerClassName} &__container &__chart-header,

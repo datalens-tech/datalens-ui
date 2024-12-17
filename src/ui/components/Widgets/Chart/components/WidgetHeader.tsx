@@ -19,7 +19,8 @@ import './WidgetHeader.scss';
 
 type TabItem = {
     id: string;
-    title: string;
+    title: string | React.ReactNode;
+    hint?: string;
     disabled?: boolean;
 };
 

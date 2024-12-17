@@ -162,6 +162,7 @@ export interface DashTabItemWidgetTab {
     id: string;
     title: string;
     description: string;
+    hint?: string;
     chartId: string;
     isDefault: boolean;
     params: StringParams;
