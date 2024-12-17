@@ -43,10 +43,10 @@ export const TitleRow = () => {
 
     return (
         <FormRow label={i18n('field_title')}>
-            <div className={b('operation-container')} data-qa={DialogControlQa.appearanceTitle}>
+            <div className={b('setting-container')} data-qa={DialogControlQa.appearanceTitle}>
                 <Checkbox
                     disabled={isFieldDisabled}
-                    className={b('operation-checkbox')}
+                    className={b('setting-checkbox')}
                     qa={ControlQA.showLabelCheckbox}
                     checked={showTitle}
                     onUpdate={handleShowTitleUpdate}

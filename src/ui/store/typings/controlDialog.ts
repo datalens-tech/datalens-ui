@@ -1,6 +1,7 @@
 import type {ConnectionQueryTypeValues} from 'shared/constants';
 import type {Operations} from 'shared/modules';
 import type {
+    AccentTypeValue,
     ConnectionQueryContent,
     ConnectionQueryTypeOptions,
     DATASET_FIELD_TYPES,
@@ -42,6 +43,7 @@ export type ItemDataSource = {
     chartId?: string;
     showTitle?: boolean;
     titlePlacement?: TitlePlacementOption;
+    accentType?: AccentTypeValue;
     elementType?: string;
     defaultValue?: string | string[];
     datasetId?: string;
@@ -71,6 +73,7 @@ export type AcceptableValue = {
 export type SelectorDialogState = {
     title?: string;
     titlePlacement?: TitlePlacementOption;
+
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
@@ -107,6 +110,7 @@ export type SelectorDialogState = {
     namespace?: string;
     showHint?: boolean;
     hint?: string;
+    accentType?: AccentTypeValue;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
 };

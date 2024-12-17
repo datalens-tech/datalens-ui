@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
+import {ColorAccentRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/ColorAccentRow/ColorAccentRow';
 import {HintRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/HintRow/HintRow';
 import {InnerTitleRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitlePlacementRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/TitlePlacementRow/TitlePlacementRow';
@@ -44,6 +45,7 @@ export const GroupControlBody: React.FC<{
                     changeNavigationPath={props.changeNavigationPath}
                 />
             </div>
+
             <div className={b('section', {'top-divider': true})}>
                 <InputTypeSelector />
             </div>
@@ -57,6 +59,9 @@ export const GroupControlBody: React.FC<{
                     </div>
                     <div className={b('section')}>
                         <InnerTitleRow />
+                    </div>
+                    <div className={b('section')}>
+                        <ColorAccentRow />
                     </div>
                 </React.Fragment>
             )}

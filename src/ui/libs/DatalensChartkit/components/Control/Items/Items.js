@@ -70,6 +70,7 @@ function BaseControlSelect({
     hasValidationError,
     limitLabel,
     disabled,
+    accentType,
 }) {
     const [currentValue, setCurrentValue] = React.useState(
         multiselect ? wrapToArray(value) : value,
@@ -126,7 +127,7 @@ function BaseControlSelect({
             onOpenChange={onOpenChange}
             placeholder={placeholder}
             size={size}
-            className={b('yc-select')}
+            className={b('yc-select', {accent: accentType})}
             showSelectAll={showSelectAll}
             hasValidationError={hasValidationError}
             disabled={disabled}
@@ -163,6 +164,7 @@ BaseControlSelect.propTypes = {
     hasValidationError: PropTypes.bool,
     limitLabel: PropTypes.bool,
     disabled: PropTypes.bool,
+    accentType: PropTypes.oneOfType([PropTypes.string, null]),
 };
 
 function BaseControlInput({
@@ -174,6 +176,7 @@ function BaseControlInput({
     label,
     hasValidationError,
     disabled,
+    accentType,
 }) {
     const [text, setText] = React.useState(value || '');
 
@@ -184,7 +187,7 @@ function BaseControlInput({
     return (
         <TextInput
             placeholder={placeholder}
-            className={b('component', {input: true})}
+            className={b('component', {input: true, accent: accentType})}
             value={text}
             onUpdate={(value) => setText(value)}
             onKeyPress={(event) => event.charCode === 13 && onChange(text)}
@@ -224,6 +227,7 @@ BaseControlInput.propTypes = {
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
     disabled: PropTypes.bool,
+    accentType: PropTypes.oneOfType([PropTypes.string, null]),
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -317,6 +321,7 @@ function BaseControlDatepicker({
     label,
     labelPlacement,
     disabled,
+    accentType,
 }) {
     const date = (value && tryResolveRelativeDate(value)) || value;
 
@@ -344,7 +349,7 @@ function BaseControlDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('component', {vertical})}
+            className={b('component', {vertical, accent: accentType})}
             hasValidationError={hasValidationError}
             required={required}
             label={labelInside ? label : innerLabel}
@@ -372,6 +377,7 @@ BaseControlDatepicker.propTypes = {
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
     disabled: PropTypes.bool,
+    accentType: PropTypes.oneOfType([PropTypes.string, null]),
 };
 
 function BaseControlRangeDatepicker({
@@ -390,6 +396,7 @@ function BaseControlRangeDatepicker({
     label,
     labelPlacement,
     disabled,
+    accentType,
 }) {
     let from;
     let to;
@@ -444,7 +451,7 @@ function BaseControlRangeDatepicker({
             onUpdate={wrappedOnChange}
             controlSize={controlSize}
             controlWidth={controlWidth}
-            className={b('component', {vertical})}
+            className={b('component', {vertical, accent: accentType})}
             hasValidationError={hasValidationError}
             required={required}
             fillPartialInterval={true}
@@ -482,6 +489,7 @@ BaseControlRangeDatepicker.propTypes = {
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
     disabled: PropTypes.bool,
+    accentType: PropTypes.oneOfType([PropTypes.string, null]),
 };
 
 function BaseControlButton({label, theme, onChange, qa, disabled}) {

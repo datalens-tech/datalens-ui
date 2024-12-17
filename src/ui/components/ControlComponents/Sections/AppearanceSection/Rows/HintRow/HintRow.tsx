@@ -39,13 +39,13 @@ export const HintRow = () => {
 
     return (
         <FormRow label={i18n('field_hint')}>
-            <div className={b('operation-container')}>
+            <div className={b('setting-container')}>
                 <Checkbox
                     disabled={isFieldDisabled}
                     onUpdate={handleUpdateEnable}
                     checked={showHint}
                     size="l"
-                    className={b('operation-checkbox', {top: true})}
+                    className={b('setting-checkbox')}
                 />
                 {showHint && (
                     <MarkdownControl
