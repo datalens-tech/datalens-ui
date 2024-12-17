@@ -6,6 +6,7 @@ import {DEFAULT_PALETTE, GradientNullModes, GradientType, WizardVisualizationId}
 export const DEFAULT_BORDERS = 'show';
 export const DEFAULT_THRESHOLDS_MODE = 'auto';
 export const DEFAULT_GRADIENT_MODE = GradientType.TWO_POINT;
+export const DEFAULT_NULL_MODE = GradientNullModes.Ignore;
 
 export const AVAILABLE_CLIENT_PALETTES_DICT = getAvailableClientPalettesMap();
 export const DEFAULT_TWO_POINT_GRADIENT = selectDefaultClientGradient(DEFAULT_GRADIENT_MODE);
