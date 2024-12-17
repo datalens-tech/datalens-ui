@@ -19,7 +19,8 @@ import './WidgetHeader.scss';
 
 type TabItem = {
     id: string;
-    title: string | React.ReactNode;
+    title: string;
+    displayedTitle: React.ReactNode;
     hint?: string;
     disabled?: boolean;
 };
@@ -73,6 +74,11 @@ export const WidgetHeader = (props: HeaderProps) => {
             return null;
         }
 
+        const displayedTabItems = tabsItems.map(item => ({
+            ...item,
+            title: item.displayedTitle || item.title || '',
+        }));
+
         return (
             <div
                 className={b(
@@ -83,7 +89,7 @@ export const WidgetHeader = (props: HeaderProps) => {
             >
                 <AdaptiveTabs
                     size={size}
-                    items={tabsItems}
+                    items={displayedTabItems}
                     activeTab={currentTab.id}
                     onSelectTab={onSelectTab}
                     breakpointsConfig={DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG}

@@ -13,8 +13,9 @@ import type {DashkitOldMetaDataItemBase} from '../types';
 
 export type CurrentTab = {
     id: string;
-    title: string | React.ReactNode;
+    title: string;
     description: string;
+    displayedTitle?: string | React.ReactNode; 
     hint?: string;
     chartId: string;
     isDefault: boolean;

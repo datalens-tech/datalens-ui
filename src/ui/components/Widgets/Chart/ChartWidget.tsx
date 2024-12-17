@@ -441,7 +441,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         () =>
             tabs.map((item: CurrentTab) => ({
                 id: item.id,
-                title: (
+                title: item.title.trim() || '\u2014',
+                displayedTitle: (
                     <span className={b('chart-title-wrap')}>
                         <span className={b('chart-title-text', {'with-hint': Boolean(item.hint)})}>
                             {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
