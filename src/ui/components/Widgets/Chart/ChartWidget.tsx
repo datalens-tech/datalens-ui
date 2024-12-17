@@ -596,6 +596,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 <WidgetFooter
                     isFullscreen={Boolean(isFullscreen)}
                     description={description || ''}
+                    enableDescription={currentTab.enableDescription}
                     author={loadedData?.publicAuthor}
                 />
             )}

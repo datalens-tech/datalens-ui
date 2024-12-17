@@ -12,6 +12,7 @@ import '../ChartWidget.scss';
 export type FooterProps = {
     isFullscreen: boolean;
     description: string | null;
+    enableDescription?: boolean;
     withPaddings?: boolean;
     author?: EntryPublicAuthor;
 };
@@ -19,9 +20,11 @@ export type FooterProps = {
 const b = block(COMPONENT_CLASSNAME);
 
 export const WidgetFooter = (props: FooterProps) => {
-    const {isFullscreen, description, author, withPaddings} = props;
+    const {isFullscreen, description, author, withPaddings, enableDescription} = props;
 
-    const showWidgetFooter = Boolean(!isFullscreen && (description || author));
+    const enableDesc = enableDescription === undefined ? Boolean(description) : enableDescription;
+
+    const showWidgetFooter = Boolean(!isFullscreen && (enableDesc || author));
 
     return (
         <React.Fragment>

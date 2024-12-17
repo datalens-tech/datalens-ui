@@ -18,6 +18,7 @@ export type CurrentTab = {
     displayedTitle?: string | React.ReactNode;
     hint?: string;
     enableHint?: boolean;
+    enableDescription?: boolean;
     chartId: string;
     isDefault: boolean;
     params: StringParams;

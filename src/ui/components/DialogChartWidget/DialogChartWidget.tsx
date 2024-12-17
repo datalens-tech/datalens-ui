@@ -362,6 +362,10 @@ class DialogChartWidget extends React.PureComponent<
         this.handleUpdateField('autoHeight', !currentCondition);
     };
 
+    handleUpdateEnableDesc = (val: boolean) => {
+        this.handleUpdateField('enableDescription', val);
+    };
+
     handleUpdateEnableHint = (val: boolean) => {
         this.handleUpdateField('enableHint', val);
     };
@@ -576,8 +580,10 @@ class DialogChartWidget extends React.PureComponent<
             />
         );
 
-        const {title, chartId, description, autoHeight, background, hint, enableHint} =
+        const {title, chartId, description, autoHeight, background, hint, enableHint, enableDescription} =
             data.tabs[tabIndex];
+
+        const hasDesc = enableDescription === undefined ? Boolean(description) : enableDescription;
 
         const {MarkdownControl} = registry.common.components.getAll();
 
@@ -656,11 +662,21 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_DESCRIPTION_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_description')}
                 >
-                    <MarkdownControl
-                        value={description || ''}
-                        onChange={this.handleUpdateDescription}
-                        disabled={false}
-                    />
+                    <div className={b('settings-container')}>
+                        <Checkbox
+                            onUpdate={this.handleUpdateEnableDesc}
+                            checked={hasDesc}
+                            size="m"
+                            className={b('checkbox')}
+                        />
+                        {hasDesc && (
+                            <MarkdownControl
+                                value={description || ''}
+                                onChange={this.handleUpdateDescription}
+                                disabled={!enableDescription}
+                            />
+                        )}
+                    </div>
                 </FormRow>
                 <FormRow
                     className={b('row')}
