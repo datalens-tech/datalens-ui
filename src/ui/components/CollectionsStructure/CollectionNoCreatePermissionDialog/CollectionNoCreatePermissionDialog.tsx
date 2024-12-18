@@ -23,7 +23,7 @@ export type OpenDialogCollectionNoCreatePermissionArgs = {
     props: Props;
 };
 
-export const CollectionNoCreatePermissionDialog = React.memo<Props>(({visible, onClose}) => {
+export const CollectionNoCreatePermissionDialog = ({visible, onClose}: Props) => {
     const {customizeNoCreatePermissionDialog} = registry.collections.functions.getAll();
 
     const {message} = customizeNoCreatePermissionDialog({
@@ -41,7 +41,7 @@ export const CollectionNoCreatePermissionDialog = React.memo<Props>(({visible, o
             message={message}
         />
     );
-});
+};
 
 CollectionNoCreatePermissionDialog.displayName = 'CollectionNoCreatePermissionDialog';
 
