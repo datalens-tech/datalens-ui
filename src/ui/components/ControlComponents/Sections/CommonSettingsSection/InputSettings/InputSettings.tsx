@@ -10,19 +10,26 @@ import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-const InputSettings = ({hideCommonFields}: {hideCommonFields?: boolean}) => {
+const InputSettings = ({
+    hideCommonFields,
+    rowClassName,
+}: {
+    hideCommonFields?: boolean;
+    rowClassName?: string;
+}) => {
     return (
         <React.Fragment>
             <ParameterNameInput
                 label={i18n('field_field-name')}
                 note={i18n('field_field-name-note')}
+                className={rowClassName}
             />
             {!hideCommonFields && (
                 <React.Fragment>
-                    <InputTypeSelector />
-                    <OperationSelector />
-                    <RequiredValueCheckbox />
-                    <ValueSelector />
+                    <InputTypeSelector className={rowClassName} />
+                    <OperationSelector className={rowClassName} />
+                    <RequiredValueCheckbox className={rowClassName} />
+                    <ValueSelector rowClassName={rowClassName} />
                 </React.Fragment>
             )}
         </React.Fragment>
