@@ -21,6 +21,8 @@ export default async (
         pluginOptions,
     } = args;
 
+    const ctx = req.ctx;
+
     const cacheClient = ChartsEngine.cacheClient as Cache;
 
     const datasetId = source.datasetId || '';
@@ -29,6 +31,7 @@ export default async (
         datasetId,
         workbookId: workbookId ?? null,
         req,
+        ctx,
         cacheClient,
         userId,
         iamToken,
@@ -38,7 +41,7 @@ export default async (
 
     const datasetFields = datasetFieldsResponse.datasetFields;
 
-    req.ctx.log('CONTROLS_DATASET_FIELDS_RECEIVED', {
+    ctx.log('CONTROLS_DATASET_FIELDS_RECEIVED', {
         count: datasetFields.length,
     });
 
@@ -46,10 +49,10 @@ export default async (
         params: source.sourceArgs.params,
         shared: source.sourceArgs.shared as unknown as ControlShared,
         datasetFields,
-        req,
+        ctx,
     });
 
-    req.ctx.log('CONTROLS_DATASET_FIELDS_PROCESSED');
+    ctx.log('CONTROLS_DATASET_FIELDS_PROCESSED');
 
     return {
         ...source,

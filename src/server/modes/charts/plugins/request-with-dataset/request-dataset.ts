@@ -1,4 +1,6 @@
 import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
+import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 import isNumber from 'lodash/isNumber';
 
@@ -17,14 +19,23 @@ export const DEFAULT_CACHE_TTL = 30;
 const getStatusFromError = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error && error.status;
 
-export const getDatasetFieldsById = async (
-    datasetId: string,
-    workbookId: string | null,
-    req: Request,
-    rejectFetchingSource: (reason?: any) => void,
-    iamToken?: string,
-    pluginOptions?: ConfigurableRequestWithDatasetPluginOptions,
-): Promise<GetDataSetFieldsByIdResponse> => {
+const getDatasetFieldsById = async ({
+    datasetId,
+    workbookId,
+    req,
+    ctx,
+    rejectFetchingSource,
+    iamToken,
+    pluginOptions,
+}: {
+    datasetId: string;
+    workbookId: string | null;
+    req: Request;
+    ctx: AppContext;
+    rejectFetchingSource: (reason?: any) => void;
+    iamToken?: string;
+    pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
+}): Promise<GetDataSetFieldsByIdResponse> => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
     const requestDatasetFields =
@@ -36,17 +47,17 @@ export const getDatasetFieldsById = async (
 
         const response = req.headers[DL_EMBED_TOKEN_HEADER]
             ? await requestDatasetFieldsByToken({
-                  ctx: req.ctx,
+                  ctx,
                   headers,
-                  requestId: req.id,
+                  requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                   args: {
                       dataSetId: datasetId,
                   },
               })
             : await requestDatasetFields({
-                  ctx: req.ctx,
+                  ctx: ctx,
                   headers,
-                  requestId: req.id,
+                  requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                   authArgs: {iamToken},
                   args: {
                       dataSetId: datasetId,
@@ -63,7 +74,7 @@ export const getDatasetFieldsById = async (
                 const message = error.message as string;
                 preparedError = new Error(message);
             }
-            req.ctx.logError('FAILED_TO_RECEIVE_FIELDS', preparedError);
+            ctx.logError('FAILED_TO_RECEIVE_FIELDS', preparedError);
             const status = getStatusFromError(error);
             if (isNumber(status) && status < 500) {
                 rejectFetchingSource({
@@ -79,6 +90,7 @@ export const getDatasetFields = async (args: {
     datasetId: string;
     workbookId: WorkbookId;
     req: Request;
+    ctx: AppContext;
     iamToken?: string;
     cacheClient: Cache;
     userId: string | null;
@@ -90,6 +102,7 @@ export const getDatasetFields = async (args: {
         workbookId,
         cacheClient,
         req,
+        ctx,
         userId,
         iamToken,
         rejectFetchingSource,
@@ -98,7 +111,7 @@ export const getDatasetFields = async (args: {
 
     const cacheKey = `${datasetId}__${userId}`;
 
-    req.ctx.log('DATASET_FOR_CHARTS_MIDDLEWARE', {cacheKey});
+    ctx.log('DATASET_FOR_CHARTS_MIDDLEWARE', {cacheKey});
 
     let datasetFields: PartialDatasetField[];
     let revisionId: string;
@@ -109,18 +122,19 @@ export const getDatasetFields = async (args: {
         if (cacheResponse.status === Cache.OK) {
             datasetFields = cacheResponse.data.datasetFields;
             revisionId = cacheResponse.data.revisionId;
-            req.ctx.log('DATASET_FIELDS_WAS_RECEIVED_FROM_CACHE');
+            ctx.log('DATASET_FIELDS_WAS_RECEIVED_FROM_CACHE');
         } else {
-            req.ctx.log('DATASET_FIELDS_IN_CACHE_WAS_NOT_FOUND');
+            ctx.log('DATASET_FIELDS_IN_CACHE_WAS_NOT_FOUND');
 
-            const response = await getDatasetFieldsById(
+            const response = await getDatasetFieldsById({
                 datasetId,
                 workbookId,
                 req,
+                ctx,
                 rejectFetchingSource,
                 iamToken,
                 pluginOptions,
-            );
+            });
             datasetFields = response.fields;
             revisionId = response.revision_id;
             cacheClient
@@ -131,32 +145,33 @@ export const getDatasetFields = async (args: {
                 })
                 .then((setCacheResponse) => {
                     if (setCacheResponse.status === Cache.OK) {
-                        req.ctx.log('SET_DATASET_IN_CACHE_SUCCESS');
+                        ctx.log('SET_DATASET_IN_CACHE_SUCCESS');
                     } else {
-                        req.ctx.logError(
+                        ctx.logError(
                             'SET_DATASET_FIELDS_IN_CACHE_FAILED',
                             new Error(setCacheResponse.message),
                         );
                     }
                 })
                 .catch((error) => {
-                    req.ctx.logError('SET_DATASET_FIELDS_UNHANDLED_ERROR', error);
+                    ctx.logError('SET_DATASET_FIELDS_UNHANDLED_ERROR', error);
                 });
         }
     } else {
-        const response = await getDatasetFieldsById(
+        const response = await getDatasetFieldsById({
             datasetId,
             workbookId,
             req,
+            ctx,
             rejectFetchingSource,
             iamToken,
             pluginOptions,
-        );
+        });
         datasetFields = response.fields;
         revisionId = response.revision_id;
     }
 
-    req.ctx.log('DATASET_FIELDS_WAS_SUCCESSFULLY_PROCESSED');
+    ctx.log('DATASET_FIELDS_WAS_SUCCESSFULLY_PROCESSED');
 
     return {datasetFields, revisionId};
 };

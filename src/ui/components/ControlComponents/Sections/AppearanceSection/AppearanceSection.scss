@@ -7,5 +7,10 @@
 
     &__setting-checkbox {
         margin-right: 8px;
+
+        &_top {
+            align-self: flex-start;
+            margin-top: 4px;
+        }
     }
 }
