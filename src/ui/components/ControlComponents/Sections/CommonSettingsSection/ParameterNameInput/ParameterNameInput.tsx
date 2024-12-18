@@ -12,6 +12,7 @@ import {FieldWrapper} from '../../../../FieldWrapper/FieldWrapper';
 export type ParameterNameInputProps = {
     label: string;
     note?: string;
+    className?: string;
 };
 export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
     props: ParameterNameInputProps,
@@ -43,7 +44,7 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
     );
 
     return (
-        <FormRow label={label}>
+        <FormRow label={label} className={props.className}>
             <FieldWrapper error={validation.fieldName || validation.uniqueFieldName}>
                 <TextInput
                     qa={DialogControlQa.fieldNameInput}
