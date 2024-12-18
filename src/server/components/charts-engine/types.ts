@@ -1,4 +1,4 @@
-import type {OutgoingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 
 import type {AppMiddleware, AppRouteDescription, Request, Response} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
@@ -125,6 +125,13 @@ export type Source<T = string | Record<string, string>> = {
     sourceArgs?: SourcesArgs;
 };
 
+export type AdapterContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        ['x-forwarded-for']: IncomingHttpHeaders['x-forwarded-for'];
+    };
+};
+
 export type SourceConfig = {
     description?: {
         title: {
@@ -139,12 +146,15 @@ export type SourceConfig = {
     uiEndpointFormatter?: (url: string, sourceData?: Source['data']) => string | null;
     uiEndpoint?: string;
     passedCredentials?: Record<string, boolean>;
-    extraHeaders?: Record<string, string | undefined> | ((req: Request) => Record<string, string>);
+    extraHeaders?: Record<string, string | undefined> | (() => Record<string, string>);
     sourceType?: string;
     dataEndpoint?: string;
     preprocess?: (url: string) => string;
     allowedMethods?: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
 
+    /**
+     * @deprecated
+     **/
     adapter?: ({
         targetUri,
         sourceName,
@@ -154,6 +164,18 @@ export type SourceConfig = {
         targetUri: string;
         sourceName: string;
         req: Request;
+        ctx: AppContext;
+    }) => unknown;
+
+    adapterWithContext?: ({
+        targetUri,
+        sourceName,
+        adapterContext,
+        ctx,
+    }: {
+        targetUri: string;
+        sourceName: string;
+        adapterContext: AdapterContext;
         ctx: AppContext;
     }) => unknown;
 
