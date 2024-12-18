@@ -210,9 +210,9 @@ class DialogColorComponent extends React.Component<Props, State> {
                 polygonBorders,
                 reversed,
                 thresholdsMode,
-                leftThreshold: leftThreshold ? leftThreshold : undefined,
-                middleThreshold: middleThreshold ? middleThreshold : undefined,
-                rightThreshold: rightThreshold ? rightThreshold : undefined,
+                leftThreshold,
+                middleThreshold,
+                rightThreshold,
                 colorMode,
                 nullMode,
             };
