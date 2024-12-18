@@ -93,6 +93,22 @@
         hyphens: auto;
     }
 
+    &__mobile-title-wrap {
+        display: flex;
+        align-items: center;
+    }
+
+    &__mobile-title-wrap &__chart-title-hint > *,
+    &__mobile-title-wrap &__chart-title-hint > * > *,
+    &__mobile-title-wrap &__chart-title-hint {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__chart-title-hint {
+        margin-left: 3px;
+    }
+
     &_mobile {
         #{$class}__tabs {
             @include text-subheader-3();

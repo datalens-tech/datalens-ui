@@ -32,10 +32,19 @@ $hintOffset: 3px;
         }
     }
 
+    &__chart-title-wrap {
+        display: flex;
+        align-items: center;
+    }
+
     &__chart-title-hint {
         margin-left: $hintOffset;
-        display: inline-block;
-        vertical-align: middle;
+    }
+
+    &__chart-title-hint > * > *,
+    &__chart-title-hint > *,
+    &__chart-title-hint {
+        display: inline-flex;
     }
 
     // styles for widgets with tabs below
