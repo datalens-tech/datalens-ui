@@ -135,6 +135,9 @@ class DialogChartWidget extends React.PureComponent<
                     background: {
                         color: 'transparent',
                     },
+                    enableHint: false,
+                    hint: '',
+                    enableDescription: false,
                 },
             ],
         } as DashTabItemWidget['data'],
