@@ -13,7 +13,7 @@ const b = block('markdown-help-popover');
 
 type Props = Partial<Pick<HelpPopoverProps, 'onClick'>> & {
     markdown: string;
-    className: string;
+    className?: string;
 };
 
 export const MarkdownHelpPopover = (props: Props) => {
