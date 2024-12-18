@@ -104,13 +104,13 @@
         align-items: center;
     }
 
-    &__mobile-title-wrap &__chart-title-hint-button > * {
-        display: inline-flex;
-        align-items: center;
-    }
-
     &__chart-title-hint {
         margin-left: 3px;
+        
+        & > * {
+            display: inline-flex;
+            align-items: center;
+        }
     }
 
     &_mobile {

@@ -39,15 +39,15 @@ $hintOffset: 3px;
 
     &__chart-title-hint {
         margin-left: $hintOffset;
-    }
-
-    &__chart-title-hint-button,
-    &__chart-title-hint {
         display: inline-flex;
 
-        &__chart-title-hint-button > * {
+        & > * {
             display: inline-flex;
         }
+    }
+
+    &__chart-title-hint-button {
+        display: inline-flex;
     }
 
     // styles for widgets with tabs below
