@@ -437,6 +437,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         setWidgetCurrentTab?.({widgetId, tabId: currentTab.id});
     }, [currentTab, setWidgetCurrentTab, widgetId]);
 
+    const handleClickHint = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        return false;
+    };
+
     const adaptiveTabsItems = React.useMemo(
         () =>
             tabs.map((item: CurrentTab) => ({
@@ -449,7 +454,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                                 '\u2014'}
                         </span>
                         {item.enableHint && item.hint && (
-                            <HelpPopover content={item.hint} className={b('chart-title-hint')} />
+                            <HelpPopover
+                                content={item.hint}
+                                className={b('chart-title-hint')}
+                                {...(DL.IS_MOBILE
+                                    ? {
+                                          onClick: handleClickHint,
+                                      }
+                                    : {})}
+                            />
                         )}
                     </span>
                 ),
