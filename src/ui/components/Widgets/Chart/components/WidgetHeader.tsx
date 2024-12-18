@@ -83,6 +83,9 @@ export const WidgetHeader = (props: HeaderProps) => {
                             <MarkdownHelpPopover
                                 markdown={widgetTitleHint}
                                 className={b('chart-title-hint')}
+                                buttonProps={{
+                                    className: b('chart-title-hint-button'),
+                                }}
                                 {...(DL.IS_MOBILE
                                     ? {
                                           onClick: handleClickHint,

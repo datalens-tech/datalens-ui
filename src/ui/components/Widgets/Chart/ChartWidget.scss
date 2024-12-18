@@ -41,16 +41,12 @@ $hintOffset: 3px;
         margin-left: $hintOffset;
     }
 
+    &__chart-title-hint-button,
     &__chart-title-hint {
         display: inline-flex;
-        
-        & > * {
-            display: inline-flex;
 
-            & > * {
-                display: inline-flex;
-    
-            }
+        &__chart-title-hint-button > * {
+            display: inline-flex;
         }
     }
 

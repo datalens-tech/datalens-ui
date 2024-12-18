@@ -2,6 +2,7 @@ import React from 'react';
 
 import type {HelpPopoverProps} from '@gravity-ui/components';
 import {HelpPopover} from '@gravity-ui/components';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DL} from 'ui/constants';
 
@@ -14,10 +15,11 @@ const b = block('markdown-help-popover');
 type Props = Partial<Pick<HelpPopoverProps, 'onClick'>> & {
     markdown: string;
     className?: string;
+    buttonProps?: ButtonProps;
 };
 
 export const MarkdownHelpPopover = (props: Props) => {
-    const {markdown, onClick} = props;
+    const {markdown, onClick, buttonProps} = props;
     const [isLoaded, setLoaded] = React.useState(false);
 
     return (
@@ -28,6 +30,7 @@ export const MarkdownHelpPopover = (props: Props) => {
             tooltipClassName={b('tooltip', {hidden: !isLoaded})}
             key={String(isLoaded)}
             initialOpen={isLoaded}
+            {...(buttonProps ? {buttonProps} : {})}
             {...(onClick ? {onClick} : {})}
         />
     );
