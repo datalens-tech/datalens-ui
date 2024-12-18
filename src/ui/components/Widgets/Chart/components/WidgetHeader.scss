@@ -98,11 +98,19 @@
         align-items: center;
     }
 
-    &__mobile-title-wrap &__chart-title-hint > *,
-    &__mobile-title-wrap &__chart-title-hint > * > *,
     &__mobile-title-wrap &__chart-title-hint {
         display: inline-flex;
         align-items: center;
+
+        & > * {
+            display: inline-flex;
+            align-items: center;
+
+            & > * {
+                display: inline-flex;
+                align-items: center;
+            }
+        }
     }
 
     &__chart-title-hint {
