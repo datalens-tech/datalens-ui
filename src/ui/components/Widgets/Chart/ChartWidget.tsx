@@ -2,7 +2,6 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
@@ -22,6 +21,7 @@ import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {getPreparedWrapSettings} from '../../DashKit/utils';
+import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
@@ -454,8 +454,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                                 '\u2014'}
                         </span>
                         {item.enableHint && item.hint && (
-                            <HelpPopover
-                                content={item.hint}
+                            <MarkdownHelpPopover
+                                markdown={item.hint}
                                 className={b('chart-title-hint')}
                                 {...(DL.IS_MOBILE
                                     ? {
