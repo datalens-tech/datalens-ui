@@ -594,7 +594,8 @@ class DialogChartWidget extends React.PureComponent<
             enableDescription,
         } = data.tabs[tabIndex];
 
-        const hasDesc = enableDescription === undefined ? Boolean(description) : enableDescription;
+        const hasDesc =
+            enableDescription === undefined ? Boolean(description) : Boolean(enableDescription);
 
         const {MarkdownControl} = registry.common.components.getAll();
 
@@ -703,11 +704,11 @@ class DialogChartWidget extends React.PureComponent<
                     <div className={b('settings-container')}>
                         <Checkbox
                             onUpdate={this.handleUpdateEnableHint}
-                            checked={enableHint}
+                            checked={Boolean(enableHint)}
                             size="m"
                             className={b('checkbox')}
                         />
-                        {enableHint && (
+                        {Boolean(enableHint) && (
                             <MarkdownControl
                                 value={hint || ''}
                                 onChange={this.handleUpdateHint}
