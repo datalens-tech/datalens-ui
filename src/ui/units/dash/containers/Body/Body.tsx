@@ -703,6 +703,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+
+        if (params.isMobile) {
+            return children;
+        }
+
         const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
@@ -731,6 +736,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+
+        if (params.isMobile) {
+            return children;
+        }
+
         const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
@@ -936,9 +946,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const context = this.getContext();
 
-        const tabDataConfig = DL.IS_MOBILE
-            ? this.getMobileLayout()
-            : (tabData as DashKitProps['config'] | null);
+        const tabDataConfig = tabData as DashKitProps['config'] | null;
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
