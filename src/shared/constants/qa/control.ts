@@ -1,6 +1,5 @@
 export const ControlQA = {
     showInnerTitleCheckbox: 'show-inner-title-checkbox',
-    showLabelCheckbox: 'show-control-name-checkbox',
     controlLabel: 'chartkit-control-title',
 
     controlSelect: 'chartkit-control-select',

@@ -1,0 +1,10 @@
+.form-section {
+    &:not(:last-child) {
+        margin-block-end: var(--g-spacing-6);
+    }
+
+    &__title {
+        display: block;
+        margin-block-end: var(--g-spacing-4);
+    }
+}

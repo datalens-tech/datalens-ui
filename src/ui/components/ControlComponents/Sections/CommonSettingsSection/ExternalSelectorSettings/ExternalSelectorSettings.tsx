@@ -33,6 +33,7 @@ const ExternalSelectorSettings: React.FC<{
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     enableAutoheightDefault?: boolean;
+    rowClassName?: string;
 }> = (props) => {
     const dispatch = useDispatch();
     const {autoHeight, chartId, title, selectorParameters, validation, selectorParametersGroup} =
@@ -100,7 +101,10 @@ const ExternalSelectorSettings: React.FC<{
 
     return (
         <React.Fragment>
-            <FormRow label={i18n('dash.control-dialog.edit', 'field_title')}>
+            <FormRow
+                label={i18n('dash.control-dialog.edit', 'field_title')}
+                className={props.rowClassName}
+            >
                 <FieldWrapper error={validation.title}>
                     <TextInput
                         qa={ControlQA.inputNameControl}
@@ -111,6 +115,7 @@ const ExternalSelectorSettings: React.FC<{
             </FormRow>
 
             <EntrySelector
+                className={props.rowClassName}
                 label={i18n('dash.control-dialog.edit', 'field_source')}
                 entryId={chartId}
                 errorText={validation.chartId}
@@ -122,7 +127,10 @@ const ExternalSelectorSettings: React.FC<{
             />
 
             {!props.enableAutoheightDefault && (
-                <FormRow label={i18n('dash.control-dialog.edit', 'field_autoheight')}>
+                <FormRow
+                    label={i18n('dash.control-dialog.edit', 'field_autoheight')}
+                    className={props.rowClassName}
+                >
                     <Checkbox
                         className={b('checkbox-option')}
                         checked={autoHeight}
