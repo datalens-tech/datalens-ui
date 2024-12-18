@@ -8,7 +8,7 @@
   "context_fill-title": "Enter title",
   "context_filtering-other-charts": "This option enables you to apply filtering from this chart to other charts on the dashboard",
   "context_filtering-usage-limitations": "<link>More about filtration</link>",
-  "context_hint-display-info": "Hint display in widget title if title is enabled",
+  "context_hint-display-info": "The hint appears in the widget title if the title is enabled",
   "field_autoheight": "Auto height",
   "field_background": "Background",
   "field_background-enable": "Enable",
