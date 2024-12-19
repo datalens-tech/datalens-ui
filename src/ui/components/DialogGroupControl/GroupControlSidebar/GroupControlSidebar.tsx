@@ -165,7 +165,7 @@ export const GroupControlSidebar: React.FC<{
                     className={b('extended-settings-button')}
                     width="max"
                     onClick={handleExtendedSettingsClick}
-                    qa={DialogGroupControlQa.placementButton}
+                    qa={DialogGroupControlQa.extendedSettingsButton}
                 >
                     <Icon data={Gear} height={16} width={16} />
                     {i18n('button_extended-settings')}

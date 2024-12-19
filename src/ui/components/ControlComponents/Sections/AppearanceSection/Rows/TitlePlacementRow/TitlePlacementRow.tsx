@@ -48,7 +48,7 @@ export const TitlePlacementRow = ({className}: {className?: string}) => {
         <FormRow className={className}>
             <div className={b('setting-container')}>
                 <RadioButton
-                    data-qa={DialogControlQa.appearanceTitlePlacement}
+                    qa={DialogControlQa.appearanceTitlePlacement}
                     options={TITLE_PLACEMENT_OPTIONS}
                     value={titlePlacement}
                     disabled={isPlacementDisabled}

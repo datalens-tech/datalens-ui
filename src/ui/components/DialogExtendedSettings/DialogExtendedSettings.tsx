@@ -314,7 +314,7 @@ const DialogExtendedSettings = ({
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_save')}
                 propsButtonCancel={{view: 'flat'}}
-                propsButtonApply={{qa: DialogGroupControlQa.placementApplyButton}}
+                propsButtonApply={{qa: DialogGroupControlQa.extendedSettingsApplyButton}}
                 onClickButtonApply={handleApplyClick}
                 onClickButtonCancel={onClose}
             />
