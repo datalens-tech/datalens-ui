@@ -149,3 +149,7 @@ export default class DatasetUtils {
         return DatasetUtils.filterVirtual(field) && field.calc_mode !== 'parameter';
     }
 }
+
+export function isCreationProcess() {
+    return /new$/.test(window.location.pathname);
+}
