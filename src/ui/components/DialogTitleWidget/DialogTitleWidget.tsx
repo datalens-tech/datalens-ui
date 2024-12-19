@@ -26,6 +26,7 @@ const SIZES = [
     {value: DashTabItemTitleSize.S, content: 'S'},
     {value: DashTabItemTitleSize.M, content: 'M'},
     {value: DashTabItemTitleSize.L, content: 'L'},
+    {value: DashTabItemTitleSize.XL, content: 'XL'},
 ];
 
 const b = block('dialog-title');
