@@ -47,6 +47,7 @@ export default async (
             datasetId,
             workbookId: workbookId ?? null,
             req,
+            ctx: req.ctx,
             cacheClient,
             userId,
             iamToken,

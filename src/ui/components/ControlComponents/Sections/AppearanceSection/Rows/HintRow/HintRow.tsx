@@ -45,7 +45,7 @@ export const HintRow = () => {
                     onUpdate={handleUpdateEnable}
                     checked={showHint}
                     size="l"
-                    className={b('setting-checkbox')}
+                    className={b('setting-checkbox', {top: true})}
                 />
                 {showHint && (
                     <MarkdownControl
