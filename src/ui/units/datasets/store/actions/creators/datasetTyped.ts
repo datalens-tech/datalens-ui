@@ -792,6 +792,8 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
                 if (!initial && error.status === 400 && activateSaveButton && !isFatalError) {
                     dispatch(toggleSaveDataset({enable: true}));
+                } else if (isFatalError) {
+                    dispatch(toggleSaveDataset({enable: false}));
                 }
 
                 dispatch({
