@@ -1,4 +1,4 @@
-import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
     ApiV2Filter,
@@ -85,14 +85,14 @@ export const getDistinctsRequestBody = ({
     shared,
     params,
     datasetFields,
-    req,
+    ctx,
 }: {
     shared: ControlShared;
     params: StringParams;
     datasetFields: PartialDatasetField[];
-    req?: Request;
+    ctx?: AppContext;
 }): ApiV2RequestBody => {
-    req?.ctx?.log?.('CONTROLS_START_PREPARING_DISTINCTS_BODY');
+    ctx?.log('CONTROLS_START_PREPARING_DISTINCTS_BODY');
     const targetParam = shared.param;
 
     const where: {
@@ -101,7 +101,7 @@ export const getDistinctsRequestBody = ({
         values: string[];
     }[] = [];
 
-    req?.ctx?.log?.('CONTROLS_START_MAPPING_DATASET_FIELDS');
+    ctx?.log('CONTROLS_START_MAPPING_DATASET_FIELDS');
 
     const datasetFieldsMap = datasetFields.reduce(
         (acc, field) => {
@@ -117,29 +117,29 @@ export const getDistinctsRequestBody = ({
         {} as Record<string, {guid: string; fieldType: string}>,
     );
 
-    req?.ctx?.log?.('CONTROLS_END_MAPPING_DATASET_FIELDS');
+    ctx?.log('CONTROLS_END_MAPPING_DATASET_FIELDS');
 
-    req?.ctx?.log?.('CONTROLS_START_TRANSFORMING_PARAMS');
+    ctx?.log?.('CONTROLS_START_TRANSFORMING_PARAMS');
 
     const urlSearchParams = transformParamsToUrlParams(params);
 
-    req?.ctx?.log?.('CONTROLS_END_TRANSFORMING_PARAMS');
+    ctx?.log?.('CONTROLS_END_TRANSFORMING_PARAMS');
 
-    req?.ctx?.log?.('CONTROLS_START_SPLIT_PARAMS');
+    ctx?.log?.('CONTROLS_START_SPLIT_PARAMS');
 
     const {filtersParams, parametersParams} = splitParamsToParametersAndFilters(
         urlSearchParams,
         datasetFields,
     );
 
-    req?.ctx?.log?.('CONTROLS_START_TRANSFORMING_PARAMS');
+    ctx?.log?.('CONTROLS_START_TRANSFORMING_PARAMS');
 
     const transformedFilterParams = transformUrlParamsToParams(filtersParams);
     const transformedParametersParams = transformUrlParamsToParams(parametersParams);
 
-    req?.ctx?.log?.('CONTROLS_END_TRANSFORMING_PARAMS');
+    ctx?.log?.('CONTROLS_END_TRANSFORMING_PARAMS');
 
-    req?.ctx?.log('CONTROLS_START_PROCESSING_FILTERS');
+    ctx?.log('CONTROLS_START_PROCESSING_FILTERS');
 
     Object.keys(transformedFilterParams).forEach((param) => {
         if (param === targetParam) {
@@ -190,7 +190,7 @@ export const getDistinctsRequestBody = ({
         }
     });
 
-    req?.ctx?.log('CONTROLS_END_PROCESSING_FILTERS');
+    ctx?.log('CONTROLS_END_PROCESSING_FILTERS');
 
     const apiV2RequestBody = buildDistinctsBodyRequest({
         where,
@@ -199,7 +199,7 @@ export const getDistinctsRequestBody = ({
         datasetFieldsMap,
     });
 
-    req?.ctx?.log('CONTROLS_END_PREPARING_DISTINCTS_BODY');
+    ctx?.log('CONTROLS_END_PREPARING_DISTINCTS_BODY');
 
     return apiV2RequestBody;
 };
