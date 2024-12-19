@@ -37,22 +37,20 @@ export const UnloadConfirmation = () => {
         [currentLocation.pathname],
     );
 
-    const beforeUnloadHandler = React.useCallback(
-        (event: BeforeUnloadEvent) => {
+    React.useEffect(() => {
+        const beforeUnloadHandler = (event: BeforeUnloadEvent) => {
             if (isConfirmationAvailable) {
                 // eslint-disable-next-line no-param-reassign
                 event.returnValue = true;
             }
-        },
-        [isConfirmationAvailable],
-    );
+        };
 
-    React.useEffect(() => {
         window.addEventListener('beforeunload', beforeUnloadHandler);
+
         return () => {
             window.removeEventListener('beforeunload', beforeUnloadHandler);
         };
-    }, [beforeUnloadHandler]);
+    }, [isConfirmationAvailable]);
 
     return <Prompt when={isConfirmationAvailable} message={message} />;
 };
