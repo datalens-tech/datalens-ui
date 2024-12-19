@@ -1,0 +1,5 @@
+{
+  "button_ok": "Ok",
+  "label_title": "Insufficient permissions",
+  "section_message": "To create collections and workbooks, you need the <code>datalens.editor</code> role. Please contact your administrator."
+}

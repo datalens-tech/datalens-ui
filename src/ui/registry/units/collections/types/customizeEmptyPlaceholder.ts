@@ -7,6 +7,7 @@ export type CustomizeEmptyPlaceholder = (args: {
     dispatch: AppDispatch;
     history: History;
     canCreateWorkbook: boolean;
+    showCreateWorkbookButton: boolean;
     curCollectionId: string | null;
     title: string;
     description?: string;
