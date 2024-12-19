@@ -86,11 +86,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                                 buttonProps={{
                                     className: b('chart-title-hint-button'),
                                 }}
-                                {...(DL.IS_MOBILE
-                                    ? {
-                                          onClick: handleClickHint,
-                                      }
-                                    : {})}
+                                onClick={handleClickHint}
                             />
                         )}
                     </div>
