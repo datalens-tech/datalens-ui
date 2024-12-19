@@ -253,7 +253,7 @@ export const SUBSELECT_SOURCE_TYPES = [
     'YQ_SUBSELECT',
 ];
 
-export const DATASETS_EDIT_HISTORY_UNIT_ID = 'datsets';
+export const DATASETS_EDIT_HISTORY_UNIT_ID = 'datasets';
 
 /** This timeout uses for batching operations to decrease validation invocations count */
 export const DATASET_VALIDATION_TIMEOUT = 2000;

@@ -173,3 +173,5 @@ export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
 };
+
+export const currentTabSelector = (state: DatalensGlobalState) => state.dataset.currentTab;

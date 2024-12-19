@@ -1,5 +1,6 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import get from 'lodash/get';
 import {batch} from 'react-redux';
 import {TIMEOUT_65_SEC} from 'shared';
 import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
@@ -462,7 +463,7 @@ function _getSources() {
 }
 
 export function getSources(connectionId, workbookId) {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         dispatch(toggleSourcesLoader(true));
 
         let sources = [];
@@ -497,9 +498,10 @@ export function getSources(connectionId, workbookId) {
             }
         } finally {
             batch(() => {
+                const diffs = get(getState(), 'editHistory.units.datasets.diffs', []);
                 dispatch(toggleSourcesLoader(false));
                 // Set initial history point
-                dispatch(addEditHistoryPointDs());
+                dispatch(addEditHistoryPointDs({stacked: Boolean(diffs.length)}));
             });
         }
 
