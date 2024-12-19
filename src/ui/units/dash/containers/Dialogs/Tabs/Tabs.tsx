@@ -41,6 +41,7 @@ type State = {
     expandedItemIndex?: number;
 };
 
+const ROW_HEIGHT = 40;
 class Tabs extends React.PureComponent<Props, State> {
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
         if (nextProps.visible === prevState.prevVisible) {
@@ -80,6 +81,9 @@ class Tabs extends React.PureComponent<Props, State> {
                         itemClassName={b('sortable-item', {
                             highlight: tabs.length > 1,
                         })}
+                        // Fix in @gravity-ui 7
+                        itemsHeight={ROW_HEIGHT * tabs.length}
+                        itemHeight={ROW_HEIGHT}
                         activeItemIndex={expandedItemIndex}
                         onSortEnd={({oldIndex, newIndex}) => this.moveItem(oldIndex, newIndex)}
                         renderItem={(tab, isActive) => (
@@ -99,7 +103,6 @@ class Tabs extends React.PureComponent<Props, State> {
                                 onChangeItemOrder={this.handleChangeOrderItem}
                             />
                         )}
-                        itemHeight={40}
                     />
                     <div
                         className={b('row', {add: true})}

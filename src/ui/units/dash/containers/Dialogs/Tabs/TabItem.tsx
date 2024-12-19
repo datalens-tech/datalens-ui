@@ -46,7 +46,6 @@ type OwnProps = {
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 
 type Props = OwnProps & DispatchProps;
-
 class TabItem extends React.PureComponent<Props> {
     state = {
         editMode: false,

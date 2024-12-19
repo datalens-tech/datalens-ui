@@ -1,12 +1,14 @@
 import React from 'react';
 
+import {DEFAULT_GROUP} from '@gravity-ui/dashkit/helpers';
 import type {PopupProps} from '@gravity-ui/uikit';
 import {Button, Dialog, List, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {cloneDeep} from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import type {DashTabItem, DashTabLayout} from 'shared';
 import {DialogTabsQA, EntryDialogQA} from 'shared';
+import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
 
 import {getLayoutMap, sortByLayoutComparator} from '../../../../modules/helpers';
@@ -36,6 +38,8 @@ const LIST_PREFIX_TEXTS = {
     image: i18n('label_image'),
 };
 
+const ROW_HEIGHT = 34;
+
 const WidgetRow = (item: DashTabItem) => {
     const typeLabel = LIST_PREFIX_TEXTS[item.type];
     const text = getWidgetRowText(item);
@@ -47,33 +51,50 @@ const WidgetRow = (item: DashTabItem) => {
     );
 };
 
+const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+    const preparedItems = getPreparedItems(cloneDeep(items), layout);
+
+    const parentByItem = layout.reduce<Record<string, string>>((memo, item) => {
+        const parent = item.parent ?? DEFAULT_GROUP;
+
+        memo[item.i] = parent;
+
+        return memo;
+    }, {});
+
+    return [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID, DEFAULT_GROUP].map((group) => {
+        return preparedItems.filter((item) => parentByItem[item.id] === group);
+    });
+};
+
 export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {
     const {anchorRef, onClose, onApply, items, layout, tabId} = props;
-    const [preparedItems, setPreparedItems] = React.useState<Array<DashTabItem>>([]);
-    const isApplyDisabled = preparedItems.length <= 1;
+    const [groupedItems, setGroupedItems] = React.useState<Array<Array<DashTabItem>>>([]);
+    const isApplyDisabled = items.length <= 1;
 
     React.useEffect(() => {
-        if (items?.length) {
-            setPreparedItems(getPreparedItems(cloneDeep(items), layout));
-        }
-    }, [items]);
+        setGroupedItems(getGroupedItems(items, layout));
+    }, [items, layout]);
 
     const handleOnSortEnd = React.useCallback(
-        ({oldIndex, newIndex}: {oldIndex: number; newIndex: number}) => {
+        (groupIndex, {oldIndex, newIndex}: {oldIndex: number; newIndex: number}) => {
             if (oldIndex === newIndex) {
                 return;
             }
+            const groupItems = groupedItems[groupIndex];
 
             const newItems = getUpdatedItems({
-                items: preparedItems,
-                dragItem: preparedItems[oldIndex],
+                items: groupItems,
+                dragItem: groupItems[oldIndex],
                 oldIndex,
                 newIndex,
             });
+            const clone = [...groupedItems];
+            clone[groupIndex] = newItems;
 
-            setPreparedItems(newItems);
+            setGroupedItems(clone);
         },
-        [preparedItems],
+        [groupedItems],
     );
 
     const handleResetToDefaultClick = React.useCallback(() => {
@@ -91,11 +112,27 @@ export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {
             };
         });
 
-        setPreparedItems(newItems);
-    }, [preparedItems]);
+        setGroupedItems(getGroupedItems(newItems, layout));
+    }, [items, layout]);
 
     const handleApplyClick = () => {
-        onApply({tabId, items: preparedItems});
+        const itemsLayoutOrder = layout.reduce<Record<string, number>>((memo, item, index) => {
+            memo[item.i] = index;
+
+            return memo;
+        }, {});
+
+        const sortedItems = groupedItems
+            .reduce((memo, group) => {
+                memo.push(...group);
+                return memo;
+            }, [])
+            .sort((a, b) => itemsLayoutOrder[a.id] - itemsLayoutOrder[b.id]);
+
+        onApply({
+            tabId,
+            items: sortedItems,
+        });
     };
 
     const {getCaptionText} = registry.dash.functions.getAll();
@@ -118,21 +155,33 @@ export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {
         >
             <Dialog.Header className={b('header')} caption={captionText} />
             <div className={b('body')}>
-                {preparedItems?.length ? (
-                    <List
-                        filterable={false}
-                        virtualized={false}
-                        sortable={true}
-                        items={preparedItems}
-                        className={b('list')}
-                        itemClassName={b('row')}
-                        onSortEnd={handleOnSortEnd}
-                        renderItem={WidgetRow}
-                        qa={DialogTabsQA.PopupWidgetOrderList}
-                    />
-                ) : (
-                    <div>{i18n('label_no-items')}</div>
-                )}
+                <div className={b('list')}>
+                    {groupedItems.map((preparedItems, index) => {
+                        if (preparedItems.length) {
+                            return (
+                                <List
+                                    key={`list_${index}`}
+                                    filterable={false}
+                                    virtualized={false}
+                                    sortable={preparedItems.length > 1}
+                                    items={preparedItems}
+                                    className={b('group-list')}
+                                    itemClassName={b('row')}
+                                    // Fix in @gravity-ui 7
+                                    itemsHeight={preparedItems.length * ROW_HEIGHT}
+                                    onSortEnd={handleOnSortEnd.bind(this, index)}
+                                    renderItem={WidgetRow}
+                                    qa={DialogTabsQA.PopupWidgetOrderList}
+                                />
+                            );
+                        }
+
+                        return null;
+                    })}
+                    {groupedItems.every((list) => list.length === 0) && (
+                        <div>{i18n('label_no-items')}</div>
+                    )}
+                </div>
             </div>
             <Dialog.Footer
                 onClickButtonCancel={onClose}
