@@ -5,6 +5,7 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/BlankChart/renderer/BlankChartWidget';
 
 import type {ChartKitHtmlItem} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
@@ -211,7 +212,11 @@ async function getUnwrappedFunction(args: {
         }
 
         // prepare function context
-        const fnContext = clearVmProp(this);
+        let fnContext = this;
+
+        if (entryType === 'graph_node') {
+            fnContext = clearVmProp(fnContext);
+        }
 
         // set global api
         const globalApi = {
@@ -221,6 +226,7 @@ async function getUnwrappedFunction(args: {
                 log: (...logArgs: unknown[]) => console.log(...logArgs),
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
+            clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
             window: {
                 open: function (url: string, target?: string) {
                     try {
@@ -323,6 +329,20 @@ async function getUnwrappedFunction(args: {
                             }
                         }
                         return null;
+                    },
+                },
+            });
+        } else if (entryType === 'blank-chart_node') {
+            const chartId = get(this, 'chartId');
+            const chartContext = chartStorage.get(chartId);
+
+            merge(globalApi, {
+                Chart: {
+                    getState: () => {
+                        return chartContext.getState();
+                    },
+                    setState: (update: any, options?: any) => {
+                        chartContext?.setState(update, options);
                     },
                 },
             });
