@@ -40,6 +40,7 @@ export const DialogControlQa = {
     radioSourceType: 'radio-source-type',
     seletSourceType: 'select-source-type',
     appearanceTitle: 'dialog-control-appearance-title',
+    appearanceTitlePlacement: 'dialog-control-appearance-title-placement',
     appearanceInnerTitle: 'dialog-control-appearance-inner-title',
     fieldNameInput: 'field-name-input',
     dateRangeCheckbox: 'date-range-checkbox',

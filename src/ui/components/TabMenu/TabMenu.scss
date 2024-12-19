@@ -9,7 +9,7 @@ $class: '.tab-menu';
     --_--tab-button-add-height: calc(var(--_--tab-button-outlined-padding) * 2 + 28px);
 
     &__list-item {
-        padding: 0 var(var(--dialog-sidebar-horizontal-padding), var(--g-spacing-6));
+        padding: 0 var(--dialog-sidebar-horizontal-padding, var(--g-spacing-6));
     }
 
     &__item {
