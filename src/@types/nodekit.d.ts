@@ -111,6 +111,10 @@ export interface SharedAppContextParams {
         ) => Promise<ResolveEntryByLinkComponentResponse>;
     };
 
+    sources: {
+        reqBody: Request['body'];
+    };
+
     getAppLayoutSettings: (req: Request, res: Response, name?: string) => AppLayoutSettings;
     landingPageSettings?: LandingPageSettings;
 
