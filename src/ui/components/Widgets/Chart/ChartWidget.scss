@@ -23,11 +23,13 @@ $hintOffset: 3px;
     }
 
     &__chart-title-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+
         &_with-hint {
-            text-overflow: ellipsis;
             display: inline-block;
             vertical-align: middle;
-            overflow: hidden;
             max-width: calc(100% - #{$hintOffset} - 16px);
         }
     }

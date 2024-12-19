@@ -683,6 +683,7 @@ class DialogChartWidget extends React.PureComponent<
                         />
                         {hasDesc && (
                             <MarkdownControl
+                                key={`md-desc-tab-${tabIndex}`}
                                 value={description || ''}
                                 onChange={this.handleUpdateDescription}
                                 disabled={!enableDescription}
@@ -710,6 +711,7 @@ class DialogChartWidget extends React.PureComponent<
                         />
                         {Boolean(enableHint) && (
                             <MarkdownControl
+                                key={`md-hint-tab-${tabIndex}`}
                                 value={hint || ''}
                                 onChange={this.handleUpdateHint}
                                 disabled={!enableHint}

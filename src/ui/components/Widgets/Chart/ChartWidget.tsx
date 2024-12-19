@@ -464,11 +464,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                                 buttonProps={{
                                     className: b('chart-title-hint-button'),
                                 }}
-                                {...(DL.IS_MOBILE
-                                    ? {
-                                          onClick: handleClickHint,
-                                      }
-                                    : {})}
+                                onClick={handleClickHint}
                             />
                         )}
                     </span>
