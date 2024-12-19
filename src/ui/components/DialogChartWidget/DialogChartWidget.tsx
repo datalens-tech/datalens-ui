@@ -19,6 +19,9 @@ import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA}
 import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
+import {TabMenu} from 'ui/components/TabMenu/TabMenu';
+import type {UpdateState} from 'ui/components/TabMenu/types';
+import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL} from 'ui/constants/common';
 
 import {registry} from '../../registry';
@@ -37,10 +40,6 @@ import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constan
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import Utils from '../../utils';
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
-
-import {TabMenu} from './TabMenu/TabMenu';
-import type {UpdateState} from './TabMenu/types';
-import {TabActionType} from './TabMenu/types';
 
 import './DialogChartWidget.scss';
 

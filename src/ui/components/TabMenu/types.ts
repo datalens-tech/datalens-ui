@@ -34,7 +34,6 @@ export type TabMenuProps<T> = {
     tabIconMixin?: string;
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
-    addButtonView?: 'flat' | 'outlined';
     onCopyItem?: (itemIndex: number) => void;
 } & (TabsWithMenu | TabsWithRemove);
 
