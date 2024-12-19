@@ -46,6 +46,11 @@ $hintOffset: 3px;
         }
     }
 
+    // hide in sheet only
+    .g-sheet__sheet &__chart-title-hint {
+        display: none;
+    }
+
     &__chart-title-hint-button {
         display: inline-flex;
     }
