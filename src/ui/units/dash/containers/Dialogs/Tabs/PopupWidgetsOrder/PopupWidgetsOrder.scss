@@ -18,6 +18,14 @@
         overflow: auto;
     }
 
+    &__group-list {
+        margin-bottom: 32px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
     &__row {
         padding: 8px;
     }
