@@ -11,10 +11,15 @@ import {bindActionCreators} from 'redux';
 import type {ColorsConfig, Field} from 'shared';
 import {ColorMode, isMeasureValue} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {ALLOWED_FOR_NULL_MODE_VISUALIZATIONS} from 'ui/units/wizard/constants/dialogColor';
 import {setDialogColorPaletteState} from 'units/wizard/actions/dialogColor';
 import {selectDataset, selectParameters} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
-import {selectDashboardParameters, selectFilters} from 'units/wizard/selectors/visualization';
+import {
+    selectDashboardParameters,
+    selectFilters,
+    selectVisualization,
+} from 'units/wizard/selectors/visualization';
 
 import {
     isGradientDialog,
@@ -46,6 +51,7 @@ interface OwnProps {
     colorsConfig: ColorsConfig;
     extra?: ExtraSettings;
     isColorModeChangeAvailable: boolean;
+    canSetNullMode?: boolean;
 }
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -87,14 +93,25 @@ class DialogColorComponent extends React.Component<Props, State> {
     }
 
     render() {
-        const {item, items, dataset, isColorModeChangeAvailable, colorSectionFields} = this.props;
+        const {
+            item,
+            items,
+            dataset,
+            isColorModeChangeAvailable,
+            colorSectionFields,
+            visualization,
+        } = this.props;
         const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
         const {colorMode} = this.state;
 
-        if (!item || !dataset) {
+        if (!item || !dataset || !visualization) {
             return null;
         }
+
+        const canSetNullMode =
+            this.props.canSetNullMode &&
+            (ALLOWED_FOR_NULL_MODE_VISUALIZATIONS as string[]).includes(visualization.id);
 
         return (
             <Dialog open={true} onClose={this.onClose} disableFocusTrap={true}>
@@ -117,6 +134,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                             colorMode={this.state.colorMode}
                             isColorModeChangeAvailable={isColorModeChangeAvailable}
                             onColorModeChange={this.onColorModeChange}
+                            canSetNullMode={canSetNullMode}
                         />
                     </Dialog.Body>
                     <Dialog.Footer
@@ -183,6 +201,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                 leftThreshold,
                 middleThreshold,
                 rightThreshold,
+                nullMode,
             } = this.props.gradientState;
 
             config = {
@@ -195,6 +214,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                 middleThreshold,
                 rightThreshold,
                 colorMode,
+                nullMode,
             };
 
             return config;
@@ -228,6 +248,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         dataset: selectDataset(state),
         gradientState: selectDialogColorGradientState(state),
         paletteState: selectDialogColorPaletteState(state),
+        visualization: selectVisualization(state),
     };
 };
 

@@ -226,6 +226,8 @@
   "label_overlap": "Labels overlap",
   "label_overriden-from-dashboard": "overriden from dashboard",
   "label_pagination": "Pagination",
+  "label_painting-as-0": "Paint as 0",
+  "label_painting-ignore": "Do not paint",
   "label_palette": "Palette",
   "label_part": "Date part",
   "label_percent": "Percentage",

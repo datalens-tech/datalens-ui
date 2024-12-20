@@ -279,6 +279,7 @@ export function openDialogColors({item, onApply, colorSectionFields}: OpenDialog
                         }
                     },
                     colorsConfig,
+                    canSetNullMode: true,
                 }),
             );
         }

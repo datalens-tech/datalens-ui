@@ -1,10 +1,11 @@
 import isNil from 'lodash/isNil';
 import isNumber from 'lodash/isNumber';
 
-import type {
-    RGBColor,
-    ServerField,
-    TableFieldBackgroundSettings,
+import {
+    GradientNullModes,
+    type RGBColor,
+    type ServerField,
+    type TableFieldBackgroundSettings,
 } from '../../../../../../../../../shared';
 import type {ChartColorsConfig} from '../../../../types';
 import {
@@ -46,15 +47,13 @@ export function colorizeFlatTableColumn({
     index: number;
     colorsConfig: ChartColorsConfig;
 }) {
-    const colorValues = data.reduce(
-        (acc, row) => {
-            const rowValue = row[index];
-            const parsedRowValue = isNil(rowValue) ? null : parseFloat(rowValue);
-
-            return [...acc, parsedRowValue];
-        },
-        [] as (number | null)[],
-    );
+    const nilValue = colorsConfig.nullMode === GradientNullModes.AsZero ? 0 : null;
+    const colorValues = data.reduce<(number | null)[]>((acc, row) => {
+        const rowValue = row[index];
+        const parsedRowValue = isNil(rowValue) ? nilValue : parseFloat(rowValue);
+        acc.push(parsedRowValue);
+        return acc;
+    }, []);
 
     const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
     const currentGradient = getCurrentGradient(colorsConfig);
