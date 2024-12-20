@@ -2,7 +2,10 @@ import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import type {CollectionWithPermissions} from 'shared/schema/us/types/collections';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 
-import type {CustomizeEmptyPlaceholder} from '../../../../registry/units/collections/types';
+import type {
+    CustomizeEmptyPlaceholder,
+    CustomizeNoCreatePermissionDialog,
+} from '../../../../registry/units/collections/types';
 
 export const customizeCollectionsActions = (
     _item: CollectionWithPermissions,
@@ -20,4 +23,10 @@ export const customizeEmptyPlaceholder: CustomizeEmptyPlaceholder = ({
     actions,
 }) => {
     return {title, description, actions};
+};
+
+export const customizeNoCreatePermissionDialog: CustomizeNoCreatePermissionDialog = ({message}) => {
+    return {
+        message,
+    };
 };
