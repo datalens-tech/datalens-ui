@@ -1,7 +1,7 @@
 import get from 'lodash/get';
 
 import type {WizardVisualizationId} from '../../../constants';
-import type {Shared, WorkbookId} from '../../../types';
+import {EntryScope, type Shared, type WorkbookId} from '../../../types';
 import type {TypedApi} from '../../simple-schema';
 import type {
     CheckConnectionsForPublicationResponse,
@@ -14,9 +14,9 @@ export function filterEntirsForCheck(entries: Pick<EntryFields, 'entryId' | 'sco
     const connectionsIds: string[] = [];
 
     entries.forEach((entry) => {
-        if (entry.scope === 'dataset') {
+        if (entry.scope === EntryScope.Dataset) {
             datasetIds.push(entry.entryId);
-        } else if (entry.scope === 'connection') {
+        } else if (entry.scope === EntryScope.Connection) {
             connectionsIds.push(entry.entryId);
         }
     });

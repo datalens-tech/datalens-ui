@@ -1,6 +1,7 @@
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
+import {EntryScope} from '../../../types';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
@@ -27,11 +28,11 @@ export const entriesActions = {
         const typedApi = getTypedApi(api);
         const {entryId, lockToken, scope} = args;
         switch (scope) {
-            case 'dataset': {
+            case EntryScope.Dataset: {
                 const data = await typedApi.bi.deleteDataset({datasetId: entryId});
                 return data;
             }
-            case 'connection': {
+            case EntryScope.Connection: {
                 const data = await typedApi.bi.deleteConnnection({connectionId: entryId});
                 return data;
             }
@@ -66,13 +67,13 @@ export const entriesActions = {
                 let lockPublication = false;
                 let lockPublicationReason = null;
 
-                if (entry.scope === 'dataset') {
+                if (entry.scope === EntryScope.Dataset) {
                     const datasetEntry = normalizedDatasets[entry.entryId];
                     lockPublication = datasetEntry && !datasetEntry.allowed;
                     lockPublicationReason = datasetEntry.reason;
                 }
 
-                if (entry.scope === 'connection') {
+                if (entry.scope === EntryScope.Connection) {
                     const connectionEntry = normalizedConnections[entry.entryId];
                     lockPublication = connectionEntry && !connectionEntry.allowed;
                     lockPublicationReason = connectionEntry.reason;
