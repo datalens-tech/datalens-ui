@@ -14,3 +14,5 @@ export const simpleSchema = {
 };
 
 export const getTypedApi = getTypedApiFactory<{root: typeof simpleSchema}>();
+
+export type TypedApi = ReturnType<typeof getTypedApi>;
