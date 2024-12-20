@@ -97,6 +97,13 @@ export const connectionsSelector = (state: DatalensGlobalState) => {
     });
 };
 
+const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>({
+    parameter_hash,
+    title,
+}: T) => {
+    return `${parameter_hash}-${title}`;
+};
+
 export const sourcePrototypesSelector = (state: DatalensGlobalState) => {
     const {
         sourcePrototypes = [],
@@ -105,31 +112,30 @@ export const sourcePrototypesSelector = (state: DatalensGlobalState) => {
 
     const availableSourcesMap = new Map(
         sourcePrototypes.map((source) => {
-            const {parameter_hash: parameterHash} = source;
-
             return [
-                parameterHash,
+                getSourceHashTitleId(source),
                 source as
                     | BaseSource
                     | {id?: string; isSource?: boolean; isConnectedWithAvatar?: boolean},
             ];
         }),
     );
+
     const availableSourceAvatars = sourceAvatars.map(({source_id: sourceId}) => sourceId);
 
     sources.filter(DatasetUtils.filterVirtual).forEach((source) => {
-        const {parameter_hash: parameterHash, id: sourceId} = source;
-
-        const sourcePrototype = availableSourcesMap.get(parameterHash);
+        const {id: sourceId} = source;
+        const sourceHashTitleId = getSourceHashTitleId(source);
+        const sourcePrototype = availableSourcesMap.get(sourceHashTitleId);
 
         if (sourcePrototype) {
-            availableSourcesMap.set(parameterHash, {
+            availableSourcesMap.set(sourceHashTitleId, {
                 ...sourcePrototype,
                 id: sourceId,
                 isSource: true,
             });
         } else {
-            availableSourcesMap.set(parameterHash, {
+            availableSourcesMap.set(sourceHashTitleId, {
                 ...source,
                 isSource: true,
                 isConnectedWithAvatar: availableSourceAvatars.includes(sourceId),
@@ -167,3 +173,5 @@ export const datasetPermissionsSelector = (state: DatalensGlobalState) => state.
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return selectedConnectionSelector(state)?.workbookId || datasetWorkbookId(state) || null;
 };
+
+export const currentTabSelector = (state: DatalensGlobalState) => state.dataset.currentTab;
