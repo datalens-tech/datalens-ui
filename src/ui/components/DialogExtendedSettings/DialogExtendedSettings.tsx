@@ -218,27 +218,6 @@ const DialogExtendedSettings = ({
             />
             <Dialog.Body className={b('body')}>
                 <FormSection title={i18n('label_group-parameters')}>
-                    {showUpdateControlsOnChange && (
-                        <FormRow
-                            label={
-                                <React.Fragment>
-                                    {i18n('label_update-controls-on-change')}
-                                    <HelpPopover
-                                        className={b('help-icon')}
-                                        htmlContent={i18n('context_update-controls-on-change')}
-                                    />
-                                </React.Fragment>
-                            }
-                        >
-                            <Checkbox
-                                className={b('checkbox')}
-                                checked={selectorsGroup.updateControlsOnChange}
-                                onUpdate={handleChangeUpdateControls}
-                                size="l"
-                                qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
-                            />
-                        </FormRow>
-                    )}
                     {showAutoHeight && (
                         <FormRow label={i18n('label_autoheight-checkbox')}>
                             <Checkbox
@@ -288,6 +267,27 @@ const DialogExtendedSettings = ({
                             qa={DialogGroupControlQa.resetButtonCheckbox}
                         />
                     </FormRow>
+                    {showUpdateControlsOnChange && (
+                        <FormRow
+                            label={
+                                <React.Fragment>
+                                    {i18n('label_update-controls-on-change')}
+                                    <HelpPopover
+                                        className={b('help-icon')}
+                                        htmlContent={i18n('context_update-controls-on-change')}
+                                    />
+                                </React.Fragment>
+                            }
+                        >
+                            <Checkbox
+                                className={b('checkbox')}
+                                checked={selectorsGroup.updateControlsOnChange}
+                                onUpdate={handleChangeUpdateControls}
+                                size="l"
+                                qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
+                            />
+                        </FormRow>
+                    )}
                 </FormSection>
                 {isMultipleSelectors && (
                     <FormSection title={i18n('label_selectors-representation')}>
