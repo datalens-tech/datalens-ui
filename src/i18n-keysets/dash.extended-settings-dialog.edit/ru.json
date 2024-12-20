@@ -8,6 +8,7 @@
   "label_apply-button-checkbox": "Кнопка «‎Применить»‎",
   "label_autoheight-checkbox": "Автовысота",
   "label_field-validation": "Некорректное значение ширины",
+  "label_group-name": "Название",
   "label_group-parameters": "Параметры группы",
   "label_note": "Селекторы, которые по ширине не помещаются в виджет, объединяющий группу селекторов, будут перенесены на следующую строку",
   "label_reset-button-checkbox": "Кнопка «‎Сбросить»",

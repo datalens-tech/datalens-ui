@@ -8,6 +8,7 @@
   "label_apply-button-checkbox": "Apply button",
   "label_autoheight-checkbox": "Autoheight",
   "label_field-validation": "Invalid width value",
+  "label_group-name": "Name",
   "label_group-parameters": "Group parameters",
   "label_note": "Selectors whose width does not fit completely inside the widget that unites a group of selectors will be moved to the next line",
   "label_reset-button-checkbox": "Reset button",
