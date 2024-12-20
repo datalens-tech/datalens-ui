@@ -6,7 +6,7 @@ import {DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DialogGroupControlQa, TabMenuQA} from 'shared';
-import {TabActionType} from 'ui/components/DialogChartWidget/TabMenu/types';
+import {TabActionType} from 'ui/components/TabMenu/types';
 import EditedTabItem from 'ui/units/dash/containers/Dialogs/Tabs/EditedTabItem';
 
 import './ListWithMenu.scss';

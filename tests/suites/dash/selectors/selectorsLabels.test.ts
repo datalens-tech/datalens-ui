@@ -6,7 +6,7 @@ import {getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {ControlQA} from '../../../../src/shared/constants';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashTabItemControlSourceType} from '../../../../src/shared';
+import {DashTabItemControlSourceType, TitlePlacements} from '../../../../src/shared';
 
 const PARAMS = {
     DATASET: {
@@ -51,7 +51,7 @@ async function checkLabels(
     await dashboardPage.controlActions.editSelectorBySettings({
         appearance: {
             title,
-            titleEnabled: true,
+            titlePlacement: TitlePlacements.Left,
             innerTitle,
             innerTitleEnabled: true,
         },

@@ -1,6 +1,6 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.controls-placement-dialog {
+.extended-settings-dialog {
     width: 600px;
     display: flex;
     flex-direction: column;
@@ -8,22 +8,21 @@
     &__body {
         display: flex;
         flex-direction: column;
-        padding-bottom: 0;
+        padding-block-end: 0;
+        height: 430px;
     }
 
-    &__selectors {
-        overflow-y: auto;
-        height: 280px;
+    &__help-icon {
+        left: var(--g-spacing-1);
     }
 
     &__note {
         @include text-body-1();
-        color: var(--g-color-text-secondary);
-        margin-bottom: 20px;
+        margin-block-end: var(--g-spacing-5);
     }
 
     &__list-item-container {
-        padding: 0 7px;
+        padding: 0 var(--g-spacing-2);
     }
 
     &__list-item {
@@ -34,7 +33,7 @@
         height: 40px;
         width: 100%;
         cursor: pointer;
-        gap: 8px;
+        gap: var(--g-spacing-2);
     }
 
     &__item-title {
@@ -42,6 +41,10 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+    }
+
+    &__checkbox {
+        margin-block-start: var(--g-spacing-1);
     }
 
     &__radio-button {
@@ -54,7 +57,7 @@
 
     &__error {
         width: 100%;
-        margin-top: 8px;
+        margin-block-start: var(--g-spacing-2);
         color: var(--g-color-text-danger);
     }
 }
