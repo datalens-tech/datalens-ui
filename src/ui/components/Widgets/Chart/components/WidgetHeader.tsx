@@ -11,6 +11,7 @@ import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
+import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
@@ -20,6 +21,8 @@ import './WidgetHeader.scss';
 type TabItem = {
     id: string;
     title: string;
+    displayedTitle: React.ReactNode;
+    hint?: string;
     disabled?: boolean;
 };
 
@@ -61,16 +64,44 @@ export const WidgetHeader = (props: HeaderProps) => {
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
     const widgetTitle = currentTab?.title || title;
+    const widgetTitleHint =
+        currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
+
+    const handleClickHint = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        return false;
+    }, []);
 
     const renderTabs = () => {
         if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
-            return <div className={b('mobile-title')}>{widgetTitle}</div>;
+            return (
+                <div className={b('mobile-title')}>
+                    <div className={b('mobile-title-wrap')}>
+                        {widgetTitle}
+                        {Boolean(widgetTitleHint) && (
+                            <MarkdownHelpPopover
+                                markdown={widgetTitleHint}
+                                className={b('chart-title-hint')}
+                                buttonProps={{
+                                    className: b('chart-title-hint-button'),
+                                }}
+                                onClick={handleClickHint}
+                            />
+                        )}
+                    </div>
+                </div>
+            );
         }
 
         if (hideTitle || !tabsItems || !currentTab || !onSelectTab || !widgetTitle) {
             return null;
         }
+
+        const displayedTabItems = tabsItems.map((item) => ({
+            ...item,
+            title: item.displayedTitle || item.title || '',
+        }));
 
         return (
             <div
@@ -82,7 +113,7 @@ export const WidgetHeader = (props: HeaderProps) => {
             >
                 <AdaptiveTabs
                     size={size}
-                    items={tabsItems}
+                    items={displayedTabItems}
                     activeTab={currentTab.id}
                     onSelectTab={onSelectTab}
                     breakpointsConfig={DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG}

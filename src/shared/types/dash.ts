@@ -20,6 +20,7 @@ export enum DashTabItemType {
 }
 
 export enum DashTabItemTitleSize {
+    XL = 'xl',
     L = 'l',
     M = 'm',
     S = 's',
@@ -162,6 +163,9 @@ export interface DashTabItemWidgetTab {
     id: string;
     title: string;
     description: string;
+    hint?: string;
+    enableHint?: boolean;
+    enableDescription?: boolean;
     chartId: string;
     isDefault: boolean;
     params: StringParams;

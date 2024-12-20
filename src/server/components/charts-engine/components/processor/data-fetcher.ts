@@ -23,7 +23,7 @@ import {
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
 import type {ChartsEngine} from '../../index';
-import type {Source, SourceConfig} from '../../types';
+import type {AdapterContext, Source, SourceConfig} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
@@ -149,6 +149,29 @@ export type DataFetcherResult = {
     data?: any;
 };
 
+type ZitadelParams = {
+    accessToken?: string;
+    serviceUserAccessToken?: string;
+};
+
+function addZitadelHeaders({
+    headers,
+    zitadelParams,
+}: {
+    headers: IncomingHttpHeaders;
+    zitadelParams: ZitadelParams;
+}) {
+    if (zitadelParams?.accessToken) {
+        Object.assign(headers, {authorization: `Bearer ${zitadelParams.accessToken}`});
+    }
+
+    if (zitadelParams?.serviceUserAccessToken) {
+        Object.assign(headers, {
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: zitadelParams.serviceUserAccessToken,
+        });
+    }
+}
+
 export class DataFetcher {
     static fetch({
         chartsEngine,
@@ -186,6 +209,28 @@ export class DataFetcher {
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
 
+            const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
+
+            const zitadelParams = ctx.config.isZitadelEnabled
+                ? {
+                      accessToken: req.user?.accessToken,
+                      serviceUserAccessToken: req.serviceUserAccessToken,
+                  }
+                : undefined;
+
+            const originalReqHeaders = {
+                xRealIP: req.headers['x-real-ip'],
+                xForwardedFor: req.headers['x-forwarded-for'],
+                xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
+                referer: req.headers.referer,
+            };
+            const adapterContext: AdapterContext = {
+                headers: {
+                    ['x-forwarded-for']: req.headers['x-forwarded-for'],
+                    cookie: req.headers.cookie,
+                },
+            };
+
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
 
@@ -205,6 +250,10 @@ export class DataFetcher {
                               userLogin,
                               iamToken,
                               workbookId,
+                              isEmbed,
+                              zitadelParams,
+                              originalReqHeaders,
+                              adapterContext,
                           })
                         : {
                               sourceId: sourceName,
@@ -420,6 +469,10 @@ export class DataFetcher {
         userLogin,
         iamToken,
         workbookId,
+        isEmbed,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
     }: {
         sourceName: string;
         source: Source;
@@ -434,6 +487,15 @@ export class DataFetcher {
         userLogin?: string | null;
         iamToken?: string | null;
         workbookId?: WorkbookId;
+        isEmbed: boolean;
+        zitadelParams: ZitadelParams | undefined;
+        originalReqHeaders: {
+            xRealIP: IncomingHttpHeaders['x-real-ip'];
+            xForwardedFor: IncomingHttpHeaders['x-forwarded-for'];
+            xChartsFetcherVia: IncomingHttpHeaders['x-charts-fetcher-via'];
+            referer: IncomingHttpHeaders['referer'];
+        };
+        adapterContext: AdapterContext;
     }) {
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -528,7 +590,7 @@ export class DataFetcher {
         const sourceConfig = DataFetcher.getSourceConfig({
             chartsEngine,
             sourcePath: targetUri,
-            isEmbed: req.headers[DL_EMBED_TOKEN_HEADER] !== undefined,
+            isEmbed,
         });
 
         if (!sourceConfig) {
@@ -584,11 +646,11 @@ export class DataFetcher {
             userTargetUriUi = sourceConfig.uiEndpoint + croppedTargetUri;
         }
 
-        if (sourceConfig.adapter) {
-            return sourceConfig.adapter({
+        if (sourceConfig.adapterWithContext) {
+            return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
                 sourceName,
-                req,
+                adapterContext,
                 ctx,
             });
         }
@@ -602,9 +664,11 @@ export class DataFetcher {
         );
 
         if (sourceType === 'charts') {
-            const incomingHeader = req.headers['x-charts-fetcher-via'] || '';
+            const incomingHeader = originalReqHeaders.xChartsFetcherVia || '';
 
-            const scriptName = req.body.params ? '/editor/' + req.body.params.name : req.body.path;
+            const {reqBody} = ctx.get('sources');
+
+            const scriptName = reqBody.params ? '/editor/' + reqBody.params.name : reqBody.path;
 
             if (incomingHeader && !Array.isArray(incomingHeader)) {
                 const circular = incomingHeader.split(',').some((someScriptName) => {
@@ -627,8 +691,8 @@ export class DataFetcher {
                 : scriptName;
         }
 
-        if (req.headers.referer) {
-            headers.referer = ctx.utils.redactSensitiveQueryParams(req.headers.referer);
+        if (originalReqHeaders.referer) {
+            headers.referer = ctx.utils.redactSensitiveQueryParams(originalReqHeaders.referer);
         }
 
         const proxyHeaders = ctx.config.chartsEngineConfig.dataFetcherProxiedHeaders || [
@@ -651,14 +715,8 @@ export class DataFetcher {
             headers[WORKBOOK_ID_HEADER] = workbookId;
         }
 
-        if (req.user?.accessToken) {
-            Object.assign(headers, {authorization: `Bearer ${req.user.accessToken}`});
-        }
-
-        if (req.serviceUserAccessToken) {
-            Object.assign(headers, {
-                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-            });
+        if (zitadelParams) {
+            addZitadelHeaders({headers, zitadelParams});
         }
 
         if (passedCredentials) {
@@ -668,7 +726,7 @@ export class DataFetcher {
 
             const sourceAuthorizationHeaders = getSourceAuthorizationHeaders({
                 req,
-                chartsEngine,
+                ctx,
                 sourceConfig,
                 subrequestHeaders,
             });
@@ -678,7 +736,7 @@ export class DataFetcher {
 
         if (extraHeaders) {
             if (typeof extraHeaders === 'function') {
-                const extraHeadersResult = extraHeaders(req);
+                const extraHeadersResult = extraHeaders();
 
                 Object.assign(headers, extraHeadersResult);
             } else if (typeof extraHeaders === 'object') {
@@ -726,7 +784,7 @@ export class DataFetcher {
         }
 
         if (ctx.config.appEnv !== 'development') {
-            requestOptions.headers['x-forwarded-for'] = req.headers['x-forwarded-for'];
+            requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
         }
 
         if (isSourceWithMiddlewareUrl(source)) {
@@ -767,7 +825,7 @@ export class DataFetcher {
         const publicSourceData = hideSensitiveData(sourceData);
 
         if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = req.headers['x-real-ip'];
+            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
         }
 
         const traceId = ctx.getTraceId();
