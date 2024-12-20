@@ -302,6 +302,8 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
