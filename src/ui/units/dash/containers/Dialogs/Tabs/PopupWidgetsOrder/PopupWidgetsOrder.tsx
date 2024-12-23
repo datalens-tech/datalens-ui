@@ -1,19 +1,16 @@
 import React from 'react';
 
-import {DEFAULT_GROUP} from '@gravity-ui/dashkit/helpers';
 import type {PopupProps} from '@gravity-ui/uikit';
 import {Button, Dialog, List, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import cloneDeep from 'lodash/cloneDeep';
 import type {DashTabItem, DashTabLayout} from 'shared';
 import {DialogTabsQA, EntryDialogQA} from 'shared';
-import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
 
 import {getLayoutMap, sortByLayoutComparator} from '../../../../modules/helpers';
 
-import {getPreparedItems, getUpdatedItems, getWidgetRowText} from './helpers';
+import {getGroupedItems, getUpdatedItems, getWidgetRowText} from './helpers';
 
 import './PopupWidgetsOrder.scss';
 
@@ -49,22 +46,6 @@ const WidgetRow = (item: DashTabItem) => {
             {typeLabel}: {text}
         </div>
     );
-};
-
-const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
-    const preparedItems = getPreparedItems(cloneDeep(items), layout);
-
-    const parentByItem = layout.reduce<Record<string, string>>((memo, item) => {
-        const parent = item.parent ?? DEFAULT_GROUP;
-
-        memo[item.i] = parent;
-
-        return memo;
-    }, {});
-
-    return [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID, DEFAULT_GROUP].map((group) => {
-        return preparedItems.filter((item) => parentByItem[item.id] === group);
-    });
 };
 
 export const PopupWidgetsOrder = (props: PopupWidgetsOrderProps) => {

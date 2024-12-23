@@ -114,6 +114,7 @@ import {
 import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
+import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -282,6 +283,10 @@ class Body extends React.PureComponent<BodyProps> {
         byGroup: {},
         byId: {},
         columns: 0,
+    };
+    _memoizedOrderedConfig?: {
+        key: DashKitProps['config']['items'];
+        config: DashKitProps['config'];
     };
 
     state: DashBodyState = {
@@ -887,6 +892,36 @@ class Body extends React.PureComponent<BodyProps> {
             [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
         };
     };
+    private getConfig = () => {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData;
+
+        if (!tabDataConfig || !DL.IS_MOBILE) {
+            return tabDataConfig;
+        }
+
+        const memoItems = this._memoizedOrderedConfig;
+
+        if (!memoItems || memoItems.key !== tabDataConfig.items) {
+            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout).reduce(
+                (list, group) => {
+                    list.push(...group);
+                    return list;
+                },
+                [],
+            );
+
+            this._memoizedOrderedConfig = {
+                key: tabDataConfig.items as ConfigItem[],
+                config: {
+                    ...tabDataConfig,
+                    items: sortedItems as ConfigItem[],
+                },
+            };
+        }
+
+        return this._memoizedOrderedConfig?.config;
+    };
 
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
@@ -894,7 +929,6 @@ class Body extends React.PureComponent<BodyProps> {
             mode,
             settings,
             tabs,
-            tabData,
             handlerEditClick,
             isEditModeLoading,
             globalParams,
@@ -904,7 +938,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const context = this.getContext();
 
-        const tabDataConfig = tabData as DashKitProps['config'] | null;
+        const tabDataConfig = this.getConfig();
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
