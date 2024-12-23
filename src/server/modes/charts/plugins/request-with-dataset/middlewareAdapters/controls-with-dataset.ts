@@ -19,6 +19,7 @@ export default async (
         workbookId,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
     } = args;
 
     const ctx = req.ctx;
@@ -37,6 +38,7 @@ export default async (
         iamToken,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
     });
 
     const datasetFields = datasetFieldsResponse.datasetFields;

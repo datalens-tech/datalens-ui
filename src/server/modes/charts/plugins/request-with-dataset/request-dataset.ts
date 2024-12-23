@@ -8,7 +8,10 @@ import type {WorkbookId} from '../../../../../shared';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
 import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
-import {getHeaders} from '../../../../components/charts-engine/controllers/charts';
+import {
+    type ZitadelParams,
+    addZitadelHeaders,
+} from '../../../../components/charts-engine/components/processor/data-fetcher';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
 
@@ -27,6 +30,7 @@ const getDatasetFieldsById = async ({
     rejectFetchingSource,
     iamToken,
     pluginOptions,
+    zitadelParams,
 }: {
     datasetId: string;
     workbookId: string | null;
@@ -35,6 +39,7 @@ const getDatasetFieldsById = async ({
     rejectFetchingSource: (reason?: any) => void;
     iamToken?: string;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
+    zitadelParams: ZitadelParams | undefined;
 }): Promise<GetDataSetFieldsByIdResponse> => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
@@ -43,7 +48,11 @@ const getDatasetFieldsById = async ({
 
     const requestDatasetFieldsByToken = gatewayApi.bi.embedsGetDataSetFieldsById;
     try {
-        const headers = getHeaders(req);
+        const headers = {...req.headers};
+
+        if (zitadelParams) {
+            addZitadelHeaders({headers, zitadelParams});
+        }
 
         const response = req.headers[DL_EMBED_TOKEN_HEADER]
             ? await requestDatasetFieldsByToken({
@@ -96,6 +105,7 @@ export const getDatasetFields = async (args: {
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
+    zitadelParams: ZitadelParams | undefined;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
     const {
         datasetId,
@@ -107,6 +117,7 @@ export const getDatasetFields = async (args: {
         iamToken,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
     } = args;
 
     const cacheKey = `${datasetId}__${userId}`;
@@ -134,6 +145,7 @@ export const getDatasetFields = async (args: {
                 rejectFetchingSource,
                 iamToken,
                 pluginOptions,
+                zitadelParams,
             });
             datasetFields = response.fields;
             revisionId = response.revision_id;
@@ -166,6 +178,7 @@ export const getDatasetFields = async (args: {
             rejectFetchingSource,
             iamToken,
             pluginOptions,
+            zitadelParams,
         });
         datasetFields = response.fields;
         revisionId = response.revision_id;
