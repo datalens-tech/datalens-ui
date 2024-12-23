@@ -14,6 +14,10 @@ export function filterEntirsForCheck(entries: Pick<EntryFields, 'entryId' | 'sco
     const connectionsIds: string[] = [];
 
     entries.forEach((entry) => {
+        if (!('scope' in entry)) {
+            throw new Error("Entry should have required field 'scope'");
+        }
+
         if (entry.scope === EntryScope.Dataset) {
             datasetIds.push(entry.entryId);
         } else if (entry.scope === EntryScope.Connection) {
