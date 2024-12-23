@@ -149,3 +149,8 @@ export default class DatasetUtils {
         return DatasetUtils.filterVirtual(field) && field.calc_mode !== 'parameter';
     }
 }
+
+export function isCreationProcess(pathname = '') {
+    const lastPathnamePart = pathname.split('/').filter(Boolean).slice(-1)[0];
+    return lastPathnamePart === 'new';
+}

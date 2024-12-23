@@ -93,6 +93,9 @@ const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Bar100p,
     WizardVisualizationId.Scatter,
     WizardVisualizationId.Treemap,
+    WizardVisualizationId.Pie,
+    WizardVisualizationId.Donut,
+    WizardVisualizationId.CombinedChart,
 ]);
 
 const TOOLTIP_SUM_SUPPORTED_VISUALIZATION = new Set([

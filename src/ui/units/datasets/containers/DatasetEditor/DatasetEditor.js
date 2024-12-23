@@ -156,10 +156,11 @@ class DatasetEditor extends React.Component {
     }) => {
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
             this.props.toggleSaveDataset({enable: !validateEnabled, validationPending: debounce});
+            const stacked = debounce && this.props.validation.isPending;
 
             switch (actionType) {
                 case 'delete': {
-                    this.props.batchDeleteFields(fields);
+                    this.props.batchDeleteFields(fields, {stacked});
 
                     this.updateDataset({
                         debounce,
@@ -170,7 +171,7 @@ class DatasetEditor extends React.Component {
                     break;
                 }
                 case 'update': {
-                    this.props.batchUpdateFields(fields);
+                    this.props.batchUpdateFields(fields, undefined, {stacked});
 
                     this.updateDataset({
                         debounce,
@@ -190,7 +191,7 @@ class DatasetEditor extends React.Component {
 
             switch (actionType) {
                 case 'duplicate': {
-                    this.props.duplicateField(field);
+                    this.props.duplicateField(field, {stacked: true});
 
                     this.updateDataset({
                         debounce: true,

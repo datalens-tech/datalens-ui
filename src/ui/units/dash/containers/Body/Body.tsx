@@ -285,7 +285,7 @@ class Body extends React.PureComponent<BodyProps> {
         columns: 0,
     };
     _memoizedOrderedConfig?: {
-        key: DashKitProps['config']['items'];
+        key: DashKitProps['config'];
         config: DashKitProps['config'];
     };
 
@@ -902,7 +902,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const memoItems = this._memoizedOrderedConfig;
 
-        if (!memoItems || memoItems.key !== tabDataConfig.items) {
+        if (!memoItems || memoItems.key !== tabDataConfig) {
             const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout).reduce(
                 (list, group) => {
                     list.push(...group);
@@ -912,7 +912,7 @@ class Body extends React.PureComponent<BodyProps> {
             );
 
             this._memoizedOrderedConfig = {
-                key: tabDataConfig.items as ConfigItem[],
+                key: tabDataConfig as DashKitProps['config'],
                 config: {
                     ...tabDataConfig,
                     items: sortedItems as ConfigItem[],
