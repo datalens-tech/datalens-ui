@@ -128,6 +128,7 @@ function setDefaultFormData(args: {type: ConnectorType; schema: FormSchema}) {
             ...defaults.form,
             ...queryForm,
             [FieldKey.Type]: type,
+            secret_headers: {entries: {'api-1-key': ''}},
         };
 
         if (Object.keys(defaults.form).length) {

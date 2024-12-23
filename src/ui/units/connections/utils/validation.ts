@@ -1,6 +1,6 @@
 import {I18n} from 'i18n';
 
-import {ValidationErrorType} from '../constants';
+import {ValidationErrorType, i18n10647} from '../constants';
 import type {ValidationError} from '../typings';
 
 const i18n = I18n.keyset('connections.form');
@@ -16,6 +16,9 @@ export const getErrorMessage = (type?: ValidationErrorType) => {
         }
         case ValidationErrorType.Length: {
             return i18n('label_error-length-field');
+        }
+        case ValidationErrorType.DuplicatedKey: {
+            return i18n10647['label_duplicated-keys'];
         }
         default: {
             return '';

@@ -9,6 +9,7 @@ import {
     Description,
     FileInput,
     Input,
+    KeyValue,
     Label,
     PlainText,
     RadioButton,
@@ -81,6 +82,10 @@ export const FormItem = ({item, readonly}: {item: ConnectorFormItem; readonly?: 
         }
         case 'hidden': {
             return null;
+        }
+        case 'key_value': {
+            const {id: _id, ...itemProps} = item;
+            return <KeyValue {...itemProps} />;
         }
         default: {
             logger.logError(`FormItem (conn): unknown item id "${(item as ConnectorFormItem).id}"`);
