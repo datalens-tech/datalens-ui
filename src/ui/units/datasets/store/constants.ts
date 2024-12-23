@@ -23,7 +23,7 @@ const isDatasetTab = (value: unknown): value is DatasetTab => {
 };
 
 const getCurrentTab = (): DatasetTab => {
-    const defaultTab = isCreationProcess() ? TAB_SOURCES : TAB_DATASET;
+    const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
     const queryTab = DatasetUtils.getQueryParam('tab');
 
     if (isDatasetTab(queryTab)) {

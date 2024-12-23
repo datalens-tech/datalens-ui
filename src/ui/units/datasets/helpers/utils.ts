@@ -150,6 +150,7 @@ export default class DatasetUtils {
     }
 }
 
-export function isCreationProcess() {
-    return /new$/.test(window.location.pathname);
+export function isCreationProcess(pathname = '') {
+    const lastPathnamePart = pathname.split('/').filter(Boolean).slice(-1)[0];
+    return lastPathnamePart === 'new';
 }
