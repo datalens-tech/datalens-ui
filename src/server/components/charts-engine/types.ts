@@ -152,21 +152,6 @@ export type SourceConfig = {
     preprocess?: (url: string) => string;
     allowedMethods?: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
 
-    /**
-     * @deprecated
-     **/
-    adapter?: ({
-        targetUri,
-        sourceName,
-        req,
-        ctx,
-    }: {
-        targetUri: string;
-        sourceName: string;
-        req: Request;
-        ctx: AppContext;
-    }) => unknown;
-
     adapterWithContext?: ({
         targetUri,
         sourceName,

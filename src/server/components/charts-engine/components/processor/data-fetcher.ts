@@ -646,15 +646,6 @@ export class DataFetcher {
             userTargetUriUi = sourceConfig.uiEndpoint + croppedTargetUri;
         }
 
-        if (sourceConfig.adapter) {
-            return sourceConfig.adapter({
-                targetUri: croppedTargetUri,
-                sourceName,
-                req,
-                ctx,
-            });
-        }
-
         if (sourceConfig.adapterWithContext) {
             return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
@@ -675,7 +666,9 @@ export class DataFetcher {
         if (sourceType === 'charts') {
             const incomingHeader = originalReqHeaders.xChartsFetcherVia || '';
 
-            const scriptName = req.body.params ? '/editor/' + req.body.params.name : req.body.path;
+            const {reqBody} = ctx.get('sources');
+
+            const scriptName = reqBody.params ? '/editor/' + reqBody.params.name : reqBody.path;
 
             if (incomingHeader && !Array.isArray(incomingHeader)) {
                 const circular = incomingHeader.split(',').some((someScriptName) => {
@@ -733,7 +726,7 @@ export class DataFetcher {
 
             const sourceAuthorizationHeaders = getSourceAuthorizationHeaders({
                 req,
-                chartsEngine,
+                ctx,
                 sourceConfig,
                 subrequestHeaders,
             });
