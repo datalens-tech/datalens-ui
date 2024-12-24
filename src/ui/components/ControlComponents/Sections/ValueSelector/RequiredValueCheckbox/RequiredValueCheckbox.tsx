@@ -20,7 +20,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const b = block('value-selector-wrapper');
 
-export const RequiredValueCheckbox = () => {
+export const RequiredValueCheckbox = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const required = useSelector(selectSelectorRequired);
 
@@ -39,7 +39,7 @@ export const RequiredValueCheckbox = () => {
     const value = required ?? false;
 
     return (
-        <FormRow label={i18n('field_required-value')}>
+        <FormRow label={i18n('field_required-value')} className={className}>
             <Checkbox
                 className={b('checkbox-option')}
                 disabled={isFieldDisabled}

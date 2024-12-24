@@ -1,6 +1,6 @@
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
-import {DashTabItemControlSourceType} from 'shared/types';
+import {DashTabItemControlSourceType, TitlePlacements} from 'shared/types';
 import type {
     ItemDataSource,
     SelectorDialogState,
@@ -207,7 +207,6 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
 
         titlePlacement,
         accentType,
-        showTitle,
         showInnerTitle,
         innerTitle,
         showHint,
@@ -238,8 +237,11 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
     }
 
     let source: ItemDataSource = {
-        showTitle,
-        titlePlacement: elementType === ELEMENT_TYPE.CHECKBOX ? undefined : titlePlacement,
+        showTitle: titlePlacement !== TitlePlacements.Hide,
+        titlePlacement:
+            elementType === ELEMENT_TYPE.CHECKBOX || titlePlacement === TitlePlacements.Hide
+                ? undefined
+                : titlePlacement,
         elementType,
         defaultValue,
         showInnerTitle,

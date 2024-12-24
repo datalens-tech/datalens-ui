@@ -1,11 +1,11 @@
 .entry-selector {
     &__navigation {
         grid-template-columns: 1fr auto;
-        grid-template-rows: 40px;
+        row-gap: var(--g-spacing-2);
+        margin-block-end: var(--g-spacing-2);
     }
 
     &__link {
-        grid-auto-rows: 40px;
         --dl-dropdown-navigation-width: initial;
     }
 }

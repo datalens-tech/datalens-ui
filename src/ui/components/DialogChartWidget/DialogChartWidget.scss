@@ -23,6 +23,7 @@
         flex: 1;
         flex-direction: column;
         width: 255px;
+        padding-block-end: var(--dialog-footer-vertical-padding, var(--g-spacing-6));
     }
 
     &__add-icon {

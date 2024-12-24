@@ -10,23 +10,26 @@ const DatasetSettings = ({
     hideCommonFields,
     navigationPath,
     changeNavigationPath,
+    rowClassName,
 }: {
     hideCommonFields?: boolean;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    rowClassName?: string;
 }) => {
     return (
         <React.Fragment>
             <DatasetSelector
+                rowClassName={rowClassName}
                 navigationPath={navigationPath}
                 changeNavigationPath={changeNavigationPath}
             />
             {!hideCommonFields && (
                 <React.Fragment>
-                    <InputTypeSelector />
-                    <OperationSelector />
-                    <RequiredValueCheckbox />
-                    <ValueSelector />
+                    <InputTypeSelector className={rowClassName} />
+                    <OperationSelector className={rowClassName} />
+                    <RequiredValueCheckbox className={rowClassName} />
+                    <ValueSelector rowClassName={rowClassName} />
                 </React.Fragment>
             )}
         </React.Fragment>
