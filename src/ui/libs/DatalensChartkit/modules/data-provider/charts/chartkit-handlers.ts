@@ -51,6 +51,7 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
     return {
         ...config,
         lines: mappedLines,
+        unsafe: true,
     };
 }
 

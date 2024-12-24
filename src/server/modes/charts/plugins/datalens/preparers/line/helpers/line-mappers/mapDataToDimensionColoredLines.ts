@@ -1,5 +1,6 @@
 import type {DATASET_FIELD_TYPES} from '../../../../../../../../../shared';
-import {ColorMode, getDistinctValue} from '../../../../../../../../../shared';
+import {ColorMode, getDistinctValue, isHtmlField} from '../../../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../../../shared/utils/ui-sandbox';
 import {COLOR_SHAPE_SEPARATOR} from '../../../../utils/constants';
 import {formatDate, getFieldTitle} from '../../../../utils/misc-helpers';
 import type {ItemValues} from '../types';
@@ -158,16 +159,21 @@ export const mapDataToDimensionColoredLines = ({
             line.formattedName = `${itemValues.formattedValue}: ${shownTitle}`;
             line.drillDownFilterValue = String(itemValues.value);
         } else {
-            line.title = String(itemValues.formattedValue);
-            line.formattedName = String(itemValues.formattedValue);
+            const formattedValue = String(itemValues.formattedValue);
+            line.title = formattedValue;
+            line.formattedName = formattedValue;
             line.drillDownFilterValue = String(itemValues.value);
 
-            line.legendTitle = getColoredLineLegendTitle({
-                yItem,
-                colorItem: items[0],
-                formattedValue: String(itemValues.formattedValue),
-                layers,
-            });
+            if (isHtmlField(items[0])) {
+                line.legendTitle = wrapHtml(formattedValue);
+            } else {
+                line.legendTitle = getColoredLineLegendTitle({
+                    yItem,
+                    colorItem: items[0],
+                    formattedValue: formattedValue,
+                    layers,
+                });
+            }
         }
 
         const {colorValue, shapeValue} = getColorAndShapeValues({

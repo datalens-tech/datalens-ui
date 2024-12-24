@@ -1,6 +1,7 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import type {Field as TField} from 'shared';
-import {DATASET_FIELD_TYPES, PlaceholderId, WizardVisualizationId} from 'shared';
+import {DATASET_FIELD_TYPES, Feature, PlaceholderId, WizardVisualizationId} from 'shared';
+import Utils from 'ui/utils';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -46,6 +47,8 @@ export function canUseStringAsMarkdown(
     visualizationId: WizardVisualizationId,
     placeholderId: PlaceholderId | undefined,
 ) {
+    const canUseHtmlInOtherFields = Utils.isEnabledFeature(Feature.HtmlInWizard);
+
     switch (visualizationId) {
         case WizardVisualizationId.Scatter: {
             const possiblePlaceholders: PlaceholderId[] = [
@@ -77,6 +80,15 @@ export function canUseStringAsMarkdown(
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Pie: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
+
+            if (canUseHtmlInOtherFields) {
+                possiblePlaceholders.push(
+                    PlaceholderId.X,
+                    PlaceholderId.Colors,
+                    PlaceholderId.Segments,
+                );
+            }
+
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
         default:

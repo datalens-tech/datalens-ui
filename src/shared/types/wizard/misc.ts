@@ -1,3 +1,4 @@
+import type {WrappedHTML} from '../..';
 import type {CommonPlaceholders} from '../config/wizard';
 
 export type CommonPlaceholdersKeys = keyof CommonPlaceholders;
@@ -38,7 +39,7 @@ export interface MarkupItem {
 }
 
 export type HighchartsSeriesCustomObject = {
-    segmentTitle?: string;
+    segmentTitle?: string | WrappedHTML;
 };
 
 export const enum AxisMode {
