@@ -11,8 +11,8 @@ export default async (
     },
 ) => {
     const {
+        ctx,
         source,
-        req,
         ChartsEngine,
         userId,
         iamToken,
@@ -20,9 +20,8 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
+        datasetHeaders,
     } = args;
-
-    const ctx = req.ctx;
 
     const cacheClient = ChartsEngine.cacheClient as Cache;
 
@@ -31,7 +30,6 @@ export default async (
     const datasetFieldsResponse = await getDatasetFields({
         datasetId,
         workbookId: workbookId ?? null,
-        req,
         ctx,
         cacheClient,
         userId,
@@ -39,6 +37,7 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
+        datasetHeaders,
     });
 
     const datasetFields = datasetFieldsResponse.datasetFields;

@@ -230,6 +230,7 @@ export class DataFetcher {
                     cookie: req.headers.cookie,
                 },
             };
+            const datasetHeaders = req.headers;
 
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
@@ -237,7 +238,6 @@ export class DataFetcher {
                 fetchPromisesList.push(() =>
                     source
                         ? DataFetcher.fetchSource({
-                              req,
                               ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
@@ -254,6 +254,7 @@ export class DataFetcher {
                               zitadelParams,
                               originalReqHeaders,
                               adapterContext,
+                              datasetHeaders,
                           })
                         : {
                               sourceId: sourceName,
@@ -458,7 +459,6 @@ export class DataFetcher {
     private static async fetchSource({
         sourceName,
         source,
-        req,
         ctx,
         chartsEngine,
         fetchingStartTime,
@@ -473,10 +473,10 @@ export class DataFetcher {
         zitadelParams,
         originalReqHeaders,
         adapterContext,
+        datasetHeaders,
     }: {
         sourceName: string;
         source: Source;
-        req: Request;
         ctx: AppContext;
         chartsEngine: ChartsEngine;
         fetchingStartTime: number;
@@ -496,6 +496,7 @@ export class DataFetcher {
             referer: IncomingHttpHeaders['referer'];
         };
         adapterContext: AdapterContext;
+        datasetHeaders: IncomingHttpHeaders;
     }) {
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -794,15 +795,16 @@ export class DataFetcher {
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
+                    ctx,
                     source,
                     sourceName,
-                    req,
                     iamToken: iamToken ?? undefined,
                     workbookId,
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
+                    datasetHeaders,
                 });
             }
         }
