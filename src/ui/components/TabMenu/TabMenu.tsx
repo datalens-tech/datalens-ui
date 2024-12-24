@@ -225,6 +225,10 @@ export const TabMenu = <T extends unknown>({
     };
 
     const renderButtons = () => {
+        const addBtnText =
+            !pasteConfig && addButtonText
+                ? addButtonText
+                : i18n('dash.widget-dialog.edit', 'button_add');
         return (
             <div className={b('buttons-row')}>
                 <Button
@@ -239,7 +243,7 @@ export const TabMenu = <T extends unknown>({
                         className={b('action-button-icon', tabIconMixin)}
                         width={ADD_BUTTON_DEFAULT_SIZE}
                     />
-                    <span>{addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}</span>
+                    <span>{addBtnText}</span>
                 </Button>
                 {pasteConfig && (
                     <Button

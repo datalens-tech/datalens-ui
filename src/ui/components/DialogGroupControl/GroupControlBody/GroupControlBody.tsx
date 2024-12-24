@@ -42,6 +42,7 @@ export const GroupControlBody: React.FC<{
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
                 <CommonSettingsSection
+                    className={b('row')}
                     hideCommonFields={true}
                     navigationPath={props.navigationPath}
                     changeNavigationPath={props.changeNavigationPath}
