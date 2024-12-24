@@ -28,7 +28,7 @@ export const ListValueControl: React.FC<ListValueControlProps> = (props: ListVal
 
     return (
         <React.Fragment>
-            {hasMultiselectValue && <MultiselectableCheckbox />}
+            {hasMultiselectValue && <MultiselectableCheckbox className={props.rowClassName} />}
 
             {props.type === 'manual' && (
                 <React.Fragment>

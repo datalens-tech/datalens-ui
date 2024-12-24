@@ -21,8 +21,8 @@
     }
 
     &__settings {
-        padding: calc(var(--dialog-footer-vertical-padding, 28px) + var(--g-spacing-1))
-            var(--dialog-sidebar-horizontal-padding);
+        padding: var(--g-spacing-2) var(--dialog-sidebar-horizontal-padding)
+            calc(var(--dialog-footer-vertical-padding, 28px) + var(--g-spacing-1));
     }
 
     &__row {
