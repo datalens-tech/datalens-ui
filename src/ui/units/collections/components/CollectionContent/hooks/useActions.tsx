@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowDown, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -19,6 +19,7 @@ import {
     DIALOG_DELETE_WORKBOOK,
     DIALOG_EDIT_COLLECTION,
     DIALOG_EDIT_WORKBOOK,
+    DIALOG_EXPORT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
     DIALOG_MOVE_WORKBOOK,
 } from '../../../../../components/CollectionsStructure';
@@ -245,6 +246,25 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     },
                 });
             }
+
+            actions.push({
+                text: <DropdownAction icon={FileArrowDown} text={i18n('action_export')} />,
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_EXPORT_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: item.workbookId,
+                                workbookTitle: item.title,
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+            });
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
                 actions.push({

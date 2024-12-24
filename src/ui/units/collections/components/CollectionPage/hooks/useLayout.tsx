@@ -21,6 +21,7 @@ import {
     DIALOG_CREATE_COLLECTION,
     DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
+    DIALOG_IMPORT_WORKBOOK,
     DIALOG_MOVE_COLLECTION,
 } from '../../../../../components/CollectionsStructure';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
@@ -290,6 +291,22 @@ export const useLayout = ({
                                         }),
                                     );
                                 }
+                            }}
+                            onImportWorkbookClick={() => {
+                                dispatch(
+                                    openDialog({
+                                        id: DIALOG_IMPORT_WORKBOOK,
+                                        props: {
+                                            open: true,
+                                            initialCollectionId: collection
+                                                ? collection.parentId
+                                                : null,
+                                            onClose: () => {
+                                                dispatch(closeDialog());
+                                            },
+                                        },
+                                    }),
+                                );
                             }}
                             onEditAccessClick={() => {
                                 if (collectionsAccessEnabled && curCollectionId && collection) {

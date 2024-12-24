@@ -25,3 +25,5 @@ export {
     CreateEntryInWorkbookDialog,
     DIALOG_CREATE_ENTRY_IN_WORKBOOK,
 } from './CreateEntryInWorkbookDialog';
+export {ExportWorkbookDialog, DIALOG_EXPORT_WORKBOOK} from './ExportWorkbookDialog';
+export {ImportWorkbookDialog, DIALOG_IMPORT_WORKBOOK} from './ImportWorkbookDialog';

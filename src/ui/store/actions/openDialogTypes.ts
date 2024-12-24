@@ -32,6 +32,8 @@ import type {OpenDialogMoveCollectionsWorkbooksArgs} from '../../components/Coll
 import type {OpenDialogMoveCollectionArgs} from '../../components/CollectionsStructure/MoveCollectionDialog';
 import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStructure/MoveWorkbookDialog';
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
+import type {OpenDialogExportWorkbookArgs} from '../../components/CollectionsStructure/ExportWorkbookDialog';
+import type {OpenDialogImportWorkbookArgs} from '../../components/CollectionsStructure/ImportWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
 import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
@@ -109,4 +111,6 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogTooltipSettingsArgs
-    | OpenDialogChangeDatasetFieldsArgs;
+    | OpenDialogChangeDatasetFieldsArgs
+    | OpenDialogExportWorkbookArgs
+    | OpenDialogImportWorkbookArgs;

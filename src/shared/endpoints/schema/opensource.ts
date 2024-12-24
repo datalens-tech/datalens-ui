@@ -13,6 +13,9 @@ export const opensourceEndpoints = {
         us: {
             endpoint: endpoints.development.api.us,
         },
+        transfer: {
+            endpoint: endpoints.development.api.transfer,
+        },
     },
     production: {
         bi: {
@@ -25,6 +28,9 @@ export const opensourceEndpoints = {
         },
         us: {
             endpoint: endpoints.production.api.us,
+        },
+        transfer: {
+            endpoint: endpoints.development.api.transfer,
         },
     },
 };

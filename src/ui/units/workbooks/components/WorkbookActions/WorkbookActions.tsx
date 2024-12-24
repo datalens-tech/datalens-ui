@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowDown, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {
     DIALOG_COPY_WORKBOOK,
     DIALOG_DELETE_WORKBOOK,
+    DIALOG_EXPORT_WORKBOOK,
     DIALOG_MOVE_WORKBOOK,
 } from 'components/CollectionsStructure';
 import {I18N} from 'i18n';
@@ -123,6 +124,25 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
             text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
         });
     }
+
+    dropdownActions.push({
+        action: () => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_EXPORT_WORKBOOK,
+                    props: {
+                        open: true,
+                        workbookId: workbook.workbookId,
+                        workbookTitle: workbook.title,
+                        onClose: () => {
+                            dispatch(closeDialog());
+                        },
+                    },
+                }),
+            );
+        },
+        text: <DropdownAction icon={FileArrowDown} text={i18n('action_export')} />,
+    });
 
     const otherActions: DropdownMenuItem[] = [];
 

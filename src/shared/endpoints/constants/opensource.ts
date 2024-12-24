@@ -9,6 +9,8 @@ export const opensourceEndpoints = {
 
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
+
+            transfer: process.env.TRANSFER_ENDPOINT,
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',
@@ -37,6 +39,8 @@ export const opensourceEndpoints = {
 
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
+
+            transfer: process.env.TRANSFER_ENDPOINT,
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, ChevronDown, FileArrowUp, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
@@ -33,6 +33,7 @@ export type Props = {
     onCreateWorkbookClick: () => void;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
+    onImportWorkbookClick: () => void;
     onDeleteClick: () => void;
 };
 
@@ -46,6 +47,7 @@ export const CollectionActions = React.memo<Props>(
         onCreateWorkbookClick,
         onEditAccessClick,
         onMoveClick,
+        onImportWorkbookClick,
         onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
@@ -146,6 +148,11 @@ export const CollectionActions = React.memo<Props>(
                 text: <DropdownAction icon={ArrowRight} text={i18n('action_move')} />,
             });
         }
+
+        createActionItems.push({
+            action: onImportWorkbookClick,
+            text: <DropdownAction icon={FileArrowUp} text={i18n('action_import')} />,
+        });
 
         const otherActions: DropdownMenuItem[] = [];
 
