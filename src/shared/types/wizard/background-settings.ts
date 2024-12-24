@@ -7,7 +7,8 @@ type GradientFields =
     | 'rightThreshold'
     | 'gradientPalette'
     | 'gradientMode'
-    | 'reversed';
+    | 'reversed'
+    | 'nullMode';
 
 export interface TableFieldBackgroundSettings {
     enabled: boolean;

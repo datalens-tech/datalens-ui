@@ -13,6 +13,7 @@ import type {
 } from '../';
 import type {
     ColorMode,
+    GradientNullMode,
     GradientType,
     NavigatorLinesMode,
     NavigatorPeriod,
@@ -75,6 +76,7 @@ export interface ColorsConfig {
     coloredByMeasure?: boolean;
     palette?: string;
     colorMode?: ColorMode;
+    nullMode?: GradientNullMode;
 }
 
 export enum LabelsPositions {

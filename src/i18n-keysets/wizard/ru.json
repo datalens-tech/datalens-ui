@@ -226,6 +226,8 @@
   "label_overlap": "Перекрытие подписей",
   "label_overriden-from-dashboard": "перезаписан с дашборда",
   "label_pagination": "Пагинация",
+  "label_painting-as-0": "Окрашивать как 0",
+  "label_painting-ignore": "Не окрашивать",
   "label_palette": "Палитра",
   "label_part": "Часть даты",
   "label_percent": "В процентах",
