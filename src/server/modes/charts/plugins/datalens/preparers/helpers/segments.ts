@@ -33,15 +33,16 @@ export function getSegmentMap(args: PrepareFunctionArgs): SegmentsMap {
     return segmentsList.reduce((acc, segmentName) => {
         if (!acc[segmentName]) {
             const segmentIndex = Object.keys(acc).length;
+            const title = segmentName;
 
             Object.assign(acc, {
-                [segmentName]: {title: segmentName, index: segmentIndex, isOpposite: false},
+                [segmentName]: {title, index: segmentIndex, isOpposite: false},
             });
 
             if (hasOppositeYAxis) {
                 Object.assign(acc, {
                     [String(getY2SegmentNameKey(segmentName))]: {
-                        title: segmentName,
+                        title,
                         index: segmentIndex + 1,
                         isOpposite: true,
                     },

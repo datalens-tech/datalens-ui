@@ -40,6 +40,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         idToDataType,
         visualizationId,
         shared,
+        segments,
     } = args;
     const preparedData = prepareBarX(args);
     const {graphs} = preparedData;
@@ -179,14 +180,15 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                         isLegendEnabled(shared.extraSettings),
                 };
 
-                const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis(
+                const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis({
+                    segment: segments[0],
                     segmentsMap,
-                    {
+                    placeholders: {
                         y: yPlaceholder as ServerPlaceholder,
                         y2: undefined as unknown as ServerPlaceholder,
                     },
                     visualizationId,
-                );
+                });
                 customConfig.yAxis = yAxisSettings;
                 customConfig.axesFormatting.yAxis = yAxisFormattings;
             }
