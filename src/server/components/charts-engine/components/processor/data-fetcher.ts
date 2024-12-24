@@ -149,12 +149,12 @@ export type DataFetcherResult = {
     data?: any;
 };
 
-type ZitadelParams = {
+export type ZitadelParams = {
     accessToken?: string;
     serviceUserAccessToken?: string;
 };
 
-function addZitadelHeaders({
+export function addZitadelHeaders({
     headers,
     zitadelParams,
 }: {
@@ -725,7 +725,6 @@ export class DataFetcher {
             );
 
             const sourceAuthorizationHeaders = getSourceAuthorizationHeaders({
-                req,
                 ctx,
                 sourceConfig,
                 subrequestHeaders,
@@ -803,6 +802,7 @@ export class DataFetcher {
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
+                    zitadelParams,
                 });
             }
         }

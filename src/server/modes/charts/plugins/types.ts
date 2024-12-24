@@ -2,6 +2,7 @@ import type {Request} from '@gravity-ui/expresskit';
 
 import type {WorkbookId} from '../../../../shared';
 import type {ChartsEngine} from '../../../components/charts-engine';
+import type {ZitadelParams} from '../../../components/charts-engine/components/processor/data-fetcher';
 
 import type {
     CHARTS_MIDDLEWARE_URL_TYPE,
@@ -53,6 +54,7 @@ export interface MiddlewareSourceAdapterArgs {
     ChartsEngine: ChartsEngine;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
+    zitadelParams: ZitadelParams | undefined;
 }
 
 export interface ProcessorHookInitArgs {
