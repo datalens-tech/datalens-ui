@@ -46,7 +46,7 @@ function TwoColumnDialog({
             <div className={b()}>
                 {!withoutSidebar && (
                     <div className={b('sidebar', sidebarClassMixin)}>
-                        <Dialog.Header className={b('header')} caption={sidebarHeader} />
+                        <Dialog.Header className={b('sidebar-header')} caption={sidebarHeader} />
                         <Dialog.Body className={b('sidebar-body')}>{sidebar}</Dialog.Body>
                     </div>
                 )}

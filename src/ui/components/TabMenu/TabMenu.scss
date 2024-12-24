@@ -55,7 +55,8 @@ $class: '.tab-menu';
 
     &__buttons-row {
         display: flex;
-        padding: var(--_--tab-button-outlined-padding) var(--g-spacing-6);
+        padding: var(--_--tab-button-outlined-padding)
+            var(--dialog-sidebar-horizontal-padding, var(--g-spacing-6));
         gap: var(--g-spacing-2);
     }
 }
