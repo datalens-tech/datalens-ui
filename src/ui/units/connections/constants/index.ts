@@ -10,3 +10,10 @@ export const ConverterErrorCode = {
     TOO_MANY_COLUMNS: 'ERR.FILE.TOO_MANY_COLUMNS',
     UNSUPPORTED_DOCUMENT: 'ERR.FILE.UNSUPPORTED_DOCUMENT',
 };
+
+// TODO: CHARTS-10647 i18n
+export const i18n10647 = {
+    button_add: 'Add',
+    'label_duplicated-keys': 'Duplicated keys',
+    'label_secret-value': 'Secret value',
+};

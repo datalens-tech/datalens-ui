@@ -2,7 +2,7 @@ import type {ConnectionQueryTypeValues} from '../constants';
 
 export type ConnectionData = Record<
     string,
-    string | number | boolean | unknown[] | null | undefined | ConnectionOptions
+    string | number | boolean | unknown[] | null | undefined | Record<string, unknown>
 >;
 
 export type ConnectionOptions = {
