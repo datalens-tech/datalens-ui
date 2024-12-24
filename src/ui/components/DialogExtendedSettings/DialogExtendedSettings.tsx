@@ -219,6 +219,7 @@ const DialogExtendedSettings = ({
             <Dialog.Body className={b('body')}>
                 <FormSection title={i18n('label_group-parameters')}>
                     <FormRow
+                        className={b('row')}
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
@@ -238,6 +239,7 @@ const DialogExtendedSettings = ({
                         />
                     </FormRow>
                     <FormRow
+                        className={b('row')}
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
@@ -257,7 +259,7 @@ const DialogExtendedSettings = ({
                         />
                     </FormRow>
                     {showAutoHeight && (
-                        <FormRow label={i18n('label_autoheight-checkbox')}>
+                        <FormRow className={b('row')} label={i18n('label_autoheight-checkbox')}>
                             <Checkbox
                                 className={b('checkbox')}
                                 checked={selectorsGroup.autoHeight}
@@ -269,6 +271,7 @@ const DialogExtendedSettings = ({
                     )}
                     {showUpdateControlsOnChange && (
                         <FormRow
+                            className={b('row')}
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
