@@ -20,6 +20,7 @@ import {
     WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
+import type {RequestDatasetFieldsHeaders} from '../../../../modes/charts/plugins/request-with-dataset/request-dataset';
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
 import type {ChartsEngine} from '../../index';
@@ -230,7 +231,8 @@ export class DataFetcher {
                     cookie: req.headers.cookie,
                 },
             };
-            const datasetHeaders = req.headers;
+            // TODO: will be more specific
+            const requestDatasetFieldsHeaders = req.headers;
 
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
@@ -254,7 +256,7 @@ export class DataFetcher {
                               zitadelParams,
                               originalReqHeaders,
                               adapterContext,
-                              datasetHeaders,
+                              requestDatasetFieldsHeaders,
                           })
                         : {
                               sourceId: sourceName,
@@ -473,7 +475,7 @@ export class DataFetcher {
         zitadelParams,
         originalReqHeaders,
         adapterContext,
-        datasetHeaders,
+        requestDatasetFieldsHeaders,
     }: {
         sourceName: string;
         source: Source;
@@ -496,7 +498,7 @@ export class DataFetcher {
             referer: IncomingHttpHeaders['referer'];
         };
         adapterContext: AdapterContext;
-        datasetHeaders: IncomingHttpHeaders;
+        requestDatasetFieldsHeaders: RequestDatasetFieldsHeaders;
     }) {
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -804,7 +806,7 @@ export class DataFetcher {
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
-                    requestDatasetFieldsHeaders: datasetHeaders,
+                    requestDatasetFieldsHeaders,
                 });
             }
         }
