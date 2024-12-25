@@ -1,4 +1,4 @@
-import type {IncomingHttpHeaders} from 'http';
+import type {OutgoingHttpHeaders} from 'http';
 
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
@@ -25,7 +25,7 @@ const getStatusFromError = (error: unknown) =>
 
 export type RequestDatasetFieldsHeaders = {
     [DL_EMBED_TOKEN_HEADER]?: string;
-} & IncomingHttpHeaders;
+} & OutgoingHttpHeaders;
 
 const getDatasetFieldsById = async ({
     datasetId,

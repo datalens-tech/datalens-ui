@@ -20,7 +20,6 @@ import {
     WORKBOOK_ID_HEADER,
     isEnabledServerFeature,
 } from '../../../../../shared';
-import type {RequestDatasetFieldsHeaders} from '../../../../modes/charts/plugins/request-with-dataset/request-dataset';
 import {registry} from '../../../../registry';
 import {config} from '../../constants';
 import type {ChartsEngine} from '../../index';
@@ -159,7 +158,7 @@ export function addZitadelHeaders({
     headers,
     zitadelParams,
 }: {
-    headers: IncomingHttpHeaders;
+    headers: OutgoingHttpHeaders;
     zitadelParams: ZitadelParams;
 }) {
     if (zitadelParams?.accessToken) {
@@ -231,8 +230,6 @@ export class DataFetcher {
                     cookie: req.headers.cookie,
                 },
             };
-            // TODO: will be more specific
-            const requestDatasetFieldsHeaders = req.headers;
 
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
@@ -256,7 +253,6 @@ export class DataFetcher {
                               zitadelParams,
                               originalReqHeaders,
                               adapterContext,
-                              requestDatasetFieldsHeaders,
                           })
                         : {
                               sourceId: sourceName,
@@ -475,7 +471,6 @@ export class DataFetcher {
         zitadelParams,
         originalReqHeaders,
         adapterContext,
-        requestDatasetFieldsHeaders,
     }: {
         sourceName: string;
         source: Source;
@@ -498,7 +493,6 @@ export class DataFetcher {
             referer: IncomingHttpHeaders['referer'];
         };
         adapterContext: AdapterContext;
-        requestDatasetFieldsHeaders: RequestDatasetFieldsHeaders;
     }) {
         const singleFetchingTimeout =
             chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -789,6 +783,10 @@ export class DataFetcher {
             requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
         }
 
+        if (!requestOptions.headers['x-real-ip']) {
+            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
+        }
+
         if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
                 chartsEngine,
@@ -806,7 +804,7 @@ export class DataFetcher {
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
-                    requestDatasetFieldsHeaders,
+                    requestDatasetFieldsHeaders: requestOptions.headers,
                 });
             }
         }
@@ -827,10 +825,6 @@ export class DataFetcher {
 
         const publicTargetUri = hideSensitiveData(targetUri);
         const publicSourceData = hideSensitiveData(sourceData);
-
-        if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
-        }
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');
