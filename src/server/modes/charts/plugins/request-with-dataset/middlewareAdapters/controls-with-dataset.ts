@@ -20,7 +20,7 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
-        requestDatasetFieldsHeaders,
+        requestHeaders,
     } = args;
 
     const cacheClient = ChartsEngine.cacheClient as Cache;
@@ -37,7 +37,7 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
-        requestDatasetFieldsHeaders,
+        requestHeaders,
     });
 
     const datasetFields = datasetFieldsResponse.datasetFields;

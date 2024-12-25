@@ -23,10 +23,6 @@ export const DEFAULT_CACHE_TTL = 30;
 const getStatusFromError = (error: unknown) =>
     typeof error === 'object' && error !== null && 'status' in error && error.status;
 
-export type RequestDatasetFieldsHeaders = {
-    [DL_EMBED_TOKEN_HEADER]?: string;
-} & OutgoingHttpHeaders;
-
 const getDatasetFieldsById = async ({
     datasetId,
     workbookId,
@@ -44,7 +40,7 @@ const getDatasetFieldsById = async ({
     iamToken?: string;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
     zitadelParams: ZitadelParams | undefined;
-    headers: RequestDatasetFieldsHeaders;
+    headers: OutgoingHttpHeaders;
 }): Promise<GetDataSetFieldsByIdResponse> => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
@@ -108,7 +104,7 @@ export const getDatasetFields = async (args: {
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
     zitadelParams: ZitadelParams | undefined;
-    requestDatasetFieldsHeaders: RequestDatasetFieldsHeaders;
+    requestHeaders: OutgoingHttpHeaders;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
     const {
         datasetId,
@@ -120,7 +116,7 @@ export const getDatasetFields = async (args: {
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
-        requestDatasetFieldsHeaders,
+        requestHeaders,
     } = args;
 
     const cacheKey = `${datasetId}__${userId}`;
@@ -148,7 +144,7 @@ export const getDatasetFields = async (args: {
                 iamToken,
                 pluginOptions,
                 zitadelParams,
-                headers: requestDatasetFieldsHeaders,
+                headers: requestHeaders,
             });
             datasetFields = response.fields;
             revisionId = response.revision_id;
@@ -181,7 +177,7 @@ export const getDatasetFields = async (args: {
             iamToken,
             pluginOptions,
             zitadelParams,
-            headers: requestDatasetFieldsHeaders,
+            headers: requestHeaders,
         });
         datasetFields = response.fields;
         revisionId = response.revision_id;

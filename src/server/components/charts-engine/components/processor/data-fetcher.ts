@@ -804,7 +804,7 @@ export class DataFetcher {
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
-                    requestDatasetFieldsHeaders: requestOptions.headers,
+                    requestHeaders: requestOptions.headers,
                 });
             }
         }
