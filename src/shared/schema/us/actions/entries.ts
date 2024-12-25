@@ -35,6 +35,8 @@ import type {
     GetEntryMetaResponse,
     GetEntryResponse,
     GetRelationsArgs,
+    GetRelationsEntry,
+    GetRelationsEntryOutput,
     GetRelationsGraphArgs,
     GetRelationsGraphResponse,
     GetRelationsOutput,
@@ -146,10 +148,21 @@ export const entriesActions = {
         params: (args, headers) => ({
             query: omit(args, 'entryId', 'excludeUnregistredDlsEntries'),
             headers,
+            body: args,
         }),
+        // @ts-ignore
         transformResponseData: (data, {args, ctx}) => {
+            let relations;
+            const isPaginationEnabled = 'nextPageToken' in data;
+
+            if (isPaginationEnabled) {
+                relations = data.relations;
+            } else {
+                relations = data as GetRelationsEntryOutput[];
+            }
+
             let uniqRelations = uniqBy(
-                data.map((relationEntry) => ({
+                relations.map((relationEntry) => ({
                     ...relationEntry,
                     name: getEntryNameByKey({key: relationEntry.key, index: -1}),
                 })),
@@ -163,7 +176,17 @@ export const entriesActions = {
                     );
                 }
             }
-            return uniqRelations;
+
+            const result: {relations: GetRelationsEntry[]; nextPageToken?: string} = {
+                relations: uniqRelations,
+            };
+
+            if (isPaginationEnabled) {
+                result.nextPageToken = data.nextPageToken;
+            }
+
+            // TODO: temp condition waiting for fix
+            return isPaginationEnabled ? result : uniqRelations;
         },
     }),
     moveEntry: createAction<MoveEntryResponse, MoveEntryArgs>({

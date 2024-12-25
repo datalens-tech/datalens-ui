@@ -1,15 +1,19 @@
 import React from 'react';
 
-import {Alert, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import type {CancellablePromise} from '@gravity-ui/sdk';
+import {Alert, Button, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import isEmpty from 'lodash/isEmpty';
+import _ from 'lodash';
 import {EDITOR_TYPE, EntryScope} from 'shared';
-import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
+import type {
+    GetEntryResponse,
+    GetRelationsEntry,
+    GetRelationsResponsePagination,
+} from 'shared/schema';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {registry} from 'ui/registry';
-import {groupEntitiesByScope} from 'ui/utils/helpers';
 
 import {type EntryDialogProps, EntryDialogResolveStatus} from '../EntryDialogues';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -29,6 +33,26 @@ type DialogRelatedEntitiesProps = EntryDialogProps & {
 
 const CONCURRENT_ID = 'list-related-entities';
 
+const CHILD_SCOPES = [EntryScope.Widget, EntryScope.Dataset, EntryScope.Connection];
+
+const DEFAULT_RELATIONS_PAGE_SIZE = 10;
+
+const getInitialScopeOrder = (topScopes: EntryScope[]) => {
+    const scopeOrder = topScopes.reduce(
+        (acc, scope) => {
+            acc[scope] = [];
+            return acc;
+        },
+        {} as Record<EntryScope, []>,
+    );
+
+    CHILD_SCOPES.forEach((scope) => {
+        scopeOrder[scope] = [];
+    });
+
+    return scopeOrder;
+};
+
 export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEntitiesProps) => {
     const {getTopLevelEntryScopes} = registry.common.functions.getAll();
 
@@ -39,51 +63,168 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             ? Direction.PARENT
             : Direction.CHILD,
     );
+
+    const actualScopes = React.useMemo(() => {
+        const topLevelScopes = getTopLevelEntryScopes();
+
+        const allScopes = topLevelScopes.concat(CHILD_SCOPES);
+        const entryIndex = allScopes.indexOf(entry.scope as EntryScope);
+
+        return currentDirection === Direction.PARENT
+            ? allScopes.slice(entryIndex + 1)
+            : allScopes.slice(0, entryIndex);
+    }, [currentDirection, entry.scope, getTopLevelEntryScopes]);
+
+    const initialRelations = React.useMemo(() => {
+        const topLevelScopes = getTopLevelEntryScopes();
+
+        return getInitialScopeOrder(topLevelScopes);
+    }, [getTopLevelEntryScopes]);
+
     const [isLoading, setIsLoading] = React.useState(true);
-    const [isError, setIsError] = React.useState(false);
-    const [relations, setRelations] = React.useState<Record<string, GetRelationsEntry[]> | null>(
-        null,
+    const [relations, setRelations] =
+        React.useState<Record<string, GetRelationsEntry[]>>(initialRelations);
+    const [relationsCount, setRelationsCount] = React.useState<number>(0);
+    const [nextPageTokens, setNextPageTokens] = React.useState<Record<string, string | undefined>>(
+        {},
     );
-    const [relationsCount, setRelationsCount] = React.useState<null | number>(null);
+    const [errors, setErrors] = React.useState<string[]>([]);
+
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
 
-    React.useEffect(() => {
+    const loadAllScopes = React.useCallback(() => {
         setIsLoading(true);
-        setIsError(false);
-        getSdk().cancelRequest(CONCURRENT_ID);
-        getSdk()
-            .mix.getEntryRelations(
-                {
-                    entryId: entry.entryId,
-                    workbookId: entry.workbookId,
-                    direction: currentDirection,
-                },
-                {concurrentId: CONCURRENT_ID},
-            )
-            .then((response) => {
-                setRelationsCount(response.length);
-                setRelations(groupEntitiesByScope(response));
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                if (error.isCancelled) {
-                    return;
-                }
-                setIsError(true);
-                setIsLoading(false);
+        setRelationsCount(0);
+        setRelations(initialRelations);
+        setErrors([]);
+
+        const promises: CancellablePromise<void>[] = [];
+
+        actualScopes.forEach((scope) => {
+            promises.push(
+                getSdk()
+                    .us.getRelations(
+                        {
+                            entryId: entry.entryId,
+                            direction: currentDirection,
+                            scope,
+                            page: 0,
+                            pageSize: DEFAULT_RELATIONS_PAGE_SIZE,
+                        },
+                        {concurrentId: `${CONCURRENT_ID}-${scope}`},
+                    )
+                    .then((response) => {
+                        // TODO: fix type after improvements
+                        const tempResponce =
+                            response as unknown as GetRelationsResponsePagination<GetRelationsEntry>;
+                        if (tempResponce.relations.length) {
+                            setRelationsCount(
+                                (currentCount) =>
+                                    (currentCount || 0) + tempResponce.relations.length,
+                            );
+                            setRelations((currentRelations) => ({
+                                ...currentRelations,
+                                [scope]: tempResponce.relations,
+                            }));
+                            setNextPageTokens((currentNextPageTokens) => ({
+                                ...currentNextPageTokens,
+                                [scope]: tempResponce.nextPageToken,
+                            }));
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.isCancelled) {
+                            return;
+                        }
+                        setErrors((currentErrors) => [...currentErrors, scope]);
+                    }),
+            );
+        });
+
+        Promise.all(promises).then(() => {
+            setIsLoading(false);
+        });
+    }, [actualScopes, currentDirection, entry.entryId, initialRelations]);
+
+    // initial request for all scopes of entries
+    React.useEffect(() => {
+        loadAllScopes();
+
+        return () => {
+            actualScopes.forEach((scope) => {
+                getSdk().cancelRequest(`${CONCURRENT_ID}-${scope}`);
             });
-    }, [entry, currentDirection]);
+        };
+    }, [actualScopes, loadAllScopes]);
 
     const showDirectionControl =
         !topLevelEntryScopes.includes(entry.scope as EntryScope) &&
         entry.scope !== EntryScope.Connection;
 
-    const handleDirectionParentdate = (value: DirectionValue) => {
+    const handleDirectionChange = (value: DirectionValue) => {
         setCurrentDirection(value);
     };
 
     const handleClose = () => {
         onClose({status: EntryDialogResolveStatus.Close});
+    };
+
+    const handleLoadMoreClick = React.useCallback(
+        (scope?: string) => {
+            if (scope) {
+                return getSdk()
+                    .us.getRelations(
+                        {
+                            entryId: entry.entryId,
+                            direction: currentDirection,
+                            scope: scope as EntryScope,
+                            page: Number(nextPageTokens[scope]) || 0,
+                            pageSize: DEFAULT_RELATIONS_PAGE_SIZE,
+                        },
+                        {concurrentId: `${CONCURRENT_ID}-${scope}`},
+                    )
+                    .then((response) => {
+                        // TODO: fix type after improvements
+                        const tempResponce =
+                            response as unknown as GetRelationsResponsePagination<GetRelationsEntry>;
+                        if (tempResponce.relations.length) {
+                            setRelationsCount(
+                                (currentCount) => currentCount + tempResponce.relations.length,
+                            );
+                            setRelations((currentRelations) => ({
+                                ...currentRelations,
+                                [scope]: currentRelations[scope].concat(tempResponce.relations),
+                            }));
+                        }
+                        if (errors.includes(scope)) {
+                            setErrors((currentErrors) =>
+                                currentErrors.filter((error) => error !== scope),
+                            );
+                        }
+                        setNextPageTokens((currentNextPageTokens) => ({
+                            ...currentNextPageTokens,
+                            [scope]: tempResponce.nextPageToken,
+                        }));
+                    })
+                    .catch((error) => {
+                        if (error.isCancelled) {
+                            return;
+                        }
+                        setErrors((currentErrors) => [...currentErrors, scope]);
+                    });
+            }
+
+            return null;
+        },
+        [currentDirection, entry.entryId, errors, nextPageTokens],
+    );
+
+    const renderRetryAction = () => {
+        return (
+            <Button className={b('button-retry')} size="l" view="action" onClick={loadAllScopes}>
+                {i18n('button_retry')}
+            </Button>
+        );
     };
 
     const renderRelations = () => {
@@ -95,19 +236,20 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             );
         }
 
-        if (isError) {
+        if (errors.length === actualScopes.length) {
             return (
                 <div className={b('error-state')}>
                     <PlaceholderIllustration
                         direction="column"
                         name="error"
                         title={i18n('label_request-error')}
+                        renderAction={renderRetryAction}
                     />
                 </div>
             );
         }
 
-        if (isEmpty(relations)) {
+        if (relationsCount === 0) {
             if (
                 entry.scope === EntryScope.Widget &&
                 Object.values(EDITOR_TYPE).includes(entry.type) &&
@@ -127,9 +269,23 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             );
         }
 
-        return Object.entries(relations || []).map(([key, value]) => (
-            <EntitiesList scope={key} entities={value} key={key} />
-        ));
+        return Object.entries(relations)
+            .filter(([scope, entries]) => entries.length || errors.includes(scope))
+            .map(([scope, entries]) => {
+                const hasError = errors.includes(scope);
+                const showLoadButton = Boolean(nextPageTokens[scope]) || hasError;
+
+                return (
+                    <EntitiesList
+                        scope={scope}
+                        entities={entries}
+                        key={scope}
+                        showLoadButton={showLoadButton}
+                        onLoadClick={handleLoadMoreClick}
+                        error={hasError}
+                    />
+                );
+            });
     };
 
     const showRelationsCount = Boolean(relationsCount && !isLoading);
@@ -143,7 +299,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     <div className={b('direction-row')}>
                         <RadioButton
                             value={currentDirection}
-                            onUpdate={handleDirectionParentdate}
+                            onUpdate={handleDirectionChange}
                             width="auto"
                         >
                             <RadioButton.Option value={Direction.CHILD}>

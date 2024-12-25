@@ -1,4 +1,4 @@
-import type {WorkbookId} from '../../../../shared';
+import type {EntryScope, WorkbookId} from '../../../../shared';
 import type {Permissions} from '../../../types';
 
 import type {EntriesCommonArgs} from './common';
@@ -183,7 +183,7 @@ export interface DeleteUSEntryArgs {
     lockToken?: string;
 }
 
-interface GetRelationsEntryOutput extends EntryRelationFields {
+export interface GetRelationsEntryOutput extends EntryRelationFields {
     createdAt: string;
     permissions?: Permissions;
 }
@@ -192,7 +192,14 @@ export interface GetRelationsEntry extends GetRelationsEntryOutput {
     name: string;
 }
 
-export type GetRelationsOutput = GetRelationsEntryOutput[];
+export type GetRelationsResponsePagination<T> = {
+    relations: T[];
+    nextPageToken?: string;
+};
+
+export type GetRelationsOutput =
+    | GetRelationsEntryOutput[]
+    | GetRelationsResponsePagination<GetRelationsEntryOutput>;
 
 export type GetRelationsResponse = GetRelationsEntry[];
 
@@ -201,6 +208,9 @@ export interface GetRelationsArgs {
     direction?: 'parent' | 'child';
     includePermissionsInfo?: boolean;
     excludeUnregistredDlsEntries?: boolean;
+    page?: number | string;
+    pageSize?: number;
+    scope?: EntryScope;
 }
 
 export interface SwitchPublicationStatusEntry extends EntryMetaFields {

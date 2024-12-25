@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Button, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
@@ -12,6 +13,9 @@ import './EntitiesList.scss';
 type EntitiesListProps = {
     entities: RowEntryData[];
     hideTitle?: boolean;
+    showLoadButton?: boolean;
+    onLoadClick?: (scope?: string) => Promise<void> | null;
+    error?: boolean;
 } & (CurrentEntity | ScopeEntities);
 
 type CurrentEntity = {
@@ -43,20 +47,71 @@ const getLabelByScope = (scope: string) => {
     }
 };
 
-export const EntitiesList = ({scope, entities, isCurrent, hideTitle}: EntitiesListProps) => {
+export const EntitiesList = ({
+    scope,
+    entities,
+    isCurrent,
+    hideTitle,
+    onLoadClick,
+    showLoadButton,
+    error,
+}: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
+
+    const [isButtonLoading, setIsButtonLoading] = React.useState(false);
+
+    const handleLoadClick = () => {
+        if (onLoadClick) {
+            const loadPromise = onLoadClick(isCurrent ? undefined : scope);
+            if (loadPromise) {
+                setIsButtonLoading(true);
+                loadPromise.finally(() => setIsButtonLoading(false));
+            }
+        }
+    };
+
+    const renderContent = () => {
+        if (error) {
+            return (
+                <React.Fragment>
+                    <Text color="danger">{i18n('label_request-error')}</Text>
+                    {showLoadButton && (
+                        <Button
+                            view="outlined"
+                            onClick={handleLoadClick}
+                            loading={isButtonLoading}
+                            className={b('button-retry')}
+                        >
+                            {i18n('button_retry')}
+                        </Button>
+                    )}
+                </React.Fragment>
+            );
+        }
+
+        return (
+            <React.Fragment>
+                {entities.map((entity) => (
+                    <EntryRow
+                        className={b('row')}
+                        key={entity.entryId}
+                        entry={entity}
+                        nonInteractive={isCurrent}
+                    />
+                ))}
+                {showLoadButton && (
+                    <Button view="outlined" onClick={handleLoadClick} loading={isButtonLoading}>
+                        {i18n('button_load-more')}
+                    </Button>
+                )}
+            </React.Fragment>
+        );
+    };
 
     return (
         <div className={b()}>
             {title && !hideTitle && <div className={b('title')}>{title}</div>}
-            {entities.map((entity) => (
-                <EntryRow
-                    className={b('row')}
-                    key={entity.entryId}
-                    entry={entity}
-                    nonInteractive={isCurrent}
-                />
-            ))}
+            {renderContent()}
         </div>
     );
 };

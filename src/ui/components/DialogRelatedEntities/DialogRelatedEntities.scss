@@ -53,4 +53,8 @@
     &__relations-title {
         @include text-subheader-2;
     }
+
+    &__button-retry {
+        margin-top: var(--g-spacing-3);
+    }
 }

@@ -14,8 +14,6 @@ import type {
     GetEntriesInFolderResponse,
     GetEntryMetaStatusArgs,
     GetEntryMetaStatusResponse,
-    GetEntryRelationsArgs,
-    GetEntryRelationsResponse,
     GetPublicationPreviewArgs,
     GetPublicationPreviewResponse,
     MixedSwitchPublicationStatusArgs,
@@ -45,10 +43,10 @@ export const entriesActions = {
     getPublicationPreview: createAction<GetPublicationPreviewResponse, GetPublicationPreviewArgs>(
         async (api, {entryId, workbookId}) => {
             const typedApi = getTypedApi(api);
-            const relations = (await typedApi.us.getRelations({
+            const relations = await typedApi.us.getRelations({
                 entryId,
                 includePermissionsInfo: true,
-            })) as Required<GetRelationsEntry, 'permissions'>[];
+            });
 
             const [datasets, connections] = await checkEntriesForPublication({
                 entries: relations,
@@ -63,7 +61,7 @@ export const entriesActions = {
                 ? keyBy(connections.result, (connection) => connection.connection_id)
                 : {};
 
-            return relations.map((entry) => {
+            return (relations as Required<GetRelationsEntry, 'permissions'>[]).map((entry) => {
                 let lockPublication = false;
                 let lockPublicationReason = null;
 
@@ -187,14 +185,6 @@ export const entriesActions = {
             });
             const yqlFolderKey = 'yql/charts/';
             return entries.filter(({key}) => !key.toLowerCase().startsWith(yqlFolderKey));
-        },
-    ),
-    getEntryRelations: createAction<GetEntryRelationsResponse, GetEntryRelationsArgs>(
-        async (api, {entryId, direction = 'parent'}) => {
-            return await getTypedApi(api).us.getRelations({
-                entryId,
-                direction,
-            });
         },
     ),
 };
