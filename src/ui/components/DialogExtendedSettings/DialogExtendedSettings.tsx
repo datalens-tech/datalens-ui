@@ -253,12 +253,11 @@ const DialogExtendedSettings = ({
                                     onUpdate={handleChangeShowGroupName}
                                     size="l"
                                 />
-                                {selectorsGroup.showGroupName && (
-                                    <TextInput
-                                        value={selectorsGroup.groupName}
-                                        onUpdate={handleChangeGroupName}
-                                    />
-                                )}
+                                <TextInput
+                                    disabled={!selectorsGroup.showGroupName}
+                                    value={selectorsGroup.groupName}
+                                    onUpdate={handleChangeGroupName}
+                                />
                             </Flex>
                         </FormRow>
                     )}
