@@ -158,7 +158,7 @@ export function addZitadelHeaders({
     headers,
     zitadelParams,
 }: {
-    headers: IncomingHttpHeaders;
+    headers: OutgoingHttpHeaders;
     zitadelParams: ZitadelParams;
 }) {
     if (zitadelParams?.accessToken) {
@@ -237,7 +237,6 @@ export class DataFetcher {
                 fetchPromisesList.push(() =>
                     source
                         ? DataFetcher.fetchSource({
-                              req,
                               ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
@@ -458,7 +457,6 @@ export class DataFetcher {
     private static async fetchSource({
         sourceName,
         source,
-        req,
         ctx,
         chartsEngine,
         fetchingStartTime,
@@ -476,7 +474,6 @@ export class DataFetcher {
     }: {
         sourceName: string;
         source: Source;
-        req: Request;
         ctx: AppContext;
         chartsEngine: ChartsEngine;
         fetchingStartTime: number;
@@ -786,6 +783,10 @@ export class DataFetcher {
             requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
         }
 
+        if (!requestOptions.headers['x-real-ip']) {
+            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
+        }
+
         if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
                 chartsEngine,
@@ -794,15 +795,16 @@ export class DataFetcher {
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
+                    ctx,
                     source,
                     sourceName,
-                    req,
                     iamToken: iamToken ?? undefined,
                     workbookId,
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
+                    requestHeaders: requestOptions.headers,
                 });
             }
         }
@@ -823,10 +825,6 @@ export class DataFetcher {
 
         const publicTargetUri = hideSensitiveData(targetUri);
         const publicSourceData = hideSensitiveData(sourceData);
-
-        if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
-        }
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');
