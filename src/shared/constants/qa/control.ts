@@ -1,6 +1,5 @@
 export const ControlQA = {
     showInnerTitleCheckbox: 'show-inner-title-checkbox',
-    showLabelCheckbox: 'show-control-name-checkbox',
     controlLabel: 'chartkit-control-title',
 
     controlSelect: 'chartkit-control-select',
@@ -41,6 +40,7 @@ export const DialogControlQa = {
     radioSourceType: 'radio-source-type',
     seletSourceType: 'select-source-type',
     appearanceTitle: 'dialog-control-appearance-title',
+    appearanceTitlePlacement: 'dialog-control-appearance-title-placement',
     appearanceInnerTitle: 'dialog-control-appearance-inner-title',
     fieldNameInput: 'field-name-input',
     dateRangeCheckbox: 'date-range-checkbox',
@@ -63,9 +63,9 @@ export const DialogGroupControlQa = {
     applyButtonCheckbox: 'apply-button-checkbox',
     resetButtonCheckbox: 'reset-button-checkbox',
     updateControlOnChangeCheckbox: 'update-controls-button-checkbox',
-    placementButton: 'selectors-placement-button',
+    extendedSettingsButton: 'extended-settings-button',
     placementControlList: 'selectors-placement-control-list',
-    placementApplyButton: 'selectors-placement-apply-button',
+    extendedSettingsApplyButton: 'selectors-extended-settings-apply-button',
     controlMenu: 'control-menu',
     removeControlButton: 'remove-control-button',
     copyControlButton: 'copy-control-button',

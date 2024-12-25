@@ -1,0 +1,21 @@
+{
+  "button_back": "Назад",
+  "button_cancel": "Отмена",
+  "button_save": "Сохранить",
+  "context_apply-button": "Опция включает кнопку для применения селекторов",
+  "context_reset-button": "Опция включает кнопку для сброса селекторов",
+  "context_update-controls-on-change": "При включении опции зависимые селекторы будут влиять друг на друга до нажатия кнопки «Применить».",
+  "label_apply-button-checkbox": "Кнопка «‎Применить»‎",
+  "label_autoheight-checkbox": "Автовысота",
+  "label_field-validation": "Некорректное значение ширины",
+  "label_group-name": "Название",
+  "label_group-parameters": "Параметры группы",
+  "label_note": "Селекторы, которые по ширине не помещаются в виджет, объединяющий группу селекторов, будут перенесены на следующую строку",
+  "label_reset-button-checkbox": "Кнопка «‎Сбросить»",
+  "label_selectors-representation": "Порядок отображения и ширина селекторов",
+  "label_title": "Настройки группы селекторов",
+  "label_update-controls-on-change": "Автообновление зависимых селекторов",
+  "value_auto": "Авто",
+  "value_percent": "%",
+  "value_pixels": "px"
+}
