@@ -1,5 +1,3 @@
-import type {IncomingHttpHeaders} from 'http';
-
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
@@ -13,6 +11,7 @@ import type {
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from './constants/middleware-urls';
 import type {SourcesArgs} from './datalens/url/build-sources/types';
+import type {RequestDatasetFieldsHeaders} from './request-with-dataset/request-dataset';
 
 export interface SourceAdapterRequestSettings {
     useCaching: boolean;
@@ -58,7 +57,7 @@ export interface MiddlewareSourceAdapterArgs {
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
     zitadelParams: ZitadelParams | undefined;
-    datasetHeaders: IncomingHttpHeaders;
+    requestDatasetFieldsHeaders: RequestDatasetFieldsHeaders;
 }
 
 export interface ProcessorHookInitArgs {
