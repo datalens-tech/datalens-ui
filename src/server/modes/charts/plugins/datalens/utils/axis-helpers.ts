@@ -6,6 +6,7 @@ import type {
     ServerPlaceholderSettings,
 } from '../../../../../../shared';
 import {isDateField} from '../../../../../../shared';
+import type {AxisOptions} from '../types';
 
 import {getOriginalTitleOrTitle} from './misc-helpers';
 
@@ -49,7 +50,7 @@ export function getTickPixelInterval(placeholderSettings: ServerPlaceholderSetti
 // eslint-disable-next-line complexity
 export const applyPlaceholderSettingsToAxis = (
     placeholder: ServerPlaceholder | undefined,
-    axis: Highcharts.AxisOptions,
+    axis: Highcharts.AxisOptions | AxisOptions,
     ignore: IgnoreProps,
 ) => {
     if (placeholder && placeholder.settings) {
