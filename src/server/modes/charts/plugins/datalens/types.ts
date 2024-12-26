@@ -93,6 +93,7 @@ export type AxisOptions = {
         offset?: number;
         rotation?: number;
         style?: React.CSSProperties;
+        useHTML?: boolean;
     };
     labels?: any[];
 };

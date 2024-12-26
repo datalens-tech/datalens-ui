@@ -29,8 +29,9 @@ import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSegmentTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -126,6 +127,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
     const isHtmlSegment = isHtmlField(segmentField);
+    const segmentTitleFormatter = getSegmentTitleFormatter({field: segmentField});
 
     const isShapeItemExist = false;
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -432,9 +434,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;
 
-                    customSeriesData.segmentTitle = isHtmlSegment
-                        ? wrapHtml(currentSegment.title)
-                        : currentSegment.title;
+                    customSeriesData.segmentTitle = segmentTitleFormatter(currentSegment.title);
                 } else if (lineKeysIndex === 0 || ySectionItems.length === 0) {
                     graph.yAxis = 0;
                 } else {
@@ -507,24 +507,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         }
 
         if (isXCategoryAxis) {
+            const categoriesFormatter = getCategoryFormatter({field: {...x, data_type: xDataType}});
+
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    if (xIsDate) {
-                        return formatDate({
-                            valueType: xDataType!,
-                            value,
-                            format: x?.format,
-                            utc: true,
-                        });
-                    }
-
-                    if (isHtmlX) {
-                        return wrapHtml(String(value));
-                    }
-
-                    return value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};

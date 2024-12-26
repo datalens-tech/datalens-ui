@@ -59,6 +59,7 @@ export const getSegmentsYAxis = (args: {
                 ? undefined
                 : {
                       text: segmentTitle,
+                      useHTML: isHtmlSegment,
                       align: 'middle',
                       textAlign: 'center',
                       offset: 120,

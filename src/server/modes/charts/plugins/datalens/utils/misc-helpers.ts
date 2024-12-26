@@ -23,6 +23,7 @@ import {
     isMeasureValue,
     wrapMarkupValue,
 } from '../../../../../../shared';
+import {isHtmlField} from '../../../../../../shared/types/index';
 import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
@@ -401,6 +402,36 @@ export function getLabelValue(
     }
 
     return value;
+}
+
+export function getCategoryFormatter(args: {field: ServerField}) {
+    const {field} = args;
+    if (isDateField(field)) {
+        return (value: string | number) => {
+            return formatDate({
+                valueType: field.data_type,
+                value,
+                format: field.format,
+                utc: true,
+            });
+        };
+    }
+
+    if (isHtmlField(field)) {
+        return (value: string | number) => wrapHtml(String(value));
+    }
+
+    return (value: string | number) => String(value);
+}
+
+export function getSegmentTitleFormatter(args: {field?: ServerField}) {
+    const {field} = args;
+
+    if (isHtmlField(field)) {
+        return (value: string) => wrapHtml(String(value));
+    }
+
+    return (value: string) => value;
 }
 
 export {

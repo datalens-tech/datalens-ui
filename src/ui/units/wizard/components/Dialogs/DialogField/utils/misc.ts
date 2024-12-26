@@ -85,6 +85,7 @@ export function canUseStringAsMarkdown(
                 possiblePlaceholders.push(
                     PlaceholderId.X,
                     PlaceholderId.Colors,
+                    PlaceholderId.Shapes,
                     PlaceholderId.Segments,
                 );
             }

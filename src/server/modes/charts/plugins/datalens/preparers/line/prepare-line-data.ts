@@ -26,8 +26,9 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSegmentTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -75,6 +76,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
     const xAxisMode = getXAxisMode({config: chartConfig});
+    const isHtmlX = isHtmlField(xField);
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
@@ -98,6 +100,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+    const isHtmlColor = isHtmlField(colorItem);
 
     const shapeItem = shapes[0];
 
@@ -116,6 +119,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
+    const isHtmlSegment = isHtmlField(segmentField);
+    const segmentTitleFormatter = getSegmentTitleFormatter({field: segmentField});
 
     const isShapeItemExist = Boolean(shapeItem && shapeItem.type !== 'PSEUDO');
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -456,7 +461,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;
 
-                    customSeriesData.segmentTitle = currentSegment.title;
+                    customSeriesData.segmentTitle = segmentTitleFormatter(currentSegment.title);
                 } else if (lineKeysIndex === 0 || ySectionItems.length === 0) {
                     graph.yAxis = 0;
                 } else {
@@ -538,23 +543,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useMarkup: true});
         }
 
-        if (isHtmlLabel) {
+        if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlSegment) {
             ChartEditor.updateConfig({useHtml: true});
         }
 
         if (isXCategoryAxis) {
+            const categoriesFormatter = getCategoryFormatter({
+                field: {...xField, data_type: xDataType},
+            });
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({
-                              valueType: xDataType!,
-                              value,
-                              format: xField?.format,
-                              utc: true,
-                          })
-                        : value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};

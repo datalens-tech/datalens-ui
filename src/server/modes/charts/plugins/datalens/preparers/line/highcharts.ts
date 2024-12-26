@@ -16,6 +16,7 @@ import {
     isMeasureNameOrValue,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {isHtmlField} from '../../../../../../../shared/types/index';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
@@ -157,6 +158,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                             ySectionItems.length > 1 ||
                             y2SectionItems.length > 1,
                     ) && isLegendEnabled(shared.extraSettings),
+                useHTML: [colorItem, shapeItem].some(isHtmlField),
             };
 
             const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis({
