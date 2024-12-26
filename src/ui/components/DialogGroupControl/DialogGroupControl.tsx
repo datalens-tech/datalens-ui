@@ -22,6 +22,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
+    showSelectorsGroupTitle?: boolean;
 };
 
 export type DialogGroupControlProps = {
@@ -40,6 +41,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     navigationPath,
     changeNavigationPath,
     enableAutoheightDefault,
+    showSelectorsGroupTitle,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -73,6 +75,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             sidebar={
                 <GroupControlSidebar
                     enableAutoheightDefault={enableAutoheightDefault}
+                    showSelectorsGroupTitle={showSelectorsGroupTitle}
                     handleCopyItem={handleCopyItem}
                 />
             }

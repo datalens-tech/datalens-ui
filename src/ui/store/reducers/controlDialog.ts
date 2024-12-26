@@ -89,6 +89,7 @@ export function getSelectorDialogInitialState(
 
 export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState {
     return {
+        showGroupName: false,
         autoHeight: false,
         buttonApply: false,
         buttonReset: false,
@@ -345,8 +346,15 @@ export function controlDialog(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
-                action.payload;
+            const {
+                group,
+                autoHeight,
+                buttonApply,
+                buttonReset,
+                updateControlsOnChange,
+                showGroupName,
+                groupName,
+            } = action.payload;
 
             // if the number of selectors has increased from 1 to several, we enable autoHeight
             const updatedAutoHeight =
@@ -361,6 +369,8 @@ export function controlDialog(
                     buttonApply,
                     buttonReset,
                     updateControlsOnChange,
+                    showGroupName,
+                    groupName,
                 },
             };
         }
