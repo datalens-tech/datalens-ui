@@ -34,7 +34,6 @@ export type ActionPanelItemParams = {
     filterItem?: (item: DashkitActionPanelItem) => boolean;
     userSettings?: DLUserSettings;
     scope?: string;
-    enableHiddenItems?: boolean;
     allowedPasteItems?: string[];
 };
 
