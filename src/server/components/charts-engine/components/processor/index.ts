@@ -19,7 +19,7 @@ import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../..
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
 import {config as configConstants} from '../../constants';
-import type {Source} from '../../types';
+import type {AdapterContext, HooksContext, Source} from '../../types';
 import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
@@ -27,7 +27,7 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {DataFetcherResult} from './data-fetcher';
+import type {DataFetcherOriginalReqHeaders, DataFetcherResult, ZitadelParams} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
@@ -152,6 +152,9 @@ export type ProcessorParams = {
     userLang: string | null;
     userId: string | null;
     iamToken: string | null;
+    /**
+     * @deprecated will be removed
+     */
     req: Request;
     responseOptions?: Record<string, string | boolean>;
     uiOnly?: boolean;
@@ -165,6 +168,11 @@ export type ProcessorParams = {
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    isEmbed: boolean;
+    zitadelParams: ZitadelParams | undefined;
+    originalReqHeaders: DataFetcherOriginalReqHeaders;
+    adapterContext: AdapterContext;
+    hooksContext: HooksContext;
 };
 
 export class Processor {
@@ -192,6 +200,11 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        isEmbed,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
+        hooksContext,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -324,6 +337,7 @@ export class Processor {
                 },
                 isEditMode,
                 ctx,
+                hooksContext,
             });
 
             if (resultHooksInit.status === ProcessorHooks.STATUS.FAILED) {
@@ -556,13 +570,16 @@ export class Processor {
                 resolvedSources = await DataFetcher.fetch({
                     chartsEngine,
                     sources,
-                    req,
                     ctx,
                     iamToken,
                     subrequestHeaders,
                     userId,
                     userLogin,
                     workbookId,
+                    isEmbed,
+                    zitadelParams,
+                    originalReqHeaders,
+                    adapterContext,
                 });
 
                 if (Object.keys(resolvedSources).length) {

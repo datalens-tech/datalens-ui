@@ -3,6 +3,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import {flow} from 'lodash';
 
 import type {ChartsEngine} from '../../index';
+import type {HooksContext} from '../../types';
 
 export class HookError extends Error {
     hookError: {
@@ -56,11 +57,16 @@ export class ProcessorHooks {
         config,
         isEditMode,
         ctx,
+        hooksContext,
     }: {
+        /**
+         * @deprecated will be removed
+         */
         req: Request;
         config: Record<string, any>;
         isEditMode: boolean;
         ctx: AppContext;
+        hooksContext: HooksContext;
     }) {
         let hrStart;
 
@@ -75,6 +81,7 @@ export class ProcessorHooks {
                     config,
                     isEditMode,
                     ctx,
+                    hooksContext,
                 });
                 ctx.log(`Hook ${hookName} process`);
                 await hook.process();
