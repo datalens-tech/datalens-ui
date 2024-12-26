@@ -1,4 +1,4 @@
-import type {MarkupType, WidgetSizeType} from '../../..';
+import type {GradientNullMode, MarkupType, WidgetSizeType} from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import type {
@@ -294,6 +294,7 @@ export type V12ColorsConfig = {
     coloredByMeasure?: boolean;
     palette?: string;
     colorMode?: ColorMode;
+    nullMode?: GradientNullMode;
 };
 
 export type V12ShapesConfig = {

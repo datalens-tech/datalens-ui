@@ -28,7 +28,6 @@ export const TabMenu = <T extends unknown>({
     enableActionMenu,
     items,
     selectedItemIndex,
-    addButtonView = 'flat',
     onUpdate,
     defaultTabText,
     onPasteItems,
@@ -226,29 +225,12 @@ export const TabMenu = <T extends unknown>({
     };
 
     const renderButtons = () => {
-        if (addButtonView === 'flat') {
-            return (
-                <div className={b('buttons-row', {flat: true})}>
-                    <div
-                        className={b('action-button')}
-                        onClick={onAction({action: TabActionType.Add})}
-                        data-qa={TabMenuQA.Add}
-                    >
-                        <Icon
-                            data={Plus}
-                            className={b('action-button-icon', tabIconMixin)}
-                            width={ADD_BUTTON_DEFAULT_SIZE}
-                        />
-                        <span>
-                            {addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}
-                        </span>
-                    </div>
-                </div>
-            );
-        }
-
+        const addBtnText =
+            !pasteConfig && addButtonText
+                ? addButtonText
+                : i18n('dash.widget-dialog.edit', 'button_add');
         return (
-            <div className={b('buttons-row', {outlined: true})}>
+            <div className={b('buttons-row')}>
                 <Button
                     className={b('action-button')}
                     onClick={onAction({action: TabActionType.Add})}
@@ -261,7 +243,7 @@ export const TabMenu = <T extends unknown>({
                         className={b('action-button-icon', tabIconMixin)}
                         width={ADD_BUTTON_DEFAULT_SIZE}
                     />
-                    <span>{addButtonText || i18n('dash.widget-dialog.edit', 'button_add')}</span>
+                    <span>{addBtnText}</span>
                 </Button>
                 {pasteConfig && (
                     <Button
@@ -374,7 +356,7 @@ export const TabMenu = <T extends unknown>({
     };
 
     return (
-        <div className={b({view: addButtonView})}>
+        <div className={b()}>
             {enableActionMenu
                 ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}

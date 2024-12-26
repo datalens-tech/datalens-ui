@@ -1,4 +1,5 @@
 import type {ColorPalette} from '../../types/color-palettes';
+import type {ValueOf} from '../../types/utility-types';
 
 import {
     THREE_POINT_DEFAULT_GRADIENT,
@@ -26,6 +27,13 @@ export interface Gradient {
     title?: string;
     colors: string[];
 }
+
+export const GradientNullModes = {
+    Ignore: 'ignore',
+    AsZero: 'as-0',
+};
+
+export type GradientNullMode = ValueOf<typeof GradientNullModes>;
 
 export interface RGBColor {
     red: number;

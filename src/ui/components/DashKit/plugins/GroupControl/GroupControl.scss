@@ -41,6 +41,11 @@
         align-items: flex-end;
     }
 
+    &__controls-title {
+        display: block;
+        width: 100%;
+    }
+
     &__control-container {
         display: contents;
         position: relative;

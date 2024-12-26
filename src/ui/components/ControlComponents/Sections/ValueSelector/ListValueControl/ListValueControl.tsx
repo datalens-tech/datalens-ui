@@ -14,7 +14,7 @@ import type {DynamicValueSelectorCustomProps} from './ValueSelector/types';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export type ListValueControlProps = {hasMultiselect?: boolean} & (
+export type ListValueControlProps = {hasMultiselect?: boolean; rowClassName?: string} & (
     | {
           type: 'dynamic';
           custom: DynamicValueSelectorCustomProps;
@@ -28,14 +28,14 @@ export const ListValueControl: React.FC<ListValueControlProps> = (props: ListVal
 
     return (
         <React.Fragment>
-            {hasMultiselectValue && <MultiselectableCheckbox />}
+            {hasMultiselectValue && <MultiselectableCheckbox className={props.rowClassName} />}
 
             {props.type === 'manual' && (
                 <React.Fragment>
-                    <FormRow label={i18n('field_acceptable-values')}>
+                    <FormRow label={i18n('field_acceptable-values')} className={props.rowClassName}>
                         <Acceptable />
                     </FormRow>
-                    <FormRow label={i18n('field_default-value')}>
+                    <FormRow label={i18n('field_default-value')} className={props.rowClassName}>
                         <FieldWrapper error={validation.defaultValue}>
                             <StaticValueSelect
                                 hasValidationError={Boolean(validation.defaultValue)}
@@ -46,7 +46,7 @@ export const ListValueControl: React.FC<ListValueControlProps> = (props: ListVal
                 </React.Fragment>
             )}
             {props.type === 'dynamic' && (
-                <FormRow label={i18n('field_default-value')}>
+                <FormRow label={i18n('field_default-value')} className={props.rowClassName}>
                     <FieldWrapper error={validation.defaultValue}>
                         <DynamicValueSelect
                             {...props.custom}

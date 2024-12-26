@@ -52,7 +52,9 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();
@@ -99,7 +101,9 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();
@@ -162,8 +166,10 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             const dashboardPage = new DashboardPage({page});
             let stateUpdatesCount = 0;
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();

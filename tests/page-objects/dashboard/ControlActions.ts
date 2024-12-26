@@ -14,7 +14,12 @@ import {clickGSelectOption, fillDatePicker, getControlByTitle, slct} from '../..
 
 import {BasePageProps} from '../BasePage';
 
-import {DashTabItemControlSourceType, DialogControlQa} from '../../../src/shared';
+import {
+    DashTabItemControlSourceType,
+    DialogControlQa,
+    TitlePlacement,
+    TitlePlacements,
+} from '../../../src/shared';
 
 import {
     DashboardAddWidgetQa,
@@ -38,7 +43,7 @@ export type SelectorSettings = {
     elementType?: SelectorElementType;
     appearance?: {
         title?: string;
-        titleEnabled?: boolean;
+        titlePlacement?: TitlePlacement;
         innerTitle?: string;
         innerTitleEnabled?: boolean;
     };
@@ -156,6 +161,7 @@ class ControlActions {
         }
 
         if (options && options.buttonApply) {
+            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await this.page
                 .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
                 .setChecked(true);
@@ -163,6 +169,8 @@ class ControlActions {
             await this.page
                 .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
                 .setChecked(Boolean(options?.updateControlOnChange));
+
+            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         }
 
         // adding a selector to the dashboard
@@ -278,9 +286,9 @@ class ControlActions {
             await this.selectElementType(setting.elementType);
         }
 
-        if (typeof setting.appearance?.titleEnabled === 'boolean') {
-            await this.dialogControl.appearanceTitle.checkbox.toggle(
-                setting.appearance.titleEnabled,
+        if (setting.appearance?.titlePlacement) {
+            await this.dialogControl.appearanceTitle.radioGroup.selectByName(
+                setting.appearance.titlePlacement,
             );
         }
 
@@ -315,7 +323,7 @@ class ControlActions {
     async addSelectorWithDefaultSettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
             sourceType: DashTabItemControlSourceType.Dataset,
-            appearance: {titleEnabled: true},
+            appearance: {titlePlacement: TitlePlacements.Left},
             dataset: {idx: 0},
             datasetField: {idx: 0},
         };

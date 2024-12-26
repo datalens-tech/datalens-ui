@@ -2,13 +2,13 @@ import {Page} from '@playwright/test';
 import {slct} from '../../../utils';
 
 import {ControlQA, DialogControlQa} from '../../../../src/shared/constants/qa/control';
-import {CheckboxElementPO} from '../abstract/CheckboxElementPO';
 import {ElementPO} from '../abstract/ElementPO';
 import {TextInputElementPO} from '../abstract/TextInputElementPO';
+import {RadioGroupElementPO} from '../abstract/RadioGroupElementPO';
 
 export class AppearanceTitle extends ElementPO {
     textInput: TextInputElementPO;
-    checkbox: CheckboxElementPO;
+    radioGroup: RadioGroupElementPO;
 
     constructor(page: Page) {
         super({page, selectors: {root: slct(DialogControlQa.appearanceTitle)}});
@@ -16,9 +16,9 @@ export class AppearanceTitle extends ElementPO {
             page,
             selectors: {root: slct(ControlQA.inputNameControl)},
         });
-        this.checkbox = new CheckboxElementPO({
+        this.radioGroup = new RadioGroupElementPO({
             page,
-            selectors: {root: slct(ControlQA.showLabelCheckbox)},
+            selectors: {root: slct(DialogControlQa.appearanceTitlePlacement)},
         });
     }
 }

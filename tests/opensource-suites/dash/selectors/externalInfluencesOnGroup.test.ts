@@ -244,6 +244,8 @@ datalensTest.describe(
                 await expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
                 await expect(secondControlValue).toEqual(PARAMS.SIDE_TEXT_VALUE);
 
+                await page.waitForResponse(CommonUrls.CreateDashState);
+
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();
 

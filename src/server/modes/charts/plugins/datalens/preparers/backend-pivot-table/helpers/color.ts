@@ -1,5 +1,5 @@
 import type {ServerColor} from '../../../../../../../../shared';
-import {ApiV2Annotations, isMeasureName} from '../../../../../../../../shared';
+import {ApiV2Annotations, GradientNullModes, isMeasureName} from '../../../../../../../../shared';
 import type {ChartColorsConfig} from '../../../types';
 import {colorizePivotTableCell} from '../../../utils/color-helpers';
 import type {AnnotationsMap, PivotDataCellValue, PivotDataRows} from '../types';
@@ -110,11 +110,13 @@ export const colorizePivotTableByColorField = (args: ColorizeByColorFieldArgs) =
     }
 
     const {colorValues, min, max} = colorSettings;
+    const nilValue = colorsConfig.nullMode === GradientNullModes.AsZero ? 0 : null;
 
     rows.forEach((row, rowIndex) => {
         for (let i = rowHeaderLength; i < row.cells.length; i++) {
             const cell = row.cells[i];
-            const colorValue = colorValues[rowIndex][i - rowHeaderLength];
+            const rawColorValue = colorValues[rowIndex][i - rowHeaderLength];
+            const colorValue = rawColorValue === null ? nilValue : rawColorValue;
 
             const isInvalidColorValue = colorValue === null;
 
