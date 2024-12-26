@@ -132,6 +132,13 @@ export type AdapterContext = {
     };
 };
 
+export type HooksContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        authorization: IncomingHttpHeaders['authorization'];
+    };
+};
+
 export type SourceConfig = {
     description?: {
         title: {
