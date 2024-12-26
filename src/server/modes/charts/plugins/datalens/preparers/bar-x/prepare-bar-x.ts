@@ -506,12 +506,14 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useHtml: true});
         }
 
-        if (isXCategoryAxis) {
-            const categoriesFormatter = getCategoryFormatter({field: {...x, data_type: xDataType}});
+        if (x && isXCategoryAxis) {
+            const categoriesFormatter = getCategoryFormatter({
+                field: {...x, data_type: xDataType ?? x.data_type},
+            });
 
             return {
                 graphs,
-                categories: categories.map(categoriesFormatter),
+                categories: categories.map<string | WrappedHTML>(categoriesFormatter),
             };
         } else {
             return {graphs};

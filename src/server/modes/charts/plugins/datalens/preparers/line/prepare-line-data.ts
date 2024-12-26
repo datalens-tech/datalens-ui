@@ -1,7 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import type {HighchartsSeriesCustomObject} from '../../../../../../../shared';
+import type {HighchartsSeriesCustomObject, WrappedHTML} from '../../../../../../../shared';
 import {
     AxisMode,
     AxisNullsMode,
@@ -21,6 +21,7 @@ import {
     isPseudoField,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
@@ -103,6 +104,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const isHtmlColor = isHtmlField(colorItem);
 
     const shapeItem = shapes[0];
+    const isHtmlShape = isHtmlField(shapeItem);
 
     const gradientMode =
         colorItem &&
@@ -144,6 +146,13 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const seriesNameFormatter = (value?: string) => {
+        if (value && (isHtmlColor || isHtmlShape)) {
+            return wrapHtml(value);
+        }
+
+        return value;
+    };
 
     if (mergedYSections.length) {
         let categories: (string | number)[] = [];
@@ -350,7 +359,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 let prevYValue: string | number | null | undefined = null;
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title || 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         ...line.dataLabels,
@@ -399,9 +408,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                             if (line.segmentNameKey) {
                                 const currentSegment = segmentsMap[line.segmentNameKey];
-                                const tooltipPointName = `${currentSegment.title}: ${line.title}`;
+                                const pointValue = `${currentSegment.title}: ${line.title}`;
                                 point.custom = {
-                                    tooltipPointName,
+                                    tooltipPointName: isHtmlSegment
+                                        ? wrapHtml(pointValue)
+                                        : pointValue,
                                 };
                             }
 
@@ -444,7 +455,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                         })
                         .filter((point) => point !== null),
                     legendTitle: line.legendTitle || line.title || 'Null',
-                    formattedName: colorItem ? undefined : line.formattedName,
+                    formattedName: colorItem ? undefined : seriesNameFormatter(line.formattedName),
                     drillDownFilterValue: line.drillDownFilterValue,
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
@@ -543,17 +554,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useMarkup: true});
         }
 
-        if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlSegment) {
+        if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlShape || isHtmlSegment) {
             ChartEditor.updateConfig({useHtml: true});
         }
 
-        if (isXCategoryAxis) {
+        if (xField && isXCategoryAxis) {
             const categoriesFormatter = getCategoryFormatter({
-                field: {...xField, data_type: xDataType},
+                field: {...xField, data_type: xDataType ?? xField.data_type},
             });
             return {
                 graphs,
-                categories: categories.map(categoriesFormatter),
+                categories: categories.map<string | WrappedHTML>(categoriesFormatter),
             };
         } else {
             return {graphs};
