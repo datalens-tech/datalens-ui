@@ -55,8 +55,10 @@ import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
+import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
 
 export type OpenDialogArgs<T = unknown> =
+    | OpenDialogReleaseVersionArgs
     | OpenDialogMetricSettingsArgs
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs

@@ -11,6 +11,7 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
 } from '../../shared';
+import {releaseVersion} from '../app-env';
 import {SERVICE_NAME_DATALENS} from '../components';
 
 export default {
@@ -44,4 +45,5 @@ export default {
     ],
     headersMap: {},
     requestIdHeaderName: 'x-request-id',
+    releaseVersion: releaseVersion,
 } satisfies Partial<AppConfig>;

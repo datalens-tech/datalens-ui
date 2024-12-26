@@ -15,3 +15,7 @@ declare module '*.webp' {
 
     export default path;
 }
+
+interface Array<T> {
+    filter(predicate: BooleanConstructor): NonNullable<T>[];
+}

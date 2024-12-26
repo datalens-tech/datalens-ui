@@ -22,7 +22,8 @@
         @include link-reset;
     }
 
-    &__docs-link {
+    &__docs-link,
+    &__info-btn {
         align-items: center;
         box-sizing: border-box;
         display: flex;

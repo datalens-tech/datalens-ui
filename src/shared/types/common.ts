@@ -211,6 +211,7 @@ export type DLGlobalData = {
     isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
+    releaseVersion?: string;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

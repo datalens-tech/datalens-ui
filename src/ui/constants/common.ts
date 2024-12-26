@@ -234,6 +234,9 @@ export const DL = {
     get CONNECTOR_ICONS() {
         return window.DL.connectorIcons || [];
     },
+    get RELEASE_VERSION() {
+        return window.DL.releaseVersion;
+    },
 };
 
 // monaco-editor common themes:
