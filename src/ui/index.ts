@@ -10,6 +10,7 @@ import type {ControlDialogState} from 'ui/store/reducers/controlDialog';
 import type {CopyEntriesToWorkbookState} from 'ui/store/reducers/copyEntriesToWorkbook';
 import type {EditHistoryState} from 'ui/store/reducers/editHistory';
 import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbook';
+import type {AuthState} from 'units/auth/store/reducers';
 import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
 import type {DashState} from 'units/dash/store/reducers/dashTypedReducer';
@@ -75,4 +76,5 @@ export type DatalensGlobalState = {
     copyEntriesToWorkbook: CopyEntriesToWorkbookState;
     editHistory: EditHistoryState;
     iamAccessDialog: IamAccessDialogState;
+    auth: AuthState;
 };
