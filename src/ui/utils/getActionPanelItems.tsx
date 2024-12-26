@@ -35,7 +35,7 @@ export type ActionPanelItemParams = {
     userSettings?: DLUserSettings;
     scope?: string;
     enableHiddenItems?: boolean;
-    allowedPasteItemsList?: string[];
+    allowedPasteItems?: string[];
 };
 
 export const BASE_ITEMS_TO_PASTE = [
@@ -54,12 +54,12 @@ export const getActionPanelItems = ({
     userSettings,
     scope,
     // TODO: Remove concat
-    allowedPasteItemsList = BASE_ITEMS_TO_PASTE.concat(DashTabItemType.Image),
+    allowedPasteItems = BASE_ITEMS_TO_PASTE.concat(DashTabItemType.Image),
 }: ActionPanelItemParams) => {
     const {getBasicActionPanelItems} = registry.common.functions.getAll();
     const items = getBasicActionPanelItems({userSettings, scope});
 
-    const enablePaste = copiedData && allowedPasteItemsList.includes(copiedData.type);
+    const enablePaste = copiedData && allowedPasteItems.includes(copiedData.type);
 
     if (enablePaste) {
         items.push({
