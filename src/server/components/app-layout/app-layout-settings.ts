@@ -42,7 +42,15 @@ export const getAppLayoutSettings = (
                 },
                 DL: {
                     landingPageSettings: pageSettings,
+                    isLanding: true,
                 },
+                bundleName: 'dl-main',
+            };
+        }
+        case 'auth-layout': {
+            return {
+                renderConfig: {title: config.serviceName},
+                DL: {},
                 bundleName: 'dl-main',
             };
         }

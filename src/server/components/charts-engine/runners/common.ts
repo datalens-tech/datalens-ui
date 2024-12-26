@@ -186,6 +186,12 @@ export const getSerializableProcessorParams = ({
           }
         : undefined;
 
+    const authParams = ctx.config.isAuthEnabled
+        ? {
+              accessToken: req.ctx.get('user')?.accessToken,
+          }
+        : undefined;
+
     const originalReqHeaders = {
         xRealIP: req.headers['x-real-ip'],
         xForwardedFor: req.headers['x-forwarded-for'],
@@ -224,6 +230,7 @@ export const getSerializableProcessorParams = ({
         disableJSONFnByCookie,
         isEmbed,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,
