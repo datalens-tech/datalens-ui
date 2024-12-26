@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Text} from '@gravity-ui/uikit';
+import {Dialog, Text, spacing} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import DialogManager from 'ui/components/DialogManager/DialogManager';
 
@@ -22,9 +22,9 @@ export function VersionDialog({releaseVersion, open, onClose}: VersionDialogProp
         <Dialog open={open} onClose={onClose} size="s">
             <Dialog.Header caption={i18n('component.aside-header.view', 'label_about')} />
             <Dialog.Body>
-                <Text variant="subheader-1">
+                <Text variant="subheader-1" className={spacing({mr: 2})}>
                     {i18n('component.aside-header.view', 'label_app-version')}:
-                </Text>{' '}
+                </Text>
                 {releaseVersion}
             </Dialog.Body>
             <Dialog.Footer />
