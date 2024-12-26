@@ -135,7 +135,7 @@ export type AdapterContext = {
 export type HooksContext = {
     headers: {
         cookie: IncomingHttpHeaders['cookie'];
-        Authorization: IncomingHttpHeaders['authorization'];
+        authorization: IncomingHttpHeaders['authorization'];
     };
 };
 

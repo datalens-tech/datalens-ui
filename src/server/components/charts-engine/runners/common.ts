@@ -216,6 +216,13 @@ export function commonRunner({
         },
     };
 
+    const hooksContext = {
+        headers: {
+            cookie: req.headers.cookie,
+            authorization: req.headers.authorization,
+        },
+    };
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -239,6 +246,7 @@ export function commonRunner({
         zitadelParams,
         originalReqHeaders,
         adapterContext,
+        hooksContext,
     };
 
     if (req.body.unreleased === 1) {
