@@ -59,6 +59,9 @@ export class ProcessorHooks {
         ctx,
         hooksContext,
     }: {
+        /**
+         * @deprecated will be removed
+         */
         req: Request;
         config: Record<string, any>;
         isEditMode: boolean;

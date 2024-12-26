@@ -152,6 +152,9 @@ export type ProcessorParams = {
     userLang: string | null;
     userId: string | null;
     iamToken: string | null;
+    /**
+     * @deprecated will be removed
+     */
     req: Request;
     responseOptions?: Record<string, string | boolean>;
     uiOnly?: boolean;

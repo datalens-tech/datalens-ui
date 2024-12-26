@@ -60,6 +60,9 @@ type PromiseWithAbortController = [Promise<unknown>, AbortController];
 type DataFetcherOptions = {
     chartsEngine: ChartsEngine;
     sources: Record<string, Source | string>;
+    /**
+     * @deprecated will be removed
+     */
     req?: Request;
     ctx: AppContext;
     postprocess?:
@@ -220,6 +223,7 @@ export class DataFetcher {
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
 
+            // TODO: will be removed after migrations
             if (req) {
                 isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
 
