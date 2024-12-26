@@ -163,5 +163,66 @@ datalensTest.describe('Wizard', () => {
             ];
             expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
         });
+
+        datalensTest('Sorting numbers with null values', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.createNewFieldWithFormula('year', 'year([Order_date])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'year');
+            await wizardPage.filterEditor.selectFilterOperation(Operations.EQ);
+            await wizardPage.filterEditor.setInputValue('2015');
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.createNewFieldWithFormula('month', 'datepart([Order_date], "month")');
+            await wizardPage.createNewFieldWithFormula(
+                'with_null',
+                'if([month] = 2) then null else [month] end',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'month',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'with_null',
+            );
+            await expect(previewLoader).not.toBeVisible();
+
+            const initialOrder = [
+                ['1', '1'],
+                ['2', 'null'],
+                ['3', '3'],
+                ['4', '4'],
+                ['5', '5'],
+                ['6', '6'],
+                ['7', '7'],
+                ['8', '8'],
+                ['9', '9'],
+                ['10', '10'],
+                ['11', '11'],
+                ['12', '12'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(initialOrder);
+
+            // Sort values by clicking on header
+            await chartContainer.locator('thead', {hasText: 'with_null'}).first().click();
+            const expectedOrder = [
+                ['12', '12'],
+                ['11', '11'],
+                ['10', '10'],
+                ['9', '9'],
+                ['8', '8'],
+                ['7', '7'],
+                ['6', '6'],
+                ['5', '5'],
+                ['4', '4'],
+                ['3', '3'],
+                ['1', '1'],
+                ['2', 'null'],
+            ];
+            expect(await wizardPage.chartkit.getRowsTexts()).toEqual(expectedOrder);
+        });
     });
 });
