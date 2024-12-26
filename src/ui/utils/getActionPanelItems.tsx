@@ -52,8 +52,7 @@ export const getActionPanelItems = ({
     filterItem,
     userSettings,
     scope,
-    // TODO: Remove concat
-    allowedPasteItems = BASE_ITEMS_TO_PASTE.concat(DashTabItemType.Image),
+    allowedPasteItems = BASE_ITEMS_TO_PASTE,
 }: ActionPanelItemParams) => {
     const {getBasicActionPanelItems} = registry.common.functions.getAll();
     const items = getBasicActionPanelItems({userSettings, scope});
