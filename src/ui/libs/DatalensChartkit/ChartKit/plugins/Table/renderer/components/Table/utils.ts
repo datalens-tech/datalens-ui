@@ -57,16 +57,21 @@ function getSortingFunction(args: {
     }
 
     return function (row1, row2) {
-        const a = getSortAccessor(row1.original[columnIndex].value);
-        const b = getSortAccessor(row2.original[columnIndex].value);
+        const nullReplacement = columnType === 'number' ? -Infinity : '';
+        const a = getSortAccessor(row1.original[columnIndex].value, nullReplacement);
+        const b = getSortAccessor(row2.original[columnIndex].value, nullReplacement);
 
         return ascending(a as Primitive, b as Primitive);
     };
 }
 
-function getSortAccessor(value: unknown) {
+function getSortAccessor(value: unknown, nullReplacement?: Primitive) {
     if (isMarkupItem(value)) {
         return markupToRawString(value);
+    }
+
+    if (value === null && typeof nullReplacement !== 'undefined') {
+        return nullReplacement;
     }
 
     return value as Primitive;
