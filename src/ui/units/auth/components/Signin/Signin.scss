@@ -1,0 +1,19 @@
+.dl-signin {
+    height: 100%;
+    background-color: var(--g-color-base-misc-light);
+
+    &__form-container {
+        background-color: var(--g-color-base-background);
+        border-radius: var(--g-border-radius-l);
+        width: 440px;
+        min-height: 200px;
+        padding: 48px;
+    }
+
+    &__logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--g-color-base-brand);
+    }
+}

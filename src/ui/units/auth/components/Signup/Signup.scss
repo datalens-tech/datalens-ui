@@ -1,0 +1,12 @@
+.dl-signup {
+    height: 100%;
+    background-color: var(--g-color-base-misc-light);
+
+    &__form-container {
+        background-color: var(--g-color-base-background);
+        border-radius: var(--g-border-radius-l);
+        width: 720px;
+        min-height: 200px;
+        padding: 48px;
+    }
+}

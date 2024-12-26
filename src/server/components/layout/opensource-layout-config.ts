@@ -39,6 +39,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     }
 
     const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
+    const isAuthEnabled = req.ctx.config.isAuthEnabled;
 
     // TODO: check and remove optional props;
     let user: DLUser = {lang} as DLUser;
@@ -69,6 +70,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
+        isAuthEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
