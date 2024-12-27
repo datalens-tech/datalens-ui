@@ -4,7 +4,8 @@ import type {
     GraphTooltipLine,
     HighchartsSeriesCustomObject,
 } from 'shared';
-import {ChartkitHandlers} from 'shared';
+import {ChartkitHandlers, Feature} from 'shared';
+import Utils from 'ui/utils';
 
 export const baseRenderFn = (value: unknown) => value;
 
@@ -51,7 +52,7 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
     return {
         ...config,
         lines: mappedLines,
-        unsafe: true,
+        unsafe: Utils.isEnabledFeature(Feature.EscapingStringInWizard),
     };
 }
 
