@@ -45,7 +45,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
             type: GET_COLLECTION_BREADCRUMBS_LOADING,
         });
         return getSdk()
-            .us.getCollectionBreadcrumbs({
+            .sdk.us.getCollectionBreadcrumbs({
                 collectionId,
             })
             .then((data) => {
@@ -56,7 +56,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
                 return data;
             })
             .catch((error: Error) => {
-                if (!getSdk().isCancel(error)) {
+                if (!getSdk().sdk.isCancel(error)) {
                     logger.logError(
                         'collections-navigation/getCollectionBreadcrumbs failed',
                         error,

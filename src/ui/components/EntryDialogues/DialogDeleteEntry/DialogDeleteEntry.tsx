@@ -61,7 +61,7 @@ class DialogDeleteEntry extends React.Component<Props> {
 
     private onApply = async () => {
         const {entry, cleanLock, lockToken} = this.props;
-        await getSdk().mix.deleteEntry({
+        await getSdk().sdk.mix.deleteEntry({
             entryId: entry.entryId,
             scope: entry.scope,
             ...(lockToken ? {lockToken} : {}),

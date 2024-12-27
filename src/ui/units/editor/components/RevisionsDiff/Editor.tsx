@@ -114,7 +114,7 @@ class Editor extends React.Component<Props, RevisionsDiffState> {
                 status: Status.Success,
             } as unknown as SetStateDynamicKey);
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('RevisionsDiff: getScripts failed', error);
@@ -175,7 +175,7 @@ class Editor extends React.Component<Props, RevisionsDiffState> {
     };
 
     private getEntry(revId: string) {
-        return getSdk().us.getEntry(
+        return getSdk().sdk.us.getEntry(
             {entryId: this.props.entry.entryId, revId},
             {concurrentId: 'getEntry: RevisionsDiff'},
         );

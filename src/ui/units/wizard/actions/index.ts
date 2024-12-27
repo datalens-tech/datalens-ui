@@ -166,7 +166,7 @@ type GetDatasetArgs = {
 
 function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
-        .bi.getDatasetByVersion({
+        .sdk.bi.getDatasetByVersion({
             datasetId: id,
             workbookId,
             version: 'draft',
@@ -1227,7 +1227,7 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
         const workbookId = selectWizardWorkbookId(getState());
 
         try {
-            return await getSdk().bi.validateDataset(
+            return await getSdk().sdk.bi.validateDataset(
                 {
                     version: 'draft',
                     datasetId: dataset.id,

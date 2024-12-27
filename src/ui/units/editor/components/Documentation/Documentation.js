@@ -132,7 +132,7 @@ function ModuleDocumentation({module}) {
     return (
         <React.Fragment>
             <div className={b('module-docs')}>
-                <Fetch fetch={() => getSdk().us.getEntryByKey({key})}>
+                <Fetch fetch={() => getSdk().sdk.us.getEntryByKey({key})}>
                     {({data}) => renderMarkdown(data.data)}
                 </Fetch>
             </div>

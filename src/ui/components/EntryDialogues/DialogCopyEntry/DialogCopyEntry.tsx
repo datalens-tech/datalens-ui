@@ -119,7 +119,7 @@ class DialogCopyEntry extends React.Component<
         const {scope} = this.props;
         if (scope === EntryScope.Dataset) {
             const new_key = path + name;
-            const {id} = await getSdk().bi.copyDataset({
+            const {id} = await getSdk().sdk.bi.copyDataset({
                 datasetId: this.props.entryId,
                 new_key,
             });
@@ -144,7 +144,7 @@ class DialogCopyEntry extends React.Component<
                 type: entry.type,
             };
         } else {
-            const data = await getSdk().us.copyEntry({
+            const data = await getSdk().sdk.us.copyEntry({
                 entryId: this.props.entryId,
                 name,
                 destination: path,
@@ -162,7 +162,7 @@ class DialogCopyEntry extends React.Component<
 
     private onApplyCreateWorkbookEntry = async ({name}: {name: string}) => {
         const {scope, entryId} = this.props;
-        const newEntry = await getSdk().us.copyWorkbookEntry({
+        const newEntry = await getSdk().sdk.us.copyWorkbookEntry({
             entryId,
             name,
         });

@@ -40,7 +40,7 @@ function DatasetSelector(props: {
         setIsInvalid(false);
 
         getSdk()
-            .bi.getDatasetByVersion({
+            .sdk.bi.getDatasetByVersion({
                 datasetId: entryId,
                 workbookId,
                 version: 'draft',
