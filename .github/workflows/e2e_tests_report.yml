@@ -42,7 +42,7 @@ jobs:
           destination_dir: ${{ env.HTML_REPORT_URL_PATH }}/report
       - name: Output Report URL as Worfklow Annotation
         run: |
-          FULL_HTML_REPORT_URL=${{ vars.E2E_REPORT_S3_ENDPOINT }}/${{ vars.E2E_REPORT_S3_BUCKET }}/${{ env.HTML_REPORT_URL_PATH }}/report
+          FULL_HTML_REPORT_URL=${{ vars.E2E_REPORT_S3_ENDPOINT }}/${{ vars.E2E_REPORT_S3_BUCKET }}/${{ env.HTML_REPORT_URL_PATH }}/report/index.html
           echo "FULL_HTML_REPORT_URL=${FULL_HTML_REPORT_URL}" >> "$GITHUB_ENV"
           echo "::notice title=📋 Published Playwright Test Report::$FULL_HTML_REPORT_URL"
       - name: Create Comment
