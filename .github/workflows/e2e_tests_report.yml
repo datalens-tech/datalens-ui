@@ -31,9 +31,12 @@ jobs:
       #     workflow: ${{ github.event.workflow_run.workflow_id }}
       #     run_id: ${{ github.event.workflow_run.id }}
       - name: Extract env from workflow
+        # run: |
+        #   echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
+        #   echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
         run: |
-          echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
-          echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
+          echo "HTML_REPORT_URL_PATH=reports/CHARTS-10864-remove-gh-pages-branch" >> "$GITHUB_ENV"
+          echo "REPORT_PR_NUMBER=1988" >> "$GITHUB_ENV"
       - name: Move report to commit folder
         run: |
           mkdir -p ${{ env.HTML_REPORT_URL_PATH }}/report && echo test > ${{ env.HTML_REPORT_URL_PATH }}/report/test
