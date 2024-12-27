@@ -232,7 +232,6 @@ export function commonRunner({
         userLogin: res.locals && res.locals.login,
         userId: res.locals && res.locals.userId,
         subrequestHeaders: res.locals.subrequestHeaders,
-        req,
         iamToken,
         isEditMode: Boolean(res.locals.editMode),
         configResolving,

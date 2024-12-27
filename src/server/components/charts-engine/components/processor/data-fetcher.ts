@@ -3,7 +3,6 @@ import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 import querystring from 'querystring';
 import url from 'url';
 
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
@@ -60,10 +59,6 @@ type PromiseWithAbortController = [Promise<unknown>, AbortController];
 type DataFetcherOptions = {
     chartsEngine: ChartsEngine;
     sources: Record<string, Source | string>;
-    /**
-     * @deprecated will be removed
-     */
-    req?: Request;
     ctx: AppContext;
     postprocess?:
         | ((
@@ -78,8 +73,8 @@ type DataFetcherOptions = {
     workbookId?: WorkbookId;
     isEmbed?: boolean;
     zitadelParams?: ZitadelParams | undefined;
-    originalReqHeaders?: DataFetcherOriginalReqHeaders;
-    adapterContext?: AdapterContext;
+    originalReqHeaders: DataFetcherOriginalReqHeaders;
+    adapterContext: AdapterContext;
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -190,7 +185,6 @@ export class DataFetcher {
     static fetch({
         chartsEngine,
         sources,
-        req,
         ctx,
         postprocess = null,
         subrequestHeaders,
@@ -222,31 +216,6 @@ export class DataFetcher {
 
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
-
-            // TODO: will be removed after migrations
-            if (req) {
-                isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
-
-                zitadelParams = ctx.config.isZitadelEnabled
-                    ? {
-                          accessToken: req.user?.accessToken,
-                          serviceUserAccessToken: req.serviceUserAccessToken,
-                      }
-                    : undefined;
-
-                originalReqHeaders = {
-                    xRealIP: req.headers['x-real-ip'],
-                    xForwardedFor: req.headers['x-forwarded-for'],
-                    xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
-                    referer: req.headers.referer,
-                };
-                adapterContext = {
-                    headers: {
-                        ['x-forwarded-for']: req.headers['x-forwarded-for'],
-                        cookie: req.headers.cookie,
-                    },
-                };
-            }
 
             if (!originalReqHeaders || !adapterContext) {
                 throw new Error('Missing original request headers or adapter context');

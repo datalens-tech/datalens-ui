@@ -1,5 +1,4 @@
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
-import type {Request} from '@gravity-ui/expresskit';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
@@ -152,10 +151,6 @@ export type ProcessorParams = {
     userLang: string | null;
     userId: string | null;
     iamToken: string | null;
-    /**
-     * @deprecated will be removed
-     */
-    req: Request;
     responseOptions?: Record<string, string | boolean>;
     uiOnly?: boolean;
     isEditMode: boolean;
@@ -188,7 +183,6 @@ export class Processor {
         userLogin,
         userId = null,
         iamToken = null,
-        req,
         responseOptions = {},
         uiOnly = false,
         isEditMode,
@@ -330,7 +324,6 @@ export class Processor {
             ctx.log('EditorEngine::ConfigResolved', {duration: getDuration(hrStart)});
 
             const resultHooksInit = await hooks.init({
-                req,
                 config: {
                     ...config,
                     entryId: config.entryId || configId,
