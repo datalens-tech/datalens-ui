@@ -5,17 +5,13 @@ on:
     workflows: ['E2E Tests']
     types:
       - completed
-  push:
-    branches:
-      # only for test
-      - CHARTS-10864-remove-gh-pages-branch
 
 jobs:
   publish_report:
     name: Publish E2E Report
-    # if: >
-    #   github.event.workflow_run.event == 'pull_request' &&
-    #   (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,21 +21,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: main
-      # - name: Download Artifacts
-      #   uses: dawidd6/action-download-artifact@v6
-      #   with:
-      #     workflow: ${{ github.event.workflow_run.workflow_id }}
-      #     run_id: ${{ github.event.workflow_run.id }}
+      - name: Download Artifacts
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
       - name: Extract env from workflow
-        # run: |
-        #   echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
-        #   echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
         run: |
-          echo "HTML_REPORT_URL_PATH=reports/CHARTS-10864-remove-gh-pages-branch" >> "$GITHUB_ENV"
-          echo "REPORT_PR_NUMBER=1988" >> "$GITHUB_ENV"
-      - name: Move report to commit folder
-        run: |
-          mkdir -p playwright-report/report && echo test > playwright-report/report/test
+          echo "HTML_REPORT_URL_PATH=$(cat playwright-report/report-link)" >> "$GITHUB_ENV"
+          echo "REPORT_PR_NUMBER=$(cat playwright-report/report-pr)" >> "$GITHUB_ENV"
       - name: Upload HTML Report
         timeout-minutes: 3
         uses: shallwefootball/s3-upload-action@master
