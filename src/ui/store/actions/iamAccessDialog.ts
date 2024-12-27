@@ -126,7 +126,7 @@ export const listAccessBindings = ({
         };
 
         const catchHandler = (error: Error) => {
-            const isCanceled = getSdk().isCancel(error);
+            const isCanceled = getSdk().sdk.isCancel(error);
 
             if (!isCanceled) {
                 dispatch(
@@ -147,7 +147,7 @@ export const listAccessBindings = ({
 
         if (resourceType === ResourceType.Collection) {
             return getSdk()
-                .extensions.listCollectionAccessBindings({
+                .sdk.extensions.listCollectionAccessBindings({
                     collectionId: resourceId,
                     ...restArgs,
                 })
@@ -155,7 +155,7 @@ export const listAccessBindings = ({
                 .catch(catchHandler);
         } else {
             return getSdk()
-                .extensions.listWorkbookAccessBindings({
+                .sdk.extensions.listWorkbookAccessBindings({
                     workbookId: resourceId,
                     ...restArgs,
                 })
@@ -206,7 +206,7 @@ export const updateAccessBindings = ({
         };
 
         const catchHandler = (error: Error) => {
-            const isCanceled = getSdk().isCancel(error);
+            const isCanceled = getSdk().sdk.isCancel(error);
 
             if (!isCanceled) {
                 dispatch(
@@ -230,7 +230,7 @@ export const updateAccessBindings = ({
                 await waitOperation({
                     operation,
                     loader: ({concurrentId}) =>
-                        getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                        getSdk().sdk.us.getOperation({operationId: operation.id}, {concurrentId}),
                 }).promise;
             }
             return operation;
@@ -238,7 +238,7 @@ export const updateAccessBindings = ({
 
         if (resourceType === ResourceType.Collection) {
             return getSdk()
-                .extensions.updateCollectionAccessBindings({
+                .sdk.extensions.updateCollectionAccessBindings({
                     collectionId: resourceId,
                     deltas,
                 })
@@ -247,7 +247,7 @@ export const updateAccessBindings = ({
                 .catch(catchHandler);
         } else {
             return getSdk()
-                .extensions.updateWorkbookAccessBindings({
+                .sdk.extensions.updateWorkbookAccessBindings({
                     workbookId: resourceId,
                     deltas,
                 })
@@ -282,7 +282,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
         });
 
         return getSdk()
-            .us.getCollectionBreadcrumbs({
+            .sdk.us.getCollectionBreadcrumbs({
                 collectionId,
             })
             .then((data) => {
@@ -293,7 +293,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 dispatch({
                     type: GET_COLLECTION_BREADCRUMBS_FAILED,
@@ -326,7 +326,7 @@ export const batchListMembers = ({subjectIds}: GetClaimsArgs) => {
         });
 
         return getSdk()
-            .extensions.getClaims({
+            .sdk.extensions.getClaims({
                 subjectIds,
             })
             .then((data) => {
@@ -337,7 +337,7 @@ export const batchListMembers = ({subjectIds}: GetClaimsArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     dispatch(
@@ -388,7 +388,7 @@ export const suggestBatchListMembers = ({
         });
 
         return getSdk()
-            .extensions.batchListMembers({
+            .sdk.extensions.batchListMembers({
                 id,
                 search: search.toLowerCase(),
                 subType,
@@ -406,7 +406,7 @@ export const suggestBatchListMembers = ({
                 return {subjects: members, nextPageToken};
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     dispatch(

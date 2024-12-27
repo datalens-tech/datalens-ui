@@ -48,7 +48,7 @@ export const getDistinctsByDatasetField = async ({
             result: {
                 data: {Data},
             },
-        } = await getSdk().bi.getDistinctsApiV2(
+        } = await getSdk().sdk.bi.getDistinctsApiV2(
             {
                 datasetId,
                 workbookId,

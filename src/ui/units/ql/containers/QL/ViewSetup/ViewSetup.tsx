@@ -251,7 +251,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
     private fetchConnection(connectionId: string) {
         return getSdk()
-            .us.getEntry({entryId: connectionId})
+            .sdk.us.getEntry({entryId: connectionId})
             .then((loadedConnectionEntry?: GetEntryResponse) => {
                 if (!loadedConnectionEntry) {
                     throw new Error(i18n('sql', 'error_failed-to-load-default-connection'));

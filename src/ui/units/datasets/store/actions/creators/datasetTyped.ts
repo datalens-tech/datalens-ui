@@ -183,7 +183,7 @@ const dispatchFetchPreviewDataset = async (
         let previewDataset: GetPreviewResponse = {};
 
         if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview(
+            previewDataset = await getSdk().sdk.bi.getPreview(
                 {
                     datasetId,
                     workbookId,
@@ -926,7 +926,7 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
             const workbookId = workbookIdSelector(getState());
 
-            const validation = await getSdk().bi.validateDataset(
+            const validation = await getSdk().sdk.bi.validateDataset(
                 {
                     datasetId,
                     workbookId,
@@ -953,7 +953,7 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
                 dispatch(toggleSaveDataset({enable: true}));
             }
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 const filteredError = getFilteredObject(error, [
                     'details.data.dataset',
                     'details.data.options',

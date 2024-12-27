@@ -487,7 +487,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
 
         getSdk().cancelRequest('getDistincts');
 
-        return getSdk().bi.getDistinctsApiV2(
+        return getSdk().sdk.bi.getDistinctsApiV2(
             {
                 datasetId,
                 workbookId,
@@ -526,7 +526,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                 fetching: false,
             });
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
 
@@ -655,7 +655,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                 suggestFetching: false,
             });
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('DialogFilter: onChangeSuggest failed', error);

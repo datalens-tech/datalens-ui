@@ -99,15 +99,16 @@ export const initSdk = () => {
     return sdk;
 };
 
-// TODO: return object with sdk and cancelRequest
 export const getSdk = () => {
-    return registry.libs.schematicSdk.get() as DatalensSdk<{
+    const sdk = registry.libs.schematicSdk.get() as DatalensSdk<{
         root: typeof schema;
     }>;
+    return {
+        sdk,
+        // Use this method instead of sdk.cancelRequest
+        cancelRequest(concurrentId: string) {
+            emitCancelRequest(concurrentId);
+            sdk.cancelRequest(concurrentId);
+        },
+    };
 };
-
-// Use it instead of sdk.cancelRequest
-export function cancelRequest(concurrentId: string) {
-    emitCancelRequest(concurrentId);
-    getSdk().cancelRequest(concurrentId);
-}

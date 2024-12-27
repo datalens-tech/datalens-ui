@@ -176,7 +176,7 @@ class Revisions extends React.Component<Props, RevisionsState> {
                 this.setState({status: Status.Loading, loadMore: true});
             }
             const {entry} = this.props;
-            const {hasNextPage, entries} = await getSdk().us.getRevisions({
+            const {hasNextPage, entries} = await getSdk().sdk.us.getRevisions({
                 entryId: entry.entryId,
                 pageSize: 100,
                 page: this.state.page,

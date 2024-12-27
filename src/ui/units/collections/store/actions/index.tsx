@@ -62,7 +62,7 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
             type: GET_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.getCollection({
+            .sdk.us.getCollection({
                 collectionId,
                 includePermissionsInfo: true,
             })
@@ -74,7 +74,7 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
                 return data as CollectionWithPermissions;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collections/getCollection failed', error);
@@ -158,7 +158,7 @@ export const getStructureItems = ({
             type: GET_STRUCTURE_ITEMS_LOADING,
         });
         return getSdk()
-            .us.getStructureItems({
+            .sdk.us.getStructureItems({
                 collectionId,
                 includePermissionsInfo: true,
                 page,
@@ -177,7 +177,7 @@ export const getStructureItems = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collections/getStructureItems failed', error);
@@ -233,7 +233,7 @@ export const getRootCollectionPermissions = () => {
             type: GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
         });
         return getSdk()
-            .us.getRootCollectionPermissions()
+            .sdk.us.getRootCollectionPermissions()
             .then((data) => {
                 dispatch({
                     type: GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
@@ -242,7 +242,7 @@ export const getRootCollectionPermissions = () => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collections/getRootCollectionPermissions failed', error);

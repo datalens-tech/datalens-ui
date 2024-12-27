@@ -198,7 +198,7 @@ class NavigationEntries extends React.Component {
         }
         this.setState({page});
 
-        return getSdk().mix.getNavigationList(
+        return getSdk().sdk.mix.getNavigationList(
             {
                 place,
                 scope,
@@ -276,7 +276,7 @@ class NavigationEntries extends React.Component {
                 this.props.focusSearchInput();
             }
         } catch (error) {
-            if (getSdk().isCancel(error)) {
+            if (getSdk().sdk.isCancel(error)) {
                 return;
             }
             if (error.status === 403 && !isPermissionRetry) {
@@ -320,9 +320,9 @@ class NavigationEntries extends React.Component {
         this.changeFavorite(entryId, !isFavorite);
         try {
             if (isFavorite) {
-                await getSdk().us.deleteFavorite({entryId});
+                await getSdk().sdk.us.deleteFavorite({entryId});
             } else {
-                await getSdk().us.addFavorite({entryId});
+                await getSdk().sdk.us.addFavorite({entryId});
             }
             if (this.props.onChangeFavorite) {
                 this.props.onChangeFavorite({entryId, isFavorite: !isFavorite});
