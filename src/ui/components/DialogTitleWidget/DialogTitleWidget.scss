@@ -9,7 +9,21 @@
         }
     }
 
+    &__controls-wrapper {
+        display: flex;
+        align-items: baseline;
+        gap: var(--g-spacing-2);
+    }
+
     &__checkbox {
         margin-block-start: var(--g-spacing-2);
+    }
+
+    &__number-input {
+        width: 80px;
+    }
+
+    &__unit {
+        margin-inline-end: var(--g-spacing-1);
     }
 }
