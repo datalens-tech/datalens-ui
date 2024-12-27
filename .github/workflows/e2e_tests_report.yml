@@ -39,7 +39,7 @@ jobs:
           echo "REPORT_PR_NUMBER=1988" >> "$GITHUB_ENV"
       - name: Move report to commit folder
         run: |
-          mkdir -p ${{ env.HTML_REPORT_URL_PATH }}/report && echo test > ${{ env.HTML_REPORT_URL_PATH }}/report/test
+          mkdir -p playwright-report/report && echo test > playwright-report/report/test
       - name: Upload HTML Report
         timeout-minutes: 3
         uses: shallwefootball/s3-upload-action@master
