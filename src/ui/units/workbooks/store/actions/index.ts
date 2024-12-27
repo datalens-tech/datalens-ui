@@ -75,7 +75,7 @@ export const getWorkbook = ({workbookId}: {workbookId: string}) => {
             type: GET_WORKBOOK_LOADING,
         });
         try {
-            const data = await getSdk().us.getWorkbook(
+            const data = await getSdk().sdk.us.getWorkbook(
                 {
                     workbookId,
                     includePermissionsInfo: true,
@@ -87,7 +87,7 @@ export const getWorkbook = ({workbookId}: {workbookId: string}) => {
                 data: data as WorkbookWithPermissions,
             });
         } catch (error) {
-            if (getSdk().isCancel(error)) {
+            if (getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('workbooks/getWorkbook failed', error);
@@ -138,7 +138,7 @@ export const getWorkbookBreadcrumbs = ({collectionId}: {collectionId: string}) =
             type: GET_WORKBOOK_BREADCRUMBS_LOADING,
         });
         try {
-            const data = await getSdk().us.getCollectionBreadcrumbs(
+            const data = await getSdk().sdk.us.getCollectionBreadcrumbs(
                 {
                     collectionId,
                 },
@@ -149,7 +149,7 @@ export const getWorkbookBreadcrumbs = ({collectionId}: {collectionId: string}) =
                 data,
             });
         } catch (error) {
-            const isCanceled = getSdk().isCancel(error);
+            const isCanceled = getSdk().sdk.isCancel(error);
 
             dispatch({
                 type: GET_WORKBOOK_BREADCRUMBS_FAILED,
@@ -213,7 +213,7 @@ export const getWorkbookEntries = ({
         }
 
         try {
-            const data = await getSdk().us.getWorkbookEntries(args, {
+            const data = await getSdk().sdk.us.getWorkbookEntries(args, {
                 concurrentId: ignoreConcurrentId ? undefined : 'workbooks/getWorkbookEntries',
             });
             dispatch({
@@ -223,7 +223,7 @@ export const getWorkbookEntries = ({
 
             return data;
         } catch (error) {
-            if (getSdk().isCancel(error)) {
+            if (getSdk().sdk.isCancel(error)) {
                 return null;
             }
             logger.logError('workbooks/getWorkbookEntries failed', error);
@@ -292,7 +292,7 @@ export const getAllWorkbookEntriesSeparately = ({
         }
 
         const promises = scopes.map((scope) => {
-            return getSdk().us.getWorkbookEntries({
+            return getSdk().sdk.us.getWorkbookEntries({
                 ...args,
                 scope,
             });
@@ -403,7 +403,7 @@ export const renameEntry = ({
             type: RENAME_ENTRY_LOADING,
         });
         return getSdk()
-            .us.renameEntry({
+            .sdk.us.renameEntry({
                 entryId,
                 name,
             })
@@ -421,7 +421,7 @@ export const renameEntry = ({
                 return data;
             })
             .catch((error) => {
-                if (!getSdk().isCancel(error)) {
+                if (!getSdk().sdk.isCancel(error)) {
                     logger.logError('workbooks/renameEntry failed', error);
                     dispatch(
                         showToast({
@@ -483,7 +483,7 @@ export const changeFavoriteEntry = ({
         };
 
         const catchHandler = (error: Error) => {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 logger.logError('workbooks/changeFavoriteEntry failed', error);
                 dispatch(
                     showToast({
@@ -526,14 +526,14 @@ export const changeFavoriteEntry = ({
 
         if (isFavorite) {
             return getSdk()
-                .us.addFavorite({
+                .sdk.us.addFavorite({
                     entryId,
                 })
                 .then(thenHandler)
                 .catch(catchHandler);
         } else {
             return getSdk()
-                .us.deleteFavorite({
+                .sdk.us.deleteFavorite({
                     entryId,
                 })
                 .then(thenHandler)
@@ -578,7 +578,7 @@ export const deleteEntry = ({
             type: DELETE_ENTRY_LOADING,
         });
         return getSdk()
-            .mix.deleteEntry({
+            .sdk.mix.deleteEntry({
                 entryId,
                 scope,
             })
@@ -603,7 +603,7 @@ export const deleteEntry = ({
                 return data;
             })
             .catch((error) => {
-                if (!getSdk().isCancel(error)) {
+                if (!getSdk().sdk.isCancel(error)) {
                     logger.logError('workbooks/deleteEntry failed', error);
                     dispatch(
                         showToast({
@@ -654,14 +654,17 @@ type AddWorkbookInfoAction = {
 
 export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => {
     return async (dispatch: WorkbooksDispatch) => {
-        const workbook = await getSdk().us.getWorkbook({workbookId, includePermissionsInfo: true});
+        const workbook = await getSdk().sdk.us.getWorkbook({
+            workbookId,
+            includePermissionsInfo: true,
+        });
 
         let workbookBreadcrumbs = null;
         let requestedWithBreadcrumbs = false;
 
         if (withBreadcrumbs && workbook.collectionId) {
             try {
-                workbookBreadcrumbs = await getSdk().us.getCollectionBreadcrumbs(
+                workbookBreadcrumbs = await getSdk().sdk.us.getCollectionBreadcrumbs(
                     {
                         collectionId: workbook.collectionId,
                     },

@@ -10,7 +10,7 @@ import {PLACE, PLACE_VALUES} from '../constants';
 
 async function getEntryKey(entryId, defaultPath) {
     try {
-        const {key} = await getSdk().us.getEntry({entryId});
+        const {key} = await getSdk().sdk.us.getEntry({entryId});
         return key;
     } catch (error) {
         logger.logError('resolveNavigationPath: getEntry failed', error);

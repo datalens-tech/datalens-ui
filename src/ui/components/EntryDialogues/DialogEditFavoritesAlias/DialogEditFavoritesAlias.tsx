@@ -46,7 +46,7 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
             onCloseDialog();
         } else {
             try {
-                await getSdk().us.renameFavorite({entryId, name});
+                await getSdk().sdk.us.renameFavorite({entryId, name});
                 onClose({status: EntryDialogResolveStatus.Success});
             } catch (error) {
                 logger.logError('DialogEditFavoritesAlias: renameAlias failed', error);

@@ -45,7 +45,7 @@ class DialogMoveEntry extends React.Component<Props> {
     }
 
     private onApply = async (key: string) => {
-        const result = await getSdk().us.moveEntry({
+        const result = await getSdk().sdk.us.moveEntry({
             entryId: this.props.entryId,
             destination: key,
         });

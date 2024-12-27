@@ -80,7 +80,7 @@ class DialogRenameEntry extends React.Component<Props, DialogRenameEntryState> {
     };
 
     private onApply = async () => {
-        const data = await getSdk().us.renameEntry({
+        const data = await getSdk().sdk.us.renameEntry({
             entryId: this.props.entryId,
             name: this.state.name.trim(),
         });
