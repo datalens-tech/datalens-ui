@@ -1,4 +1,3 @@
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {flow} from 'lodash';
 
@@ -53,16 +52,11 @@ export class ProcessorHooks {
     }
 
     async init({
-        req,
         config,
         isEditMode,
         ctx,
         hooksContext,
     }: {
-        /**
-         * @deprecated will be removed
-         */
-        req: Request;
         config: Record<string, any>;
         isEditMode: boolean;
         ctx: AppContext;
@@ -77,7 +71,6 @@ export class ProcessorHooks {
             try {
                 ctx.log(`Hook ${hookName} init`);
                 const hook = processHook.init({
-                    req,
                     config,
                     isEditMode,
                     ctx,
