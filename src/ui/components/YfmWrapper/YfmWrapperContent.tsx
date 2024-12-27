@@ -1,13 +1,16 @@
 import React from 'react';
 
+import '@diplodoc/cut-extension/runtime';
 import '@diplodoc/transform/dist/js/_yfm-only';
 import '@diplodoc/transform/dist/js/base';
 
 import {YFM_MARKDOWN_CLASSNAME} from '../../constants/yfm';
 
-import '@diplodoc/transform/dist/css/yfm.css';
-// eslint-disable-next-line import/order
-import './YfmWrapperContent.scss';
+import '@diplodoc/transform/dist/css/base.css';
+import '@diplodoc/transform/dist/css/_yfm-only.css'; // eslint-disable-line import/order
+import '@diplodoc/cut-extension/runtime/styles.css'; // eslint-disable-line import/order
+
+import './YfmWrapperContent.scss'; // eslint-disable-line import/order
 
 type YfmWrapperProps = {
     content: React.ReactNode | string;
