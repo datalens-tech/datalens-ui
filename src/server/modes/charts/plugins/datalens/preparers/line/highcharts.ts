@@ -1,4 +1,5 @@
 import _isEmpty from 'lodash/isEmpty';
+import set from 'lodash/set';
 
 import type {Field, ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
@@ -158,7 +159,6 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                             ySectionItems.length > 1 ||
                             y2SectionItems.length > 1,
                     ) && isLegendEnabled(shared.extraSettings),
-                useHTML: [colorItem, shapeItem].some(isHtmlField),
             };
 
             const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis({
@@ -173,6 +173,11 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             customConfig.yAxis = yAxisSettings;
             customConfig.axesFormatting.yAxis = yAxisFormattings;
         }
+    }
+
+    const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
+    if (shouldUseHtmlForLegend) {
+        set(customConfig, 'legend.useHTML', true);
     }
 
     return customConfig;
