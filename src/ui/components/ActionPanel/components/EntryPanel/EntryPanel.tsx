@@ -206,7 +206,7 @@ class EntryPanel extends React.Component<Props, State> {
         try {
             if (isFavorite) {
                 getSdk()
-                    .us.deleteFavorite({entryId})
+                    .sdk.us.deleteFavorite({entryId})
                     .then(() =>
                         this.setState({
                             entry: {
@@ -218,7 +218,7 @@ class EntryPanel extends React.Component<Props, State> {
                 return;
             }
             getSdk()
-                .us.addFavorite({entryId})
+                .sdk.us.addFavorite({entryId})
                 .then(() =>
                     this.setState({
                         entry: {

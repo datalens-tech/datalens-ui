@@ -19,6 +19,7 @@ import {DL} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils';
 
+import {emitCancelRequest} from './decorator';
 import type {OperationError, SdkError} from './parse-error';
 import {handleRequestError, isOperationError, isSdkError} from './parse-error';
 
@@ -60,6 +61,7 @@ const sdkConfig: SdkConfig = {
             },
         };
     },
+    // decorator: initBeforeRequestDecorator(...),
 };
 
 export const initSdk = () => {
@@ -98,7 +100,15 @@ export const initSdk = () => {
 };
 
 export const getSdk = () => {
-    return registry.libs.schematicSdk.get() as DatalensSdk<{
+    const sdk = registry.libs.schematicSdk.get() as DatalensSdk<{
         root: typeof schema;
     }>;
+    return {
+        sdk,
+        // Use this method instead of sdk.cancelRequest
+        cancelRequest(concurrentId: string) {
+            emitCancelRequest(concurrentId);
+            sdk.cancelRequest(concurrentId);
+        },
+    };
 };

@@ -54,7 +54,7 @@ export const getEntry = (params: GetEntryArgs) => {
             type: GET_ENTRY_LOADING,
         });
         return getSdk()
-            .us.getEntry(params)
+            .sdk.us.getEntry(params)
             .then((data) => {
                 dispatch({
                     type: GET_ENTRY_SUCCESS,
@@ -63,7 +63,7 @@ export const getEntry = (params: GetEntryArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('copyEntryToWorkbook/getEntry failed', error);
@@ -107,7 +107,7 @@ export const getRelations = (params: GetRelationsArgs) => {
             type: GET_RELATIONS_LOADING,
         });
         return getSdk()
-            .us.getRelations(params)
+            .sdk.us.getRelations(params)
             .then((data) => {
                 dispatch({
                     type: GET_RELATIONS_SUCCESS,
@@ -116,7 +116,7 @@ export const getRelations = (params: GetRelationsArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('copyEntryToWorkbook/getRelations failed', error);
@@ -160,7 +160,7 @@ export const copyEntriesToWorkbook = (params: CopyEntriesToWorkbookArgs) => {
             type: COPY_ENTRIES_TO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.copyEntriesToWorkbook(params)
+            .sdk.us.copyEntriesToWorkbook(params)
             .then((data) => {
                 dispatch({
                     type: COPY_ENTRIES_TO_WORKBOOK_SUCCESS,
@@ -169,7 +169,7 @@ export const copyEntriesToWorkbook = (params: CopyEntriesToWorkbookArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('copyEntriesToWorkbook/copyEntriesToWorkbook failed', error);

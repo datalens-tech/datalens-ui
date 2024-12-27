@@ -68,7 +68,6 @@ import {isEmbeddedMode} from 'ui/utils/embedded';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
-import type SDK from '../../../../libs/sdk';
 import Utils from '../../../../utils';
 import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
@@ -239,7 +238,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (!this.props.entryId) {
             return;
         }
-        const {hash} = await getSdk().us.createDashState({
+        const {hash} = await getSdk().sdk.us.createDashState({
             entryId: this.props.entryId,
             data,
         });
@@ -373,7 +372,7 @@ class Body extends React.PureComponent<BodyProps> {
             <div className={b()}>
                 {this.renderBody()}
                 <PaletteEditor />
-                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
+                <EntryDialogues ref={this.entryDialoguesRef} />
             </div>
         );
     }

@@ -208,7 +208,7 @@ class DatasetSources extends React.Component {
 
     selectConnection = async ({entryId}) => {
         try {
-            const connection = await getSdk().us.getEntry({entryId});
+            const connection = await getSdk().sdk.us.getEntry({entryId});
 
             this.props.addConnection({connection});
 
@@ -592,7 +592,7 @@ class DatasetSources extends React.Component {
 
     replaceConnection = async (connection, {entryId}) => {
         try {
-            const newConnection = await getSdk().us.getEntry({entryId});
+            const newConnection = await getSdk().sdk.us.getEntry({entryId});
 
             const update = {connection, newConnection};
             this.updateDatasetConfig({

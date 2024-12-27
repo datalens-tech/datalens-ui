@@ -37,7 +37,7 @@ export function waitOperation<O extends Operation>({
 }: WaitOperationOptions<O>): WaitOperationResult<O> {
     const cancelSource = axios.CancelToken.source();
     const cancelToken = cancelSource.token;
-    const concurrentId = getSdk().getConcurrentId();
+    const concurrentId = getSdk().sdk.getConcurrentId();
     let cancelOperation: () => void;
     let timeouted = false;
     let cancelled = false;
