@@ -44,6 +44,8 @@ interface DialogTitleWidgetState {
 export interface DialogTitleWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableShowInTOC?: boolean;
+    enableCustomFontSize?: boolean;
+    enableCustomLineHeight?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -68,6 +70,7 @@ class DialogTitleWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableShowInTOC: true,
+        enableCustomFontParams: true,
         openedItemData: {
             text: i18n('dash.title-dialog.edit', 'value_default'),
             size: SIZES[0].value,
