@@ -81,7 +81,7 @@ export enum Feature {
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
     /** Escaping string in wizard chart config to remove potential html injection */
-    EscapingStringInWizard = 'EscapingStringInWizard',
+    EscapeStringInWizard = 'EscapeStringInWizard',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -30,7 +30,6 @@ import {
     getDefaultSubTotalsSettings,
     isSubTotalsAvailableInDialogField,
 } from 'ui/units/wizard/components/Dialogs/DialogField/utils/subTotals';
-import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
 import type {
@@ -42,7 +41,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES, Feature} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -67,7 +66,12 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {canUseStringAsMarkdown, getFormattingDataType, isOneOfPropChanged} from './utils/misc';
+import {
+    canUseStringAsHtml,
+    canUseStringAsMarkdown,
+    getFormattingDataType,
+    isOneOfPropChanged,
+} from './utils/misc';
 
 import './DialogField.scss';
 
@@ -471,20 +475,26 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
     private renderMarkdownSettings() {
         const {item, placeholderId, visualization} = this.props;
+        const isStringField = item?.data_type === DATASET_FIELD_TYPES.STRING;
+        const visualizationId = visualization.id as WizardVisualizationId;
         const canTransformToMarkdown =
-            item?.data_type === DATASET_FIELD_TYPES.STRING &&
-            canUseStringAsMarkdown(visualization.id as WizardVisualizationId, placeholderId);
+            isStringField && canUseStringAsMarkdown(visualizationId, placeholderId);
+        const canTransformToHtml =
+            isStringField && canUseStringAsHtml(visualizationId, placeholderId);
 
-        if (!canTransformToMarkdown) {
+        if (!canTransformToMarkdown && !canTransformToHtml) {
             return null;
         }
 
         const items: RadioButtonOption[] = [
             {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
-            {value: MARKUP_TYPE.markdown, content: i18n('wizard', 'label_markdown')},
         ];
 
-        if (Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+        if (canTransformToMarkdown) {
+            items.push({value: MARKUP_TYPE.markdown, content: i18n('wizard', 'label_markdown')});
+        }
+
+        if (canTransformToHtml) {
             items.push({value: MARKUP_TYPE.html, content: i18n('wizard', 'label_html')});
         }
 

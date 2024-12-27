@@ -52,7 +52,7 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
     return {
         ...config,
         lines: mappedLines,
-        unsafe: Utils.isEnabledFeature(Feature.EscapingStringInWizard),
+        unsafe: Utils.isEnabledFeature(Feature.HtmlInWizard),
     };
 }
 

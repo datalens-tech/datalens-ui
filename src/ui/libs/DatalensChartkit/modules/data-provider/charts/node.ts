@@ -356,7 +356,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 const parseHtml = await getParseHtmlFn();
                 const ignoreInvalidValues = isWizardOrQl;
                 const allowHtml =
-                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapingStringInWizard)
+                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapeStringInWizard)
                         ? false
                         : enableJsAndHtml;
                 processHtmlFields(result.data, {

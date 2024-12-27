@@ -31,7 +31,7 @@ import {
     collator,
     getCategoryFormatter,
     getLabelValue,
-    getSegmentTitleFormatter,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -127,7 +127,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
     const isHtmlSegment = isHtmlField(segmentField);
-    const segmentTitleFormatter = getSegmentTitleFormatter({field: segmentField});
+    const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
     const isShapeItemExist = false;
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -151,6 +151,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const nullsY1 = placeholders?.[1]?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem]});
 
     if (mergedYSections.length) {
         let categories: (string | number)[] = [];
@@ -339,7 +340,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title || 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         ...line.dataLabels,

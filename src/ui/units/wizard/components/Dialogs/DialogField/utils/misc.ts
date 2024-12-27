@@ -47,8 +47,6 @@ export function canUseStringAsMarkdown(
     visualizationId: WizardVisualizationId,
     placeholderId: PlaceholderId | undefined,
 ) {
-    const canUseHtmlInOtherFields = Utils.isEnabledFeature(Feature.HtmlInWizard);
-
     switch (visualizationId) {
         case WizardVisualizationId.Scatter: {
             const possiblePlaceholders: PlaceholderId[] = [
@@ -80,19 +78,16 @@ export function canUseStringAsMarkdown(
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Pie: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
-
-            if (canUseHtmlInOtherFields) {
-                possiblePlaceholders.push(
-                    PlaceholderId.X,
-                    PlaceholderId.Colors,
-                    PlaceholderId.Shapes,
-                    PlaceholderId.Segments,
-                );
-            }
-
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
         default:
             return false;
     }
+}
+
+export function canUseStringAsHtml(
+    _visualizationId: WizardVisualizationId,
+    _placeholderId: PlaceholderId | undefined,
+) {
+    return Utils.isEnabledFeature(Feature.HtmlInWizard);
 }

@@ -84,6 +84,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                     isDateField(x) && xAxisType === 'category'
                         ? ChartkitHandlers.WizardXAxisFormatter
                         : undefined,
+                useHTML: isHtmlField(x),
             },
         },
         axesFormatting: {

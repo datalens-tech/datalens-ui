@@ -29,7 +29,7 @@ import {
     collator,
     getCategoryFormatter,
     getLabelValue,
-    getSegmentTitleFormatter,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -122,7 +122,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
     const isHtmlSegment = isHtmlField(segmentField);
-    const segmentTitleFormatter = getSegmentTitleFormatter({field: segmentField});
+    const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
     const isShapeItemExist = Boolean(shapeItem && shapeItem.type !== 'PSEUDO');
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -146,13 +146,18 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
-    const seriesNameFormatter = (value?: string) => {
-        if (value && (isHtmlColor || isHtmlShape)) {
-            return wrapHtml(value);
-        }
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem, shapeItem]});
 
-        return value;
-    };
+    const categoryField = xField
+        ? {...xField, data_type: xDataType ?? xField?.data_type}
+        : undefined;
+    const categoriesFormatter = getCategoryFormatter({
+        field: categoryField,
+    });
+
+    if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlShape || isHtmlSegment) {
+        ChartEditor.updateConfig({useHtml: true});
+    }
 
     if (mergedYSections.length) {
         let categories: (string | number)[] = [];
@@ -554,14 +559,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useMarkup: true});
         }
 
-        if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlShape || isHtmlSegment) {
-            ChartEditor.updateConfig({useHtml: true});
-        }
-
-        if (xField && isXCategoryAxis) {
-            const categoriesFormatter = getCategoryFormatter({
-                field: {...xField, data_type: xDataType ?? xField.data_type},
-            });
+        if (isXCategoryAxis) {
             return {
                 graphs,
                 categories: categories.map<string | WrappedHTML>(categoriesFormatter),
@@ -623,6 +621,6 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             return {graphs, categories_ms: categories};
         }
 
-        return {graphs, categories};
+        return {graphs, categories: categories.map<string | WrappedHTML>(categoriesFormatter)};
     }
 }
