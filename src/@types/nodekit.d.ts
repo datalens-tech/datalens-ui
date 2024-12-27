@@ -89,6 +89,7 @@ export interface SharedAppConfig {
     redis: RedisConfig | null;
     apiPrefix: string;
     preloadList?: string[];
+    releaseVersion?: string;
 }
 
 export interface SharedAppDynamicConfig {
