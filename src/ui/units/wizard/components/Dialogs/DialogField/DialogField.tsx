@@ -479,8 +479,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         const visualizationId = visualization.id as WizardVisualizationId;
         const canTransformToMarkdown =
             isStringField && canUseStringAsMarkdown(visualizationId, placeholderId);
-        const canTransformToHtml =
-            isStringField && canUseStringAsHtml(visualizationId, placeholderId);
+        const canTransformToHtml = isStringField && canUseStringAsHtml();
 
         if (!canTransformToMarkdown && !canTransformToHtml) {
             return null;

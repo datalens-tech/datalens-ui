@@ -85,9 +85,6 @@ export function canUseStringAsMarkdown(
     }
 }
 
-export function canUseStringAsHtml(
-    _visualizationId: WizardVisualizationId,
-    _placeholderId: PlaceholderId | undefined,
-) {
+export function canUseStringAsHtml() {
     return Utils.isEnabledFeature(Feature.HtmlInWizard);
 }
