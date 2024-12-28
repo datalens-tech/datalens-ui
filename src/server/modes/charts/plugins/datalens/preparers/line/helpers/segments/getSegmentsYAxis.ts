@@ -1,8 +1,9 @@
-import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import sortBy from 'lodash/sortBy';
 
-import type {ServerPlaceholder} from '../../../../../../../../../shared';
-import {AxisLabelFormatMode} from '../../../../../../../../../shared';
+import type {ServerField, ServerPlaceholder} from '../../../../../../../../../shared';
+import {AxisLabelFormatMode, isHtmlField} from '../../../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../../../shared/utils/ui-sandbox';
+import type {AxisOptions} from '../../../../types';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
 import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
 
@@ -10,12 +11,15 @@ import type {SegmentsMap} from './types';
 
 const DEFAULT_SPACE_BETWEEN_SEGMENTS = 4;
 
-export const getSegmentsYAxis = (
-    segmentsMap: SegmentsMap,
-    placeholders: {y?: ServerPlaceholder; y2?: ServerPlaceholder},
-    visualizationId: string,
-): {yAxisSettings: Highcharts.AxisOptions[]; yAxisFormattings: any[]} => {
+export const getSegmentsYAxis = (args: {
+    segment?: ServerField;
+    segmentsMap: SegmentsMap;
+    placeholders: {y?: ServerPlaceholder; y2?: ServerPlaceholder};
+    visualizationId: string;
+}): {yAxisSettings: AxisOptions[]; yAxisFormattings: any[]} => {
+    const {segment, segmentsMap, placeholders, visualizationId} = args;
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isHtmlSegment = isHtmlField(segment);
 
     const segmentsNumber = segments.filter((s) => !s.isOpposite).length;
     const takenSpaceBetweenSegments = DEFAULT_SPACE_BETWEEN_SEGMENTS * (segmentsNumber - 1);
@@ -42,7 +46,9 @@ export const getSegmentsYAxis = (
             segmentIndex = leftAxisSegment;
         }
 
-        const axis: Highcharts.AxisOptions = {
+        const segmentTitle = isHtmlSegment ? wrapHtml(segment.title) : String(segment.title);
+
+        const axis: AxisOptions = {
             top: `${DEFAULT_SPACE_BETWEEN_SEGMENTS * segmentIndex + segmentsSpace * segmentIndex}%`,
             height: `${segmentsSpace}%`,
             offset: 0,
@@ -52,7 +58,8 @@ export const getSegmentsYAxis = (
             title: isY2Axis
                 ? undefined
                 : {
-                      text: segment.title,
+                      text: segmentTitle,
+                      useHTML: isHtmlSegment,
                       align: 'middle',
                       textAlign: 'center',
                       offset: 120,

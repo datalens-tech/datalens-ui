@@ -183,12 +183,15 @@ export const buildChartsConfigPrivate = (
         }
     } else if (visualizationId === 'pie' || visualizationId === 'donut') {
         config.showPercentInTooltip = true;
+        config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
     } else if (visualizationId === 'metric') {
         (config as MetricConfig).metricVersion = 2;
     } else if (visualizationId === 'pivotTable') {
         (config as TableConfig).settings = {
             externalSort: true,
         };
+    } else if (visualizationId === WizardVisualizationId.CombinedChart) {
+        config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
     }
 
     const isTableWidget = (

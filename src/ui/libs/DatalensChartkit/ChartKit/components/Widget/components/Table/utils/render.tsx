@@ -24,13 +24,14 @@ import type {
     TableRow,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
 import {markupToRawString} from '../../../../../../modules/table';
 import type {ChartKitDataTable, DataTableData} from '../../../../../../types';
 import {Bar} from '../Bar/Bar';
-import {WrappedHTMLNode, isWrappedHTML} from '../WrappedHTMLNode';
+import {WrappedHTMLNode} from '../WrappedHTMLNode';
 import type {TableProps} from '../types';
 
 import {getAdditionalStyles, getRowActionParams} from './action-params';

@@ -1,8 +1,9 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
-import {WrappedHTMLNode, isWrappedHTML} from '../WrappedHTMLNode';
+import {WrappedHTMLNode} from '../WrappedHTMLNode';
 
 import type {BarProps} from './types';
 import {getStyles, isPropsValid} from './utils';

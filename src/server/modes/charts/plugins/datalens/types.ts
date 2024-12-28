@@ -9,6 +9,7 @@ import type {
     TableBarsSettings,
     Update,
 } from '../../../../../shared';
+import type {WrappedHTML} from '../../../../../shared/types/charts';
 import type {TableFieldBackgroundSettings} from '../../../../../shared/types/wizard/background-settings';
 
 export type PayloadParameter = {
@@ -69,3 +70,30 @@ export interface ChartColorsConfig extends ServerColorsConfig {
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
 }
+
+// Extended Highcharts.AxisOptions
+export type AxisOptions = {
+    type?: string;
+    visible?: boolean;
+    opposite?: boolean;
+    top?: string;
+    height?: string;
+    offset?: number;
+    min?: number;
+    max?: number;
+    endOnTick?: boolean;
+    tickPixelInterval?: number;
+    lineWidth?: number;
+    gridLineWidth?: number;
+    minorGridLineWidth?: number;
+    title?: {
+        text: string | WrappedHTML;
+        align?: string;
+        textAlign?: string;
+        offset?: number;
+        rotation?: number;
+        style?: React.CSSProperties;
+        useHTML?: boolean;
+    };
+    labels?: any[];
+};

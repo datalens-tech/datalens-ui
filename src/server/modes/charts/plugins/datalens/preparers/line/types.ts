@@ -1,4 +1,8 @@
-import type {ServerField, ServerPlaceholderSettings} from '../../../../../../../shared';
+import type {
+    ServerField,
+    ServerPlaceholderSettings,
+    WrappedHTML,
+} from '../../../../../../../shared';
 import type {ChartKitFormatSettings} from '../types';
 
 export type LinesRecord = {
@@ -18,7 +22,7 @@ export type LineTemplate = {
     // colorValue for the entire series.
     colorValue: string | number | undefined;
     title: string;
-    legendTitle: string;
+    legendTitle: string | WrappedHTML;
     stack: string | number | Date | undefined;
     colorKey: string | undefined;
     tooltip: string;

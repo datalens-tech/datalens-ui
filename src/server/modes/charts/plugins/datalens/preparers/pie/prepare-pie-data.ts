@@ -1,4 +1,4 @@
-import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
+import type {ExtendedSeriesLineOptions, WrappedHTML} from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
@@ -109,7 +109,23 @@ export function preparePieData(args: PrepareFunctionArgs) {
         colorField = colorField.fields[Math.min(drillDownLevel, colorField.fields.length - 1)];
     }
 
-    const dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
+    if (colorField) {
+        colorField = {
+            ...colorField,
+            data_type: idToDataType[colorField.guid],
+        };
+    }
+    const isHtmlColor = isHtmlField(colorField);
+
+    let dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
+    if (dimensionField) {
+        dimensionField = {
+            ...dimensionField,
+            data_type: idToDataType[dimensionField.guid],
+        };
+    }
+    const isHtmlDimension = isHtmlField(dimensionField);
+
     if (!measure) {
         return {graphs: []};
     }
@@ -206,36 +222,29 @@ export function preparePieData(args: PrepareFunctionArgs) {
             } else {
                 colorValue = getDistinctValue(colorFieldValue);
                 legendParts.push(String(colorFieldValue));
-                formattedNameParts.push(
-                    String(
-                        getFormattedValue(colorFieldValue, {
-                            ...colorField,
-                            data_type: idToDataType[colorField.guid],
-                        }),
-                    ),
-                );
+                formattedNameParts.push(String(getFormattedValue(colorFieldValue, colorField)));
             }
         }
 
         if (dimensionField) {
             legendParts.push(String(dimensionValue));
-            formattedNameParts.push(
-                String(
-                    getFormattedValue(dimensionValue, {
-                        ...dimensionField,
-                        data_type: idToDataType[dimensionField.guid],
-                    }),
-                ),
-            );
+            formattedNameParts.push(String(getFormattedValue(dimensionValue, dimensionField)));
         }
 
-        const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
-        const formattedName = formattedNameParts.join(': ');
+        const pointName: string | WrappedHTML =
+            legendParts.join(': ') || getFakeTitleOrTitle(measure);
+        const drillDownFilterValue = pointName;
+        const shouldWrapPointName = isHtmlColor || isHtmlDimension;
+
+        let formattedName: string | WrappedHTML = formattedNameParts.join(': ');
+        if (isHtmlColor || isHtmlDimension) {
+            formattedName = wrapHtml(formattedName);
+        }
 
         const point: PiePoint = {
-            name: pointName,
+            name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
             formattedName,
-            drillDownFilterValue: pointName,
+            drillDownFilterValue,
             y: Number(measureValue),
             colorGuid: colorField?.guid,
             colorValue,
@@ -271,11 +280,11 @@ export function preparePieData(args: PrepareFunctionArgs) {
             };
         }
 
-        if (acc.get(point.name)) {
+        if (acc.get(pointName)) {
             pie.pointConflict = true;
         }
 
-        acc.set(point.name, point);
+        acc.set(pointName, point);
 
         return acc;
     }, new Map<string, PiePoint>());
@@ -307,11 +316,18 @@ export function preparePieData(args: PrepareFunctionArgs) {
         ChartEditor.updateConfig({useMarkup: true});
     }
 
-    if (isHtmlLabel) {
+    if (isHtmlColor || isHtmlDimension || [labelField].some(isHtmlField)) {
         ChartEditor.updateConfig({useHtml: true});
     }
 
-    return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};
+    return {
+        graphs: [pie],
+        totals: totals.find((value) => value),
+        label: labelField,
+        measure,
+        color: colorField,
+        dimension: dimensionField,
+    };
 }
 
 export default preparePieData;

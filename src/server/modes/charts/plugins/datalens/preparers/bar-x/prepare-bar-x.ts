@@ -5,6 +5,7 @@ import type {
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
+    WrappedHTML,
 } from '../../../../../../../shared';
 import {
     AxisMode,
@@ -21,14 +22,16 @@ import {
     isMeasureValue,
     isPercentVisualization,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {PSEUDO} from '../../utils/constants';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -86,6 +89,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const x2IsNumber = Boolean(x2DataType && isNumericalDataType(x2DataType));
     const x2IsDate = Boolean(x2DataType && isDateField({data_type: x2DataType}));
     const x2IsPseudo = Boolean(x2 && x2.type === PSEUDO);
+    const isHtmlX = isHtmlField(x);
 
     const yPlaceholder: ServerPlaceholder = placeholders[1];
 
@@ -105,6 +109,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+    const isHtmlColor = isHtmlField(colorItem);
 
     const gradientMode =
         colorItem &&
@@ -121,6 +126,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
+    const isHtmlSegment = isHtmlField(segmentField);
+    const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
     const isShapeItemExist = false;
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -144,6 +151,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const nullsY1 = placeholders?.[1]?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem]});
 
     if (mergedYSections.length) {
         let categories: (string | number)[] = [];
@@ -332,7 +340,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title || 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         ...line.dataLabels,
@@ -368,7 +376,11 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
                             if (line.segmentNameKey) {
                                 const currentSegment = segmentsMap[line.segmentNameKey];
-                                const tooltipPointName = `${currentSegment.title}: ${line.title}`;
+                                let tooltipPointName: string | WrappedHTML =
+                                    `${currentSegment.title}: ${line.title}`;
+                                if (isHtmlSegment) {
+                                    tooltipPointName = wrapHtml(tooltipPointName);
+                                }
                                 point.custom = {
                                     tooltipPointName,
                                 };
@@ -423,7 +435,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;
 
-                    customSeriesData.segmentTitle = currentSegment.title;
+                    customSeriesData.segmentTitle = segmentTitleFormatter(currentSegment.title);
                 } else if (lineKeysIndex === 0 || ySectionItems.length === 0) {
                     graph.yAxis = 0;
                 } else {
@@ -491,18 +503,18 @@ export function prepareBarX(args: PrepareFunctionArgs) {
             ChartEditor.updateConfig({useMarkup: true});
         }
 
-        if (isHtmlLabel) {
+        if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlSegment) {
             ChartEditor.updateConfig({useHtml: true});
         }
 
-        if (isXCategoryAxis) {
+        if (x && isXCategoryAxis) {
+            const categoriesFormatter = getCategoryFormatter({
+                field: {...x, data_type: xDataType ?? x.data_type},
+            });
+
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({valueType: xDataType!, value, format: x?.format, utc: true})
-                        : value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};

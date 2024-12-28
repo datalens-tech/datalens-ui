@@ -35,6 +35,7 @@ import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
+    getCategoryFormatter,
     getPointRadius,
     getTimezoneOffsettedTime,
     isGradientMode,
@@ -59,11 +60,12 @@ export type ScatterGraph = {
 
 export type PrepareScatterResult = {
     graphs: ScatterGraph[];
-    categories?: (string | number | WrappedMarkdown)[];
+    categories?: (string | number | WrappedMarkdown | WrappedHTML)[];
     x?: ServerField;
     y?: ServerField;
     z?: ServerField;
     color?: ServerField;
+    shape?: ServerField;
     size?: ServerField;
     minColorValue?: number;
     maxColorValue?: number;
@@ -121,7 +123,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const yDataType = idToDataType[y.guid];
     const yIsNumber = isNumericalDataType(yDataType);
     const yIsDate = isDateField({data_type: yDataType});
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
+    const shouldEscapeUserValue =
+        features[Feature.EscapeUserHtmlInDefaultHcTooltip] &&
+        !features[Feature.EscapeStringInWizard];
 
     const cDataType = color && idToDataType[color.guid];
 
@@ -373,7 +377,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (shape) {
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
-            const shapeValue = escape(values[i] as string) || '';
+            const shapeValue = shouldEscapeUserValue
+                ? escape(String(values[i] ?? ''))
+                : String(values[i] ?? '');
             let shapeLabel: WrappedMarkdown | string | WrappedHTML = shapeValue;
             if (isMarkdownField(shape)) {
                 shapeLabel = wrapMarkdownValue(shapeValue);
@@ -446,14 +452,16 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         });
     }
 
-    let categories: (string | number | WrappedMarkdown)[] | undefined;
+    let categories: (string | number | WrappedMarkdown | WrappedHTML)[] | undefined;
 
     if (!xIsNumber && !xIsDate) {
         categories = xCategories;
+        const categoryField = x ? {...x, data_type: xDataType ?? x?.data_type} : undefined;
+        const categoriesFormatter = getCategoryFormatter({
+            field: categoryField,
+        });
 
-        if (isMarkdownField(x)) {
-            categories = categories?.map((c) => wrapMarkdownValue(c as string));
-        }
+        categories = categories?.map((c) => categoriesFormatter(String(c)));
     }
 
     const hasMarkdown = [x, y, z, size, color, shape].some((field) => isMarkdownField(field));
@@ -491,6 +499,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         y,
         z,
         color,
+        shape,
         minColorValue,
         maxColorValue,
         colorsConfig,

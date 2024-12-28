@@ -16,6 +16,7 @@ import {
     isPseudoField,
     markupToRawString,
 } from '../../../../../../../../../shared';
+import type {WrappedHTML} from '../../../../../../../../../shared/types/charts';
 import {
     findIndexInOrder,
     getFormatOptionsFromFieldFormatting,
@@ -169,6 +170,10 @@ const extendLineWithSegmentsData = (args: ExtendLineWithSegmentDataArgs): LineTe
         segmentNameKey,
     };
 };
+
+function getSeriesId(...str: (string | WrappedHTML)[]) {
+    return str.find((s) => typeof s === 'string') ?? '';
+}
 
 export const prepareLines = (args: PrepareLinesArgs) => {
     const {
@@ -354,7 +359,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
             });
         }
 
-        lines[keys.key].id = currentLine.legendTitle || currentLine.title;
+        lines[keys.key].id = getSeriesId(currentLine.legendTitle, currentLine.title);
 
         if (keys.pointConflict) {
             lines[keys.key].pointConflict = true;

@@ -88,8 +88,8 @@ export type LayerChartMeta = {
 };
 
 export type PiePoint = {
-    name: string;
-    formattedName: string;
+    name: string | WrappedHTML;
+    formattedName: string | WrappedHTML;
     drillDownFilterValue: string;
     y: number;
     color?: string;

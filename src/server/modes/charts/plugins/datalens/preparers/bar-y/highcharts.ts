@@ -1,3 +1,5 @@
+import set from 'lodash/set';
+
 import type {ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
     AxisLabelFormatMode,
@@ -11,6 +13,7 @@ import {
     getXAxisMode,
     isDateField,
     isFloatField,
+    isHtmlField,
     isMeasureNameOrValue,
 } from '../../../../../../../shared';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -66,6 +69,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                     isDateField(x) && isXDiscrete
                         ? ChartkitHandlers.WizardXAxisFormatter
                         : undefined,
+                useHTML: isHtmlField(x),
             },
         },
         axesFormatting: {
@@ -120,6 +124,11 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                 getAxisFormattingByField(layerYPlaceholder, visualizationId),
             );
         }
+    }
+
+    const shouldUseHtmlForLegend = isHtmlField(colorItem);
+    if (shouldUseHtmlForLegend) {
+        set(customConfig, 'legend.useHTML', true);
     }
 
     return customConfig;
