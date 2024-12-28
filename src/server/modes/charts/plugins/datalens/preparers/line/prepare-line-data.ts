@@ -1,7 +1,11 @@
 import _isEmpty from 'lodash/isEmpty';
 import isNil from 'lodash/isNil';
 
-import type {HighchartsSeriesCustomObject, WrappedHTML} from '../../../../../../../shared';
+import type {
+    HighchartsSeriesCustomObject,
+    WrappedHTML,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {
     AxisMode,
     AxisNullsMode,
@@ -562,7 +566,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map<string | WrappedHTML>(categoriesFormatter),
+                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
+                    categoriesFormatter,
+                ),
             };
         } else {
             return {graphs};
@@ -621,6 +627,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             return {graphs, categories_ms: categories};
         }
 
-        return {graphs, categories: categories.map<string | WrappedHTML>(categoriesFormatter)};
+        return {
+            graphs,
+            categories: categories.map<string | WrappedHTML | WrappedMarkdown>(categoriesFormatter),
+        };
     }
 }

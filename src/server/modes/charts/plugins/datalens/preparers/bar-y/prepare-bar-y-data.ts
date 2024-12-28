@@ -4,6 +4,7 @@ import type {
     ServerPlaceholder,
     WizardVisualizationId,
     WrappedHTML,
+    WrappedMarkdown,
 } from '../../../../../../../shared';
 import {
     AxisMode,
@@ -466,7 +467,9 @@ export function prepareBarYData({
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map<string | WrappedHTML>(categoriesFormatter),
+                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
+                    categoriesFormatter,
+                ),
             };
         } else {
             return {graphs};
@@ -523,7 +526,12 @@ export function prepareBarYData({
         if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         } else {
-            return {graphs, categories: categories.map<string | WrappedHTML>(categoriesFormatter)};
+            return {
+                graphs,
+                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
+                    categoriesFormatter,
+                ),
+            };
         }
     }
 }

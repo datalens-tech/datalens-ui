@@ -6,6 +6,7 @@ import type {
     ServerPlaceholder,
     WizardVisualizationId,
     WrappedHTML,
+    WrappedMarkdown,
 } from '../../../../../../../shared';
 import {
     AxisMode,
@@ -514,7 +515,9 @@ export function prepareBarX(args: PrepareFunctionArgs) {
 
             return {
                 graphs,
-                categories: categories.map<string | WrappedHTML>(categoriesFormatter),
+                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
+                    categoriesFormatter,
+                ),
             };
         } else {
             return {graphs};

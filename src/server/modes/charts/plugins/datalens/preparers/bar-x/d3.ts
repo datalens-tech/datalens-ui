@@ -4,7 +4,7 @@ import type {
     ChartKitWidgetData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
+import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
     AxisMode,
     LabelsPositions,
@@ -29,7 +29,7 @@ type OldBarXDataItem = {
 } | null;
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
-    x?: BarXSeriesData['x'] | WrappedHTML;
+    x?: BarXSeriesData['x'] | WrappedHTML | WrappedMarkdown;
 };
 
 type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {

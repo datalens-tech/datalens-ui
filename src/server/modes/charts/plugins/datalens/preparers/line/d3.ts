@@ -4,7 +4,12 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {SeriesExportSettings, ServerField, WrappedHTML} from '../../../../../../../shared';
+import type {
+    SeriesExportSettings,
+    ServerField,
+    WrappedHTML,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {AxisMode, PlaceholderId, getXAxisMode} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -15,7 +20,7 @@ import type {PrepareFunctionArgs} from '../types';
 import {prepareLineData} from './prepare-line-data';
 
 type ExtendedLineSeriesData = Omit<LineSeriesData, 'x'> & {
-    x?: LineSeriesData['x'] | WrappedHTML;
+    x?: LineSeriesData['x'] | WrappedHTML | WrappedMarkdown;
 };
 
 type ExtendedLineSeries = Omit<LineSeries, 'data'> & {

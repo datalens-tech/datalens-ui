@@ -432,10 +432,10 @@ export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)
     const {fields} = args;
 
     if (fields.some(isHtmlField)) {
-        return (value: string) => wrapHtml(String(value));
+        return (value?: string) => wrapHtml(String(value ?? ''));
     }
 
-    return (value: string) => value;
+    return (value?: string) => value ?? '';
 }
 
 export {
