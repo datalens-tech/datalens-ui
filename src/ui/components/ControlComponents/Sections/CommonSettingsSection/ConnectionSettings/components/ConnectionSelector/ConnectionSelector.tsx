@@ -33,7 +33,7 @@ export const ConnectionSelector = (props: {
             setIsInvalid(false);
 
             return getSdk()
-                .bi.getConnection({
+                .sdk.bi.getConnection({
                     connectionId: updatedConnectionId,
                     workbookId,
                 })

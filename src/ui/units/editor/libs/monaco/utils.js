@@ -125,7 +125,9 @@ export class MonacoUtils {
                 } else {
                     try {
                         // fix module resolve without navigation service
-                        const {entryId} = await getSdk().us.getEntryByKey({key: matchRequire.key});
+                        const {entryId} = await getSdk().sdk.us.getEntryByKey({
+                            key: matchRequire.key,
+                        });
                         window.open(`/editor/${entryId}`, '_blank');
                     } catch (error) {
                         window.open(`${DL.ENDPOINTS.charts}/editor/${matchRequire.key}`, '_blank');

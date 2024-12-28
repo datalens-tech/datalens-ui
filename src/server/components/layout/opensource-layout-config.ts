@@ -72,6 +72,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
+        releaseVersion: config.releaseVersion,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

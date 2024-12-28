@@ -253,7 +253,7 @@ class ValuesList extends React.Component<Props, State> {
 
             this.props.onChangeSelectedValue(values[0] || null, shouldClearPalette);
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('DialogColorPalette: fetchInitialData failed', error);
@@ -307,7 +307,7 @@ class ValuesList extends React.Component<Props, State> {
 
         getSdk().cancelRequest('getDistincts');
 
-        return getSdk().bi.getDistinctsApiV2(
+        return getSdk().sdk.bi.getDistinctsApiV2(
             {
                 updates,
                 datasetId,
@@ -374,7 +374,7 @@ class ValuesList extends React.Component<Props, State> {
 
             this.props.onChangeSelectedValue(values[0] || null);
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('DialogColorPalette: onChangeSuggest failed', error);

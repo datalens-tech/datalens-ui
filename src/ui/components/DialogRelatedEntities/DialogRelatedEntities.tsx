@@ -52,7 +52,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         setIsError(false);
         getSdk().cancelRequest(CONCURRENT_ID);
         getSdk()
-            .mix.getEntryRelations(
+            .sdk.mix.getEntryRelations(
                 {
                     entryId: entry.entryId,
                     workbookId: entry.workbookId,
