@@ -26,13 +26,16 @@ export enum DashTabItemType {
     Image = 'image',
 }
 
-export enum DashTabItemTitleSize {
-    XL = 'xl',
-    L = 'l',
-    M = 'm',
-    S = 's',
-    XS = 'xs',
-}
+export const DashTabItemTitleSizes = {
+    Custom: 'Custom',
+    XL: 'xl',
+    L: 'l',
+    M: 'm',
+    S: 's',
+    XS: 'xs',
+} as const;
+
+export type DashTabItemTitleSize = ValueOf<typeof DashTabItemTitleSizes>;
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
@@ -155,6 +158,8 @@ export interface DashTabItemTitle extends DashTabItemBase {
     data: {
         text: string;
         size: DashTabItemTitleSize;
+        customFontSize?: number;
+        customLineHeight?: number;
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;

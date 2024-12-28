@@ -12,4 +12,12 @@
     &__checkbox {
         margin-block-start: var(--g-spacing-2);
     }
+
+    &__radiobtn {
+        flex-grow: 1;
+    }
+
+    &__number-input {
+        width: 100px;
+    }
 }
