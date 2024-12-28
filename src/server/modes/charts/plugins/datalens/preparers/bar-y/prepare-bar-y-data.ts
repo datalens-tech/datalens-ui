@@ -3,8 +3,6 @@ import type {
     ServerField,
     ServerPlaceholder,
     WizardVisualizationId,
-    WrappedHTML,
-    WrappedMarkdown,
 } from '../../../../../../../shared';
 import {
     AxisMode,
@@ -467,9 +465,7 @@ export function prepareBarYData({
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
-                    categoriesFormatter,
-                ),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};
@@ -528,9 +524,7 @@ export function prepareBarYData({
         } else {
             return {
                 graphs,
-                categories: categories.map<string | WrappedHTML | WrappedMarkdown>(
-                    categoriesFormatter,
-                ),
+                categories: categories.map(categoriesFormatter),
             };
         }
     }

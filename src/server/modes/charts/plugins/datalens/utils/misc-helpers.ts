@@ -11,6 +11,8 @@ import type {
     SortParams,
     StringParams,
     V9Color,
+    WrappedHTML,
+    WrappedMarkdown,
 } from '../../../../../../shared';
 import {
     ColorMode,
@@ -404,7 +406,11 @@ export function getLabelValue(
     return value;
 }
 
-export function getCategoryFormatter(args: {field?: ServerField}) {
+type CategoryItem = string | number | WrappedHTML | WrappedMarkdown;
+
+export function getCategoryFormatter(args: {
+    field?: ServerField;
+}): (value: string | number) => CategoryItem {
     const {field} = args;
     if (isDateField(field)) {
         return (value: string | number) => {
@@ -425,7 +431,7 @@ export function getCategoryFormatter(args: {field?: ServerField}) {
         return (value: unknown) => wrapHtml(String(value));
     }
 
-    return (value: unknown) => String(value);
+    return (value: string | number) => value;
 }
 
 export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)[]}) {
