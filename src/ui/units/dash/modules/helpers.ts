@@ -274,12 +274,7 @@ export const sortByOrderIdOrLayoutComparator = (
         return sortByLayoutComparator(prev, next, layout, columns);
     }
 
-    if (prevOrderId > nextOrderId) {
-        return 1;
-    } else if (prevOrderId < nextOrderId) {
-        return -1;
-    }
-    return 0;
+    return prevOrderId - nextOrderId;
 };
 
 export const getLayoutParentId = (layout: DashTabLayout) => {
