@@ -46,7 +46,7 @@ class DialogCreateFolder extends React.Component<Props> {
     }
 
     private onApply = async (key: string) => {
-        const data = await getSdk().us.createFolder({key});
+        const data = await getSdk().sdk.us.createFolder({key});
         return data;
     };
 

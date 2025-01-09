@@ -83,7 +83,7 @@ export const setSelectStateMode = ({
                 } = getState();
 
                 const hashData = await getSdk()
-                    .us.getDashState({entryId, hash: stateHash})
+                    .sdk.us.getDashState({entryId, hash: stateHash})
                     .catch((error) => {
                         logger.logError('getDashState failed', error);
                         console.error('STATE_LOAD', error);
@@ -125,7 +125,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         }
 
         try {
-            const {savedId} = await getSdk().us.getEntryMeta({entryId});
+            const {savedId} = await getSdk().sdk.us.getEntryMeta({entryId});
 
             if (stateSavedId !== savedId) {
                 dispatch(
@@ -276,7 +276,7 @@ export const load = ({
                 }),
                 hash
                     ? getSdk()
-                          .us.getDashState({
+                          .sdk.us.getDashState({
                               entryId,
                               hash,
                           })

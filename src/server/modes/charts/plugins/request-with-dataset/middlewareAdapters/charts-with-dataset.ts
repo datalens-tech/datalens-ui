@@ -13,15 +13,17 @@ export default async (
     },
 ) => {
     const {
+        ctx,
         source,
         sourceName,
-        req,
         ChartsEngine,
         userId,
         iamToken,
         workbookId,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
+        requestHeaders,
     } = args;
 
     const cacheClient = ChartsEngine.cacheClient as Cache;
@@ -46,20 +48,21 @@ export default async (
         const datasetFieldsResponse = await getDatasetFields({
             datasetId,
             workbookId: workbookId ?? null,
-            req,
-            ctx: req.ctx,
+            ctx,
             cacheClient,
             userId,
             iamToken,
             rejectFetchingSource,
             pluginOptions,
+            zitadelParams,
+            requestHeaders,
         });
 
         revisionId = datasetFieldsResponse.revisionId;
         datasetFields = datasetFieldsResponse.datasetFields;
     }
 
-    req.ctx.log('CHARTS_DATASET_FIELDS_RECEIVED', {
+    ctx.log('CHARTS_DATASET_FIELDS_RECEIVED', {
         count: datasetFields.length,
     });
 
@@ -73,7 +76,7 @@ export default async (
         revisionId,
     });
 
-    req.ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
+    ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
 
     return {...source, data};
 };

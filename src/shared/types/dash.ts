@@ -2,7 +2,14 @@ import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
-import type {ClientChartsConfig, Dictionary, Entry, EntryScope, StringParams} from './index';
+import type {
+    ClientChartsConfig,
+    Dictionary,
+    Entry,
+    EntryScope,
+    StringParams,
+    ValueOf,
+} from './index';
 
 export enum ControlType {
     Dash = 'control_dash',
@@ -235,6 +242,14 @@ export enum TitlePlacementOption {
     Top = 'top',
 }
 
+export const TitlePlacements = {
+    Hide: 'hide' as const,
+    Left: TitlePlacementOption.Left,
+    Top: TitlePlacementOption.Top,
+};
+
+export type TitlePlacement = ValueOf<typeof TitlePlacements>;
+
 export type AccentTypeValue = 'info' | null;
 
 export interface DashTabItemControlElementBase {
@@ -287,6 +302,8 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;

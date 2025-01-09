@@ -373,12 +373,12 @@ export const useDialogPublicState = ({
         async function init() {
             dispatch({type: DIALOG_PUBLIC_SET_LOADING});
             try {
-                const entry = await getSdk().us.getEntry({
+                const entry = await getSdk().sdk.us.getEntry({
                     entryId: propsEntry.entryId,
                     includePermissionsInfo: true,
                     includeDlComponentUiData: true,
                 });
-                const relations = await getSdk().mix.getPublicationPreview({
+                const relations = await getSdk().sdk.mix.getPublicationPreview({
                     entryId: entry.entryId,
                     workbookId: entry.workbookId,
                 });
@@ -472,7 +472,7 @@ export const useDialogPublicState = ({
             });
             const entries = getPublicationEntries(state);
             getSdk()
-                .mix.switchPublicationStatus({
+                .sdk.mix.switchPublicationStatus({
                     entries,
                     mainEntry: {
                         entryId: propsEntry.entryId,

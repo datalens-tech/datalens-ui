@@ -1,4 +1,4 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {Palette} from '../../../../shared/constants/colors';
@@ -11,7 +11,6 @@ export const commonFunctionsMap = {
     getSourceAuthorizationHeaders:
         makeFunctionTemplate<
             (args: {
-                req?: Request;
                 ctx: AppContext;
                 sourceConfig: SourceConfig;
                 subrequestHeaders: Record<string, string>;

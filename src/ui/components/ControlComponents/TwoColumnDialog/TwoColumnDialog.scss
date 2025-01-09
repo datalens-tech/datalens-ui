@@ -1,32 +1,22 @@
 .two-column-dialog {
-    $dialogPaddingHorizontal: 24px;
+    --dialog-sidebar-horizontal-padding: var(--g-spacing-4);
+    --dialog-footer-vertical-padding: 28px; // equal to gravity Dialog footer vertical padding
 
     // Header
     $dialogHeaderPaddingTop: 20px;
     $dialogHeaderPaddingBottom: 10px;
-    $dialogHeaderPaddingHorizontal: $dialogPaddingHorizontal;
-
-    // Body
-    $dialogBodyPaddingHorizontal: $dialogPaddingHorizontal;
-    $dialogBodyPaddingTop: 14px;
-    $dialogBodyPaddingTopWithoutSidebar: 10px;
-    $dialogBodyPaddingBottom: 0px;
-
-    // Footer
-    $dialogFooterPaddingHorizontal: $dialogPaddingHorizontal;
-    $dialogFooterPaddingVertical: 28px;
 
     border-radius: 5px;
     overflow: hidden;
     flex: 1;
     display: flex;
 
-    &__header {
-        padding: #{$dialogHeaderPaddingTop} #{$dialogHeaderPaddingHorizontal} #{$dialogHeaderPaddingBottom};
-    }
-
     &__sidebar {
         background: var(--g-color-base-generic-ultralight);
+    }
+
+    &__sidebar-header {
+        padding-inline: var(--dialog-sidebar-horizontal-padding);
     }
 
     &__sidebar-body {
@@ -44,17 +34,5 @@
                     $dialogHeaderPaddingBottom}
             );
         }
-    }
-
-    &__content-body {
-        padding: #{$dialogBodyPaddingTop} #{$dialogBodyPaddingHorizontal} #{$dialogBodyPaddingBottom};
-
-        &_without-sidebar {
-            padding-top: #{$dialogBodyPaddingTopWithoutSidebar};
-        }
-    }
-
-    & .g-dialog-footer {
-        padding: #{$dialogFooterPaddingVertical} #{$dialogFooterPaddingHorizontal};
     }
 }

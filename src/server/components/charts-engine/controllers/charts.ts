@@ -90,7 +90,7 @@ function prepareChartData(
     return {chart, type, links, template};
 }
 
-export const getHeaders = (req: Request) => {
+const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
         ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),

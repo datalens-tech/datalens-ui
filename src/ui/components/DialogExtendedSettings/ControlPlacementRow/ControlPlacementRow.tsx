@@ -8,11 +8,11 @@ import {EMPTY_VALUE} from 'ui/units/dash/modules/constants';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../../constants/dialogs';
 
-import '../DialogControlsPlacement.scss';
+import '../DialogExtendedSettings.scss';
 
-const b = block('controls-placement-dialog');
+const b = block('extended-settings-dialog');
 
-const i18n = I18n.keyset('dash.controls-placement-dialog.edit');
+const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
 type ControlPlacementRowProps = {
     onPlacementModeUpdate: (

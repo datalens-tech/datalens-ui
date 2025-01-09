@@ -9,6 +9,7 @@ import type {
     Dataset,
     DatasetFieldType,
     StringParams,
+    TitlePlacement,
     TitlePlacementOption,
 } from 'shared/types';
 
@@ -24,6 +25,8 @@ export type SelectorDialogValidation = {
 };
 
 export type SelectorsGroupDialogState = {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
@@ -72,13 +75,12 @@ export type AcceptableValue = {
 
 export type SelectorDialogState = {
     title?: string;
-    titlePlacement?: TitlePlacementOption;
+    titlePlacement?: TitlePlacement;
 
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
     chartId?: string;
-    showTitle?: boolean;
     showInnerTitle?: boolean;
     elementType: SelectorElementType;
     defaultValue?: string | string[];

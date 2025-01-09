@@ -3,7 +3,6 @@ import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 import querystring from 'querystring';
 import url from 'url';
 
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
@@ -60,8 +59,7 @@ type PromiseWithAbortController = [Promise<unknown>, AbortController];
 type DataFetcherOptions = {
     chartsEngine: ChartsEngine;
     sources: Record<string, Source | string>;
-    req: Request;
-    ctx?: AppContext;
+    ctx: AppContext;
     postprocess?:
         | ((
               data: Record<string, DataFetcherResult>,
@@ -73,6 +71,17 @@ type DataFetcherOptions = {
     userLogin?: string | null;
     iamToken?: string | null;
     workbookId?: WorkbookId;
+    isEmbed?: boolean;
+    zitadelParams?: ZitadelParams | undefined;
+    originalReqHeaders: DataFetcherOriginalReqHeaders;
+    adapterContext: AdapterContext;
+};
+
+export type DataFetcherOriginalReqHeaders = {
+    xRealIP: IncomingHttpHeaders['x-real-ip'];
+    xForwardedFor: IncomingHttpHeaders['x-forwarded-for'];
+    xChartsFetcherVia: IncomingHttpHeaders['x-charts-fetcher-via'];
+    referer: IncomingHttpHeaders['referer'];
 };
 
 type DataFetcherRequestOptions = {
@@ -149,16 +158,16 @@ export type DataFetcherResult = {
     data?: any;
 };
 
-type ZitadelParams = {
+export type ZitadelParams = {
     accessToken?: string;
     serviceUserAccessToken?: string;
 };
 
-function addZitadelHeaders({
+export function addZitadelHeaders({
     headers,
     zitadelParams,
 }: {
-    headers: IncomingHttpHeaders;
+    headers: OutgoingHttpHeaders;
     zitadelParams: ZitadelParams;
 }) {
     if (zitadelParams?.accessToken) {
@@ -176,7 +185,6 @@ export class DataFetcher {
     static fetch({
         chartsEngine,
         sources,
-        req,
         ctx,
         postprocess = null,
         subrequestHeaders,
@@ -184,11 +192,11 @@ export class DataFetcher {
         userLogin,
         iamToken,
         workbookId,
+        isEmbed = false,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
-        // TODO: remove aftex extension will be migrated
-        if (ctx === undefined) {
-            ctx = req.ctx;
-        }
         const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
@@ -209,27 +217,9 @@ export class DataFetcher {
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
 
-            const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
-
-            const zitadelParams = ctx.config.isZitadelEnabled
-                ? {
-                      accessToken: req.user?.accessToken,
-                      serviceUserAccessToken: req.serviceUserAccessToken,
-                  }
-                : undefined;
-
-            const originalReqHeaders = {
-                xRealIP: req.headers['x-real-ip'],
-                xForwardedFor: req.headers['x-forwarded-for'],
-                xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
-                referer: req.headers.referer,
-            };
-            const adapterContext: AdapterContext = {
-                headers: {
-                    ['x-forwarded-for']: req.headers['x-forwarded-for'],
-                    cookie: req.headers.cookie,
-                },
-            };
+            if (!originalReqHeaders || !adapterContext) {
+                throw new Error('Missing original request headers or adapter context');
+            }
 
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
@@ -237,7 +227,6 @@ export class DataFetcher {
                 fetchPromisesList.push(() =>
                     source
                         ? DataFetcher.fetchSource({
-                              req,
                               ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
@@ -252,8 +241,9 @@ export class DataFetcher {
                               workbookId,
                               isEmbed,
                               zitadelParams,
-                              originalReqHeaders,
-                              adapterContext,
+                              originalReqHeaders:
+                                  originalReqHeaders as DataFetcherOriginalReqHeaders,
+                              adapterContext: adapterContext as AdapterContext,
                           })
                         : {
                               sourceId: sourceName,
@@ -298,12 +288,12 @@ export class DataFetcher {
 
                             failed[result.sourceId] = filterObjectWhitelist(
                                 entry,
-                                chartsEngine.config.runResponseWhitelist,
+                                ctx.config.runResponseWhitelist,
                             );
                         } else {
                             fetched[result.sourceId] = filterObjectWhitelist(
                                 result,
-                                chartsEngine.config.runResponseWhitelist,
+                                ctx.config.runResponseWhitelist,
                             ) as DataFetcherResult;
                         }
                     });
@@ -458,7 +448,6 @@ export class DataFetcher {
     private static async fetchSource({
         sourceName,
         source,
-        req,
         ctx,
         chartsEngine,
         fetchingStartTime,
@@ -476,7 +465,6 @@ export class DataFetcher {
     }: {
         sourceName: string;
         source: Source;
-        req: Request;
         ctx: AppContext;
         chartsEngine: ChartsEngine;
         fetchingStartTime: number;
@@ -489,16 +477,11 @@ export class DataFetcher {
         workbookId?: WorkbookId;
         isEmbed: boolean;
         zitadelParams: ZitadelParams | undefined;
-        originalReqHeaders: {
-            xRealIP: IncomingHttpHeaders['x-real-ip'];
-            xForwardedFor: IncomingHttpHeaders['x-forwarded-for'];
-            xChartsFetcherVia: IncomingHttpHeaders['x-charts-fetcher-via'];
-            referer: IncomingHttpHeaders['referer'];
-        };
+        originalReqHeaders: DataFetcherOriginalReqHeaders;
         adapterContext: AdapterContext;
     }) {
         const singleFetchingTimeout =
-            chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
+            ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
         const onDataFetched = chartsEngine.telemetryCallbacks.onDataFetched || (() => {});
         const onDataFetchingFailed =
@@ -725,7 +708,6 @@ export class DataFetcher {
             );
 
             const sourceAuthorizationHeaders = getSourceAuthorizationHeaders({
-                req,
                 ctx,
                 sourceConfig,
                 subrequestHeaders,
@@ -787,6 +769,10 @@ export class DataFetcher {
             requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
         }
 
+        if (!requestOptions.headers['x-real-ip']) {
+            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
+        }
+
         if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
                 chartsEngine,
@@ -795,14 +781,16 @@ export class DataFetcher {
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
+                    ctx,
                     source,
                     sourceName,
-                    req,
                     iamToken: iamToken ?? undefined,
                     workbookId,
                     ChartsEngine: chartsEngine,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
+                    zitadelParams,
+                    requestHeaders: requestOptions.headers,
                 });
             }
         }
@@ -823,10 +811,6 @@ export class DataFetcher {
 
         const publicTargetUri = hideSensitiveData(targetUri);
         const publicSourceData = hideSensitiveData(sourceData);
-
-        if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
-        }
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');

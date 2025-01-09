@@ -25,7 +25,7 @@ export const getDistinctsByTypedQuery = async (
     }
 
     try {
-        const result = await getSdk().bi.getConnectionTypedQueryData({
+        const result = await getSdk().sdk.bi.getConnectionTypedQueryData({
             connectionId,
             workbookId,
             body: {

@@ -1,4 +1,5 @@
-import type {Request} from '@gravity-ui/expresskit';
+import type {OutgoingHttpHeaders} from 'http';
+
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
@@ -8,7 +9,10 @@ import type {WorkbookId} from '../../../../../shared';
 import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
 import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
-import {getHeaders} from '../../../../components/charts-engine/controllers/charts';
+import {
+    type ZitadelParams,
+    addZitadelHeaders,
+} from '../../../../components/charts-engine/components/processor/data-fetcher';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
 
@@ -22,19 +26,21 @@ const getStatusFromError = (error: unknown) =>
 const getDatasetFieldsById = async ({
     datasetId,
     workbookId,
-    req,
     ctx,
     rejectFetchingSource,
     iamToken,
     pluginOptions,
+    zitadelParams,
+    headers,
 }: {
     datasetId: string;
     workbookId: string | null;
-    req: Request;
     ctx: AppContext;
     rejectFetchingSource: (reason?: any) => void;
     iamToken?: string;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
+    zitadelParams: ZitadelParams | undefined;
+    headers: OutgoingHttpHeaders;
 }): Promise<GetDataSetFieldsByIdResponse> => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
@@ -43,9 +49,11 @@ const getDatasetFieldsById = async ({
 
     const requestDatasetFieldsByToken = gatewayApi.bi.embedsGetDataSetFieldsById;
     try {
-        const headers = getHeaders(req);
+        if (zitadelParams) {
+            addZitadelHeaders({headers, zitadelParams});
+        }
 
-        const response = req.headers[DL_EMBED_TOKEN_HEADER]
+        const response = headers[DL_EMBED_TOKEN_HEADER]
             ? await requestDatasetFieldsByToken({
                   ctx,
                   headers,
@@ -89,24 +97,26 @@ const getDatasetFieldsById = async ({
 export const getDatasetFields = async (args: {
     datasetId: string;
     workbookId: WorkbookId;
-    req: Request;
     ctx: AppContext;
     iamToken?: string;
     cacheClient: Cache;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
+    zitadelParams: ZitadelParams | undefined;
+    requestHeaders: OutgoingHttpHeaders;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
     const {
         datasetId,
         workbookId,
         cacheClient,
-        req,
         ctx,
         userId,
         iamToken,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
+        requestHeaders,
     } = args;
 
     const cacheKey = `${datasetId}__${userId}`;
@@ -129,11 +139,12 @@ export const getDatasetFields = async (args: {
             const response = await getDatasetFieldsById({
                 datasetId,
                 workbookId,
-                req,
                 ctx,
                 rejectFetchingSource,
                 iamToken,
                 pluginOptions,
+                zitadelParams,
+                headers: requestHeaders,
             });
             datasetFields = response.fields;
             revisionId = response.revision_id;
@@ -161,11 +172,12 @@ export const getDatasetFields = async (args: {
         const response = await getDatasetFieldsById({
             datasetId,
             workbookId,
-            req,
             ctx,
             rejectFetchingSource,
             iamToken,
             pluginOptions,
+            zitadelParams,
+            headers: requestHeaders,
         });
         datasetFields = response.fields;
         revisionId = response.revision_id;

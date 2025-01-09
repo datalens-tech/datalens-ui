@@ -28,7 +28,7 @@ const getHelpPopoverText = (sourceType: SelectorSourceType | undefined): string 
     }
 };
 
-export const InnerTitleRow = () => {
+export const InnerTitleRow = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const {showInnerTitle, innerTitle, sourceType} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -63,7 +63,7 @@ export const InnerTitleRow = () => {
     );
 
     return (
-        <FormRow label={label}>
+        <FormRow label={label} className={className}>
             <div className={b('setting-container')} data-qa={DialogControlQa.appearanceInnerTitle}>
                 <Checkbox
                     className={b('setting-checkbox')}

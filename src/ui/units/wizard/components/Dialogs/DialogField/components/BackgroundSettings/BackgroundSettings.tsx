@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Switch} from '@gravity-ui/uikit';
+import {RadioButton, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {
@@ -12,6 +12,7 @@ import type {
     WizardVisualizationId,
 } from 'shared';
 import {DialogFieldBackgroundSettingsQa} from 'shared';
+import {NULLS_OPTIONS} from 'ui/units/wizard/constants/dialogColor';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
 import {ButtonColorDialog} from '../ButtonColorDialog/ButtonColorDialog';
@@ -19,13 +20,16 @@ import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 import {DialogFieldSelect} from '../DialogFieldSelect/DialogFieldSelect';
 
 import {useBackgroundColorFieldSelect} from './hooks/useBackgrounColorFieldSelect';
-import {useBackgroundColorModeRadioButtons} from './hooks/useBackgroundColorModeRadioButtons';
+import {
+    BackgroundColorMode,
+    useBackgroundColorModeRadioButtons,
+} from './hooks/useBackgroundColorModeRadioButtons';
+import {useBackgroundNullModeSettings} from './hooks/useBackgroundNullModeSettings';
 import {useBackgroundSettings} from './hooks/useBackgroundSettings';
 import {useBackgroundSettingsButtonColorDialog} from './hooks/useBackgroundSettingsButtonColorDialog';
 import {useBackgroundSettingsSwitch} from './hooks/useBackgroundSettingsSwitch';
 
 import './BackgroundSettings.scss';
-
 const b = block('background-settings');
 
 type Props = {
@@ -71,6 +75,11 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
             onUpdate,
             state,
         });
+
+    const {nullMode, handleNullModeUpdate} = useBackgroundNullModeSettings({
+        onUpdate,
+        state,
+    });
 
     return (
         <div className={b()}>
@@ -127,6 +136,19 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                     />
                 }
             />
+            {selectedRadioButton === BackgroundColorMode.Gradient && (
+                <DialogFieldRow
+                    title={i18n('wizard', 'label_nulls')}
+                    setting={
+                        <RadioButton
+                            disabled={!state.enabled}
+                            options={NULLS_OPTIONS}
+                            value={nullMode}
+                            onUpdate={handleNullModeUpdate}
+                        />
+                    }
+                />
+            )}
         </div>
     );
 };

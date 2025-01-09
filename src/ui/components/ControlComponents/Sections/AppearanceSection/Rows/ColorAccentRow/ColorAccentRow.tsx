@@ -17,7 +17,7 @@ const b = block('control2-appearance-section');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const ColorAccentRow = () => {
+export const ColorAccentRow = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const {accentType} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -47,7 +47,7 @@ export const ColorAccentRow = () => {
     );
 
     return (
-        <FormRow label={label}>
+        <FormRow label={label} className={className}>
             <div className={b('setting-container')}>
                 <Checkbox
                     disabled={isFieldDisabled}
