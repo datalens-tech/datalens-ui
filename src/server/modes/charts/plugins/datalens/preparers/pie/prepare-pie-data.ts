@@ -231,8 +231,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
             formattedNameParts.push(String(getFormattedValue(dimensionValue, dimensionField)));
         }
 
-        const pointName: string | WrappedHTML =
-            legendParts.join(': ') || getFakeTitleOrTitle(measure);
+        const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
         const drillDownFilterValue = pointName;
         const shouldWrapPointName = isHtmlColor || isHtmlDimension;
 
