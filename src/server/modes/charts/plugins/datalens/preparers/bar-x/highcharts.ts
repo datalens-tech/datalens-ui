@@ -1,4 +1,5 @@
 import _isEmpty from 'lodash/isEmpty';
+import set from 'lodash/set';
 
 import type {ServerPlaceholder, WizardVisualizationId} from '../../../../../../../shared';
 import {
@@ -11,6 +12,7 @@ import {
     getIsNavigatorEnabled,
     getXAxisMode,
     isDateField,
+    isHtmlField,
     isMeasureNameOrValue,
 } from '../../../../../../../shared';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -40,6 +42,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         idToDataType,
         visualizationId,
         shared,
+        segments,
     } = args;
     const preparedData = prepareBarX(args);
     const {graphs} = preparedData;
@@ -67,6 +70,8 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
     // Here we manage the highcharts settings depending on the parameters
     if (ChartEditor) {
+        const customConfig: any = {xAxis: {}};
+
         if (yFields.length) {
             const isYSectionHasFloatItem = yFields.some((y) => y.data_type === 'float');
             if (isYSectionHasFloatItem) {
@@ -75,7 +80,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 });
             }
 
-            const customConfig: any = {
+            Object.assign(customConfig, {
                 xAxis: {},
                 plotOptions: {},
                 axesFormatting: {xAxis: [], yAxis: []},
@@ -87,7 +92,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                         columnHeaderFormatter: ChartkitHandlers.WizardExportColumnNamesFormatter,
                     },
                 },
-            };
+            });
 
             if (xPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
                 customConfig.axesFormatting.xAxis.push(
@@ -179,22 +184,19 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                         isLegendEnabled(shared.extraSettings),
                 };
 
-                const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis(
+                const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis({
+                    segment: segments[0],
                     segmentsMap,
-                    {
+                    placeholders: {
                         y: yPlaceholder as ServerPlaceholder,
                         y2: undefined as unknown as ServerPlaceholder,
                     },
                     visualizationId,
-                );
+                });
                 customConfig.yAxis = yAxisSettings;
                 customConfig.axesFormatting.yAxis = yAxisFormattings;
             }
-
-            ChartEditor.updateHighchartsConfig(customConfig);
         } else {
-            const customConfig: any = {xAxis: {}};
-
             if (xIsDate || xIsNumber) {
                 customConfig.xAxis.reversed = isXAxisReversed(
                     x,
@@ -214,8 +216,13 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                     customConfig.xAxis.type = 'category';
                 }
             }
+        }
 
-            ChartEditor.updateHighchartsConfig(customConfig);
+        ChartEditor.updateHighchartsConfig(customConfig);
+
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        if (shouldUseHtmlForLegend) {
+            set(customConfig, 'legend.useHTML', true);
         }
     }
 
