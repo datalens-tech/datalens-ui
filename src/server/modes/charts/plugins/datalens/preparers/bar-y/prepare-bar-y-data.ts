@@ -25,8 +25,9 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     numericCollator,
@@ -122,6 +123,12 @@ export function prepareBarYData({
     const nullsY1 = placeholders?.[1]?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const categoryField = x ? {...x, data_type: xDataType ?? x?.data_type} : undefined;
+    const categoriesFormatter = getCategoryFormatter({
+        field: categoryField,
+    });
+
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem]});
 
     if (ySectionItems.length) {
         let categories: (string | number)[] = [];
@@ -309,7 +316,7 @@ export function prepareBarYData({
 
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title || 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         enabled: Boolean(labelItem),
@@ -458,11 +465,7 @@ export function prepareBarYData({
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({valueType: xDataType!, value, format: x.format, utc: true})
-                        : value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};
@@ -519,7 +522,10 @@ export function prepareBarYData({
         if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         } else {
-            return {graphs, categories};
+            return {
+                graphs,
+                categories: categories.map(categoriesFormatter),
+            };
         }
     }
 }

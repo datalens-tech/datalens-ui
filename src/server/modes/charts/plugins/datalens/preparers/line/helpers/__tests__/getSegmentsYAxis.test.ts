@@ -6,15 +6,15 @@ import type {SegmentsMap} from '../segments/types';
 
 describe('getSegmentsYAxis', () => {
     it('The position of a segment(top) depends on its index', () => {
-        const segmentMap: SegmentsMap = {
+        const segmentsMap: SegmentsMap = {
             a: {index: 1, title: 'a', isOpposite: false},
             b: {index: 0, title: 'b', isOpposite: false},
         };
-        const actual = getSegmentsYAxis(
-            segmentMap,
-            {},
-            WizardVisualizationId.Column,
-        ).yAxisSettings.map((s) => ({
+        const actual = getSegmentsYAxis({
+            segmentsMap,
+            placeholders: {},
+            visualizationId: WizardVisualizationId.Column,
+        }).yAxisSettings.map((s) => ({
             top: (s as Highcharts.YAxisOptions).top,
             title: s.title?.text,
         }));
