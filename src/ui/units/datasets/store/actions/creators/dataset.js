@@ -342,7 +342,7 @@ export function saveDataset({
 
                 datasetId = createdDatasetId;
             } else {
-                const validation = await getSdk().sdk.sdk.bi.updateDataset({
+                const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
                     dataset,
                     multisource: true,
