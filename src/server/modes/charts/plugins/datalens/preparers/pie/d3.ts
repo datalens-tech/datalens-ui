@@ -3,7 +3,11 @@ import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit';
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
-import {isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
+import {
+    isMarkdownField,
+    isMarkupField,
+    isNumberField,
+} from '../../../../../../../shared/types/index';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
@@ -42,11 +46,28 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isLabelsEnabled,
                 html: isMarkdownLabel || isMarkupLabel,
+                style: {
+                    fontWeight: '500',
+                    fontSize: '12px',
+                    fontColor: 'var(--g-color-text-complementary)',
+                },
+            },
+            legend: {
+                symbol: {
+                    width: 10,
+                },
             },
             data:
                 graph.data?.map((item) => {
+                    let dataLabel: PiePoint['label'] = item.label;
+                    if (label && isNumberField(label)) {
+                        dataLabel = getFormattedValue(String(dataLabel), label);
+                    }
+
                     return {
                         ...item,
+                        name: item.formattedName ?? item.name,
+                        label: dataLabel,
                         value: item.y,
                         color: String(item.color),
                         formattedValue: getFormattedValue(String(item.y), {
