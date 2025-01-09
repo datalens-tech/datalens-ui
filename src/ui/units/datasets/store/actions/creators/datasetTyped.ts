@@ -1008,9 +1008,17 @@ export function addEditHistoryPointDs({stacked}: EditHistoryOptions = {}) {
     };
 }
 
-export function setCurrentTab(payload: SetCurrentTab['payload']): SetCurrentTab {
+export function setCurrentTab({
+    currentTab,
+    [EDIT_HISTORY_OPTIONS_KEY]: editHistoryOptions,
+}: SetCurrentTab['payload']): SetCurrentTab {
     return {
         type: DATASET_ACTION_TYPES.SET_CURRENT_TAB,
-        payload,
+        payload: {
+            currentTab,
+            [EDIT_HISTORY_OPTIONS_KEY]: {
+                ...editHistoryOptions,
+            },
+        },
     };
 }
