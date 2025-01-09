@@ -6,7 +6,6 @@ export enum RobotChartsDatasets {
     SampleCHDataset = 'sample-csv-dataset',
     CitiesDataset = 'cities-dataset',
     SampleDsWithoutProfit = 'dataset-sample-without-profit',
-    BigDataset = 'big-dataset',
     ObligatoryFilterDataset = 'dataset-with-obligatory-filters-duplicate',
     DatasetWithParameters = 'sample-csv-dataset-with-parameters',
     OrderSalesDataset = 'order-sales-ds',
@@ -15,7 +14,6 @@ export enum RobotChartsDatasets {
 
 export enum RobotChartsWizardUrls {
     Empty = '/wizard/',
-    WizardWithParameterDataset = '/wizard/?__datasetId=ktrfwixwpwikc',
     WizardCitiesDataset = '/wizard/?__datasetId=uxyjsgrbam4sk',
     WizardForDatasetSampleCh = '/wizard/?__datasetId=bfvw78uczxp65',
     WizardForGeoDataset = '/wizard/?__datasetId=f9v6rrirbjjka',
@@ -65,6 +63,7 @@ export enum RobotChartsWizardUrls {
 export enum RobotChartsEditorUrls {
     EditorNew = '/editor/new',
     EditorEmptyDraft = '/editor/draft',
+    EditorNewTableFromTemplate = '/editor/draft/table',
     EditorWithWizardId = '/editor/ikblc7qjn4reb',
     EditorWithSQLId = '/editor/estm3g44u4g84',
     InputWithReset = '/editor/gx2pqz0oqtno6',

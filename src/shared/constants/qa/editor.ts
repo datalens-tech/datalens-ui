@@ -1,3 +1,8 @@
+export const enum EditorPageQA {
+    RunButton = 'button-draw-preview',
+    SaveButton = 'save-entry-button',
+}
+
 export const enum EditorTemplatesQA {
     NoTemplate = 'editor-templates-no-template-item',
     Selector = 'editor-templates-selector-item',
