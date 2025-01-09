@@ -1,6 +1,7 @@
 import React from 'react';
 
-import '@diplodoc/transform/dist/js/yfm';
+import '@diplodoc/transform/dist/js/_yfm-only';
+import '@diplodoc/transform/dist/js/base';
 
 import {YFM_MARKDOWN_CLASSNAME} from '../../constants/yfm';
 
