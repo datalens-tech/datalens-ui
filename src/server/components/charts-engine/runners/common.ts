@@ -48,8 +48,10 @@ function engineProcessingCallback({
             res.setHeader('chart-runner-type', runnerType);
 
             if (result) {
-                // TODO use ShowChartsEngineDebugInfo flag
-                if ('logs_v2' in result && (!res.locals.editMode || !showChartsEngineDebugInfo)) {
+                if (
+                    'logs_v2' in result &&
+                    (!processorParams.isEditMode || !showChartsEngineDebugInfo)
+                ) {
                     delete result.logs_v2;
                 }
 
@@ -141,9 +143,6 @@ function engineProcessingCallback({
 
                 res.status(error.statusCode || 500).send(result);
             }
-        })
-        .finally(() => {
-            ctx.end();
         });
 }
 
@@ -297,7 +296,9 @@ export function commonRunner({
         })
         .catch((error) => {
             ctx.logError('CHARTS_ENGINE_PROCESSOR_UNHANDLED_ERROR', error);
-            ctx.end();
             res.status(500).send('Internal error');
+        })
+        .finally(() => {
+            ctx.end();
         });
 }
