@@ -246,8 +246,25 @@ class YandexMap {
         });
     }
 
-    static _initModules() {
+    static async _initModules() {
         try {
+            // Make crossOrigin anonymous for canvas tiles to prevent Tainted canvases
+            await YandexMap._ymaps.modules
+                .require('layer.tileContainer.CanvasContainer')
+                .then(([canvasContainer]) => {
+                    if (canvasContainer?.superclass?.constructor) {
+                        const superclassCtor = canvasContainer.superclass.constructor;
+
+                        canvasContainer.superclass.constructor = function (...args) {
+                            const result = superclassCtor.call(this, args);
+
+                            this.options?.set('crossOrigin', 'anonymous');
+
+                            return result;
+                        };
+                    }
+                });
+
             defineGridmap(YandexMap._ymaps);
             defineModules(YandexMap._ymaps);
 
