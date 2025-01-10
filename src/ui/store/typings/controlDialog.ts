@@ -25,6 +25,8 @@ export type SelectorDialogValidation = {
 };
 
 export type SelectorsGroupDialogState = {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, List} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -26,6 +26,7 @@ export type ExtendedSettingsDialogProps = {
     onClose: () => void;
 
     enableAutoheightDefault?: boolean;
+    showSelectorsGroupTitle?: boolean;
 };
 
 export type OpenDialogExtendedSettingsArgs = {
@@ -45,6 +46,7 @@ const resetAutoValues = (group: SelectorDialogState[]) =>
 const DialogExtendedSettings = ({
     onClose,
     enableAutoheightDefault,
+    showSelectorsGroupTitle,
 }: ExtendedSettingsDialogProps) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
@@ -145,6 +147,30 @@ const DialogExtendedSettings = ({
 
     const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
+    const handleChangeShowGroupName = React.useCallback(
+        (value) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    showGroupName: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
+
+    const handleChangeGroupName = React.useCallback(
+        (value) => {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    groupName: value,
+                }),
+            );
+        },
+        [dispatch, selectorsGroup],
+    );
+
     const handleChangeAutoHeight = React.useCallback(
         (value) => {
             dispatch(
@@ -218,6 +244,23 @@ const DialogExtendedSettings = ({
             />
             <Dialog.Body className={b('body')}>
                 <FormSection title={i18n('label_group-parameters')}>
+                    {showSelectorsGroupTitle && (
+                        <FormRow className={b('row')} label={i18n('label_group-name')}>
+                            <Flex gap={2}>
+                                <Checkbox
+                                    className={b('checkbox')}
+                                    checked={selectorsGroup.showGroupName}
+                                    onUpdate={handleChangeShowGroupName}
+                                    size="l"
+                                />
+                                <TextInput
+                                    disabled={!selectorsGroup.showGroupName}
+                                    value={selectorsGroup.groupName}
+                                    onUpdate={handleChangeGroupName}
+                                />
+                            </Flex>
+                        </FormRow>
+                    )}
                     <FormRow
                         className={b('row')}
                         label={
