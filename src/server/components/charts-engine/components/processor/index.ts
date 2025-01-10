@@ -228,7 +228,7 @@ export class Processor {
         const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
         const onTabsExecuted = chartsEngine.telemetryCallbacks.onTabsExecuted || (() => {});
 
-        function injectConfigAndParams({target}: {target: Record<string, any>}) {
+        function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
             const useChartsEngineResponseConfig = Boolean(
                 isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
@@ -727,7 +727,7 @@ export class Processor {
 
                 ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
 
-                processedData = jsTabResults.exports as Record<string, any>;
+                processedData = jsTabResults.exports;
                 logs.JavaScript = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
@@ -802,7 +802,7 @@ export class Processor {
             injectLogs({target: result});
 
             if (!uiOnly && jsTabResults) {
-                result.data = processedData;
+                result.data = processedData as ProcessorSuccessResponse['data'];
                 let resultConfig = merge(
                     {},
                     userConfig,
