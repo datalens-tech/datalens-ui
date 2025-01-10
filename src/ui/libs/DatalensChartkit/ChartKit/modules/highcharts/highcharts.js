@@ -12,7 +12,7 @@ import {
     TOOLTIP_FOOTER_CLASS_NAME,
     TOOLTIP_LIST_CLASS_NAME,
     TOOLTIP_ROW_CLASS_NAME,
-    TOOLTIP_ROW_NAME_CLASS_NANE,
+    TOOLTIP_ROW_NAME_CLASS_NAME,
 } from '../graph/tooltip/tooltip';
 import {i18n} from '../i18n/i18n';
 
@@ -324,7 +324,7 @@ function initHighcharts({isMobile}) {
             }
 
             if (isFixation) {
-                const rowNames = this.container.querySelectorAll(`.${TOOLTIP_ROW_NAME_CLASS_NANE}`);
+                const rowNames = this.container.querySelectorAll(`.${TOOLTIP_ROW_NAME_CLASS_NAME}`);
 
                 for (let i = 0; i < rowNames.length; i++) {
                     const rowNameNode = rowNames[i];
