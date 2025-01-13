@@ -137,7 +137,7 @@ export function getSelectorDialogFromData(
         titlePlacement:
             data.source.showTitle === false || data.source.titlePlacement === TitlePlacements.Hide
                 ? TitlePlacements.Hide
-                : data.source.titlePlacement,
+                : data.source.titlePlacement ?? TitlePlacements.Left,
         accentType: data.source.accentType,
         multiselectable: data.source.multiselectable,
         isRange: data.source.isRange,
