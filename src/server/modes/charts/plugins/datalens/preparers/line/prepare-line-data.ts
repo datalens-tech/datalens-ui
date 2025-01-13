@@ -465,9 +465,14 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: shapeItem?.guid || null,
-                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
+
+                // For one point (non-zero), the setting of the connection empty values has a strange effect:
+                // the value stops being displayed on the graph
+                if (graph.data.length > 1) {
+                    graph.connectNulls = nulls === AxisNullsMode.Connect;
+                }
 
                 if (line.pointConflict) {
                     graph.pointConflict = true;
