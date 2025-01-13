@@ -202,7 +202,8 @@ export const usePreparedTableData = (props: {
         state: {
             sorting,
         },
-        isMultiSortEvent: (event) => event.ctrlKey || event.metaKey,
+        isMultiSortEvent: (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+            event.ctrlKey || event.metaKey,
         onSortingChange: (updater) => {
             setSorting(updater);
 
