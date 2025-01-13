@@ -33,7 +33,7 @@ const DuplicateEntryDialog: React.FC<Props> = ({open, onClose, onApply, initName
 
     const handleApply = React.useCallback(
         async ({name}: {name: string}) => {
-            const duplicatedEntry = await getSdk().us.copyWorkbookEntry({
+            const duplicatedEntry = await getSdk().sdk.us.copyWorkbookEntry({
                 entryId,
                 name,
             });

@@ -348,19 +348,24 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) ||
                 (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
             if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
-                const ignoreInvalidValues = result.isNewWizard || result.isQL;
+                const ignoreInvalidValues = isWizardOrQl;
+                const allowHtml =
+                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapeStringInWizard)
+                        ? false
+                        : enableJsAndHtml;
                 processHtmlFields(result.data, {
-                    allowHtml: enableJsAndHtml,
+                    allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
                 });
                 processHtmlFields(result.libraryConfig, {
-                    allowHtml: enableJsAndHtml,
+                    allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
                 });

@@ -767,7 +767,7 @@ export type SetCurrentTab = {
     type: typeof SET_CURRENT_TAB;
     payload: {
         currentTab: DatasetTab;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 export type DatasetReduxAction =

@@ -36,8 +36,6 @@ export class Search extends React.PureComponent {
     };
 
     _handleOnClick = () => {
-        this.focusInput();
-
         if (this.props.onClick) {
             this.props.onClick();
         }

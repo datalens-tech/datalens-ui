@@ -24,14 +24,7 @@ export const TYPES_TO_DIALOGS_MAP = {
 
 export const ITEM_PASTE_ITEM_ID = 'paste';
 
-export const getActionPanelItems = ({
-    copiedData,
-    onPasteItem,
-    openDialog,
-    filterItem,
-    userSettings,
-    scope,
-}: {
+export type ActionPanelItemParams = {
     copiedData: CopiedConfigData | null;
     onPasteItem: (item: CopiedConfigData) => void;
     openDialog: (
@@ -41,11 +34,32 @@ export const getActionPanelItems = ({
     filterItem?: (item: DashkitActionPanelItem) => boolean;
     userSettings?: DLUserSettings;
     scope?: string;
-}) => {
+    allowedPasteItems?: string[];
+};
+
+export const BASE_ITEMS_TO_PASTE = [
+    DashTabItemType.Widget,
+    DashTabItemType.GroupControl,
+    DashTabItemType.Control,
+    DashTabItemType.Text,
+    DashTabItemType.Title,
+];
+
+export const getActionPanelItems = ({
+    copiedData,
+    onPasteItem,
+    openDialog,
+    filterItem,
+    userSettings,
+    scope,
+    allowedPasteItems = BASE_ITEMS_TO_PASTE,
+}: ActionPanelItemParams) => {
     const {getBasicActionPanelItems} = registry.common.functions.getAll();
     const items = getBasicActionPanelItems({userSettings, scope});
 
-    if (copiedData) {
+    const enablePaste = copiedData && allowedPasteItems.includes(copiedData.type);
+
+    if (enablePaste) {
         items.push({
             id: ITEM_PASTE_ITEM_ID,
             icon: <Icon data={CopyPlus} />,

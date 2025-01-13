@@ -3,6 +3,7 @@ export * from './Datepicker/Datepicker';
 export * from './Description/Description';
 export * from './Input/Input';
 export * from './FileInput/FileInput';
+export * from './KeyValue/KeyValue';
 export * from './Label/Label';
 export * from './MarkdownItem/MarkdownItem';
 export * from './PlainText/PlainText';

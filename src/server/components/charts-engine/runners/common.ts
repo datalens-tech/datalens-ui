@@ -6,6 +6,7 @@ import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../share
 import {
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
+    DL_EMBED_TOKEN_HEADER,
     Feature,
     isEnabledServerFeature,
 } from '../../../../shared';
@@ -47,8 +48,10 @@ function engineProcessingCallback({
             res.setHeader('chart-runner-type', runnerType);
 
             if (result) {
-                // TODO use ShowChartsEngineDebugInfo flag
-                if ('logs_v2' in result && (!res.locals.editMode || !showChartsEngineDebugInfo)) {
+                if (
+                    'logs_v2' in result &&
+                    (!processorParams.isEditMode || !showChartsEngineDebugInfo)
+                ) {
                     delete result.logs_v2;
                 }
 
@@ -140,9 +143,6 @@ function engineProcessingCallback({
 
                 res.status(error.statusCode || 500).send(result);
             }
-        })
-        .finally(() => {
-            ctx.end();
         });
 }
 
@@ -193,6 +193,35 @@ export function commonRunner({
     const configId = req.body.id;
     const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
 
+    const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
+
+    const zitadelParams = ctx.config.isZitadelEnabled
+        ? {
+              accessToken: req.user?.accessToken,
+              serviceUserAccessToken: req.serviceUserAccessToken,
+          }
+        : undefined;
+
+    const originalReqHeaders = {
+        xRealIP: req.headers['x-real-ip'],
+        xForwardedFor: req.headers['x-forwarded-for'],
+        xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
+        referer: req.headers.referer,
+    };
+    const adapterContext = {
+        headers: {
+            ['x-forwarded-for']: req.headers['x-forwarded-for'],
+            cookie: req.headers.cookie,
+        },
+    };
+
+    const hooksContext = {
+        headers: {
+            cookie: req.headers.cookie,
+            authorization: req.headers.authorization,
+        },
+    };
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -202,7 +231,6 @@ export function commonRunner({
         userLogin: res.locals && res.locals.login,
         userId: res.locals && res.locals.userId,
         subrequestHeaders: res.locals.subrequestHeaders,
-        req,
         iamToken,
         isEditMode: Boolean(res.locals.editMode),
         configResolving,
@@ -212,6 +240,11 @@ export function commonRunner({
         configName,
         configId,
         disableJSONFnByCookie,
+        isEmbed,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
+        hooksContext,
     };
 
     if (req.body.unreleased === 1) {
@@ -263,7 +296,9 @@ export function commonRunner({
         })
         .catch((error) => {
             ctx.logError('CHARTS_ENGINE_PROCESSOR_UNHANDLED_ERROR', error);
-            ctx.end();
             res.status(500).send('Internal error');
+        })
+        .finally(() => {
+            ctx.end();
         });
 }

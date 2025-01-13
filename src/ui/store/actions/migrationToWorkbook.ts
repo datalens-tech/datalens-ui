@@ -58,7 +58,7 @@ export const getEntry = (params: GetEntryArgs) => {
             type: GET_ENTRY_LOADING,
         });
         return getSdk()
-            .us.getEntry(params)
+            .sdk.us.getEntry(params)
             .then((data) => {
                 dispatch({
                     type: GET_ENTRY_SUCCESS,
@@ -67,7 +67,7 @@ export const getEntry = (params: GetEntryArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('migrationToWorkbook/getEntry failed', error);
@@ -111,7 +111,7 @@ export const getRelationsGraph = (params: GetRelationsGraphArgs) => {
             type: GET_RELATIONS_GRAPH_LOADING,
         });
         return getSdk()
-            .us.getRelationsGraph(params)
+            .sdk.us.getRelationsGraph(params)
             .then((data) => {
                 dispatch({
                     type: GET_RELATIONS_GRAPH_SUCCESS,
@@ -120,7 +120,7 @@ export const getRelationsGraph = (params: GetRelationsGraphArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('migrationToWorkbook/getRelationsGraph failed', error);
@@ -164,7 +164,7 @@ export const getRelations = (params: GetRelationsArgs) => {
             type: GET_RELATIONS_LOADING,
         });
         return getSdk()
-            .us.getRelations(params)
+            .sdk.us.getRelations(params)
             .then((data) => {
                 dispatch({
                     type: GET_RELATIONS_SUCCESS,
@@ -173,7 +173,7 @@ export const getRelations = (params: GetRelationsArgs) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('migrationToWorkbook/getRelations failed', error);
@@ -217,7 +217,7 @@ export const migrateEntriesToWorkbookByTransfer = (params: MigrateEntriesToWorkb
             type: MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.migrateEntriesToWorkbookByTransfer(params)
+            .sdk.us.migrateEntriesToWorkbookByTransfer(params)
             .then((data) => {
                 dispatch({
                     type: MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
@@ -226,7 +226,7 @@ export const migrateEntriesToWorkbookByTransfer = (params: MigrateEntriesToWorkb
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('migrationToWorkbook/migrateEntriesToWorkbook failed', error);
@@ -254,7 +254,7 @@ export const migrateEntriesToWorkbookByCopy = (params: MigrateEntriesToWorkbookA
             type: MIGRATE_ENTRIES_TO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.migrateEntriesToWorkbookByCopy(params)
+            .sdk.us.migrateEntriesToWorkbookByCopy(params)
             .then((data) => {
                 dispatch({
                     type: MIGRATE_ENTRIES_TO_WORKBOOK_SUCCESS,
@@ -263,7 +263,7 @@ export const migrateEntriesToWorkbookByCopy = (params: MigrateEntriesToWorkbookA
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('migrationToWorkbook/migrateEntriesToWorkbook failed', error);

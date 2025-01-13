@@ -130,7 +130,7 @@ function setInitialSources(ids) {
             if (ids.length) {
                 const result = await Promise.allSettled(
                     ids.map((id) =>
-                        getSdk().us.getEntry({
+                        getSdk().sdk.us.getEntry({
                             entryId: id,
                             includePermissionsInfo: true,
                         }),
@@ -195,10 +195,10 @@ export function initialFetchDataset({datasetId}) {
                 payload: {},
             });
 
-            const meta = await getSdk().us.getEntryMeta({entryId: datasetId});
+            const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
             const workbookId = meta.workbookId ?? null;
 
-            const dataset = await getSdk().bi.getDatasetByVersion({
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
                 version: 'draft',
@@ -277,7 +277,7 @@ export function fetchDataset({datasetId}) {
 
             const workbookId = workbookIdSelector(getState());
 
-            const dataset = await getSdk().bi.getDatasetByVersion({
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
                 version: 'draft',
@@ -338,11 +338,11 @@ export function saveDataset({
                     creationData.name = nameFromKey;
                 }
 
-                const {id: createdDatasetId} = await getSdk().bi.createDataset(creationData);
+                const {id: createdDatasetId} = await getSdk().sdk.bi.createDataset(creationData);
 
                 datasetId = createdDatasetId;
             } else {
-                const validation = await getSdk().bi.updateDataset({
+                const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
                     dataset,
                     multisource: true,
@@ -398,7 +398,7 @@ export function fetchFieldTypes() {
         let types;
 
         try {
-            const response = await getSdk().bi.getFieldTypes();
+            const response = await getSdk().sdk.bi.getFieldTypes();
 
             types = response.types
                 .map((type) => {
@@ -469,7 +469,7 @@ export function getSources(connectionId, workbookId) {
         let sources = [];
 
         try {
-            const result = await getSdk().bi.getSources(
+            const result = await getSdk().sdk.bi.getSources(
                 {connectionId, workbookId, limit: 10000},
                 {concurrentId: 'getSources', timeout: TIMEOUT_65_SEC},
             );
@@ -491,7 +491,7 @@ export function getSources(connectionId, workbookId) {
             dispatch(setFreeformSources(freeformSources));
             dispatch(setSourcesLoadingError(null));
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 logger.logError('dataset: getSources failed', error);
                 error.connectionId = connectionId;
                 dispatch(setSourcesLoadingError(error));
