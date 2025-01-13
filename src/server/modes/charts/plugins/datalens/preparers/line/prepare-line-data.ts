@@ -364,7 +364,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 let prevYValue: string | number | null | undefined = null;
                 const graph: any = {
                     id: line.id,
-                    title: seriesNameFormatter(line.title || 'Null'),
+                    title: seriesNameFormatter(line.title ?? 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         ...line.dataLabels,
@@ -459,7 +459,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             return point;
                         })
                         .filter((point) => point !== null),
-                    legendTitle: line.legendTitle || line.title || 'Null',
+                    legendTitle: line.legendTitle ?? line.title ?? 'Null',
                     formattedName: colorItem ? undefined : seriesNameFormatter(line.formattedName),
                     drillDownFilterValue: line.drillDownFilterValue,
                     colorKey: line.colorKey,
