@@ -11,6 +11,8 @@ import type {
     SortParams,
     StringParams,
     V9Color,
+    WrappedHTML,
+    WrappedMarkdown,
 } from '../../../../../../shared';
 import {
     ColorMode,
@@ -23,6 +25,7 @@ import {
     isMeasureValue,
     wrapMarkupValue,
 } from '../../../../../../shared';
+import {isHtmlField, isMarkdownField} from '../../../../../../shared/types/index';
 import {wrapMarkdownValue} from '../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import type {ChartKitFormatSettings, ResultDataOrder} from '../preparers/types';
@@ -401,6 +404,44 @@ export function getLabelValue(
     }
 
     return value;
+}
+
+type CategoryItem = string | number | WrappedHTML | WrappedMarkdown;
+
+export function getCategoryFormatter(args: {
+    field?: ServerField;
+}): (value: string | number) => CategoryItem {
+    const {field} = args;
+    if (isDateField(field)) {
+        return (value: string | number) => {
+            return formatDate({
+                valueType: field.data_type,
+                value,
+                format: field.format,
+                utc: true,
+            });
+        };
+    }
+
+    if (isMarkdownField(field)) {
+        return (value: unknown) => wrapMarkdownValue(String(value));
+    }
+
+    if (isHtmlField(field)) {
+        return (value: unknown) => wrapHtml(String(value));
+    }
+
+    return (value: string | number) => value;
+}
+
+export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)[]}) {
+    const {fields} = args;
+
+    if (fields.some(isHtmlField)) {
+        return (value?: string) => wrapHtml(String(value ?? ''));
+    }
+
+    return (value?: string) => value ?? '';
 }
 
 export {

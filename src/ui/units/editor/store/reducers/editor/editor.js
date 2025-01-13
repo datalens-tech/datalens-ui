@@ -38,7 +38,7 @@ export const fetchInitialLoad = ({id, template, location}) => {
             const urlSearch = new UrlSearch(search);
             if (id) {
                 const revId = urlSearch.get(URL_QUERY.REV_ID_OLD);
-                const entryData = await getSdk().us.getEntry({
+                const entryData = await getSdk().sdk.us.getEntry({
                     entryId: id,
                     includePermissionsInfo: true,
                     revId,
@@ -141,7 +141,7 @@ export const fetchEditorChartUpdate = ({mode, release, history, location}) => {
                 componentStateChange({name: ComponentName.ButtonSave, data: {progress: true}}),
             );
             const meta = release ? {...entry.meta, is_release: true} : {...entry.meta};
-            const updatedEntry = await getSdk().mix.updateEditorChart({
+            const updatedEntry = await getSdk().sdk.mix.updateEditorChart({
                 mode,
                 data: Helper.formEntryData({scriptsValues, entry}),
                 entryId: entry.entryId,
@@ -217,7 +217,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
             const urlSearch = new UrlSearch(search);
             switch (action) {
                 case RevisionAction.Open: {
-                    entryData = await getSdk().us.getEntry({
+                    entryData = await getSdk().sdk.us.getEntry({
                         entryId,
                         includePermissionsInfo: true,
                         revId,
@@ -232,7 +232,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     break;
                 }
                 case RevisionAction.Publish: {
-                    const publishedEntry = await getSdk().mix.updateEditorChart({
+                    const publishedEntry = await getSdk().sdk.mix.updateEditorChart({
                         mode: UPDATE_ENTRY_MODE.PUBLISH,
                         entryId,
                         revId,
@@ -241,7 +241,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     break;
                 }
                 case RevisionAction.Reset: {
-                    const clonedEntry = await getSdk().us.getEntry({
+                    const clonedEntry = await getSdk().sdk.us.getEntry({
                         entryId,
                         includePermissionsInfo: true,
                         revId,
@@ -249,7 +249,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     const tabData = Helper.createTabData(clonedEntry);
                     scriptsValues = tabData.scriptsValues;
                     chart = null;
-                    entryData = await getSdk().mix.updateEditorChart({
+                    entryData = await getSdk().sdk.mix.updateEditorChart({
                         mode: UPDATE_ENTRY_MODE.SAVE,
                         entryId,
                         data: Helper.formEntryData({scriptsValues, entry: clonedEntry}),

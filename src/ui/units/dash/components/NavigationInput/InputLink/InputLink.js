@@ -87,7 +87,7 @@ class InputLink extends React.PureComponent {
 
         try {
             this.setState({progress: true});
-            const {entry, params} = await getSdk().mix.resolveEntryByLink({
+            const {entry, params} = await getSdk().sdk.mix.resolveEntryByLink({
                 url: this.state.value,
             });
 

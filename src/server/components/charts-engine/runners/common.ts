@@ -6,6 +6,7 @@ import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../share
 import {
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
+    DL_EMBED_TOKEN_HEADER,
     Feature,
     isEnabledServerFeature,
 } from '../../../../shared';
@@ -21,34 +22,30 @@ import {prepareErrorForLogger} from './utils';
 
 export type Runners = 'Worker' | 'Wizard' | 'Ql' | 'Editor' | 'Control';
 
-function engineProcessingCallback({
-    cx,
+export function engineProcessingCallback({
     ctx,
     hrStart,
-    res,
     processorParams,
     runnerType,
 }: {
-    cx: AppContext;
     ctx: AppContext;
     hrStart: [number, number];
-    res: Response;
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
-}) {
+}): Promise<{status: number; payload: unknown}> {
     const showChartsEngineDebugInfo = Boolean(
         isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
     );
 
-    return Processor.process({...processorParams, ctx: cx})
+    return Processor.process({...processorParams, ctx: ctx})
         .then((result) => {
-            cx.log(`${runnerType}::FullRun`, {duration: getDuration(hrStart)});
-
-            res.setHeader('chart-runner-type', runnerType);
+            ctx.log(`${runnerType}::FullRun`, {duration: getDuration(hrStart)});
 
             if (result) {
-                // TODO use ShowChartsEngineDebugInfo flag
-                if ('logs_v2' in result && (!res.locals.editMode || !showChartsEngineDebugInfo)) {
+                if (
+                    'logs_v2' in result &&
+                    (!processorParams.isEditMode || !showChartsEngineDebugInfo)
+                ) {
                     delete result.logs_v2;
                 }
 
@@ -61,7 +58,7 @@ function engineProcessingCallback({
 
                     const logError = prepareErrorForLogger(result.error);
 
-                    cx.log('PROCESSED_WITH_ERRORS', {error: logError});
+                    ctx.log('PROCESSED_WITH_ERRORS', {error: logError});
 
                     let statusCode = 500;
 
@@ -97,27 +94,28 @@ function engineProcessingCallback({
 
                         delete result.error.statusCode;
                     }
-
-                    res.status(statusCode).send(result);
+                    return {status: statusCode, payload: result};
                 } else {
-                    cx.log('PROCESSED_SUCCESSFULLY');
-
-                    res.status(200).send(result);
+                    ctx.log('PROCESSED_SUCCESSFULLY');
+                    return {status: 200, payload: result};
                 }
             } else {
                 throw new Error('INVALID_PROCESSING_RESULT');
             }
         })
         .catch((error) => {
-            cx.logError('PROCESSING_FAILED', error);
+            ctx.logError('PROCESSING_FAILED', error);
 
             if (Number(error.statusCode) >= 200 && Number(error.statusCode) < 400) {
-                res.status(500).send({
-                    error: {
-                        code: 'ERR.CHARTS.INVALID_SET_ERROR_USAGE',
-                        message: 'Only 4xx/5xx error status codes valid for .setError',
+                return {
+                    status: 500,
+                    payload: {
+                        error: {
+                            code: 'ERR.CHARTS.INVALID_SET_ERROR_USAGE',
+                            message: 'Only 4xx/5xx error status codes valid for .setError',
+                        },
                     },
-                });
+                };
             } else {
                 const result = {
                     error: {
@@ -138,11 +136,8 @@ function engineProcessingCallback({
                     }
                 }
 
-                res.status(error.statusCode || 500).send(result);
+                return {status: error.statusCode || 500, payload: result};
             }
-        })
-        .finally(() => {
-            ctx.end();
         });
 }
 
@@ -193,6 +188,35 @@ export function commonRunner({
     const configId = req.body.id;
     const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
 
+    const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
+
+    const zitadelParams = ctx.config.isZitadelEnabled
+        ? {
+              accessToken: req.user?.accessToken,
+              serviceUserAccessToken: req.serviceUserAccessToken,
+          }
+        : undefined;
+
+    const originalReqHeaders = {
+        xRealIP: req.headers['x-real-ip'],
+        xForwardedFor: req.headers['x-forwarded-for'],
+        xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
+        referer: req.headers.referer,
+    };
+    const adapterContext = {
+        headers: {
+            ['x-forwarded-for']: req.headers['x-forwarded-for'],
+            cookie: req.headers.cookie,
+        },
+    };
+
+    const hooksContext = {
+        headers: {
+            cookie: req.headers.cookie,
+            authorization: req.headers.authorization,
+        },
+    };
+
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
         chartsEngine,
         paramsOverride: params,
@@ -202,7 +226,6 @@ export function commonRunner({
         userLogin: res.locals && res.locals.login,
         userId: res.locals && res.locals.userId,
         subrequestHeaders: res.locals.subrequestHeaders,
-        req,
         iamToken,
         isEditMode: Boolean(res.locals.editMode),
         configResolving,
@@ -212,6 +235,11 @@ export function commonRunner({
         configName,
         configId,
         disableJSONFnByCookie,
+        isEmbed,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
+        hooksContext,
     };
 
     if (req.body.unreleased === 1) {
@@ -253,17 +281,20 @@ export function commonRunner({
     return ctx
         .call('engineProcessing', (cx) => {
             return engineProcessingCallback({
-                cx,
-                ctx,
+                ctx: cx,
                 hrStart,
-                res,
                 processorParams,
                 runnerType: runnerType as Runners,
             });
         })
+        .then((result) => {
+            res.status(result.status).send(result.payload);
+        })
         .catch((error) => {
             ctx.logError('CHARTS_ENGINE_PROCESSOR_UNHANDLED_ERROR', error);
-            ctx.end();
             res.status(500).send('Internal error');
+        })
+        .finally(() => {
+            ctx.end();
         });
 }

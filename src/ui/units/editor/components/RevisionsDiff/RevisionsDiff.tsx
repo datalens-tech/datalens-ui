@@ -91,7 +91,7 @@ export const useRevisionsReqEnhancer = (props: UseRevisionsReqEnhancerProps) => 
 
     const getRevisions = React.useCallback(() => {
         getSdk()
-            .us.getRevisions({
+            .sdk.us.getRevisions({
                 entryId: props.entry.entryId,
                 pageSize: PAGE_SIZE,
                 page: nextPageNumber,

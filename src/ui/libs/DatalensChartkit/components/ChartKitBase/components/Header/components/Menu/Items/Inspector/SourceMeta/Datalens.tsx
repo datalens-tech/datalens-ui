@@ -22,7 +22,7 @@ const Datalens: React.FC<Props> = ({datasetId, setStatus, uiUrl}) => {
     React.useEffect(() => {
         async function fetchData() {
             try {
-                const data = await getSdk().us.getEntryMeta({entryId: datasetId});
+                const data = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
 
                 setData(data);
                 setStatus('success');
