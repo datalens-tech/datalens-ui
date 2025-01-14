@@ -12,6 +12,7 @@ import {
 } from '../../../../shared';
 import type {ProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
+import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
@@ -178,6 +179,10 @@ export function commonRunner({
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
 }) {
+    const telemetryCallbacks = chartsEngine.telemetryCallbacks;
+    const cacheClient = chartsEngine.cacheClient;
+    const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
+
     res.locals.subrequestHeaders['x-chart-kind'] = chartType;
 
     const {params, actionParams, widgetConfig} = req.body;
@@ -218,7 +223,6 @@ export function commonRunner({
     };
 
     const processorParams: Omit<ProcessorParams, 'ctx'> = {
-        chartsEngine,
         paramsOverride: params,
         actionParamsOverride: actionParams,
         widgetConfig,
@@ -240,6 +244,9 @@ export function commonRunner({
         originalReqHeaders,
         adapterContext,
         hooksContext,
+        hooks,
+        telemetryCallbacks,
+        cacheClient,
     };
 
     if (req.body.unreleased === 1) {

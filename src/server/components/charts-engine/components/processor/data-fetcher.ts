@@ -20,9 +20,9 @@ import {
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
+import type {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
-import type {ChartsEngine} from '../../index';
-import type {AdapterContext, Source, SourceConfig} from '../../types';
+import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
@@ -57,7 +57,6 @@ type ChartkitSource = {
 type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
-    chartsEngine: ChartsEngine;
     sources: Record<string, Source | string>;
     ctx: AppContext;
     postprocess?:
@@ -75,6 +74,8 @@ type DataFetcherOptions = {
     zitadelParams?: ZitadelParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -183,7 +184,6 @@ export function addZitadelHeaders({
 
 export class DataFetcher {
     static fetch({
-        chartsEngine,
         sources,
         ctx,
         postprocess = null,
@@ -196,8 +196,10 @@ export class DataFetcher {
         zitadelParams,
         originalReqHeaders,
         adapterContext,
+        telemetryCallbacks,
+        cacheClient,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
-        const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
+        const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
 
@@ -230,7 +232,6 @@ export class DataFetcher {
                               ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
-                              chartsEngine,
                               fetchingStartTime,
                               subrequestHeaders,
                               processingRequests,
@@ -244,6 +245,8 @@ export class DataFetcher {
                               originalReqHeaders:
                                   originalReqHeaders as DataFetcherOriginalReqHeaders,
                               adapterContext: adapterContext as AdapterContext,
+                              telemetryCallbacks,
+                              cacheClient,
                           })
                         : {
                               sourceId: sourceName,
@@ -323,15 +326,15 @@ export class DataFetcher {
      * @returns {Object} source configuration
      */
     static getSourceConfig({
-        chartsEngine,
+        ctx,
         sourcePath,
         isEmbed,
     }: {
-        chartsEngine: ChartsEngine;
+        ctx: AppContext;
         sourcePath: string;
         isEmbed?: boolean;
     }) {
-        const sources = chartsEngine.sources;
+        const sources = ctx.config.sources;
         let sourceName = DataFetcher.getSourceName(sourcePath);
 
         // Temporary hack for embed endpoints
@@ -381,14 +384,8 @@ export class DataFetcher {
      *
      * @returns {Object} config for all sources
      */
-    static getChartKitSources({
-        chartsEngine,
-        lang = 'en',
-    }: {
-        chartsEngine: ChartsEngine;
-        lang: 'en' | 'ru';
-    }) {
-        const sources = chartsEngine.sources;
+    static getChartKitSources({ctx, lang = 'en'}: {ctx: AppContext; lang: 'en' | 'ru'}) {
+        const sources = ctx.config.sources;
 
         const chartkitSources: Record<string, ChartkitSource> = {};
 
@@ -432,8 +429,8 @@ export class DataFetcher {
      *
      * @returns {Boolean} check is source stat or not
      */
-    static isStat({chartsEngine, sourcePath}: {chartsEngine: ChartsEngine; sourcePath: string}) {
-        return DataFetcher.getSourceConfig({chartsEngine, sourcePath}) === null;
+    static isStat({ctx, sourcePath}: {ctx: AppContext; sourcePath: string}) {
+        return DataFetcher.getSourceConfig({ctx, sourcePath}) === null;
     }
 
     private static removeFromProcessingRequests(
@@ -449,7 +446,6 @@ export class DataFetcher {
         sourceName,
         source,
         ctx,
-        chartsEngine,
         fetchingStartTime,
         subrequestHeaders,
         processingRequests,
@@ -462,11 +458,13 @@ export class DataFetcher {
         zitadelParams,
         originalReqHeaders,
         adapterContext,
+        telemetryCallbacks,
+        cacheClient,
     }: {
         sourceName: string;
         source: Source;
         ctx: AppContext;
-        chartsEngine: ChartsEngine;
+        telemetryCallbacks: TelemetryCallbacks;
         fetchingStartTime: number;
         subrequestHeaders: Record<string, string>;
         processingRequests: PromiseWithAbortController[];
@@ -479,13 +477,13 @@ export class DataFetcher {
         zitadelParams: ZitadelParams | undefined;
         originalReqHeaders: DataFetcherOriginalReqHeaders;
         adapterContext: AdapterContext;
+        cacheClient: CacheClient;
     }) {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
-        const onDataFetched = chartsEngine.telemetryCallbacks.onDataFetched || (() => {});
-        const onDataFetchingFailed =
-            chartsEngine.telemetryCallbacks.onDataFetchingFailed || (() => {});
+        const onDataFetched = telemetryCallbacks.onDataFetched || (() => {});
+        const onDataFetchingFailed = telemetryCallbacks.onDataFetchingFailed || (() => {});
 
         const requestControl = {
             allBuffersLength: 0,
@@ -533,7 +531,7 @@ export class DataFetcher {
         targetUri = targetUri.replace(/^\/api\/editor\/v1\/run/, '/_charts/api/editor/v1/run');
         targetUri = targetUri.replace(/^\/api\/run/, '/_charts/api/run');
 
-        if (DataFetcher.isStat({chartsEngine, sourcePath: targetUri})) {
+        if (DataFetcher.isStat({ctx, sourcePath: targetUri})) {
             targetUri = '/_stat' + targetUri;
         }
 
@@ -571,7 +569,7 @@ export class DataFetcher {
         const dataSourceName = DataFetcher.getSourceName(targetUri);
 
         const sourceConfig = DataFetcher.getSourceConfig({
-            chartsEngine,
+            ctx,
             sourcePath: targetUri,
             isEmbed,
         });
@@ -775,7 +773,7 @@ export class DataFetcher {
 
         if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
-                chartsEngine,
+                ctx,
                 sourcePath: source.middlewareUrl.sourceName,
             });
 
@@ -786,7 +784,7 @@ export class DataFetcher {
                     sourceName,
                     iamToken: iamToken ?? undefined,
                     workbookId,
-                    ChartsEngine: chartsEngine,
+                    cacheClient,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,

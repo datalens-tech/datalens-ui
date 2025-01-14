@@ -39,7 +39,6 @@ type Controllers = {
 };
 
 class ChartsEngine {
-    config: AppConfig;
     runners: Runner[];
     sources: Record<string, SourceConfig>;
     telemetryCallbacks: TelemetryCallbacks;
@@ -75,7 +74,6 @@ class ChartsEngine {
         afterAuth: AppMiddleware[];
         runners: Runner[];
     }) {
-        this.config = config;
         this.runners = runners;
         this.sources = config.sources;
         this.telemetryCallbacks = telemetryCallbacks;
