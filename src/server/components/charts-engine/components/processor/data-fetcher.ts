@@ -9,6 +9,7 @@ import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
 
+import type {ChartsEngine} from '../..';
 import type {WorkbookId} from '../../../../../shared';
 import {
     DL_CONTEXT_HEADER,
@@ -57,6 +58,7 @@ type ChartkitSource = {
 type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
+    chartsEngine?: ChartsEngine;
     sources: Record<string, Source | string>;
     ctx: AppContext;
     postprocess?:
@@ -74,8 +76,8 @@ type DataFetcherOptions = {
     zitadelParams?: ZitadelParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
-    telemetryCallbacks: TelemetryCallbacks;
-    cacheClient: CacheClient;
+    telemetryCallbacks?: TelemetryCallbacks;
+    cacheClient?: CacheClient;
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -184,6 +186,7 @@ export function addZitadelHeaders({
 
 export class DataFetcher {
     static fetch({
+        chartsEngine,
         sources,
         ctx,
         postprocess = null,
@@ -199,6 +202,15 @@ export class DataFetcher {
         telemetryCallbacks,
         cacheClient,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
+        // TODO remove after migration
+        if ((!telemetryCallbacks || !cacheClient) && chartsEngine) {
+            telemetryCallbacks = chartsEngine.telemetryCallbacks;
+            cacheClient = chartsEngine.cacheClient;
+        }
+        if (!telemetryCallbacks || !cacheClient) {
+            throw new Error('Missing telemetry callbacks or cache client');
+        }
+
         const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
