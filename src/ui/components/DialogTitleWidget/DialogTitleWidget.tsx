@@ -2,7 +2,7 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import {TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
-import {ChevronDown} from '@gravity-ui/icons';
+import {ChevronDown, PencilToLine} from '@gravity-ui/icons';
 import type {RadioButtonOption} from '@gravity-ui/uikit';
 import {
     Button,
@@ -46,7 +46,7 @@ const FONT_SIZE_OPTIONS: RadioButtonOption<DashTabItemTitleSize>[] = [
 
 const CUSTOM_FONT_SIZE_OPTION: RadioButtonOption<RadioButtonFontSizeOption> = {
     value: 'custom',
-    content: 'Custom',
+    content: <Icon data={PencilToLine} size={16} />,
 };
 
 const presetFontSizeOptions = ['15', '17', '20', '24', '32', '40', '48', '56', '72', '96'].map(
@@ -91,6 +91,9 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
 const INPUT_TITLE_ID = 'widgetTitleField';
 const INPUT_SHOW_IN_TOC_ID = 'widgetShowInTOCField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
+
+const MIN_FONT_SIZE = 1;
+const MAX_FONT_SIZE = 950;
 
 const defaultOpenedItemData: DashTabItemTitle['data'] = {
     text: i18n('dash.title-dialog.edit', 'value_default'),
@@ -205,12 +208,18 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
             text: text?.trim() ? undefined : i18n('dash.title-dialog.edit', 'toast_required-field'),
         };
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
+            const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
             setItemData({
                 data: {
                     text,
                     size:
                         fontSize === 'custom'
-                            ? {fontSize: customFontSize ?? previousSelectedFontSize}
+                            ? {
+                                  fontSize: Math.min(
+                                      MAX_FONT_SIZE,
+                                      Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
+                                  ),
+                              }
                             : fontSize,
                     showInTOC,
                     autoHeight,
@@ -273,7 +282,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     </FieldWrapper>
                 </FormRow>
                 <FormRow className={b('row')} label={i18n('dash.title-dialog.edit', 'label_size')}>
-                    <div className={b('controls-wrapper')}>
+                    <div>
                         <RadioButton
                             className={b('radiobtn')}
                             value={fontSize}
@@ -281,7 +290,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                             onUpdate={onSizeChange}
                         />
                         {enableCustomFontSize && fontSize === 'custom' && (
-                            <div>
+                            <div ref={customFontSizeControlRef}>
                                 <NumberInput
                                     className={b('number-input')}
                                     value={customFontSize}
@@ -294,8 +303,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                                             }));
                                         }
                                     }}
-                                    min={1}
-                                    max={200}
+                                    min={MIN_FONT_SIZE}
+                                    max={MAX_FONT_SIZE}
                                     hiddenControls
                                     endContent={
                                         <Select
@@ -305,9 +314,11 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                                                 .map(String)}
                                             onUpdate={onCustomFontSizePresetSelectChange}
                                             options={presetFontSizeOptions}
+                                            popupWidth={80} // equal to NumberInput width
+                                            popupPlacement={['bottom-end', 'top-end']}
                                             renderControl={(selectControlProps) => (
                                                 <Button view="flat" {...selectControlProps}>
-                                                    <Icon data={ChevronDown} />
+                                                    <Icon data={ChevronDown} size={16} />
                                                 </Button>
                                             )}
                                         />
