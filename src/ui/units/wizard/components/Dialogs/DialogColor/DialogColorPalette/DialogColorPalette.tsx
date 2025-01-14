@@ -123,6 +123,7 @@ class PaletteContainer extends React.Component<Props> {
                     }}
                 />
                 <Palette
+                    key={palette}
                     paletteType={PaletteTypes.Colors}
                     className={b('palette')}
                     onPaletteItemClick={this.props.onPaletteItemClick}
