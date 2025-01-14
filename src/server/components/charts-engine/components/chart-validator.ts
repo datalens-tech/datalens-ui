@@ -1,27 +1,42 @@
 import {EDITOR_TYPE} from '../../../../shared/constants';
 
 const MODEL_TABS = {
-    graph_node: new Set([
-        'graph,js,params,shared,statface_graph,ui,url',
-        'graph,js,params,secrets,shared,statface_graph,ui,url',
+    [EDITOR_TYPE.GRAPH_NODE]: new Set([
+        'graph,js,params,shared,statface_graph,ui,url,meta',
+        'graph,js,params,secrets,shared,statface_graph,ui,url,meta',
     ]),
 
-    metric_node: new Set([
-        'js,params,shared,statface_metric,url',
-        'js,params,secrets,shared,statface_metric,url',
+    [EDITOR_TYPE.METRIC_NODE]: new Set([
+        'js,params,shared,statface_metric,url,meta',
+        'js,params,secrets,shared,statface_metric,url,meta',
     ]),
 
-    table_node: new Set(['js,params,shared,table,ui,url', 'js,params,secrets,shared,table,ui,url']),
+    [EDITOR_TYPE.TABLE_NODE]: new Set([
+        'js,params,shared,table,ui,url,meta',
+        'js,params,secrets,shared,table,ui,url,meta',
+    ]),
 
-    ymap_node: new Set(['js,params,shared,url,ymap', 'js,params,secrets,shared,url,ymap']),
+    [EDITOR_TYPE.YMAP_NODE]: new Set([
+        'js,params,shared,url,ymap,meta',
+        'js,params,secrets,shared,url,ymap,meta',
+    ]),
 
-    control_node: new Set(['js,params,shared,ui,url', 'js,params,secrets,shared,ui,url']),
+    [EDITOR_TYPE.CONTROL_NODE]: new Set([
+        'js,params,shared,ui,url,meta',
+        'js,params,secrets,shared,ui,url,meta',
+    ]),
 
-    markdown_node: new Set(['js,params,shared,url', 'js,params,secrets,shared,url']),
+    [EDITOR_TYPE.MARKDOWN_NODE]: new Set([
+        'js,params,shared,url,meta',
+        'js,params,secrets,shared,url,meta',
+    ]),
 
-    markup_node: new Set(['config,js,params,shared,url', 'config,js,params,secrets,shared,url']),
+    [EDITOR_TYPE.MARKUP_NODE]: new Set([
+        'config,js,params,shared,url,meta',
+        'config,js,params,secrets,shared,url,meta',
+    ]),
 
-    module: new Set([
+    [EDITOR_TYPE.MODULE]: new Set([
         'documentation_en,documentation_ru,js',
         'documentation_ru,js',
         'documentation_en,js',
@@ -29,13 +44,13 @@ const MODEL_TABS = {
     ]),
 
     [EDITOR_TYPE.D3_NODE]: new Set([
-        'js,params,shared,ui,url,config',
-        'js,params,secrets,shared,ui,url,config',
+        'js,params,shared,ui,url,config,meta',
+        'js,params,secrets,shared,ui,url,config,meta',
     ]),
 
     [EDITOR_TYPE.BLANK_CHART_NODE]: new Set([
-        'js,params,shared,ui,url,config',
-        'js,params,secrets,shared,ui,url,config',
+        'js,params,shared,ui,url,config,meta',
+        'js,params,secrets,shared,ui,url,config,meta',
     ]),
 };
 
