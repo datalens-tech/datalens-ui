@@ -24,7 +24,7 @@
     }
 
     &__unit-select {
-        margin-inline-start: var(--g-spacing-1);
+        margin-inline-end: -1px;
         border-inline-start: 1px solid var(--g-color-line-generic-accent);
     }
 
