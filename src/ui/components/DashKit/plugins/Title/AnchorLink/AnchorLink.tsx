@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RECCOMMENDED_LINE_HEIGHT_MULTIPLIER} from '@gravity-ui/dashkit';
+import {RECCOMMENDED_LINE_HEIGHT_MULTIPLIER, TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
@@ -29,18 +29,19 @@ export const AnchorLink = ({size, to, show, absolute, top}: AnchorLinkProps) => 
         return null;
     }
 
-    const fontStyle =
-        typeof size === 'object' && size.fontSize
-            ? {
-                  fontSize: size.fontSize + 'px',
-                  lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
-              }
-            : {};
+    let fontStyle: React.CSSProperties = {};
+    if (typeof size === 'object' && size.fontSize) {
+        fontStyle = {
+            fontSize: size.fontSize + 'px',
+            lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
+        };
+    } else if (typeof size === 'string') {
+        fontStyle = TITLE_DEFAULT_SIZES[size];
+    }
 
     return (
         <Link
             className={b('anchor', {
-                size: typeof size === 'string' ? size : false,
                 absolute,
             })}
             to={link}
