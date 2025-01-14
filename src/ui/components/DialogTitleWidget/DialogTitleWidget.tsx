@@ -93,7 +93,7 @@ const INPUT_TITLE_ID = 'widgetTitleField';
 const INPUT_SHOW_IN_TOC_ID = 'widgetShowInTOCField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
-const MIN_FONT_SIZE = 1;
+const MIN_FONT_SIZE = 15;
 const MAX_FONT_SIZE = 950;
 
 const defaultOpenedItemData: DashTabItemTitle['data'] = {
