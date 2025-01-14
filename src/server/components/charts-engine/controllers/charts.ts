@@ -1,6 +1,5 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import type {ChartsEngine} from '..';
 import {EntryUpdateMode} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import Utils from '../../../utils';
@@ -99,7 +98,7 @@ const getHeaders = (req: Request) => {
     return headers;
 };
 
-export const chartsController = (_chartsEngine: ChartsEngine) => {
+export const chartsController = () => {
     return {
         create: async (req: Request, res: Response) => {
             const {ctx} = req;

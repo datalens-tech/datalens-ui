@@ -99,8 +99,8 @@ class ChartsEngine {
             export: defaultControllers.export(),
             markdown: defaultControllers.markdown,
             run: defaultControllers.run(this),
-            config: defaultControllers.config(this),
-            charts: defaultControllers.charts(this),
+            config: defaultControllers.config(),
+            charts: defaultControllers.charts(),
             embeds: defaultControllers.embeds(this),
             embeddedEntry: defaultControllers.embeddedEntry,
         };
