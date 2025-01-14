@@ -318,7 +318,11 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                                             popupWidth={80} // equal to NumberInput width
                                             popupPlacement={['bottom-end', 'top-end']}
                                             renderControl={(selectControlProps) => (
-                                                <Button view="flat" {...selectControlProps}>
+                                                <Button
+                                                    {...selectControlProps}
+                                                    view="flat"
+                                                    pin="brick-brick"
+                                                >
                                                     <Icon data={ChevronDown} size={16} />
                                                 </Button>
                                             )}
