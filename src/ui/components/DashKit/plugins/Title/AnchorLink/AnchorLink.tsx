@@ -30,7 +30,7 @@ export const AnchorLink = ({size, to, show, absolute, top}: AnchorLinkProps) => 
     }
 
     let fontStyle: React.CSSProperties = {};
-    if (typeof size === 'object' && size.fontSize) {
+    if (typeof size === 'object' && 'fontSize' in size) {
         fontStyle = {
             fontSize: size.fontSize + 'px',
             lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,

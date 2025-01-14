@@ -200,7 +200,7 @@ const titlePlugin: PluginTitle = {
                     <AnchorLink
                         size={data.size}
                         to={data.text}
-                        show={true /* showAnchor */}
+                        show={showAnchor}
                         top={anchorTop}
                         absolute={!isInlineAnchor}
                     />
