@@ -49,9 +49,10 @@ const CUSTOM_FONT_SIZE_OPTION: RadioButtonOption<RadioButtonFontSizeOption> = {
     content: <Icon data={PencilToLine} size={16} />,
 };
 
-const presetFontSizeOptions = ['15', '17', '20', '24', '32', '40', '48', '56', '72', '96'].map(
-    (opt) => ({value: opt, content: opt}),
-);
+const presetFontSizeOptions = ['40', '48', '56', '72', '96'].map((opt) => ({
+    value: opt,
+    content: opt,
+}));
 
 function isDashTabItemTitleSize(size: RadioButtonFontSizeOption): size is DashTabItemTitleSize {
     return Object.values(DashTabItemTitleSizes).includes(size as DashTabItemTitleSize);
@@ -282,7 +283,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     </FieldWrapper>
                 </FormRow>
                 <FormRow className={b('row')} label={i18n('dash.title-dialog.edit', 'label_size')}>
-                    <div>
+                    <div className={b('controls-wrapper')}>
                         <RadioButton
                             className={b('radiobtn')}
                             value={fontSize}
@@ -290,7 +291,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                             onUpdate={onSizeChange}
                         />
                         {enableCustomFontSize && fontSize === 'custom' && (
-                            <div ref={customFontSizeControlRef}>
+                            <div>
                                 <NumberInput
                                     className={b('number-input')}
                                     value={customFontSize}
