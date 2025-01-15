@@ -181,6 +181,7 @@ export function commonRunner({
 }) {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
+    const sourcesConfig = chartsEngine.sources;
     const hooks = new ProcessorHooks({processorHooks: chartsEngine.processorHooks});
 
     res.locals.subrequestHeaders['x-chart-kind'] = chartType;
@@ -247,6 +248,7 @@ export function commonRunner({
         hooks,
         telemetryCallbacks,
         cacheClient,
+        sourcesConfig,
     };
 
     if (req.body.unreleased === 1) {

@@ -5,6 +5,7 @@ import JSONfn from 'json-fn';
 import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
+import type {ChartsEngine} from '../..';
 import type {
     ControlType,
     DashWidgetConfig,
@@ -170,6 +171,7 @@ export type ProcessorParams = {
     telemetryCallbacks: TelemetryCallbacks;
     cacheClient: CacheClient;
     hooks: ProcessorHooks;
+    sourcesConfig: ChartsEngine['sources'];
 };
 
 export class Processor {
