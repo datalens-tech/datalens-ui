@@ -402,7 +402,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     }, [width, height, debouncedChartReflow]);
 
     /**
-     * changed position, title, background, description, title and loaded state watcher
+     * changed position, title, background, description and loaded state watcher
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
     const {enableDescription, background, title} = currentTab;
