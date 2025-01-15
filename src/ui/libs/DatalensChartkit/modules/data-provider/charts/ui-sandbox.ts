@@ -68,6 +68,8 @@ const HC_FORBIDDEN_ATTRS = [
 ] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
+const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
+
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
     if (nestingLevel > MAX_NESTING_LEVEL) {
@@ -113,6 +115,9 @@ function clearVmProp(prop: unknown): unknown {
             return getChartProps(prop);
         }
 
+        // instanceof Event
+        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
+
         const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
@@ -141,7 +146,14 @@ function clearVmProp(prop: unknown): unknown {
             points = points.map(clearVmProp);
         }
 
-        return {series, point, points, this: _this, ...(removeSVGElements(other) as object)};
+        return {
+            series,
+            point,
+            points,
+            this: _this,
+            ...(removeSVGElements(other) as object),
+            ...eventProps,
+        };
     }
 
     if (prop && typeof prop === 'function') {
