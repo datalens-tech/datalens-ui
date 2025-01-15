@@ -7,6 +7,8 @@ import type {
     VmCallResult,
 } from 'quickjs-emscripten';
 
+import {ATTR_DATA_ELEMENT_ID} from '../../html-generator/constants';
+
 type UiSandboxRuntimeProps = {
     fn: string;
     fnArgs: unknown[];
@@ -34,21 +36,27 @@ export class UiSandboxRuntime {
     callFunction(props: UiSandboxRuntimeProps) {
         const {fn, fnContext, fnArgs, globalApi, libs, name} = props;
 
-        this.defineVmArguments(fnArgs);
+        this.vm.evalCode(libs);
+
         this.defineVmContext(fnContext);
+        this.defineVmArguments(fnArgs);
         this.defineVmApi(globalApi);
-        const code = `${libs}
-            const __fn = ${fn};
-            __fn.call(JSON.parse(context), ...(args.length
+        const code = `globalThis.__fn = ${fn};
+            globalThis.__fn_args = args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
                         eval('fn = ' + arg);
                         return fn;
                     }
+
+                    if (arg.target && '${ATTR_DATA_ELEMENT_ID}' in arg.target) {
+                        arg.target = document.querySelector('[${ATTR_DATA_ELEMENT_ID}="' + arg.target['${ATTR_DATA_ELEMENT_ID}'] + '"]');
+                    }
                     return arg;
                 })
-                : []))`;
+                : [];
+            globalThis.__fn.call(JSON.parse(context), ...globalThis.__fn_args)`;
         const result = this.vm.evalCode(code, 'fn');
         const lines = code?.split('\n') ?? [];
         const startPoint = lines.findIndex((row) => row.trim().startsWith('const __fn')) + 1;
