@@ -22,6 +22,8 @@ const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 type GenerateHtmlOptions = {
     tooltipId?: string;
     ignoreInvalidValues?: boolean;
+    /** Add an id in a special attribute to all elements - useful for further work with items in events, for example */
+    addElementId?: boolean;
 };
 
 export function generateHtml(
@@ -103,7 +105,9 @@ export function generateHtml(
             elem.setAttribute(ATTR_DATA_TOOLTIP_ANCHOR_ID, options.tooltipId);
         }
 
-        elem.setAttribute(ATTR_DATA_ELEMENT_ID, getRandomKey());
+        if (options?.addElementId) {
+            elem.setAttribute(ATTR_DATA_ELEMENT_ID, getRandomKey());
+        }
 
         const nextOptions = {...options};
 

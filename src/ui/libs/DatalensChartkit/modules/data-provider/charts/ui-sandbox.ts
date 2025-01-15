@@ -196,6 +196,7 @@ async function getUnwrappedFunction(args: {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
     let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
+    const isBlankChart = entryType === 'blank-chart_node';
 
     return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();
@@ -267,7 +268,9 @@ async function getUnwrappedFunction(args: {
                     appendElements: (node: unknown) => {
                         const chart = getCurrentChart();
 
-                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const html = unwrapHtml({
+                            value: wrapHtml(node as ChartKitHtmlItem),
+                        }) as string;
                         const container = chart.container;
                         const wrapper = document.createElement('div');
                         wrapper.insertAdjacentHTML('beforeend', html);
@@ -332,7 +335,7 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
-        } else if (entryType === 'blank-chart_node') {
+        } else if (isBlankChart) {
             const chartId = get(this, 'chartId');
             const chartContext = chartStorage.get(chartId);
 
@@ -370,7 +373,7 @@ async function getUnwrappedFunction(args: {
                 options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
             }
 
-            return unwrapHtml(result, parseHtml);
+            return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {
@@ -494,6 +497,7 @@ type ProcessHtmlOptions = {
     allowHtml: boolean;
     parseHtml?: (value: string) => unknown;
     ignoreInvalidValues?: boolean;
+    addElementId?: boolean;
 };
 
 export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
@@ -511,6 +515,7 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
                     key,
                     generateHtml(content as ChartKitHtmlItem, {
                         ignoreInvalidValues: options?.ignoreInvalidValues,
+                        addElementId: options?.addElementId,
                     }),
                 );
             } else {
@@ -535,13 +540,18 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
     }
 }
 
-export function unwrapHtml(value: unknown, parseHtml?: (value: string) => unknown) {
+function unwrapHtml(args: {
+    value: unknown;
+    parseHtml?: (value: string) => unknown;
+    addElementId?: boolean;
+}) {
+    const {value, parseHtml, addElementId} = args;
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
         let content = value[WRAPPED_HTML_KEY];
         if (typeof content === 'string' && typeof parseHtml === 'function') {
             content = parseHtml(content);
         }
-        return generateHtml(content as ChartKitHtmlItem);
+        return generateHtml(content as ChartKitHtmlItem, {addElementId});
     }
 
     if (typeof value === 'string') {
