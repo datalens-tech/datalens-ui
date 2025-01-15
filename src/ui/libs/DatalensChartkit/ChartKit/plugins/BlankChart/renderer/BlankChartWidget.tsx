@@ -3,11 +3,11 @@ import React from 'react';
 import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 
 import {ChartQa} from '../../../../../../../shared';
+import {ATTR_DATA_ELEMENT_ID} from '../../../../modules/html-generator/constants';
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import type {BlankChartWidgetProps, WidgetDimensions} from '../types';
@@ -46,7 +46,7 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
             chartId: generatedId,
             getState: () => chartState.current,
             setState: (value: any, options?: {silent: boolean}) => {
-                chartState.current = merge({}, chartState.current, value);
+                chartState.current = {...chartState.current, ...value};
 
                 if (!options?.silent) {
                     render();
@@ -81,10 +81,16 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
         }
     }, [dimensions, generatedId, onLoad, props.data]);
 
-    const handleClick = React.useCallback((_event) => {
+    const handleClick = React.useCallback((event) => {
         if (originalData?.events?.click) {
             const context = chartStorage.get(generatedId);
-            originalData.events.click.call(context, {});
+            context.__innerHTML = ref.current?.innerHTML;
+            const target = {
+                [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
+            };
+            originalData.events.click.call(context, {
+                target,
+            });
         }
     }, []);
 

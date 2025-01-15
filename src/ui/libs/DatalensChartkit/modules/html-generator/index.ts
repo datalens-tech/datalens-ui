@@ -2,12 +2,13 @@ import escape from 'lodash/escape';
 
 import type {ChartKitHtmlItem} from '../../../../../shared';
 import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
-import {getRandomCKId} from '../../helpers/helpers';
+import {getRandomCKId, getRandomKey} from '../../helpers/helpers';
 
 import {
     ALLOWED_ATTRIBUTES,
     ALLOWED_TAGS,
     ATTR_DATA_CE_THEME,
+    ATTR_DATA_ELEMENT_ID,
     ATTR_DATA_TOOLTIP_ANCHOR_ID,
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_PLACEMENT,
@@ -101,6 +102,8 @@ export function generateHtml(
         if (!isDLTooltip && options?.tooltipId) {
             elem.setAttribute(ATTR_DATA_TOOLTIP_ANCHOR_ID, options.tooltipId);
         }
+
+        elem.setAttribute(ATTR_DATA_ELEMENT_ID, getRandomKey());
 
         const nextOptions = {...options};
 

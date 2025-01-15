@@ -194,7 +194,7 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
 
     return function (this: unknown, ...restArgs: unknown[]) {
@@ -346,6 +346,10 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
+
+            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+            }
         }
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
