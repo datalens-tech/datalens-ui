@@ -205,6 +205,7 @@ export class Processor {
         telemetryCallbacks,
         cacheClient,
         hooks,
+        sourcesConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -579,6 +580,7 @@ export class Processor {
                     adapterContext,
                     telemetryCallbacks,
                     cacheClient,
+                    sourcesConfig,
                 });
 
                 if (Object.keys(resolvedSources).length) {
