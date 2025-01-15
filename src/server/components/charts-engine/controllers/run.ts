@@ -120,7 +120,7 @@ export const runController = (
             }
 
             if (req.body.config) {
-                if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
+                if (!ctx.config.allowBodyConfig && !runnerFound.safeConfig) {
                     ctx.log('UNSAFE_CONFIG_OVERRIDE');
                     res.status(400).send({
                         error: `It is forbidden to pass config in body for "${configType}"`,
