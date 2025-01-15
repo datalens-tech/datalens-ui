@@ -394,13 +394,19 @@ export class DataFetcher {
     }
 
     /**
-     * @param {String} chartsEngine
+     * @param {String} sourcesConfig
      * @param {String} lang target lang
      *
      * @returns {Object} config for all sources
      */
-    static getChartKitSources({ctx, lang = 'en'}: {ctx: AppContext; lang: 'en' | 'ru'}) {
-        const sources = ctx.config.sources;
+    static getChartKitSources({
+        sourcesConfig,
+        lang = 'en',
+    }: {
+        sourcesConfig: ChartsEngine['sources'];
+        lang: 'en' | 'ru';
+    }) {
+        const sources = sourcesConfig;
 
         const chartkitSources: Record<string, ChartkitSource> = {};
 
