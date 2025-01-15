@@ -50,7 +50,7 @@ export const entriesActions = {
                 includePermissionsInfo: true,
             })) as Required<GetRelationsEntry, 'permissions'>[];
 
-            const [datasets, connections] = await checkEntriesForPublication({
+            const [datasets] = await checkEntriesForPublication({
                 entries: relations,
                 typedApi,
                 workbookId,
@@ -59,9 +59,10 @@ export const entriesActions = {
             const normalizedDatasets = datasets
                 ? keyBy(datasets.result, (dataset) => dataset.dataset_id)
                 : {};
-            const normalizedConnections = connections
-                ? keyBy(connections.result, (connection) => connection.connection_id)
-                : {};
+            // TODO: wait for back fix
+            // const normalizedConnections = connections
+            //     ? keyBy(connections.result, (connection) => connection.connection_id)
+            //     : {};
 
             return relations.map((entry) => {
                 let lockPublication = false;
@@ -73,11 +74,11 @@ export const entriesActions = {
                     lockPublicationReason = datasetEntry.reason;
                 }
 
-                if (entry.scope === EntryScope.Connection) {
-                    const connectionEntry = normalizedConnections[entry.entryId];
-                    lockPublication = connectionEntry && !connectionEntry.allowed;
-                    lockPublicationReason = connectionEntry.reason;
-                }
+                // if (entry.scope === EntryScope.Connection) {
+                //     const connectionEntry = normalizedConnections[entry.entryId];
+                //     lockPublication = connectionEntry && !connectionEntry.allowed;
+                //     lockPublicationReason = connectionEntry.reason;
+                // }
 
                 return {
                     ...entry,
@@ -97,7 +98,7 @@ export const entriesActions = {
 
         const typedApi = getTypedApi(api);
 
-        const [datasets, connections] = await checkEntriesForPublication({
+        const [datasets] = await checkEntriesForPublication({
             entries,
             typedApi,
             workbookId,
@@ -115,15 +116,15 @@ export const entriesActions = {
             );
         }
 
-        if (connections && connections.result.some((connectionEntry) => !connectionEntry.allowed)) {
-            errorMessage += JSON.stringify(
-                connections.result
-                    .filter(({allowed}) => !allowed)
-                    .map(({connection_id: entryId, reason}) => ({entryId, reason})),
-                null,
-                4,
-            );
-        }
+        // if (connections && connections.result.some((connectionEntry) => !connectionEntry.allowed)) {
+        //     errorMessage += JSON.stringify(
+        //         connections.result
+        //             .filter(({allowed}) => !allowed)
+        //             .map(({connection_id: entryId, reason}) => ({entryId, reason})),
+        //         null,
+        //         4,
+        //     );
+        // }
 
         if (errorMessage) {
             throw new Error(`Failed to publish entries:\n ${errorMessage}`);
