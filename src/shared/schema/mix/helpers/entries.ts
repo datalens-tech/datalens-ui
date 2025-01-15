@@ -62,7 +62,7 @@ export const checkEntriesForPublication = async ({
     typedApi: TypedApi;
     workbookId: WorkbookId;
 }) => {
-    const {datasetIds, connectionsIds} = filterEntirsForCheck(entries);
+    const {datasetIds} = filterEntirsForCheck(entries);
     const promises: [
         Promise<CheckDatasetsForPublicationResponse> | null,
         Promise<CheckConnectionsForPublicationResponse> | null,
@@ -74,12 +74,12 @@ export const checkEntriesForPublication = async ({
             workbookId,
         });
     }
-    if (connectionsIds.length) {
-        promises[1] = typedApi.bi.checkConnectionsForPublication({
-            connectionsIds: connectionsIds,
-            workbookId,
-        });
-    }
+    // if (connectionsIds.length) {
+    //     promises[1] = typedApi.bi.checkConnectionsForPublication({
+    //         connectionsIds: connectionsIds,
+    //         workbookId,
+    //     });
+    // }
 
     return Promise.all(promises);
 };
