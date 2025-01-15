@@ -98,7 +98,7 @@ export const entriesActions = {
 
         const typedApi = getTypedApi(api);
 
-        const [datasets, connections] = await checkEntriesForPublication({
+        const [datasets] = await checkEntriesForPublication({
             entries,
             typedApi,
             workbookId,
@@ -116,15 +116,15 @@ export const entriesActions = {
             );
         }
 
-        if (connections && connections.result.some((connectionEntry) => !connectionEntry.allowed)) {
-            errorMessage += JSON.stringify(
-                connections.result
-                    .filter(({allowed}) => !allowed)
-                    .map(({connection_id: entryId, reason}) => ({entryId, reason})),
-                null,
-                4,
-            );
-        }
+        // if (connections && connections.result.some((connectionEntry) => !connectionEntry.allowed)) {
+        //     errorMessage += JSON.stringify(
+        //         connections.result
+        //             .filter(({allowed}) => !allowed)
+        //             .map(({connection_id: entryId, reason}) => ({entryId, reason})),
+        //         null,
+        //         4,
+        //     );
+        // }
 
         if (errorMessage) {
             throw new Error(`Failed to publish entries:\n ${errorMessage}`);
