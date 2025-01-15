@@ -224,6 +224,11 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
         if (shouldUseHtmlForLegend) {
             set(customConfig, 'legend.useHTML', true);
         }
+
+        const shouldUseHtmlForCategory = isHtmlField(x);
+        if (shouldUseHtmlForCategory) {
+            set(customConfig, 'xAxis.labels.useHTML', true);
+        }
     }
 
     return preparedData;
