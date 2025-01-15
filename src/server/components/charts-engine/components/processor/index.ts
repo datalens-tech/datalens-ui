@@ -17,8 +17,9 @@ import type {
 import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
+import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
-import type {AdapterContext, HooksContext, Source} from '../../types';
+import type {AdapterContext, HooksContext, Source, TelemetryCallbacks} from '../../types';
 import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
@@ -133,7 +134,6 @@ function logFetchingError(ctx: AppContext, error: unknown) {
 }
 
 export type ProcessorParams = {
-    chartsEngine: ChartsEngine;
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -168,12 +168,15 @@ export type ProcessorParams = {
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    hooks: ProcessorHooks;
+    sourcesConfig: ChartsEngine['sources'];
 };
 
 export class Processor {
     // eslint-disable-next-line complexity
     static async process({
-        chartsEngine,
         subrequestHeaders,
         paramsOverride = {},
         widgetConfig = {},
@@ -199,6 +202,10 @@ export class Processor {
         originalReqHeaders,
         adapterContext,
         hooksContext,
+        telemetryCallbacks,
+        cacheClient,
+        hooks,
+        sourcesConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -213,7 +220,6 @@ export class Processor {
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
-        const hooks = new ProcessorHooks({chartsEngine});
 
         const timings: {
             configResolving: number;
@@ -225,8 +231,8 @@ export class Processor {
             jsExecution: null,
         };
 
-        const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
-        const onTabsExecuted = chartsEngine.telemetryCallbacks.onTabsExecuted || (() => {});
+        const onCodeExecuted = telemetryCallbacks.onCodeExecuted || (() => {});
+        const onTabsExecuted = telemetryCallbacks.onTabsExecuted || (() => {});
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
@@ -561,7 +567,6 @@ export class Processor {
                 }
 
                 resolvedSources = await DataFetcher.fetch({
-                    chartsEngine,
                     sources,
                     ctx,
                     iamToken,
@@ -573,6 +578,9 @@ export class Processor {
                     zitadelParams,
                     originalReqHeaders,
                     adapterContext,
+                    telemetryCallbacks,
+                    cacheClient,
+                    sourcesConfig,
                 });
 
                 if (Object.keys(resolvedSources).length) {
@@ -863,7 +871,7 @@ export class Processor {
                 ctx.log('EditorEngine::Postprocessing', {duration: getDuration(hrStart)});
 
                 if (
-                    chartsEngine.flags.chartComments &&
+                    ctx.config.chartsEngineConfig.flags?.chartComments &&
                     (type === CONFIG_TYPE.GRAPH_NODE ||
                         type === CONFIG_TYPE.GRAPH_WIZARD_NODE ||
                         type === CONFIG_TYPE.GRAPH_QL_NODE)

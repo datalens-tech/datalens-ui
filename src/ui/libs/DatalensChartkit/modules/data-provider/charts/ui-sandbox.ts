@@ -68,6 +68,8 @@ const HC_FORBIDDEN_ATTRS = [
 ] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
+const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
+
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
     if (nestingLevel > MAX_NESTING_LEVEL) {
@@ -113,6 +115,9 @@ function clearVmProp(prop: unknown): unknown {
             return getChartProps(prop);
         }
 
+        // instanceof Event
+        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
+
         const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
@@ -141,7 +146,14 @@ function clearVmProp(prop: unknown): unknown {
             points = points.map(clearVmProp);
         }
 
-        return {series, point, points, this: _this, ...(removeSVGElements(other) as object)};
+        return {
+            series,
+            point,
+            points,
+            this: _this,
+            ...(removeSVGElements(other) as object),
+            ...eventProps,
+        };
     }
 
     if (prop && typeof prop === 'function') {
@@ -194,8 +206,9 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
+    const isBlankChart = entryType === 'blank-chart_node';
 
     return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();
@@ -267,7 +280,9 @@ async function getUnwrappedFunction(args: {
                     appendElements: (node: unknown) => {
                         const chart = getCurrentChart();
 
-                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const html = unwrapHtml({
+                            value: wrapHtml(node as ChartKitHtmlItem),
+                        }) as string;
                         const container = chart.container;
                         const wrapper = document.createElement('div');
                         wrapper.insertAdjacentHTML('beforeend', html);
@@ -332,7 +347,7 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
-        } else if (entryType === 'blank-chart_node') {
+        } else if (isBlankChart) {
             const chartId = get(this, 'chartId');
             const chartContext = chartStorage.get(chartId);
 
@@ -346,6 +361,10 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
+
+            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+            }
         }
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
@@ -366,7 +385,7 @@ async function getUnwrappedFunction(args: {
                 options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
             }
 
-            return unwrapHtml(result, parseHtml);
+            return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {
@@ -490,6 +509,7 @@ type ProcessHtmlOptions = {
     allowHtml: boolean;
     parseHtml?: (value: string) => unknown;
     ignoreInvalidValues?: boolean;
+    addElementId?: boolean;
 };
 
 export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
@@ -507,6 +527,7 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
                     key,
                     generateHtml(content as ChartKitHtmlItem, {
                         ignoreInvalidValues: options?.ignoreInvalidValues,
+                        addElementId: options?.addElementId,
                     }),
                 );
             } else {
@@ -531,13 +552,18 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
     }
 }
 
-export function unwrapHtml(value: unknown, parseHtml?: (value: string) => unknown) {
+function unwrapHtml(args: {
+    value: unknown;
+    parseHtml?: (value: string) => unknown;
+    addElementId?: boolean;
+}) {
+    const {value, parseHtml, addElementId} = args;
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
         let content = value[WRAPPED_HTML_KEY];
         if (typeof content === 'string' && typeof parseHtml === 'function') {
             content = parseHtml(content);
         }
-        return generateHtml(content as ChartKitHtmlItem);
+        return generateHtml(content as ChartKitHtmlItem, {addElementId});
     }
 
     if (typeof value === 'string') {

@@ -74,7 +74,14 @@ const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState,
                     path={['/datasets/new', '/workbooks/:workbookId/datasets/new']}
                     render={(props: RouteComponentProps<{workbookId?: string}>) => {
                         const {workbookId} = props.match.params;
-                        return <DatasetPage {...props} sdk={sdk} datasetId={workbookId} />;
+                        return (
+                            <DatasetPage
+                                {...props}
+                                sdk={sdk}
+                                datasetId={workbookId}
+                                workbookId={workbookId}
+                            />
+                        );
                     }}
                 />
                 <Route

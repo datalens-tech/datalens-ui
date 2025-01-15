@@ -1,4 +1,3 @@
-import type Cache from '../../../../../components/cache-client';
 import type {ControlShared} from '../../control/types';
 import {getDistinctsRequestBody} from '../../control/url/distincts/build-distincts-body';
 import type {MiddlewareSourceAdapterArgs} from '../../types';
@@ -13,7 +12,7 @@ export default async (
     const {
         ctx,
         source,
-        ChartsEngine,
+        cacheClient,
         userId,
         iamToken,
         workbookId,
@@ -22,8 +21,6 @@ export default async (
         zitadelParams,
         requestHeaders,
     } = args;
-
-    const cacheClient = ChartsEngine.cacheClient as Cache;
 
     const datasetId = source.datasetId || '';
 

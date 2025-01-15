@@ -1,6 +1,5 @@
 import {getResultSchemaFromDataset} from '../../../../../../shared';
 import type {PartialDatasetField} from '../../../../../../shared/schema';
-import type Cache from '../../../../../components/cache-client';
 import {getUrlsRequestBody} from '../../datalens/url/build-request-body';
 import {getDatasetIdAndLayerIdFromKey} from '../../helpers/misc';
 import type {MiddlewareSourceAdapterArgs} from '../../types';
@@ -16,7 +15,7 @@ export default async (
         ctx,
         source,
         sourceName,
-        ChartsEngine,
+        cacheClient,
         userId,
         iamToken,
         workbookId,
@@ -25,8 +24,6 @@ export default async (
         zitadelParams,
         requestHeaders,
     } = args;
-
-    const cacheClient = ChartsEngine.cacheClient as Cache;
 
     const [datasetId, layerId] = getDatasetIdAndLayerIdFromKey(sourceName);
 

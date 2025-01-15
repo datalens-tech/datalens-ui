@@ -85,6 +85,29 @@ export function canUseStringAsMarkdown(
     }
 }
 
-export function canUseStringAsHtml() {
-    return Utils.isEnabledFeature(Feature.HtmlInWizard);
+export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
+    if (!Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+        return false;
+    }
+
+    switch (visualizationId) {
+        case WizardVisualizationId.Scatter:
+        case WizardVisualizationId.Treemap:
+        case WizardVisualizationId.Geopoint:
+        case WizardVisualizationId.GeopointWithCluster:
+        case WizardVisualizationId.Geopolygon:
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p:
+        case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Donut:
+        case WizardVisualizationId.CombinedChart:
+            return true;
+        default:
+            return false;
+    }
 }

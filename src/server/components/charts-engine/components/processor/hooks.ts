@@ -1,7 +1,6 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 import {flow} from 'lodash';
 
-import type {ChartsEngine} from '../../index';
 import type {HooksContext} from '../../types';
 
 export class HookError extends Error {
@@ -20,8 +19,8 @@ const isHookError = (err: {}): err is HookError => {
 export class ProcessorHooks {
     _processorHooks: Record<string, any>[];
     _hooks: Record<string, any>[];
-    constructor({chartsEngine}: {chartsEngine: ChartsEngine}) {
-        this._processorHooks = chartsEngine.processorHooks;
+    constructor({processorHooks}: {processorHooks: Record<string, any>[]}) {
+        this._processorHooks = processorHooks;
         this._hooks = [];
     }
 

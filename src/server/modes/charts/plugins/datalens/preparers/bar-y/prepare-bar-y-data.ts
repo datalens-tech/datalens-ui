@@ -458,7 +458,7 @@ export function prepareBarYData({
             ChartEditor.updateConfig({useMarkup: true});
         }
 
-        if (isHtmlLabel) {
+        if (isHtmlLabel || isHtmlField(x) || isHtmlField(colorItem)) {
             ChartEditor.updateConfig({useHtml: true});
         }
 

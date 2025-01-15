@@ -4,7 +4,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {WorkbookId} from '../../../../shared';
-import type {ChartsEngine} from '../../../components/charts-engine';
+import type {CacheClient} from '../../../components/cache-client';
 import type {ZitadelParams} from '../../../components/charts-engine/components/processor/data-fetcher';
 
 import type {
@@ -54,7 +54,7 @@ export interface MiddlewareSourceAdapterArgs {
     };
     iamToken?: string;
     workbookId?: WorkbookId;
-    ChartsEngine: ChartsEngine;
+    cacheClient: CacheClient;
     userId: string | null;
     rejectFetchingSource: (reason: any) => void;
     zitadelParams: ZitadelParams | undefined;
