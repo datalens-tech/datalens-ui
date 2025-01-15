@@ -1,9 +1,10 @@
 import React from 'react';
 
-import type {PluginTitleProps} from '@gravity-ui/dashkit';
+import {RECCOMMENDED_LINE_HEIGHT_MULTIPLIER, TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
+import type {DashTitleSize} from 'shared';
 import {DL} from 'ui/constants';
 
 import '../Title.scss';
@@ -11,7 +12,7 @@ import '../Title.scss';
 const b = block('dashkit-plugin-title-container');
 
 interface AnchorLinkProps {
-    size: PluginTitleProps['data']['size'];
+    size: DashTitleSize;
     to: string;
     show?: boolean;
     absolute?: boolean;
@@ -28,14 +29,23 @@ export const AnchorLink = ({size, to, show, absolute, top}: AnchorLinkProps) => 
         return null;
     }
 
+    let fontStyle: React.CSSProperties = {};
+    if (typeof size === 'object' && 'fontSize' in size) {
+        fontStyle = {
+            fontSize: size.fontSize + 'px',
+            lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
+        };
+    } else if (typeof size === 'string') {
+        fontStyle = TITLE_DEFAULT_SIZES[size];
+    }
+
     return (
         <Link
             className={b('anchor', {
-                size,
                 absolute,
             })}
             to={link}
-            style={{top}}
+            style={{top, ...fontStyle}}
         >
             #
         </Link>

@@ -9,7 +9,7 @@ import {
     DashTabConnectionKind,
     DashTabItemControlElementType,
     DashTabItemControlSourceType,
-    DashTabItemTitleSize,
+    DashTabItemTitleSizes,
     DashTabItemType,
     EntryScope,
     ErrorCode,
@@ -41,7 +41,7 @@ export const dashApiValidation: ValidationConfig = {
                 properties: {
                     text: {type: 'string'},
                     size: {
-                        enum: Object.values(DashTabItemTitleSize),
+                        enum: Object.values(DashTabItemTitleSizes),
                     },
                     showInTOC: {type: 'boolean'},
                 },
