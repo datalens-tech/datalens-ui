@@ -115,8 +115,8 @@ function clearVmProp(prop: unknown): unknown {
             return getChartProps(prop);
         }
 
-        // instanceof Highcharts' extended PointerEvent
-        const eventProps = 'chartX' in prop ? pick(prop, EVENT_KEYS) : {};
+        // instanceof Event
+        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
 
         const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
