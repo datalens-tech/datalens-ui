@@ -50,7 +50,7 @@ export class UiSandboxRuntime {
                         return fn;
                     }
 
-                    if (arg.target && '${ATTR_DATA_ELEMENT_ID}' in arg.target) {
+                    if (arg?.target && '${ATTR_DATA_ELEMENT_ID}' in arg.target) {
                         arg.target = document.querySelector('[${ATTR_DATA_ELEMENT_ID}="' + arg.target['${ATTR_DATA_ELEMENT_ID}'] + '"]');
                     }
                     return arg;
