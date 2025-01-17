@@ -5,8 +5,8 @@ import type {AppDispatch} from '../../../../store';
 export const logout = () => {
     return (_dispatch: AppDispatch) => {
         const {sdk} = getSdk();
-        return getSdk()
-            .sdk.auth.auth.logout()
+        return sdk.auth.auth
+            .logout()
             .then(() => {
                 window.location.href = '/auth/signin';
                 return {error: null};
