@@ -84,6 +84,8 @@ export enum Feature {
     EscapeStringInWizard = 'EscapeStringInWizard',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
+    /** Enable using of presigned urls for uploading files to S3 */
+    EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
 }
 
 export type FeatureConfig = Record<string, boolean>;
