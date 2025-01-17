@@ -17,6 +17,7 @@
   "label_encoding-windows-1251": "windows-1251",
   "label_file-download-failure": "File upload failed",
   "label_file-promo": "To create a connection, upload files in the supported formats: {{formats}}.",
+  "label_file-size-error": "The file size cannot exceed 200 MB",
   "label_filter-by-column": "Search by column",
   "label_header-disabled": "No",
   "label_header-enabled": "Yes",
