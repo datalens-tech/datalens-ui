@@ -7,6 +7,8 @@ import type {
     AddGoogleSheetResponse,
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
+    DownloadPresignedUrlArgs,
+    DownloadPresignedUrlResponse,
     FormSchema,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -18,6 +20,7 @@ import type {
     GetOAuthTokenResponse,
     GetOAuthUriArgs,
     GetOAuthUriResponse,
+    GetPresignedUrlResponse,
     RefreshToken,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
@@ -383,6 +386,60 @@ const getOAuthToken = async (
     }
 };
 
+const getPresignedUrl = async (
+    fileHash: string,
+): Promise<GetPresignedUrlResponse & {error?: DataLensApiError}> => {
+    try {
+        return await getSdk().sdk.biConverter.getPresignedUrl({
+            content_md5: fileHash,
+        });
+    } catch (error) {
+        return {url: '', fields: {}, error};
+    }
+};
+
+const uploadFileToS3 = async (
+    args: GetPresignedUrlResponse & {file: File; fileHash: string},
+): Promise<{error?: DataLensApiError}> => {
+    const {fields, file, fileHash, url} = args;
+
+    try {
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        formData.append('content-md5', fileHash);
+        formData.append('file', file);
+        /* 
+            Why don't we need axios here?
+            
+            DL axios instance has a lot of predefined settings, for example `withCredentials: true` that
+            we don't need in this request. Also we don't want to send any headers, except Content-Type,
+            but this header is sets automatically by using FormData object in `fetch` body
+            (more details https://muffinman.io/blog/uploading-files-using-fetch-multipart-form-data)
+        */
+        fetch(url, {method: 'POST', body: formData});
+
+        return {};
+    } catch (error) {
+        return {error};
+    }
+};
+
+const downloadPresignedUrl = async (
+    args: DownloadPresignedUrlArgs,
+): Promise<DownloadPresignedUrlResponse & {error?: DataLensApiError}> => {
+    const {filename, key} = args;
+    try {
+        return await getSdk().sdk.biConverter.downloadPresignedUrl({
+            filename,
+            key,
+        });
+    } catch (error) {
+        return {file_id: '', filename: '', error};
+    }
+};
+
 export const api = {
     fetchEntry,
     fetchConnectionData,
@@ -405,4 +462,7 @@ export const api = {
     addYandexDocument,
     getOAuthUrl,
     getOAuthToken,
+    getPresignedUrl,
+    uploadFileToS3,
+    downloadPresignedUrl,
 };
