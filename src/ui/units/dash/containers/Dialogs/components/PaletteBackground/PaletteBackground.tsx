@@ -2,11 +2,12 @@ import React from 'react';
 
 import {ChartColumn} from '@gravity-ui/icons';
 import type {PaletteOption} from '@gravity-ui/uikit';
-import {ActionTooltip, Icon, Palette, Popover, Tooltip} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Icon, Palette, Popup, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {ValueOf} from 'shared';
 import {DashCommonQa} from 'shared';
+import {ColorPicker} from 'ui/components/ColorPicker/ColorPicker';
 
 import './PaletteBackground.scss';
 
@@ -103,57 +104,126 @@ const colors = [
     CustomPaletteColors.LIKE_CHART,
 ];
 
-const PaletteList = (props: {onSelect: (val: string[]) => void; selectedColor: string}) => {
+type PaleteListProps = {
+    onSelect: (val: string[]) => void;
+    selectedColor?: string;
+    enableCustomBgColorSelector?: boolean;
+
+    customColor?: string;
+    onCustomColorUpdate: (color: string) => void;
+    customError?: string;
+    setCustomError?: (error: string | undefined) => void;
+};
+
+const PaletteList = (props: PaleteListProps) => {
+    const {selectedColor, onSelect, customColor, onCustomColorUpdate, customError, setCustomError} =
+        props;
     const options: PaletteOption[] = colors.map((colorItem) => {
         return {
-            content: <ColorItem color={colorItem} isSelected={colorItem === props.selectedColor} />,
+            content: <ColorItem color={colorItem} isSelected={colorItem === selectedColor} />,
             value: colorItem,
         };
     });
 
     return (
-        <Palette
-            columns={6}
-            options={options}
-            onUpdate={props.onSelect}
-            multiple={false}
-            optionClassName={b('palette-list-btn')}
-            qa={DashCommonQa.WidgetSelectBackgroundPalleteContainer}
-        />
+        <div className={b('palette-popup-content')}>
+            <Palette
+                columns={6}
+                options={options}
+                onUpdate={onSelect}
+                multiple={false}
+                optionClassName={b('palette-list-btn')}
+                qa={DashCommonQa.WidgetSelectBackgroundPalleteContainer}
+            />
+            {props.enableCustomBgColorSelector && (
+                <ColorPicker
+                    color={customColor}
+                    onColorUpdate={onCustomColorUpdate}
+                    error={customError}
+                    setError={setCustomError}
+                    className={b('color-picker')}
+                    selectedPresetColor={
+                        !selectedColor ||
+                        (
+                            [CustomPaletteColors.NONE, CustomPaletteColors.LIKE_CHART] as string[]
+                        ).includes(selectedColor)
+                            ? undefined
+                            : selectedColor
+                    }
+                />
+            )}
+        </div>
     );
 };
 
 type PaletteBackgroundProps = {
     color?: string;
     onSelect: (color: string) => void;
+    enableCustomBgColorSelector?: boolean;
 };
 
 export const PaletteBackground = (props: PaletteBackgroundProps) => {
-    const [selectedColor, setSelectedColor] = React.useState(
-        props.color || CustomPaletteColors.NONE,
+    const [selectedColor, setSelectedColor] = React.useState<string | undefined>(
+        props.color?.startsWith('#')
+            ? CustomPaletteColors.NONE
+            : props.color || CustomPaletteColors.NONE,
     );
 
-    const handleSelectColor = React.useCallback(
-        (val) => {
-            setSelectedColor(val[0]);
-            props.onSelect(val[0]);
-        },
-        [props],
+    const [customColor, setCustomColor] = React.useState<string>(
+        props.color?.startsWith('#') ? props.color : '',
     );
+    const [customError, setCustomError] = React.useState<string | undefined>();
+
+    const handleSelectColor = React.useCallback((val) => {
+        setSelectedColor(val[0]);
+        setCustomColor('');
+    }, []);
+
+    const anchorRef = React.useRef<HTMLElement>(null);
+    const [openPopup, setOpenPopup] = React.useState(false);
+
+    const handleClosePopup = React.useCallback(() => {
+        setOpenPopup((prevOpen) => !prevOpen);
+
+        if (!customError && customColor) {
+            props.onSelect(customColor);
+        } else {
+            props.onSelect(selectedColor ?? props.color ?? CustomPaletteColors.NONE);
+        }
+    }, [customColor, customError, props, selectedColor]);
 
     return (
-        <Popover
-            className={b()}
-            openOnHover={false}
-            content={<PaletteList onSelect={handleSelectColor} selectedColor={selectedColor} />}
-        >
+        <div className={b()}>
             <Tooltip content={i18n('dash.palette-background', 'tooltip_click-to-select')}>
-                <ColorItem
-                    color={selectedColor}
-                    isPreview={true}
-                    qa={DashCommonQa.WidgetSelectBackgroundButton}
-                />
+                <Button
+                    className={b('palette-trigger')}
+                    view="flat"
+                    ref={anchorRef}
+                    onClick={handleClosePopup}
+                >
+                    <ColorItem
+                        color={props.color || CustomPaletteColors.NONE}
+                        isPreview={true}
+                        qa={DashCommonQa.WidgetSelectBackgroundButton}
+                    />
+                </Button>
             </Tooltip>
-        </Popover>
+            <Popup
+                open={openPopup}
+                anchorRef={anchorRef}
+                hasArrow
+                onOutsideClick={handleClosePopup}
+            >
+                <PaletteList
+                    onSelect={handleSelectColor}
+                    selectedColor={selectedColor}
+                    enableCustomBgColorSelector={props.enableCustomBgColorSelector}
+                    customColor={customColor}
+                    onCustomColorUpdate={setCustomColor}
+                    customError={customError}
+                    setCustomError={setCustomError}
+                />
+            </Popup>
+        </div>
     );
 };

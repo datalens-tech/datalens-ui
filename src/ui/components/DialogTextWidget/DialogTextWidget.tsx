@@ -20,6 +20,7 @@ const b = block('dialog-text');
 
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
+    enableCustomBgColorSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -70,7 +71,8 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     state: DialogTextWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
+        const {openedItemId, dialogIsVisible, enableAutoheight, enableCustomBgColorSelector} =
+            this.props;
         const {text, autoHeight, backgroundColor} = this.state;
 
         return (
@@ -104,6 +106,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                         <PaletteBackground
                             color={backgroundColor}
                             onSelect={this.handleHasBackgroundSelected}
+                            enableCustomBgColorSelector={enableCustomBgColorSelector}
                         />
                     </FormRow>
                     {enableAutoheight && (

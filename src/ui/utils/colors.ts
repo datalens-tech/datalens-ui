@@ -14,6 +14,6 @@ export function getPaletteColors(paletteName: string, clientPalettes?: ColorPale
     return currentPalette?.scheme || [];
 }
 
-export function isValidHexColor(hexColor: string) {
-    return /^#[\da-f]{3,6}$/i.test(hexColor);
+export function isValidHexColor(hexColor: string, allowTransparency = false) {
+    return (allowTransparency ? /^#[\da-f]{3,8}$/i : /^#[\da-f]{3,6}$/i).test(hexColor);
 }

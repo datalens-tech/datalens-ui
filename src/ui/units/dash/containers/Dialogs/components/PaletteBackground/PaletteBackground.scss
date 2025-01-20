@@ -18,13 +18,21 @@
         margin-top: 20px;
     }
 
+    &__palette-trigger {
+        width: 26px;
+        height: 26px;
+    }
+
+    &__palette-popup-content {
+        padding: var(--g-spacing-4);
+    }
+
     &__color-item {
         display: inline-block;
         position: relative;
         border-radius: 4px;
         width: 26px;
         height: 26px;
-        cursor: pointer;
 
         $colorItem: &;
 
@@ -68,6 +76,10 @@
             border-radius: 6px;
             z-index: 0;
         }
+    }
+
+    &__color-picker {
+        margin-block-start: var(--g-spacing-2);
     }
 
     &__tooltip-trigger {

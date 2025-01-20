@@ -79,6 +79,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
+    enableCustomBgColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -110,6 +111,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         dialogIsVisible,
         enableAutoheight = true,
         enableShowInTOC = true,
+        enableCustomBgColorSelector,
         closeDialog,
         setItemData,
         openedItemData = defaultOpenedItemData,
@@ -342,6 +344,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     <PaletteBackground
                         color={backgroundColor}
                         onSelect={handleHasBackgroundSelected}
+                        enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
                 {enableAutoheight && (
