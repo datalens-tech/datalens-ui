@@ -9,7 +9,7 @@ import {DashCommonQa} from 'shared';
 import {ColorPicker} from 'ui/components/ColorPicker/ColorPicker';
 import {
     CustomPaletteBgColors,
-    TITLE_BG_COLORS_PRESET,
+    WIDGET_BG_COLORS_PRESET,
     isCustomPaletteColor,
 } from 'ui/constants/widgets';
 
@@ -81,7 +81,7 @@ type PaleteListProps = {
 const PaletteList = (props: PaleteListProps) => {
     const {selectedColor, onSelect, customColor, onCustomColorUpdate, customError, setCustomError} =
         props;
-    const options: PaletteOption[] = TITLE_BG_COLORS_PRESET.map((colorItem) => {
+    const options: PaletteOption[] = WIDGET_BG_COLORS_PRESET.map((colorItem) => {
         return {
             content: <ColorItem color={colorItem} isSelected={colorItem === selectedColor} />,
             value: colorItem,
@@ -91,7 +91,7 @@ const PaletteList = (props: PaleteListProps) => {
     return (
         <div className={b('palette-popup-content')}>
             <Palette
-                columns={6}
+                columns={7}
                 options={options}
                 onUpdate={onSelect}
                 multiple={false}

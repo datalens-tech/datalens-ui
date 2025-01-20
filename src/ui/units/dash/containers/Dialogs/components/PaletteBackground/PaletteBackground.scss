@@ -30,11 +30,20 @@
     &__color-item {
         display: inline-block;
         position: relative;
-        border-radius: 4px;
-        width: 26px;
-        height: 26px;
+        border-radius: 6px;
+        width: 28px;
+        height: 28px;
 
         $colorItem: &;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid var(--g-color-line-generic);
+            border-radius: 6px;
+            z-index: 0;
+        }
 
         &_transparent {
             background-image: repeating-conic-gradient(
@@ -71,9 +80,9 @@
         &_selected:not(&_small)::after {
             content: '';
             position: absolute;
-            inset: -1px;
-            border: 1px solid var(--g-color-line-misc);
-            border-radius: 6px;
+            inset: -3px;
+            border: 2px solid var(--g-color-line-brand);
+            border-radius: 9px;
             z-index: 0;
         }
     }

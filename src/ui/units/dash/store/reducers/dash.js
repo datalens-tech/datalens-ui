@@ -3,7 +3,7 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, TITLE_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -217,7 +217,7 @@ function dash(state = initialState, action) {
                             : itemData.size,
                     background:
                         action.payload.item.type === DashTabItemType.Title &&
-                        !TITLE_BG_COLORS_PRESET.includes(itemData.background?.color)
+                        !WIDGET_BG_COLORS_PRESET.includes(itemData.background?.color)
                             ? CustomPaletteBgColors.NONE
                             : itemData.background.color,
                 },
