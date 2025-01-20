@@ -25,10 +25,8 @@ import {
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
-import {
-    CustomPaletteColors,
-    PaletteBackground,
-} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
@@ -227,7 +225,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     showInTOC,
                     autoHeight,
                     background: {
-                        enabled: backgroundColor !== CustomPaletteColors.NONE,
+                        enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                         color: backgroundColor,
                     },
                 },

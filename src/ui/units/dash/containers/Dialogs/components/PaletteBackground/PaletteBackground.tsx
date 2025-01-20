@@ -5,28 +5,24 @@ import type {PaletteOption} from '@gravity-ui/uikit';
 import {ActionTooltip, Button, Icon, Palette, Popup, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {ValueOf} from 'shared';
 import {DashCommonQa} from 'shared';
 import {ColorPicker} from 'ui/components/ColorPicker/ColorPicker';
+import {
+    CustomPaletteBgColors,
+    TITLE_BG_COLORS_PRESET,
+    isCustomPaletteColor,
+} from 'ui/constants/widgets';
 
 import './PaletteBackground.scss';
 
 const b = block('widget-palette-background');
 
-export const CustomPaletteColors = {
-    LIKE_CHART: 'like-chart-bg',
-    NONE: 'transparent',
-} as const;
-
-type CustomPaletteColor = ValueOf<typeof CustomPaletteColors>;
-
-function isCustomPaletteColor(color: string): color is CustomPaletteColor {
-    return Object.keys(CustomPaletteColors).includes(color as CustomPaletteColor);
-}
+/** @deprecated  */
+export const CustomPaletteColors = CustomPaletteBgColors;
 
 const PALETTE_HINTS = {
-    [CustomPaletteColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
-    [CustomPaletteColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
+    [CustomPaletteBgColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
+    [CustomPaletteBgColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
 } as const;
 
 const ColorItem = React.forwardRef(function ColorItem(
@@ -45,8 +41,8 @@ const ColorItem = React.forwardRef(function ColorItem(
     },
     ref: React.ForwardedRef<HTMLSpanElement>,
 ) {
-    const isTransparent = color === CustomPaletteColors.NONE;
-    const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
+    const isTransparent = color === CustomPaletteBgColors.NONE;
+    const isLikeChartBg = color === CustomPaletteBgColors.LIKE_CHART;
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
 
     return (
@@ -71,39 +67,6 @@ const ColorItem = React.forwardRef(function ColorItem(
     );
 });
 
-const colors = [
-    'var(--g-color-base-info-light)',
-    'var(--g-color-base-info-light-hover)',
-    'var(--g-color-base-positive-light)',
-    'var(--g-color-base-positive-light-hover)',
-    'var(--g-color-base-warning-light)',
-    'var(--g-color-base-warning-light-hover)',
-    'var(--g-color-base-danger-light)',
-    'var(--g-color-base-danger-light-hover)',
-    'var(--g-color-base-utility-light)',
-    'var(--g-color-base-utility-light-hover)',
-    'var(--g-color-base-misc-light)',
-    'var(--g-color-base-misc-light-hover)',
-    'var(--g-color-base-neutral-light)',
-    'var(--g-color-base-neutral-light-hover)',
-    'var(--g-color-base-info-medium)',
-    'var(--g-color-base-info-medium-hover)',
-    'var(--g-color-base-positive-medium)',
-    'var(--g-color-base-positive-medium-hover)',
-    'var(--g-color-base-warning-medium)',
-    'var(--g-color-base-warning-medium-hover)',
-    'var(--g-color-base-danger-medium)',
-    'var(--g-color-base-danger-medium-hover)',
-    'var(--g-color-base-utility-medium)',
-    'var(--g-color-base-utility-medium-hover)',
-    'var(--g-color-base-misc-medium)',
-    'var(--g-color-base-misc-medium-hover)',
-    'var(--g-color-base-neutral-medium)',
-    'var(--g-color-base-neutral-medium-hover)',
-    CustomPaletteColors.NONE,
-    CustomPaletteColors.LIKE_CHART,
-];
-
 type PaleteListProps = {
     onSelect: (val: string[]) => void;
     selectedColor?: string;
@@ -118,7 +81,7 @@ type PaleteListProps = {
 const PaletteList = (props: PaleteListProps) => {
     const {selectedColor, onSelect, customColor, onCustomColorUpdate, customError, setCustomError} =
         props;
-    const options: PaletteOption[] = colors.map((colorItem) => {
+    const options: PaletteOption[] = TITLE_BG_COLORS_PRESET.map((colorItem) => {
         return {
             content: <ColorItem color={colorItem} isSelected={colorItem === selectedColor} />,
             value: colorItem,
@@ -145,7 +108,10 @@ const PaletteList = (props: PaleteListProps) => {
                     selectedPresetColor={
                         !selectedColor ||
                         (
-                            [CustomPaletteColors.NONE, CustomPaletteColors.LIKE_CHART] as string[]
+                            [
+                                CustomPaletteBgColors.NONE,
+                                CustomPaletteBgColors.LIKE_CHART,
+                            ] as string[]
                         ).includes(selectedColor)
                             ? undefined
                             : selectedColor
@@ -165,8 +131,8 @@ type PaletteBackgroundProps = {
 export const PaletteBackground = (props: PaletteBackgroundProps) => {
     const [selectedColor, setSelectedColor] = React.useState<string | undefined>(
         props.color?.startsWith('#')
-            ? CustomPaletteColors.NONE
-            : props.color || CustomPaletteColors.NONE,
+            ? CustomPaletteBgColors.NONE
+            : props.color || CustomPaletteBgColors.NONE,
     );
 
     const [customColor, setCustomColor] = React.useState<string>(
@@ -179,6 +145,11 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
         setCustomColor('');
     }, []);
 
+    const handleCustomColorChange = React.useCallback((newColor: string) => {
+        setCustomColor(newColor);
+        setSelectedColor(undefined);
+    }, []);
+
     const anchorRef = React.useRef<HTMLElement>(null);
     const [openPopup, setOpenPopup] = React.useState(false);
 
@@ -188,7 +159,7 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
         if (!customError && customColor) {
             props.onSelect(customColor);
         } else {
-            props.onSelect(selectedColor ?? props.color ?? CustomPaletteColors.NONE);
+            props.onSelect(selectedColor ?? props.color ?? CustomPaletteBgColors.NONE);
         }
     }, [customColor, customError, props, selectedColor]);
 
@@ -202,7 +173,12 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
                     onClick={handleClosePopup}
                 >
                     <ColorItem
-                        color={props.color || CustomPaletteColors.NONE}
+                        color={
+                            (customError || customColor.length <= 1 ? undefined : customColor) ||
+                            selectedColor ||
+                            props.color ||
+                            CustomPaletteBgColors.NONE
+                        }
                         isPreview={true}
                         qa={DashCommonQa.WidgetSelectBackgroundButton}
                     />
@@ -219,7 +195,7 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
                     selectedColor={selectedColor}
                     enableCustomBgColorSelector={props.enableCustomBgColorSelector}
                     customColor={customColor}
-                    onCustomColorUpdate={setCustomColor}
+                    onCustomColorUpdate={handleCustomColorChange}
                     customError={customError}
                     setCustomError={setCustomError}
                 />
