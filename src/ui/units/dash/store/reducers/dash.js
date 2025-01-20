@@ -2,7 +2,7 @@ import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemType} from 'shared';
+import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -204,8 +204,21 @@ function dash(state = initialState, action) {
                 }),
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
+            const itemData = action.payload.item.data;
+            const newItem = {
+                ...action.payload.item,
+                data: {
+                    ...itemData,
+                    size:
+                        action.payload.item.type === DashTabItemType.Title &&
+                        typeof itemData.size === 'object'
+                            ? DashTabItemTitleSizes.XL
+                            : itemData.size,
+                },
+            };
+
             const tabData = DashKit.setItem({
-                item: action.payload.item,
+                item: newItem,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     ...action.payload.options,
