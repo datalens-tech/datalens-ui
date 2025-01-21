@@ -10,7 +10,7 @@ import {
     Feature,
     isEnabledServerFeature,
 } from '../../../../shared';
-import type {ProcessorParams} from '../components/processor';
+import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
@@ -142,6 +142,130 @@ export function engineProcessingCallback({
         });
 }
 
+export const getSerializableProcessorParams = ({
+    res,
+    req,
+    ctx,
+    configResolving,
+    generatedConfig,
+    workbookId,
+    localConfig,
+    subrequestHeadersKind,
+    forbiddenFields,
+}: {
+    res: Response;
+    req: Request;
+    ctx: AppContext;
+    configResolving: number;
+    generatedConfig: {
+        data: Record<string, string>;
+        meta: {
+            stype: ChartStorageType | ControlType.Dash;
+        };
+        publicAuthor?: EntryPublicAuthor;
+    };
+    localConfig?: ResolvedConfig;
+    workbookId?: WorkbookId;
+    subrequestHeadersKind?: string;
+    forbiddenFields?: ProcessorParams['forbiddenFields'];
+}): SerializableProcessorParams => {
+    const {params, actionParams, widgetConfig} = req.body;
+
+    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
+
+    const configName = req.body.key;
+    const configId = req.body.id;
+    const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
+
+    const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
+
+    const zitadelParams = ctx.config.isZitadelEnabled
+        ? {
+              accessToken: req.user?.accessToken,
+              serviceUserAccessToken: req.serviceUserAccessToken,
+          }
+        : undefined;
+
+    const originalReqHeaders = {
+        xRealIP: req.headers['x-real-ip'],
+        xForwardedFor: req.headers['x-forwarded-for'],
+        xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
+        referer: req.headers.referer,
+    };
+    const adapterContext = {
+        headers: {
+            ['x-forwarded-for']: req.headers['x-forwarded-for'],
+            cookie: req.headers.cookie,
+        },
+    };
+
+    const hooksContext = {
+        headers: {
+            cookie: req.headers.cookie,
+            authorization: req.headers.authorization,
+        },
+    };
+
+    const processorParams: SerializableProcessorParams = {
+        paramsOverride: params,
+        actionParamsOverride: actionParams,
+        widgetConfig,
+        userLang: res.locals && res.locals.lang,
+        userLogin: res.locals && res.locals.login,
+        userId: res.locals && res.locals.userId,
+        subrequestHeaders: res.locals.subrequestHeaders,
+        iamToken,
+        isEditMode: Boolean(res.locals.editMode),
+        configResolving,
+        cacheToken: req.headers['x-charts-cache-token'] || null,
+        forbiddenFields,
+        configName,
+        configId,
+        disableJSONFnByCookie,
+        isEmbed,
+        zitadelParams,
+        originalReqHeaders,
+        adapterContext,
+        hooksContext,
+    };
+
+    if (req.body.unreleased === 1) {
+        processorParams.useUnreleasedConfig = true;
+    }
+
+    if (generatedConfig) {
+        processorParams.configOverride = generatedConfig;
+    }
+
+    const configWorkbook = workbookId ?? localConfig?.workbookId;
+    if (configWorkbook) {
+        processorParams.workbookId = configWorkbook;
+    }
+
+    if (req.body.uiOnly) {
+        processorParams.uiOnly = true;
+    }
+
+    processorParams.responseOptions = req.body.responseOptions || {};
+
+    if (
+        processorParams.responseOptions &&
+        typeof processorParams.responseOptions.includeLogs === 'undefined'
+    ) {
+        processorParams.responseOptions.includeLogs = true;
+    }
+
+    if (
+        subrequestHeadersKind &&
+        processorParams.subrequestHeaders &&
+        typeof processorParams.subrequestHeaders['x-chart-kind'] === 'undefined'
+    ) {
+        processorParams.subrequestHeaders['x-chart-kind'] = subrequestHeadersKind;
+    }
+
+    return processorParams;
+};
+
 export function commonRunner({
     res,
     req,
@@ -186,104 +310,17 @@ export function commonRunner({
 
     res.locals.subrequestHeaders['x-chart-kind'] = chartType;
 
-    const {params, actionParams, widgetConfig} = req.body;
-
-    const iamToken = res?.locals?.iamToken ?? req.headers[ctx.config.headersMap.subjectToken];
-
-    const configName = req.body.key;
-    const configId = req.body.id;
-    const disableJSONFnByCookie = req.cookies[DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME] === DISABLE;
-
-    const isEmbed = req.headers[DL_EMBED_TOKEN_HEADER] !== undefined;
-
-    const zitadelParams = ctx.config.isZitadelEnabled
-        ? {
-              accessToken: req.user?.accessToken,
-              serviceUserAccessToken: req.serviceUserAccessToken,
-          }
-        : undefined;
-
-    const originalReqHeaders = {
-        xRealIP: req.headers['x-real-ip'],
-        xForwardedFor: req.headers['x-forwarded-for'],
-        xChartsFetcherVia: req.headers['x-charts-fetcher-via'],
-        referer: req.headers.referer,
-    };
-    const adapterContext = {
-        headers: {
-            ['x-forwarded-for']: req.headers['x-forwarded-for'],
-            cookie: req.headers.cookie,
-        },
-    };
-
-    const hooksContext = {
-        headers: {
-            cookie: req.headers.cookie,
-            authorization: req.headers.authorization,
-        },
-    };
-
-    const processorParams: Omit<ProcessorParams, 'ctx'> = {
-        paramsOverride: params,
-        actionParamsOverride: actionParams,
-        widgetConfig,
-        userLang: res.locals && res.locals.lang,
-        userLogin: res.locals && res.locals.login,
-        userId: res.locals && res.locals.userId,
-        subrequestHeaders: res.locals.subrequestHeaders,
-        iamToken,
-        isEditMode: Boolean(res.locals.editMode),
+    const serializableProcessorParams = getSerializableProcessorParams({
+        res,
+        req,
+        ctx,
         configResolving,
-        cacheToken: req.headers['x-charts-cache-token'] || null,
-        builder,
+        generatedConfig,
+        workbookId,
+        localConfig,
+        subrequestHeadersKind,
         forbiddenFields,
-        configName,
-        configId,
-        disableJSONFnByCookie,
-        isEmbed,
-        zitadelParams,
-        originalReqHeaders,
-        adapterContext,
-        hooksContext,
-        hooks,
-        telemetryCallbacks,
-        cacheClient,
-        sourcesConfig,
-    };
-
-    if (req.body.unreleased === 1) {
-        processorParams.useUnreleasedConfig = true;
-    }
-
-    if (generatedConfig) {
-        processorParams.configOverride = generatedConfig;
-    }
-
-    const configWorkbook = workbookId ?? localConfig?.workbookId;
-    if (configWorkbook) {
-        processorParams.workbookId = configWorkbook;
-    }
-
-    if (req.body.uiOnly) {
-        processorParams.uiOnly = true;
-    }
-
-    processorParams.responseOptions = req.body.responseOptions || {};
-
-    if (
-        processorParams.responseOptions &&
-        typeof processorParams.responseOptions.includeLogs === 'undefined'
-    ) {
-        processorParams.responseOptions.includeLogs = true;
-    }
-
-    if (
-        subrequestHeadersKind &&
-        processorParams.subrequestHeaders &&
-        typeof processorParams.subrequestHeaders['x-chart-kind'] === 'undefined'
-    ) {
-        processorParams.subrequestHeaders['x-chart-kind'] = subrequestHeadersKind;
-    }
+    });
 
     ctx.log(`${runnerType}::PreRun`, {duration: getDuration(hrStart)});
 
@@ -292,7 +329,14 @@ export function commonRunner({
             return engineProcessingCallback({
                 ctx: cx,
                 hrStart,
-                processorParams,
+                processorParams: {
+                    ...serializableProcessorParams,
+                    telemetryCallbacks,
+                    cacheClient,
+                    builder,
+                    hooks,
+                    sourcesConfig,
+                },
                 runnerType: runnerType as Runners,
             });
         })

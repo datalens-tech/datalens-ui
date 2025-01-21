@@ -134,6 +134,15 @@ function logFetchingError(ctx: AppContext, error: unknown) {
 }
 
 export type ProcessorParams = {
+    ctx: AppContext;
+    builder: ChartBuilder;
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    hooks: ProcessorHooks;
+    sourcesConfig: ChartsEngine['sources'];
+} & SerializableProcessorParams;
+
+export type SerializableProcessorParams = {
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -155,10 +164,8 @@ export type ProcessorParams = {
     uiOnly?: boolean;
     isEditMode: boolean;
     configResolving: number;
-    ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
-    builder: ChartBuilder;
     forbiddenFields?: (keyof ProcessorSuccessResponse)[];
     disableJSONFnByCookie: boolean;
     configName: string;
@@ -168,10 +175,6 @@ export type ProcessorParams = {
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
-    telemetryCallbacks: TelemetryCallbacks;
-    cacheClient: CacheClient;
-    hooks: ProcessorHooks;
-    sourcesConfig: ChartsEngine['sources'];
 };
 
 export class Processor {
