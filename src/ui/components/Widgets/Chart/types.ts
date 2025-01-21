@@ -262,6 +262,7 @@ export type ChartContentProps = Pick<
     | 'hideMenu'
     | 'renderPluginLoader'
     | 'forceShowSafeChart'
+    | 'padding'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;

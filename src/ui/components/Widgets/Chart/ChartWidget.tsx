@@ -12,7 +12,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import type {StringParams} from 'shared';
+import {Feature, type StringParams} from 'shared';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -41,6 +41,7 @@ import type {
 } from './types';
 
 import './ChartWidget.scss';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const b = block(COMPONENT_CLASSNAME);
 
@@ -607,6 +608,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
+                padding={isEnabledFeature(Feature.OutsideMargin)}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter

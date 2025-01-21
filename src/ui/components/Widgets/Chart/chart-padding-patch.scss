@@ -1,0 +1,13 @@
+.dl-widget .chartkit {
+	.chartkit-indicator__item {
+		padding: 0;
+	}
+
+	.highcharts-root {
+		overflow: visible;
+	}
+
+	.chartkit-graph, .chartkit-highcharts {
+		overflow: visible !important;
+	}
+}

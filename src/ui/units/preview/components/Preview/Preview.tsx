@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import type {WorkbookId} from 'shared';
-import {PreviewQa} from 'shared';
+import {Feature, PreviewQa} from 'shared';
 import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
@@ -31,6 +31,7 @@ import {sendEmbedHeight} from '../../modules/helpers';
 
 import './Preview.scss';
 import 'ui/components/Widgets/Chart/Chart.scss';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const b = block('preview');
 
@@ -259,6 +260,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         isPageHidden={isPageHidden}
                         autoupdateInterval={autoupdateInterval}
                         workbookId={workbookInfo.workbookId}
+                        padding={isEnabledFeature(Feature.OutsideMargin)}
                     />
                 )}
                 <PreviewExtension />

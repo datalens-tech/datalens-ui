@@ -76,6 +76,8 @@ export enum Feature {
     ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
+    /** Move widget margins to the outside */
+    OutsideMargin = 'OutsideMargin',
     /** Enable using of presigned urls for uploading files to S3 */
     EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
     /** Enables export menu item for downloading workbook config and import button

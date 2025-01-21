@@ -17,6 +17,7 @@ import {useChartActions} from '../helpers/chart-actions';
 import type {ChartContentProps, ChartControlsType} from '../types';
 
 import {Header as ChartHeader} from './Header';
+import {getChartPadding, removeInternalMargin} from '../utils';
 
 import '../ChartWidget.scss';
 
@@ -69,10 +70,15 @@ export const Content = (props: ChartContentProps) => {
         rootNodeRef,
         runAction,
         backgroundColor,
+        padding: shouldUsePadding,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
     const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        removeInternalMargin();
+    }, []);
 
     const handleExportLoading = React.useCallback(
         (isLoading: boolean) => {
@@ -105,6 +111,11 @@ export const Content = (props: ChartContentProps) => {
     const showLoaderVeil = veil && !isExportLoading;
 
     const {onAction} = useChartActions({onChange});
+
+    const widgetBodyStyle: React.CSSProperties = {};
+    if (shouldUsePadding) {
+        widgetBodyStyle.padding = getChartPadding({widgetType});
+    }
 
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
@@ -141,6 +152,7 @@ export const Content = (props: ChartContentProps) => {
                     widgetBodyClassName,
                 )}
                 data-qa={chartId ? `chartkit-body-entry-${chartId}` : null}
+                style={widgetBodyStyle}
             >
                 {Boolean(showControls && hasControl && getControls) && (
                     <Control
