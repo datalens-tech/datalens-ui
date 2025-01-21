@@ -61,6 +61,7 @@ import type {
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
+    SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SOURCES_REFRESH,
@@ -168,6 +169,7 @@ export type FreeformSource = {
 
 export type EditHistoryOptions = {
     stacked?: boolean;
+    tab?: DatasetTab;
 };
 
 type EditHistoryOptionsProperty = {
@@ -338,6 +340,7 @@ export type DatasetReduxState = {
     sourceTemplate: FreeformSource | null; // TODO: abandon this thing in favor of freeformSources
     error: DatasetError;
     currentTab: DatasetTab;
+    lastModifiedTab?: DatasetTab;
 };
 
 type SetFreeformSources = {
@@ -770,6 +773,13 @@ export type SetCurrentTab = {
     } & EditHistoryOptionsProperty;
 };
 
+export type SetLastModifiedTab = {
+    type: typeof SET_LAST_MODIFIED_TAB;
+    payload: {
+        lastModifiedTab?: DatasetTab;
+    };
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -835,4 +845,5 @@ export type DatasetReduxAction =
     | EditorSetItemsToDisplay
     | RenameDataset
     | SetEditHistoryState
-    | SetCurrentTab;
+    | SetCurrentTab
+    | SetLastModifiedTab;

@@ -37,7 +37,13 @@ import RelationsMap from '../../components/RelationsMap/RelationsMap';
 import SelectSourcePrototypes from '../../components/SelectSourcePrototypes/SelectSourcePrototypes';
 import SourceEditorDialog from '../../components/SourceEditorDialog/SourceEditorDialog';
 import Veil from '../../components/Veil/Veil';
-import {ComponentErrorType, DATASET_UPDATE_ACTIONS, JOIN_TYPES, TOAST_TYPES} from '../../constants';
+import {
+    ComponentErrorType,
+    DATASET_UPDATE_ACTIONS,
+    JOIN_TYPES,
+    TAB_SOURCES,
+    TOAST_TYPES,
+} from '../../constants';
 import {getComponentErrorsByType} from '../../helpers/datasets';
 import DatasetUtils from '../../helpers/utils';
 import {
@@ -210,7 +216,7 @@ class DatasetSources extends React.Component {
         try {
             const connection = await getSdk().sdk.us.getEntry({entryId});
 
-            this.props.addConnection({connection});
+            this.props.addConnection({connection, tab: TAB_SOURCES});
 
             this.clickConnection(entryId);
         } catch (error) {
@@ -240,7 +246,7 @@ class DatasetSources extends React.Component {
         const selectedConnDeleted = connectionId === selectedConnId;
         const nextConn = connections.find(({entryId}) => entryId !== connectionId);
 
-        this.props.deleteConnection({connectionId});
+        this.props.deleteConnection({connectionId, tab: TAB_SOURCES});
 
         if (selectedConnDeleted && nextConn) {
             this.clickConnection(nextConn.entryId);
