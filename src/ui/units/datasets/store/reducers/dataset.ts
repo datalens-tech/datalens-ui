@@ -58,6 +58,7 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -338,7 +339,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 validation: {
                     ...state.validation,
                     isLoading: true,
-                    isPending: false,
                 },
                 ui: {
                     ...state.ui,
@@ -1327,6 +1327,16 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case SET_LAST_MODIFIED_TAB: {
             const {lastModifiedTab} = action.payload;
             return {...state, lastModifiedTab};
+        }
+        case SET_VALIDATION_STATE: {
+            const {validation} = action.payload;
+            return {
+                ...state,
+                validation: {
+                    ...state.validation,
+                    ...validation,
+                },
+            };
         }
         default: {
             return state;

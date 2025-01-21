@@ -53,6 +53,7 @@ import type {
     FreeformSource,
     SetCurrentTab,
     SetLastModifiedTab,
+    SetValidationState,
     ToggleAllowanceSave,
     Update,
 } from '../../types';
@@ -1097,5 +1098,12 @@ export function setLastModifiedTab({
     return {
         type: DATASET_ACTION_TYPES.SET_LAST_MODIFIED_TAB,
         payload: {lastModifiedTab},
+    };
+}
+
+export function setValidationState(payload: SetValidationState['payload']): SetValidationState {
+    return {
+        type: DATASET_ACTION_TYPES.SET_VALIDATION_STATE,
+        payload,
     };
 }

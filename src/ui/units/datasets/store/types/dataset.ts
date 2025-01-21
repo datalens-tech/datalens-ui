@@ -64,6 +64,7 @@ import type {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -780,6 +781,13 @@ export type SetLastModifiedTab = {
     };
 };
 
+export type SetValidationState = {
+    type: typeof SET_VALIDATION_STATE;
+    payload: {
+        validation: Partial<DatasetReduxState['validation']>;
+    };
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -846,4 +854,5 @@ export type DatasetReduxAction =
     | RenameDataset
     | SetEditHistoryState
     | SetCurrentTab
-    | SetLastModifiedTab;
+    | SetLastModifiedTab
+    | SetValidationState;
