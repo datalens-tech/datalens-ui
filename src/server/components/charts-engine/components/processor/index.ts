@@ -27,7 +27,12 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {DataFetcherOriginalReqHeaders, DataFetcherResult, ZitadelParams} from './data-fetcher';
+import type {
+    AuthParams,
+    DataFetcherOriginalReqHeaders,
+    DataFetcherResult,
+    ZitadelParams,
+} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
@@ -172,6 +177,7 @@ export type SerializableProcessorParams = {
     configId: string;
     isEmbed: boolean;
     zitadelParams: ZitadelParams | undefined;
+    authParams: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
@@ -202,6 +208,7 @@ export class Processor {
         configId,
         isEmbed,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,
@@ -579,6 +586,7 @@ export class Processor {
                     workbookId,
                     isEmbed,
                     zitadelParams,
+                    authParams,
                     originalReqHeaders,
                     adapterContext,
                     telemetryCallbacks,

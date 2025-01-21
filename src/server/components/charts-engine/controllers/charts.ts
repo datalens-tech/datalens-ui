@@ -94,6 +94,7 @@ const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
         ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+        ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
     };
 
     return headers;

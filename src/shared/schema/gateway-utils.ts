@@ -2,7 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import {SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
+import {AuthHeader, SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
 export const getAuthHeadersNone = () => undefined;
 
@@ -15,12 +15,16 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
 type AuthArgsData = {
     userAccessToken?: string;
     serviceUserAccessToken?: string;
+    accessToken?: string;
 };
 
 export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
     return {
+        // zitadel
         userAccessToken: req.user?.accessToken,
         serviceUserAccessToken: req.serviceUserAccessToken,
+        // auth
+        accessToken: req.ctx.get('user')?.accessToken,
     };
 };
 
@@ -29,13 +33,22 @@ const createGetAuthHeaders: () => GetAuthHeaders<AuthArgsData> = () => (params) 
 
     const resultHeaders = {};
 
+    // zitadel
     if (authArgs?.userAccessToken) {
-        Object.assign(resultHeaders, {authorization: `Bearer ${authArgs?.userAccessToken}`});
+        Object.assign(resultHeaders, {
+            [AuthHeader.Authorization]: `Bearer ${authArgs.userAccessToken}`,
+        });
     }
-
+    // zitadel
     if (authArgs?.serviceUserAccessToken) {
         Object.assign(resultHeaders, {
-            [SERVICE_USER_ACCESS_TOKEN_HEADER]: authArgs?.serviceUserAccessToken,
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: authArgs.serviceUserAccessToken,
+        });
+    }
+    // auth
+    if (authArgs?.accessToken) {
+        Object.assign(resultHeaders, {
+            [AuthHeader.Authorization]: `Bearer ${authArgs.accessToken}`,
         });
     }
 

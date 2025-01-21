@@ -13,6 +13,9 @@ export const opensourceEndpoints = {
         us: {
             endpoint: endpoints.development.api.us,
         },
+        auth: {
+            endpoint: endpoints.development.api.auth,
+        },
     },
     production: {
         bi: {
@@ -25,6 +28,9 @@ export const opensourceEndpoints = {
         },
         us: {
             endpoint: endpoints.production.api.us,
+        },
+        auth: {
+            endpoint: endpoints.production.api.auth,
         },
     },
 };
