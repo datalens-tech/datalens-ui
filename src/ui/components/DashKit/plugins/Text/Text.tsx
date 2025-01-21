@@ -39,6 +39,7 @@ const textPlugin = {
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const cutNodesRef = React.useRef<NodeList | null>(null);
+        const tabsNodesRef = React.useRef<NodeList | null>(null);
         const mutationObserver = React.useRef<MutationObserver | null>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
         const [isPending, setIsPending] = React.useState<boolean>(false);
@@ -81,7 +82,7 @@ const textPlugin = {
 
         /**
          * call adjust function after all text was rendered (ketex formulas, markdown, etc)
-         * and after cut opened/closed
+         * and after cut opened/closed, change tabs
          */
         const handleTextRender = React.useCallback(() => {
             adjustLayout(!props.data.autoHeight);
@@ -133,16 +134,38 @@ const textPlugin = {
                 });
             }
 
+            if (mutationObserver.current && tabsNodesRef.current) {
+                tabsNodesRef.current.forEach((cutNode) => {
+                    mutationObserver.current?.observe(cutNode, {
+                        attributes: true,
+                        attributeFilter: ['class'],
+                    });
+                });
+            }
+
             // eslint-disable-next-line consistent-return
             return () => {
                 mutationObserver.current?.disconnect();
             };
-        }, [handleTextRender, mutationObserver, rootNodeRef, cutNodesRef.current]);
+        }, [
+            handleTextRender,
+            mutationObserver,
+            rootNodeRef,
+            cutNodesRef.current,
+            tabsNodesRef.current,
+        ]);
 
-        const nodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-cut`);
+        const cutNodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-cut`);
+        const tabsNodes = rootNodeRef.current?.querySelectorAll(
+            `.${YFM_MARKDOWN_CLASSNAME}-tab-panel`,
+        );
 
-        if (nodes?.length && !cutNodesRef.current) {
-            cutNodesRef.current = nodes;
+        if (cutNodes?.length && !cutNodesRef.current) {
+            cutNodesRef.current = cutNodes;
+        }
+
+        if (tabsNodes?.length && !tabsNodesRef.current) {
+            tabsNodesRef.current = tabsNodes;
         }
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
