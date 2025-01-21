@@ -24,4 +24,11 @@
         font-size: 16px;
         font-weight: bold;
     }
+
+    &__item-version {
+        color: var(--g-color-base-brand);
+        font-weight: bold;
+        margin-bottom: 8px;
+        margin-left: 4px;
+    }
 }
