@@ -13,6 +13,7 @@ function Item({item, onClick}) {
     return (
         <div className={b('item')} onClick={() => onClick(item)} data-qa={item.qa}>
             {i18n('editor.templates.view', `label_${name}`)}
+            {item.version ? <span className={b('item-version')}>{item.version}</span> : null}
         </div>
     );
 }

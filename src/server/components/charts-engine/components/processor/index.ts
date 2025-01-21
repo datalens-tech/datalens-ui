@@ -837,7 +837,11 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
+                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                if (
+                    disableFnAndHtml ||
+                    !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
+                ) {
                     resultConfig.enableJsAndHtml = false;
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
