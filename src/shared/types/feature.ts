@@ -82,6 +82,8 @@ export enum Feature {
     ChartActions = 'ChartActions',
     /** Escaping string in wizard chart config to remove potential html injection */
     EscapeStringInWizard = 'EscapeStringInWizard',
+    /** Disable the use of html and function in chart configs */
+    DisableFnAndHtml = 'DisableFnAndHtml',
 }
 
 export type FeatureConfig = Record<string, boolean>;

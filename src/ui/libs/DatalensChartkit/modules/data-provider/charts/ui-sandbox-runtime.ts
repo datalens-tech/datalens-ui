@@ -34,7 +34,7 @@ export class UiSandboxRuntime {
     }
 
     callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi, libs, name} = props;
+        const {fn, fnContext = {}, fnArgs, globalApi, libs, name} = props;
 
         this.vm.evalCode(libs);
 
