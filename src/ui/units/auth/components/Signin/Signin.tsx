@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {Link} from 'react-router-dom';
 
+import {AUTH_ROUTE} from '../../constants/routes';
 import {submitSigninForm} from '../../store/actions/signin';
 
 import {Login} from './components/Login';
@@ -34,7 +35,7 @@ export const Signin = () => {
                     </Button>
                     <Flex>
                         Don&#39;t have an account?&nbsp;
-                        <Link to="/auth/signup">Sign Up</Link>
+                        <Link to={AUTH_ROUTE.SIGNUP}>Sign Up</Link>
                     </Flex>
                 </Flex>
             </Flex>
