@@ -139,10 +139,14 @@ export const selectAvailableOperationsDict = (
 };
 
 export const selectInputOperations = (state: DatalensGlobalState) => {
-    const {multiselectable, isRange, elementType, fieldType, sourceType} =
+    const {multiselectable, isRange, elementType, fieldType, sourceType, datasetFieldId} =
         selectControlDialogState(state).selectorDialog;
 
     const availableOperations = selectAvailableOperationsDict(state);
+
+    if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
+        return undefined;
+    }
 
     let inputOperations;
 
