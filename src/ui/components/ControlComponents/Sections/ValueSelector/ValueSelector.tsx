@@ -38,7 +38,7 @@ const b = block('value-selector-wrapper');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-const InputValueControl = () => {
+const InputValueControl = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -53,7 +53,7 @@ const InputValueControl = () => {
     }, []);
 
     return (
-        <FormRow label={i18n('field_default-value')}>
+        <FormRow label={i18n('field_default-value')} className={className}>
             <FieldWrapper error={validation.defaultValue}>
                 <TextInput
                     disabled={isFieldDisabled}
@@ -66,7 +66,7 @@ const InputValueControl = () => {
     );
 };
 
-const DateValueControl = () => {
+const DateValueControl = ({rowClassName}: {rowClassName?: string}) => {
     const {isRange, acceptableValues, defaultValue, fieldType, sourceType} =
         useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -102,7 +102,7 @@ const DateValueControl = () => {
 
     return (
         <React.Fragment>
-            <FormRow label={i18n('field_date-range')}>
+            <FormRow label={i18n('field_date-range')} className={rowClassName}>
                 <Checkbox
                     qa={DialogControlQa.dateRangeCheckbox}
                     className={b('checkbox-option')}
@@ -114,7 +114,7 @@ const DateValueControl = () => {
             </FormRow>
 
             {sourceType === 'manual' ? (
-                <FormRow label={i18n('field_date-with-time')}>
+                <FormRow label={i18n('field_date-with-time')} className={rowClassName}>
                     <Checkbox
                         qa={DialogControlQa.dateTimeCheckbox}
                         className={b('checkbox-option')}
@@ -125,7 +125,7 @@ const DateValueControl = () => {
                     />
                 </FormRow>
             ) : null}
-            <FormRow label={i18n('field_default-value')}>
+            <FormRow label={i18n('field_default-value')} className={rowClassName}>
                 <FieldWrapper error={validation.defaultValue}>
                     <DateDefaultValue
                         disabled={isFieldDisabled}
@@ -142,7 +142,7 @@ const DateValueControl = () => {
     );
 };
 
-const CheckboxValueControl = () => {
+const CheckboxValueControl = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const defaultValue = useSelector(selectSelectorDefaultValue);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -159,7 +159,7 @@ const CheckboxValueControl = () => {
     );
 
     return (
-        <FormRow label={i18n('field_default-value')}>
+        <FormRow label={i18n('field_default-value')} className={className}>
             <RadioGroup
                 className={b('radio-option')}
                 onUpdate={handleUpdate}
@@ -180,7 +180,7 @@ const CheckboxValueControl = () => {
     );
 };
 
-const ValueSelector = () => {
+const ValueSelector = ({rowClassName}: {rowClassName?: string}) => {
     const {sourceType} = useSelector(selectSelectorDialog);
     const controlType = useSelector(selectSelectorControlType);
     const workbookId = useSelector(selectWorkbookId);
@@ -271,19 +271,19 @@ const ValueSelector = () => {
 
     switch (controlType) {
         case 'date': {
-            inputControl = <DateValueControl />;
+            inputControl = <DateValueControl rowClassName={rowClassName} />;
             break;
         }
         case 'select': {
-            inputControl = <ListValueControl {...listValueProps} />;
+            inputControl = <ListValueControl {...listValueProps} rowClassName={rowClassName} />;
             break;
         }
         case 'input': {
-            inputControl = <InputValueControl />;
+            inputControl = <InputValueControl className={rowClassName} />;
             break;
         }
         case 'checkbox': {
-            inputControl = <CheckboxValueControl />;
+            inputControl = <CheckboxValueControl className={rowClassName} />;
         }
     }
 

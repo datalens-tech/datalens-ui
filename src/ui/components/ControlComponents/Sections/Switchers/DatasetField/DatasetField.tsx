@@ -82,7 +82,7 @@ export class DatasetField extends React.PureComponent<Props, State> {
         } = this.props;
 
         getSdk()
-            .bi.getDataSetFieldsById({
+            .sdk.bi.getDataSetFieldsById({
                 dataSetId: this.props.datasetId!,
                 workbookId,
             })

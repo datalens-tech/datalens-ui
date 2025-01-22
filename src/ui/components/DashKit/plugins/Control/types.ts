@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
-import type {TitlePlacementOption} from 'shared';
+import type {AccentTypeValue, TitlePlacementOption} from 'shared';
 import type {
     GetDistinctsApiV2Args,
     GetDistinctsApiV2InfoHeadersArg,
@@ -84,6 +84,7 @@ export interface SelectControlProps {
     innerLabel: string;
     labelPlacement?: TitlePlacementOption;
     limitLabel?: boolean;
+    accentType?: AccentTypeValue;
     param: string;
     multiselect: boolean;
     type: ControlType;

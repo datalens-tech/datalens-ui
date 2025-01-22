@@ -68,7 +68,6 @@ import {isEmbeddedMode} from 'ui/utils/embedded';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
-import type SDK from '../../../../libs/sdk';
 import Utils from '../../../../utils';
 import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
@@ -81,7 +80,6 @@ import {
     getPastedWidgetData,
     getPreparedCopyItemOptions,
     memoizedGetLocalTabs,
-    sortByOrderIdOrLayoutComparator,
 } from '../../modules/helpers';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
 import {
@@ -115,6 +113,7 @@ import {
 import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
+import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {FixedHeaderContainer, FixedHeaderControls} from '../FixedHeader/FixedHeader';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -182,12 +181,6 @@ type GetPreparedCopyItemOptions<T extends object = {}> = (
     itemToCopy: PreparedCopyItemOptions<T>,
 ) => PreparedCopyItemOptions<T>;
 
-const GROUPS_WEIGHT = {
-    [FIXED_GROUP_HEADER_ID]: 2,
-    [FIXED_GROUP_CONTAINER_ID]: 1,
-    [DEFAULT_GROUP]: 0,
-} as const;
-
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
@@ -239,7 +232,7 @@ class Body extends React.PureComponent<BodyProps> {
         if (!this.props.entryId) {
             return;
         }
-        const {hash} = await getSdk().us.createDashState({
+        const {hash} = await getSdk().sdk.us.createDashState({
             entryId: this.props.entryId,
             data,
         });
@@ -289,6 +282,10 @@ class Body extends React.PureComponent<BodyProps> {
         byGroup: {},
         byId: {},
         columns: 0,
+    };
+    _memoizedOrderedConfig?: {
+        key: DashKitProps['config'];
+        config: DashKitProps['config'];
     };
 
     state: DashBodyState = {
@@ -373,7 +370,7 @@ class Body extends React.PureComponent<BodyProps> {
             <div className={b()}>
                 {this.renderBody()}
                 <PaletteEditor />
-                <EntryDialogues sdk={getSdk() as unknown as SDK} ref={this.entryDialoguesRef} />
+                <EntryDialogues ref={this.entryDialoguesRef} />
             </div>
         );
     }
@@ -703,6 +700,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+
+        if (params.isMobile) {
+            return children;
+        }
+
         const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
@@ -731,6 +733,11 @@ class Body extends React.PureComponent<BodyProps> {
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
         }
+
+        if (params.isMobile) {
+            return children;
+        }
+
         const {fixedHeaderCollapsed = false, isEmbeddedMode, isPublicMode} = params.context;
 
         return (
@@ -829,83 +836,42 @@ class Body extends React.PureComponent<BodyProps> {
         if (!this._memoizedMenu) {
             const dashkitMenu = getDashKitMenu();
 
-            if (Utils.isEnabledFeature(Feature.EnableDashFixedHeader)) {
-                this._memoizedMenu = [
-                    ...dashkitMenu.slice(0, -1),
-                    {
-                        id: 'pin',
-                        title: i18n('dash.main.view', 'label_pin'),
-                        icon: <Icon data={Pin} size={16} />,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+            this._memoizedMenu = [
+                ...dashkitMenu.slice(0, -1),
+                {
+                    id: 'pin',
+                    title: i18n('dash.main.view', 'label_pin'),
+                    icon: <Icon data={Pin} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
-                            return (
-                                parent !== FIXED_GROUP_HEADER_ID &&
-                                parent !== FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.PinButton,
+                        return (
+                            parent !== FIXED_GROUP_HEADER_ID && parent !== FIXED_GROUP_CONTAINER_ID
+                        );
                     },
-                    {
-                        id: 'unpin',
-                        title: i18n('dash.main.view', 'label_unpin'),
-                        icon: <Icon data={PinSlash} size={16} />,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+                    qa: DashKitOverlayMenuQa.PinButton,
+                },
+                {
+                    id: 'unpin',
+                    title: i18n('dash.main.view', 'label_unpin'),
+                    icon: <Icon data={PinSlash} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
-                            return (
-                                parent === FIXED_GROUP_HEADER_ID ||
-                                parent === FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.UnpinButton,
+                        return (
+                            parent === FIXED_GROUP_HEADER_ID || parent === FIXED_GROUP_CONTAINER_ID
+                        );
                     },
-                    ...dashkitMenu.slice(-1),
-                ];
-            } else {
-                this._memoizedMenu = dashkitMenu;
-            }
+                    qa: DashKitOverlayMenuQa.UnpinButton,
+                },
+                ...dashkitMenu.slice(-1),
+            ];
         }
 
         return this._memoizedMenu;
     };
-
-    getMobileLayout(): DashKitProps['config'] | null {
-        const {tabData} = this.props;
-        const tabDataConfig = tabData as DashKitProps['config'] | null;
-
-        if (!tabDataConfig) {
-            return tabDataConfig;
-        }
-
-        const {byId, columns} = this.getMemoLayoutMap();
-        const getWeight = (item: DashTabItem): number => {
-            const parentId = getLayoutParentId(byId[item.id]);
-
-            return (GROUPS_WEIGHT as any)[parentId] || 0;
-        };
-
-        return {
-            ...tabDataConfig,
-            items: (tabDataConfig.items as DashTab['items'])
-                .sort((prev, next) => {
-                    const prevWeight = getWeight(prev);
-                    const nextWeight = getWeight(next);
-
-                    if (prevWeight === nextWeight) {
-                        return sortByOrderIdOrLayoutComparator(prev, next, byId, columns);
-                    }
-
-                    return nextWeight - prevWeight;
-                })
-                .map((item, index) => ({
-                    ...item,
-                    orderId: item.orderId || index,
-                })) as ConfigItem[],
-        };
-    }
 
     dataProviderContextGetter = () => {
         const {tabId, entryId} = this.props;
@@ -919,6 +885,36 @@ class Body extends React.PureComponent<BodyProps> {
             [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
         };
     };
+    private getConfig = () => {
+        const {tabData} = this.props;
+        const tabDataConfig = tabData;
+
+        if (!tabDataConfig || !DL.IS_MOBILE) {
+            return tabDataConfig;
+        }
+
+        const memoItems = this._memoizedOrderedConfig;
+
+        if (!memoItems || memoItems.key !== tabDataConfig) {
+            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout).reduce(
+                (list, group) => {
+                    list.push(...group);
+                    return list;
+                },
+                [],
+            );
+
+            this._memoizedOrderedConfig = {
+                key: tabDataConfig as DashKitProps['config'],
+                config: {
+                    ...tabDataConfig,
+                    items: sortedItems as ConfigItem[],
+                },
+            };
+        }
+
+        return this._memoizedOrderedConfig?.config;
+    };
 
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
@@ -926,7 +922,6 @@ class Body extends React.PureComponent<BodyProps> {
             mode,
             settings,
             tabs,
-            tabData,
             handlerEditClick,
             isEditModeLoading,
             globalParams,
@@ -936,9 +931,7 @@ class Body extends React.PureComponent<BodyProps> {
 
         const context = this.getContext();
 
-        const tabDataConfig = DL.IS_MOBILE
-            ? this.getMobileLayout()
-            : (tabData as DashKitProps['config'] | null);
+        const tabDataConfig = this.getConfig();
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
@@ -960,9 +953,7 @@ class Body extends React.PureComponent<BodyProps> {
                 focusable={true}
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={
-                    Utils.isEnabledFeature(Feature.EnableDashFixedHeader) ? this.groups : undefined
-                }
+                groups={this.groups}
                 context={context}
                 getPreparedCopyItemOptions={
                     this

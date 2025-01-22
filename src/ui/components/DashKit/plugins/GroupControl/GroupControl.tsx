@@ -3,7 +3,7 @@ import React from 'react';
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader} from '@gravity-ui/uikit';
+import {Loader, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -700,13 +700,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this._getDistinctsMemo;
     }
 
-    private requestHeadersGetter() {
-        if (this?.context?.dataProviderContextGetter) {
+    private requestHeadersGetter = () => {
+        if (this.context?.dataProviderContextGetter) {
             return this.context.dataProviderContextGetter(this.props.id);
         }
 
         return {};
-    }
+    };
 
     private renderControl(item: DashTabItemControlSingle) {
         const {workbookId} = this.props;
@@ -836,6 +836,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return (
             <div className={b('controls')}>
+                {controlData.showGroupName && controlData.groupName && (
+                    <Text variant="subheader-2" className={b('controls-title')}>
+                        {controlData.groupName}
+                    </Text>
+                )}
                 {controlData.group?.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}

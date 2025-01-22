@@ -19,6 +19,7 @@ export enum Feature {
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
     EmptySelector = 'emptySelector',
+    // Check access rights when processing ChartEditor charts
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
     QLMonitoring = 'QLMonitoring',
@@ -27,14 +28,15 @@ export enum Feature {
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     DashAutorefresh = 'DashAutorefresh',
-    GSheetsV2Enabled = 'GSheetsV2Enabled',
+    // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
+    // Prohibiting the serialization of functions in the chart configs
     NoJsonFn = 'NoJsonFn',
-    GSheetGoogleAuthEnabled = 'GSheetGoogleAuthEnabled',
     DatasetsRLS = 'DatasetsRLS',
+    // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    GroupControls = 'GroupControls',
+    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
     EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
@@ -59,7 +61,6 @@ export enum Feature {
     MultipleColorsInVisualization = 'MultipleColorsInVisualization',
     ConnectionBasedControl = 'ConnectionBasedControl',
     EnableServerlessEditor = 'EnableServerlessEditor',
-    ChartWithFnLogging = 'ChartWithFnLogging',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
     /* Enable dashboard fixed header */
@@ -67,10 +68,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Use BI data for connector icons rendering (connections, ql, workbooks, navigation) */
-    EnableBIConnectorIcons = 'EnableBIConnectorIcons',
-    /** Enable undo/redo buttons & hotkeys in ql */
-    EnableEditHistoryQL = 'EnableEditHistoryQL',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Depends on US feature UseMovePermAction.
@@ -79,8 +76,14 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
+    /** Add a setting to display html in wizard */
+    HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
+    /** Escaping string in wizard chart config to remove potential html injection */
+    EscapeStringInWizard = 'EscapeStringInWizard',
+    /** Disable the use of html and function in chart configs */
+    DisableFnAndHtml = 'DisableFnAndHtml',
 }
 
 export type FeatureConfig = Record<string, boolean>;

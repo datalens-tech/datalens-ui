@@ -22,6 +22,7 @@ import {
     DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_NO_CREATE_COLLECTION_PERMISSION,
 } from '../../../../../components/CollectionsStructure';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
@@ -201,25 +202,45 @@ export const useLayout = ({
                                 }
                             }}
                             onCreateCollectionClick={() => {
-                                dispatch(
-                                    openDialog({
-                                        id: DIALOG_CREATE_COLLECTION,
-                                        props: {
-                                            open: true,
-                                            parentId: curCollectionId,
-                                            onApply: (result: CreateCollectionResponse | null) => {
-                                                if (result) {
-                                                    history.push(
-                                                        `${COLLECTIONS_PATH}/${result.collectionId}`,
-                                                    );
-                                                }
+                                if (
+                                    isRootCollection &&
+                                    Boolean(rootCollectionPermissions?.createCollectionInRoot) ===
+                                        false
+                                ) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
+                                            props: {
+                                                visible: true,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                            onClose: () => {
-                                                dispatch(closeDialog());
+                                        }),
+                                    );
+                                } else {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_CREATE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                parentId: curCollectionId,
+                                                onApply: (
+                                                    result: CreateCollectionResponse | null,
+                                                ) => {
+                                                    if (result) {
+                                                        history.push(
+                                                            `${COLLECTIONS_PATH}/${result.collectionId}`,
+                                                        );
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                        },
-                                    }),
-                                );
+                                        }),
+                                    );
+                                }
                             }}
                             onAddDemoWorkbookClick={() => {
                                 if (DL.TEMPLATE_WORKBOOK_ID) {
@@ -337,6 +358,7 @@ export const useLayout = ({
         curCollectionId,
         rootCollectionPermissions,
         fetchCollectionInfo,
+        goToParentCollection,
     ]);
 
     React.useEffect(() => {

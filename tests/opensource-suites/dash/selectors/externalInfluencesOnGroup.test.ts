@@ -1,10 +1,10 @@
 import {Page, expect} from '@playwright/test';
 
-import {DashCommonQa, DashRelationTypes, Feature} from '../../../../src/shared';
+import {DashCommonQa, DashRelationTypes} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
 
@@ -53,25 +53,7 @@ const getUrlWithoutState = (page: Page) => {
 datalensTest.describe(
     'Dashboards - The influence of the selector outside the group on the group',
     () => {
-        let skipAfterEach = false;
-
-        datalensTest.beforeEach(async ({page}: {page: Page}) => {
-            // some page need to be loaded so we can get data of feature flag from DL var
-            await openTestPage(page, '/');
-
-            const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-            if (!isEnabledGroupControls) {
-                skipAfterEach = true;
-                // Test is immediately aborted when you call skip, it goes straight to afterEach
-                datalensTest.skip();
-            }
-        });
         datalensTest.afterEach(async ({page}: {page: Page}) => {
-            if (skipAfterEach) {
-                return;
-            }
-
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.deleteDash();
@@ -261,6 +243,8 @@ datalensTest.describe(
 
                 await expect(firstControlValue).toEqual(PARAMS.INPUT_TEXT_VALUE);
                 await expect(secondControlValue).toEqual(PARAMS.SIDE_TEXT_VALUE);
+
+                await page.waitForResponse(CommonUrls.CreateDashState);
 
                 // disable autoupdate in group
                 await dashboardPage.disableAutoupdateInFirstControl();

@@ -4,10 +4,12 @@ import {
     Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
+    isHtmlField,
     isMarkdownField,
 } from '../../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -48,6 +50,7 @@ export function prepareHighchartsTreemap({
     const d = placeholders[0].items;
     const dTypes = d.map((item) => item.data_type);
     const useMarkdown = d?.some(isMarkdownField);
+    const useHtml = d?.some(isHtmlField);
 
     // Measures
     const m = placeholders[1].items;
@@ -204,6 +207,8 @@ export function prepareHighchartsTreemap({
             let name: any[] = dPath;
             if (useMarkdown) {
                 name = dPath.map((item) => (item ? wrapMarkdownValue(item) : item));
+            } else if (useHtml) {
+                name = dPath.map((item) => (item ? wrapHtml(item) : item));
             }
             lastDimensionItem.name = name as any;
 
@@ -274,6 +279,10 @@ export function prepareHighchartsTreemap({
         ChartEditor.updateConfig({useMarkdown: true});
     }
 
+    if (useHtml) {
+        ChartEditor.updateConfig({useHtml: true});
+    }
+
     const graphs = [
         {
             type: 'treemap',
@@ -290,7 +299,7 @@ export function prepareHighchartsTreemap({
                 style: {
                     cursor: 'pointer',
                 },
-                ...(useMarkdown && {
+                ...((useMarkdown || useHtml) && {
                     useHTML: true,
                 }),
             },

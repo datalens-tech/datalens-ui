@@ -10,6 +10,7 @@ import type {
     WorkbookId,
 } from '../../../../../shared';
 import type {ValidateDatasetResponse} from '../../../../../shared/schema';
+import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
     ADD_AVATAR_TEMPLATE,
@@ -54,7 +55,7 @@ import type {
     RELATION_UPDATE,
     RENAME_DATASET,
     RESET_DATASET_STATE,
-    SET_ASIDE_HEADER_WIDTH,
+    SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
@@ -77,6 +78,7 @@ import type {
     UPDATE_OBLIGATORY_FILTER,
     UPDATE_RLS,
 } from '../actions/types/dataset';
+import type {EDIT_HISTORY_OPTIONS_KEY} from '../constants';
 
 // TODO: correctly describe the type
 export type DatasetError = any | null;
@@ -163,6 +165,14 @@ export type FreeformSource = {
     form: FormOptions[];
     tab_title: TranslatedItem;
 } & BaseSource;
+
+export type EditHistoryOptions = {
+    stacked?: boolean;
+};
+
+type EditHistoryOptionsProperty = {
+    [EDIT_HISTORY_OPTIONS_KEY]?: EditHistoryOptions;
+};
 
 type AddFieldUpdate = {
     action: 'add_field';
@@ -282,7 +292,7 @@ export type DatasetReduxState = {
         isVisible: boolean;
         isLoading: boolean;
         amountPreviewRows: number;
-        view: 'full' | 'bottom' | 'right'; // VIEW_PREVIEW
+        view: 'full' | 'bottom' | 'right';
         data: string[]; // TODO: correctly describe the type
         error: DatasetError;
         isQueued: boolean;
@@ -313,7 +323,6 @@ export type DatasetReduxState = {
     };
     ui: {
         selectedConnectionId: string | null;
-        asideHeaderWidth: number | null;
         isDatasetChanged: boolean;
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
@@ -328,6 +337,7 @@ export type DatasetReduxState = {
     sourcePrototypes: BaseSource[];
     sourceTemplate: FreeformSource | null; // TODO: abandon this thing in favor of freeformSources
     error: DatasetError;
+    currentTab: DatasetTab;
 };
 
 type SetFreeformSources = {
@@ -357,13 +367,6 @@ type ToggleSourcesLoader = {
     };
 };
 
-type SetAsideHeaderWidth = {
-    type: typeof SET_ASIDE_HEADER_WIDTH;
-    payload: {
-        width: number;
-    };
-};
-
 type ToggleFieldEditorModuleLoading = {
     type: typeof TOGGLE_FIELD_EDITOR_MODULE_LOADING;
     payload: {
@@ -390,14 +393,14 @@ type DeleteConnection = {
     type: typeof DELETE_CONNECTION;
     payload: {
         connectionId: string;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddConnection = {
     type: typeof ADD_CONNECTION;
     payload: {
         connection: ConnectionEntry;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ClickConnection = {
@@ -426,7 +429,7 @@ type UpdateRls = {
     type: typeof UPDATE_RLS;
     payload: {
         rls: {[key: string]: string};
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type UpdateField = {
@@ -434,7 +437,7 @@ type UpdateField = {
     payload: {
         field: Partial<DatasetField>;
         ignoreMergeWithSchema?: boolean;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type BatchUpdateFields = {
@@ -442,28 +445,28 @@ type BatchUpdateFields = {
     payload: {
         fields: Partial<DatasetField>[];
         ignoreMergeWithSchema?: boolean;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type DeleteField = {
     type: typeof DELETE_FIELD;
     payload: {
         field: Partial<DatasetField>;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type BatchDeleteFields = {
     type: typeof BATCH_DELETE_FIELDS;
     payload: {
         fields: Partial<DatasetField>[];
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type DuplicateField = {
     type: typeof DUPLICATE_FIELD;
     payload: {
         field: DatasetField;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddField = {
@@ -474,7 +477,7 @@ type AddField = {
         // If true, the field will not be added to the schema before validation and the field will appear in the future after the response from the backend
         // If false, the field will be added to the old schema before validation.
         ignoreMergeWithSchema?: boolean;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ToggleViewPreview = {
@@ -499,7 +502,7 @@ type ToggleLoadPreviewByDefault = {
     type: typeof TOGGLE_LOAD_PREVIEW_BY_DEFAULT;
     payload: {
         enable: boolean;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ClosePreview = {
@@ -514,7 +517,7 @@ type ChangeAmountPreviewRows = {
     type: typeof CHANGE_AMOUNT_PREVIEW_ROWS;
     payload: {
         amountPreviewRows: number;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 export type ToggleAllowanceSave = {
@@ -522,7 +525,7 @@ export type ToggleAllowanceSave = {
     payload: {
         enable: boolean;
         validationPending?: boolean;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ClearPreview = {
@@ -537,56 +540,56 @@ type DeleteObligatoryFilter = {
     type: typeof DELETE_OBLIGATORY_FILTER;
     payload: {
         id: string;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type UpdateObligatoryFilter = {
     type: typeof UPDATE_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddObligatoryFilter = {
     type: typeof ADD_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type DeleteAvatarRelation = {
     type: typeof RELATION_DELETE;
     payload: {
         relationId: string;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type UpdateAvatarRelation = {
     type: typeof RELATION_UPDATE;
     payload: {
         relation: DatasetAvatarRelation;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddAvatarRelation = {
     type: typeof RELATION_ADD;
     payload: {
         relation: DatasetAvatarRelation;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type DeleteSourceAvatar = {
     type: typeof AVATAR_DELETE;
     payload: {
         avatarId: string;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddSourceAvatar = {
     type: typeof AVATAR_ADD;
     payload: {
         avatar: DatasetSourceAvatar;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ReplaceConnection = {
@@ -594,7 +597,7 @@ type ReplaceConnection = {
     payload: {
         connection?: ConnectionEntry;
         newConnection?: ConnectionEntry;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type ReplaceSource = {
@@ -602,46 +605,47 @@ type ReplaceSource = {
     payload: {
         source: DatasetSource;
         avatar: DatasetSourceAvatar;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type SourcesRefresh = {
     type: typeof SOURCES_REFRESH;
+    payload?: EditHistoryOptionsProperty;
 };
 
 type DeleteSource = {
     type: typeof SOURCE_DELETE;
     payload: {
         sourceId: string;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type UpdateSource = {
     type: typeof SOURCE_UPDATE;
     payload: {
         source: DatasetSource;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type AddSource = {
     type: typeof SOURCE_ADD;
     payload: {
         source: DatasetSource;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type PreviewDatasetFetchFailure = {
     type: typeof PREVIEW_DATASET_FETCH_FAILURE;
     payload: {
         error: any;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type PreviewDatasetFetchSuccess = {
     type: typeof PREVIEW_DATASET_FETCH_SUCCESS;
     payload: {
         data: any;
-    };
+    } & EditHistoryOptionsProperty;
 };
 
 type PreviewDatasetFetchRequest = {
@@ -759,13 +763,19 @@ export type SetEditHistoryState = {
     };
 };
 
+export type SetCurrentTab = {
+    type: typeof SET_CURRENT_TAB;
+    payload: {
+        currentTab: DatasetTab;
+    } & EditHistoryOptionsProperty;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
     | SetDatasetRevisionMismatch
     | SetSourcesLoadingError
     | ToggleSourcesLoader
-    | SetAsideHeaderWidth
     | ToggleFieldEditorModuleLoading
     | AddAvatarTemplate
     | AddAvatarPrototypes
@@ -824,4 +834,5 @@ export type DatasetReduxAction =
     | EditorSetFilter
     | EditorSetItemsToDisplay
     | RenameDataset
-    | SetEditHistoryState;
+    | SetEditHistoryState
+    | SetCurrentTab;

@@ -18,6 +18,7 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
+    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -332,7 +333,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 }
 
                 if (result.type === WidgetKind.BlankChart) {
-                    uiSandboxOptions.fnExecTimeLimit = 1000;
+                    uiSandboxOptions.fnExecTimeLimit = 1500;
                 }
 
                 const unwrapFnArgs = {
@@ -347,10 +348,27 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            if (isPotentiallyUnsafeChart(loadedType)) {
+            const isWizardOrQl = result.isNewWizard || result.isQL;
+            const shouldProcessHtmlFields =
+                isPotentiallyUnsafeChart(loadedType) ||
+                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+            if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
-                processHtmlFields(result.data, {allowHtml: enableJsAndHtml, parseHtml});
-                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml, parseHtml});
+                const ignoreInvalidValues = isWizardOrQl;
+                const allowHtml =
+                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapeStringInWizard)
+                        ? false
+                        : enableJsAndHtml;
+                processHtmlFields(result.data, {
+                    allowHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
+                processHtmlFields(result.libraryConfig, {
+                    allowHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});

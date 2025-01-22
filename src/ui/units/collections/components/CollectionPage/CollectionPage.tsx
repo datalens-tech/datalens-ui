@@ -12,6 +12,7 @@ import {
     DIALOG_CREATE_WORKBOOK,
     DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
+    DIALOG_NO_CREATE_COLLECTION_PERMISSION,
 } from '../../../../components/CollectionsStructure';
 import {ViewError} from '../../../../components/ViewError/ViewError';
 import type {AppDispatch} from '../../../../store';
@@ -109,6 +110,20 @@ export const CollectionPage = () => {
             }),
         );
     }, [curCollectionId, dispatch, history]);
+
+    const handleShowNoPermissionsDialog = React.useCallback(() => {
+        dispatch(
+            openDialog({
+                id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
+                props: {
+                    visible: true,
+                    onClose: () => {
+                        dispatch(closeDialog());
+                    },
+                },
+            }),
+        );
+    }, [dispatch]);
 
     const handleCreateWorkbookWithConnection = React.useCallback(() => {
         dispatch(
@@ -218,6 +233,19 @@ export const CollectionPage = () => {
         fetchStructureItems,
     ]);
 
+    const isRootCollection = curCollectionId === null;
+
+    const hasPermissionToCreate =
+        curCollectionId && collection
+            ? Boolean(collection.permissions?.createWorkbook)
+            : Boolean(rootCollectionPermissions?.createWorkbookInRoot);
+
+    const showCreateWorkbookButton = DL.IS_MOBILE
+        ? false
+        : hasPermissionToCreate || isRootCollection;
+
+    const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
+
     useLayout({
         curCollectionId,
         filters,
@@ -230,7 +258,9 @@ export const CollectionPage = () => {
         resetSelected,
         fetchCollectionInfo,
         fetchStructureItems,
-        handleCreateWorkbook,
+        handleCreateWorkbook: hasPermissionToCreate
+            ? handleCreateWorkbook
+            : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,
     });
@@ -255,15 +285,6 @@ export const CollectionPage = () => {
         );
     }
 
-    const hasPermissionToCreate =
-        curCollectionId && collection
-            ? Boolean(collection.permissions?.createWorkbook)
-            : Boolean(rootCollectionPermissions?.createWorkbookInRoot);
-
-    const canCreateWorkbook = DL.IS_MOBILE ? false : hasPermissionToCreate;
-
-    const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
-
     return (
         <div className={b({mobile: DL.IS_MOBILE})}>
             <div className={b('filters', {hidden: isFiltersHidden})}>
@@ -286,11 +307,16 @@ export const CollectionPage = () => {
                     selectedMapWithDeletePermission={selectedMapWithDeletePermission}
                     itemsAvailableForSelection={itemsAvailableForSelection}
                     isOpenSelectionMode={isOpenSelectionMode}
-                    canCreateWorkbook={canCreateWorkbook}
+                    canCreateWorkbook={hasPermissionToCreate}
+                    showCreateWorkbookButton={showCreateWorkbookButton}
                     getStructureItemsRecursively={getStructureItemsRecursively}
                     fetchStructureItems={fetchStructureItems}
                     onCloseMoveDialog={handeCloseMoveDialog}
-                    onCreateWorkbookWithConnectionClick={handleCreateWorkbookWithConnection}
+                    onCreateWorkbookWithConnectionClick={
+                        hasPermissionToCreate
+                            ? handleCreateWorkbookWithConnection
+                            : handleShowNoPermissionsDialog
+                    }
                     onClearFiltersClick={() => {
                         updateFilters({
                             ...DEFAULT_FILTERS,

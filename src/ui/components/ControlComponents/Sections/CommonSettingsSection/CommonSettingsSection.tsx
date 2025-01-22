@@ -15,11 +15,13 @@ export const CommonSettingsSection = ({
     navigationPath,
     changeNavigationPath,
     enableAutoheightDefault,
+    className,
 }: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     hideCommonFields?: boolean;
     enableAutoheightDefault?: boolean;
+    className?: string;
 }) => {
     const {sourceType} = useSelector(selectSelectorDialog);
 
@@ -27,16 +29,18 @@ export const CommonSettingsSection = ({
         case DashTabItemControlSourceType.External:
             return (
                 <ExternalSelectorSettings
+                    rowClassName={className}
                     changeNavigationPath={changeNavigationPath}
                     navigationPath={navigationPath}
                     enableAutoheightDefault={enableAutoheightDefault}
                 />
             );
         case DashTabItemControlSourceType.Manual:
-            return <InputSettings hideCommonFields={hideCommonFields} />;
+            return <InputSettings rowClassName={className} hideCommonFields={hideCommonFields} />;
         case DashTabItemControlSourceType.Connection:
             return (
                 <ConnectionSettings
+                    rowClassName={className}
                     hideCommonFields={hideCommonFields}
                     changeNavigationPath={changeNavigationPath}
                     navigationPath={navigationPath}
@@ -45,6 +49,7 @@ export const CommonSettingsSection = ({
         default:
             return (
                 <DatasetSettings
+                    rowClassName={className}
                     hideCommonFields={hideCommonFields}
                     changeNavigationPath={changeNavigationPath}
                     navigationPath={navigationPath}

@@ -169,12 +169,14 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                         Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
                                     }
                                 >
-                                    <EntryIcon
-                                        entry={connection}
-                                        size={24}
-                                        className={b('entry-icon')}
-                                    />
-                                    {connection.name}
+                                    <div className={b('connection-select-btn-content')}>
+                                        <EntryIcon
+                                            entry={connection}
+                                            size={24}
+                                            className={b('entry-icon')}
+                                        />
+                                        {connection.name}
+                                    </div>
                                 </Button>
                             </div>
                         ) : (
@@ -249,7 +251,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
     private fetchConnection(connectionId: string) {
         return getSdk()
-            .us.getEntry({entryId: connectionId})
+            .sdk.us.getEntry({entryId: connectionId})
             .then((loadedConnectionEntry?: GetEntryResponse) => {
                 if (!loadedConnectionEntry) {
                     throw new Error(i18n('sql', 'error_failed-to-load-default-connection'));

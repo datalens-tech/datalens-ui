@@ -126,7 +126,7 @@ export const Content = (props: ChartContentProps) => {
                 );
                 break;
             }
-            case 'setPatams': {
+            case 'setParams': {
                 if (onChange) {
                     onChange(
                         {type: 'PARAMS_CHANGED', data: {params: args}},

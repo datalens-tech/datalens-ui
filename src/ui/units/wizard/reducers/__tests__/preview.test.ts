@@ -267,7 +267,7 @@ describe('Preview reducer', () => {
                 tooltips: [],
                 type: 'datalens',
                 updates: [],
-                version: '11',
+                version: '12',
                 visualization: stateWithDataset.visualization,
                 wizardDataset: mockedDataset,
             };

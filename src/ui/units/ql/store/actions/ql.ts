@@ -582,7 +582,7 @@ export const fetchConnectionSources = ({entryId, workbookId}: FetchConnectionSou
     return async function (dispatch: QLDispatch) {
         // Requesting information about connection sources
         const {sources: connectionSources, freeform_sources: connectionFreeformSources} =
-            await getSdk().bi.getConnectionSources({
+            await getSdk().sdk.bi.getConnectionSources({
                 connectionId: entryId,
                 workbookId,
             });
@@ -640,7 +640,7 @@ export const fetchConnectionSourceSchema = ({tableName}: FetchConnectionSourceSc
                 throw new Error(`Unknown connection source: ${tableName}`);
             }
 
-            const {raw_schema: schema} = await getSdk().bi.getConnectionSourceSchema({
+            const {raw_schema: schema} = await getSdk().sdk.bi.getConnectionSourceSchema({
                 connectionId: connection!.entryId,
                 workbookId: connection!.workbookId ?? null,
                 source: {...targetConnectionSource, id: 'sample'},
@@ -698,7 +698,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     branch: 'published',
                 };
 
-                const loadedEntry = await getSdk().us.getEntry(getEntryArgs);
+                const loadedEntry = await getSdk().sdk.us.getEntry(getEntryArgs);
 
                 if (!loadedEntry) {
                     throw new Error(i18n('sql', 'error_failed-to-load-chart'));
@@ -743,7 +743,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                 try {
                     // We request the connection for which the chart is built
-                    const loadedConnectionEntry = await getSdk().us.getEntry({
+                    const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                         entryId: connectionEntryId,
                     });
 
@@ -961,7 +961,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     );
 
                     try {
-                        const loadedConnectionEntry = await getSdk().us.getEntry({
+                        const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                             entryId: defaultMonitoringQLConnectionId,
                         });
 
@@ -976,7 +976,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
                         dispatch(setConnection(connection));
 
-                        const preset = await getSdk().us.getPreset({presetId});
+                        const preset = await getSdk().sdk.us.getPreset({presetId});
 
                         const {initialQueries, initialParams, redirectUrl, visualization} =
                             prepareMonitoringPreset(preset);
@@ -1059,7 +1059,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                 if (connectionEntryId) {
                     try {
                         // We request the connection for which the chart is built
-                        const loadedConnectionEntry = await getSdk().us.getEntry({
+                        const loadedConnectionEntry = await getSdk().sdk.us.getEntry({
                             entryId: connectionEntryId,
                         });
 

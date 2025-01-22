@@ -5,12 +5,11 @@ import {
     DashCommonQa,
     DashRelationTypes,
     DashTabItemControlSourceType,
-    Feature,
 } from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {getStringFullUrl, isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {getStringFullUrl, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
@@ -76,25 +75,7 @@ const getSecondSelectItemsCount = async (dashboardPage: DashboardPage) => {
 };
 
 datalensTest.describe('Dashboards - Autoupdate options of group selectors', () => {
-    let skipAfterEach = false;
-
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        // some page need to be loaded so we can get data of feature flag from DL var
-        await openTestPage(page, '/');
-
-        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-        if (!isEnabledGroupControls) {
-            skipAfterEach = true;
-            // Test is immediately aborted when you call skip, it goes straight to afterEach
-            datalensTest.skip();
-        }
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        if (skipAfterEach) {
-            return;
-        }
-
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.deleteDash();

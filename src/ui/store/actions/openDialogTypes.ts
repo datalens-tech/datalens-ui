@@ -42,7 +42,7 @@ import type {OpenDialogQLParameterArgs} from '../../components/DialogQLParameter
 import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import type {OpenDialogControlsPlacementArgs} from '../../components/DialogControlsPlacement/DialogControlsPlacement';
+import type {OpenDialogExtendedSettingsArgs} from '../../components/DialogExtendedSettings/DialogExtendedSettings';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
@@ -54,8 +54,11 @@ import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/Collect
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
+import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
+import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
 
 export type OpenDialogArgs<T = unknown> =
+    | OpenDialogReleaseVersionArgs
     | OpenDialogMetricSettingsArgs
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs
@@ -90,7 +93,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
-    | OpenDialogControlsPlacementArgs
+    | OpenDialogExtendedSettingsArgs
     | OpenDialogLabelSettingsArgs
     | OpenDialogEditWorkbookArgs
     | OpenDialogEditCollectionArgs
@@ -109,4 +112,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogTooltipSettingsArgs
-    | OpenDialogChangeDatasetFieldsArgs;
+    | OpenDialogChangeDatasetFieldsArgs
+    | OpenDialogCollectionNoCreatePermissionArgs;

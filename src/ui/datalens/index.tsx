@@ -33,6 +33,9 @@ const CollectionsNavigtaionPage = React.lazy(
 );
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
+const AuthPage = React.lazy(
+    () => import(/* webpackChunkName: "connections-page" */ './pages/AuthPage/AuthPage'),
+);
 
 const DatalensPageView = () => {
     const isLanding = useSelector(selectIsLanding);
@@ -41,6 +44,14 @@ const DatalensPageView = () => {
         return (
             <React.Suspense fallback={<FallbackPage />}>
                 <LandingPage />
+            </React.Suspense>
+        );
+    }
+
+    if (DL.IS_AUTH_PAGE) {
+        return (
+            <React.Suspense fallback={<FallbackPage />}>
+                <AuthPage />
             </React.Suspense>
         );
     }
@@ -73,6 +84,8 @@ const DatalensPageView = () => {
                     component={CollectionsNavigtaionPage}
                 />
 
+                {DL.AUTH_ENABLED && <Route path="/auth" component={AuthPage} />}
+
                 <Route path="/">
                     <Redirect to={`/collections${location.search}`} />
                 </Route>
@@ -87,7 +100,8 @@ const DatalensPageView = () => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
-    const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
+    const showMobileHeader =
+        !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
 
     if (showMobileHeader) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;

@@ -1,7 +1,7 @@
-@import 'Chart';
-
 $dashContainerClassName: '.dash-body';
 $dashPublicContainerClassName: '.dash';
+
+$hintOffset: 3px;
 
 .dl-widget {
     #{$dashContainerClassName} &,
@@ -20,6 +20,41 @@ $dashPublicContainerClassName: '.dash';
         &_move {
             cursor: move;
         }
+    }
+
+    &__chart-title-text {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: block;
+
+        &_with-hint {
+            display: inline-block;
+            vertical-align: middle;
+            max-width: calc(100% - #{$hintOffset} - 16px);
+        }
+    }
+
+    &__chart-title-wrap {
+        display: flex;
+        align-items: center;
+    }
+
+    &__chart-title-hint {
+        margin-left: $hintOffset;
+        display: inline-flex;
+
+        & > * {
+            display: inline-flex;
+        }
+    }
+
+    // hide in sheet only
+    .g-sheet__sheet &__chart-title-hint {
+        display: none;
+    }
+
+    &__chart-title-hint-button {
+        display: inline-flex;
     }
 
     // styles for widgets with tabs below
@@ -57,6 +92,13 @@ $dashPublicContainerClassName: '.dash';
     #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header,
     #{$dashContainerClassName} &_no-tabs &__container &__chart-header {
         top: -4px;
+    }
+
+    // styles for mobile dash widgets chart header
+    // for supporting full display of titles
+    #{$dashPublicContainerClassName} &_default-mobile &__chart-header,
+    #{$dashContainerClassName} &_default-mobile &__chart-header {
+        top: 2px;
     }
 
     // style for widgets with auto height

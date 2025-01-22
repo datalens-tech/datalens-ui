@@ -80,7 +80,7 @@ export const cleanLock = (): SetStateAction<{lockToken: null}> => ({
 
 export const setLock = (entryId: string, force = false, noEditMode = false) => {
     return async function (dispatch: DashDispatch) {
-        const {lockToken} = await getSdk().us.createLock({
+        const {lockToken} = await getSdk().sdk.us.createLock({
             entryId,
             data: {duration: LOCK_DURATION, force},
         });
@@ -111,7 +111,7 @@ export const deleteLock = () => {
 
         if (lockToken && entryId) {
             await getSdk()
-                .us.deleteLock({
+                .sdk.us.deleteLock({
                     entryId: entryId,
                     params: {lockToken},
                 })
@@ -252,7 +252,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
 
         if (stateHashId && entryId) {
             const hashData = await getSdk()
-                .us.getDashState({entryId, hash: stateHashId})
+                .sdk.us.getDashState({entryId, hash: stateHashId})
                 .catch((error) => logger.logError('getDashState failed', error));
 
             if (hashData) {
@@ -649,7 +649,7 @@ export function copyDash({
         let dashData: DashData;
 
         if (selectDash(state) === null || selectEntryId(state) !== entryId) {
-            const response = await getSdk().us.getEntry({entryId});
+            const response = await getSdk().sdk.us.getEntry({entryId});
 
             if (response.scope === EntryScope.Dash) {
                 dashData = (response as any as DashEntry).data;

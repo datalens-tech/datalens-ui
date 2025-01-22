@@ -2,18 +2,25 @@ import React from 'react';
 
 import {ChartColumn} from '@gravity-ui/icons';
 import type {PaletteOption} from '@gravity-ui/uikit';
-import {ActionTooltip, Icon, Palette, Popover} from '@gravity-ui/uikit';
+import {ActionTooltip, Icon, Palette, Popover, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import type {ValueOf} from 'shared';
 import {DashCommonQa} from 'shared';
 
 import './PaletteBackground.scss';
 
 const b = block('widget-palette-background');
 
-export enum CustomPaletteColors {
-    LIKE_CHART = 'like-chart-bg',
-    NONE = 'transparent',
+export const CustomPaletteColors = {
+    LIKE_CHART: 'like-chart-bg',
+    NONE: 'transparent',
+} as const;
+
+type CustomPaletteColor = ValueOf<typeof CustomPaletteColors>;
+
+function isCustomPaletteColor(color: string): color is CustomPaletteColor {
+    return Object.keys(CustomPaletteColors).includes(color as CustomPaletteColor);
 }
 
 const PALETTE_HINTS = {
@@ -21,26 +28,30 @@ const PALETTE_HINTS = {
     [CustomPaletteColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
 } as const;
 
-const ColorItem = ({
-    color,
-    isSelected,
-    classNameMod,
-    isPreview,
-    qa,
-}: {
-    color: string;
-    classNameMod?: string;
-    isSelected?: boolean;
-    isPreview?: boolean;
-    qa?: string;
-}) => {
+const ColorItem = React.forwardRef(function ColorItem(
+    {
+        color,
+        isSelected,
+        classNameMod,
+        isPreview,
+        qa,
+    }: {
+        color: string;
+        classNameMod?: string;
+        isSelected?: boolean;
+        isPreview?: boolean;
+        qa?: string;
+    },
+    ref: React.ForwardedRef<HTMLSpanElement>,
+) {
     const isTransparent = color === CustomPaletteColors.NONE;
     const isLikeChartBg = color === CustomPaletteColors.LIKE_CHART;
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
 
     return (
         <span
-            style={{backgroundColor: isLikeChartBg ? '' : `${color}`}}
+            ref={ref}
+            style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
             className={b('color-item', {
                 transparent: isTransparent,
                 selected: isSelected,
@@ -50,14 +61,14 @@ const ColorItem = ({
             data-qa={qa}
         >
             {isLikeChartBg && <Icon data={ChartColumn} className={b('color-icon')} />}
-            {!isPreview && color in PALETTE_HINTS && (
-                <ActionTooltip title={PALETTE_HINTS[color as CustomPaletteColors]}>
+            {!isPreview && isCustomPaletteColor(color) && (
+                <ActionTooltip title={PALETTE_HINTS[color]}>
                     <span className={b('tooltip-trigger')} />
                 </ActionTooltip>
             )}
         </span>
     );
-};
+});
 
 const colors = [
     'var(--g-color-base-info-light)',
@@ -133,15 +144,16 @@ export const PaletteBackground = (props: PaletteBackgroundProps) => {
     return (
         <Popover
             className={b()}
+            openOnHover={false}
             content={<PaletteList onSelect={handleSelectColor} selectedColor={selectedColor} />}
         >
-            <ColorItem
-                color={selectedColor}
-                isSelected={true}
-                classNameMod={'small'}
-                isPreview={true}
-                qa={DashCommonQa.WidgetSelectBackgroundButton}
-            />
+            <Tooltip content={i18n('dash.palette-background', 'tooltip_click-to-select')}>
+                <ColorItem
+                    color={selectedColor}
+                    isPreview={true}
+                    qa={DashCommonQa.WidgetSelectBackgroundButton}
+                />
+            </Tooltip>
         </Popover>
     );
 };

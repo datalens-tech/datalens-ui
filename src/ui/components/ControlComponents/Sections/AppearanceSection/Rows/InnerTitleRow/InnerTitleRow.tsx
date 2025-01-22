@@ -7,7 +7,6 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
@@ -29,13 +28,12 @@ const getHelpPopoverText = (sourceType: SelectorSourceType | undefined): string 
     }
 };
 
-export const InnerTitleRow = () => {
+export const InnerTitleRow = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
-    const {elementType, showInnerTitle, innerTitle, sourceType} = useSelector(selectSelectorDialog);
+    const {showInnerTitle, innerTitle, sourceType} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
-    const isInnerTitleDisabled = elementType === ELEMENT_TYPE.CHECKBOX || isFieldDisabled;
-    const isInnerTitleActive = (elementType !== ELEMENT_TYPE.CHECKBOX && showInnerTitle) ?? false;
+    const isInnerTitleActive = showInnerTitle ?? false;
 
     const handleShowInnerTitleUpdate = React.useCallback((showInnerTitle: boolean) => {
         dispatch(
@@ -65,14 +63,11 @@ export const InnerTitleRow = () => {
     );
 
     return (
-        <FormRow label={label}>
-            <div
-                className={b('operation-container')}
-                data-qa={DialogControlQa.appearanceInnerTitle}
-            >
+        <FormRow label={label} className={className}>
+            <div className={b('setting-container')} data-qa={DialogControlQa.appearanceInnerTitle}>
                 <Checkbox
-                    className={b('operation-checkbox')}
-                    disabled={isInnerTitleDisabled}
+                    className={b('setting-checkbox')}
+                    disabled={isFieldDisabled}
                     checked={isInnerTitleActive}
                     qa={ControlQA.showInnerTitleCheckbox}
                     onUpdate={handleShowInnerTitleUpdate}

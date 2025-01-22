@@ -17,6 +17,8 @@
   "error_unsupported-connection": "Подключение не поддерживается",
   "field_acceptable-values": "Возможные значения",
   "field_autoheight": "Автовысота",
+  "field_color-accent": "Цветовой акцент",
+  "field_color-accent-note": "Используйте опцию для выделения цветом важных селекторов",
   "field_connection": "Подключение",
   "field_control": "Селектор",
   "field_dataset": "Датасет",

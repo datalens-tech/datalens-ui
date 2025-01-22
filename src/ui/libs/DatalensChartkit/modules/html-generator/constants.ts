@@ -6,6 +6,7 @@ export const ATTR_DATA_TOOLTIP_PLACEMENT = 'data-tooltip-placement';
 export const ATTR_DATA_TOOLTIP_ANCHOR_ID = 'data-tooltip-anchor-id';
 export const ATTR_DATA_TOOLTIP_HIDE_DELAY = 'data-tooltip-hide-delay';
 export const ATTR_DATA_TOOLTIP_OPEN_DELAY = 'data-tooltip-open-delay';
+export const ATTR_DATA_ELEMENT_ID = 'data-dl-id';
 
 export const THEME_CSS_VARIABLE_PREFIX = '--ce-theme';
 
@@ -99,6 +100,7 @@ export const ALLOWED_ATTRIBUTES = [
     'clip-rule',
     'color',
     'colspan',
+    'cursor',
     'cx',
     'cy',
     'd',
@@ -120,6 +122,8 @@ export const ALLOWED_ATTRIBUTES = [
     'opacity',
     'orient',
     'padding',
+    'paint-order',
+    'pointer-events',
     'points',
     'r',
     'refX',
@@ -133,6 +137,7 @@ export const ALLOWED_ATTRIBUTES = [
     'stroke',
     'stroke-linecap',
     'stroke-linejoin',
+    'stroke-opacity',
     'stroke-width',
     'result',
     'rowspan',
@@ -156,6 +161,7 @@ export const ALLOWED_ATTRIBUTES = [
     'y1',
     'y2',
     'zindex',
+    'data-id',
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_HIDE_DELAY,
     ATTR_DATA_TOOLTIP_OPEN_DELAY,

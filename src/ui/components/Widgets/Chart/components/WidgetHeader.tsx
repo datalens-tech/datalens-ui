@@ -11,6 +11,7 @@ import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
+import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
@@ -20,6 +21,8 @@ import './WidgetHeader.scss';
 type TabItem = {
     id: string;
     title: string;
+    displayedTitle: React.ReactNode;
+    hint?: string;
     disabled?: boolean;
 };
 
@@ -28,7 +31,7 @@ type HeaderProps = {
     isFullscreen: boolean;
     onFullscreenClick: () => void;
     editMode: boolean;
-    hideTabs: boolean;
+    hideTitle?: boolean;
     tabsItems?: Array<TabItem>;
     currentTab?: CurrentTab;
     onSelectTab?: (param: string) => void;
@@ -47,7 +50,7 @@ export const WidgetHeader = (props: HeaderProps) => {
         isFullscreen,
         onFullscreenClick,
         editMode,
-        hideTabs,
+        hideTitle,
         tabsItems,
         currentTab,
         onSelectTab,
@@ -60,23 +63,57 @@ export const WidgetHeader = (props: HeaderProps) => {
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
-    const showTabs = !hideTabs && tabsItems && currentTab && onSelectTab;
-
     const widgetTitle = currentTab?.title || title;
+    const widgetTitleHint =
+        currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
     const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
-    const renderTabs = () => (
-        <div
-            className={b(
-                'tabs',
-                {'edit-mode': editMode, 'no-controls': noControls},
-                DRAGGABLE_HANDLE_CLASS_NAME,
-            )}
-        >
-            {showTabs && (
+    const handleClickHint = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        return false;
+    }, []);
+
+    const renderTabs = () => {
+        if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
+            return (
+                <div className={b('mobile-title')}>
+                    <div className={b('mobile-title-wrap')}>
+                        {widgetTitle}
+                        {Boolean(widgetTitleHint) && (
+                            <MarkdownHelpPopover
+                                markdown={widgetTitleHint}
+                                className={b('chart-title-hint')}
+                                buttonProps={{
+                                    className: b('chart-title-hint-button'),
+                                }}
+                                onClick={handleClickHint}
+                            />
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        if (hideTitle || !tabsItems || !currentTab || !onSelectTab || !widgetTitle) {
+            return null;
+        }
+
+        const displayedTabItems = tabsItems.map((item) => ({
+            ...item,
+            title: item.displayedTitle || item.title || '',
+        }));
+
+        return (
+            <div
+                className={b(
+                    'tabs',
+                    {'edit-mode': editMode, 'no-controls': noControls},
+                    DRAGGABLE_HANDLE_CLASS_NAME,
+                )}
+            >
                 <AdaptiveTabs
                     size={size}
-                    items={tabsItems}
+                    items={displayedTabItems}
                     activeTab={currentTab.id}
                     onSelectTab={onSelectTab}
                     breakpointsConfig={DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG}
@@ -102,9 +139,9 @@ export const WidgetHeader = (props: HeaderProps) => {
                         );
                     }}
                 />
-            )}
-        </div>
-    );
+            </div>
+        );
+    };
 
     return (
         <React.Fragment>
@@ -124,7 +161,7 @@ export const WidgetHeader = (props: HeaderProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
+                {renderTabs()}
                 {showFiltersClear && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>

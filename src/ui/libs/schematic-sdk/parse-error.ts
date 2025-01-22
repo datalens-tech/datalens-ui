@@ -85,7 +85,11 @@ export const handleRequestError: SdkConfig['handleRequestError'] = (errorRespons
         };
     }
 
-    if (parsedError.code === ErrorCode.NeedReset && dispatch && !needResetDialogShown) {
+    if (
+        ([ErrorCode.AuthNeedReset, ErrorCode.NeedReset] as string[]).includes(parsedError.code) &&
+        dispatch &&
+        !needResetDialogShown
+    ) {
         needResetDialogShown = true;
 
         dispatch(

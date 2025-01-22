@@ -7,6 +7,7 @@ import type {
 } from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
+    GradientNullModes,
     IS_NULL_FILTER_TEMPLATE,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
@@ -277,7 +278,7 @@ function prepareFlatTable({
 
             if (colors.length) {
                 const valueColor = values[iColor];
-                if (valueColor !== null) {
+                if (valueColor !== null || colorsConfig.nullMode === GradientNullModes.AsZero) {
                     cell.color = Number(valueColor);
                 }
             }

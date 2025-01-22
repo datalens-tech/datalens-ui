@@ -4,7 +4,12 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
+import type {
+    SeriesExportSettings,
+    ServerField,
+    WrappedHTML,
+    WrappedMarkdown,
+} from '../../../../../../../shared';
 import {AxisMode, PlaceholderId, getXAxisMode} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -14,13 +19,18 @@ import type {PrepareFunctionArgs} from '../types';
 
 import {prepareLineData} from './prepare-line-data';
 
-type ExtendedLineSeries = LineSeries & {
+type ExtendedLineSeriesData = Omit<LineSeriesData, 'x'> & {
+    x?: LineSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+};
+
+type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
     custom?: {
         exportSettings?: SeriesExportSettings;
     };
+    data: ExtendedLineSeriesData[];
 };
 
-export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
+export function prepareD3Line(args: PrepareFunctionArgs) {
     const {
         labels,
         placeholders,
@@ -84,8 +94,8 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
             name: graph.title,
             type: 'line',
             color: graph.color,
-            data: graph.data.reduce((acc: LineSeriesData[], item: any, index: number) => {
-                const dataItem: LineSeriesData = {
+            data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
+                const dataItem: ExtendedLineSeriesData = {
                     y: item?.y || 0,
                     custom: item.custom,
                 };
@@ -125,22 +135,24 @@ export function prepareD3Line(args: PrepareFunctionArgs): ChartKitWidgetData {
         };
     });
 
-    const config: ChartKitWidgetData = {
-        series: {
-            data: seriesData,
-        },
-    };
-
-    if (config.series.data.length <= 1) {
-        config.legend = {enabled: false};
+    let legend: ChartKitWidgetData['legend'];
+    if (seriesData.length <= 1) {
+        legend = {enabled: false};
     }
 
+    let xAxis: ChartKitWidgetData['xAxis'];
     if (isCategoriesXAxis) {
-        config.xAxis = {
+        xAxis = {
             type: 'category',
             categories: xCategories?.map(String),
         };
     }
 
-    return config;
+    return {
+        series: {
+            data: seriesData,
+        },
+        xAxis,
+        legend,
+    };
 }

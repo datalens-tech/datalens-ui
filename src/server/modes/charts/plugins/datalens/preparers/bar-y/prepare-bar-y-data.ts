@@ -10,6 +10,7 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureField,
@@ -24,8 +25,9 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     numericCollator,
@@ -99,6 +101,7 @@ export function prepareBarYData({
     const labelItem = labels?.[0];
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
     const isColorizeByMeasure = isMeasureField(colorItem);
@@ -120,6 +123,12 @@ export function prepareBarYData({
     const nullsY1 = placeholders?.[1]?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const categoryField = x ? {...x, data_type: xDataType ?? x?.data_type} : undefined;
+    const categoriesFormatter = getCategoryFormatter({
+        field: categoryField,
+    });
+
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem]});
 
     if (ySectionItems.length) {
         let categories: (string | number)[] = [];
@@ -307,12 +316,12 @@ export function prepareBarYData({
 
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title || 'Null'),
                     tooltip: line.tooltip,
                     dataLabels: {
                         enabled: Boolean(labelItem),
                         ...line.dataLabels,
-                        useHTML: isMarkdownLabel || isMarkupLabel,
+                        useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
                     },
                     data: categories
                         .map((category, i) => {
@@ -353,6 +362,7 @@ export function prepareBarYData({
                             point.label = getLabelValue(innerLabels?.[category], {
                                 isMarkdownLabel,
                                 isMarkupLabel,
+                                isHtmlLabel,
                             });
 
                             if (isActionParamsEnable) {
@@ -448,14 +458,14 @@ export function prepareBarYData({
             ChartEditor.updateConfig({useMarkup: true});
         }
 
+        if (isHtmlLabel || isHtmlField(x) || isHtmlField(colorItem)) {
+            ChartEditor.updateConfig({useHtml: true});
+        }
+
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({valueType: xDataType!, value, format: x.format, utc: true})
-                        : value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};
@@ -512,7 +522,10 @@ export function prepareBarYData({
         if (xIsDate && xAxisMode !== AxisMode.Discrete) {
             return {graphs, categories_ms: categories};
         } else {
-            return {graphs, categories};
+            return {
+                graphs,
+                categories: categories.map(categoriesFormatter),
+            };
         }
     }
 }

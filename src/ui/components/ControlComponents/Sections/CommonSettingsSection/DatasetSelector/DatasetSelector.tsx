@@ -28,6 +28,7 @@ const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 function DatasetSelector(props: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    rowClassName?: string;
 }) {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
@@ -39,7 +40,7 @@ function DatasetSelector(props: {
         setIsInvalid(false);
 
         getSdk()
-            .bi.getDatasetByVersion({
+            .sdk.bi.getDatasetByVersion({
                 datasetId: entryId,
                 workbookId,
                 version: 'draft',
@@ -133,6 +134,7 @@ function DatasetSelector(props: {
     return (
         <React.Fragment>
             <EntrySelector
+                className={props.rowClassName}
                 label={i18n('field_dataset')}
                 entryId={datasetId}
                 scope={EntryScope.Dataset}
@@ -143,7 +145,7 @@ function DatasetSelector(props: {
                 navigationPath={props.navigationPath}
                 changeNavigationPath={props.changeNavigationPath}
             />
-            <FormRow label={i18n('field_field')}>
+            <FormRow label={i18n('field_field')} className={props.rowClassName}>
                 <FieldWrapper error={validation.datasetFieldId}>
                     <DatasetField
                         ignoredFieldTypes={[]}

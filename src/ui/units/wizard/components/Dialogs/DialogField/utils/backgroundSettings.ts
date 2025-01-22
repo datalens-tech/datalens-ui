@@ -21,6 +21,7 @@ export const extractGradientSettings = (
     gradientPalette: gradientState.gradientPalette,
     gradientMode: gradientState.gradientMode,
     reversed: gradientState.reversed,
+    nullMode: gradientState.nullMode,
 });
 export const getDefaultPaletteSettings = () => {
     return extractPaletteSettings(DEFAULT_PALETTE_STATE);

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Checkbox, TextInput} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {I18n} from 'i18n';
@@ -19,9 +19,9 @@ const b = block('control2-appearance-section');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const TitleRow = () => {
+export const TitleRow = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
-    const {showTitle, title, validation} = useSelector(selectSelectorDialog);
+    const {title, validation} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
 
     const handleTitleUpdate = React.useCallback((title: string) => {
@@ -33,25 +33,9 @@ export const TitleRow = () => {
         );
     }, []);
 
-    const handleShowTitleUpdate = React.useCallback((value: boolean) => {
-        dispatch(
-            setSelectorDialogItem({
-                showTitle: value,
-            }),
-        );
-    }, []);
-
     return (
-        <FormRow label={i18n('field_title')}>
-            <div className={b('operation-container')} data-qa={DialogControlQa.appearanceTitle}>
-                <Checkbox
-                    disabled={isFieldDisabled}
-                    className={b('operation-checkbox')}
-                    qa={ControlQA.showLabelCheckbox}
-                    checked={showTitle}
-                    onUpdate={handleShowTitleUpdate}
-                    size="l"
-                />
+        <FormRow label={i18n('field_title')} className={className}>
+            <div className={b('setting-container')} data-qa={DialogControlQa.appearanceTitle}>
                 <FieldWrapper error={validation.title}>
                     <TextInput
                         disabled={isFieldDisabled}
