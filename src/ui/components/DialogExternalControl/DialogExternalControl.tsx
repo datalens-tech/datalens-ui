@@ -6,8 +6,7 @@ import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ControlQA, DashTabItemControlSourceType} from 'shared';
-import {AppearanceSection} from 'ui/components/ControlComponents/Sections/AppearanceSection/AppearanceSection';
+import {ControlQA} from 'shared';
 import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
 import {ParametersSection} from 'ui/components/ControlComponents/Sections/ParametersSection/ParametersSection';
 import {SelectorPreview} from 'ui/components/ControlComponents/SelectorPreview/SelectorPreview';
@@ -52,7 +51,6 @@ class DialogExternalControl extends React.Component<Props> {
     render() {
         const {isEdit, validation, dialogIsVisible} = this.props;
         const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
-        //TODO: raname 'label_control' after enabling feature flag
         const caption = dashI18n('button_edit-panel-editor-selector');
 
         return (
@@ -106,22 +104,7 @@ class DialogExternalControl extends React.Component<Props> {
                         <ParametersSection />
                     </div>
                 )}
-                {this.renderAppearanceSection()}
             </React.Fragment>
-        );
-    }
-
-    private renderAppearanceSection() {
-        const {sourceType} = this.props;
-
-        if (sourceType === DashTabItemControlSourceType.External) {
-            return null;
-        }
-
-        return (
-            <div className={b('section')}>
-                <AppearanceSection />
-            </div>
         );
     }
 
