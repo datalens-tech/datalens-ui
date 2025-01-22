@@ -17,13 +17,21 @@ import type {GetPreviewResponse, ValidateDatasetResponse} from 'shared/schema';
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {EDIT_HISTORY_ACTION} from 'ui/store/constants/editHistory';
+import type {EditHistoryUnit} from 'ui/store/reducers/editHistory';
 import Utils from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {getFilteredObject} from '../../../../../utils';
-import {DATASETS_EDIT_HISTORY_UNIT_ID, TOASTERS_NAMES} from '../../../constants';
+import {
+    DATASETS_EDIT_HISTORY_UNIT_ID,
+    TAB_DATASET,
+    TAB_FILTERS,
+    TAB_SOURCES,
+    TOASTERS_NAMES,
+} from '../../../constants';
 import {EDIT_HISTORY_OPTIONS_KEY} from '../../constants';
 import {
     datasetContentSelector,
@@ -39,11 +47,13 @@ import type {
     ConnectionEntry,
     DatasetError,
     DatasetReduxAction,
+    DatasetReduxState,
     EditHistoryOptions,
     EditorItemToDisplay,
     FreeformSource,
     SetCurrentTab,
-    SetEditHistoryState,
+    SetLastModifiedTab,
+    SetValidationState,
     ToggleAllowanceSave,
     Update,
 } from '../../types';
@@ -348,19 +358,6 @@ export function duplicateField(field: DatasetField, editHistoryOptions?: EditHis
         });
     };
 }
-export function deleteField(field: Partial<DatasetField>, editHistoryOptions?: EditHistoryOptions) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.DELETE_FIELD,
-            payload: {
-                field,
-                [EDIT_HISTORY_OPTIONS_KEY]: {
-                    ...editHistoryOptions,
-                },
-            },
-        });
-    };
-}
 
 export function batchDeleteFields(
     fields: Partial<DatasetField>[],
@@ -371,42 +368,6 @@ export function batchDeleteFields(
             type: DATASET_ACTION_TYPES.BATCH_DELETE_FIELDS,
             payload: {
                 fields,
-                [EDIT_HISTORY_OPTIONS_KEY]: {
-                    ...editHistoryOptions,
-                },
-            },
-        });
-    };
-}
-export function addField(
-    field: Partial<DatasetField>,
-    ignoreMergeWithSchema?: boolean,
-    editHistoryOptions?: EditHistoryOptions,
-) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.ADD_FIELD,
-            payload: {
-                field,
-                ignoreMergeWithSchema,
-                [EDIT_HISTORY_OPTIONS_KEY]: {
-                    ...editHistoryOptions,
-                },
-            },
-        });
-    };
-}
-export function updateField(
-    field: Partial<DatasetField>,
-    ignoreMergeWithSchema?: boolean,
-    editHistoryOptions?: EditHistoryOptions,
-) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.UPDATE_FIELD,
-            payload: {
-                field,
-                ignoreMergeWithSchema,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
                     ...editHistoryOptions,
                 },
@@ -441,6 +402,7 @@ export function updateRLS(rls: {[key: string]: string}, editHistoryOptions?: Edi
             payload: {
                 rls,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_DATASET,
                     ...editHistoryOptions,
                 },
             },
@@ -547,6 +509,7 @@ export function addSource({
                 source,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
                     stacked: true,
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -567,6 +530,7 @@ export function updateSource({
                 source,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
                     stacked: true,
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -586,6 +550,7 @@ export function deleteSource({
             payload: {
                 sourceId,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -597,6 +562,7 @@ export function refreshSources(editHistoryOptions?: EditHistoryOptions) {
         dispatch({
             type: DATASET_ACTION_TYPES.SOURCES_REFRESH,
             [EDIT_HISTORY_OPTIONS_KEY]: {
+                tab: TAB_DATASET,
                 ...editHistoryOptions,
             },
         });
@@ -618,6 +584,7 @@ export function replaceSource({
                 source,
                 avatar,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -641,6 +608,7 @@ export function replaceConnection({
                 connection,
                 newConnection,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -662,6 +630,7 @@ export function addAvatar({
                 avatar,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
                     stacked: true,
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -681,6 +650,7 @@ export function deleteAvatar({
             payload: {
                 avatarId,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -701,6 +671,7 @@ export function addRelation({
             payload: {
                 relation,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -720,6 +691,7 @@ export function updateRelation({
             payload: {
                 relation,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -739,6 +711,7 @@ export function deleteRelation({
             payload: {
                 relationId,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
                     ...editHistoryOptions,
                 },
             },
@@ -753,6 +726,7 @@ export function addObligatoryFilter(filter: ApplyData, editHistoryOptions?: Edit
             payload: {
                 filter,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
                     ...editHistoryOptions,
                 },
             },
@@ -766,6 +740,7 @@ export function updateObligatoryFilter(filter: ApplyData, editHistoryOptions?: E
             payload: {
                 filter,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
                     ...editHistoryOptions,
                 },
             },
@@ -779,6 +754,7 @@ export function deleteObligatoryFilter(filterId: string, editHistoryOptions?: Ed
             payload: {
                 id: filterId,
                 [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
                     ...editHistoryOptions,
                 },
             },
@@ -859,47 +835,117 @@ export function editorSetItemsToDisplay(itemsToDisplay: EditorItemToDisplay[]) {
     };
 }
 
-export function addFieldWithValidation(field: DatasetField) {
+export function addField(
+    field: Partial<DatasetField>,
+    ignoreMergeWithSchema?: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.ADD_FIELD,
+            payload: {
+                field,
+                ignoreMergeWithSchema,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
+            },
+        });
+    };
+}
+
+export function addFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(addField(field, true));
+            dispatch(addField(field, true, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function deleteFieldWithValidation(field: DatasetField) {
+function deleteField(field: Partial<DatasetField>, editHistoryOptions?: EditHistoryOptions) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.DELETE_FIELD,
+            payload: {
+                field,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
+            },
+        });
+    };
+}
+export function deleteFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(deleteField(field));
+            dispatch(deleteField(field, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function duplicateFieldWithValidation(field: DatasetField) {
+export function duplicateFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(duplicateField(field));
+            dispatch(duplicateField(field, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function updateFieldWithValidation(field: DatasetField) {
+function updateField(
+    field: Partial<DatasetField>,
+    ignoreMergeWithSchema?: boolean,
+    editHistoryOptions?: EditHistoryOptions | null,
+) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.UPDATE_FIELD,
+            payload: {
+                field,
+                ignoreMergeWithSchema,
+                ...(editHistoryOptions === null
+                    ? {}
+                    : {
+                          [EDIT_HISTORY_OPTIONS_KEY]: {
+                              ...editHistoryOptions,
+                          },
+                      }),
+            },
+        });
+    };
+}
+
+export function updateFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(updateField(field));
+            dispatch(updateField(field, false, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function updateFieldWithValidationByMultipleUpdates(fields: DatasetField[]) {
+export function updateFieldWithValidationByMultipleUpdates(
+    fields: DatasetField[],
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            fields.forEach((field) => {
-                dispatch(updateField(field, true));
+            fields.forEach((field, index) => {
+                dispatch(updateField(field, true, index === 0 ? null : editHistoryOptions));
             });
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
@@ -989,36 +1035,75 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
     };
 }
 
-export function setEditHistoryState(payload: SetEditHistoryState['payload']): SetEditHistoryState {
-    return {
-        type: DATASET_ACTION_TYPES.SET_EDIT_HISTORY_STATE,
-        payload,
-    };
-}
-
-export function addEditHistoryPointDs({stacked}: EditHistoryOptions = {}) {
+export function setEditHistoryState({
+    state,
+    type,
+}: Parameters<EditHistoryUnit<DatasetReduxState>['setState']>[0]) {
     return (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(
-            addEditHistoryPoint({
-                unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
-                newState: getState().dataset,
-                stacked: stacked,
-            }),
-        );
+        const {lastModifiedTab: prevLastModifiedTab} = getState().dataset;
+        const {lastModifiedTab} = state;
+        const resultState = {...state};
+
+        switch (type) {
+            case EDIT_HISTORY_ACTION.UNDO: {
+                if (prevLastModifiedTab && prevLastModifiedTab !== lastModifiedTab) {
+                    resultState.currentTab = prevLastModifiedTab;
+                }
+                break;
+            }
+            case EDIT_HISTORY_ACTION.REDO: {
+                if (lastModifiedTab && prevLastModifiedTab !== lastModifiedTab) {
+                    resultState.currentTab = lastModifiedTab;
+                }
+            }
+        }
+
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_EDIT_HISTORY_STATE,
+            payload: {state: resultState},
+        });
     };
 }
 
-export function setCurrentTab({
-    currentTab,
-    [EDIT_HISTORY_OPTIONS_KEY]: editHistoryOptions,
-}: SetCurrentTab['payload']): SetCurrentTab {
+export function addEditHistoryPointDs({stacked, tab}: EditHistoryOptions = {}) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        batch(() => {
+            const {lastModifiedTab} = getState().dataset;
+
+            if (tab && tab !== lastModifiedTab) {
+                dispatch(setLastModifiedTab({lastModifiedTab: tab}));
+            }
+
+            dispatch(
+                addEditHistoryPoint({
+                    unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
+                    newState: getState().dataset,
+                    stacked: stacked,
+                }),
+            );
+        });
+    };
+}
+
+export function setCurrentTab({currentTab}: SetCurrentTab['payload']): SetCurrentTab {
     return {
         type: DATASET_ACTION_TYPES.SET_CURRENT_TAB,
-        payload: {
-            currentTab,
-            [EDIT_HISTORY_OPTIONS_KEY]: {
-                ...editHistoryOptions,
-            },
-        },
+        payload: {currentTab},
+    };
+}
+
+export function setLastModifiedTab({
+    lastModifiedTab,
+}: SetLastModifiedTab['payload']): SetLastModifiedTab {
+    return {
+        type: DATASET_ACTION_TYPES.SET_LAST_MODIFIED_TAB,
+        payload: {lastModifiedTab},
+    };
+}
+
+export function setValidationState(payload: SetValidationState['payload']): SetValidationState {
+    return {
+        type: DATASET_ACTION_TYPES.SET_VALIDATION_STATE,
+        payload,
     };
 }
