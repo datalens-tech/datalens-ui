@@ -54,19 +54,25 @@ const getValidatedKeyValues = (keyValues: KeyValueEntry[]) => {
 };
 
 export function useKeyValueProps(props: KeyValueProps) {
-    const {name, inner, keys, keySelectProps, valueInputProps, secret} = props;
+    const {name, inner, keys = [], keySelectProps, valueInputProps, secret} = props;
     const dispatch = useDispatch();
     const form = useSelector(formSelector);
     const innerForm = useSelector(innerFormSelector);
     const validationErrors = useSelector(validationErrorsSelector);
     const value = (inner ? innerForm[name] : form[name]) as KeyValueResult | undefined;
     const error = getValidationError(name, validationErrors);
+    const hasRequiredError =
+        validationErrors.find((e) => e.name === props.name)?.type === ValidationErrorType.Required;
 
     const updateForm = (nextKeyValues: KeyValueEntry[]) => {
         const validatedNextKeyValues = getValidatedKeyValues(nextKeyValues);
-        const formUpdates: KeyValueResult = {
-            entries: keyValuesToEntries(validatedNextKeyValues),
-        };
+        const entries = keyValuesToEntries(validatedNextKeyValues);
+        const formUpdates: KeyValueResult | undefined =
+            Object.keys(entries).length === 0
+                ? undefined
+                : {
+                      entries: keyValuesToEntries(validatedNextKeyValues),
+                  };
 
         batch(() => {
             if (inner) {
@@ -90,7 +96,7 @@ export function useKeyValueProps(props: KeyValueProps) {
         });
     };
 
-    return {value, keys, keySelectProps, valueInputProps, secret, updateForm};
+    return {hasRequiredError, value, keys, keySelectProps, valueInputProps, secret, updateForm};
 }
 
 export function useKeyValueState(props: {

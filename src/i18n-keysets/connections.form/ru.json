@@ -1,4 +1,5 @@
 {
+  "button_add": "Добавить",
   "button_add-connection": "Создать подключение",
   "button_already-saved": "Сохранено",
   "button_attach-file": "Прикрепить файл",
@@ -83,6 +84,7 @@
   "label_error-403-title": "У вас нет доступа к подключению",
   "label_error-404-title": "Подключение не найдено",
   "label_error-500-title": "Не удалось загрузить подключение",
+  "label_error-duplicated-keys": "Часть пар ключ-значение имеет одинаковые ключи",
   "label_error-empty-field": "Поле обязательно для заполнения",
   "label_error-length-field": "Значение имеет некорректное количество символов",
   "label_error-msg": "Не удалось загрузить список подключений",
@@ -108,6 +110,7 @@
   "label_portal": "Портал",
   "label_project-id": "ID проекта",
   "label_refresh-token-label": "Refresh-токен",
+  "label_secret-value": "Секретное значение",
   "label_section-caption-counter-settings": "Настройки счетчика",
   "label_select-folder": "Выберите каталог",
   "label_service-acc-key-file": "Публичный ключ сервисного аккаунта",

@@ -1,4 +1,5 @@
 {
+  "button_add": "Add",
   "button_add-connection": "Create connection",
   "button_already-saved": "Saved",
   "button_attach-file": "Attach file",
@@ -83,6 +84,7 @@
   "label_error-403-title": "You don't have access to this connection",
   "label_error-404-title": "Connection not found",
   "label_error-500-title": "Failed to load connection",
+  "label_error-duplicated-keys": "Some key-value pairs have the same keys",
   "label_error-empty-field": "This is a required field",
   "label_error-length-field": "Value has an incorrect number of characters",
   "label_error-msg": "Failed to load list of connections",
@@ -108,6 +110,7 @@
   "label_portal": "Portal",
   "label_project-id": "Project ID",
   "label_refresh-token-label": "Refresh token",
+  "label_secret-value": "Secret value",
   "label_section-caption-counter-settings": "Tag settings",
   "label_select-folder": "Select folder",
   "label_service-acc-key-file": "Service account public key",
