@@ -34,6 +34,8 @@ export function engineProcessingCallback({
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
 }): Promise<{status: number; payload: unknown}> {
+    const enableChartEditor =
+        isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerType === 'Editor';
     const showChartsEngineDebugInfo = Boolean(
         isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
     );
@@ -43,9 +45,11 @@ export function engineProcessingCallback({
             ctx.log(`${runnerType}::FullRun`, {duration: getDuration(hrStart)});
 
             if (result) {
+                const showLogsAndStackTraces =
+                    showChartsEngineDebugInfo || (enableChartEditor && processorParams.isEditMode);
                 if (
                     'logs_v2' in result &&
-                    (!processorParams.isEditMode || !showChartsEngineDebugInfo)
+                    (!processorParams.isEditMode || !showLogsAndStackTraces)
                 ) {
                     delete result.logs_v2;
                 }
@@ -63,7 +67,7 @@ export function engineProcessingCallback({
 
                     let statusCode = 500;
 
-                    if (isObject(result.error) && !showChartsEngineDebugInfo) {
+                    if (isObject(result.error) && !showLogsAndStackTraces) {
                         const {error} = result;
                         if ('debug' in error) {
                             delete error.debug;
