@@ -47,10 +47,7 @@ export function engineProcessingCallback({
             if (result) {
                 const showLogsAndStackTraces =
                     showChartsEngineDebugInfo || (enableChartEditor && processorParams.isEditMode);
-                if (
-                    'logs_v2' in result &&
-                    (!processorParams.isEditMode || !showLogsAndStackTraces)
-                ) {
+                if ('logs_v2' in result && !showLogsAndStackTraces) {
                     delete result.logs_v2;
                 }
 
