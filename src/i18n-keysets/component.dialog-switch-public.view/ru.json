@@ -26,6 +26,7 @@
   "label_no-permission-alert": "Для изменения статуса публикации нужны права {{permission}}",
   "label_placeholder-publishing-not-enabled": "Публикация не включена",
   "label_some-entries-not-ready": "Некоторые объекты не готовы к публикации",
+  "md_label_unavaible-publication-attention": "Публикация выбранного объекта невозможна, так как некоторые зависимые объекты недоступны для публикации.",
   "section_alert-publish-title": "Сделать публичным?",
   "section_alert-publish-title-many": "Сделать публичными?",
   "section_alert-unpublish-title": "Снять с публикации?",

@@ -22,20 +22,8 @@
         flex: 1 0 100%;
     }
 
-    &__attention {
-        width: 100%;
-        display: flex;
-        padding: 12px;
-        flex-shrink: 0;
-    }
-
     &__attention-icon {
         color: var(--g-color-text-danger);
-        min-width: 16px;
-    }
-
-    &__attention-text {
-        margin-left: 8px;
     }
 
     &__current-entry {
