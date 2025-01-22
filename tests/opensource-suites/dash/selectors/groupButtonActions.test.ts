@@ -1,16 +1,11 @@
 import {Page, Request} from '@playwright/test';
 
-import {
-    ControlQA,
-    DialogGroupControlQa,
-    Feature,
-    UPDATE_STATE_DEBOUNCE_TIME,
-} from '../../../../src/shared';
+import {ControlQA, DialogGroupControlQa, UPDATE_STATE_DEBOUNCE_TIME} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {getUrlStateParam} from '../../../suites/dash/helpers';
-import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 
 const PARAMS = {
@@ -31,19 +26,7 @@ const PARAMS = {
 const STATE_CHANGING_TIMEOUT = 1000;
 
 datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
-    let skipAfterEach = false;
-
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        // some page need to be loaded so we can get data of feature flag from DL var
-        await openTestPage(page, '/');
-
-        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-        if (!isEnabledGroupControls) {
-            skipAfterEach = true;
-            // Test is immediately aborted when you call skip, it goes straight to afterEach
-            datalensTest.skip();
-        }
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.createDashboard({
@@ -59,10 +42,6 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         await dashboardPage.clickFirstControlSettingsButton();
     });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        if (skipAfterEach) {
-            return;
-        }
-
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.deleteDash();
@@ -73,7 +52,9 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();
@@ -120,7 +101,9 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();
@@ -183,8 +166,10 @@ datalensTest.describe('Dashboards - Action buttons in group selectors', () => {
             const dashboardPage = new DashboardPage({page});
             let stateUpdatesCount = 0;
 
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await page.locator(slct(DialogGroupControlQa.applyButtonCheckbox)).click();
             await page.locator(slct(DialogGroupControlQa.resetButtonCheckbox)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
             await dashboardPage.saveChanges();

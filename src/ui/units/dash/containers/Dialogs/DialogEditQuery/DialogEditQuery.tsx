@@ -71,7 +71,7 @@ const DialogEditQuery: React.FC = () => {
         const queryContent: ConnectionQueryContent = {query};
         setLoading(true);
         getSdk()
-            .bi.getConnectionTypedQueryData({
+            .sdk.bi.getConnectionTypedQueryData({
                 connectionId,
                 workbookId,
                 body: {

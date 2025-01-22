@@ -1,4 +1,3 @@
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
@@ -147,7 +146,6 @@ export type ChartBuilder = {
     buildShared: () => Promise<void>;
     buildModules: (args: {
         subrequestHeaders: Record<string, string>;
-        req: Request;
         ctx: AppContext;
         onModuleBuild: (args: {executionTiming: [number, number]; filename: string}) => void;
     }) => Promise<Record<string, ChartBuilderResult>>;

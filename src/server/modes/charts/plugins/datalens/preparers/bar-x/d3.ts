@@ -4,7 +4,7 @@ import type {
     ChartKitWidgetData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
-import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
+import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
     AxisMode,
     LabelsPositions,
@@ -12,6 +12,7 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
 } from '../../../../../../../shared';
+import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -27,14 +28,19 @@ type OldBarXDataItem = {
     custom?: any;
 } | null;
 
-type ExtendedBarXSeries = BarXSeries & {
+type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
+    x?: BarXSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+};
+
+type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {
     custom?: {
         exportSettings?: SeriesExportSettings;
         colorValue?: string;
     };
+    data: ExtendedBaXrSeriesData[];
 };
 
-export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
+export function prepareD3BarX(args: PrepareFunctionArgs) {
     const {
         shared,
         labels,
@@ -97,8 +103,8 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
             stackId: graph.stack,
             stacking: 'normal',
             data: graph.data.reduce(
-                (acc: BarXSeriesData[], item: OldBarXDataItem, index: number) => {
-                    const dataItem: BarXSeriesData = {
+                (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
+                    const dataItem: ExtendedBaXrSeriesData = {
                         y: item?.y || 0,
                         custom: item?.custom,
                     };
@@ -130,22 +136,24 @@ export function prepareD3BarX(args: PrepareFunctionArgs): ChartKitWidgetData {
         };
     });
 
-    const config: ChartKitWidgetData = {
-        series: {
-            data: seriesData,
-        },
-    };
-
-    if (config.series.data.length <= 1) {
-        config.legend = {enabled: false};
+    let legend: ChartKitWidgetData['legend'];
+    if (seriesData.length <= 1) {
+        legend = {enabled: false};
     }
 
+    let xAxis: ChartKitWidgetData['xAxis'];
     if (isCategoriesXAxis) {
-        config.xAxis = {
+        xAxis = {
             type: 'category',
             categories: xCategories?.map(String),
         };
     }
 
-    return config;
+    return {
+        series: {
+            data: seriesData,
+        },
+        legend,
+        xAxis,
+    };
 }

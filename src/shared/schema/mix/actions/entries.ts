@@ -1,10 +1,11 @@
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
+import {EntryScope} from '../../../types';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
-import {escapeStringForLike, filterDatasetsIdsForCheck} from '../helpers';
+import {checkEntriesForPublication, escapeStringForLike} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
 import type {
     DeleteEntryArgs,
@@ -27,11 +28,11 @@ export const entriesActions = {
         const typedApi = getTypedApi(api);
         const {entryId, lockToken, scope} = args;
         switch (scope) {
-            case 'dataset': {
+            case EntryScope.Dataset: {
                 const data = await typedApi.bi.deleteDataset({datasetId: entryId});
                 return data;
             }
-            case 'connection': {
+            case EntryScope.Connection: {
                 const data = await typedApi.bi.deleteConnnection({connectionId: entryId});
                 return data;
             }
@@ -48,28 +49,43 @@ export const entriesActions = {
                 entryId,
                 includePermissionsInfo: true,
             })) as Required<GetRelationsEntry, 'permissions'>[];
-            const filteredDatasetsIds = filterDatasetsIdsForCheck(relations);
-            if (filteredDatasetsIds.length) {
-                const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
-                    datasetsIds: filteredDatasetsIds,
-                    workbookId,
-                });
-                const normalizedDatasets = keyBy(datasets, (dataset) => dataset.dataset_id);
-                return relations.map((entry) => {
+
+            const [datasets] = await checkEntriesForPublication({
+                entries: relations,
+                typedApi,
+                workbookId,
+            });
+
+            const normalizedDatasets = datasets
+                ? keyBy(datasets.result, (dataset) => dataset.dataset_id)
+                : {};
+            // TODO: wait for back fix
+            // const normalizedConnections = connections
+            //     ? keyBy(connections.result, (connection) => connection.connection_id)
+            //     : {};
+
+            return relations.map((entry) => {
+                let lockPublication = false;
+                let lockPublicationReason = null;
+
+                if (entry.scope === EntryScope.Dataset) {
                     const datasetEntry = normalizedDatasets[entry.entryId];
-                    const lockPublication = Boolean(datasetEntry && !datasetEntry.allowed);
-                    return {
-                        ...entry,
-                        lockPublication,
-                        lockPublicationReason: lockPublication ? datasetEntry.reason : null,
-                    };
-                });
-            }
-            return relations.map((entry) => ({
-                ...entry,
-                lockPublication: false,
-                lockPublicationReason: null,
-            }));
+                    lockPublication = datasetEntry && !datasetEntry.allowed;
+                    lockPublicationReason = datasetEntry.reason;
+                }
+
+                // if (entry.scope === EntryScope.Connection) {
+                //     const connectionEntry = normalizedConnections[entry.entryId];
+                //     lockPublication = connectionEntry && !connectionEntry.allowed;
+                //     lockPublicationReason = connectionEntry.reason;
+                // }
+
+                return {
+                    ...entry,
+                    lockPublication,
+                    lockPublicationReason,
+                };
+            });
         },
     ),
     switchPublicationStatus: createAction<
@@ -81,23 +97,39 @@ export const entriesActions = {
         }
 
         const typedApi = getTypedApi(api);
-        const filteredDatasetsIds = filterDatasetsIdsForCheck(entries);
-        if (filteredDatasetsIds.length) {
-            const {result: datasets} = await typedApi.bi.checkDatasetsForPublication({
-                datasetsIds: filteredDatasetsIds,
-                workbookId,
-            });
-            if (datasets.some((datasetEntry) => !datasetEntry.allowed)) {
-                const errorMessage = JSON.stringify(
-                    datasets
-                        .filter(({allowed}) => !allowed)
-                        .map(({dataset_id: entryId, reason}) => ({entryId, reason})),
-                    null,
-                    4,
-                );
-                throw new Error(`Failed to publish datasets:\n ${errorMessage}`);
-            }
+
+        const [datasets] = await checkEntriesForPublication({
+            entries,
+            typedApi,
+            workbookId,
+        });
+
+        let errorMessage = '';
+
+        if (datasets && datasets.result.some((datasetEntry) => !datasetEntry.allowed)) {
+            errorMessage += JSON.stringify(
+                datasets.result
+                    .filter(({allowed}) => !allowed)
+                    .map(({dataset_id: entryId, reason}) => ({entryId, reason})),
+                null,
+                4,
+            );
         }
+
+        // if (connections && connections.result.some((connectionEntry) => !connectionEntry.allowed)) {
+        //     errorMessage += JSON.stringify(
+        //         connections.result
+        //             .filter(({allowed}) => !allowed)
+        //             .map(({connection_id: entryId, reason}) => ({entryId, reason})),
+        //         null,
+        //         4,
+        //     );
+        // }
+
+        if (errorMessage) {
+            throw new Error(`Failed to publish entries:\n ${errorMessage}`);
+        }
+
         const result = await typedApi.us._switchPublicationStatus({entries, mainEntry});
         return result;
     }),

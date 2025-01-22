@@ -4,7 +4,12 @@ import type {MarkupItem} from 'shared/types';
 
 type RenderToString = (element: MarkupItem) => string;
 
-type DataItem = {text: string; value?: MarkupItem; key?: string; [WRAPPED_MARKDOWN_KEY]?: string};
+type DataItem = {
+    text: string;
+    value?: MarkupItem;
+    key?: string;
+    [WRAPPED_MARKDOWN_KEY]?: string;
+};
 
 export const renderPossibleMarkupItems = (
     renderMarkupToString: RenderToString,

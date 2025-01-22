@@ -4,9 +4,9 @@ import {ArrowUturnCcwLeft, ArrowUturnCwRight, LayoutHeader} from '@gravity-ui/ic
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {Feature, QLPageQA} from 'shared';
+import {QLPageQA} from 'shared';
 
-import {type DatalensGlobalState, Utils} from '../../../../../';
+import {type DatalensGlobalState} from '../../../../../';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
@@ -25,8 +25,6 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
 
     const {handleClickButtonToggleTablePreview} = args;
 
-    const enableEditHistoryQL = Utils.isEnabledFeature(Feature.EnableEditHistoryQL);
-
     const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
         (state) => selectCanGoBack(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
     );
@@ -36,16 +34,16 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
     );
 
     const handleClickGoBack = React.useCallback(() => {
-        if (canGoBack && enableEditHistoryQL) {
+        if (canGoBack) {
             dispatch(goBack({unitId: QL_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoBack, dispatch, enableEditHistoryQL]);
+    }, [canGoBack, dispatch]);
 
     const handleClickGoForward = React.useCallback(() => {
-        if (canGoForward && enableEditHistoryQL) {
+        if (canGoForward) {
             dispatch(goForward({unitId: QL_EDIT_HISTORY_UNIT_ID}));
         }
-    }, [canGoForward, dispatch, enableEditHistoryQL]);
+    }, [canGoForward, dispatch]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,
@@ -75,37 +73,34 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
             },
         ];
 
-        if (enableEditHistoryQL) {
-            items = [
-                {
-                    key: 'undo',
-                    action: handleClickGoBack,
-                    className: b('undo-btn'),
-                    icon: {data: ArrowUturnCcwLeft, size: 16},
-                    view: 'flat',
-                    disabled: !canGoBack,
-                    qa: QLPageQA.UndoButton,
-                    title: i18n('component.action-panel.view', 'button_undo'),
-                    hotkey: UNDO_HOTKEY.join('+'),
-                },
-                {
-                    key: 'redo',
-                    action: handleClickGoForward,
-                    className: b('redo-btn'),
-                    icon: {data: ArrowUturnCwRight, size: 16},
-                    view: 'flat',
-                    disabled: !canGoForward,
-                    qa: QLPageQA.RedoButton,
-                    title: i18n('component.action-panel.view', 'button_redo'),
-                    hotkey: REDO_HOTKEY.join('+'),
-                },
-                ...items,
-            ];
-        }
+        items = [
+            {
+                key: 'undo',
+                action: handleClickGoBack,
+                className: b('undo-btn'),
+                icon: {data: ArrowUturnCcwLeft, size: 16},
+                view: 'flat',
+                disabled: !canGoBack,
+                qa: QLPageQA.UndoButton,
+                title: i18n('component.action-panel.view', 'button_undo'),
+                hotkey: UNDO_HOTKEY.join('+'),
+            },
+            {
+                key: 'redo',
+                action: handleClickGoForward,
+                className: b('redo-btn'),
+                icon: {data: ArrowUturnCwRight, size: 16},
+                view: 'flat',
+                disabled: !canGoForward,
+                qa: QLPageQA.RedoButton,
+                title: i18n('component.action-panel.view', 'button_redo'),
+                hotkey: REDO_HOTKEY.join('+'),
+            },
+            ...items,
+        ];
 
         return items;
     }, [
-        enableEditHistoryQL,
         handleClickButtonToggleTablePreview,
         handleClickGoBack,
         canGoBack,

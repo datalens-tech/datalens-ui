@@ -32,6 +32,7 @@ type EntrySelectorProps = {
     getEntryLink?: (entryId: string) => string;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    className?: string;
 };
 
 export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelectorProps) => {
@@ -47,10 +48,11 @@ export const EntrySelector: React.FC<EntrySelectorProps> = (props: EntrySelector
         includeClickableType,
         navigationPath,
         changeNavigationPath,
+        className,
     } = props;
 
     return (
-        <FormRow label={label}>
+        <FormRow label={label} className={className}>
             <FieldWrapper error={errorText}>
                 <NavigationInput
                     entryId={entryId}

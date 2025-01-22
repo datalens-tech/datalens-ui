@@ -107,6 +107,11 @@ export enum DialogConfirmQA {
     CancelButton = 'dialog-confirm-cancel-button',
 }
 
+export enum DialogInfoQA {
+    Dialog = 'dialog-info',
+    CloseButton = 'dialog-close-button',
+}
+
 export enum DialogWarningQA {
     Dialog = 'dialog-warning',
     ApplyButton = 'dialog-warning-apply-button',

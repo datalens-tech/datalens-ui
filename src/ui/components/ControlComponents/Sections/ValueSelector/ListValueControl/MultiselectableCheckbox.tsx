@@ -17,7 +17,7 @@ const b = block('value-selector-wrapper');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const MultiselectableCheckbox = () => {
+export const MultiselectableCheckbox = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const {multiselectable} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -34,7 +34,7 @@ export const MultiselectableCheckbox = () => {
     );
 
     return (
-        <FormRow label={i18n('field_multiselectable')}>
+        <FormRow label={i18n('field_multiselectable')} className={className}>
             <Checkbox
                 className={b('checkbox-option')}
                 disabled={isFieldDisabled}

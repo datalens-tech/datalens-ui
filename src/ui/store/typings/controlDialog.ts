@@ -1,6 +1,7 @@
 import type {ConnectionQueryTypeValues} from 'shared/constants';
 import type {Operations} from 'shared/modules';
 import type {
+    AccentTypeValue,
     ConnectionQueryContent,
     ConnectionQueryTypeOptions,
     DATASET_FIELD_TYPES,
@@ -8,6 +9,7 @@ import type {
     Dataset,
     DatasetFieldType,
     StringParams,
+    TitlePlacement,
     TitlePlacementOption,
 } from 'shared/types';
 
@@ -16,12 +18,15 @@ export type SelectorDialogValidation = {
     uniqueFieldName?: string;
     fieldName?: string;
     datasetFieldId?: string;
+    chartId?: string;
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;
 };
 
 export type SelectorsGroupDialogState = {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
@@ -41,6 +46,7 @@ export type ItemDataSource = {
     chartId?: string;
     showTitle?: boolean;
     titlePlacement?: TitlePlacementOption;
+    accentType?: AccentTypeValue;
     elementType?: string;
     defaultValue?: string | string[];
     datasetId?: string;
@@ -69,12 +75,12 @@ export type AcceptableValue = {
 
 export type SelectorDialogState = {
     title?: string;
-    titlePlacement?: TitlePlacementOption;
+    titlePlacement?: TitlePlacement;
+
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
     chartId?: string;
-    showTitle?: boolean;
     showInnerTitle?: boolean;
     elementType: SelectorElementType;
     defaultValue?: string | string[];
@@ -106,6 +112,7 @@ export type SelectorDialogState = {
     namespace?: string;
     showHint?: boolean;
     hint?: string;
+    accentType?: AccentTypeValue;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
 };

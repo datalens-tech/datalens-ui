@@ -35,6 +35,7 @@ export default async (req: Request, res: Response) => {
                 ...req.headers,
                 [TENANT_ID_HEADER]: res.locals.currentTenantId,
                 ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+                ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             },
             requestId: req.id,
             authArgs: {iamToken: res.locals.iamToken},

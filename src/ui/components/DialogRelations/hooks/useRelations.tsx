@@ -119,7 +119,7 @@ export const useRelations = ({
             let entriesDatasetsFields: GetEntriesDatasetsFieldsResponse = [];
             if (!isEmpty(entriesList) && (!isEmpty(datasetsList) || !isEmpty(controlsList))) {
                 // TODO does not return the dataType of the field (to study whether it is needed in the links)
-                entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
+                entriesDatasetsFields = await getSdk().sdk.mix.getEntriesDatasetsFields({
                     entriesIds: entriesList,
                     datasetsIds: Object.keys(datasetsList),
                     workbookId,
@@ -156,16 +156,18 @@ export const useRelations = ({
                 });
             }
 
-            const allUsedParams = dashWidgetsMetaData.reduce((result: string[], item) => {
-                const usedParams = item.usedParams || [];
-                return [...result, ...usedParams];
-            }, []);
+            const allUsedParams = dashWidgetsMetaData.reduce<Set<string>>((result, item) => {
+                (item.usedParams || []).forEach(result.add, result);
+                Object.keys(item.widgetParams || {}).forEach(result.add, result);
+
+                return result;
+            }, new Set());
 
             const invalidAliasesData: string[] = [];
             if (DEFAULT_ALIAS_NAMESPACE in dialogAliases) {
                 dialogAliases[DEFAULT_ALIAS_NAMESPACE].forEach((aliasRow) => {
                     aliasRow.forEach((item) => {
-                        if (!allUsedParams.includes(item)) {
+                        if (!allUsedParams.has(item)) {
                             invalidAliasesData.push(item);
                         }
                     });

@@ -1,6 +1,6 @@
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
-import {DashTabItemControlSourceType} from 'shared/types';
+import {DashTabItemControlSourceType, TitlePlacements} from 'shared/types';
 import type {
     ItemDataSource,
     SelectorDialogState,
@@ -96,6 +96,7 @@ export const getControlValidation = (
     const {
         title,
         sourceType,
+        chartId,
         datasetFieldId,
         fieldName,
         defaultValue,
@@ -108,6 +109,10 @@ export const getControlValidation = (
 
     if (!title) {
         validation.title = i18n('dash.control-dialog.edit', 'validation_required');
+    }
+
+    if (sourceType === DashTabItemControlSourceType.External && !chartId) {
+        validation.chartId = i18n('dash.control-dialog.edit', 'validation_required');
     }
 
     if (sourceType === DashTabItemControlSourceType.Connection && !connectionQueryContent) {
@@ -201,7 +206,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         sourceType,
 
         titlePlacement,
-        showTitle,
+        accentType,
         showInnerTitle,
         innerTitle,
         showHint,
@@ -232,8 +237,11 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
     }
 
     let source: ItemDataSource = {
-        showTitle,
-        titlePlacement: elementType === ELEMENT_TYPE.CHECKBOX ? undefined : titlePlacement,
+        showTitle: titlePlacement !== TitlePlacements.Hide,
+        titlePlacement:
+            elementType === ELEMENT_TYPE.CHECKBOX || titlePlacement === TitlePlacements.Hide
+                ? undefined
+                : titlePlacement,
         elementType,
         defaultValue,
         showInnerTitle,
@@ -242,6 +250,7 @@ export const getItemDataSource = (selectorDialog: SelectorDialogState): ItemData
         required,
         showHint,
         hint,
+        accentType: elementType === ELEMENT_TYPE.CHECKBOX ? undefined : accentType,
     };
 
     switch (sourceType) {

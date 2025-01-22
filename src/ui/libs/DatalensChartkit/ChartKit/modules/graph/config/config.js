@@ -28,7 +28,7 @@ import formatTooltip, {
     TOOLTIP_HEADER_CLASS_NAME,
     TOOLTIP_LIST_CLASS_NAME,
     TOOLTIP_ROW_CLASS_NAME,
-    TOOLTIP_ROW_NAME_CLASS_NANE,
+    TOOLTIP_ROW_NAME_CLASS_NAME,
 } from '../tooltip/tooltip';
 
 import {handleLegendItemClick} from './handleLegendItemClick';
@@ -193,7 +193,7 @@ export function synchronizeTooltipTablesCellsWidth(tooltipContainer, isMobile) {
     }
 
     if (isMobile && tooltipOverflowsViewport) {
-        const rowNamesNodes = tooltipContainer.querySelectorAll(`.${TOOLTIP_ROW_NAME_CLASS_NANE}`);
+        const rowNamesNodes = tooltipContainer.querySelectorAll(`.${TOOLTIP_ROW_NAME_CLASS_NAME}`);
 
         for (let i = 0; i < rowNamesNodes.length; i++) {
             const node = rowNamesNodes[i];

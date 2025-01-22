@@ -9,6 +9,7 @@ import type {
 } from '../../../../../../../shared';
 import {
     Feature,
+    MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
     getFakeTitleOrTitle,
@@ -335,7 +336,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
-                    if (tooltipField?.isMarkdown) {
+                    if (tooltipField?.markupType === MARKUP_TYPE.markdown) {
                         pointData[WRAPPED_MARKDOWN_KEY] = text;
                     } else {
                         pointData.text = shouldEscapeUserValue ? escape(text) : text;
@@ -369,8 +370,12 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     });
 
-    if (tooltips.some((item) => item.isMarkdown)) {
+    if (tooltips.some((item) => item.markupType === MARKUP_TYPE.markdown)) {
         ChartEditor.updateConfig({useMarkdown: true});
+    }
+
+    if (tooltips.some((item) => item.markupType === MARKUP_TYPE.html)) {
+        ChartEditor.updateConfig({useHtml: true});
     }
 
     let mapOptions: GeopointMapOptions = {

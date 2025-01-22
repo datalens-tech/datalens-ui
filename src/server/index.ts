@@ -6,6 +6,7 @@ import type {AppEnvironment} from '../shared/constants/common';
 import {getAppEndpointsConfig} from '../shared/endpoints';
 
 import {appEnv} from './app-env';
+import {appAuth} from './components/auth/middlewares/auth';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
 import authZitadel from './middlewares/auth-zitadel';
 import {getConnectorToQlConnectionTypeMap} from './modes/charts/plugins/ql/utils/connection';
@@ -25,6 +26,10 @@ nodekit.config.endpoints = getAppEndpointsConfig(
 
 if (nodekit.config.isZitadelEnabled) {
     nodekit.config.appAuthHandler = authZitadel;
+}
+
+if (nodekit.config.isAuthEnabled) {
+    nodekit.config.appAuthHandler = appAuth;
 }
 
 nodekit.config.appAllowedLangs = nodekit.config.regionalEnvConfig?.allowLanguages;

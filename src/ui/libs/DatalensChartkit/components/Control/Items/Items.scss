@@ -87,4 +87,17 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
             cursor: move;
         }
     }
+
+    &__component {
+        &_accent_info {
+            --g-text-input-background-color: var(--g-color-base-info-light);
+        }
+    }
+    &__yc-select {
+        &_accent_info {
+            --yc-select-badge-color: var(--g-color-base-selection-hover);
+            --yc-select-background-color: var(--g-color-base-info-light);
+            --yc-select-background-color-hover: var(--g-color-base-info-light-hover);
+        }
+    }
 }

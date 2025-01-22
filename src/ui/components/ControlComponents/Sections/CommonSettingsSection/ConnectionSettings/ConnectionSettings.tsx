@@ -18,28 +18,34 @@ export const ConnectionSettings = ({
     hideCommonFields,
     navigationPath,
     changeNavigationPath,
+    rowClassName,
 }: {
     hideCommonFields?: boolean;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    rowClassName?: string;
 }) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
 
     return (
         <React.Fragment>
             <ConnectionSelector
+                className={rowClassName}
                 navigationPath={navigationPath}
                 changeNavigationPath={changeNavigationPath}
             />
             {connectionQueryTypes && connectionQueryTypes.length > 0 && (
                 <React.Fragment>
-                    <ParameterNameInput label={i18n('field_parameter-name')} />
+                    <ParameterNameInput
+                        label={i18n('field_parameter-name')}
+                        className={rowClassName}
+                    />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                     {!hideCommonFields && (
                         <React.Fragment>
-                            <InputTypeSelector />
-                            <RequiredValueCheckbox />
-                            <ValueSelector />
+                            <InputTypeSelector className={rowClassName} />
+                            <RequiredValueCheckbox className={rowClassName} />
+                            <ValueSelector rowClassName={rowClassName} />
                         </React.Fragment>
                     )}
                 </React.Fragment>

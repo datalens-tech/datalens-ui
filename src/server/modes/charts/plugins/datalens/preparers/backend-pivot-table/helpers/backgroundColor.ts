@@ -7,6 +7,7 @@ import type {
 } from '../../../../../../../../shared';
 import {
     ApiV2Annotations,
+    GradientNullModes,
     PseudoFieldTitle,
     getFakeTitleOrTitle,
 } from '../../../../../../../../shared';
@@ -231,8 +232,19 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
         const fieldColorValues = Array.from(colorValues);
 
         continuousColorsByField[guid] = {};
+        const nilValue =
+            backgroundSettings.settings.gradientState.nullMode === GradientNullModes.AsZero
+                ? 0
+                : null;
 
-        const colorValuesWithoutNull = fieldColorValues.filter((cv): cv is number => cv !== null);
+        const colorValuesWithoutNull = fieldColorValues.reduce<number[]>((acc, cv) => {
+            const colorValue = cv === null ? nilValue : cv;
+            if (colorValue !== null) {
+                acc.push(Number(colorValue));
+            }
+
+            return acc;
+        }, []);
 
         const min = Math.min(...colorValuesWithoutNull);
         const max = Math.max(...colorValuesWithoutNull);
@@ -250,7 +262,10 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
 
         fieldColorValues.forEach((value) => {
             const colorValue = getContinuousColorValue(value);
-            if (colorValue === null) {
+            if (
+                colorValue === null &&
+                backgroundSettings.settings.gradientState.nullMode !== GradientNullModes.AsZero
+            ) {
                 return;
             }
 
@@ -317,7 +332,10 @@ export const colorizePivotTableByFieldBackgroundSettings = (
             const {settings, colorFieldGuid} = backgroundColorSettings;
             const colorKey = cell.colorKey;
 
-            if (!colorKey) {
+            if (
+                !colorKey &&
+                backgroundColorSettings.settings.gradientState.nullMode !== GradientNullModes.AsZero
+            ) {
                 continue;
             }
 

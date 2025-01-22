@@ -7,6 +7,8 @@ import {
     transformValidateDatasetResponseError,
 } from '../helpers';
 import type {
+    CheckConnectionsForPublicationArgs,
+    CheckConnectionsForPublicationResponse,
     CheckDatasetsForPublicationArgs,
     CheckDatasetsForPublicationResponse,
     CopyDatasetArgs,
@@ -105,6 +107,17 @@ export const actions = {
         path: () => `${API_V1}/info/datasets_publicity_checker`,
         params: ({datasetsIds, workbookId}, headers) => ({
             body: {datasets: datasetsIds},
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
+    }),
+    checkConnectionsForPublication: createAction<
+        CheckConnectionsForPublicationResponse,
+        CheckConnectionsForPublicationArgs
+    >({
+        method: 'POST',
+        path: () => `${API_V1}/info/connections_publicity_checker`,
+        params: ({connectionsIds, workbookId}, headers) => ({
+            body: {connections: connectionsIds},
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),

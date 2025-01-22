@@ -200,7 +200,7 @@ class Connections extends React.PureComponent {
             const datasetsIds = Object.keys(datasets);
 
             if (!isEmpty(entriesIds) && (!isEmpty(datasetsIds) || !isEmpty(controlsIds))) {
-                entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
+                entriesDatasetsFields = await getSdk().sdk.mix.getEntriesDatasetsFields({
                     entriesIds,
                     datasetsIds,
                     workbookId: this.props.workbookId,

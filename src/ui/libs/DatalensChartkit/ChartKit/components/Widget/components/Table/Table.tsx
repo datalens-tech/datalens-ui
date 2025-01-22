@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {DEFAULT_WIDGET_SIZE} from 'shared';
 import type {TableCommonCell, TableHead, TableRow, WidgetSizeType} from 'shared';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {
@@ -20,7 +21,7 @@ import {Loader} from '../../../Loader/Loader';
 import {SNAPTER_HTML_CLASSNAME} from '../constants';
 
 import Paginator from './Paginator/Paginator';
-import {WrappedHTMLNode, isWrappedHTML} from './WrappedHTMLNode';
+import {WrappedHTMLNode} from './WrappedHTMLNode';
 import type {TableProps} from './types';
 import {
     camelCaseCss,

@@ -312,14 +312,12 @@ export const getPreparedConstants = (props: {
     widgetId?: string;
     history?: History<unknown>;
     hideTitle?: boolean | undefined;
-    tabsLength?: number;
     disableChartLoader?: boolean;
     needWaitForDSFields?: boolean;
 }) => {
     const {
         loadedData,
         hideTitle,
-        tabsLength,
         widgetId,
         history,
         isLoading,
@@ -340,8 +338,6 @@ export const getPreparedConstants = (props: {
         noControls = isTrueArg(searchParams.get(URL_OPTIONS.NO_CONTROLS));
     }
 
-    const hideTabs = isFullscreen ? true : Boolean(tabsLength === 1 && hideTitle);
-
     const isFirstLoadOrAfterError = loadedData === null;
 
     const showLoader =
@@ -350,10 +346,11 @@ export const getPreparedConstants = (props: {
         ((!isSilentReload && !noLoader) || isFirstLoadOrAfterError);
 
     const mods = {
-        'no-tabs': !isFullscreen && hideTabs,
+        'no-tabs': !isFullscreen && hideTitle,
         fullscreen: isFullscreen,
         'no-controls': noControls,
         [String(widgetType)]: Boolean(widgetType),
+        'default-mobile': DL.IS_MOBILE && !isFullscreen,
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);
 
@@ -368,7 +365,6 @@ export const getPreparedConstants = (props: {
         veil: hasVeil,
         showLoader,
         isFullscreen,
-        hideTabs,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,

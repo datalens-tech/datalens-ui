@@ -10,7 +10,6 @@ import {Route, Switch, withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
-import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {registry} from 'ui/registry';
 import {resetDatasetState} from 'units/datasets/store/actions/creators';
 
@@ -18,6 +17,8 @@ import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter
 import withInaccessibleOnMobile from '../../../../hoc/withInaccessibleOnMobile';
 import DatasetPage from '../../containers/DatasetPage/DatasetPage';
 import {datasetKeySelector} from '../../store/selectors/dataset';
+
+import {UnloadConfirmation} from './UnloadConfirmation';
 
 import './DatasetRouter.scss';
 
@@ -33,14 +34,7 @@ type Props = StateProps &
         sdk: SDK;
     };
 
-const DatasetRouter = ({
-    sdk,
-    datasetKey,
-    setCurrentPageEntry,
-    asideHeaderData,
-    resetDatasetState,
-    match,
-}: Props) => {
+const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState, match}: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
     const {extractEntryId} = registry.common.functions.getAll();
     const possibleEntryId = extractEntryId(window.location.pathname);
@@ -49,7 +43,7 @@ const DatasetRouter = ({
         return () => {
             resetDatasetState();
         };
-    }, []);
+    }, [resetDatasetState]);
 
     const prevMatch = usePrevious(match) || match;
 
@@ -60,7 +54,7 @@ const DatasetRouter = ({
         if (prevEntryId !== currentEntryId) {
             resetDatasetState();
         }
-    }, [prevMatch.url, match.url]);
+    }, [prevMatch.url, match.url, extractEntryId, resetDatasetState]);
 
     React.useEffect(() => {
         if (!isAsideHeaderEnabled || !possibleEntryId || !datasetKey) {
@@ -71,29 +65,43 @@ const DatasetRouter = ({
             entryId: possibleEntryId,
             key: datasetKey,
         });
-    }, [isAsideHeaderEnabled, possibleEntryId, datasetKey]);
+    }, [isAsideHeaderEnabled, possibleEntryId, datasetKey, setCurrentPageEntry]);
 
     return (
         <div className={b()}>
             <Switch>
                 <Route
                     path={['/datasets/new', '/workbooks/:workbookId/datasets/new']}
-                    render={(props) => (
-                        <DatasetPage
-                            {...props}
-                            sdk={sdk}
-                            asideHeaderData={asideHeaderData}
-                            isCreationProcess={true}
-                        />
-                    )}
+                    render={(props: RouteComponentProps<{workbookId?: string}>) => {
+                        const {workbookId} = props.match.params;
+                        return (
+                            <DatasetPage
+                                {...props}
+                                sdk={sdk}
+                                datasetId={workbookId}
+                                workbookId={workbookId}
+                            />
+                        );
+                    }}
                 />
                 <Route
                     path={['/datasets/:datasetId', '/workbooks/:workbookId/datasets/:datasetId']}
-                    render={(props) => (
-                        <DatasetPage {...props} asideHeaderData={asideHeaderData} sdk={sdk} />
-                    )}
+                    render={(
+                        props: RouteComponentProps<{datasetId?: string; workbookId?: string}>,
+                    ) => {
+                        const {datasetId, workbookId} = props.match.params;
+                        return (
+                            <DatasetPage
+                                {...props}
+                                sdk={sdk}
+                                datasetId={datasetId}
+                                workbookId={workbookId}
+                            />
+                        );
+                    }}
                 />
             </Switch>
+            <UnloadConfirmation />
         </div>
     );
 };
@@ -101,7 +109,6 @@ const DatasetRouter = ({
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         datasetKey: datasetKeySelector(state),
-        asideHeaderData: selectAsideHeaderData(state),
     };
 };
 

@@ -3,11 +3,13 @@ import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 import querystring from 'querystring';
 import url from 'url';
 
-import type {Request} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
+import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
 import sizeof from 'object-sizeof';
 import PQueue from 'p-queue';
 
+import type {ChartsEngine} from '../..';
 import type {WorkbookId} from '../../../../../shared';
 import {
     DL_CONTEXT_HEADER,
@@ -19,9 +21,9 @@ import {
     isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
+import type {CacheClient} from '../../../cache-client';
 import {config} from '../../constants';
-import type {ChartsEngine} from '../../index';
-import type {Source} from '../../types';
+import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
@@ -56,9 +58,9 @@ type ChartkitSource = {
 type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
-    chartsEngine: ChartsEngine;
+    chartsEngine?: ChartsEngine;
     sources: Record<string, Source | string>;
-    req: Request;
+    ctx: AppContext;
     postprocess?:
         | ((
               data: Record<string, DataFetcherResult>,
@@ -67,8 +69,24 @@ type DataFetcherOptions = {
         | null;
     subrequestHeaders: Record<string, string>;
     userId?: string | null;
+    userLogin?: string | null;
     iamToken?: string | null;
     workbookId?: WorkbookId;
+    isEmbed?: boolean;
+    zitadelParams?: ZitadelParams | undefined;
+    authParams?: AuthParams | undefined;
+    originalReqHeaders: DataFetcherOriginalReqHeaders;
+    adapterContext: AdapterContext;
+    telemetryCallbacks?: TelemetryCallbacks;
+    cacheClient?: CacheClient;
+    sourcesConfig?: ChartsEngine['sources'];
+};
+
+export type DataFetcherOriginalReqHeaders = {
+    xRealIP: IncomingHttpHeaders['x-real-ip'];
+    xForwardedFor: IncomingHttpHeaders['x-forwarded-for'];
+    xChartsFetcherVia: IncomingHttpHeaders['x-charts-fetcher-via'];
+    referer: IncomingHttpHeaders['referer'];
 };
 
 type DataFetcherRequestOptions = {
@@ -145,18 +163,76 @@ export type DataFetcherResult = {
     data?: any;
 };
 
+export type ZitadelParams = {
+    accessToken?: string;
+    serviceUserAccessToken?: string;
+};
+
+export function addZitadelHeaders({
+    headers,
+    zitadelParams,
+}: {
+    headers: OutgoingHttpHeaders;
+    zitadelParams: ZitadelParams;
+}) {
+    if (zitadelParams?.accessToken) {
+        Object.assign(headers, {authorization: `Bearer ${zitadelParams.accessToken}`});
+    }
+
+    if (zitadelParams?.serviceUserAccessToken) {
+        Object.assign(headers, {
+            [SERVICE_USER_ACCESS_TOKEN_HEADER]: zitadelParams.serviceUserAccessToken,
+        });
+    }
+}
+
+export type AuthParams = {
+    accessToken?: string;
+};
+
+export function addAuthHeaders({
+    headers,
+    authParams,
+}: {
+    headers: OutgoingHttpHeaders;
+    authParams: AuthParams;
+}) {
+    if (authParams?.accessToken) {
+        Object.assign(headers, {authorization: `Bearer ${authParams.accessToken}`});
+    }
+}
+
 export class DataFetcher {
     static fetch({
         chartsEngine,
         sources,
-        req,
+        ctx,
         postprocess = null,
         subrequestHeaders,
         userId,
+        userLogin,
         iamToken,
         workbookId,
+        isEmbed = false,
+        zitadelParams,
+        authParams,
+        originalReqHeaders,
+        adapterContext,
+        telemetryCallbacks,
+        cacheClient,
+        sourcesConfig,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
-        const fetchingTimeout = chartsEngine.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
+        // TODO remove after migration
+        if ((!telemetryCallbacks || !cacheClient) && chartsEngine) {
+            telemetryCallbacks = chartsEngine.telemetryCallbacks;
+            cacheClient = chartsEngine.cacheClient;
+            sourcesConfig = chartsEngine.sources;
+        }
+        if (!telemetryCallbacks || !cacheClient || !sourcesConfig) {
+            throw new Error('Missing telemetry callbacks or cache client');
+        }
+
+        const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
 
@@ -176,23 +252,36 @@ export class DataFetcher {
             const queue = new PQueue({concurrency: CONCURRENT_REQUESTS_LIMIT});
             const fetchPromisesList: (() => unknown)[] = [];
 
+            if (!originalReqHeaders || !adapterContext) {
+                throw new Error('Missing original request headers or adapter context');
+            }
+
             Object.keys(sources).forEach((sourceName) => {
                 const source = sources[sourceName];
 
                 fetchPromisesList.push(() =>
                     source
                         ? DataFetcher.fetchSource({
-                              req,
+                              ctx,
                               sourceName,
                               source: isString(source) ? {url: source} : source,
-                              chartsEngine,
                               fetchingStartTime,
                               subrequestHeaders,
                               processingRequests,
                               rejectFetchingSource: reject,
                               userId,
+                              userLogin,
                               iamToken,
                               workbookId,
+                              isEmbed,
+                              zitadelParams,
+                              authParams,
+                              originalReqHeaders:
+                                  originalReqHeaders as DataFetcherOriginalReqHeaders,
+                              adapterContext: adapterContext as AdapterContext,
+                              telemetryCallbacks,
+                              cacheClient,
+                              sourcesConfig,
                           })
                         : {
                               sourceId: sourceName,
@@ -237,12 +326,12 @@ export class DataFetcher {
 
                             failed[result.sourceId] = filterObjectWhitelist(
                                 entry,
-                                chartsEngine.config.runResponseWhitelist,
+                                ctx.config.runResponseWhitelist,
                             );
                         } else {
                             fetched[result.sourceId] = filterObjectWhitelist(
                                 result,
-                                chartsEngine.config.runResponseWhitelist,
+                                ctx.config.runResponseWhitelist,
                             ) as DataFetcherResult;
                         }
                     });
@@ -272,15 +361,14 @@ export class DataFetcher {
      * @returns {Object} source configuration
      */
     static getSourceConfig({
-        chartsEngine,
+        sourcesConfig,
         sourcePath,
         isEmbed,
     }: {
-        chartsEngine: ChartsEngine;
+        sourcesConfig: ChartsEngine['sources'];
         sourcePath: string;
         isEmbed?: boolean;
     }) {
-        const sources = chartsEngine.sources;
         let sourceName = DataFetcher.getSourceName(sourcePath);
 
         // Temporary hack for embed endpoints
@@ -291,12 +379,12 @@ export class DataFetcher {
             sourceName = 'bi_connections_embed';
         }
 
-        const resultSourceType = Object.keys(sources).find((sourceType) => {
+        const resultSourceType = Object.keys(sourcesConfig).find((sourceType) => {
             if (sourceName === sourceType) {
                 return true;
             }
 
-            const aliases = sources[sourceType].aliases;
+            const aliases = sourcesConfig[sourceType].aliases;
             if (aliases) {
                 return aliases.has(sourceName);
             }
@@ -305,7 +393,7 @@ export class DataFetcher {
         });
 
         if (resultSourceType) {
-            const sourceConfig = sources[resultSourceType];
+            const sourceConfig = sourcesConfig[resultSourceType];
 
             sourceConfig.sourceType = resultSourceType;
 
@@ -325,19 +413,19 @@ export class DataFetcher {
     }
 
     /**
-     * @param {String} chartsEngine
+     * @param {String} sourcesConfig
      * @param {String} lang target lang
      *
      * @returns {Object} config for all sources
      */
     static getChartKitSources({
-        chartsEngine,
+        sourcesConfig,
         lang = 'en',
     }: {
-        chartsEngine: ChartsEngine;
+        sourcesConfig: ChartsEngine['sources'];
         lang: 'en' | 'ru';
     }) {
-        const sources = chartsEngine.sources;
+        const sources = sourcesConfig;
 
         const chartkitSources: Record<string, ChartkitSource> = {};
 
@@ -381,8 +469,14 @@ export class DataFetcher {
      *
      * @returns {Boolean} check is source stat or not
      */
-    static isStat({chartsEngine, sourcePath}: {chartsEngine: ChartsEngine; sourcePath: string}) {
-        return DataFetcher.getSourceConfig({chartsEngine, sourcePath}) === null;
+    static isStat({
+        sourcesConfig,
+        sourcePath,
+    }: {
+        sourcesConfig: ChartsEngine['sources'];
+        sourcePath: string;
+    }) {
+        return DataFetcher.getSourceConfig({sourcesConfig, sourcePath}) === null;
     }
 
     private static removeFromProcessingRequests(
@@ -397,35 +491,49 @@ export class DataFetcher {
     private static async fetchSource({
         sourceName,
         source,
-        req,
-        chartsEngine,
+        ctx,
         fetchingStartTime,
         subrequestHeaders,
         processingRequests,
         rejectFetchingSource,
         userId,
+        userLogin,
         iamToken,
         workbookId,
+        isEmbed,
+        zitadelParams,
+        authParams,
+        originalReqHeaders,
+        adapterContext,
+        telemetryCallbacks,
+        cacheClient,
+        sourcesConfig,
     }: {
         sourceName: string;
         source: Source;
-        req: Request;
-        chartsEngine: ChartsEngine;
+        ctx: AppContext;
+        telemetryCallbacks: TelemetryCallbacks;
         fetchingStartTime: number;
         subrequestHeaders: Record<string, string>;
         processingRequests: PromiseWithAbortController[];
         rejectFetchingSource: () => void;
         userId?: string | null;
+        userLogin?: string | null;
         iamToken?: string | null;
         workbookId?: WorkbookId;
+        isEmbed: boolean;
+        zitadelParams: ZitadelParams | undefined;
+        authParams: AuthParams | undefined;
+        originalReqHeaders: DataFetcherOriginalReqHeaders;
+        adapterContext: AdapterContext;
+        cacheClient: CacheClient;
+        sourcesConfig: ChartsEngine['sources'];
     }) {
-        const ctx = req.ctx;
         const singleFetchingTimeout =
-            chartsEngine.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
+            ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
-        const onDataFetched = chartsEngine.telemetryCallbacks.onDataFetched || (() => {});
-        const onDataFetchingFailed =
-            chartsEngine.telemetryCallbacks.onDataFetchingFailed || (() => {});
+        const onDataFetched = telemetryCallbacks.onDataFetched || (() => {});
+        const onDataFetchingFailed = telemetryCallbacks.onDataFetchingFailed || (() => {});
 
         const requestControl = {
             allBuffersLength: 0,
@@ -449,14 +557,8 @@ export class DataFetcher {
             isEnabledServerFeature(ctx, Feature.UseChartsEngineLogin),
         );
 
-        if (
-            useChartsEngineLogin &&
-            'blackbox' in req &&
-            isObject(req.blackbox) &&
-            'login' in req.blackbox &&
-            isString(req.blackbox.login)
-        ) {
-            loggedInfo.login = req.blackbox.login;
+        if (useChartsEngineLogin && userLogin) {
+            loggedInfo.login = userLogin;
         }
 
         ctx.log('FETCHER_REQUEST', loggedInfo);
@@ -479,7 +581,7 @@ export class DataFetcher {
         targetUri = targetUri.replace(/^\/api\/editor\/v1\/run/, '/_charts/api/editor/v1/run');
         targetUri = targetUri.replace(/^\/api\/run/, '/_charts/api/run');
 
-        if (DataFetcher.isStat({chartsEngine, sourcePath: targetUri})) {
+        if (DataFetcher.isStat({sourcesConfig, sourcePath: targetUri})) {
             targetUri = '/_stat' + targetUri;
         }
 
@@ -517,9 +619,9 @@ export class DataFetcher {
         const dataSourceName = DataFetcher.getSourceName(targetUri);
 
         const sourceConfig = DataFetcher.getSourceConfig({
-            chartsEngine,
+            sourcesConfig,
             sourcePath: targetUri,
-            isEmbed: req.headers[DL_EMBED_TOKEN_HEADER] !== undefined,
+            isEmbed,
         });
 
         if (!sourceConfig) {
@@ -534,7 +636,12 @@ export class DataFetcher {
 
         const {passedCredentials, extraHeaders, sourceType} = sourceConfig;
 
-        if (sourceConfig.allowedMethods && !sourceConfig.allowedMethods.includes(sourceMethod)) {
+        if (
+            sourceConfig.allowedMethods &&
+            !sourceConfig.allowedMethods.includes(
+                sourceMethod as 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+            )
+        ) {
             const message = `This HTTP method (${sourceMethod}) is not allowed for this source: ${sourceName}`;
 
             ctx.logError(message);
@@ -547,35 +654,15 @@ export class DataFetcher {
         }
 
         if (sourceConfig.check) {
-            try {
-                const checkResult = await sourceConfig.check(req, targetUri, req.body.params);
-                if (checkResult === true) {
-                    ctx.log('Access to source allowed');
-                } else if (checkResult === false) {
-                    ctx.log('Access to source forbidden');
-
-                    return {
-                        sourceId: sourceName,
-                        sourceType,
-                        message: 'Access to source forbidden',
-                    };
-                } else {
-                    ctx.logError('Source access check failed');
-
-                    return {
-                        sourceId: sourceName,
-                        sourceType,
-                        message: 'Source access check failed',
-                    };
-                }
-            } catch (error) {
-                ctx.logError('Failed to run source check', error);
-
-                return {
-                    sourceId: sourceName,
-                    sourceType,
-                    message: 'Failed to run source check',
-                };
+            const result = await sourceConfigCheck({
+                ctx,
+                targetUri,
+                sourceConfig,
+                sourceName,
+                sourceType,
+            });
+            if (result.valid === false) {
+                return result;
             }
         }
 
@@ -590,13 +677,12 @@ export class DataFetcher {
             userTargetUriUi = sourceConfig.uiEndpoint + croppedTargetUri;
         }
 
-        if (sourceConfig.adapter) {
-            return sourceConfig.adapter({
+        if (sourceConfig.adapterWithContext) {
+            return sourceConfig.adapterWithContext({
                 targetUri: croppedTargetUri,
                 sourceName,
-                source,
-                fetchingStartTime,
-                req,
+                adapterContext,
+                ctx,
             });
         }
 
@@ -609,9 +695,11 @@ export class DataFetcher {
         );
 
         if (sourceType === 'charts') {
-            const incomingHeader = req.headers['x-charts-fetcher-via'] || '';
+            const incomingHeader = originalReqHeaders.xChartsFetcherVia || '';
 
-            const scriptName = req.body.params ? '/editor/' + req.body.params.name : req.body.path;
+            const {reqBody} = ctx.get('sources');
+
+            const scriptName = reqBody.params ? '/editor/' + reqBody.params.name : reqBody.path;
 
             if (incomingHeader && !Array.isArray(incomingHeader)) {
                 const circular = incomingHeader.split(',').some((someScriptName) => {
@@ -634,8 +722,8 @@ export class DataFetcher {
                 : scriptName;
         }
 
-        if (req.headers.referer) {
-            headers.referer = req.ctx.utils.redactSensitiveQueryParams(req.headers.referer);
+        if (originalReqHeaders.referer) {
+            headers.referer = ctx.utils.redactSensitiveQueryParams(originalReqHeaders.referer);
         }
 
         const proxyHeaders = ctx.config.chartsEngineConfig.dataFetcherProxiedHeaders || [
@@ -658,14 +746,12 @@ export class DataFetcher {
             headers[WORKBOOK_ID_HEADER] = workbookId;
         }
 
-        if (req.user?.accessToken) {
-            Object.assign(headers, {authorization: `Bearer ${req.user.accessToken}`});
+        if (zitadelParams) {
+            addZitadelHeaders({headers, zitadelParams});
         }
 
-        if (req.serviceUserAccessToken) {
-            Object.assign(headers, {
-                [SERVICE_USER_ACCESS_TOKEN_HEADER]: req.serviceUserAccessToken,
-            });
+        if (authParams) {
+            addAuthHeaders({headers, authParams});
         }
 
         if (passedCredentials) {
@@ -674,8 +760,7 @@ export class DataFetcher {
             );
 
             const sourceAuthorizationHeaders = getSourceAuthorizationHeaders({
-                req,
-                chartsEngine,
+                ctx,
                 sourceConfig,
                 subrequestHeaders,
             });
@@ -685,7 +770,7 @@ export class DataFetcher {
 
         if (extraHeaders) {
             if (typeof extraHeaders === 'function') {
-                const extraHeadersResult = extraHeaders(req);
+                const extraHeadersResult = extraHeaders();
 
                 Object.assign(headers, extraHeadersResult);
             } else if (typeof extraHeaders === 'object') {
@@ -733,25 +818,32 @@ export class DataFetcher {
         }
 
         if (ctx.config.appEnv !== 'development') {
-            requestOptions.headers['x-forwarded-for'] = req.headers['x-forwarded-for'];
+            requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
+        }
+
+        if (!requestOptions.headers['x-real-ip']) {
+            requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
         }
 
         if (isSourceWithMiddlewareUrl(source)) {
             const middlewareSourceConfig = DataFetcher.getSourceConfig({
-                chartsEngine,
+                sourcesConfig,
                 sourcePath: source.middlewareUrl.sourceName,
             });
 
             if (middlewareSourceConfig?.middlewareAdapter) {
                 source = await middlewareSourceConfig.middlewareAdapter({
+                    ctx,
                     source,
                     sourceName,
-                    req,
                     iamToken: iamToken ?? undefined,
                     workbookId,
-                    ChartsEngine: chartsEngine,
+                    cacheClient,
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
+                    zitadelParams,
+                    authParams,
+                    requestHeaders: requestOptions.headers,
                 });
             }
         }
@@ -772,10 +864,6 @@ export class DataFetcher {
 
         const publicTargetUri = hideSensitiveData(targetUri);
         const publicSourceData = hideSensitiveData(sourceData);
-
-        if (!requestOptions.headers['x-real-ip']) {
-            requestOptions.headers['x-real-ip'] = req.headers['x-real-ip'];
-        }
 
         const traceId = ctx.getTraceId();
         const tenantId = ctx.get('tenantId');
@@ -805,7 +893,7 @@ export class DataFetcher {
                     onDataFetchingFailed(error, {
                         sourceName: dataSourceName,
                         statusCode,
-                        requestId: req.id,
+                        requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                         latency,
                         traceId,
                         tenantId,
@@ -912,7 +1000,7 @@ export class DataFetcher {
                         onDataFetched({
                             sourceName: dataSourceName,
                             statusCode: response.statusCode,
-                            requestId: req.id,
+                            requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
                             latency,
                             url: publicTargetUri,
                             traceId,
@@ -1015,5 +1103,72 @@ export class DataFetcher {
 
             processingRequests.push([currentRequest, abortController]);
         });
+    }
+}
+
+type SourceCheckResult = {
+    valid: boolean;
+    meta?: {
+        sourceId: string;
+        sourceType?: string;
+        message: string;
+    };
+};
+
+async function sourceConfigCheck({
+    ctx,
+    sourceName,
+    sourceType,
+    sourceConfig,
+    targetUri,
+}: {
+    ctx: AppContext;
+    sourceName: string;
+    sourceType?: string;
+    sourceConfig: SourceConfig;
+    targetUri: string;
+}): Promise<SourceCheckResult> {
+    if (!sourceConfig.check) {
+        return {valid: true};
+    }
+    try {
+        const checkResult = await sourceConfig.check(targetUri);
+        if (checkResult === true) {
+            ctx.log('Access to source allowed');
+            return {valid: true};
+        } else if (checkResult === false) {
+            ctx.log('Access to source forbidden');
+
+            return {
+                valid: false,
+                meta: {
+                    sourceId: sourceName,
+                    sourceType,
+                    message: 'Access to source forbidden',
+                },
+            };
+        } else {
+            ctx.logError('Source access check failed');
+
+            return {
+                valid: false,
+                meta: {
+                    sourceId: sourceName,
+                    sourceType,
+                    message: 'Source access check failed',
+                },
+            };
+        }
+    } catch (error) {
+        ctx.logError('Failed to run source check', error);
+
+        return {
+            valid: false,
+            meta: {
+                sourceId: sourceName,
+                sourceType,
+                message: 'Failed to run source check',
+            },
+        };
     }
 }

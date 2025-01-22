@@ -238,6 +238,8 @@ export const applyGroupControlDialog = ({
                 : false;
 
         const data = {
+            showGroupName: selectorsGroup.showGroupName,
+            groupName: selectorsGroup.groupName,
             autoHeight,
             buttonApply: selectorsGroup.buttonApply,
             buttonReset: selectorsGroup.buttonReset,

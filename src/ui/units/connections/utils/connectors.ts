@@ -1,13 +1,6 @@
-import {ConnectorType, Feature} from 'shared';
-
 import type {ConnectorItem} from '../../../../shared/schema/types';
-import Utils from '../../../utils';
 
 export const isConnectorInList = (connectors: ConnectorItem[], connType?: string) => {
-    if (connType === ConnectorType.GsheetsV2 && !Utils.isEnabledFeature(Feature.GSheetsV2Enabled)) {
-        return false;
-    }
-
     return connectors.findIndex((connector) => connector.conn_type === connType) !== -1;
 };
 

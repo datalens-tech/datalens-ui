@@ -49,14 +49,16 @@ import {
     RELATION_DELETE,
     RELATION_UPDATE,
     RENAME_DATASET,
-    SET_ASIDE_HEADER_WIDTH,
+    SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
+    SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -337,7 +339,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 validation: {
                     ...state.validation,
                     isLoading: true,
-                    isPending: false,
                 },
                 ui: {
                     ...state.ui,
@@ -1262,17 +1263,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
             };
         }
-        case SET_ASIDE_HEADER_WIDTH: {
-            const {width} = action.payload;
-
-            return {
-                ...state,
-                ui: {
-                    ...state.ui,
-                    asideHeaderWidth: width,
-                },
-            };
-        }
         case TOGGLE_SOURCES_LOADER: {
             const {isSourcesLoading} = action.payload;
 
@@ -1329,6 +1319,24 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         }
         case SET_EDIT_HISTORY_STATE: {
             return action.payload.state;
+        }
+        case SET_CURRENT_TAB: {
+            const {currentTab} = action.payload;
+            return {...state, currentTab};
+        }
+        case SET_LAST_MODIFIED_TAB: {
+            const {lastModifiedTab} = action.payload;
+            return {...state, lastModifiedTab};
+        }
+        case SET_VALIDATION_STATE: {
+            const {validation} = action.payload;
+            return {
+                ...state,
+                validation: {
+                    ...state.validation,
+                    ...validation,
+                },
+            };
         }
         default: {
             return state;

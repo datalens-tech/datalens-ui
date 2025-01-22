@@ -7,7 +7,6 @@ import get from 'lodash/get';
 import type {ChartsEngine} from '..';
 import {Feature, isEnabledServerFeature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
-import {registry} from '../../../registry';
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
 
@@ -24,7 +23,6 @@ export const runController = (
 ) => {
     return async function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
-        const app = registry.getApp();
 
         // We need it because of timeout error after 120 seconds
         // https://forum.nginx.org/read.php?2,214230,214239#msg-214239
@@ -122,7 +120,7 @@ export const runController = (
             }
 
             if (req.body.config) {
-                if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
+                if (!ctx.config.allowBodyConfig && !runnerFound.safeConfig) {
                     ctx.log('UNSAFE_CONFIG_OVERRIDE');
                     res.status(400).send({
                         error: `It is forbidden to pass config in body for "${configType}"`,
@@ -131,12 +129,12 @@ export const runController = (
                 }
 
                 if (
-                    isEnabledServerFeature(app.nodekit.ctx, Feature.ShouldCheckEditorAccess) &&
+                    isEnabledServerFeature(ctx, Feature.ShouldCheckEditorAccess) &&
                     runnerFound.name === 'editor'
                 ) {
-                    const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+                    const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
                     const checkResult = await checkRequestForDeveloperModeAccess({
-                        ctx: req.ctx,
+                        ctx,
                     });
 
                     if (checkResult === DeveloperModeCheckStatus.Forbidden) {

@@ -52,6 +52,7 @@ interface Props {
     itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
+    showCreateWorkbookButton: boolean;
     isEmptyItems: boolean;
     getStructureItemsRecursively: (
         args: GetStructureItemsArgs,
@@ -76,6 +77,7 @@ export const CollectionContent: React.FC<Props> = ({
     selectedMapWithDeletePermission,
     itemsAvailableForSelection,
     isOpenSelectionMode,
+    showCreateWorkbookButton,
     canCreateWorkbook,
     isEmptyItems,
     getStructureItemsRecursively,
@@ -162,7 +164,7 @@ export const CollectionContent: React.FC<Props> = ({
         if (isDefaultFilters || DL.IS_MOBILE) {
             const actions: EmptyPlaceholderAction[] = [];
 
-            if (canCreateWorkbook) {
+            if (showCreateWorkbookButton) {
                 actions.push({
                     id: EmptyPlaceholderActionId.ConnectYourData,
                     title: i18n('action_connect-your-data'),
@@ -181,6 +183,7 @@ export const CollectionContent: React.FC<Props> = ({
                 dispatch,
                 history,
                 curCollectionId,
+                showCreateWorkbookButton,
                 canCreateWorkbook,
                 title: i18n('label_empty-list'),
                 description: canCreateWorkbook ? i18n('section_create-first') : undefined,

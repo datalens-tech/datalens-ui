@@ -11,7 +11,11 @@ export type BlankChartWidgetProps = {
     id: string;
     data: {
         data: {
-            render: (options: WidgetDimensions & {}) => any;
+            render: (options: WidgetDimensions | undefined) => any;
+            events?: {
+                click: (event: any) => void;
+                keydown: (event: any) => void;
+            };
         };
         config: any;
     };

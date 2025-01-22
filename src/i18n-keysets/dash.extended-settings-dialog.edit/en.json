@@ -1,0 +1,21 @@
+{
+  "button_back": "Back",
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "context_apply-button": "This option enables a button for applying selectors",
+  "context_reset-button": "This option enables a button for resetting selectors",
+  "context_update-controls-on-change": "Once you enable this option, the dependent selectors will have influence on each other before you click Apply.",
+  "label_apply-button-checkbox": "Apply button",
+  "label_autoheight-checkbox": "Autoheight",
+  "label_field-validation": "Invalid width value",
+  "label_group-name": "Name",
+  "label_group-parameters": "Group parameters",
+  "label_note": "Selectors whose width does not fit completely inside the widget that unites a group of selectors will be moved to the next line",
+  "label_reset-button-checkbox": "Reset button",
+  "label_selectors-representation": "Selectors representation order and width",
+  "label_title": "Settings for selectors group",
+  "label_update-controls-on-change": "Auto-updating dependent selectors",
+  "value_auto": "Auto",
+  "value_percent": "%",
+  "value_pixels": "px"
+}

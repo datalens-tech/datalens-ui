@@ -64,25 +64,5 @@
             right: 0;
             z-index: 1;
         }
-
-        &_size_l {
-            font-size: 24px;
-            line-height: 28px;
-        }
-
-        &_size_m {
-            font-size: 20px;
-            line-height: 24px;
-        }
-
-        &_size_s {
-            font-size: var(--g-text-body-3-font-size);
-            line-height: 24px;
-        }
-
-        &_size_xs {
-            font-size: 15px;
-            line-height: 20px;
-        }
     }
 }

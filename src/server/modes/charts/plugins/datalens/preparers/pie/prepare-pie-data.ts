@@ -1,4 +1,4 @@
-import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
+import type {ExtendedSeriesLineOptions, WrappedHTML} from '../../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
     MINIMUM_FRACTION_DIGITS,
@@ -6,6 +6,7 @@ import {
     getDistinctValue,
     getFakeTitleOrTitle,
     isFieldHierarchy,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureValue,
@@ -14,6 +15,7 @@ import {
     wrapMarkupValue,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import type {ChartColorsConfig} from '../../types';
 import type {ColorValue} from '../../utils/color-helpers';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -107,7 +109,23 @@ export function preparePieData(args: PrepareFunctionArgs) {
         colorField = colorField.fields[Math.min(drillDownLevel, colorField.fields.length - 1)];
     }
 
-    const dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
+    if (colorField) {
+        colorField = {
+            ...colorField,
+            data_type: idToDataType[colorField.guid],
+        };
+    }
+    const isHtmlColor = isHtmlField(colorField);
+
+    let dimensionField = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items[0];
+    if (dimensionField) {
+        dimensionField = {
+            ...dimensionField,
+            data_type: idToDataType[dimensionField.guid],
+        };
+    }
+    const isHtmlDimension = isHtmlField(dimensionField);
+
     if (!measure) {
         return {graphs: []};
     }
@@ -129,6 +147,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
         : -1;
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const measureIndex = findIndexInOrder(order, measure, idToTitle[measure.guid]);
     const measureDataType = idToDataType[measure.guid] || measure.data_type;
@@ -183,7 +202,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
                               ? MINIMUM_FRACTION_DIGITS
                               : 0,
                   }),
-            useHTML: isMarkdownLabel || isMarkupLabel,
+            useHTML: (isMarkdownLabel || isMarkupLabel || isHtmlLabel) ?? undefined,
         },
     };
 
@@ -203,36 +222,28 @@ export function preparePieData(args: PrepareFunctionArgs) {
             } else {
                 colorValue = getDistinctValue(colorFieldValue);
                 legendParts.push(String(colorFieldValue));
-                formattedNameParts.push(
-                    String(
-                        getFormattedValue(colorFieldValue, {
-                            ...colorField,
-                            data_type: idToDataType[colorField.guid],
-                        }),
-                    ),
-                );
+                formattedNameParts.push(String(getFormattedValue(colorFieldValue, colorField)));
             }
         }
 
         if (dimensionField) {
             legendParts.push(String(dimensionValue));
-            formattedNameParts.push(
-                String(
-                    getFormattedValue(dimensionValue, {
-                        ...dimensionField,
-                        data_type: idToDataType[dimensionField.guid],
-                    }),
-                ),
-            );
+            formattedNameParts.push(String(getFormattedValue(dimensionValue, dimensionField)));
         }
 
         const pointName = legendParts.join(': ') || getFakeTitleOrTitle(measure);
-        const formattedName = formattedNameParts.join(': ');
+        const drillDownFilterValue = pointName;
+        const shouldWrapPointName = isHtmlColor || isHtmlDimension;
+
+        let formattedName: string | WrappedHTML = formattedNameParts.join(': ');
+        if (isHtmlColor || isHtmlDimension) {
+            formattedName = wrapHtml(formattedName);
+        }
 
         const point: PiePoint = {
-            name: pointName,
+            name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
             formattedName,
-            drillDownFilterValue: pointName,
+            drillDownFilterValue,
             y: Number(measureValue),
             colorGuid: colorField?.guid,
             colorValue,
@@ -248,6 +259,8 @@ export function preparePieData(args: PrepareFunctionArgs) {
                 point.label = wrapMarkdownValue(labelValue);
             } else if (labelValue && isMarkupLabel) {
                 point.label = wrapMarkupValue(labelValue);
+            } else if (labelValue && isHtmlLabel) {
+                point.label = wrapHtml(labelValue);
             } else {
                 point.label = getFormattedValue(labelValue, {
                     ...labelField,
@@ -266,11 +279,11 @@ export function preparePieData(args: PrepareFunctionArgs) {
             };
         }
 
-        if (acc.get(point.name)) {
+        if (acc.get(pointName)) {
             pie.pointConflict = true;
         }
 
-        acc.set(point.name, point);
+        acc.set(pointName, point);
 
         return acc;
     }, new Map<string, PiePoint>());
@@ -302,7 +315,18 @@ export function preparePieData(args: PrepareFunctionArgs) {
         ChartEditor.updateConfig({useMarkup: true});
     }
 
-    return {graphs: [pie], totals: totals.find((value) => value), label: labelField, measure};
+    if (isHtmlColor || isHtmlDimension || [labelField].some(isHtmlField)) {
+        ChartEditor.updateConfig({useHtml: true});
+    }
+
+    return {
+        graphs: [pie],
+        totals: totals.find((value) => value),
+        label: labelField,
+        measure,
+        color: colorField,
+        dimension: dimensionField,
+    };
 }
 
 export default preparePieData;

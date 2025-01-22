@@ -21,6 +21,7 @@ import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {getPreparedWrapSettings} from '../../DashKit/utils';
+import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
@@ -344,7 +345,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isFullscreen,
         isAutoHeightEnabled,
         description,
-        hideTabs,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -437,11 +437,38 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         setWidgetCurrentTab?.({widgetId, tabId: currentTab.id});
     }, [currentTab, setWidgetCurrentTab, widgetId]);
 
+    const handleClickHint = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        return false;
+    };
+
     const adaptiveTabsItems = React.useMemo(
         () =>
             tabs.map((item: CurrentTab) => ({
                 id: item.id,
                 title: item.title.trim() || '\u2014',
+                displayedTitle: (
+                    <span className={b('chart-title-wrap')}>
+                        <span
+                            className={b('chart-title-text', {
+                                'with-hint': Boolean(item.hint && item.enableHint),
+                            })}
+                        >
+                            {(typeof item.title === 'string' ? item.title.trim() : item.title) ||
+                                '\u2014'}
+                        </span>
+                        {item.enableHint && item.hint && (
+                            <MarkdownHelpPopover
+                                markdown={item.hint}
+                                className={b('chart-title-hint')}
+                                buttonProps={{
+                                    className: b('chart-title-hint-button'),
+                                }}
+                                onClick={handleClickHint}
+                            />
+                        )}
+                    </span>
+                ),
                 disabled: Boolean(isLoading),
             })),
         [tabs, isLoading],
@@ -497,7 +524,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     }, [editMode, widgetType]);
 
     const showBgColor = Boolean(
-        currentTab.background?.enabled &&
+        currentTab?.enabled !== false &&
             currentTab.background?.color &&
             currentTab.background?.color !== 'transparent',
     );
@@ -514,6 +541,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 autoheight: isAutoHeightEnabled,
                 classMod,
                 ['wait-for-init']: !isInit,
+                'default-mobile': DL.IS_MOBILE && !isFullscreen,
             })}`}
             style={style}
             data-qa="chart-widget"
@@ -530,7 +558,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 isFullscreen={isFullscreen}
                 onFullscreenClick={handleToggleFullscreenMode}
                 editMode={editMode}
-                hideTabs={hideTabs}
+                hideTitle={Boolean(data.hideTitle)}
                 tabsItems={adaptiveTabsItems}
                 currentTab={currentTab}
                 onSelectTab={handleSelectTab}
@@ -584,6 +612,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 <WidgetFooter
                     isFullscreen={Boolean(isFullscreen)}
                     description={description || ''}
+                    enableDescription={currentTab.enableDescription}
                     author={loadedData?.publicAuthor}
                 />
             )}

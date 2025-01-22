@@ -5,6 +5,7 @@ import type {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
@@ -38,6 +39,10 @@ export function getRoutes({
 
     if (ctx.config.isZitadelEnabled) {
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
+    }
+
+    if (ctx.config.isAuthEnabled) {
+        routes = {...routes, ...getAuthRoutes({routeParams: {beforeAuth, afterAuth}})};
     }
 
     if (isFullMode || isDatalensMode) {

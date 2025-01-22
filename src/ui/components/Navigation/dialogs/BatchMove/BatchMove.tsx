@@ -90,7 +90,7 @@ export const BatchMove = ({
 
         for (const [index, entry] of entriesWithRights.entries()) {
             try {
-                await getSdk().us.moveEntry(
+                await getSdk().sdk.us.moveEntry(
                     {
                         entryId: entry.entryId,
                         destination: path,
@@ -98,7 +98,7 @@ export const BatchMove = ({
                     {concurrentId: CONCURRENT_ID},
                 );
             } catch (error) {
-                if (getSdk().isCancel(error)) {
+                if (getSdk().sdk.isCancel(error)) {
                     moveCancelled.current = true;
                     break;
                 }

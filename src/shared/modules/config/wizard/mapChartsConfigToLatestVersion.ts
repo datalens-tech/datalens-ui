@@ -3,6 +3,7 @@ import {ChartsConfigVersion} from '../../../types';
 
 import {mapV1ConfigToV2} from './v1/mapV1ConfigToV2';
 import {mapV10ConfigToV11} from './v10/mapV10ConfigToV11';
+import {mapV11ConfigToV12} from './v11/mapV11ConfigToV12';
 import {mapV2ConfigToV3} from './v2/mapV2ConfigToV3';
 import {mapV3ConfigToV4, migrateDatetime} from './v3/mapV3ConfigToV4';
 import {mapV4ConfigToV5} from './v4/mapV4ConfigToV5';
@@ -66,6 +67,10 @@ export const mapChartsConfigToLatestVersion = (
 
     if (config.version === ChartsConfigVersion.V10) {
         config = mapV10ConfigToV11(config);
+    }
+
+    if (config.version === ChartsConfigVersion.V11) {
+        config = mapV11ConfigToV12(config);
     }
 
     return config as ChartsConfig;
