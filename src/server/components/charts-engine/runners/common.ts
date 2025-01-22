@@ -45,9 +45,9 @@ export function engineProcessingCallback({
             ctx.log(`${runnerType}::FullRun`, {duration: getDuration(hrStart)});
 
             if (result) {
-                const showLogsAndStackTraces =
+                const showLogs =
                     showChartsEngineDebugInfo || (enableChartEditor && processorParams.isEditMode);
-                if ('logs_v2' in result && !showLogsAndStackTraces) {
+                if ('logs_v2' in result && !showLogs) {
                     delete result.logs_v2;
                 }
 
@@ -64,7 +64,7 @@ export function engineProcessingCallback({
 
                     let statusCode = 500;
 
-                    if (isObject(result.error) && !showLogsAndStackTraces) {
+                    if (isObject(result.error) && !showChartsEngineDebugInfo) {
                         const {error} = result;
                         if ('debug' in error) {
                             delete error.debug;
