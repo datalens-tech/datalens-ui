@@ -5,6 +5,7 @@ import merge from 'lodash/merge';
 
 import type {MarkupItem, MarkupItemType} from '../../../shared';
 import {MarkupItemTypes, isMarkupItem, markupToRawString} from '../../../shared';
+import {validateUrl} from '../../libs/DatalensChartkit/modules/html-generator/utils';
 
 import {UserInfo} from './components/UserInfo/UserInfo';
 import {isNumericCSSValueValid} from './utils';
@@ -97,10 +98,12 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.Url: {
+            const href = markupItem.url || '';
+            validateUrl(href);
             iteratedConfigItem.element = Link as TemplateItem['element'];
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
-                href: markupItem.url || '',
+                href,
                 target: '_blank',
             });
             break;
