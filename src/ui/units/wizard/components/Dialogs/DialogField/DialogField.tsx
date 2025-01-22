@@ -89,6 +89,7 @@ type DialogFieldProps = {
     placeholderId?: PlaceholderId;
     options?: DatasetOptions;
     formattingEnabled: boolean;
+    markupTypeEnabled?: boolean;
     onCancel: () => void;
     onApply: (state: DialogFieldState) => void;
     extraSettings?: CommonSharedExtraSettings;
@@ -474,7 +475,12 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
     }
 
     private renderMarkdownSettings() {
-        const {item, placeholderId, visualization} = this.props;
+        const {item, placeholderId, visualization, markupTypeEnabled} = this.props;
+
+        if (markupTypeEnabled === false) {
+            return null;
+        }
+
         const isStringField = item?.data_type === DATASET_FIELD_TYPES.STRING;
         const visualizationId = visualization.id as WizardVisualizationId;
         const canTransformToMarkdown =
