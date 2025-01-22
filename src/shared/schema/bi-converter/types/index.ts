@@ -203,10 +203,6 @@ export type GetPresignedUrlResponse = {
     fields: Record<string, string>;
 };
 
-export type GetPresignedUrlArgs = {
-    content_md5?: string;
-};
-
 export type DownloadPresignedUrlArgs = {
     filename: string;
     key: string;

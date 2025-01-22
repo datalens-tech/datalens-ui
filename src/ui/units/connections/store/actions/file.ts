@@ -282,16 +282,6 @@ const updateUploadedFiles = (uploadedFile: UploadedFile) => {
     };
 };
 
-// https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API/Non-cryptographic_uses_of_subtle_crypto#hashing_a_file
-const getFileHash = async (file: File) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const hashAsArrayBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-    const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
-    return Array.from(uint8ViewOfHash)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-};
-
 const removeUploadedFile = (file: File) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const prevUploadedFiles = get(getState().connections, ['file', 'uploadedFiles']);
@@ -333,8 +323,7 @@ const uploadFileViaPresignedUrl = (file: File) => {
         // To show the loader without waiting for the file to be uploaded to the uploader
         dispatch(updateUploadedFiles({file, id: ''}));
 
-        const fileHash = await getFileHash(file);
-        const {fields, url, error: getPresignedUrlError} = await api.getPresignedUrl(fileHash);
+        const {fields, url, error: getPresignedUrlError} = await api.getPresignedUrl();
 
         if (getPresignedUrlError) {
             dispatch(removeUploadedFile(file));
@@ -348,12 +337,7 @@ const uploadFileViaPresignedUrl = (file: File) => {
             return;
         }
 
-        const {error: uploadFileToS3Error} = await api.uploadFileToS3({
-            fields,
-            file,
-            fileHash,
-            url,
-        });
+        const {error: uploadFileToS3Error} = await api.uploadFileToS3({fields, file, url});
 
         if (uploadFileToS3Error) {
             dispatch(removeUploadedFile(file));

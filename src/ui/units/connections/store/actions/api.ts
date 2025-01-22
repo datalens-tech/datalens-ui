@@ -386,29 +386,24 @@ const getOAuthToken = async (
     }
 };
 
-const getPresignedUrl = async (
-    fileHash: string,
-): Promise<GetPresignedUrlResponse & {error?: DataLensApiError}> => {
+const getPresignedUrl = async (): Promise<GetPresignedUrlResponse & {error?: DataLensApiError}> => {
     try {
-        return await getSdk().sdk.biConverter.getPresignedUrl({
-            content_md5: fileHash,
-        });
+        return await getSdk().sdk.biConverter.getPresignedUrl();
     } catch (error) {
         return {url: '', fields: {}, error};
     }
 };
 
 const uploadFileToS3 = async (
-    args: GetPresignedUrlResponse & {file: File; fileHash: string},
+    args: GetPresignedUrlResponse & {file: File},
 ): Promise<{error?: DataLensApiError}> => {
-    const {fields, file, fileHash, url} = args;
+    const {fields, file, url} = args;
 
     try {
         const formData = new FormData();
         Object.entries(fields).forEach(([key, value]) => {
             formData.append(key, value);
         });
-        formData.append('content-md5', fileHash);
         formData.append('file', file);
         /* 
             Why don't we need axios here?

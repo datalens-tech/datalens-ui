@@ -14,7 +14,6 @@ import type {
     GetFileSourcesResponse,
     GetFileStatusArgs,
     GetFileStatusResponse,
-    GetPresignedUrlArgs,
     GetPresignedUrlResponse,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
@@ -70,10 +69,10 @@ export const actions = {
         path: () => `${PATH_PREFIX_V2}/documents`,
         params: (body, headers) => ({body, headers}),
     }),
-    getPresignedUrl: createAction<GetPresignedUrlResponse, GetPresignedUrlArgs>({
-        method: 'POST',
+    getPresignedUrl: createAction<GetPresignedUrlResponse>({
+        method: 'GET',
         path: () => `${PATH_PREFIX_V2}/make_presigned_url`,
-        params: (body, headers) => ({body, headers}),
+        params: (_, headers) => ({headers}),
     }),
     downloadPresignedUrl: createAction<DownloadPresignedUrlResponse, DownloadPresignedUrlArgs>({
         method: 'POST',
