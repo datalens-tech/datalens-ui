@@ -119,17 +119,18 @@ function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
             : i18n('label_main-attention', {
                   subject: i18n(`label_main-subject-${scope}`),
               });
+        const icon = state.hasLockedEntries ? undefined : (
+            <div className={b('attention-icon')}>
+                <TriangleExclamationFill width={16} height={16} />
+            </div>
+        );
 
         return (
             <React.Fragment>
                 <Alert
                     theme="danger"
                     message={<YfmWrapper content={attentionMessage} setByInnerHtml />}
-                    icon={
-                        <div className={b('attention-icon')}>
-                            <TriangleExclamationFill width={16} height={16} />
-                        </div>
-                    }
+                    icon={icon}
                 />
 
                 <CurrentEntrySection

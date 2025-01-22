@@ -26,7 +26,7 @@
   "label_no-permission-alert": "To change the publication status, you need {{permission}} permission",
   "label_placeholder-publishing-not-enabled": "Publication is not enabled",
   "label_some-entries-not-ready": "Some objects are not ready for publication",
-  "md_label_unavaible-publication-attention": "The selected object cannot be published because some dependent objects are prohibited from publication.",
+  "md_label_unavaible-publication-attention": "You cannot publish an object because it uses unavailable or deleted connections",
   "section_alert-publish-title": "Make public?",
   "section_alert-publish-title-many": "Make public?",
   "section_alert-unpublish-title": "Unpublish?",
