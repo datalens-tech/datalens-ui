@@ -164,7 +164,7 @@ BaseControlSelect.propTypes = {
     hasValidationError: PropTypes.bool,
     limitLabel: PropTypes.bool,
     disabled: PropTypes.bool,
-    accentType: PropTypes.oneOfType([PropTypes.string, null]),
+    accentType: PropTypes.string,
 };
 
 function BaseControlInput({
@@ -227,7 +227,7 @@ BaseControlInput.propTypes = {
     required: PropTypes.bool,
     hasValidationError: PropTypes.bool,
     disabled: PropTypes.bool,
-    accentType: PropTypes.oneOfType([PropTypes.string, null]),
+    accentType: PropTypes.string,
 };
 
 function BaseControlTextArea({label, theme, value, placeholder, onChange}) {
@@ -377,7 +377,7 @@ BaseControlDatepicker.propTypes = {
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
     disabled: PropTypes.bool,
-    accentType: PropTypes.oneOfType([PropTypes.string, null]),
+    accentType: PropTypes.string,
 };
 
 function BaseControlRangeDatepicker({
@@ -489,7 +489,7 @@ BaseControlRangeDatepicker.propTypes = {
     labelInside: PropTypes.bool,
     labelPlacement: PropTypes.string,
     disabled: PropTypes.bool,
-    accentType: PropTypes.oneOfType([PropTypes.string, null]),
+    accentType: PropTypes.string,
 };
 
 function BaseControlButton({label, theme, onChange, qa, disabled}) {
