@@ -6,12 +6,13 @@ import type {ChartKitHtmlItem} from 'shared';
 import {generateHtml} from '../../../../../../modules/html-generator';
 import {getParseHtmlFn} from '../../../../../../modules/html-generator/utils';
 
+type CellContent = ChartKitHtmlItem['content'];
 type HtmlCellProps = {
-    content?: ChartKitHtmlItem['content'];
+    content?: CellContent;
 };
 
 /* check that the object is a link and that a valid html can be generated */
-function isLink(item: ChartKitHtmlItem['content']): item is ChartKitHtmlItem {
+function isLink(item: CellContent | null): item is ChartKitHtmlItem {
     const isLinkItem = item && typeof item === 'object' && 'tag' in item && item.tag === 'a';
 
     return Boolean(isLinkItem && generateHtml(item));
@@ -21,11 +22,11 @@ export const HtmlCell = (props: HtmlCellProps) => {
     const {content} = props;
     const shouldParseValue = typeof content === 'string';
     const initialValue = shouldParseValue ? null : content;
-    const [htmlContent, setHtmlContent] = React.useState(initialValue);
+    const [htmlContent, setHtmlContent] = React.useState<CellContent | null>(initialValue);
 
     const parseHtmlValue = async () => {
         const parseHtml = await getParseHtmlFn();
-        setHtmlContent(parseHtml(content));
+        setHtmlContent(parseHtml(String(content)) as CellContent);
     };
 
     React.useEffect(() => {
@@ -36,6 +37,10 @@ export const HtmlCell = (props: HtmlCellProps) => {
 
     if (shouldParseValue && !htmlContent) {
         return <Loader size="s" />;
+    }
+
+    if (!htmlContent) {
+        return null;
     }
 
     if (isLink(htmlContent)) {
