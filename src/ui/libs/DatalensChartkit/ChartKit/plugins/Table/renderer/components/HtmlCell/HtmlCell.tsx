@@ -33,7 +33,7 @@ export const HtmlCell = (props: HtmlCellProps) => {
         if (shouldParseValue) {
             parseHtmlValue();
         }
-    }, [content]);
+    }, [content, shouldParseValue]);
 
     if (shouldParseValue && !htmlContent) {
         return <Loader size="s" />;
