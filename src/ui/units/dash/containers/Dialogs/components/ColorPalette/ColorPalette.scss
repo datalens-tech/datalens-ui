@@ -1,0 +1,123 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.widget-color-palette {
+    $class: &;
+    display: inline-block;
+    position: relative;
+    line-height: 0;
+    width: fit-content;
+    vertical-align: text-top;
+
+    $color-item-size: 28px;
+
+    &__hint {
+        @include text-body-1();
+        color: var(--g-color-text-secondary);
+        margin-top: var(--g-spacing-2);
+    }
+
+    &__palette-trigger,
+    &__custom-palette-bg-btn,
+    &__highlight-wrapper {
+        width: $color-item-size;
+        height: $color-item-size;
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    &__palette-list-btn,
+    &__custom-palette-bg-btn {
+        // disable selected additional background on button
+        --g-button-background-color: transparent;
+        --g-button-background-color-hover: transparent;
+    }
+
+    &__palette-list {
+        padding: var(--g-spacing-4);
+    }
+
+    &__preset {
+        margin-block-end: var(--g-spacing-2);
+    }
+
+    &__palette {
+        margin-block-start: var(--g-spacing-5);
+    }
+
+    &__color-picker {
+        display: block;
+    }
+
+    $colorItem: #{$class}__color-item;
+    $btnWithBorder: #{$class}__custom-palette-bg-btn_with-border;
+
+    &__highlight-wrapper {
+        position: relative;
+
+        --g-button-border-color: var(--g-color-line-generic);
+
+        #{$btnWithBorder} #{$colorItem} {
+            border: 1px solid var(--g-color-base-background);
+        }
+
+        &_selected,
+        &:hover {
+            --g-button-border-color: transparrent;
+
+            #{$btnWithBorder} #{$colorItem} {
+                border: none;
+            }
+        }
+    }
+
+    &__custom-palette-bg-btn_with-border {
+        --g-button-border-width: 1px;
+
+        #{$colorItem} {
+            border: 1px solid var(--_--main-preset-color-item-border-color);
+        }
+    }
+
+    &__highlight-wrapper:not(&__highlight-wrapper_selected):hover:before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border: 2px solid var(--g-color-line-generic-hover);
+        border-radius: 9px;
+    }
+
+    &__highlight-wrapper_selected::before {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border: 2px solid var(--g-color-line-brand);
+        border-radius: 9px;
+    }
+
+    &__color-item {
+        display: inline-block;
+        position: relative;
+        border-radius: 6px;
+        width: $color-item-size;
+        height: $color-item-size;
+        z-index: -2;
+
+        &_transparent {
+            background-image: repeating-conic-gradient(
+                var(--g-color-base-generic) 0 25%,
+                var(--g-color-base-background) 0 50%
+            );
+            background-clip: padding-box;
+        }
+
+        &_widget-bg {
+            background-color: var(--g-color-base-float);
+        }
+    }
+
+    &__tooltip-trigger {
+        position: absolute;
+        inset: 0;
+        z-index: 1000;
+    }
+}

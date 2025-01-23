@@ -7,8 +7,8 @@ export const CustomPaletteBgColors = {
 
 export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
 
-export function isCustomPaletteColor(color: string): color is CustomPaletteBgColor {
-    return Object.keys(CustomPaletteBgColors).includes(color as CustomPaletteBgColor);
+export function isCustomPaletteBgColor(color: string): color is CustomPaletteBgColor {
+    return Object.values(CustomPaletteBgColors).includes(color as CustomPaletteBgColor);
 }
 
 export const WIDGET_BG_HEAVY_COLORS_PRESET = [
@@ -19,6 +19,14 @@ export const WIDGET_BG_HEAVY_COLORS_PRESET = [
     'var(--g-color-base-utility-heavy)',
     'var(--g-color-base-misc-heavy)',
     'var(--g-color-base-neutral-heavy)',
+
+    'var(--g-color-base-info-heavy-hover)',
+    'var(--g-color-base-positive-heavy-hover)',
+    'var(--g-color-base-warning-heavy-hover)',
+    'var(--g-color-base-danger-heavy-hover)',
+    'var(--g-color-base-utility-heavy-hover)',
+    'var(--g-color-base-misc-heavy-hover)',
+    'var(--g-color-base-neutral-heavy-hover)',
 ];
 
 export const DUPLICATED_WIDGET_BG_COLORS_PRESET = [
@@ -39,6 +47,7 @@ export const WIDGET_BG_COLORS_PRESET = [
     'var(--g-color-base-utility-light)',
     'var(--g-color-base-misc-light)',
     'var(--g-color-base-neutral-light)',
+
     'var(--g-color-base-info-light-hover)',
     'var(--g-color-base-positive-light-hover)',
     'var(--g-color-base-warning-light-hover)',
@@ -54,8 +63,4 @@ export const WIDGET_BG_COLORS_PRESET = [
     'var(--g-color-base-utility-medium-hover)',
     'var(--g-color-base-misc-medium-hover)',
     'var(--g-color-base-neutral-medium-hover)',
-    ...WIDGET_BG_HEAVY_COLORS_PRESET,
-
-    CustomPaletteBgColors.NONE,
-    CustomPaletteBgColors.LIKE_CHART,
 ];
