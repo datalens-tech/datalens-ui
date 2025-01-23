@@ -836,44 +836,38 @@ class Body extends React.PureComponent<BodyProps> {
         if (!this._memoizedMenu) {
             const dashkitMenu = getDashKitMenu();
 
-            if (Utils.isEnabledFeature(Feature.EnableDashFixedHeader)) {
-                this._memoizedMenu = [
-                    ...dashkitMenu.slice(0, -1),
-                    {
-                        id: 'pin',
-                        title: i18n('dash.main.view', 'label_pin'),
-                        icon: <Icon data={Pin} size={16} />,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+            this._memoizedMenu = [
+                ...dashkitMenu.slice(0, -1),
+                {
+                    id: 'pin',
+                    title: i18n('dash.main.view', 'label_pin'),
+                    icon: <Icon data={Pin} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
-                            return (
-                                parent !== FIXED_GROUP_HEADER_ID &&
-                                parent !== FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.PinButton,
+                        return (
+                            parent !== FIXED_GROUP_HEADER_ID && parent !== FIXED_GROUP_CONTAINER_ID
+                        );
                     },
-                    {
-                        id: 'unpin',
-                        title: i18n('dash.main.view', 'label_unpin'),
-                        icon: <Icon data={PinSlash} size={16} />,
-                        handler: this.togglePinElement,
-                        visible: (configItem) => {
-                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+                    qa: DashKitOverlayMenuQa.PinButton,
+                },
+                {
+                    id: 'unpin',
+                    title: i18n('dash.main.view', 'label_unpin'),
+                    icon: <Icon data={PinSlash} size={16} />,
+                    handler: this.togglePinElement,
+                    visible: (configItem) => {
+                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
-                            return (
-                                parent === FIXED_GROUP_HEADER_ID ||
-                                parent === FIXED_GROUP_CONTAINER_ID
-                            );
-                        },
-                        qa: DashKitOverlayMenuQa.UnpinButton,
+                        return (
+                            parent === FIXED_GROUP_HEADER_ID || parent === FIXED_GROUP_CONTAINER_ID
+                        );
                     },
-                    ...dashkitMenu.slice(-1),
-                ];
-            } else {
-                this._memoizedMenu = dashkitMenu;
-            }
+                    qa: DashKitOverlayMenuQa.UnpinButton,
+                },
+                ...dashkitMenu.slice(-1),
+            ];
         }
 
         return this._memoizedMenu;
@@ -959,9 +953,7 @@ class Body extends React.PureComponent<BodyProps> {
                 focusable={true}
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={
-                    Utils.isEnabledFeature(Feature.EnableDashFixedHeader) ? this.groups : undefined
-                }
+                groups={this.groups}
                 context={context}
                 getPreparedCopyItemOptions={
                     this

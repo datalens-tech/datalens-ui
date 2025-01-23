@@ -5,6 +5,10 @@ import isNumber from 'lodash/isNumber';
 import {sleep} from 'shared/modules';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
+import {DL} from '../../../../constants/common';
+import {refreshAuthToken} from '../../../auth/refreshToken';
+import {initBeforeRequestInterceptor} from '../../../axios/interceptors';
+
 import type {ConcurrencyManagerInstance} from './axiosConcurrency';
 import {concurrencyManager} from './axiosConcurrency';
 
@@ -73,6 +77,10 @@ client.interceptors.response.use(
         throw error;
     },
 );
+
+if (DL.AUTH_ENABLED) {
+    initBeforeRequestInterceptor(client, refreshAuthToken);
+}
 
 export default client;
 

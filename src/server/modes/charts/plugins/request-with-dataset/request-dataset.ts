@@ -10,7 +10,9 @@ import {DL_EMBED_TOKEN_HEADER} from '../../../../../shared';
 import type {GetDataSetFieldsByIdResponse, PartialDatasetField} from '../../../../../shared/schema';
 import Cache from '../../../../components/cache-client';
 import {
+    type AuthParams,
     type ZitadelParams,
+    addAuthHeaders,
     addZitadelHeaders,
 } from '../../../../components/charts-engine/components/processor/data-fetcher';
 import {registry} from '../../../../registry';
@@ -31,6 +33,7 @@ const getDatasetFieldsById = async ({
     iamToken,
     pluginOptions,
     zitadelParams,
+    authParams,
     headers,
 }: {
     datasetId: string;
@@ -40,6 +43,7 @@ const getDatasetFieldsById = async ({
     iamToken?: string;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
     zitadelParams: ZitadelParams | undefined;
+    authParams: AuthParams | undefined;
     headers: OutgoingHttpHeaders;
 }): Promise<GetDataSetFieldsByIdResponse> => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
@@ -51,6 +55,10 @@ const getDatasetFieldsById = async ({
     try {
         if (zitadelParams) {
             addZitadelHeaders({headers, zitadelParams});
+        }
+
+        if (authParams) {
+            addAuthHeaders({headers, authParams});
         }
 
         const response = headers[DL_EMBED_TOKEN_HEADER]
@@ -104,6 +112,7 @@ export const getDatasetFields = async (args: {
     rejectFetchingSource: (reason: any) => void;
     pluginOptions?: ConfigurableRequestWithDatasetPluginOptions;
     zitadelParams: ZitadelParams | undefined;
+    authParams: AuthParams | undefined;
     requestHeaders: OutgoingHttpHeaders;
 }): Promise<{datasetFields: PartialDatasetField[]; revisionId: string}> => {
     const {
@@ -116,6 +125,7 @@ export const getDatasetFields = async (args: {
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
+        authParams,
         requestHeaders,
     } = args;
 
@@ -144,6 +154,7 @@ export const getDatasetFields = async (args: {
                 iamToken,
                 pluginOptions,
                 zitadelParams,
+                authParams,
                 headers: requestHeaders,
             });
             datasetFields = response.fields;
@@ -177,6 +188,7 @@ export const getDatasetFields = async (args: {
             iamToken,
             pluginOptions,
             zitadelParams,
+            authParams,
             headers: requestHeaders,
         });
         datasetFields = response.fields;

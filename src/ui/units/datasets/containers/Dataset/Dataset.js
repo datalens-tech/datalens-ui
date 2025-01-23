@@ -106,8 +106,8 @@ class Dataset extends React.Component {
 
         this.props.initEditHistoryUnit({
             unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
-            setState: ({state}) => {
-                this.props.setEditHistoryState({state});
+            setState: (args) => {
+                this.props.setEditHistoryState(args);
             },
             options: {
                 pathIgnoreList: ['/isLoading'],

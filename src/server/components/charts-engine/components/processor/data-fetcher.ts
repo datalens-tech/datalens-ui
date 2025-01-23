@@ -74,6 +74,7 @@ type DataFetcherOptions = {
     workbookId?: WorkbookId;
     isEmbed?: boolean;
     zitadelParams?: ZitadelParams | undefined;
+    authParams?: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     telemetryCallbacks?: TelemetryCallbacks;
@@ -185,6 +186,22 @@ export function addZitadelHeaders({
     }
 }
 
+export type AuthParams = {
+    accessToken?: string;
+};
+
+export function addAuthHeaders({
+    headers,
+    authParams,
+}: {
+    headers: OutgoingHttpHeaders;
+    authParams: AuthParams;
+}) {
+    if (authParams?.accessToken) {
+        Object.assign(headers, {authorization: `Bearer ${authParams.accessToken}`});
+    }
+}
+
 export class DataFetcher {
     static fetch({
         chartsEngine,
@@ -198,6 +215,7 @@ export class DataFetcher {
         workbookId,
         isEmbed = false,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         telemetryCallbacks,
@@ -257,6 +275,7 @@ export class DataFetcher {
                               workbookId,
                               isEmbed,
                               zitadelParams,
+                              authParams,
                               originalReqHeaders:
                                   originalReqHeaders as DataFetcherOriginalReqHeaders,
                               adapterContext: adapterContext as AdapterContext,
@@ -483,6 +502,7 @@ export class DataFetcher {
         workbookId,
         isEmbed,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         telemetryCallbacks,
@@ -503,6 +523,7 @@ export class DataFetcher {
         workbookId?: WorkbookId;
         isEmbed: boolean;
         zitadelParams: ZitadelParams | undefined;
+        authParams: AuthParams | undefined;
         originalReqHeaders: DataFetcherOriginalReqHeaders;
         adapterContext: AdapterContext;
         cacheClient: CacheClient;
@@ -729,6 +750,10 @@ export class DataFetcher {
             addZitadelHeaders({headers, zitadelParams});
         }
 
+        if (authParams) {
+            addAuthHeaders({headers, authParams});
+        }
+
         if (passedCredentials) {
             const getSourceAuthorizationHeaders = registry.common.functions.get(
                 'getSourceAuthorizationHeaders',
@@ -817,6 +842,7 @@ export class DataFetcher {
                     userId: userId === undefined ? null : userId,
                     rejectFetchingSource,
                     zitadelParams,
+                    authParams,
                     requestHeaders: requestOptions.headers,
                 });
             }

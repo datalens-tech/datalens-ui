@@ -34,6 +34,8 @@ export function engineProcessingCallback({
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
 }): Promise<{status: number; payload: unknown}> {
+    const enableChartEditor =
+        isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerType === 'Editor';
     const showChartsEngineDebugInfo = Boolean(
         isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
     );
@@ -43,10 +45,9 @@ export function engineProcessingCallback({
             ctx.log(`${runnerType}::FullRun`, {duration: getDuration(hrStart)});
 
             if (result) {
-                if (
-                    'logs_v2' in result &&
-                    (!processorParams.isEditMode || !showChartsEngineDebugInfo)
-                ) {
+                const showLogs =
+                    showChartsEngineDebugInfo || (enableChartEditor && processorParams.isEditMode);
+                if ('logs_v2' in result && !showLogs) {
                     delete result.logs_v2;
                 }
 
@@ -186,6 +187,12 @@ export const getSerializableProcessorParams = ({
           }
         : undefined;
 
+    const authParams = ctx.config.isAuthEnabled
+        ? {
+              accessToken: req.ctx.get('user')?.accessToken,
+          }
+        : undefined;
+
     const originalReqHeaders = {
         xRealIP: req.headers['x-real-ip'],
         xForwardedFor: req.headers['x-forwarded-for'],
@@ -224,6 +231,7 @@ export const getSerializableProcessorParams = ({
         disableJSONFnByCookie,
         isEmbed,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,

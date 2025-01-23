@@ -33,6 +33,7 @@ export default async (req: Request, res: Response): Promise<void> => {
                     ...req.headers,
                     [TENANT_ID_HEADER]: currentTenantId,
                     ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+                    ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
                 },
                 requestId: req.id,
                 authArgs: {iamToken: res.locals.iamToken},
