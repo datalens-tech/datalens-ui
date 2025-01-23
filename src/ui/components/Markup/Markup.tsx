@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
@@ -97,10 +98,11 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.Url: {
+            const href = sanitizeUrl(markupItem.url || '');
             iteratedConfigItem.element = Link as TemplateItem['element'];
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
-                href: markupItem.url || '',
+                href,
                 target: '_blank',
             });
             break;

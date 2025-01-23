@@ -12,7 +12,7 @@ import type {StringParams} from 'shared';
 import {ControlQA} from 'shared';
 import {useEffectOnce} from 'ui/hooks';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
 
 import {EntrySelector} from '../EntrySelector/EntrySelector';
@@ -38,6 +38,7 @@ const ExternalSelectorSettings: React.FC<{
     const dispatch = useDispatch();
     const {autoHeight, chartId, title, selectorParameters, validation, selectorParametersGroup} =
         useSelector(selectSelectorDialog);
+    const {workbookId} = useSelector(selectOpenedItemMeta);
 
     const handleAutoHeightUpdate = React.useCallback(
         (value: boolean) => {
@@ -118,6 +119,7 @@ const ExternalSelectorSettings: React.FC<{
                 className={props.rowClassName}
                 label={i18n('dash.control-dialog.edit', 'field_source')}
                 entryId={chartId}
+                workbookId={workbookId}
                 errorText={validation.chartId}
                 isInvalid={Boolean(validation.chartId)}
                 onChange={handleChartIdChange}

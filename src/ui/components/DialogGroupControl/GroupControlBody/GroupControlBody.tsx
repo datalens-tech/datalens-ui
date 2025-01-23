@@ -43,7 +43,6 @@ export const GroupControlBody: React.FC<{
                 </FormRow>
                 <CommonSettingsSection
                     className={b('row')}
-                    hideCommonFields={true}
                     navigationPath={props.navigationPath}
                     changeNavigationPath={props.changeNavigationPath}
                 />
