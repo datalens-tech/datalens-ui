@@ -6,12 +6,15 @@ import type {
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
     ApplySourceSettingsResponse,
+    DownloadPresignedUrlArgs,
+    DownloadPresignedUrlResponse,
     GetFileSourceStatusArgs,
     GetFileSourceStatusResponse,
     GetFileSourcesArgs,
     GetFileSourcesResponse,
     GetFileStatusArgs,
     GetFileStatusResponse,
+    GetPresignedUrlResponse,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
     UpdateS3BasedConnectionDataArgs,
@@ -64,6 +67,16 @@ export const actions = {
     addYandexDocument: createAction<AddYandexDocumentResponse, AddYandexDocumentArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX_V2}/documents`,
+        params: (body, headers) => ({body, headers}),
+    }),
+    getPresignedUrl: createAction<GetPresignedUrlResponse>({
+        method: 'GET',
+        path: () => `${PATH_PREFIX_V2}/make_presigned_url`,
+        params: (_, headers) => ({headers}),
+    }),
+    downloadPresignedUrl: createAction<DownloadPresignedUrlResponse, DownloadPresignedUrlArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX_V2}/download_presigned_url`,
         params: (body, headers) => ({body, headers}),
     }),
 };

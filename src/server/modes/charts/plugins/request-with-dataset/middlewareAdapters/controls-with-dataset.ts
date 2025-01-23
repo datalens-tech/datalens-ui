@@ -19,6 +19,7 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
+        authParams,
         requestHeaders,
     } = args;
 
@@ -34,6 +35,7 @@ export default async (
         rejectFetchingSource,
         pluginOptions,
         zitadelParams,
+        authParams,
         requestHeaders,
     });
 

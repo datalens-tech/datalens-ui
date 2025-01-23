@@ -180,6 +180,15 @@ export const DL = {
     get IS_LANDING() {
         return window.DL.isLanding;
     },
+    get AUTH_ENABLED() {
+        return window.DL.isAuthEnabled === true;
+    },
+    get IS_AUTH_PAGE() {
+        return Boolean(window.DL.authPageSettings?.isAuthPage);
+    },
+    get AUTH_PAGE_SETTINGS() {
+        return window.DL.authPageSettings;
+    },
     get OAUTH_ENDPOINT() {
         return window.DL.oauthEndpoint!;
     },
