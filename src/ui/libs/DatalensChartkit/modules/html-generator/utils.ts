@@ -147,7 +147,7 @@ export async function getParseHtmlFn() {
     };
 }
 
-function mapElementToJson(element: any) {
+function mapElementToJson(element: any): ChartKitHtmlItem | string {
     if (element.type === 'tag') {
         const {style: styleAttr = '', ...attributes} = element.attribs;
         const style = String(styleAttr)

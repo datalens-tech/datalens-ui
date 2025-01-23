@@ -29,7 +29,7 @@ jobs:
       - name: Upload UI report to S3
         id: upload-to-s3
         run: |
-          aws --endpoint-url=${AWS_ENDPOINT} \
+          aws --region ${AWS_DEFAULT_REGION} --endpoint-url=${AWS_ENDPOINT} \
               s3 cp statoscope-report/index.html s3://${AWS_BUCKET}/${{ github.ref }}/; \
               echo "DOWNLOAD_LINK=$(aws --endpoint-url=${AWS_ENDPOINT} s3 presign s3://${AWS_BUCKET}/${{ github.ref }}/index.html)" >> $GITHUB_OUTPUT
         env:
