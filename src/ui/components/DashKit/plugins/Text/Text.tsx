@@ -26,6 +26,24 @@ const b = block('dashkit-plugin-text-container');
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
+const setObserve = (
+    nodesRef: React.MutableRefObject<NodeList | null>,
+    observerRef: React.MutableRefObject<MutationObserver | null>,
+) => {
+    if (!nodesRef.current || !observerRef.current) {
+        return false;
+    }
+
+    nodesRef.current.forEach((cutNode) => {
+        observerRef.current?.observe(cutNode, {
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+    });
+
+    return true;
+};
+
 const textPlugin = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
@@ -41,6 +59,7 @@ const textPlugin = {
         const cutNodesRef = React.useRef<NodeList | null>(null);
         const tabsNodesRef = React.useRef<NodeList | null>(null);
         const mutationObserver = React.useRef<MutationObserver | null>(null);
+        const observedIsSetRef = React.useRef<{[key: string]: boolean}>({cuts: false, tabs: false});
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
         const [isPending, setIsPending] = React.useState<boolean>(false);
 
@@ -125,27 +144,13 @@ const textPlugin = {
                 requestAnimationFrame(() => handleTextRender());
             });
 
-            if (mutationObserver.current && cutNodesRef.current) {
-                cutNodesRef.current.forEach((cutNode) => {
-                    mutationObserver.current?.observe(cutNode, {
-                        attributes: true,
-                        attributeFilter: ['class'],
-                    });
-                });
-            }
-
-            if (mutationObserver.current && tabsNodesRef.current) {
-                tabsNodesRef.current.forEach((cutNode) => {
-                    mutationObserver.current?.observe(cutNode, {
-                        attributes: true,
-                        attributeFilter: ['class'],
-                    });
-                });
-            }
+            observedIsSetRef.current.cuts = setObserve(cutNodesRef, mutationObserver);
+            observedIsSetRef.current.tabs = setObserve(tabsNodesRef, mutationObserver);
 
             // eslint-disable-next-line consistent-return
             return () => {
                 mutationObserver.current?.disconnect();
+                observedIsSetRef.current = {cuts: false, tabs: false};
             };
         }, [
             handleTextRender,
@@ -156,16 +161,22 @@ const textPlugin = {
         ]);
 
         const cutNodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-cut`);
-        const tabsNodes = rootNodeRef.current?.querySelectorAll(
-            `.${YFM_MARKDOWN_CLASSNAME}-tab-panel`,
-        );
+        const tabsNodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-tab`);
 
         if (cutNodes?.length && !cutNodesRef.current) {
             cutNodesRef.current = cutNodes;
+
+            if (!observedIsSetRef.current.cuts) {
+                setObserve(cutNodesRef, mutationObserver);
+            }
         }
 
         if (tabsNodes?.length && !tabsNodesRef.current) {
             tabsNodesRef.current = tabsNodes;
+
+            if (!observedIsSetRef.current.tabs) {
+                setObserve(tabsNodesRef, mutationObserver);
+            }
         }
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;

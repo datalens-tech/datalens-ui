@@ -73,7 +73,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
                     regular: true,
                     radio: true,
                     dropdown: false,
-                    accordion: false,
+                    accordion: true,
                 },
             },
         }),
