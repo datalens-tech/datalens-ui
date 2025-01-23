@@ -16,7 +16,7 @@ import {
 } from './constants';
 import {getThemeStyle, validateUrl} from './utils';
 
-const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
+const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'xlink:href', 'src'];
 const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
 type GenerateHtmlOptions = {
