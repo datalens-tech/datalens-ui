@@ -1,6 +1,5 @@
 .table-of-content {
     display: flex;
-    border-right: 1px solid var(--g-color-line-generic);
     background-color: var(--g-color-base-background);
     position: relative;
     flex: 1;
@@ -8,6 +7,9 @@
 
     &__wrapper {
         position: relative;
+        border-right: 1px solid var(--g-color-line-generic);
+        height: 100%;
+        width: 100%;
     }
 
     &__sidebar {

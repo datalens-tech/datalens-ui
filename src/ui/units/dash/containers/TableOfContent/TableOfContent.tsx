@@ -27,13 +27,16 @@ import {
 } from '../../modules/helpers';
 import {setPageTab, toggleTableOfContent} from '../../store/actions/dashTyped';
 
+import {getUpdatedOffsets} from './helpers';
+
 import './TableOfContent.scss';
 
 const i18n = I18n.keyset('dash.table-of-content.view');
 
 const b = block('table-of-content');
 
-const dispatchResizeTimeout = 200;
+const DISPATCH_RESIZE_TIMEOUT = 200;
+const THROTTLE_TIMEOUT = 100;
 
 const getHash = ({
     itemTitle,
@@ -119,9 +122,29 @@ const TableOfContent = React.memo(
             [disableHashNavigation, hashStates, isSelectedTab, location],
         );
 
+        const setUpdatedOffsets = React.useCallback(() => {
+            const updatedOffsets = getUpdatedOffsets(containerRef);
+            if (!updatedOffsets) {
+                return;
+            }
+            const {topOffset, bottomOffset, leftOffset} = updatedOffsets;
+
+            setOffsets((state) => {
+                if (
+                    state.top !== topOffset ||
+                    state.bottom !== bottomOffset ||
+                    state.left !== leftOffset
+                ) {
+                    return {top: topOffset, bottom: bottomOffset, left: leftOffset};
+                }
+
+                return state;
+            });
+        }, []);
+
         React.useEffect(() => {
             // to recalculate ReactGridLayout
-            dispatchResize(dispatchResizeTimeout);
+            dispatchResize(DISPATCH_RESIZE_TIMEOUT);
         }, [opened]);
 
         React.useEffect(() => {
@@ -130,43 +153,25 @@ const TableOfContent = React.memo(
             }
 
             const handler = throttle(() => {
-                const containerEl = containerRef.current;
-
-                if (!containerEl) {
-                    return;
-                }
-
-                const containerRect = containerEl.getBoundingClientRect();
-                const scrollTop = document.documentElement.scrollTop;
-                const windowHeight = window.innerHeight;
-
-                const leftOffset = `${containerRect.left}px`;
-                const topOffset = `${containerRect.top + scrollTop}px`;
-                const bottomOffset = `${Math.max(0, windowHeight - containerRect.bottom)}px`;
-
-                setOffsets((state) => {
-                    if (
-                        state.top !== topOffset ||
-                        state.bottom !== bottomOffset ||
-                        state.left !== leftOffset
-                    ) {
-                        return {top: topOffset, bottom: bottomOffset, left: leftOffset};
-                    }
-
-                    return state;
-                });
-            });
+                setUpdatedOffsets();
+            }, THROTTLE_TIMEOUT);
 
             window.addEventListener('scroll', handler);
-            window.addEventListener('resize', handler);
             handler();
+
+            const resizeObserver = new ResizeObserver(() => {
+                handler();
+            });
+            if (containerRef?.current) {
+                resizeObserver.observe(containerRef?.current || undefined);
+            }
 
             // eslint-disable-next-line consistent-return
             return () => {
                 window.removeEventListener('scroll', handler);
-                window.removeEventListener('resize', handler);
+                resizeObserver.disconnect();
             };
-        }, [opened]);
+        }, [opened, setUpdatedOffsets]);
 
         const localTabs = memoizedGetLocalTabs(tabs);
 
