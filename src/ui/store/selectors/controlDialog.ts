@@ -15,6 +15,7 @@ import {
     SELECTOR_OPERATIONS,
 } from '../constants/controlDialog';
 import {createSelector} from 'reselect';
+import {BASE_EQUALITY_OPERATIONS} from 'ui/constants/operations';
 
 export const selectOpenedDialogType = (state: DatalensGlobalState) =>
     state.controlDialog.openedDialog;
@@ -142,8 +143,6 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
     const {multiselectable, isRange, elementType, fieldType, sourceType, datasetFieldId} =
         selectControlDialogState(state).selectorDialog;
 
-    const availableOperations = selectAvailableOperationsDict(state);
-
     if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
         return undefined;
     }
@@ -192,14 +191,23 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         }
 
         case 'checkbox': {
+            if (sourceType === DashTabItemControlSourceType.Manual) {
+                inputOperations = BASE_EQUALITY_OPERATIONS;
+                break;
+            }
+
             inputOperations = BOOLEAN_OPERATIONS;
             break;
         }
     }
 
-    if (!availableOperations) {
-        return inputOperations;
+    if (sourceType === DashTabItemControlSourceType.Dataset) {
+        const availableOperations = selectAvailableOperationsDict(state);
+
+        return availableOperations
+            ? inputOperations.filter((operation) => availableOperations[operation.value])
+            : inputOperations;
     }
 
-    return inputOperations.filter((operation) => availableOperations[operation.value]);
+    return inputOperations;
 };
