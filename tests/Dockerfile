@@ -4,17 +4,15 @@ ARG NODE_MAJOR=20
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get -y upgrade
+RUN apt-get update && apt-get -y upgrade && apt-get -y install ca-certificates curl gnupg
 
 # node
-RUN apt-get -y install ca-certificates curl gnupg
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-RUN apt-get update
-RUN apt-get -y install nodejs
+RUN apt-get update && apt-get -y install nodejs
 
 # remove unnecessary packages
 RUN apt-get -y purge curl gnupg gnupg2 && \
@@ -55,8 +53,7 @@ COPY package.json package-lock.json /opt/app/
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 
 # split install playwright deps and browser
-RUN npx playwright install chromium ffmpeg --with-deps --dry-run | grep --color=never 'sh -c' | sed 's|sh -c "||' | sed 's|"||' > ./deps.sh
-RUN chmod +x ./deps.sh && ./deps.sh && rm -rf ./deps.sh
+RUN npx playwright install chromium ffmpeg --with-deps --dry-run | grep --color=never 'sh -c' | sed 's|sh -c "||' | sed 's|"||' > ./deps.sh && chmod +x ./deps.sh && ./deps.sh && rm -rf ./deps.sh
 
 ENV PLAYWRIGHT_DOWNLOAD_HOST=https://storage.yandexcloud.net/playwright
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/app/pw-browsers
