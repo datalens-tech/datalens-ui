@@ -71,7 +71,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             features: {
                 enabledVariants: {
                     regular: true,
-                    radio: true,
+                    radio: false,
                     dropdown: false,
                     accordion: true,
                 },
