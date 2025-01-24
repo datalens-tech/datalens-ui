@@ -84,7 +84,7 @@
   "label_error-403-title": "You don't have access to this connection",
   "label_error-404-title": "Connection not found",
   "label_error-500-title": "Failed to load connection",
-  "label_error-duplicated-keys": "Some key-value pairs have the same keys",
+  "label_error-duplicated-keys": "This key is already in use in another key-value pair",
   "label_error-empty-field": "This is a required field",
   "label_error-length-field": "Value has an incorrect number of characters",
   "label_error-msg": "Failed to load list of connections",
