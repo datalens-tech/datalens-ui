@@ -10,6 +10,7 @@ import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} fro
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {TabMenuItemData, UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
+import {useEffectOnce} from 'ui/hooks';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -132,7 +133,7 @@ export const GroupControlSidebar: React.FC<{
                 },
             }),
         );
-    }, [dispatch, handleClosePlacementDialog, enableAutoheightDefault]);
+    }, [dispatch, handleClosePlacementDialog, enableAutoheightDefault, showSelectorsGroupTitle]);
 
     const handleUpdateItem = React.useCallback(
         (title: string) => {
@@ -144,6 +145,17 @@ export const GroupControlSidebar: React.FC<{
         },
         [dispatch],
     );
+
+    useEffectOnce(() => {
+        if (enableAutoheightDefault) {
+            dispatch(
+                updateSelectorsGroup({
+                    ...selectorsGroup,
+                    autoHeight: true,
+                }),
+            );
+        }
+    });
 
     return (
         <div className={b('sidebar')}>
