@@ -1,3 +1,4 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import {wrap} from 'highcharts';
@@ -7,7 +8,6 @@ import merge from 'lodash/merge';
 import set from 'lodash/set';
 
 import type {GoToEventHandler, GraphWidgetEventScope} from '../../../../../shared';
-import {validateUrl} from '../../modules/html-generator/utils';
 import type {GraphWidget} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
@@ -167,8 +167,8 @@ function handleSeriesClickForGoTo(args: {
     }
 
     try {
-        validateUrl(pointUrl);
-        window.open(pointUrl, target === '_self' ? '_self' : '_blank');
+        const url = sanitizeUrl(pointUrl);
+        window.open(url, target === '_self' ? '_self' : '_blank');
     } catch (e) {
         console.error(e);
     }

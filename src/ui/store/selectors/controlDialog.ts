@@ -6,15 +6,16 @@ import type {DashTabItemControlData, Operations} from 'shared';
 import {DashTabItemControlSourceType, DATASET_FIELD_TYPES} from 'shared';
 import type {DatalensGlobalState} from 'ui/index';
 import {
-    ALL_OPERATIONS,
     DATEPICKER_OPERATIONS,
     DATEPICKER_RANGE_OPERATIONS,
+    EXTENDED_STRING_OPERATIONS,
     INPUT_OPERATIONS_NUMBER_OR_DATE,
     INPUT_OPERATIONS_TEXT,
     MULTISELECT_OPERATIONS,
     SELECTOR_OPERATIONS,
 } from '../constants/controlDialog';
 import {createSelector} from 'reselect';
+import {BASE_EQUALITY_OPERATIONS} from 'ui/constants/operations';
 
 export const selectOpenedDialogType = (state: DatalensGlobalState) =>
     state.controlDialog.openedDialog;
@@ -142,19 +143,9 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
     const {multiselectable, isRange, elementType, fieldType, sourceType, datasetFieldId} =
         selectControlDialogState(state).selectorDialog;
 
-    if (sourceType !== 'dataset' && elementType === 'checkbox') {
-        return BOOLEAN_OPERATIONS;
-    }
-
-    if (sourceType !== 'dataset') {
-        return ALL_OPERATIONS;
-    }
-
-    if (!datasetFieldId) {
+    if (sourceType === DashTabItemControlSourceType.Dataset && !datasetFieldId) {
         return undefined;
     }
-
-    const availableOperations = selectAvailableOperationsDict(state);
 
     let inputOperations;
 
@@ -162,6 +153,11 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         case 'select': {
             if (multiselectable) {
                 inputOperations = MULTISELECT_OPERATIONS;
+                break;
+            }
+
+            if (sourceType === DashTabItemControlSourceType.Manual) {
+                inputOperations = EXTENDED_STRING_OPERATIONS;
                 break;
             }
 
@@ -180,6 +176,11 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         }
 
         case 'input': {
+            if (sourceType === DashTabItemControlSourceType.Manual) {
+                inputOperations = EXTENDED_STRING_OPERATIONS;
+                break;
+            }
+
             if (fieldType === DATASET_FIELD_TYPES.STRING) {
                 inputOperations = INPUT_OPERATIONS_TEXT;
                 break;
@@ -190,14 +191,23 @@ export const selectInputOperations = (state: DatalensGlobalState) => {
         }
 
         case 'checkbox': {
+            if (sourceType === DashTabItemControlSourceType.Manual) {
+                inputOperations = BASE_EQUALITY_OPERATIONS;
+                break;
+            }
+
             inputOperations = BOOLEAN_OPERATIONS;
             break;
         }
     }
 
-    if (!availableOperations) {
-        return inputOperations;
+    if (sourceType === DashTabItemControlSourceType.Dataset) {
+        const availableOperations = selectAvailableOperationsDict(state);
+
+        return availableOperations
+            ? inputOperations.filter((operation) => availableOperations[operation.value])
+            : inputOperations;
     }
 
-    return inputOperations.filter((operation) => availableOperations[operation.value]);
+    return inputOperations;
 };
