@@ -63,8 +63,6 @@ export enum Feature {
     EnableServerlessEditor = 'EnableServerlessEditor',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /* Enable dashboard fixed header */
-    EnableDashFixedHeader = 'EnableDashFixedHeader',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
