@@ -63,8 +63,6 @@ export enum Feature {
     EnableServerlessEditor = 'EnableServerlessEditor',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /* Enable dashboard fixed header */
-    EnableDashFixedHeader = 'EnableDashFixedHeader',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
@@ -82,6 +80,10 @@ export enum Feature {
     ChartActions = 'ChartActions',
     /** Escaping string in wizard chart config to remove potential html injection */
     EscapeStringInWizard = 'EscapeStringInWizard',
+    /** Disable the use of html and function in chart configs */
+    DisableFnAndHtml = 'DisableFnAndHtml',
+    /** Enable using of presigned urls for uploading files to S3 */
+    EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
 }
 
 export type FeatureConfig = Record<string, boolean>;

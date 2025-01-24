@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.EnableDashFixedHeader,
+    name: Feature.DisableFnAndHtml,
     state: {
-        development: true,
-        production: true,
+        development: false,
+        production: false,
     },
 });

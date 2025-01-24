@@ -1,6 +1,7 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
+import type {AuthPageSettings} from '../components/auth/types/layout';
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
 import type {Endpoints} from '../endpoints';
@@ -161,6 +162,7 @@ export type DLGlobalData = {
     intLandingConfigEntryId?: string;
     meta?: Record<string, any>;
     landingPageSettings?: LandingPageSettings;
+    authPageSettings?: AuthPageSettings;
     push?: PushServiceConfig;
     metricaCounters?: MetricaCounterConfig[];
     templateWorkbookId?: string;
@@ -212,6 +214,7 @@ export type DLGlobalData = {
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
+    isAuthEnabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

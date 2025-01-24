@@ -14,6 +14,8 @@ import {
     SET_EDIT_HISTORY_CURRENT_STATE,
 } from '../actions/editHistory';
 
+import type {EditHistoryActionType} from '../constants/editHistory';
+
 import type {CreateJDPOptions} from '../utils/jdp';
 
 export type Diff = JDPDelta;
@@ -22,7 +24,7 @@ export type EditHistoryUnit<T = unknown> = {
     diffs: (Diff | Diff[])[];
     pointIndex: number;
     pointState?: T;
-    setState: ({state}: {state: T}) => void;
+    setState: (args: {state: T; type: EditHistoryActionType}) => void;
     options: CreateJDPOptions;
 };
 

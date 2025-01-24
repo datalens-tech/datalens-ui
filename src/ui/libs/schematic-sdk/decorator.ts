@@ -28,10 +28,16 @@ export function emitCancelRequest(concurrentId: ConcurrentId) {
     instance.cancelRequest(concurrentId);
 }
 
+type BeforeRequestArgs = {
+    scope?: string;
+    service?: string;
+    action?: string;
+};
+
 export function initBeforeRequestDecorator(
-    beforeRequest: () => Promise<unknown>,
+    beforeRequest: (args: BeforeRequestArgs) => Promise<unknown>,
 ): SdkConfig['decorator'] {
-    return (sdkActionFunc) =>
+    return (sdkActionFunc, scope, service, action) =>
         (...sdkActionFuncArgs) => {
             const requestOptions = sdkActionFuncArgs[1];
             const concurrentId = requestOptions?.concurrentId;
@@ -46,7 +52,7 @@ export function initBeforeRequestDecorator(
                 });
             }
             return new CancellablePromise(
-                beforeRequest().then(() => {
+                beforeRequest({scope, service, action}).then(() => {
                     unsubscribe?.();
                     actionPromise = sdkActionFunc(...sdkActionFuncArgs);
                     if (cancelled) {

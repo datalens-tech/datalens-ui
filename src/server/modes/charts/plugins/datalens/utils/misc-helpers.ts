@@ -68,7 +68,7 @@ const numericStringCollator = (a: string, b: string) => {
     return Number(a) > Number(b) ? 1 : -1;
 };
 
-function isNumericalDataType(dataType: string) {
+function isNumericalDataType(dataType: string | null) {
     return (
         dataType === DATASET_FIELD_TYPES.FLOAT ||
         dataType === DATASET_FIELD_TYPES.INTEGER ||
@@ -368,7 +368,7 @@ function isGradientMode({
 }: {
     colorField: V9Color;
     colorsConfig: ChartColorsConfig;
-    colorFieldDataType: string;
+    colorFieldDataType: string | null;
 }) {
     return (
         isMeasureField(colorField) ||

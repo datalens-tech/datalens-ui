@@ -14,12 +14,13 @@ import {
     TENANT_ID_HEADER,
     TIMEZONE_OFFSET_HEADER,
 } from '../../../shared';
-import type {WithRequired, schema} from '../../../shared';
+import type {WithRequired, authSchema, schema} from '../../../shared';
 import {DL} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils';
+import {refreshAuthToken} from '../auth/refreshToken';
 
-import {emitCancelRequest} from './decorator';
+import {emitCancelRequest, initBeforeRequestDecorator} from './decorator';
 import type {OperationError, SdkError} from './parse-error';
 import {handleRequestError, isOperationError, isSdkError} from './parse-error';
 
@@ -61,11 +62,17 @@ const sdkConfig: SdkConfig = {
             },
         };
     },
-    // decorator: initBeforeRequestDecorator(...),
+    decorator: DL.AUTH_ENABLED
+        ? initBeforeRequestDecorator(({scope}) => {
+              return scope === 'auth' ? Promise.resolve() : refreshAuthToken();
+          })
+        : undefined,
 };
 
+export type TypedSchema = {root: typeof schema; auth: typeof authSchema};
+
 export const initSdk = () => {
-    const sdk: DatalensSdk<{root: typeof schema}> = sdkFactory<{root: typeof schema}>(sdkConfig);
+    const sdk: DatalensSdk<TypedSchema> = sdkFactory<TypedSchema>(sdkConfig);
 
     sdk.setDefaultHeader({
         name: TIMEZONE_OFFSET_HEADER,
@@ -100,9 +107,7 @@ export const initSdk = () => {
 };
 
 export const getSdk = () => {
-    const sdk = registry.libs.schematicSdk.get() as DatalensSdk<{
-        root: typeof schema;
-    }>;
+    const sdk = registry.libs.schematicSdk.get() as DatalensSdk<TypedSchema>;
     return {
         sdk,
         // Use this method instead of sdk.cancelRequest

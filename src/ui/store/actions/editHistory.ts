@@ -5,6 +5,8 @@ import type {DatalensGlobalState} from '../../';
 
 import type {EditHistoryUnit, EditHistoryState, Diff} from '../reducers/editHistory';
 
+import {EDIT_HISTORY_ACTION} from '../constants/editHistory';
+
 import type {CreateJDPOptions} from '../utils/jdp';
 import {createJDP} from '../utils/jdp';
 import type {Delta} from 'jsondiffpatch';
@@ -193,7 +195,7 @@ export function goBack({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            setState({state: targetState});
+            setState({state: targetState, type: EDIT_HISTORY_ACTION.UNDO});
         });
     };
 }
@@ -238,7 +240,7 @@ export function goForward({unitId}: {unitId: string}) {
 
             dispatch(_setEditHistoryCurrentState({unitId, pointState: targetState}));
 
-            setState({state: targetState});
+            setState({state: targetState, type: EDIT_HISTORY_ACTION.REDO});
         });
     };
 }

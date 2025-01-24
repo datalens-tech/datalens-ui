@@ -170,7 +170,7 @@ export type ValidatedItemAction = 'include' | 'skip';
 export type ValidatedItem = {
     name: string;
     defaultAction: ValidatedItemAction;
-    type?: 'string' | 'boolean'; // default 'string'
+    type?: 'string' | 'boolean' | 'object'; // default 'string'
     required?: boolean;
     nullable?: boolean;
     length?: number;

@@ -29,6 +29,7 @@ import {
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
+    setValidationState,
     toggleSaveDataset,
     toggleSourcesLoader,
     validateDataset,
@@ -70,6 +71,7 @@ export function updateDatasetByValidation({
         let fetchingPreviewEnabled, updates;
 
         clearToasters(toaster);
+        dispatch(setValidationState({validation: {isPending: false}}));
 
         if (validateEnabled) {
             updates = await dispatch(validateDataset({compareContent}));

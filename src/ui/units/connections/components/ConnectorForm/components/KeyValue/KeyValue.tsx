@@ -3,9 +3,8 @@ import React from 'react';
 import {Plus, Xmark} from '@gravity-ui/icons';
 import {Button, Icon, PasswordInput, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import type {KeyValueItem} from 'shared/schema/types';
-
-import {i18n10647} from '../../../../constants';
 
 import {useKeyValueProps, useKeyValueState} from './hooks';
 import type {KeyValueEntry, KeyValueProps} from './types';
@@ -13,6 +12,7 @@ import type {KeyValueEntry, KeyValueProps} from './types';
 import './KeyValue.scss';
 
 const b = block('conn-form-key-value');
+const i18n = I18n.keyset('connections.form');
 const ICON_SIZE = 18;
 
 type KeyValueEntryViewProps = Omit<KeyValueItem, 'id' | 'name'> & {
@@ -27,7 +27,7 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
     let placeholder = valueInputProps?.placeholder;
 
     if (entry.initial && secret && !placeholder) {
-        placeholder = i18n10647['label_secret-value'];
+        placeholder = i18n('label_secret-value');
     }
 
     if (entry.value === null) {
@@ -45,7 +45,7 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
                     onUpdate(index, {key: value[0]});
                 }}
                 validationState={entry.error ? 'invalid' : undefined}
-                errorMessage={i18n10647['label_duplicated-keys']}
+                errorMessage={i18n('label_error-duplicated-keys')}
             />
             {secret ? (
                 <PasswordInput
@@ -76,8 +76,8 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
 };
 
 export const KeyValue = (props: KeyValueProps) => {
-    const {keys = [], keySelectProps, valueInputProps, secret} = props;
-    const {value, updateForm} = useKeyValueProps(props);
+    const {hasRequiredError, value, keys, keySelectProps, valueInputProps, secret, updateForm} =
+        useKeyValueProps(props);
     const {keyValues, handleAddKeyValue, handleUpdateKeyValue, handleDeleteKeyValue} =
         useKeyValueState({
             value,
@@ -101,10 +101,21 @@ export const KeyValue = (props: KeyValueProps) => {
                     />
                 );
             })}
-            <Button className={b('add-button')} onClick={handleAddKeyValue}>
-                <Icon data={Plus} size={ICON_SIZE} />
-                {i18n10647['button_add']}
-            </Button>
+            <div className={b('add-button-wrapper')}>
+                <Button
+                    className={b('add-button')}
+                    onClick={handleAddKeyValue}
+                    view={hasRequiredError ? 'outlined-danger' : 'normal'}
+                >
+                    <Icon data={Plus} size={ICON_SIZE} />
+                    {i18n('button_add')}
+                </Button>
+                {hasRequiredError && (
+                    <span className={b('add-button-error-message')}>
+                        {i18n('label_error-empty-field')}
+                    </span>
+                )}
+            </div>
         </div>
     );
 };

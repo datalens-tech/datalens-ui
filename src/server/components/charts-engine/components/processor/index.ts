@@ -27,7 +27,12 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {DataFetcherOriginalReqHeaders, DataFetcherResult, ZitadelParams} from './data-fetcher';
+import type {
+    AuthParams,
+    DataFetcherOriginalReqHeaders,
+    DataFetcherResult,
+    ZitadelParams,
+} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
@@ -134,6 +139,15 @@ function logFetchingError(ctx: AppContext, error: unknown) {
 }
 
 export type ProcessorParams = {
+    ctx: AppContext;
+    builder: ChartBuilder;
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    hooks: ProcessorHooks;
+    sourcesConfig: ChartsEngine['sources'];
+} & SerializableProcessorParams;
+
+export type SerializableProcessorParams = {
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -155,23 +169,18 @@ export type ProcessorParams = {
     uiOnly?: boolean;
     isEditMode: boolean;
     configResolving: number;
-    ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
-    builder: ChartBuilder;
     forbiddenFields?: (keyof ProcessorSuccessResponse)[];
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
     isEmbed: boolean;
     zitadelParams: ZitadelParams | undefined;
+    authParams: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
-    telemetryCallbacks: TelemetryCallbacks;
-    cacheClient: CacheClient;
-    hooks: ProcessorHooks;
-    sourcesConfig: ChartsEngine['sources'];
 };
 
 export class Processor {
@@ -199,6 +208,7 @@ export class Processor {
         configId,
         isEmbed,
         zitadelParams,
+        authParams,
         originalReqHeaders,
         adapterContext,
         hooksContext,
@@ -576,6 +586,7 @@ export class Processor {
                     workbookId,
                     isEmbed,
                     zitadelParams,
+                    authParams,
                     originalReqHeaders,
                     adapterContext,
                     telemetryCallbacks,
@@ -837,7 +848,11 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
+                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                if (
+                    disableFnAndHtml ||
+                    !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
+                ) {
                     resultConfig.enableJsAndHtml = false;
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);

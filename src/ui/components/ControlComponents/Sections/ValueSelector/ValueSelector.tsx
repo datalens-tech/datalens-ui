@@ -23,14 +23,14 @@ import {selectWorkbookId} from 'ui/units/workbooks/store/selectors';
 import type {FilterValue} from '../../../../../shared/modules';
 import {DATASET_FIELD_TYPES, DashTabItemControlSourceType} from '../../../../../shared/types';
 import {getDistinctsByTypedQuery} from '../CommonSettingsSection/ConnectionSettings/helpers/get-distincts-by-typed-query';
-import {
-    DEFAULT_PAGE_SIZE,
-    getDistinctsByDatasetField,
-} from '../CommonSettingsSection/DatasetSettings/helpers/get-distincts-by-dataset-field';
 import DateDefaultValue from '../Date/Default/Default';
 
 import type {ListValueControlProps} from './ListValueControl/ListValueControl';
 import {ListValueControl} from './ListValueControl/ListValueControl';
+import {
+    DEFAULT_PAGE_SIZE,
+    getDistinctsByDatasetField,
+} from './helpers/get-distincts-by-dataset-field';
 
 import './ValueSelector.scss';
 
