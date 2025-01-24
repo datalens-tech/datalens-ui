@@ -1,3 +1,4 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import escape from 'lodash/escape';
 import isObject from 'lodash/isObject';
 import type {ChartKitHtmlItem} from 'shared';
@@ -7,7 +8,8 @@ import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/
 import {ALLOWED_REFERENCES, ATTR_DATA_CE_THEME, THEME_CSS_VARIABLE_PREFIX} from './constants';
 
 export function validateUrl(url: string, errorMsg?: string) {
-    if (!ALLOWED_REFERENCES.some((ref) => String(url).startsWith(ref))) {
+    const href = sanitizeUrl(url);
+    if (!ALLOWED_REFERENCES.some((ref) => href.startsWith(ref))) {
         const msg = errorMsg ?? `'${url}' is not valid url`;
         throw new ChartKitCustomError(undefined, {
             message: msg,
@@ -145,7 +147,7 @@ export async function getParseHtmlFn() {
     };
 }
 
-function mapElementToJson(element: any) {
+function mapElementToJson(element: any): ChartKitHtmlItem | string {
     if (element.type === 'tag') {
         const {style: styleAttr = '', ...attributes} = element.attribs;
         const style = String(styleAttr)

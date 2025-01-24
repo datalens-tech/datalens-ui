@@ -8,7 +8,6 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
 import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
-import {useEffectOnce} from 'ui/hooks';
 import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
 import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
@@ -218,12 +217,6 @@ const DialogExtendedSettings = ({
         },
         [dispatch, selectorsGroup],
     );
-
-    useEffectOnce(() => {
-        if (enableAutoheightDefault) {
-            handleChangeAutoHeight(true);
-        }
-    });
 
     const showAutoHeight =
         (isMultipleSelectors ||

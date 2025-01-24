@@ -1,8 +1,8 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import {TIMEOUT_90_SEC, type WorkbookId, getFieldsApiV2RequestSection} from 'shared';
 
-import logger from '../../../../../../libs/logger';
-import {getSdk} from '../../../../../../libs/schematic-sdk';
+import logger from '../../../../../libs/logger';
+import {getSdk} from '../../../../../libs/schematic-sdk';
 
 export const DEFAULT_PAGE_SIZE = 100;
 const hasNextPage = (arr: unknown[], pageSize: number) => {

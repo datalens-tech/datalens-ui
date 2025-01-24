@@ -197,3 +197,18 @@ export type AddYandexDocumentArgs = {
     public_link?: string;
     oauth_token?: RefreshToken;
 };
+
+export type GetPresignedUrlResponse = {
+    url: string;
+    fields: Record<string, string>;
+};
+
+export type DownloadPresignedUrlArgs = {
+    filename: string;
+    key: string;
+};
+
+export type DownloadPresignedUrlResponse = {
+    file_id: string;
+    filename: string;
+};

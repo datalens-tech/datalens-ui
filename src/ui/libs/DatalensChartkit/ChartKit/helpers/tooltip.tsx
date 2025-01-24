@@ -116,7 +116,23 @@ function pieTooltipRenderer(_widgetData: ChartKitWidgetData, data: Parameters<To
     );
 }
 
+function customTooltipRenderer(widgetData: ChartKitWidgetData, data: Parameters<TooltipRenderer>) {
+    const render = widgetData?.tooltip?.renderer;
+    if (typeof render !== 'function') {
+        return null;
+    }
+
+    const content = render(...data);
+    return (
+        <div className={b('content')} dangerouslySetInnerHTML={{__html: String(content ?? '')}} />
+    );
+}
+
 export const getTooltipRenderer = (widgetData: ChartKitWidgetData): TooltipRenderer | undefined => {
+    if (widgetData?.tooltip?.renderer) {
+        return (...args) => customTooltipRenderer(widgetData, args);
+    }
+
     const seriesTypes = (widgetData?.series?.data || []).map((s) => s.type);
 
     if (seriesTypes.length === 1) {
