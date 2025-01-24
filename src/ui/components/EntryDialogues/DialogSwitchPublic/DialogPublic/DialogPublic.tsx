@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Button, Card, Dialog} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import AuthorSection from './AuthorSection/AuthorSection';
 import ContentError from './ContentError/ContentError';
@@ -33,7 +35,7 @@ type Props = {
 
 function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
     const alertDialogRef: React.MutableRefObject<any | null> = React.useRef(null);
-    const {state, apply, refetch, disableBtnApply, dispatchAction} = useDialogPublicState({
+    const {state, apply, refetch, disableApply, dispatchAction} = useDialogPublicState({
         entry: propsEntry,
         onClose,
     });
@@ -110,21 +112,27 @@ function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
 
     function renderContent() {
         const scope = state.entry.scope as 'dash' | 'widget';
+        const attentionMessage = state.hasLockedEntries
+            ? i18n('md_label_unavaible-publication-attention', {
+                  link: formDocsEndpointDL('/concepts/datalens-public#rules'),
+              })
+            : i18n('label_main-attention', {
+                  subject: i18n(`label_main-subject-${scope}`),
+              });
+        const icon = state.hasLockedEntries ? undefined : (
+            <div className={b('attention-icon')}>
+                <TriangleExclamationFill width={16} height={16} />
+            </div>
+        );
 
         return (
             <React.Fragment>
-                <Card theme="danger" type="container" view="filled">
-                    <div className={b('attention')}>
-                        <div className={b('attention-icon')}>
-                            <TriangleExclamationFill />
-                        </div>
-                        <div className={b('attention-text')}>
-                            {i18n('label_main-attention', {
-                                subject: i18n(`label_main-subject-${scope}`),
-                            })}
-                        </div>
-                    </div>
-                </Card>
+                <Alert
+                    theme="danger"
+                    message={<YfmWrapper content={attentionMessage} setByInnerHtml />}
+                    icon={icon}
+                />
+
                 <CurrentEntrySection
                     className={b('current-entry')}
                     entry={state.entry}
@@ -182,7 +190,7 @@ function DialogPublic({onClose, visible, entry: propsEntry}: Props) {
                     onClickButtonApply={() => apply()}
                     textButtonApply={i18n('button_apply')}
                     textButtonCancel={i18n('button_cancel')}
-                    propsButtonApply={{disabled: disableBtnApply}}
+                    propsButtonApply={{disabled: disableApply}}
                     loading={state.progress}
                 >
                     <Button view="outlined" size="l" disabled={state.progress} onClick={refetch}>
