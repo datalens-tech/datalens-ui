@@ -1,4 +1,7 @@
 .table-of-content {
+    $borderWidth: 1px;
+    $fullTabWidth: 250px;
+
     display: flex;
     background-color: var(--g-color-base-background);
     position: relative;
@@ -7,7 +10,7 @@
 
     &__wrapper {
         position: relative;
-        border-right: 1px solid var(--g-color-line-generic);
+        border-right: $borderWidth solid var(--g-color-line-generic);
         height: 100%;
         width: 100%;
     }
@@ -19,7 +22,7 @@
         left: -250px;
         overflow: hidden;
         padding: 24px 0 24px 8px;
-        width: 249px;
+        width: $fullTabWidth - $borderWidth;
         height: 100%;
 
         &_opened {
