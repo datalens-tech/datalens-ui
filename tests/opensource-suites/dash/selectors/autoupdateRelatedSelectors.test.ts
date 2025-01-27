@@ -110,6 +110,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
                     waitForLoader: true,
                 },
+                workbookId: config.workbookId,
             });
 
             await expect(await getSecondSelectItemsCount(dashboardPage)).toBeGreaterThan(1);
@@ -167,6 +168,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
                     waitForLoader: true,
                 },
+                workbookId: config.workbookId,
             });
             // check that initial count of items
             const cityItemsCount = await getSecondSelectItemsCount(dashboardPage);
@@ -195,7 +197,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
     datalensTest(
         'Manual selectors with aliases affect each other before applying when auto-update is enabled',
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -219,6 +221,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     controlTitles: SELECTORS_TITLES.MANUAL_SELECTORS,
                     waitForLoader: true,
                 },
+                workbookId: config.workbookId,
             });
 
             const firstControl = dashboardPage
@@ -251,7 +254,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
 
     datalensTest(
         "Manual selectors with aliases don't affect each other before applying when auto-update is disabled",
-        async ({page}: {page: Page}) => {
+        async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});
 
             await dashboardPage.createDashboard({
@@ -275,6 +278,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     controlTitles: SELECTORS_TITLES.MANUAL_SELECTORS,
                     waitForLoader: false,
                 },
+                workbookId: config.workbookId,
             });
             const firstControl = dashboardPage
                 .getSelectorLocatorByTitle({
@@ -357,6 +361,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
                     controlTitles: SELECTORS_TITLES.DATASET_SELECTORS,
                     waitForLoader: true,
                 },
+                workbookId: config.workbookId,
             });
 
             // check that initial count of items more than 1

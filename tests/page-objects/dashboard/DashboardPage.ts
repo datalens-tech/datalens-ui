@@ -217,18 +217,20 @@ class DashboardPage extends BasePage {
     async createDashboard({
         editDash,
         waitingRequestOptions,
+        workbookId,
     }: {
         editDash: () => Promise<void>;
         waitingRequestOptions?: {
             controlTitles: string[];
             waitForLoader?: boolean;
         };
+        workbookId?: string;
     }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
-            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            ? `/workbooks/${workbookId ?? WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
 
