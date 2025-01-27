@@ -31,6 +31,7 @@ import {
     DatasetFieldType,
     Feature,
     PlaceholderId,
+    QLChartType,
     SortDirection,
     VisualizationItemQa,
     WizardVisualizationId,
@@ -40,6 +41,7 @@ import {
 } from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
+import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
 import {
     createFieldFromVisualization,
@@ -688,7 +690,7 @@ class VisualizationItem extends React.Component<Props, State> {
     };
 
     private openDialogField = (item: Field, extra: any) => {
-        const {visualization, extraSettings, props} = this.props;
+        const {visualization, extraSettings, props, qlChartType} = this.props;
         const {dataset} = this.props;
 
         this.props.actions.openDialog({
@@ -712,6 +714,7 @@ class VisualizationItem extends React.Component<Props, State> {
                 onCancel: this.closeDialogField,
                 extraSettings,
                 fieldIndexInSection: props.index,
+                markupTypeEnabled: qlChartType !== QLChartType.Monitoringql,
             },
         });
     };
@@ -967,6 +970,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
         workbookId: selectWizardWorkbookId(state),
+        qlChartType: getChartType(state),
     };
 };
 
