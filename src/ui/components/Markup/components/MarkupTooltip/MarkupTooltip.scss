@@ -1,0 +1,10 @@
+.dl-markup {
+    &__content {
+        padding: 16px;
+        max-width: 300px;
+    }
+}
+
+.dl-markup[data-popper-reference-hidden='true'] {
+    display: none;
+}

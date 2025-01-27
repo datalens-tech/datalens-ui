@@ -1,6 +1,7 @@
 import React from 'react';
 
 import '@diplodoc/cut-extension/runtime';
+import '@diplodoc/tabs-extension/runtime';
 import '@diplodoc/transform/dist/js/_yfm-only';
 import '@diplodoc/transform/dist/js/base';
 

@@ -3,31 +3,25 @@ import React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
+import type {MarkupItem, MarkupItemType} from 'shared';
+import {MarkupItemTypes, isMarkupItem, markupToRawString} from 'shared';
 
-import type {MarkupItem, MarkupItemType} from '../../../shared';
-import {MarkupItemTypes, isMarkupItem, markupToRawString} from '../../../shared';
-
-import {UserInfo} from './components/UserInfo/UserInfo';
+import {MarkupTooltip, UserInfo} from './components';
+import type {TemplateItem} from './types';
 import {isNumericCSSValueValid} from './utils';
 
-type TemplateItem = {
-    children: (TemplateItem | string)[];
-    element?: string | React.ComponentClass | React.ExoticComponent | React.FC;
-    props?: {[key: string]: string | Record<string, unknown>};
-};
-
-type Props = {
+type MarkupProps = {
     item: MarkupItem;
     externalProps?: Partial<Record<MarkupItemType, Record<string, unknown>>>;
 };
 
 // eslint-disable-next-line complexity
-const getConfig = (
+export function getConfig(
     markupItem?: string | MarkupItem,
-    externalProps?: Props['externalProps'],
+    externalProps?: MarkupProps['externalProps'],
     configItem?: TemplateItem,
     config?: TemplateItem,
-): TemplateItem => {
+): TemplateItem {
     if (!markupItem) {
         return config as TemplateItem;
     }
@@ -127,6 +121,15 @@ const getConfig = (
             });
             break;
         }
+        case MarkupItemTypes.Tooltip: {
+            iteratedConfigItem.element = MarkupTooltip;
+            iteratedConfigItem.props = {
+                content: renderTemplate(getConfig(markupItem.tooltip, {}, {children: []})),
+                ...(markupItem.placement && {placement: markupItem.placement}),
+            };
+
+            break;
+        }
     }
 
     if (externalProps?.[markupItem.type]) {
@@ -145,9 +148,9 @@ const getConfig = (
     const nextConfig = config || iteratedConfigItem;
 
     return getConfig(markupItem.content, externalProps, nextConfigItem, nextConfig);
-};
+}
 
-const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
+export function renderTemplate(templateItem: TemplateItem | string): JSX.Element {
     if (typeof templateItem === 'string') {
         // Part of ReactNode type is undefined, which is not a valid JSX element
         // Wrapping the result in a fragment solves this issue
@@ -159,6 +162,10 @@ const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
         templateItem.props,
         ...templateItem.children.map((child) => renderTemplate(child)),
     );
-};
+}
 
-export default (props: Props) => renderTemplate(getConfig(props.item, props.externalProps));
+export function Markup(props: MarkupProps) {
+    return renderTemplate(getConfig(props.item, props.externalProps));
+}
+
+export default Markup;
