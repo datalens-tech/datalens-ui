@@ -4,7 +4,7 @@ import {PencilToLine} from '@gravity-ui/icons';
 import type {PaletteOption} from '@gravity-ui/uikit';
 import {ActionTooltip, Button, Flex, Icon, Palette, Popup, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import chroma from 'chroma-js';
+import {color as d3Color} from 'd3-color';
 import {i18n} from 'i18n';
 import {DashCommonQa} from 'shared';
 import {ColorPickerInput} from 'ui/components/ColorPickerInput/ColorPickerInput';
@@ -20,7 +20,7 @@ const PALETTE_HINTS = {
 } as const;
 
 function colorStringToHex(color: string) {
-    return color && chroma.valid(color) ? chroma(color).hex() : '';
+    return d3Color(color)?.formatHex() ?? '';
 }
 
 const ColorItem = React.forwardRef(function ColorItemWithRef(
