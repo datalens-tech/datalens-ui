@@ -1,6 +1,7 @@
 .table-of-content {
     $borderWidth: 1px;
     $fullTabWidth: 250px;
+    $bottomMargin: 28px;
 
     display: flex;
     background-color: var(--g-color-base-background);
@@ -50,7 +51,7 @@
     }
 
     &__tabs {
-        height: calc(100% - 28px);
+        height: calc(100% - $bottomMargin);
         overflow-y: scroll;
         overflow-x: hidden;
     }
