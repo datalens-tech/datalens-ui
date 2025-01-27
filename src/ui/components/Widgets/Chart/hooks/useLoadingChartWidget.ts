@@ -559,7 +559,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const debouncedMutationsCheck = React.useCallback(
         debounce((mutations: Array<MutationRecord>) => {
-            if (!rootNodeRef.current || !loadedData) {
+            if (!rootNodeRef.current || !loadedWidgetType) {
                 return;
             }
             let needUpdate = false;
