@@ -19,6 +19,7 @@ export const MarkupItemTypes = {
     Url: 'url',
     UserInfo: 'user_info',
     Image: 'img',
+    Tooltip: 'tooltip',
 } as const;
 
 export type MarkupItemType = (typeof MarkupItemTypes)[keyof typeof MarkupItemTypes];
@@ -36,6 +37,8 @@ export interface MarkupItem {
     alt?: string;
     width?: number;
     height?: number;
+    placement?: string;
+    tooltip?: MarkupItem;
 }
 
 export type HighchartsSeriesCustomObject = {
