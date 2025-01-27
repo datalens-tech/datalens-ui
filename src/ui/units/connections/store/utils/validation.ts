@@ -13,6 +13,7 @@ type SchemaOptions = Record<
     string,
     | yup.StringSchema<string | null | undefined, Record<string, any>, string | null | undefined>
     | yup.BooleanSchema<boolean | null | undefined, Record<string, any>, boolean | null | undefined>
+    | yup.ObjectSchema<Record<string, any>>
 >;
 
 type ValidationArgs = {
@@ -49,6 +50,10 @@ const createValidationSchema = (args: PartialBy<ValidationArgs, 'innerForm'>) =>
             }
             case 'string': {
                 acc[name] = yup.string();
+                break;
+            }
+            case 'object': {
+                acc[name] = yup.object();
             }
         }
 

@@ -1,3 +1,4 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
@@ -19,7 +20,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
-import {getParseHtmlFn, validateUrl} from '../../html-generator/utils';
+import {getParseHtmlFn} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -243,8 +244,8 @@ async function getUnwrappedFunction(args: {
             window: {
                 open: function (url: string, target?: string) {
                     try {
-                        validateUrl(url);
-                        window.open(url, target === '_self' ? '_self' : '_blank');
+                        const href = sanitizeUrl(url);
+                        window.open(href, target === '_self' ? '_self' : '_blank');
                     } catch (e) {
                         console.error(e);
                     }

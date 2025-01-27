@@ -405,15 +405,15 @@ const uploadFileToS3 = async (
             formData.append(key, value);
         });
         formData.append('file', file);
-        /* 
+        /*
             Why don't we need axios here?
-            
+
             DL axios instance has a lot of predefined settings, for example `withCredentials: true` that
             we don't need in this request. Also we don't want to send any headers, except Content-Type,
             but this header is sets automatically by using FormData object in `fetch` body
             (more details https://muffinman.io/blog/uploading-files-using-fetch-multipart-form-data)
         */
-        fetch(url, {method: 'POST', body: formData});
+        await fetch(url, {method: 'POST', body: formData});
 
         return {};
     } catch (error) {

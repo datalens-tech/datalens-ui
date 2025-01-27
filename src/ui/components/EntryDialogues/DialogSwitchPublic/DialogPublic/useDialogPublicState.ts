@@ -126,6 +126,7 @@ function getCurrentEntryDisabled(
                 'component.dialog-switch-public.view',
                 'label_some-entries-not-ready',
             ),
+            hasLockedEntries: true,
         };
     }
     return {
@@ -215,6 +216,7 @@ const getInitialState = (data: Partial<State>): State => {
         error: {
             title: '',
         },
+        hasLockedEntries: false,
     };
 };
 
@@ -391,10 +393,8 @@ export const useDialogPublicState = ({
 
                 if (refMounted.current) {
                     const normalizedRelations = normalizeRelations(relations, extendedEntry);
-                    const {currentEntryDisabled, currentEntryTooltip} = getCurrentEntryDisabled(
-                        extendedEntry,
-                        normalizedRelations,
-                    );
+                    const {currentEntryDisabled, currentEntryTooltip, hasLockedEntries} =
+                        getCurrentEntryDisabled(extendedEntry, normalizedRelations);
                     const entryAuthor = {text: '', link: ''};
                     if (entry.unversionedData) {
                         const unversionedData = entry.unversionedData as {
@@ -419,6 +419,7 @@ export const useDialogPublicState = ({
                             currentEntryDisabled,
                             currentEntryTooltip,
                             entryAuthor,
+                            hasLockedEntries: Boolean(hasLockedEntries),
                         },
                     });
                 }
@@ -541,7 +542,7 @@ export const useDialogPublicState = ({
 
     return {
         state,
-        disableBtnApply: (!hasPublishChanges(state) && !hasAuthorChanges(state)) || !isValid(state),
+        disableApply: (!hasPublishChanges(state) && !hasAuthorChanges(state)) || !isValid(state),
         refetch,
         apply,
         dispatchAction,

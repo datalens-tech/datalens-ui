@@ -112,9 +112,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
     const isHtmlColor = isHtmlField(colorItem);
 
     const gradientMode =
-        colorItem &&
-        colorFieldDataType &&
-        isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
+        colorItem && isGradientMode({colorField: colorItem, colorFieldDataType, colorsConfig});
 
     const labelItem = labels?.[0];
     const labelsLength = labels && labels.length;
