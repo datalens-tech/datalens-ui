@@ -42,14 +42,14 @@ const EditorPage = ({
     }, [match.params.path]);
     const prevEditorPath = usePrevious(editorPath);
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
-    const {workbookId} = match.params;
+    const {workbookId: routeWorkbookId} = match.params;
 
     const loadAndSetTemplate = React.useCallback(
         (item) => {
             setTemplate(item);
-            initialLoad({template: item, location});
+            initialLoad({template: item, location, workbookId: routeWorkbookId});
         },
-        [initialLoad, location],
+        [initialLoad, location, routeWorkbookId],
     );
 
     const isEntryInited = Boolean(entry) && !entry.fake;
@@ -106,7 +106,12 @@ const EditorPage = ({
 
     function onClickNodeTemplate(item) {
         const urlPath = item.empty ? '' : `/${item.name}`;
-        history.push(getFullPathName({base: `${EditorUrls.EntryDraft}${urlPath}`, workbookId}));
+        history.push(
+            getFullPathName({
+                base: `${EditorUrls.EntryDraft}${urlPath}`,
+                workbookId: routeWorkbookId,
+            }),
+        );
     }
 
     const renderEditor = (size) => {
@@ -125,7 +130,7 @@ const EditorPage = ({
         return (
             <React.Fragment>
                 <UnloadConfirmation />
-                <ActionPanel history={history} workbookId={workbookId} />
+                <ActionPanel history={history} workbookId={entry.workbookId} />
                 <div className={b('content')}>
                     <Grid size={size} />
                 </div>
@@ -135,7 +140,9 @@ const EditorPage = ({
 
     const renderPageContent = () => {
         if (editorPath === EditorUrlParams.New) {
-            return <NewChart onClickNodeTemplate={onClickNodeTemplate} />;
+            return (
+                <NewChart onClickNodeTemplate={onClickNodeTemplate} workbookId={routeWorkbookId} />
+            );
         } else {
             return renderEditor(asideHeaderData.size);
         }
@@ -166,6 +173,7 @@ EditorPage.propTypes = {
         key: PropTypes.string,
         entryId: PropTypes.string,
         fake: PropTypes.bool,
+        workbookId: PropTypes.string,
     }),
 };
 
