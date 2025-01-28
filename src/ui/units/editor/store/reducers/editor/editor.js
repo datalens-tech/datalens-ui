@@ -29,7 +29,7 @@ export const initialLoading = (payload) => (dispatch) => {
         payload,
     });
 };
-export const fetchInitialLoad = ({id, template, location}) => {
+export const fetchInitialLoad = ({id, template, location, workbookId}) => {
     return async function (dispatch, getState) {
         const {search} = location;
         let settings = getState().editor.settings;
@@ -61,7 +61,9 @@ export const fetchInitialLoad = ({id, template, location}) => {
                     entryId: null,
                     fake: true,
                     key: `${path}${i18n('editor.common.view', 'label_new-chart')}`,
+                    fakeName: i18n('editor.common.view', 'label_new-chart'),
                     permissions: {read: true, edit: true, admin: true},
+                    workbookId,
                 };
                 const defaultPath = urlSearch.getNormalized(URL_QUERY.CURRENT_PATH);
                 settings = {...settings, defaultPath: defaultPath ? defaultPath : DL.USER_FOLDER};
