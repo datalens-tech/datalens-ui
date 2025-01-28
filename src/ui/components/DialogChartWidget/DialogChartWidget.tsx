@@ -69,6 +69,7 @@ export interface DialogChartWidgetFeatureProps {
 
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
+    enableCustomBgColorSelector?: boolean;
     enableFilteringSetting?: boolean;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
@@ -121,6 +122,7 @@ class DialogChartWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableBackgroundColor: false,
+        enableCustomBgColorSelector: false,
         enableFilteringSetting: true,
         openedItemData: {
             hideTitle: false,
@@ -571,6 +573,7 @@ class DialogChartWidget extends React.PureComponent<
             navigationPath,
             enableAutoheight,
             enableBackgroundColor,
+            enableCustomBgColorSelector,
             enableFilteringSetting,
             changeNavigationPath,
         } = this.props;
@@ -750,6 +753,7 @@ class DialogChartWidget extends React.PureComponent<
                         <PaletteBackground
                             color={background?.color}
                             onSelect={this.handleBackgroundColorSelected}
+                            enableCustomBgColorSelector={enableCustomBgColorSelector}
                         />
                     </FormRow>
                 )}

@@ -1,16 +1,16 @@
 .palette-color-control {
     position: relative;
-    margin-bottom: 5px;
+    margin-bottom: var(--g-spacing-1);
 
     &__color-control-wrapper {
         display: flex;
-        align-items: center;
     }
 
     & &__color-control-button {
         width: 24px;
         height: 24px;
-        margin-right: 5px;
+        margin-right: var(--g-spacing-1);
+        margin-block: 2px;
 
         &.palette-item:hover::before {
             content: none;
@@ -37,6 +37,6 @@
         top: 0;
         left: 28px;
         background-color: var(--g-color-base-background);
-        padding: 16px;
+        padding: var(--g-spacing-4);
     }
 }
