@@ -713,9 +713,10 @@ class DashboardPage extends BasePage {
         ]);
     }
 
-    async deleteDash() {
+    async deleteDash(args?: {workbookId?: string}) {
+        const {workbookId = WorkbooksUrls.E2EWorkbook} = args ?? {};
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+        const urlOnDelete = isEnabledCollections ? workbookId : '/dashboards';
 
         await deleteEntity(this.page, urlOnDelete);
     }

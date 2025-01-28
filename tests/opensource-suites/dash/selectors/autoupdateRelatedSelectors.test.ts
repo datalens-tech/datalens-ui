@@ -75,10 +75,10 @@ const getSecondSelectItemsCount = async (dashboardPage: DashboardPage) => {
 };
 
 datalensTest.describe('Dashboards - Autoupdate options of group selectors', () => {
-    datalensTest.afterEach(async ({page}: {page: Page}) => {
+    datalensTest.afterEach(async ({page, config}) => {
         const dashboardPage = new DashboardPage({page});
 
-        await dashboardPage.deleteDash();
+        await dashboardPage.deleteDash({workbookId: config.workbookId});
     });
 
     datalensTest(
