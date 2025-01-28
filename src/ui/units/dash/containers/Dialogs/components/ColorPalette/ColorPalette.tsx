@@ -20,7 +20,7 @@ const PALETTE_HINTS = {
 } as const;
 
 function colorStringToHex(color: string) {
-    return d3Color(color)?.formatHex() ?? '';
+    return d3Color(color)?.formatHex8() ?? '';
 }
 
 const ColorItem = React.forwardRef(function ColorItemWithRef(

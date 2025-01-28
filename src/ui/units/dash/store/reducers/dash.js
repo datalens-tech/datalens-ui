@@ -216,7 +216,7 @@ function dash(state = initialState, action) {
                             ? DashTabItemTitleSizes.XL
                             : itemData.size,
                     background:
-                        action.payload.item.type === DashTabItemType.Title &&
+                        'background' in itemData &&
                         !WIDGET_BG_COLORS_PRESET.includes(itemData.background?.color)
                             ? CustomPaletteBgColors.NONE
                             : itemData.background.color,

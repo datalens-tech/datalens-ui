@@ -137,7 +137,9 @@ export function ColorPickerInput({
                     <input
                         className={b('palette', {[`size-${size}`]: true})}
                         type="color"
-                        value={sanitizeColor(value || placeholder || DEFAULT_COLOR)}
+                        value={sanitizeColor(
+                            externalSolidColorPart || placeholder || DEFAULT_COLOR,
+                        )}
                         onChange={(e) => {
                             setColor(e.target.value);
                         }}
