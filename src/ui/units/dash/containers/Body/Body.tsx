@@ -896,18 +896,26 @@ class Body extends React.PureComponent<BodyProps> {
         const memoItems = this._memoizedOrderedConfig;
 
         if (!memoItems || memoItems.key !== tabDataConfig) {
-            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout).reduce(
-                (list, group) => {
+            const layoutIndex: Record<string, number> = {};
+            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout)
+                .reduce((list, group) => {
+                    group.forEach((item) => {
+                        layoutIndex[item.id] = item.orderId;
+                    });
                     list.push(...group);
                     return list;
-                },
-                [],
-            );
+                }, [])
+                .sort((a, b) => a.orderId - b.orderId);
+            const sortedLayout = tabDataConfig.layout.reduce<ConfigLayout[]>((memo, item) => {
+                memo[layoutIndex[item.i]] = item;
+                return memo;
+            }, []);
 
             this._memoizedOrderedConfig = {
                 key: tabDataConfig as DashKitProps['config'],
                 config: {
                     ...tabDataConfig,
+                    layout: sortedLayout,
                     items: sortedItems as ConfigItem[],
                 },
             };
