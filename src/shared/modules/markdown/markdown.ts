@@ -7,6 +7,7 @@ import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import monospace from '@diplodoc/transform/lib/plugins/monospace';
 import notes from '@diplodoc/transform/lib/plugins/notes';
+import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
@@ -80,6 +81,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         imsize,
         table,
         monospace,
+        sup,
         MarkdonwItSub,
         MarkdonwItMark,
         MarkdonwItIns,
