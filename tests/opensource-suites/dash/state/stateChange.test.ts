@@ -65,7 +65,7 @@ const waitForWidgetsRunAndGetChartResponse = async (
             const jsonResponse = await response.json();
             if (
                 jsonResponse.type === WizardType.GraphWizardNode ||
-                jsonResponse.type === WizardType.D3WizardNode
+                jsonResponse.type === WizardType.GravityChartsWizardNode
             ) {
                 chartResponseData = response;
                 return true;
