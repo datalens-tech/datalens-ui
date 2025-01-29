@@ -1,7 +1,8 @@
 /* eslint-disable complexity */
 import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
-import querystring from 'querystring';
-import url from 'url';
+import path from 'node:path';
+import querystring from 'node:querystring';
+import url from 'node:url';
 
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
@@ -96,8 +97,8 @@ type DataFetcherRequestOptions = {
     timeout: number;
     spStatFormat: string | string[] | null;
     maxRedirects?: number;
-    form?: string | Record<string, string>;
-    body?: string | Record<string, string>;
+    form?: string | Record<string, string | Record<string, string>>;
+    body?: string | Record<string, string | Record<string, string>>;
     json?: boolean;
 };
 
@@ -541,6 +542,33 @@ export class DataFetcher {
 
         const hideInInspector = source.hideInInspector;
 
+        let JSONConnectorParams: Record<string, string> = {};
+        if (source.connectionId) {
+            if (source.method && source.body && source.path) {
+                source.url = path.join(
+                    '/_bi_connections',
+                    encodeURIComponent(source.connectionId),
+                    'typed_query_raw',
+                );
+                JSONConnectorParams = {
+                    method: source.method,
+                    body: source.body,
+                    path: source.path,
+                };
+                source.method = 'POST';
+            } else {
+                ctx.logError('FETCHER_INCORRECT_JSON_CONNECTOR_SPECIFICATION', {
+                    connectionId: source.connectionId,
+                });
+
+                return {
+                    sourceId: sourceName,
+                    sourceType: 'Unresolved',
+                    code: UNKNOWN_SOURCE,
+                };
+            }
+        }
+
         let targetUri = source.url;
 
         const loggedSource = Object.assign({}, source, {
@@ -848,7 +876,9 @@ export class DataFetcher {
             }
         }
 
-        const sourceData = (!isString(source) && source.data) || null;
+        const sourceData = source.connectionId
+            ? {parameters: JSONConnectorParams}
+            : (!isString(source) && source.data) || null;
 
         if (sourceData) {
             if (sourceFormat === 'form') {
