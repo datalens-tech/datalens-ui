@@ -257,9 +257,6 @@ class SectionDataset extends React.Component<Props, State> {
             fieldNext.calc_mode = 'formula';
             fieldNext.formula = field.formula;
             fieldNext.source = '';
-
-            delete (fieldNext as any).cast;
-            delete (fieldNext as any).data_type;
         } else {
             // If there is just a field, then we will put down all the accompanying attributes of a simple field
             fieldNext.aggregation = field.aggregation;

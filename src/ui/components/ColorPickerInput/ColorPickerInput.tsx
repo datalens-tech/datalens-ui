@@ -7,7 +7,7 @@ import {
     type unstable_NumberInputProps as NumberInputProps,
 } from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
-import chroma from 'chroma-js';
+import {color as d3Color} from 'd3-color';
 
 import {
     colorMask,
@@ -84,10 +84,10 @@ export function ColorPickerInput({
                     onUpdate(null);
                     isValidValue = !required;
                 } else if (isValidColor(maskedColor)) {
-                    const valueWithOpacity = chroma(maskedColor)
-                        .alpha(opacity / 100)
-                        .hex();
-                    onUpdate(valueWithOpacity);
+                    const valueWithOpacity = d3Color(maskedColor)
+                        ?.copy({opacity: opacity / 100})
+                        .formatHex8();
+                    onUpdate(valueWithOpacity ?? null);
                     isValidValue = true;
                 }
                 setIsValid(isValidValue);
@@ -137,7 +137,9 @@ export function ColorPickerInput({
                     <input
                         className={b('palette', {[`size-${size}`]: true})}
                         type="color"
-                        value={sanitizeColor(value || placeholder || DEFAULT_COLOR)}
+                        value={sanitizeColor(
+                            externalSolidColorPart || placeholder || DEFAULT_COLOR,
+                        )}
                         onChange={(e) => {
                             setColor(e.target.value);
                         }}

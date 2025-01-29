@@ -217,18 +217,20 @@ class DashboardPage extends BasePage {
     async createDashboard({
         editDash,
         waitingRequestOptions,
+        workbookId,
     }: {
         editDash: () => Promise<void>;
         waitingRequestOptions?: {
             controlTitles: string[];
             waitForLoader?: boolean;
         };
+        workbookId?: string;
     }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
-            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            ? `/workbooks/${workbookId ?? WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
 
@@ -711,9 +713,10 @@ class DashboardPage extends BasePage {
         ]);
     }
 
-    async deleteDash() {
+    async deleteDash(args?: {workbookId?: string}) {
+        const {workbookId = WorkbooksUrls.E2EWorkbook} = args ?? {};
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+        const urlOnDelete = isEnabledCollections ? workbookId : '/dashboards';
 
         await deleteEntity(this.page, urlOnDelete);
     }

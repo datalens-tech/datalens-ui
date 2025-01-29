@@ -10,9 +10,9 @@ import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
-import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
@@ -186,7 +186,7 @@ const textPlugin = {
         const showBgColor = Boolean(
             data.background?.enabled !== false &&
                 data.background?.color &&
-                data.background?.color !== CustomPaletteColors.NONE,
+                data.background?.color !== CustomPaletteBgColors.NONE,
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);

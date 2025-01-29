@@ -1,4 +1,4 @@
-import chroma from 'chroma-js';
+import {color as d3Color} from 'd3-color';
 
 import {type ColorParts} from './ColorPickerInput';
 
@@ -20,7 +20,7 @@ export function colorMask(color?: string): string {
 
 // Prevents browser warnings for empty\invalid values
 export function sanitizeColor(color: string) {
-    return normalizeColor(chroma(color).hex());
+    return normalizeColor(d3Color(color)?.formatHex8());
 }
 
 export function getMaskedColor(color: ColorParts) {
@@ -32,24 +32,26 @@ export function isValidColor(color: string) {
 }
 
 export function getColorParts(rawValue?: string): ColorParts {
-    const chromaValue = rawValue && chroma.valid(rawValue) ? chroma(rawValue) : undefined;
+    const d3ColorValue = rawValue ? d3Color(rawValue) : undefined;
 
-    if (!chromaValue) {
+    if (!d3ColorValue) {
         return {solid: '', opacity: 100};
     }
 
-    const opacity = chromaValue.alpha() * 100;
-    const solid = normalizeColor(chromaValue.alpha(1).hex('rgb'));
+    const opacity = d3ColorValue.opacity * 100;
+    const solid = normalizeColor(d3ColorValue.copy({opacity: 1}).formatHex());
 
     return {solid, opacity};
 }
 
 export function getResultColorFromParts(color: ColorParts): string {
-    if (!color.solid || !chroma.valid(color.solid)) {
+    if (!color.solid || !d3Color(color.solid)) {
         return '';
     }
 
-    return chroma(color.solid)
-        .alpha(color.opacity === null ? 1 : color.opacity / 100)
-        .hex();
+    return (
+        d3Color(color.solid)
+            ?.copy({opacity: color.opacity === null ? 1 : color.opacity / 100})
+            .formatHex8() ?? ''
+    );
 }

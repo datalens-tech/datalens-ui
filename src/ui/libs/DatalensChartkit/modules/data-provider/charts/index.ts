@@ -37,7 +37,7 @@ import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/type
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
 import Utils from '../../../../../utils';
-import {chartToTable} from '../../../ChartKit/helpers/d3-chart-to-table';
+import {chartToTable} from '../../../ChartKit/helpers/gravity-charts/chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
     ChartKitLoadSuccess,

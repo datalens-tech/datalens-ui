@@ -12,4 +12,5 @@ export type TestParametrizationConfig = {
     dash: DashParametrizationConfig;
     datasets: DatasetsParametrizationConfig;
     charts: ChartParametrizationConfig;
+    workbookId?: string;
 };

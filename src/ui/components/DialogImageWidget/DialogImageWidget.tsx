@@ -152,6 +152,7 @@ export function DialogImageWidget(props: Props) {
                     <PaletteBackground
                         color={data.background?.color}
                         onSelect={(color) => updateData({background: {color}})}
+                        enableCustomBgColorSelector
                     />
                 </FormRow>
             </Dialog.Body>

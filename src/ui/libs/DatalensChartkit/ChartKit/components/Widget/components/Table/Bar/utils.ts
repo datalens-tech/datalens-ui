@@ -21,6 +21,10 @@ export const getRangeValue = (min: number, max: number) => {
 };
 
 export const getRangeValuePart = (rangeValue: number, value: number) => {
+    if (rangeValue === 0) {
+        return 0;
+    }
+
     return round((Math.abs(value) * 100) / Math.abs(rangeValue), ROUND_PRESISION);
 };
 
