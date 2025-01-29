@@ -5,8 +5,10 @@ import {wizard} from './wizard';
 import {dash} from './dash';
 import {datasets} from './datasets';
 import {charts} from './charts';
+import {WorkbookIds} from '../constants';
 
 export const config: TestParametrizationConfig = {
+    workbookId: WorkbookIds.E2EWorkbook,
     wizard,
     connections,
     ql,
