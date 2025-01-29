@@ -17,7 +17,9 @@ const b = block('widget-color-palette');
 const PALETTE_HINTS = {
     [CustomPaletteBgColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
     [CustomPaletteBgColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
-} as const;
+    'var(--g-color-base-generic)': i18n('dash.palette-background', 'value_base_gray'),
+    'custom-btn': i18n('dash.palette-background', 'button_custom_value'),
+};
 
 function colorStringToHex(color: string) {
     return d3Color(color)?.formatHex8() ?? '';
@@ -134,8 +136,12 @@ function PaletteList(props: PaleteListProps) {
                                     isSelected={selected}
                                     ref={selected ? previewRef : undefined}
                                 />
-                                {isCustomPaletteBgColor(colorItem) && (
-                                    <ActionTooltip title={PALETTE_HINTS[colorItem]}>
+                                {colorItem in PALETTE_HINTS && (
+                                    <ActionTooltip
+                                        title={
+                                            PALETTE_HINTS[colorItem as keyof typeof PALETTE_HINTS]
+                                        }
+                                    >
                                         <span className={b('tooltip-trigger')} />
                                     </ActionTooltip>
                                 )}
@@ -149,13 +155,15 @@ function PaletteList(props: PaleteListProps) {
                             selected: customColorInputEnabled,
                         })}
                     >
-                        <Button
-                            view="flat"
-                            className={b('custom-palette-bg-btn', {'with-border': true})}
-                            onClick={() => setCustomColorInputEnabled(true)}
-                        >
-                            <Icon data={PencilToLine} size={16} />
-                        </Button>
+                        <ActionTooltip title={PALETTE_HINTS['custom-btn']}>
+                            <Button
+                                view="flat"
+                                className={b('custom-palette-bg-btn', {'with-border': true})}
+                                onClick={() => setCustomColorInputEnabled(true)}
+                            >
+                                <Icon data={PencilToLine} size={16} />
+                            </Button>
+                        </ActionTooltip>
                     </div>
                 )}
             </Flex>

@@ -1,5 +1,7 @@
 {
+  "button_custom_value": "Указать свое значение",
   "tooltip_click-to-select": "Выберите значение",
+  "value_base_gray": "Базовый серый",
   "value_default": "Базовый",
   "value_transparent": "Прозрачный"
 }
