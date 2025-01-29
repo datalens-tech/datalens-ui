@@ -154,7 +154,7 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
     const {format} = options;
 
     switch (widgetType) {
-        case WidgetKind.D3: {
+        case WidgetKind.GravityCharts: {
             return prepareValues({
                 widget: {},
                 data: chartToTable({chartData: data}),

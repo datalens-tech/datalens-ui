@@ -132,6 +132,8 @@ export const isExportVisible = ({
     const type = loadedData?.type as WidgetKind;
     return (
         !isEmpty(data) &&
-        ([WidgetKind.Graph, WidgetKind.Table, WidgetKind.D3] as WidgetKind[]).includes(type)
+        ([WidgetKind.Graph, WidgetKind.Table, WidgetKind.GravityCharts] as WidgetKind[]).includes(
+            type,
+        )
     );
 };

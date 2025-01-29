@@ -341,7 +341,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
         data: {js: {}},
         type: EDITOR_TYPE.MODULE,
     },
-    // D3_NODE
+    // GRAVITY_CHARTS_NODE
     {
         data: {
             config: {},
@@ -351,7 +351,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.D3_NODE,
+        type: EDITOR_TYPE.GRAVITY_CHARTS_NODE,
     },
     {
         data: {
@@ -363,7 +363,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.D3_NODE,
+        type: EDITOR_TYPE.GRAVITY_CHARTS_NODE,
     },
     {
         data: {
@@ -375,7 +375,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.D3_NODE,
+        type: EDITOR_TYPE.GRAVITY_CHARTS_NODE,
     },
     {
         data: {
@@ -388,7 +388,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.D3_NODE,
+        type: EDITOR_TYPE.GRAVITY_CHARTS_NODE,
     },
     // BLANK_CHART_NODE
     {

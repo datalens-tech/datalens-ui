@@ -58,7 +58,7 @@ const MODEL_TABS = {
         'js',
     ]),
 
-    [EDITOR_TYPE.D3_NODE]: new Set([
+    [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: new Set([
         'config,js,params,shared,ui,url',
         'config,js,meta,params,shared,ui,url',
         'config,js,params,secrets,shared,ui,url',
