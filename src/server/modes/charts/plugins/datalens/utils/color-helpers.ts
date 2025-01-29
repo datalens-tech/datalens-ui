@@ -512,7 +512,8 @@ function getGradientStops(
     const {mid, min, max} = getThresholdValues(colorsConfig, colorValues);
     const colorValueRange = maxColorValue - minColorValue;
     const stops = [min, mid, max].map((v, index) => {
-        const stop = v / colorValueRange;
+        const value = min < 0 ? v - min : v;
+        const stop = value / colorValueRange;
         if (index === 0 && stop > 0) {
             return 0;
         } else if (index === 1 && stop > 1) {
