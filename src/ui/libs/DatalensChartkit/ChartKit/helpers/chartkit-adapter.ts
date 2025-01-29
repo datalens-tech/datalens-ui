@@ -14,7 +14,7 @@ import {
     applyTreemapLabelFormatter,
     fixPieTotals,
 } from './apply-hc-handlers';
-import {getD3ChartKitData} from './d3-chartkit-adapter';
+import {getGravityChartsChartKitData} from './gravity-charts/chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
@@ -203,7 +203,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
         }
         case 'd3': {
             const data = cloneDeep(loadedData) as GraphWidget;
-            return getD3ChartKitData({
+            return getGravityChartsChartKitData({
                 loadedData: data,
                 onChange,
             });

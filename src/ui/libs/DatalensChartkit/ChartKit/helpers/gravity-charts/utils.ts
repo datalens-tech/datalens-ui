@@ -2,10 +2,9 @@ import type {ChartKitWidgetSeries, ChartKitWidgetSeriesData} from '@gravity-ui/c
 import get from 'lodash/get';
 import set from 'lodash/set';
 
-import type {StringParams} from '../../../../../shared';
-
-import type {PointActionParams} from './utils';
-import {hasMatchedActionParams} from './utils';
+import type {StringParams} from '../../../../../../shared';
+import type {PointActionParams} from '../utils';
+import {hasMatchedActionParams} from '../utils';
 
 const Opacity = {
     SELECTED: 1,

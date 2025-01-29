@@ -398,7 +398,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 case WidgetKind.Graph: {
                     return ChartsDataProvider.graphToTable(processed);
                 }
-                case WidgetKind.D3: {
+                case WidgetKind.GravityCharts: {
                     return {
                         ...processed,
                         type: 'table',
