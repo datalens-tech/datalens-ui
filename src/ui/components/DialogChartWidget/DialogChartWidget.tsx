@@ -540,7 +540,12 @@ class DialogChartWidget extends React.PureComponent<
         const helpPopover = (
             <HelpPopover
                 className={b('help-tooltip')}
-                content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                content={
+                    <React.Fragment>
+                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                        {this.getHierarchyWarning()}
+                    </React.Fragment>
+                }
             />
         );
 
@@ -560,7 +565,6 @@ class DialogChartWidget extends React.PureComponent<
                         checked={enableActionParams}
                         disabled={!canUseFiltration}
                     />
-                    {this.getHierarchyWarning()}
                 </div>
             </FormRow>
         );
