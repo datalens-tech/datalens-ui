@@ -58,4 +58,4 @@ export const UNRELEASED_MODULE_MARK = '@saved';
 
 export const EVENT_DRAW_PREVIEW = 'editor-draw-preview';
 
-export const getEmptyTemplateType = () => EDITOR_TYPE.D3_NODE;
+export const getEmptyTemplateType = () => EDITOR_TYPE.GRAVITY_CHARTS_NODE;

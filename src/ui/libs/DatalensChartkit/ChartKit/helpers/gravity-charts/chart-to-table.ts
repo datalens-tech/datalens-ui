@@ -20,6 +20,26 @@ function getSeriesDataForExport(series: ChartKitWidgetSeries) {
     }
 }
 
+function getDefaultExportSettings(series: ChartKitWidgetSeries): SeriesExportSettings {
+    const point = series.data?.[0];
+    const pointFields = Object.keys(point).map((key) => {
+        return {
+            field: key,
+            name: key,
+        };
+    });
+
+    return {
+        columns: [
+            {
+                field: 'series.name',
+                name: 'name',
+            },
+            ...pointFields,
+        ],
+    };
+}
+
 export function chartToTable(args: ChartToTableArgs): TableData | null {
     const {chartData} = args;
 
@@ -31,7 +51,11 @@ export function chartToTable(args: ChartToTableArgs): TableData | null {
 
     const columns = new Map<string, ColumnExportSettings>();
     chartData.series.data.forEach((s) => {
-        const exportSettings: SeriesExportSettings = get(s, 'custom.exportSettings');
+        const exportSettings: SeriesExportSettings = get(
+            s,
+            'custom.exportSettings',
+            getDefaultExportSettings(s),
+        );
 
         exportSettings?.columns.forEach((col) => {
             columns.set(col.field, col);

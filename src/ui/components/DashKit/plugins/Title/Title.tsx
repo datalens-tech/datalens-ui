@@ -13,7 +13,7 @@ import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
-import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -98,7 +98,7 @@ const titlePlugin: PluginTitle = {
         const showBgColor = Boolean(
             data.background?.enabled !== false &&
                 data.background?.color &&
-                data.background?.color !== CustomPaletteColors.NONE,
+                data.background?.color !== CustomPaletteBgColors.NONE,
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);

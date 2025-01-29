@@ -207,7 +207,7 @@ export const getOpenAsTableMenuItem = ({
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
         const isChart =
             loadedData?.data &&
-            ([WidgetKind.Graph, WidgetKind.D3] as string[]).includes(loadedData?.type);
+            ([WidgetKind.Graph, WidgetKind.GravityCharts] as string[]).includes(loadedData?.type);
 
         return Boolean(!isCriticalError && isExportAllowed && isChart);
     },

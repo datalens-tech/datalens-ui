@@ -1,7 +1,8 @@
 import type {History} from 'history';
-import type {DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
+import type {BackgroundSettings, DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
 import {DashTabItemType} from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
+import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
@@ -25,9 +26,44 @@ const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] =
 // This type guard is to save this behaviour
 export const isCallable = <T extends (args: any) => void>(fn: T | undefined): T => fn as T;
 
+function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
+    if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
+        return {
+            color: background.color.replace('medium', 'light-hover'),
+        };
+    }
+
+    return background;
+}
+
+export function migrateBgColor(item: DashTabItem): DashTabItem {
+    const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
+
+    if ('background' in newItem.data) {
+        if (
+            newItem.data.background &&
+            DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(newItem.data.background.color)
+        ) {
+            newItem.data.background = getActualBackground(newItem.data.background);
+
+            return newItem;
+        }
+    }
+    if (newItem.type === DashTabItemType.Widget) {
+        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
+            ...tab,
+            background: getActualBackground(tab.background),
+        }));
+
+        return newItem;
+    }
+    return item;
+}
+
 export const prepareLoadedData = (data: DashEntry['data']) => {
     data.tabs.forEach((dashTabItem) => {
-        dashTabItem.items.forEach((widgetItem) => {
+        dashTabItem.items = dashTabItem.items.map((wi) => {
+            const widgetItem = migrateBgColor(wi);
             if (widgetItem.type !== DashTabItemType.Control) {
                 return widgetItem;
             }

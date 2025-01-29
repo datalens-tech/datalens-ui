@@ -15,6 +15,7 @@ import {
     getFakeTitleOrTitle,
     isMarkupDataType,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -336,10 +337,19 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
-                    if (tooltipField?.markupType === MARKUP_TYPE.markdown) {
-                        pointData[WRAPPED_MARKDOWN_KEY] = text;
-                    } else {
-                        pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                    switch (tooltipField?.markupType) {
+                        case MARKUP_TYPE.markdown: {
+                            pointData[WRAPPED_MARKDOWN_KEY] = text;
+                            break;
+                        }
+                        case MARKUP_TYPE.html: {
+                            pointData.text = wrapHtml(text);
+                            break;
+                        }
+                        default: {
+                            pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                            break;
+                        }
                     }
                 }
 

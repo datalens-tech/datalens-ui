@@ -129,7 +129,7 @@ export type DashTabItem =
     | DashTabItemGroupControl
     | DashTabItemImage;
 
-type BackgroundSettings = {
+export type BackgroundSettings = {
     enabled?: boolean;
     color: string;
 };

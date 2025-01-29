@@ -1,7 +1,7 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
 import {DL} from 'ui/constants';
-import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/d3-chart-to-table';
+import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/gravity-charts/chart-to-table';
 import {registry} from 'ui/registry';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
@@ -154,7 +154,7 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
     const {format} = options;
 
     switch (widgetType) {
-        case WidgetKind.D3: {
+        case WidgetKind.GravityCharts: {
             return prepareValues({
                 widget: {},
                 data: chartToTable({chartData: data}),

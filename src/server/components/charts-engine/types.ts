@@ -123,6 +123,9 @@ export type Source<T = string | Record<string, string>> = {
     hideInInspector?: boolean;
     ui?: boolean;
     sourceArgs?: SourcesArgs;
+    connectionId?: string;
+    body?: string;
+    path?: string;
 };
 
 export type AdapterContext = {

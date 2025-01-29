@@ -56,14 +56,14 @@ const EditorPage = ({
     );
     const prevRevId = usePrevious(revId);
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
-    const {workbookId} = match.params;
+    const {workbookId: routeWorkbookId} = match.params;
 
     const loadAndSetTemplate = React.useCallback(
         (item) => {
             setTemplate(item);
-            initialLoad({template: item, location});
+            initialLoad({template: item, location, workbookId: routeWorkbookId});
         },
-        [initialLoad, location],
+        [initialLoad, location, routeWorkbookId],
     );
 
     const isEntryInited = Boolean(entry) && !entry.fake;
@@ -129,7 +129,12 @@ const EditorPage = ({
 
     function onClickNodeTemplate(item) {
         const urlPath = item.empty ? '' : `/${item.name}`;
-        history.push(getFullPathName({base: `${EditorUrls.EntryDraft}${urlPath}`, workbookId}));
+        history.push(
+            getFullPathName({
+                base: `${EditorUrls.EntryDraft}${urlPath}`,
+                workbookId: routeWorkbookId,
+            }),
+        );
     }
 
     const handleSetActualVersion = () => {
@@ -171,7 +176,7 @@ const EditorPage = ({
                 <UnloadConfirmation />
                 <ActionPanel
                     history={history}
-                    workbookId={workbookId}
+                    workbookId={entry.workbookId}
                     setActualVersion={handleSetActualVersion}
                 />
                 <div className={b('content')}>
@@ -183,7 +188,9 @@ const EditorPage = ({
 
     const renderPageContent = () => {
         if (editorPath === EditorUrlParams.New) {
-            return <NewChart onClickNodeTemplate={onClickNodeTemplate} />;
+            return (
+                <NewChart onClickNodeTemplate={onClickNodeTemplate} workbookId={routeWorkbookId} />
+            );
         } else {
             return renderEditor(asideHeaderData.size);
         }
@@ -216,6 +223,7 @@ EditorPage.propTypes = {
         entryId: PropTypes.string,
         fake: PropTypes.bool,
         revId: PropTypes.string,
+        workbookId: PropTypes.string,
     }),
 };
 
