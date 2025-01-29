@@ -16,7 +16,7 @@ const b = block('revisions-diff-btn-new-window');
 
 const openNewWindow = (revId?: string) => {
     const url = new URL(window.location.href);
-    if (revId) url.searchParams.set(URL_QUERY.REV_ID_OLD, revId);
+    if (revId) url.searchParams.set(URL_QUERY.REV_ID, revId);
     window.open(url.href, '_blank');
 };
 

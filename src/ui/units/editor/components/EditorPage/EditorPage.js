@@ -5,6 +5,11 @@ import {usePrevious} from 'hooks';
 import PropTypes from 'prop-types';
 import {DndProvider} from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import {useDispatch} from 'react-redux';
+import {isDraftVersion} from 'ui/components/Revisions/helpers';
+import {URL_QUERY} from 'ui/constants';
+import {openDialogSaveDraftChartAsActualConfirm} from 'ui/store/actions/dialog';
+import {getUrlParamFromStr} from 'ui/utils';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {registry} from '../../../../registry';
@@ -12,6 +17,7 @@ import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
+import {fetchEditorChartUpdate} from '../../store/reducers/editor/editor';
 import {getFullPathName} from '../../utils';
 import EditorPageError from '../EditorPageError/EditorPageError';
 import NewChart from '../NewChart/NewChart';
@@ -32,8 +38,11 @@ const EditorPage = ({
     asideHeaderData,
     setCurrentPageEntry,
     setLoading,
+    setEntryContent,
 }) => {
     const [template, setTemplate] = React.useState(null);
+
+    const dispatch = useDispatch();
 
     const editorPath = React.useMemo(() => {
         const {extractEntryId} = registry.common.functions.getAll();
@@ -41,6 +50,11 @@ const EditorPage = ({
         return entryId ? entryId : match.params.path;
     }, [match.params.path]);
     const prevEditorPath = usePrevious(editorPath);
+    const revId = React.useMemo(
+        () => getUrlParamFromStr(location.search, URL_QUERY.REV_ID),
+        [location.search],
+    );
+    const prevRevId = usePrevious(revId);
     const templatePath = React.useMemo(() => match.params.template, [match.params.template]);
     const {workbookId} = match.params;
 
@@ -84,17 +98,26 @@ const EditorPage = ({
             return;
         }
 
-        if (editorPath !== prevEditorPath || !isEntryInited) {
-            setLoading({status: Status.Loading});
+        if (revId !== prevRevId || editorPath !== prevEditorPath || !isEntryInited) {
             initialLoad({id: editorPath, location});
         }
-    }, [loadAndSetTemplate, editorPath, templatePath, location, initialLoad, setLoading]);
+    }, [
+        loadAndSetTemplate,
+        editorPath,
+        templatePath,
+        location,
+        initialLoad,
+        setLoading,
+        revId,
+        isEntryInited,
+    ]);
 
     React.useEffect(() => {
         if (isEntryInited && isAsideHeaderEnabled) {
             setCurrentPageEntry(entry);
+            setEntryContent(entry);
         }
-    }, [isEntryInited, isAsideHeaderEnabled, entry]);
+    }, [isEntryInited, isAsideHeaderEnabled, entry, setCurrentPageEntry, setEntryContent]);
 
     React.useEffect(() => {
         return () => {
@@ -108,6 +131,24 @@ const EditorPage = ({
         const urlPath = item.empty ? '' : `/${item.name}`;
         history.push(getFullPathName({base: `${EditorUrls.EntryDraft}${urlPath}`, workbookId}));
     }
+
+    const handleSetActualVersion = () => {
+        const isDraftEntry = isDraftVersion(entry);
+
+        if (isDraftEntry) {
+            dispatch(fetchEditorChartUpdate({mode: 'publish', history, location}));
+        } else {
+            dispatch(
+                openDialogSaveDraftChartAsActualConfirm({
+                    onApply: () =>
+                        dispatch(fetchEditorChartUpdate({mode: 'publish', history, location})),
+                }),
+            );
+
+            // TODO: need oppotunity to make savedId and publishedId equal to currentRevId
+            return;
+        }
+    };
 
     const renderEditor = (size) => {
         switch (editorStatus) {
@@ -125,7 +166,11 @@ const EditorPage = ({
         return (
             <React.Fragment>
                 <UnloadConfirmation />
-                <ActionPanel history={history} workbookId={workbookId} />
+                <ActionPanel
+                    history={history}
+                    workbookId={workbookId}
+                    setActualVersion={handleSetActualVersion}
+                />
                 <div className={b('content')}>
                     <Grid size={size} />
                 </div>
@@ -155,6 +200,7 @@ const EditorPage = ({
 EditorPage.propTypes = {
     initialLoad: PropTypes.func.isRequired,
     setCurrentPageEntry: PropTypes.func.isRequired,
+    setEntryContent: PropTypes.func.isRequired,
     setLoading: PropTypes.func.isRequired,
     editorStatus: PropTypes.string.isRequired,
     match: PropTypes.object.isRequired,
@@ -166,6 +212,7 @@ EditorPage.propTypes = {
         key: PropTypes.string,
         entryId: PropTypes.string,
         fake: PropTypes.bool,
+        revId: PropTypes.string,
     }),
 };
 

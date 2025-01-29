@@ -40,7 +40,8 @@ export const UPDATE_ENTRY_MODE = {
 };
 
 export const ENTRY_ACTION = {
-    SAVE_AS: 'saveAs',
+    SAVE_AS_COPY: 'saveAsCopy',
+    SAVE_AS_DRAFT: 'saveAsDraft',
 };
 
 export const DIALOG_RESOLVE_STATUS = {
