@@ -142,7 +142,10 @@ export const fetchEditorChartUpdate = ({mode, history, location}) => {
             dispatch(
                 componentStateChange({name: ComponentName.ButtonSave, data: {progress: true}}),
             );
-            const meta = mode === 'publish' ? {...entry.meta, is_release: true} : {...entry.meta};
+            const meta =
+                mode === UPDATE_ENTRY_MODE.PUBLISH
+                    ? {...entry.meta, is_release: true}
+                    : {...entry.meta};
 
             const updatedEntry = await getSdk().sdk.mix.updateEditorChart({
                 mode,

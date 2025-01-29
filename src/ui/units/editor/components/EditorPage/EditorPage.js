@@ -13,7 +13,7 @@ import {getUrlParamFromStr} from 'ui/utils';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {registry} from '../../../../registry';
-import {EditorUrlParams, EditorUrls, Status} from '../../constants/common';
+import {EditorUrlParams, EditorUrls, Status, UPDATE_ENTRY_MODE} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
@@ -136,17 +136,20 @@ const EditorPage = ({
         const isDraftEntry = isDraftVersion(entry);
 
         if (isDraftEntry) {
-            dispatch(fetchEditorChartUpdate({mode: 'publish', history, location}));
+            dispatch(fetchEditorChartUpdate({mode: UPDATE_ENTRY_MODE.PUBLISH, history, location}));
         } else {
             dispatch(
                 openDialogSaveDraftChartAsActualConfirm({
                     onApply: () =>
-                        dispatch(fetchEditorChartUpdate({mode: 'publish', history, location})),
+                        dispatch(
+                            fetchEditorChartUpdate({
+                                mode: UPDATE_ENTRY_MODE.PUBLISH,
+                                history,
+                                location,
+                            }),
+                        ),
                 }),
             );
-
-            // TODO: need oppotunity to make savedId and publishedId equal to currentRevId
-            return;
         }
     };
 
