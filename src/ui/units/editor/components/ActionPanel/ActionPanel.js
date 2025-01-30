@@ -85,6 +85,7 @@ function ActionPanelService({
                 centerItems={centerItems}
                 rightItems={rightItems}
                 setActualVersion={setActualVersion}
+                hideOpenRevisionsButton={true}
             />
         </React.Fragment>
     );

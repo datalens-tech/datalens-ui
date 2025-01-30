@@ -55,6 +55,7 @@ type OwnProps = {
         message: string;
         onConfirm?: () => void;
     };
+    hideOpenRevisionsButton?: boolean;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -151,6 +152,7 @@ class ActionPanel extends React.Component<Props, State> {
             setActualVersion,
             isEditing,
             deprecationWarning,
+            hideOpenRevisionsButton,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -189,6 +191,7 @@ class ActionPanel extends React.Component<Props, State> {
                             isEditing={isEditing || false}
                             deprecationMessage={deprecationWarning?.message}
                             onDeprecationConfirm={deprecationWarning?.onConfirm}
+                            hideOpenRevisionsButton={hideOpenRevisionsButton}
                         />
                         <ExpandablePanel
                             title={i18n('label_history-changes')}
