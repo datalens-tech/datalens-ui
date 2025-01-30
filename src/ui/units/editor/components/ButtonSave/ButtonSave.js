@@ -158,7 +158,7 @@ function ButtonSave({
         if (locked) {
             return i18n('editor.button-save.view', 'button_save');
         }
-        if (!isCurrentRevisionActual) {
+        if (!isCurrentRevisionActual && !entry.fake) {
             return i18n(
                 'editor.button-save.view',
                 disabledSave ? 'button_saved' : 'button_save-as-draft',
@@ -194,6 +194,11 @@ function ButtonSave({
     }, [disabledPublish, entry, isCurrentRevisionActual, locked, onClick]);
 
     const handleClick = () => {
+        if (entry.fake) {
+            onClick();
+            return;
+        }
+
         if (isCurrentRevisionActual) {
             onClick(ACTIONS.PUBLISH);
             return;
