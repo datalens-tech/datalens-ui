@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    BASE_GREY_BACKGROUND_COLOR,
     CustomPaletteBgColors,
     WIDGET_BG_COLORS_PRESET,
     WIDGET_BG_HEAVY_COLORS_PRESET,
@@ -25,7 +26,7 @@ export const PaletteBackground = ({
     const mainPresetOptions = [
         CustomPaletteBgColors.NONE,
         CustomPaletteBgColors.LIKE_CHART,
-        enableCustomBgColorSelector ? 'var(--g-color-base-generic)' : '',
+        enableCustomBgColorSelector ? BASE_GREY_BACKGROUND_COLOR : '',
     ].filter(Boolean);
 
     const paletteOptions = WIDGET_BG_COLORS_PRESET.concat(
