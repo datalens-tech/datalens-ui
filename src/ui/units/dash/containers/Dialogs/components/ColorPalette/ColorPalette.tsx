@@ -8,7 +8,11 @@ import {color as d3Color} from 'd3-color';
 import {i18n} from 'i18n';
 import {DashCommonQa} from 'shared';
 import {ColorPickerInput} from 'ui/components/ColorPickerInput/ColorPickerInput';
-import {CustomPaletteBgColors, isCustomPaletteBgColor} from 'ui/constants/widgets';
+import {
+    BASE_GREY_BACKGROUND_COLOR,
+    CustomPaletteBgColors,
+    isCustomPaletteBgColor,
+} from 'ui/constants/widgets';
 
 import './ColorPalette.scss';
 
@@ -17,7 +21,7 @@ const b = block('widget-color-palette');
 const PALETTE_HINTS = {
     [CustomPaletteBgColors.LIKE_CHART]: i18n('dash.palette-background', 'value_default'),
     [CustomPaletteBgColors.NONE]: i18n('dash.palette-background', 'value_transparent'),
-    'var(--g-color-base-generic)': i18n('dash.palette-background', 'value_base_gray'),
+    [BASE_GREY_BACKGROUND_COLOR]: i18n('dash.palette-background', 'value_base_gray'),
     'custom-btn': i18n('dash.palette-background', 'button_custom_value'),
 };
 
