@@ -109,12 +109,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isEmpty(relations)) {
-            if (renderDialogRelatedEntitiesAlertHint) {
-                return renderDialogRelatedEntitiesAlertHint({
-                    direction: currentDirection,
-                    entryType: entry.type,
-                    entryScope: entry.scope,
-                });
+            const alert = renderDialogRelatedEntitiesAlertHint?.({
+                direction: currentDirection,
+                entryType: entry.type,
+                entryScope: entry.scope,
+            });
+
+            if (alert) {
+                return alert;
             }
 
             return (
