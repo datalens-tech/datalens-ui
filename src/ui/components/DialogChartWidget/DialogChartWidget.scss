@@ -148,6 +148,6 @@
     &__info-comment {
         color: var(--g-color-text-secondary);
         line-height: var(--g-text-body-1-line-height);
-        margin: 0;
+        margin: var(--g-spacing-2) 0 0 0;
     }
 }
