@@ -124,9 +124,12 @@ export type Source<T = string | Record<string, string>> = {
     ui?: boolean;
     sourceArgs?: SourcesArgs;
     connectionId?: string;
-    body?: string;
+    body?: Record<string, unknown>;
     path?: string;
 };
+
+export type SourceWithAPIConnector = Source &
+    Required<Pick<Source, 'connectionId' | 'method' | 'body' | 'path'>>;
 
 export type AdapterContext = {
     headers: {

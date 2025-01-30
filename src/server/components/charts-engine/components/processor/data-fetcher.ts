@@ -1,6 +1,5 @@
 /* eslint-disable complexity */
 import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
-import path from 'node:path';
 import querystring from 'node:querystring';
 import url from 'node:url';
 
@@ -27,6 +26,13 @@ import {config} from '../../constants';
 import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../../types';
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
+
+import type {APIConnectorParams} from './sources';
+import {
+    getApiConnectorParamsFromSource,
+    isAPIConnectorSource,
+    prepareSourceWithAPIConnector,
+} from './sources';
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -97,8 +103,8 @@ type DataFetcherRequestOptions = {
     timeout: number;
     spStatFormat: string | string[] | null;
     maxRedirects?: number;
-    form?: string | Record<string, string | Record<string, string>>;
-    body?: string | Record<string, string | Record<string, string>>;
+    form?: string | Record<string, string | Record<string, unknown>>;
+    body?: string | Record<string, string | Record<string, unknown>>;
     json?: boolean;
 };
 
@@ -542,22 +548,13 @@ export class DataFetcher {
 
         const hideInInspector = source.hideInInspector;
 
-        let JSONConnectorParams: Record<string, string> = {};
+        let apiConnectorParams: APIConnectorParams | undefined;
         if (source.connectionId) {
-            if (source.method && source.body && source.path) {
-                source.url = path.join(
-                    '/_bi_connections',
-                    encodeURIComponent(source.connectionId),
-                    'typed_query_raw',
-                );
-                JSONConnectorParams = {
-                    method: source.method,
-                    body: source.body,
-                    path: source.path,
-                };
-                source.method = 'POST';
+            if (isAPIConnectorSource(source)) {
+                apiConnectorParams = getApiConnectorParamsFromSource(source);
+                source = prepareSourceWithAPIConnector(source, apiConnectorParams);
             } else {
-                ctx.logError('FETCHER_INCORRECT_JSON_CONNECTOR_SPECIFICATION', {
+                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', {
                     connectionId: source.connectionId,
                 });
 
@@ -876,9 +873,10 @@ export class DataFetcher {
             }
         }
 
-        const sourceData = source.connectionId
-            ? {parameters: JSONConnectorParams}
-            : (!isString(source) && source.data) || null;
+        const sourceData =
+            isAPIConnectorSource(source) && apiConnectorParams
+                ? {parameters: apiConnectorParams}
+                : (!isString(source) && source.data) || null;
 
         if (sourceData) {
             if (sourceFormat === 'form') {
