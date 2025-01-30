@@ -8,7 +8,8 @@ import {HighchartsMapPlugin} from './HighchartsMap';
 import {MarkupPlugin} from './Markup';
 import {MetricPlugin} from './Metric';
 import {TablePlugin} from './Table';
-import {YandexMapPlugin} from './YandexMap';
+// import {YandexMapPlugin} from './YandexMap';
+import {YandexMapV3Plugin as YandexMapPlugin} from './YandexMapV3';
 
 export {MetricPlugin} from './Metric';
 export {HighchartsMapPlugin} from './HighchartsMap';
