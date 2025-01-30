@@ -206,6 +206,19 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+            const backgroundData =
+                'background' in itemData
+                    ? {
+                          background: {
+                              color:
+                                  itemData.background?.color &&
+                                  itemData.background.enabled !== false &&
+                                  WIDGET_BG_COLORS_PRESET.includes(itemData.background.color)
+                                      ? itemData.background.color
+                                      : CustomPaletteBgColors.NONE,
+                          },
+                      }
+                    : {};
             const newItem = {
                 ...action.payload.item,
                 data: {
@@ -215,11 +228,7 @@ function dash(state = initialState, action) {
                         typeof itemData.size === 'object'
                             ? DashTabItemTitleSizes.XL
                             : itemData.size,
-                    background:
-                        'background' in itemData &&
-                        !WIDGET_BG_COLORS_PRESET.includes(itemData.background?.color)
-                            ? CustomPaletteBgColors.NONE
-                            : itemData.background.color,
+                    ...backgroundData,
                 },
             };
 
