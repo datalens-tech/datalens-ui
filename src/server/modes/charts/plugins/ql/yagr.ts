@@ -46,6 +46,25 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
+function getAxisTitle(placeholders: ServerVisualization['placeholders'], axis: PlaceholderId) {
+    const axisSettings = placeholders.find((p) => p.id === axis);
+
+    switch (axisSettings?.settings?.title) {
+        case 'manual': {
+            return axisSettings.settings.titleValue;
+        }
+        case 'auto': {
+            const firstItemTitle = axisSettings.items[0].title;
+            return axisSettings.items.every((i) => i.title === firstItemTitle)
+                ? firstItemTitle
+                : undefined;
+        }
+        default: {
+            return undefined;
+        }
+    }
+}
+
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
@@ -87,11 +106,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         title,
         axes: {
             x: {
-                label: 'UTC',
+                label: getAxisTitle(visualization.placeholders, PlaceholderId.X),
                 labelSize: 25,
             },
             y: {
-                label: '',
+                label: getAxisTitle(visualization.placeholders, PlaceholderId.Y),
                 precision: 'auto',
                 scale: 'y',
                 side: 'left',
