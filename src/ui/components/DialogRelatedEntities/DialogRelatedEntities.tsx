@@ -45,8 +45,8 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         null,
     );
     const [relationsCount, setRelationsCount] = React.useState<null | number>(null);
-    const {DialogRelatedEntitiesRadioHint, DialogRelatedEntitiesAlertHint} =
-        registry.common.components.getAll();
+    const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
+    const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
     React.useEffect(() => {
         setIsLoading(true);
@@ -109,16 +109,12 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isEmpty(relations)) {
-            const alert = (
-                <DialogRelatedEntitiesAlertHint
-                    entryScope={entry.scope}
-                    entryType={entry.type}
-                    direction={currentDirection}
-                />
-            );
-
-            if (alert) {
-                return alert;
+            if (renderDialogRelatedEntitiesAlertHint) {
+                return renderDialogRelatedEntitiesAlertHint({
+                    direction: currentDirection,
+                    entryType: entry.type,
+                    entryScope: entry.scope,
+                });
             }
 
             return (

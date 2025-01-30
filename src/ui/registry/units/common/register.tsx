@@ -5,7 +5,7 @@ import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
-import {DialogRelatedEntitiesAlertHint} from '../../../components/DialogRelatedEntities/DialogRelatedEntitiesAlertHint';
+import {renderDialogRelatedEntitiesAlertHint} from '../../../components/DialogRelatedEntities/DialogRelatedEntitiesAlertHint';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
 import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
 import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
@@ -58,7 +58,6 @@ export const registerCommonPlugins = () => {
         DatepickerControl,
         MarkdownControl,
         WorkbookEntriesTableTabs,
-        DialogRelatedEntitiesAlertHint,
     });
 
     registry.common.functions.register({
@@ -100,5 +99,6 @@ export const registerCommonPlugins = () => {
         getEntryScopesWithRevisionsList,
         getRevisionsPanelEntryScopesTexts,
         getRestrictedParamNames,
+        renderDialogRelatedEntitiesAlertHint,
     });
 };
