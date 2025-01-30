@@ -7,7 +7,7 @@
   "label_progress-publishing": "Publishing",
   "label_status-current": "Current",
   "label_status-draft": "Draft",
-  "label_status-published": "Current",
+  "label_status-published": "Actual",
   "label_status-tooltip-current": "Current",
   "label_status-tooltip-draft": "Draft",
   "label_status-tooltip-not-actual": "Not actual",
@@ -17,5 +17,5 @@
   "toast_get-revisions-failed": "Failed to load change history",
   "toast_warning-has-no-saved-changes": "Any unsaved changes will be lost.",
   "value_open-revision": "Open",
-  "value_publish-revision": "Make current"
+  "value_publish-revision": "Make actual"
 }
