@@ -179,7 +179,7 @@ function ButtonSave({
         const saveAsDraftItem = {
             action: () => onClick(ACTIONS.SAVE),
             text: i18n('component.chart-save-controls', 'button_save-as-draft'),
-            hidden: entry.fake,
+            hidden: entry.fake || locked,
         };
 
         const saveAndPublishItem = {
