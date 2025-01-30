@@ -105,8 +105,8 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 
+                // TODO: remove temporary restriction of the new versioning for the editor
                 const currentPathPart = getCurrentPageFirstPathPart();
-                // temporary restriction of the new versioning for the editor until we switch to it,
                 const isChartNotEditor = isChartsPage(currentPathPart);
 
                 return (
