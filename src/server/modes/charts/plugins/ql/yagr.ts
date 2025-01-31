@@ -54,7 +54,7 @@ function getAxisTitle(placeholders: ServerVisualization['placeholders'], axis: P
             return axisSettings.settings.titleValue;
         }
         case 'auto': {
-            const firstItemTitle = axisSettings.items[0].title;
+            const firstItemTitle = axisSettings.items[0]?.title;
             return axisSettings.items.every((i) => i.title === firstItemTitle)
                 ? firstItemTitle
                 : undefined;
