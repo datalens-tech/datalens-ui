@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {Feature} from 'shared';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {MODULE_TYPE, PANE_VIEWS} from '../../constants/common';
 import Console from '../../containers/Console/Console';
@@ -139,7 +139,7 @@ const PaneView = ({
                             active={state.show === SHOW.DIFF}
                         />
                     )}
-                    {hasDocs && Utils.isEnabledFeature(Feature.EnableChartEditorDocs) && (
+                    {hasDocs && isEnabledFeature(Feature.EnableChartEditorDocs) && (
                         <ButtonDocs
                             onClick={() =>
                                 dispatchAction(ACTION_TYPE.TOGGLE_SHOW, {show: SHOW.DOCS})

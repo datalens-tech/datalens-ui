@@ -1,6 +1,5 @@
-import {selectAvailableClientGradients} from 'constants/common';
-
 import type {ColorsConfig, Field, GradientNullMode, GradientType, PartialBy} from 'shared';
+import {selectAvailableClientGradients} from 'shared/constants/gradients';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 

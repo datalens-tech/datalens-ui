@@ -14,8 +14,9 @@ import {ActionPanel, DL, EntryDialogName, EntryDialogResolveStatus} from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 import type {ValuesType} from 'utility-types';
-import Utils from 'utils';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import type {
@@ -83,7 +84,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     render() {
         const {entry, isEditMode} = this.props;
         const showHeader = !isEmbeddedMode();
-        const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
+        const enablePublish = isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
 

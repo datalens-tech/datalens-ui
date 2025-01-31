@@ -1,7 +1,7 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import type {Field as TField} from 'shared';
 import {DATASET_FIELD_TYPES, Feature, PlaceholderId, WizardVisualizationId} from 'shared';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -86,7 +86,7 @@ export function canUseStringAsMarkdown(
 }
 
 export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
-    if (!Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+    if (!isEnabledFeature(Feature.HtmlInWizard)) {
         return false;
     }
 

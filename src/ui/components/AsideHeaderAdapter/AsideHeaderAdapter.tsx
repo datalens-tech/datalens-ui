@@ -13,7 +13,7 @@ import {DlNavigationQA, Feature} from 'shared';
 import {DL, PRODUCT_NAME} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import type {AsideHeaderData} from '../../store/typings/asideHeader';
@@ -133,7 +133,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         setVisiblePanel(undefined);
     }, []);
 
-    const isReadOnly = Utils.isEnabledFeature(Feature.ReadOnlyMode);
+    const isReadOnly = isEnabledFeature(Feature.ReadOnlyMode);
     const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
         ? {
               message: baseI18n('common.read-only', 'toast_editing-warning'),

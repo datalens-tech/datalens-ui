@@ -402,7 +402,7 @@ export const pushStats = (
     scope: ChartsStats['scope'],
     chartsDataProvider: ChartWithProviderProps['dataProvider'],
 ) => {
-    if (Utils.isEnabledFeature(Feature.EnableDashChartStat)) {
+    if (isEnabledFeature(Feature.EnableDashChartStat)) {
         chartsDataProvider.pushStats?.(data as ChartKitLoadSuccess<ChartsData>, {
             groupId: DL.REQUEST_ID,
             scope,

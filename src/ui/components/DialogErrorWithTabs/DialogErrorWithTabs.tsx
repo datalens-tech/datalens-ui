@@ -11,7 +11,7 @@ import type {DataLensApiError} from 'ui';
 import {SHEET_IDS} from 'ui';
 import {registry} from 'ui/registry';
 import type {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import logger from '../../libs/logger';
@@ -209,7 +209,7 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
             }
         });
 
-        if (state.code && Utils.isEnabledFeature(Feature.FetchDocumentation)) {
+        if (state.code && isEnabledFeature(Feature.FetchDocumentation)) {
             state.documentation = await this.fetchErrorDocumentation(state.code);
         }
 
