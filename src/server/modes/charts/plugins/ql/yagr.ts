@@ -4,6 +4,7 @@ import set from 'lodash/set';
 import {LegendDisplayMode, PlaceholderId, QlVisualizationId} from '../../../../../shared';
 import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import {getAxisTitle} from '../datalens/utils/axis-helpers';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -46,23 +47,14 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
-function getAxisTitle(placeholders: ServerVisualization['placeholders'], axis: PlaceholderId) {
-    const axisSettings = placeholders.find((p) => p.id === axis);
+function getTitleForAxis(placeholders: ServerVisualization['placeholders'], axis: PlaceholderId) {
+    const placeholder = placeholders.find((p) => p.id === axis);
 
-    switch (axisSettings?.settings?.title) {
-        case 'manual': {
-            return axisSettings.settings.titleValue;
-        }
-        case 'auto': {
-            const firstItemTitle = axisSettings.items[0]?.title;
-            return axisSettings.items.every((i) => i.title === firstItemTitle)
-                ? firstItemTitle
-                : undefined;
-        }
-        default: {
-            return undefined;
-        }
+    if (!placeholder?.settings) {
+        return undefined;
     }
+
+    return getAxisTitle(placeholder.settings, placeholder.items[0]);
 }
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
@@ -106,11 +98,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         title,
         axes: {
             x: {
-                label: getAxisTitle(visualization.placeholders, PlaceholderId.X),
+                label: getTitleForAxis(visualization.placeholders, PlaceholderId.X),
                 labelSize: 25,
             },
             y: {
-                label: getAxisTitle(visualization.placeholders, PlaceholderId.Y),
+                label: getTitleForAxis(visualization.placeholders, PlaceholderId.Y),
                 precision: 'auto',
                 scale: 'y',
                 side: 'left',
