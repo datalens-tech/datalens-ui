@@ -1,5 +1,7 @@
 {
+  "button_custom_value": "Enter custom value",
   "tooltip_click-to-select": "Select value",
+  "value_base_gray": "Basic gray",
   "value_default": "Basic",
   "value_transparent": "Transparent"
 }

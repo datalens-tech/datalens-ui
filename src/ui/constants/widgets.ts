@@ -5,6 +5,8 @@ export const CustomPaletteBgColors = {
     NONE: 'transparent',
 } as const;
 
+export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
+
 export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
 
 export function isCustomPaletteBgColor(color: string): color is CustomPaletteBgColor {
