@@ -1,6 +1,8 @@
 @import '../../../../styles/variables';
+@import '../../../../styles/mixins';
 
 .editor-page {
+    @include revision-panel-fix;
     height: calc(100% - #{$headerHeight});
     min-width: 1100px;
     display: flex;
@@ -19,12 +21,10 @@
     }
 
     &__content {
+        flex-grow: 1;
+        display: block;
+        position: relative;
+        width: 100%;
         height: calc(100% - #{$actionPanelHeight});
-        display: flex;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: $actionPanelHeight;
-        bottom: 0;
     }
 }

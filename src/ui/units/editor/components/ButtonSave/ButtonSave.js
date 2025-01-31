@@ -18,12 +18,7 @@ import {
 } from 'ui';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
-import {
-    DIALOG_RESOLVE_STATUS,
-    ENTRY_ACTION,
-    TOASTER_TYPE,
-    UPDATE_ENTRY_MODE,
-} from '../../constants/common';
+import {ENTRY_ACTION, TOASTER_TYPE, UPDATE_ENTRY_MODE} from '../../constants/common';
 import Dialogs from '../Dialogs/Dialogs';
 
 import iconLock from 'ui/assets/icons/lock.svg';
@@ -36,7 +31,7 @@ const b = block('editor-btn-save');
 const ACTIONS = {
     SAVE: UPDATE_ENTRY_MODE.SAVE,
     PUBLISH: UPDATE_ENTRY_MODE.PUBLISH,
-    SAVE_AS: ENTRY_ACTION.SAVE_AS,
+    SAVE_AS_COPY: ENTRY_ACTION.SAVE_AS_COPY,
     NO_EDIT_RIGHTS: Dialogs.DIALOG.NO_EDIT_RIGHTS,
 };
 
@@ -59,8 +54,16 @@ function ButtonSave({
     const locked = !entry.permissions.edit;
     const {progress} = componentStoreState;
     const disabledSave = !(entry.fake || isScriptsChanged) || locked;
+    const isCurrentRevisionActual = entry.revId && entry.revId === entry.publishedId;
     const disabledPublish = !isScriptsChanged && entry.publishedId === entry.revId;
-    async function saveAs() {
+    const saveAs = React.useCallback(async () => {
+        const initName =
+            entry && !entry.fake
+                ? i18n('wizard', 'label_widget-name-copy', {
+                      name: Utils.getEntryNameFromKey(entry.key, true),
+                  })
+                : i18n('component.dialog-create-editor-chart.view', 'label_default-name');
+
         const response = await entryDialoguesRef.current.open({
             dialog: EntryDialogName.CreateEditorChart,
             dialogProps: {
@@ -68,12 +71,13 @@ function ButtonSave({
                 data: scriptsValues,
                 type: entry.type,
                 workbookId,
+                initName,
             },
         });
         if (response.status === EntryDialogResolveStatus.Success) {
             const url = navigateHelper.redirectUrlSwitcher(response.data);
             toaster.add({
-                name: 'success_save_as_chart_editor',
+                name: 'success_save_as_copy_chart_editor',
                 theme: TOASTER_TYPE.SUCCESS,
                 title: i18n('editor.notifications.view', 'toast_save-as-editor-chart-success'),
                 actions: [
@@ -87,89 +91,131 @@ function ButtonSave({
             });
             window.open(url, '_blank');
         }
-    }
-    async function onClick(action) {
-        if (entry.fake) {
-            const response = await entryDialoguesRef.current.open({
-                dialog: EntryDialogName.CreateEditorChart,
-                dialogProps: {
-                    initDestination: defaultPath,
-                    data: scriptsValues,
-                    type: entry.type,
-                    workbookId,
-                },
-            });
-            if (response.status === EntryDialogResolveStatus.Success) {
-                onCreateEditorChart(response.data, history);
-            }
-        } else if (action === ACTIONS.SAVE_AS) {
-            await saveAs();
-        } else if (action === ACTIONS.NO_EDIT_RIGHTS) {
-            await dialogsRef.current.open({
-                dialog: Dialogs.DIALOG.NO_EDIT_RIGHTS,
-                dialogProps: {
-                    async onAccessRights() {
-                        await entryDialoguesRef.current.open({
-                            dialog: EntryDialogName.Unlock,
-                            dialogProps: {
-                                entry,
-                            },
-                        });
+    }, [entry, scriptsValues, workbookId]);
+
+    const onClick = React.useCallback(
+        async (action) => {
+            if (entry.fake) {
+                const response = await entryDialoguesRef.current.open({
+                    dialog: EntryDialogName.CreateEditorChart,
+                    dialogProps: {
+                        initDestination: defaultPath,
+                        data: scriptsValues,
+                        type: entry.type,
+                        workbookId,
                     },
-                    async onSaveAs() {
-                        await saveAs();
+                });
+                if (response.status === EntryDialogResolveStatus.Success) {
+                    onCreateEditorChart(response.data, history);
+                }
+            } else if (action === ACTIONS.SAVE_AS_COPY) {
+                await saveAs();
+            } else if (action === ACTIONS.NO_EDIT_RIGHTS) {
+                await dialogsRef.current.open({
+                    dialog: Dialogs.DIALOG.NO_EDIT_RIGHTS,
+                    dialogProps: {
+                        async onAccessRights() {
+                            await entryDialoguesRef.current.open({
+                                dialog: EntryDialogName.Unlock,
+                                dialogProps: {
+                                    entry,
+                                },
+                            });
+                        },
+                        async onSaveAs() {
+                            await saveAs();
+                        },
                     },
-                },
-            });
-        } else if (entry.revId === entry.savedId) {
-            onUpdateEditorChart({
-                mode: action,
-                release: action === ACTIONS.PUBLISH,
-                history,
-                location,
-            });
-        } else {
-            const response = await dialogsRef.current.open({
-                dialog: Dialogs.DIALOG.CONFIRM_WARNING,
-                dialogProps: {
-                    message: i18n('editor.button-save.view', 'toast_warning-not-latest-version'),
-                },
-            });
-            if (response.status === DIALOG_RESOLVE_STATUS.SUCCESS) {
+                });
+            } else if (entry.revId === entry.savedId) {
                 onUpdateEditorChart({
                     mode: action,
-                    release: action === ACTIONS.PUBLISH,
+                    history,
+                    location,
+                });
+            } else {
+                onUpdateEditorChart({
+                    mode: action,
                     history,
                     location,
                 });
             }
-        }
-    }
-
-    function getBtnSaveTheme() {
-        if (entry.fake) {
-            return 'action';
-        }
-        return disabledSave ? 'action' : 'outlined';
-    }
+        },
+        [
+            defaultPath,
+            entry,
+            history,
+            location,
+            onCreateEditorChart,
+            onUpdateEditorChart,
+            saveAs,
+            scriptsValues,
+            workbookId,
+        ],
+    );
 
     function getBtnSaveText() {
         if (locked) {
             return i18n('editor.button-save.view', 'button_save');
         }
+        if (!isCurrentRevisionActual && !entry.fake) {
+            return i18n(
+                'editor.button-save.view',
+                disabledSave ? 'button_saved' : 'button_save-as-draft',
+            );
+        }
         return i18n('editor.button-save.view', disabledSave ? 'button_saved' : 'button_save');
     }
+
+    const dropdownItems = React.useMemo(() => {
+        const items = [
+            {
+                text: i18n('editor.button-save.view', 'button_save-as'),
+                action: () => onClick(ACTIONS.SAVE_AS_COPY),
+                hidden: false,
+            },
+        ];
+
+        const saveAsDraftItem = {
+            action: () => onClick(ACTIONS.SAVE),
+            text: i18n('component.chart-save-controls', 'button_save-as-draft'),
+            hidden: entry.fake || locked,
+        };
+
+        const saveAndPublishItem = {
+            action: () => onClick(ACTIONS.PUBLISH),
+            text: i18n('editor.button-save.view', 'button_save-as-published'),
+            hidden: entry.fake || locked || disabledPublish,
+        };
+
+        items.push(isCurrentRevisionActual ? saveAsDraftItem : saveAndPublishItem);
+
+        return items;
+    }, [disabledPublish, entry, isCurrentRevisionActual, locked, onClick]);
+
+    const handleClick = () => {
+        if (entry.fake) {
+            onClick();
+            return;
+        }
+
+        if (isCurrentRevisionActual) {
+            onClick(ACTIONS.PUBLISH);
+            return;
+        }
+
+        onClick(ACTIONS.SAVE);
+    };
 
     return (
         <div className={b()}>
             <NavigationPrompt when={!disabledSave && !isRenameWithoutReload} />
             <Button
-                view={getBtnSaveTheme()}
+                view={'action'}
                 size="m"
                 disabled={disabledSave}
-                onClick={() => onClick(ACTIONS.SAVE)}
+                onClick={handleClick}
                 loading={progress && !disabledSave}
-                pin={entry.fake || locked ? undefined : 'round-brick'}
             >
                 {locked && (
                     <Icon data={iconLock} className={b('icon-lock')} width="16" height="16" />
@@ -183,43 +229,21 @@ function ButtonSave({
                 />
             )}
             {!entry.fake && (
-                <React.Fragment>
-                    {!locked && (
+                <DropdownMenu
+                    size="s"
+                    items={dropdownItems}
+                    renderSwitcher={(props) => (
                         <Button
-                            className={b('btn-publish')}
+                            className={b('btn-switcher')}
                             view="action"
                             size="m"
-                            pin="brick-round"
-                            disabled={disabledPublish}
-                            onClick={() => onClick(ACTIONS.PUBLISH)}
-                            loading={progress && !disabledPublish}
+                            loading={progress}
+                            {...props}
                         >
-                            {i18n(
-                                'editor.button-save.view',
-                                disabledPublish ? 'button_published' : 'button_publish',
-                            )}
+                            <Icon data={ChevronDown} height={16} width={16} />
                         </Button>
                     )}
-                    <DropdownMenu
-                        size="s"
-                        items={[
-                            {
-                                action: () => onClick(ACTIONS.SAVE_AS),
-                                text: i18n('editor.button-save.view', 'button_save-as'),
-                            },
-                        ]}
-                        switcher={
-                            <Button
-                                className={b('btn-switcher')}
-                                view="action"
-                                size="m"
-                                loading={progress}
-                            >
-                                <Icon data={ChevronDown} height={16} width={16} />
-                            </Button>
-                        }
-                    />
-                </React.Fragment>
+                />
             )}
             <EntryDialogues ref={entryDialoguesRef} sdk={sdk} />
             <Dialogs ref={dialogsRef} />

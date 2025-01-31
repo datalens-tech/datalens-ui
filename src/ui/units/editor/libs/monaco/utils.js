@@ -95,7 +95,7 @@ export class MonacoUtils {
         );
         const revId = getRevId();
         if (revId) {
-            url.searchParams.set(URL_QUERY.REV_ID_OLD, revId);
+            url.searchParams.set(URL_QUERY.REV_ID, revId);
         }
         copyTextToClipboard(url.href);
     }

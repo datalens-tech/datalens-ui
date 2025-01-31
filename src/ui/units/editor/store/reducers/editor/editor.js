@@ -3,6 +3,7 @@ import _get from 'lodash/get';
 import {createSelector} from 'reselect';
 import {showToast} from 'store/actions/toaster';
 import {DL, URL_QUERY} from 'ui';
+import {SET_ENTRY} from 'ui/store/actions/entryContent';
 import history from 'ui/utils/history';
 
 import {ENTRY_TYPES} from '../../../../../../shared';
@@ -37,11 +38,12 @@ export const fetchInitialLoad = ({id, template, location, workbookId}) => {
         try {
             const urlSearch = new UrlSearch(search);
             if (id) {
-                const revId = urlSearch.get(URL_QUERY.REV_ID_OLD);
+                const revId = urlSearch.get(URL_QUERY.REV_ID);
                 const entryData = await getSdk().sdk.us.getEntry({
                     entryId: id,
                     includePermissionsInfo: true,
                     revId,
+                    branch: 'published',
                 });
                 entry = {
                     ...entryData,
@@ -131,7 +133,7 @@ export const createEditorChart = (entry, history) => {
 const EDITOR_CHART_UPDATE_LOADING = Symbol('editor/EDITOR_CHART_UPDATE_LOADING');
 const EDITOR_CHART_UPDATE_SUCCESS = Symbol('editor/EDITOR_CHART_UPDATE_SUCCESS');
 const EDITOR_CHART_UPDATE_FAILED = Symbol('editor/EDITOR_CHART_UPDATE_FAILED');
-export const fetchEditorChartUpdate = ({mode, release, history, location}) => {
+export const fetchEditorChartUpdate = ({mode, history, location}) => {
     return async function (dispatch, getState) {
         const {
             editor: {entry, scriptsValues},
@@ -142,7 +144,11 @@ export const fetchEditorChartUpdate = ({mode, release, history, location}) => {
             dispatch(
                 componentStateChange({name: ComponentName.ButtonSave, data: {progress: true}}),
             );
-            const meta = release ? {...entry.meta, is_release: true} : {...entry.meta};
+            const meta =
+                mode === UPDATE_ENTRY_MODE.PUBLISH
+                    ? {...entry.meta, is_release: true}
+                    : {...entry.meta};
+
             const updatedEntry = await getSdk().sdk.mix.updateEditorChart({
                 mode,
                 data: Helper.formEntryData({scriptsValues, entry}),
@@ -160,8 +166,8 @@ export const fetchEditorChartUpdate = ({mode, release, history, location}) => {
             );
             const urlSearch = new UrlSearch(search);
             const query = isEntryLatest(updatedEntry)
-                ? urlSearch.delete(URL_QUERY.REV_ID_OLD).toString()
-                : urlSearch.set(URL_QUERY.REV_ID_OLD, updatedEntry.revId).toString();
+                ? urlSearch.delete(URL_QUERY.REV_ID).toString()
+                : urlSearch.set(URL_QUERY.REV_ID, updatedEntry.revId).toString();
             history.replace(`${pathname}${query}`);
             dispatch(
                 showToast({
@@ -228,21 +234,12 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     scriptsValues = tabData.scriptsValues;
                     chart = null;
                     const query = isEntryLatest(entryData)
-                        ? urlSearch.delete(URL_QUERY.REV_ID_OLD).toString()
-                        : urlSearch.set(URL_QUERY.REV_ID_OLD, entryData.revId).toString();
+                        ? urlSearch.delete(URL_QUERY.REV_ID).toString()
+                        : urlSearch.set(URL_QUERY.REV_ID, entryData.revId).toString();
                     history.replace(`${pathname}${query}`);
                     break;
                 }
                 case RevisionAction.Publish: {
-                    const publishedEntry = await getSdk().sdk.mix.updateEditorChart({
-                        mode: UPDATE_ENTRY_MODE.PUBLISH,
-                        entryId,
-                        revId,
-                    });
-                    entryData = {publishedId: publishedEntry.publishedId};
-                    break;
-                }
-                case RevisionAction.Reset: {
                     const clonedEntry = await getSdk().sdk.us.getEntry({
                         entryId,
                         includePermissionsInfo: true,
@@ -252,11 +249,12 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     scriptsValues = tabData.scriptsValues;
                     chart = null;
                     entryData = await getSdk().sdk.mix.updateEditorChart({
-                        mode: UPDATE_ENTRY_MODE.SAVE,
+                        mode: UPDATE_ENTRY_MODE.PUBLISH,
                         entryId,
                         data: Helper.formEntryData({scriptsValues, entry: clonedEntry}),
+                        meta: {...clonedEntry.meta, is_release: true},
                     });
-                    const query = urlSearch.delete(URL_QUERY.REV_ID_OLD).toString();
+                    const query = urlSearch.delete(URL_QUERY.REV_ID).toString();
                     history.replace(`${pathname}${query}`);
                     break;
                 }
@@ -268,6 +266,10 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
             dispatch(
                 componentStateChange({name: ComponentName.DialogRevisions, data: {progress: null}}),
             );
+            dispatch({
+                type: SET_ENTRY,
+                payload: {entry: entryData},
+            });
             showToast({
                 name: 'success_change_revision',
                 type: TOASTER_TYPE.SUCCESS,

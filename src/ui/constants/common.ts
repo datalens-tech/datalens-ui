@@ -311,7 +311,6 @@ export const BI_ERRORS = {
 export const MODULE_TYPE = 'module';
 
 export const URL_QUERY = {
-    REV_ID_OLD: 'rev_id',
     REV_ID: 'revId',
     HIGHLIGHT_LINES: '_l',
     ACTIVE_TAB: '_t',
