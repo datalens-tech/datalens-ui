@@ -1,4 +1,3 @@
-import type {DatalensGlobalState} from '../../../ui';
 import type {ColorPalette} from '../../types/color-palettes';
 import type {ValueOf} from '../../types/utility-types';
 
@@ -59,34 +58,6 @@ const GRADIENTS: Gradients<GradientPalettes> = {
 };
 
 export const selectAvailableGradients = (gradientType: GradientType) => GRADIENTS[gradientType];
-
-export const selectAvailableClientGradients = (
-    state: DatalensGlobalState,
-    gradientType: GradientType,
-): GradientPalettes => {
-    const colorsLength = gradientType === GradientType.TWO_POINT ? 2 : 3;
-
-    const gradientPalletes = state.colorPaletteEditor.colorPalettes
-        .filter((colorPalette: ColorPalette) => {
-            return colorPalette.isGradient && colorPalette.colors.length === colorsLength;
-        })
-        .reduce(
-            (acc: GradientPalettes, colorPalette: ColorPalette) => ({
-                ...acc,
-                [colorPalette.colorPaletteId]: {
-                    id: colorPalette.colorPaletteId,
-                    title: colorPalette.displayName,
-                    colors: colorPalette.colors,
-                } as Gradient,
-            }),
-            {},
-        );
-
-    return {
-        ...selectAvailableGradients(gradientType),
-        ...gradientPalletes,
-    };
-};
 
 export const selectAvailableGradientsColors = (
     gradientType: GradientType,
