@@ -17,14 +17,13 @@ import {
     isEmptyColor,
     isValidColor,
     normalizeColor,
-    sanitizeColor,
 } from './utils';
 
 import './ColorPickerInput.scss';
 
 const b = block('color-picker-input');
 
-const DEFAULT_COLOR = '#ffffff';
+const DEFAULT_COLOR = '#FFFFFF';
 
 interface ColorPickerInputProps {
     required?: boolean;
@@ -112,12 +111,16 @@ export function ColorPickerInput({
         [onUpdate],
     );
 
+    const formattedPlaceholder = isValidColor(placeholder || '')
+        ? normalizeColor(placeholder)
+        : placeholder;
+
     return (
         <TextInput
             className={b(null, className)}
             size={size}
             value={normalizeColor(stateValue.solid)}
-            placeholder={placeholder ? sanitizeColor(placeholder) : '#'}
+            placeholder={formattedPlaceholder ?? '#'}
             onUpdate={setColor}
             error={!isValid}
             hasClear={hasClear}
@@ -137,9 +140,7 @@ export function ColorPickerInput({
                     <input
                         className={b('palette', {[`size-${size}`]: true})}
                         type="color"
-                        value={sanitizeColor(
-                            externalSolidColorPart || placeholder || DEFAULT_COLOR,
-                        )}
+                        value={externalSolidColorPart || DEFAULT_COLOR}
                         onChange={(e) => {
                             setColor(e.target.value);
                         }}
