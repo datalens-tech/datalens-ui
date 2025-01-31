@@ -498,42 +498,6 @@ function getRgbColors(gradientColors: RGBColor[] | undefined, isReversed: boolea
     return colors;
 }
 
-function getGradientStops(
-    colorsConfig: ChartColorsConfig,
-    points: Highcharts.PointOptionsObject[],
-    minColorValue: number,
-    maxColorValue: number,
-): Highcharts.GradientColorStopObject[] {
-    const gradient = getCurrentGradient(colorsConfig);
-    const gradientColors = getRgbColors(gradient.colors, Boolean(colorsConfig.reversed));
-    const colorValues = points.map((point) =>
-        typeof point.colorValue === 'number' ? point.colorValue : null,
-    );
-    const {mid, min, max} = getThresholdValues(colorsConfig, colorValues);
-    const colorValueRange = maxColorValue - minColorValue;
-    const stops = [min, mid, max].map((v, index) => {
-        const stop = v / colorValueRange;
-        if (index === 0 && stop > 0) {
-            return 0;
-        } else if (index === 1 && stop > 1) {
-            return 0.5;
-        } else if (index === 2 && stop > 1) {
-            return 1;
-        }
-
-        return stop;
-    });
-
-    if (colorsConfig.gradientMode === GradientType.TWO_POINT) {
-        stops.splice(1, 1);
-    }
-
-    return gradientColors.map((color, i) => [
-        stops[i],
-        `rgb(${color.red}, ${color.green}, ${color.blue})`,
-    ]);
-}
-
 function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
     return graphs.reduce((acc, graph) => {
         const colorValues = (graph.data as Highcharts.PointOptionsObject[])
@@ -555,7 +519,6 @@ export {
     mapAndColorizeGraphsByGradient,
     getCurrentGradient,
     getRgbColors,
-    getGradientStops,
     colorizePivotTableCell,
     getRangeDelta,
     getRgbColorValue,
