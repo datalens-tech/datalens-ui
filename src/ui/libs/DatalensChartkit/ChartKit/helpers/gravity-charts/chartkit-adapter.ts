@@ -4,15 +4,15 @@ import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 
-import type {GraphWidget} from '../../types';
-import type {ChartKitAdapterProps} from '../types';
+import type {GraphWidget} from '../../../types';
+import type {ChartKitAdapterProps} from '../../types';
+import {getTooltipRenderer} from '../tooltip';
+import {getNormalizedClickActions} from '../utils';
 
-import {handleClick} from './d3-event-handlers';
-import {isPointSelected, setPointSelectState, setSeriesSelectState} from './d3-utils';
-import {getTooltipRenderer} from './tooltip';
-import {getNormalizedClickActions} from './utils';
+import {handleClick} from './event-handlers';
+import {isPointSelected, setPointSelectState, setSeriesSelectState} from './utils';
 
-export function getD3ChartKitData(args: {
+export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
 }) {

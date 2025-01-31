@@ -1,10 +1,13 @@
 import {transform as yfmCut} from '@diplodoc/cut-extension';
 import {transform as latex} from '@diplodoc/latex-extension/plugin';
 import {transform as mermaid} from '@diplodoc/mermaid-extension/plugin';
+import {transform as yfmTabs} from '@diplodoc/tabs-extension';
 import yfmTransform from '@diplodoc/transform';
 import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
+import monospace from '@diplodoc/transform/lib/plugins/monospace';
 import notes from '@diplodoc/transform/lib/plugins/notes';
+import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
@@ -13,11 +16,16 @@ import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 import type MarkdownIt from 'markdown-it';
 import type {PluginWithParams} from 'markdown-it';
 import MarkdownItColor from 'markdown-it-color';
+import MarkdownItEmoji from 'markdown-it-emoji';
+import MarkdonwItIns from 'markdown-it-ins';
 import Mila from 'markdown-it-link-attributes';
+import MarkdonwItMark from 'markdown-it-mark';
+import MarkdonwItSub from 'markdown-it-sub';
 import {v4 as uuidv4} from 'uuid';
 
 import {YFM_COLORIFY_MARKDOWN_CLASSNAME, YfmMetaScripts} from '../../constants';
 
+import {emojiDefs} from './emoji-defs';
 import {unifyTermIds} from './markdown-plugins/unify-terms';
 
 type RenderHtmlArgs = {
@@ -55,11 +63,28 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
                 .use(MarkdownItColor, {
                     defaultClassName: YFM_COLORIFY_MARKDOWN_CLASSNAME,
                 })
+                .use(MarkdownItEmoji, {defs: emojiDefs})
                 .use(unifyTermIds, {
                     prefix: uniqPrefix,
                 }),
+        yfmTabs({
+            bundle: false,
+            features: {
+                enabledVariants: {
+                    regular: true,
+                    radio: false,
+                    dropdown: false,
+                    accordion: true,
+                },
+            },
+        }),
         imsize,
         table,
+        monospace,
+        sup,
+        MarkdonwItSub,
+        MarkdonwItMark,
+        MarkdonwItIns,
         latex({
             bundle: false,
             runtime: YfmMetaScripts.LATEX,

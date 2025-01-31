@@ -615,7 +615,7 @@ export function getChartEditorTypes(type: string) {
                 ...getMetaTab(),
             ],
         },
-        [EDITOR_TYPE.D3_NODE]: {
+        [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: {
             get name() {
                 return i18n('label_graph');
             },

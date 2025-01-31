@@ -6,10 +6,8 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import {
-    CustomPaletteColors,
-    PaletteBackground,
-} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {TextEditor} from '../TextEditor/TextEditor';
@@ -20,6 +18,7 @@ const b = block('dialog-text');
 
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
+    enableCustomBgColorSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -70,7 +69,8 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     state: DialogTextWidgetState = {};
 
     render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight} = this.props;
+        const {openedItemId, dialogIsVisible, enableAutoheight, enableCustomBgColorSelector} =
+            this.props;
         const {text, autoHeight, backgroundColor} = this.state;
 
         return (
@@ -104,6 +104,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                         <PaletteBackground
                             color={backgroundColor}
                             onSelect={this.handleHasBackgroundSelected}
+                            enableCustomBgColorSelector={enableCustomBgColorSelector}
                         />
                     </FormRow>
                     {enableAutoheight && (
@@ -150,7 +151,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 text,
                 autoHeight,
                 background: {
-                    enabled: backgroundColor !== CustomPaletteColors.NONE,
+                    enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                     color: backgroundColor,
                 },
             },

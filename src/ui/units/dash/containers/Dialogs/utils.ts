@@ -13,7 +13,7 @@ export function isEntryTypeWithFiltering(
 
     const wizardEntryTypes = [
         WizardType.GraphWizardNode,
-        WizardType.D3WizardNode,
+        WizardType.GravityChartsWizardNode,
         WizardType.TableWizardNode,
         WizardType.YmapWizardNode,
     ];

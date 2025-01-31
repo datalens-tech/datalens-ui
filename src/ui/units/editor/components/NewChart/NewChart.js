@@ -11,7 +11,7 @@ import './NewChart.scss';
 
 const b = block('new-chart');
 
-function NewChart({onClickNodeTemplate}) {
+function NewChart({onClickNodeTemplate, workbookId}) {
     const searchParams = new URLSearchParams(location.search);
     const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
     let path = searchCurrentPath || DL.USER_FOLDER;
@@ -24,6 +24,8 @@ function NewChart({onClickNodeTemplate}) {
                     fake: true,
                     entryId: null,
                     key: `${path}${i18n('editor.common.view', 'label_new-chart')}`,
+                    fakeName: i18n('editor.common.view', 'label_new-chart'),
+                    workbookId,
                 }}
                 history={history}
                 rightItems={[null]}
@@ -37,6 +39,7 @@ function NewChart({onClickNodeTemplate}) {
 
 NewChart.propTypes = {
     onClickNodeTemplate: PropTypes.func.isRequired,
+    workbookId: PropTypes.string,
 };
 
 export default NewChart;
