@@ -17,6 +17,7 @@
   "label_encoding-windows-1251": "windows-1251",
   "label_file-download-failure": "Не удалось загрузить файл",
   "label_file-promo": "Чтобы создать подключение, загрузите файлы.<br></br>Поддерживаемые форматы: {{formats}}.",
+  "label_file-size-error": "Размер файла не должен превышать 200 МБ",
   "label_filter-by-column": "Поиск по столбцу",
   "label_header-disabled": "Нет",
   "label_header-enabled": "Да",

@@ -15,6 +15,8 @@ import type {
     WrappedHTML,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
+import {WRAPPED_HTML_KEY} from 'shared/constants/chartkit-handlers';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import {MarkdownHelpPopover} from '../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DEFAULT_DATE_FORMAT} from '../../../../../../../constants/misc';
@@ -49,7 +51,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             const cell = {
                 value: th.markup ?? th.name,
                 // Remove condition after wrappedHTML being supported for new Table
-                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : undefined,
+                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : th.name,
                 type: th.markup ? 'markup' : columnType,
             };
             return (
@@ -160,6 +162,8 @@ export function renderCellContent(args: {
         } else {
             formattedValue = String(cell.value ?? '');
         }
+    } else if (isWrappedHTML(formattedValue)) {
+        return <HtmlCell content={formattedValue[WRAPPED_HTML_KEY]} />;
     }
 
     if (cell.link?.href) {

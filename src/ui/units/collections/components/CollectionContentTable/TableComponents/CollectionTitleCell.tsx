@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {CollectionContentTableQa} from 'shared';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
 import {DL} from 'ui/constants/common';
@@ -25,7 +26,11 @@ export const CollectionTitleCell = ({
     const collectionSize = DL.IS_MOBILE ? 28 : undefined;
 
     return (
-        <div className={b('content-cell', {title: true})} key={collectionId}>
+        <div
+            className={b('content-cell', {title: true})}
+            key={collectionId}
+            data-qa={CollectionContentTableQa.CollectionTitleCell}
+        >
             <div className={b('title-col')}>
                 <div>
                     {isWorkbook ? (

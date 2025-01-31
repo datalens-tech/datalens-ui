@@ -73,14 +73,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         const data = await Utils.getAccesses({id: entry.entryId});
         setAccesses(data);
     }
-
+    
     const loadRelations = () => {
         setIsLoading(true);
         setIsError(false);
         loadAccesses().finally(()=>{
             getSdk().cancelRequest(CONCURRENT_ID);
             getSdk()
-                .mix.getEntryRelations(
+                .sdk.mix.getEntryRelations(
                     {
                         entryId: entry.entryId,
                         workbookId: entry.workbookId,

@@ -1,6 +1,6 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
 import {DashTabItemType} from 'shared/types';
-import type {ConnectionsData} from 'ui/units/dash/containers/Dialogs/DialogRelations/types';
+import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem

@@ -24,6 +24,7 @@ import type {
     TableRow,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
@@ -42,7 +43,6 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
-    isWrappedHTML,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,
@@ -127,7 +127,11 @@ export function valueFormatter(
             (options as NumberTableColumn).view === 'bar' || (cell as BarTableCell).view === 'bar';
 
         if ('formattedValue' in cell && cell.formattedValue && !shouldUseBar) {
-            resultValue = cell.formattedValue;
+            resultValue = isWrappedHTML(cell.formattedValue) ? (
+                <WrappedHTMLNode value={cell.formattedValue} />
+            ) : (
+                cell.formattedValue
+            );
         } else if (cell.value === null) {
             resultValue = 'null';
         } else if (isMarkupItem(cell.value)) {

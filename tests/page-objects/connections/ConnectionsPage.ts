@@ -28,12 +28,7 @@ class ConnectionsPage extends BasePage {
         await this.page.click(this.createQlChartButtonSelector);
     }
 
-    async createConnectionInFolder({name = uuidv1()}: {name?: string} = {}) {
-        const formSubmit = await this.page.waitForSelector(
-            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
-        );
-        // open creation dialog
-        await formSubmit.click();
+    async fillCreateConnectionInFolder({name}: {name: string}) {
         const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
         // type connection name
         await textInput.type(name);
@@ -45,6 +40,16 @@ class ConnectionsPage extends BasePage {
         } catch {
             throw new Error("Connection wasn't created");
         }
+    }
+
+    async createConnectionInFolder({name = uuidv1()}: {name?: string} = {}) {
+        const formSubmit = await this.page.waitForSelector(
+            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
+        );
+        // open creation dialog
+        await formSubmit.click();
+
+        await this.fillCreateConnectionInFolder({name});
     }
 
     async createConnectionInWorkbook({name = uuidv1()}: {name?: string} = {}) {

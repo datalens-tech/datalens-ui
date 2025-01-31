@@ -7,12 +7,15 @@ import type {
     VmCallResult,
 } from 'quickjs-emscripten';
 
+import {ATTR_DATA_ELEMENT_ID} from '../../html-generator/constants';
+
 type UiSandboxRuntimeProps = {
     fn: string;
     fnArgs: unknown[];
     fnContext: unknown;
     globalApi: object;
     libs: string;
+    name?: string;
 };
 
 export class UiSandboxRuntime {
@@ -31,28 +34,44 @@ export class UiSandboxRuntime {
     }
 
     callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi, libs} = props;
+        const {fn, fnContext = {}, fnArgs, globalApi, libs, name} = props;
 
-        this.defineVmArguments(fnArgs);
+        this.vm.evalCode(libs);
+
         this.defineVmContext(fnContext);
+        this.defineVmArguments(fnArgs);
         this.defineVmApi(globalApi);
-        const result = this.vm.evalCode(
-            `
-            ${libs}
-            (${fn}).call(JSON.parse(context), ...(args.length
+        const code = `globalThis.__fn = ${fn};
+            globalThis.__fn_args = args.length
                 ? JSON.parse(args).map((arg) => {
                     if(typeof arg === "string" && arg.startsWith('function')) {
                         let fn;
                         eval('fn = ' + arg);
                         return fn;
                     }
+
+                    if (arg?.target && '${ATTR_DATA_ELEMENT_ID}' in arg.target) {
+                        arg.target = document.querySelector('[${ATTR_DATA_ELEMENT_ID}="' + arg.target['${ATTR_DATA_ELEMENT_ID}'] + '"]');
+                    }
                     return arg;
                 })
-                : []))`,
-        );
+                : [];
+            globalThis.__fn.call(JSON.parse(context), ...globalThis.__fn_args)`;
+        const result = this.vm.evalCode(code, 'fn');
+        const lines = code?.split('\n') ?? [];
+        const startPoint = lines.findIndex((row) => row.trim().startsWith('const __fn')) + 1;
 
         if (result.error) {
             const errorMsg = this.vm.dump(result.error);
+            errorMsg.stack = errorMsg.stack
+                .replace('__fn', name)
+                .split('\n')
+                .map((s: string) =>
+                    s.replace(/\d+(?=\D*$)/, (val) => String(parseInt(val) - startPoint)),
+                )
+                .filter((s: string) => Boolean(s.trim()))
+                .slice(0, -2)
+                .join('\n');
             result.error.dispose();
             throw errorMsg;
         }

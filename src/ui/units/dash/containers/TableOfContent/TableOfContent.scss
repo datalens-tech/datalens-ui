@@ -1,4 +1,8 @@
 .table-of-content {
+    $borderWidth: 1px;
+    $fullTabWidth: 250px;
+    $bottomMargin: 28px;
+
     display: flex;
     background-color: var(--g-color-base-background);
     position: relative;
@@ -7,6 +11,9 @@
 
     &__wrapper {
         position: relative;
+        border-right: $borderWidth solid var(--g-color-line-generic);
+        height: 100%;
+        width: 100%;
     }
 
     &__sidebar {
@@ -16,13 +23,13 @@
         left: -250px;
         overflow: hidden;
         padding: 24px 0 24px 8px;
-        width: 250px;
+        width: $fullTabWidth - $borderWidth;
         height: 100%;
-        border-right: 1px solid var(--g-color-line-generic);
 
         &_opened {
+            position: fixed;
             display: block;
-            left: 0;
+            height: auto;
         }
     }
 
@@ -44,7 +51,7 @@
     }
 
     &__tabs {
-        max-height: 97%;
+        height: calc(100% - $bottomMargin);
         overflow-y: scroll;
         overflow-x: hidden;
     }

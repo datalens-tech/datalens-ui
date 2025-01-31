@@ -25,6 +25,7 @@ import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import type {ControlProps} from '../../../libs/DatalensChartkit/components/Control/types';
 import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
 import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
 import type {
@@ -285,6 +286,7 @@ export type ChartContentProps = Pick<
         initialParams: StringParams;
         enableActionParams?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
+        runAction?: ControlProps['runAction'];
         backgroundColor?: string;
     };
 
@@ -300,6 +302,8 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
+        runAction?: ControlProps['runAction'];
+        onAction?: ControlProps['onAction'];
     };
 
 export type ResolveWidgetControlDataRefArgs =

@@ -1,14 +1,15 @@
+import type {WrappedHTML} from '../../..';
 import type {WrappedMarkup} from '../../../utils';
 import type {WrappedMarkdown} from '../../../utils/markdown';
 import type {SeriesExportSettings} from '../../wizard';
 
 export type PointCustomData = {
-    name?: string | number | WrappedMarkdown | WrappedMarkup;
-    xLabel?: string | WrappedMarkdown;
-    yLabel?: string | WrappedMarkdown;
-    cLabel?: string | null | WrappedMarkdown;
-    sLabel?: string | null | WrappedMarkdown;
-    sizeLabel?: string | null | WrappedMarkdown;
+    name?: string | number | WrappedMarkdown | WrappedMarkup | WrappedHTML;
+    xLabel?: string | WrappedMarkdown | WrappedHTML;
+    yLabel?: string | WrappedMarkdown | WrappedHTML;
+    cLabel?: string | null | WrappedMarkdown | WrappedHTML;
+    sLabel?: string | null | WrappedMarkdown | WrappedHTML;
+    sizeLabel?: string | null | WrappedMarkdown | WrappedHTML;
 };
 
 export type ScatterSeriesCustomData = {

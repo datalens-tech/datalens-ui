@@ -103,6 +103,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     _cancelSource: any = null;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, CONTROL_LAYOUT_DEBOUNCE_TIME);
+    _getDistinctsMemo: ControlSettings['getDistincts'];
 
     resolve: ((value: unknown) => void) | null = null;
 
@@ -426,6 +427,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const {workbookId} = this.props;
 
             const payloadCancellation = chartsDataProvider.getRequestCancellation();
+            const dataProviderContextGetter = this.context?.dataProviderContextGetter?.(
+                this.props.id,
+            );
 
             const payload = {
                 data: {
@@ -445,6 +449,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
+                headers: dataProviderContextGetter,
             };
 
             if (data.sourceType !== DashTabItemControlSourceType.External) {
@@ -552,9 +557,29 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return null;
     }
 
+    getDistinctsWithHeaders() {
+        if (this.props.getDistincts) {
+            this._getDistinctsMemo =
+                this._getDistinctsMemo ||
+                ((params) => {
+                    const {getDistincts} = this.props;
+                    const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
+
+                    return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
+                        params,
+                        headers,
+                    );
+                });
+        } else {
+            this._getDistinctsMemo = undefined;
+        }
+
+        return this._getDistinctsMemo;
+    }
+
     renderSelectControl() {
         const data = this.props.data as unknown as DashTabItemControlSingle;
-        const {id, defaults, getDistincts} = this.props;
+        const {id, defaults} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
         const {label, innerLabel} = getLabels(data);
@@ -575,7 +600,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 validationError={validationError}
                 errorData={errorData}
                 validateValue={this.validateValue}
-                getDistincts={getDistincts}
+                getDistincts={this.getDistinctsWithHeaders()}
                 classMixin={b('item')}
                 selectProps={{label, innerLabel}}
             />

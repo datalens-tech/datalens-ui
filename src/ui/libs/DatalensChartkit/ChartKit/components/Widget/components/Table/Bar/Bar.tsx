@@ -1,6 +1,9 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
+
+import {WrappedHTMLNode} from '../WrappedHTMLNode';
 
 import type {BarProps} from './types';
 import {getStyles, isPropsValid} from './utils';
@@ -38,7 +41,15 @@ export const Bar = (props: BarProps) => {
         showSeparator,
     });
 
-    const displayedValue = typeof formattedValue === 'string' ? formattedValue : value;
+    let displayedValue: React.ReactNode;
+
+    if (isWrappedHTML(formattedValue)) {
+        displayedValue = <WrappedHTMLNode value={formattedValue} />;
+    } else if (typeof formattedValue === 'string') {
+        displayedValue = formattedValue;
+    } else {
+        displayedValue = value;
+    }
 
     return (
         <div className={b()}>

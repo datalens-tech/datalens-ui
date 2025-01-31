@@ -70,7 +70,7 @@
         // obviously (at the expense of the grid) because there id no such problem with a mobile layout,
         // and the height is not explicitly set here it is necessary to redefine position
 
-        position: static;
+        position: relative;
     }
 
     .dashkit-plugin-widget {

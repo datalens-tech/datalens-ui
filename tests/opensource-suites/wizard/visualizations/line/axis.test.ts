@@ -21,7 +21,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Date and time on the Y axis @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-graph,.chartkit-d3');
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-d3');
 
             // Create dateTime field
             const dateTimeMeasureField = 'MaxDate';

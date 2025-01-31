@@ -291,7 +291,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         let fieldErrors: DatasetFieldError[] = [];
 
         try {
-            await getSdk().bi.validateDatasetFormula(
+            await getSdk().sdk.bi.validateDatasetFormula(
                 {
                     datasetId,
                     workbookId,
@@ -301,7 +301,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                 {concurrentId: 'validateDatasetFormula'},
             );
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 fieldErrors = (error?.details?.data?.field_errors as DatasetFieldError[]) || [];
                 logger.logError('FieldEditor: validateDatasetFormula failed', error);
             }

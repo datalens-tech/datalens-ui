@@ -21,6 +21,8 @@ export type ControlProps<TProviderData = unknown> = {
     ) => void;
     onUpdate?: (data: OnChangeData) => void;
     initialParams?: ChartInitialParams;
+    runAction: (args: StringParams) => Promise<unknown>;
+    onAction: (args: {data: unknown}) => void;
 } & Omit<WidgetProps, 'data'>;
 
 export interface ControlState {

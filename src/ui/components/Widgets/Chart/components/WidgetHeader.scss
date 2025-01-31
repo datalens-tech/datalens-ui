@@ -92,39 +92,57 @@
         }
     }
 
-    &__title {
+    &__mobile-title {
+        @include text-subheader-3();
         color: var(--g-color-text-primary);
-        font-size: 15px;
         text-decoration: none;
-        text-overflow: ellipsis;
-        overflow: hidden;
         width: 100%;
-        white-space: nowrap;
-        padding-left: 45px;
-        padding-right: 50px;
-        height: $headerHeight;
+        padding: 10px 50px 10px 16px;
+        overflow: visible;
+        white-space: normal;
+        word-break: break-word;
+        hyphens: auto;
     }
 
-    &_fullscreen {
-        #{$class}__tabs {
-            padding-left: 45px;
-            padding-right: 50px;
+    &__mobile-title-wrap {
+        display: flex;
+        align-items: center;
+    }
+
+    &__mobile-title-wrap &__chart-title-hint-button,
+    &__mobile-title-wrap &__chart-title-hint {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    &__mobile-title-wrap &__chart-title-hint {
+        margin-left: 3px;
+
+        & > * {
+            display: inline-flex;
+            align-items: center;
         }
     }
 
     &_mobile {
-        #{$class}__title,
         #{$class}__tabs {
             @include text-subheader-3();
-        }
-
-        #{$class}__title {
-            line-height: $headerHeight;
         }
 
         &#{$class}_fullscreen #{$class}__filters-controls {
             top: 50px;
             right: 16px;
+        }
+    }
+
+    &_fullscreen {
+        #{$class}__mobile-title {
+            line-height: $headerHeight;
+            padding: 0 50px 0 45px;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            height: $headerHeight;
         }
     }
 }

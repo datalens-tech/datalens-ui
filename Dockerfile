@@ -7,12 +7,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/cert.pem
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
+    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata ca-certificates curl gnupg
     #DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
     #apt-get -y install python3.9 python3-pip
 
 # node
-RUN apt-get -y install ca-certificates curl gnupg
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
@@ -38,19 +37,19 @@ FROM ubuntu:22.04 AS base-stage
 
 ARG NODE_MAJOR=20
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata ca-certificates curl gnupg && \
     apt-get -y install python3.9 python3-pip
 
 # node
-RUN apt-get -y install ca-certificates curl gnupg
 RUN mkdir -p /etc/apt/keyrings
 RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
 RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-RUN apt-get update
-RUN apt-get -y install nginx supervisor nodejs
+RUN apt-get update && apt-get -y install nginx supervisor nodejs
 
 # remove unnecessary packages
 RUN apt-get -y purge curl gnupg gnupg2 && \

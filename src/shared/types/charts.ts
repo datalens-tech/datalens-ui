@@ -273,3 +273,11 @@ export interface ChartsStats extends Timings {
     columnsCount: number | null;
     rowsCount: number | null;
 }
+
+export const MARKUP_TYPE = {
+    none: 'none',
+    markdown: 'md',
+    html: 'html',
+};
+
+export type MarkupType = (typeof MARKUP_TYPE)[keyof typeof MARKUP_TYPE];

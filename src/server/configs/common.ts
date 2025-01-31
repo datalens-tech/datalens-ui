@@ -1,4 +1,5 @@
 import {DEFAULT_PROXY_HEADERS} from '@gravity-ui/gateway/build/constants';
+import type {AppConfig} from '@gravity-ui/nodekit';
 
 import {
     AuthHeader,
@@ -11,7 +12,8 @@ import {
     TENANT_ID_HEADER,
     RPC_AUTHORIZATION
 } from '../../shared';
-import {SERVICE_NAME_DATALENS, errorBooster} from '../components';
+import {releaseVersion} from '../app-env';
+import {SERVICE_NAME_DATALENS} from '../components';
 
 export default {
     appName: `datalens-${process.env.APP_MODE}`,
@@ -24,7 +26,6 @@ export default {
         extended: false,
     },
     expressTrustProxyNumber: 2,
-    errorBooster,
     workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
     python: process.env.PYTHON || 'python3',
     fetchingTimeout: ((process.env.FETCHING_TIMEOUT_SEC && parseInt(process.env.FETCHING_TIMEOUT_SEC)) || 95) * 1000,
@@ -48,4 +49,5 @@ export default {
     ],
     headersMap: {},
     requestIdHeaderName: 'x-request-id',
-};
+    releaseVersion: releaseVersion,
+} satisfies Partial<AppConfig>;

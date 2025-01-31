@@ -99,6 +99,7 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
             scopes: getAllEntryScopes(),
             isSpecific: true,
             isOnEditMode: false,
+            permissions: () => ({admin: true, edit: true, read: false, execute: false}),
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
                 return getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope);

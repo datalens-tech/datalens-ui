@@ -6,18 +6,34 @@ import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('editor.templates.view');
 
-export type ChartEditorType = {
+type ChartEditorTab = {
     name: string;
-    tabs: {
-        name: string;
-        id: string;
-        language: string;
-        docs?: {
-            title: string;
-            path: string;
-        }[];
+    id: string;
+    language: string;
+    docs?: {
+        title: string;
+        path: string;
     }[];
 };
+
+export type ChartEditorType = {
+    name: string;
+    tabs: ChartEditorTab[];
+};
+
+function getMetaTab() {
+    if (Utils.isEnabledFeature('EnableChartEditorMetaTab')) {
+        return [
+            {
+                name: 'Meta',
+                id: 'meta',
+                language: 'json',
+            },
+        ];
+    }
+
+    return [];
+}
 
 // TODO: https://github.com/datalens-tech/datalens-ui/issues/762
 export function getChartEditorTypes(type: string) {
@@ -77,7 +93,7 @@ export function getChartEditorTypes(type: string) {
     ];
 
     const chartEditorTypes = {
-        graph_node: {
+        [EDITOR_TYPE.GRAPH_NODE]: {
             get name() {
                 return i18n('label_graph');
             },
@@ -142,9 +158,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        timeseries_node: {
+        [EDITOR_TYPE.TIMESERIES_NODE]: {
             name: 'Timeseries',
             tabs: [
                 {
@@ -200,9 +217,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        table_node: {
+        [EDITOR_TYPE.TABLE_NODE]: {
             get name() {
                 return i18n('label_table');
             },
@@ -255,9 +273,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        text_node: {
+        [EDITOR_TYPE.TEXT_NODE]: {
             name: 'Текст',
             tabs: [
                 {
@@ -290,7 +309,7 @@ export function getChartEditorTypes(type: string) {
                 },
             ],
         },
-        markdown_node: {
+        [EDITOR_TYPE.MARKDOWN_NODE]: {
             get name() {
                 return i18n('label_markdown');
             },
@@ -325,9 +344,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        metric_node: {
+        [EDITOR_TYPE.METRIC_NODE]: {
             name: 'Показатель',
             tabs: [
                 {
@@ -365,9 +385,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        map_node: {
+        [EDITOR_TYPE.MAP_NODE]: {
             name: 'Карта',
             tabs: [
                 {
@@ -424,9 +445,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        ymap_node: {
+        [EDITOR_TYPE.YMAP_NODE]: {
             name: 'Яндекс Карта',
             tabs: [
                 {
@@ -471,9 +493,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        control_node: {
+        [EDITOR_TYPE.CONTROL_NODE]: {
             get name() {
                 return i18n('label_control');
             },
@@ -508,9 +531,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        module: {
+        [EDITOR_TYPE.MODULE]: {
             get name() {
                 return i18n('label_module');
             },
@@ -550,7 +574,7 @@ export function getChartEditorTypes(type: string) {
                 },
             ],
         },
-        markup_node: {
+        [EDITOR_TYPE.MARKUP_NODE]: {
             name: 'Markup',
             tabs: [
                 {
@@ -588,9 +612,10 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
             ],
         },
-        [EDITOR_TYPE.D3_NODE]: {
+        [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: {
             get name() {
                 return i18n('label_graph');
             },
@@ -636,59 +661,68 @@ export function getChartEditorTypes(type: string) {
                     language: 'json',
                     docs: docsShare,
                 },
+                ...getMetaTab(),
+            ],
+        },
+        [EDITOR_TYPE.BLANK_CHART_NODE]: {
+            get name() {
+                // @ts-ignore
+                return i18n('label_blank-chart');
+            },
+            tabs: [
+                {
+                    name: 'Urls',
+                    id: 'url',
+                    language: 'javascript',
+                    docs: docsUrls,
+                },
+                {
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
+                },
+                {
+                    name: 'JavaScript',
+                    id: 'js',
+                    language: 'javascript',
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.CHART,
+                        },
+                        docsVendor,
+                    ],
+                },
+                {
+                    name: 'Controls',
+                    id: 'ui',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                {
+                    name: 'Config',
+                    id: 'config',
+                    language: 'javascript',
+                },
+                {
+                    name: 'Shared',
+                    id: 'shared',
+                    language: 'json',
+                    docs: docsShare,
+                },
+                ...getMetaTab(),
             ],
         },
     } as Record<string, ChartEditorType>;
 
-    if (Utils.isEnabledFeature(Feature.BlankChart)) {
-        chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] = {
-            get name() {
-                return i18n('label_graph');
-            },
-            tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
-                {
-                    name: 'Params',
-                    id: 'params',
-                    language: 'javascript',
-                    docs: docsParams,
-                },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
-                    docs: [
-                        {
-                            title: 'section_common-information',
-                            path: DOCS_PATH.CHART,
-                        },
-                        docsVendor,
-                    ],
-                },
-                {
-                    name: 'Controls',
-                    id: 'ui',
-                    language: 'javascript',
-                    docs: docsControls,
-                },
-                {
-                    name: 'Config',
-                    id: 'config',
-                    language: 'javascript',
-                },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
-            ],
-        };
+    if (Utils.isEnabledFeature(Feature.ChartActions)) {
+        chartEditorTypes[EDITOR_TYPE.CONTROL_NODE].tabs.push({
+            name: 'Actions',
+            id: 'actions',
+            language: 'javascript',
+            docs: docsControls,
+        });
     }
 
     return chartEditorTypes[type];

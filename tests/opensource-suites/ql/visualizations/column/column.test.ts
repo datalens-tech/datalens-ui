@@ -28,7 +28,7 @@ datalensTest.describe('QL', () => {
                 const qlPage = new QLPage({page});
 
                 const previewLoader = page.locator('.grid-loader');
-                const chart = page.locator('.chartkit-graph,.chartkit-d3');
+                const chart = page.locator('.chartkit-graph,.gcharts-d3');
 
                 await qlPage.sectionVisualization.removeFieldByClick(
                     PlaceholderName.X,

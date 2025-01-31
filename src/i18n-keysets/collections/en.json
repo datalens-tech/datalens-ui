@@ -5,6 +5,7 @@
   "action_add-learning-materials-workbook": "Add learning materials",
   "action_cancel": "Cancel",
   "action_clear-filters": "Reset filters",
+  "action_connect-your-data": "Connect your data",
   "action_copy": "Copy",
   "action_create": "Create",
   "action_create-collection": "Collection",
@@ -24,6 +25,6 @@
   "label_not-found": "No results",
   "label_root-title": "Collections and workbooks",
   "label_title": "Name",
-  "section_create-first": "Start building your resource hierarchy: create a workbook or other resource",
+  "section_create-first": "You can create a workbook and connect your data",
   "section_incorrect-filters": "Try other values in filters"
 }

@@ -18,7 +18,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Tooltip when hovering chart area @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-d3');
+            const chart = chartContainer.locator('.gcharts-d3');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             await wizardPage.sectionVisualization.addFieldByClick(

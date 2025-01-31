@@ -17,9 +17,9 @@ import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogC
 import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
 import type {OpenDialogDatasetFieldInspectorArgs} from '../../units/datasets/components/dialogs/DatasetFieldInspector/DatasetFieldInspector';
 import type {OpenDialogParameterArgs} from '../../components/DialogParameter/DialogParameter';
-import type {OpenDialogMultidatasetArgs} from 'units/wizard/components/Dialogs/DialogMultidataset';
-import type {OpenDialogRelationsArgs} from '../../units/dash/containers/Dialogs/DialogRelations/DialogRelations';
-import type {OpenDialogAliasesArgs} from '../../units/dash/containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
+import type {OpenDialogMultidatasetArgs} from '../../units/wizard/components/Dialogs/DialogMultidataset';
+import type {OpenDialogRelationsArgs} from '../../components/DialogRelations/DialogRelations';
+import type {OpenDialogAliasesArgs} from '../../components/DialogRelations/components/DialogAliases/DialogAliases';
 import type {OpenDialogColumnSettingsArgs} from '../../units/wizard/components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import type {OpenDialogFieldEditorArgs} from '../../components/DialogFieldEditor/DialogFieldEditor';
 import type {OpenDialogRenameEntryInNewWorkbookArgs} from '../../units/workbooks/components/RenameEntryDialog/RenameEntryDialog';
@@ -42,7 +42,7 @@ import type {OpenDialogQLParameterArgs} from '../../components/DialogQLParameter
 import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import type {OpenDialogControlsPlacementArgs} from '../../components/DialogControlsPlacement/DialogControlsPlacement';
+import type {OpenDialogExtendedSettingsArgs} from '../../components/DialogExtendedSettings/DialogExtendedSettings';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
@@ -57,8 +57,11 @@ import { OpenDialogShareArgs } from 'ui/components/OpenDialogShare/OpenDialogSha
 import { OpenDialogExportPdfArgs } from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Export/ExportDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
+import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
+import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
 
 export type OpenDialogArgs<T = unknown> =
+    | OpenDialogReleaseVersionArgs
     | OpenDialogMetricSettingsArgs
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs
@@ -93,7 +96,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
-    | OpenDialogControlsPlacementArgs
+    | OpenDialogExtendedSettingsArgs
     | OpenDialogLabelSettingsArgs
     | OpenDialogEditWorkbookArgs
     | OpenDialogEditCollectionArgs
@@ -115,4 +118,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogShareArgs
     | OpenDialogExportPdfArgs
     | OpenDialogTooltipSettingsArgs
-    | OpenDialogChangeDatasetFieldsArgs;
+    | OpenDialogChangeDatasetFieldsArgs
+    | OpenDialogCollectionNoCreatePermissionArgs;

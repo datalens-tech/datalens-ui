@@ -5,7 +5,7 @@ import type {
     EntryScope,
     StringParams,
 } from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, TitlePlacementOption} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType, TitlePlacements} from 'shared';
 import type {SelectorDialogState, SelectorsGroupDialogState} from '../typings/controlDialog';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
@@ -76,8 +76,8 @@ export function getSelectorDialogInitialState(
         defaults: {},
         datasetId: args.lastUsedDatasetId,
         connectionId: args.lastUsedConnectionId,
-        showTitle: true,
-        titlePlacement: TitlePlacementOption.Left,
+        titlePlacement: TitlePlacements.Left,
+        accentType: null,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
@@ -89,6 +89,7 @@ export function getSelectorDialogInitialState(
 
 export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState {
     return {
+        showGroupName: false,
         autoHeight: false,
         buttonApply: false,
         buttonReset: false,
@@ -133,8 +134,11 @@ export function getSelectorDialogFromData(
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
-        showTitle: data.source.showTitle,
-        titlePlacement: data.source.titlePlacement,
+        titlePlacement:
+            data.source.showTitle === false || data.source.titlePlacement === TitlePlacements.Hide
+                ? TitlePlacements.Hide
+                : data.source.titlePlacement ?? TitlePlacements.Left,
+        accentType: data.source.accentType,
         multiselectable: data.source.multiselectable,
         isRange: data.source.isRange,
         fieldName: data.source.fieldName,
@@ -342,8 +346,15 @@ export function controlDialog(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
-                action.payload;
+            const {
+                group,
+                autoHeight,
+                buttonApply,
+                buttonReset,
+                updateControlsOnChange,
+                showGroupName,
+                groupName,
+            } = action.payload;
 
             // if the number of selectors has increased from 1 to several, we enable autoHeight
             const updatedAutoHeight =
@@ -358,6 +369,8 @@ export function controlDialog(
                     buttonApply,
                     buttonReset,
                     updateControlsOnChange,
+                    showGroupName,
+                    groupName,
                 },
             };
         }

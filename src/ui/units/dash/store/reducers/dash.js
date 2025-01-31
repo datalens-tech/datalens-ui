@@ -2,7 +2,8 @@ import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemType} from 'shared';
+import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -67,31 +68,6 @@ function dash(state = initialState, action) {
     const tab = tabIndex === -1 ? null : data.tabs[tabIndex];
 
     switch (action.type) {
-        case actionTypes.SAVE_DASH_SUCCESS:
-        case actionTypes.SAVE_DASH_ERROR:
-        case actionTypes.CLOSE_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: null,
-            };
-        }
-        case actionTypes.OPEN_ITEM_DIALOG: {
-            const payload = action.payload;
-
-            return {
-                ...state,
-                openedItemId: payload.id ?? null,
-                openedDialog: payload.type,
-            };
-        }
-        case actionTypes.OPEN_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: action.payload.dragOperationProps ?? null,
-            };
-        }
         case actionTypes.SET_TABS: {
             let counter = data.counter;
 
@@ -229,8 +205,26 @@ function dash(state = initialState, action) {
                 }),
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
+            const itemData = action.payload.item.data;
+            const newItem = {
+                ...action.payload.item,
+                data: {
+                    ...itemData,
+                    size:
+                        action.payload.item.type === DashTabItemType.Title &&
+                        typeof itemData.size === 'object'
+                            ? DashTabItemTitleSizes.XL
+                            : itemData.size,
+                    background:
+                        'background' in itemData &&
+                        !WIDGET_BG_COLORS_PRESET.includes(itemData.background?.color)
+                            ? CustomPaletteBgColors.NONE
+                            : itemData.background.color,
+                },
+            };
+
             const tabData = DashKit.setItem({
-                item: action.payload.item,
+                item: newItem,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     ...action.payload.options,

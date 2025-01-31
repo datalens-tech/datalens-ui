@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature, RPC_AUTHORIZATION} from 'shared';
 import {DL, PRODUCT_NAME} from 'ui/constants';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import Utils from 'ui/utils';
 
@@ -18,6 +19,7 @@ import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/action
 import type {AsideHeaderData} from '../../store/typings/asideHeader';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
+import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
 
 import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
@@ -203,6 +205,33 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
         [visiblePanel]
     );
 
+    const getReliaseVersionWrapper = React.useCallback(
+        ({text}) => {
+            const handleShowReleaseVersion = () => {
+                setCurrentPopup(null);
+                dispatch(
+                    openDialog({
+                        id: DIALOG_RELEASE_VERSION,
+                        props: {
+                            releaseVersion: DL.RELEASE_VERSION || '',
+                            open: true,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            };
+
+            return (
+                <div className={b('info-btn')} onClick={handleShowReleaseVersion}>
+                    {text}
+                </div>
+            );
+        },
+        [dispatch],
+    );
+
     const renderFooter = () => {
         return (
             <React.Fragment>
@@ -250,15 +279,20 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
                                         text: i18n('label_github'),
                                         url: GITHUB_URL,
                                     },
-                                    {
-                                        text: i18n('label_about'),
-                                        url: PROMO_SITE_DOMAIN,
-                                    },
+                                    DL.RELEASE_VERSION
+                                        ? {
+                                              text: i18n('label_about'),
+                                              itemWrapper: getReliaseVersionWrapper,
+                                          }
+                                        : {
+                                              text: i18n('label_about'),
+                                              url: PROMO_SITE_DOMAIN,
+                                          },
                                     {
                                         text: i18n('label_docs'),
                                         url: DOCUMENTATION_LINK,
                                     },
-                                ]}
+                                ].filter(Boolean)}
                                 filterable={false}
                                 virtualized={false}
                                 renderItem={renderDocsItem}

@@ -3,12 +3,19 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
 import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
-import {rgb} from 'd3';
-import type {RGBColor} from 'd3';
+import {ascending, rgb} from 'd3';
+import type {Primitive, RGBColor} from 'd3';
 import get from 'lodash/get';
 import round from 'lodash/round';
-import type {TableCellsRow, TableCommonCell, TableRow, TableTitle} from 'shared';
+import {
+    type TableCellsRow,
+    type TableCommonCell,
+    type TableRow,
+    type TableTitle,
+    isMarkupItem,
+} from 'shared';
 
+import {markupToRawString} from '../../../../../../modules/table';
 import type {TableWidgetData} from '../../../../../../types';
 import {camelCaseCss} from '../../../../../components/Widget/components/Table/utils';
 import {getTreeCellColumnIndex, getTreeSetColumnSortAscending} from '../../utils';
@@ -49,20 +56,25 @@ function getSortingFunction(args: {
         };
     }
 
-    if (columnType === 'number') {
-        return function (row1, row2) {
-            const cell1Value = row1.original[columnIndex].value as number;
-            const cell2Value = row2.original[columnIndex].value as number;
+    return function (row1, row2) {
+        const nullReplacement = columnType === 'number' ? -Infinity : '';
+        const a = getSortAccessor(row1.original[columnIndex].value, nullReplacement);
+        const b = getSortAccessor(row2.original[columnIndex].value, nullReplacement);
 
-            if (cell1Value > cell2Value) {
-                return 1;
-            }
+        return ascending(a as Primitive, b as Primitive);
+    };
+}
 
-            return cell1Value < cell2Value ? -1 : 0;
-        };
+function getSortAccessor(value: unknown, nullReplacement?: Primitive) {
+    if (isMarkupItem(value)) {
+        return markupToRawString(value);
     }
 
-    return 'auto';
+    if (value === null && typeof nullReplacement !== 'undefined') {
+        return nullReplacement;
+    }
+
+    return value as Primitive;
 }
 
 export function getColumnId(headCell: THead) {
@@ -96,14 +108,6 @@ function createColumn(args: {
             const originalCellData = context.row.original[index];
             return cell(originalCellData);
         };
-    }
-
-    if (footerCell) {
-        if (cell) {
-            options.footer = () => cell(footerCell);
-        } else {
-            options.footer = footerCell.formattedValue ?? (footerCell.value as string);
-        }
     }
 
     return options;

@@ -5,6 +5,7 @@ import {Plus} from '@gravity-ui/icons';
 import {Button, Icon, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {ConnectionsBaseQA} from 'shared';
 
 import {useFileContext} from '../context';
 import {getAcceptedExtensions} from '../utils';
@@ -22,7 +23,7 @@ export const AddFileButton = () => {
     });
 
     return (
-        <div className={b('add-file-button-wrap')}>
+        <div className={b('add-file-button-wrap')} data-qa={ConnectionsBaseQA.S3_UPLOAD_BUTTON}>
             <input {...controlProps} accept={accept} />
             <Button {...triggerProps} className={b('add-file-button')} view={'outlined'}>
                 <Icon data={Plus} size={ICON_SIZE} />

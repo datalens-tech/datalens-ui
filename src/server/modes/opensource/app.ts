@@ -144,9 +144,10 @@ function initChartsApp({
             configuredDashApiPlugin({
                 basePath: DASH_API_BASE_URL,
                 routeParams: {
-                    authPolicy: nodekit.config.isZitadelEnabled
-                        ? AuthPolicy.required
-                        : AuthPolicy.disabled,
+                    authPolicy:
+                        nodekit.config.isZitadelEnabled || nodekit.config.isAuthEnabled
+                            ? AuthPolicy.required
+                            : AuthPolicy.disabled,
                 },
                 privatePath: PUBLIC_API_DASH_API_BASE_URL,
                 privateRouteParams: {

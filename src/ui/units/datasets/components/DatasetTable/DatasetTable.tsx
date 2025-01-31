@@ -26,7 +26,8 @@ import type {
     openDialog,
     openDialogConfirm,
 } from '../../../../store/actions/dialog';
-import type {EditorItemToDisplay} from '../../store/types';
+import {TAB_DATASET} from '../../constants';
+import type {EditHistoryOptions, EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
@@ -60,7 +61,7 @@ type DatasetTableProps = {
         },
     ) => void;
     batchUpdateFields: BatchUpdateFields;
-    duplicateField: (data: {field: DatasetField}) => void;
+    duplicateField: (data: {field: DatasetField; editHistoryOptions?: EditHistoryOptions}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
@@ -102,6 +103,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 editableFieldGuid: undefined,
                 waitingForOpenFieldEditor: false,
             });
+        }
+
+        if (this.props.fields !== prevProps.fields && Object.keys(this.state.selectedRows).length) {
+            this.resetSelection();
         }
     }
 
@@ -495,7 +500,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }) => {
         switch (action) {
             case FieldAction.Duplicate: {
-                this.props.duplicateField({field});
+                this.props.duplicateField({field, editHistoryOptions: {tab: TAB_DATASET}});
                 break;
             }
             case FieldAction.Edit: {

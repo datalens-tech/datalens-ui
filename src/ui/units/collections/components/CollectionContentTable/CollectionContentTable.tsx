@@ -6,7 +6,7 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
@@ -74,7 +74,7 @@ export const CollectionContentTable = React.memo<Props>(
 
         if (DL.IS_MOBILE) {
             return (
-                <div className={b({mobile: true})}>
+                <div className={b({mobile: true})} data-qa={CollectionContentTableQa.Table}>
                     <AnimateBlock>
                         <div className={b('table')}>
                             <div className={b('content')}>
@@ -107,7 +107,7 @@ export const CollectionContentTable = React.memo<Props>(
         }
 
         return (
-            <div className={b()}>
+            <div className={b()} data-qa={CollectionContentTableQa.Table}>
                 <AnimateBlock>
                     <div className={b('table')}>
                         <div className={b('header')}>

@@ -25,7 +25,7 @@ concurrency:
 jobs:
     i18n_check:
         runs-on: ubuntu-latest
-        if: github.actor != 'WeblateGravity' && github.event.pull_request.draft == false
+        if: github.actor != 'datalens-weblate-robot' && github.event.pull_request.draft == false
         steps:
             - uses: actions/checkout@v4
               with:

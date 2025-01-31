@@ -10,6 +10,7 @@ import partial from 'lodash/partial';
 import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
+import {WidgetKind} from 'shared/types/widget';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import type {Optional} from 'utility-types';
 
@@ -17,6 +18,7 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
+    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -36,6 +38,7 @@ import type {
     WithControls,
 } from '../../../types';
 import DatalensChartkitCustomError from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
+import {getParseHtmlFn} from '../../html-generator/utils';
 
 import {ChartkitHandlersDict} from './chartkit-handlers';
 import {getChartsInsightsData} from './helpers';
@@ -329,6 +332,10 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
+                if (result.type === WidgetKind.BlankChart) {
+                    uiSandboxOptions.fnExecTimeLimit = 1500;
+                }
+
                 const unwrapFnArgs = {
                     entryId: result.entryId,
                     entryType: loadedType,
@@ -341,9 +348,27 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            if (isPotentiallyUnsafeChart(loadedType)) {
-                processHtmlFields(result.data, {allowHtml: enableJsAndHtml});
-                processHtmlFields(result.libraryConfig, {allowHtml: enableJsAndHtml});
+            const isWizardOrQl = result.isNewWizard || result.isQL;
+            const shouldProcessHtmlFields =
+                isPotentiallyUnsafeChart(loadedType) ||
+                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+            if (shouldProcessHtmlFields) {
+                const parseHtml = await getParseHtmlFn();
+                const ignoreInvalidValues = isWizardOrQl;
+                const allowHtml =
+                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapeStringInWizard)
+                        ? false
+                        : enableJsAndHtml;
+                processHtmlFields(result.data, {
+                    allowHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
+                processHtmlFields(result.libraryConfig, {
+                    allowHtml,
+                    parseHtml,
+                    ignoreInvalidValues,
+                });
             }
 
             await unwrapMarkdown({config: result.config, data: result.data});
@@ -493,6 +518,7 @@ async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data'
 
         try {
             unwrapItem(get(data, 'graphs', []));
+            unwrapItem(get(data, 'series.data', []));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

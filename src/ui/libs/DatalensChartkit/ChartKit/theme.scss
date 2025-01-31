@@ -53,14 +53,15 @@
     --dl-table-footer-bg-color: var(--g-color-base-generic);
 }
 
-.g-root_theme_dark .chartkit .chartkit-ymap,
-.g-root_theme_dark-hc .chartkit .chartkit-ymap {
+// Apply themed styles to chartkit ymap contents
+
+.g-root .chartkit .chartkit-ymap {
     & .chartkit-map-ground-pane {
-        filter: invert(0.9) saturate(0.4) hue-rotate(-30deg);
+        filter: var(--dl-filter-ymap-background);
     }
 
     & [class*='map-bg'] {
-        background: transparent;
+        background: var(--dl-color-ymap-background);
     }
 
     & [class*='zoom__plus'],
@@ -70,27 +71,12 @@
     }
 
     & [class*='zoom__icon'] {
-        filter: invert(1);
+        filter: var(--dl-filter-zoom-control);
     }
 }
 
-.g-root_theme_dark-hc .chartkit .chartkit-ymap {
-    & .chartkit-map-ground-pane {
-        filter: invert(0.95) saturate(0.4) hue-rotate(-30deg);
-    }
-}
-
-// hitmap color change together with map color styles
-// therefor hitmap legend should also be inverted
-
-.g-root_theme_dark .chartkit .chartkit-ymap-legend {
+.g-root .chartkit .chartkit-ymap-legend {
     & .chartkit-ymap-legend-layer__color-preview_default-heatmap {
-        filter: invert(0.9) saturate(0.4) hue-rotate(-30deg);
-    }
-}
-
-.g-root_theme_dark-hc .chartkit .chartkit-ymap-legend {
-    & .chartkit-ymap-legend-layer__color-preview_default-heatmap {
-        filter: invert(0.95) saturate(0.4) hue-rotate(-30deg);
+        filter: var(--dl-filter-ymap-heatmap);
     }
 }

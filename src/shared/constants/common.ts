@@ -54,6 +54,8 @@ export const TIME_FORMAT_24 = 'HH:mm';
 
 export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 
+export const SCROLL_TITLE_DEBOUNCE_TIME = 400;
+
 export const SHARED_URL_OPTIONS = {
     SAFE_CHART: '_safe_chart',
     WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',

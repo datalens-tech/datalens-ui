@@ -3,6 +3,7 @@ import {expect} from '@playwright/test';
 import {
     ChartKitQa,
     DialogFieldSettingsQa,
+    MARKUP_TYPE,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
@@ -23,7 +24,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Markdown dimension @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-d3');
+            const chart = chartContainer.locator('.gcharts-d3');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             await wizardPage.createNewFieldWithFormula(
@@ -32,7 +33,10 @@ datalensTest.describe('Wizard', () => {
             );
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Dimensions, 'md');
             await wizardPage.visualizationItemDialog.open(PlaceholderName.Dimensions, 'md');
-            await page.locator(slct(DialogFieldSettingsQa.MarkdownEnableButton)).click();
+            await page
+                .locator(slct(DialogFieldSettingsQa.MarkupTypeRadioButtons))
+                .locator(`[value="${MARKUP_TYPE.markdown}"]`)
+                .click();
             await wizardPage.visualizationItemDialog.clickOnApplyButton();
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Measures, 'sum');
 

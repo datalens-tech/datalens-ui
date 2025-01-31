@@ -1,6 +1,3 @@
-export function getEndpointForNavigation(
-    endpoints: Record<string, string>,
-    useNavigation = false,
-): string {
-    return useNavigation ? `${endpoints.charts}/navigation` : '/navigate';
+export function getEndpointForNavigation(): string {
+    return '/navigate';
 }

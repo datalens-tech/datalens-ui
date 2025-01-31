@@ -11,7 +11,11 @@ import {
 
 type DlContext = Record<string, string | string[] | undefined>;
 
-export default function xDlContext() {
+export default function xDlContext({
+    plugins = [],
+}: {
+    plugins?: Array<(req: Request, context: DlContext) => DlContext>;
+} = {}) {
     return function xDlContextMiddleware(req: Request, _: Response, next: NextFunction) {
         const {folderId: folderIdHeader} = req.ctx.config.headersMap;
 
@@ -50,7 +54,15 @@ export default function xDlContext() {
             context.displayMode = dispayMode;
         }
 
-        req.headers[DL_CONTEXT_HEADER] = JSON.stringify(context);
+        req.headers[DL_CONTEXT_HEADER] = JSON.stringify(
+            plugins.length > 0
+                ? plugins.reduce<DlContext>(
+                      (memo, plugin) => ({...memo, ...plugin(req, memo)}),
+                      context,
+                  )
+                : context,
+        );
+
         req.originalContext.set(
             'tenantId',
             tenantId && Array.isArray(tenantId) ? tenantId.join(',') : tenantId,

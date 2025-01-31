@@ -1,8 +1,7 @@
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {flow} from 'lodash';
 
-import type {ChartsEngine} from '../../index';
+import type {HooksContext} from '../../types';
 
 export class HookError extends Error {
     hookError: {
@@ -20,8 +19,8 @@ const isHookError = (err: {}): err is HookError => {
 export class ProcessorHooks {
     _processorHooks: Record<string, any>[];
     _hooks: Record<string, any>[];
-    constructor({chartsEngine}: {chartsEngine: ChartsEngine}) {
-        this._processorHooks = chartsEngine.processorHooks;
+    constructor({processorHooks}: {processorHooks: Record<string, any>[]}) {
+        this._processorHooks = processorHooks;
         this._hooks = [];
     }
 
@@ -52,15 +51,15 @@ export class ProcessorHooks {
     }
 
     async init({
-        req,
         config,
         isEditMode,
         ctx,
+        hooksContext,
     }: {
-        req: Request;
         config: Record<string, any>;
         isEditMode: boolean;
         ctx: AppContext;
+        hooksContext: HooksContext;
     }) {
         let hrStart;
 
@@ -71,10 +70,10 @@ export class ProcessorHooks {
             try {
                 ctx.log(`Hook ${hookName} init`);
                 const hook = processHook.init({
-                    req,
                     config,
                     isEditMode,
                     ctx,
+                    hooksContext,
                 });
                 ctx.log(`Hook ${hookName} process`);
                 await hook.process();

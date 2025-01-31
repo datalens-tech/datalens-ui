@@ -63,6 +63,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 holidays: 'off',
                 axisFormatMode: 'auto',
                 axisModeMap: {},
+                axisVisibility: 'show',
             },
         },
         {
@@ -88,6 +89,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 axisFormatMode: 'auto',
+                axisVisibility: 'show',
             },
             onChange: onMeasureAxisChange,
         },

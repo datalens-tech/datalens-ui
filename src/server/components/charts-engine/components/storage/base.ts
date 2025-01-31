@@ -1,5 +1,5 @@
 import type {Request} from '@gravity-ui/expresskit';
-import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import {type AppConfig, type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {v4 as uuidv4} from 'uuid';
 
 import type {WorkbookId} from '../../../../../shared';
@@ -9,8 +9,6 @@ import type {EmbeddingInfo, ResolvedConfig} from './types';
 import type {USProvider} from './united-storage/provider';
 
 const DEFAULT_PRELOAD_FETCHING_INTERVAL = 120e3;
-
-type Config = AppConfig & {preloadList?: string[]};
 
 export type ResolveConfigProps = {
     id?: string;
@@ -78,12 +76,12 @@ export class BaseStorage {
     }
 
     async refreshPreloaded(
-        parentCtx: AppContext & {config: Config},
+        parentCtx: AppContext & {config: AppConfig},
         callback: (configs: Record<string, ResolvedConfig>) => void,
     ) {
         const requestId = uuidv4();
         const ctx = parentCtx.create('Configs preloading', {loggerPostfix: requestId});
-        ctx.set('requestId', requestId);
+        ctx.set(REQUEST_ID_PARAM_NAME, requestId);
         ctx.setTag('request_id', requestId);
 
         ctx.log('STORAGE_REFRESHING_PRELOADED');
@@ -96,7 +94,6 @@ export class BaseStorage {
                         authorization: `OAuth ${this.oauthToken}`,
                     },
                     noCache: true,
-                    requestId,
                 })
                     .then((config) => {
                         this.cachedConfigs[key] = config;
@@ -138,8 +135,8 @@ export class BaseStorage {
         ctx: AppContext,
         params: (ResolveConfigProps | EmbedResolveConfigProps) & {unreleased: boolean},
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, requestId, storageApiPath, extraAllowedHeaders, workbookId} =
-            params;
+        const {headers, unreleased, storageApiPath, extraAllowedHeaders, workbookId} = params;
+        const requestId = ctx.get(REQUEST_ID_PARAM_NAME);
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
         }

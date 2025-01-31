@@ -75,6 +75,18 @@ export type CheckDatasetsForPublicationArgs = {
     datasetsIds: string[];
 } & WorkbookIdArg;
 
+export type CheckConnectionsForPublicationResponse = {
+    result: {
+        allowed: boolean;
+        connection_id: string;
+        reason: string | null;
+    }[];
+};
+
+export type CheckConnectionsForPublicationArgs = {
+    connectionsIds: string[];
+} & WorkbookIdArg;
+
 export type ValidateDatasetErrorResponse = {
     code: string;
     message: string;
@@ -188,6 +200,8 @@ export type GetDistinctsApiV2TransformedResponse = {
         };
     };
 };
+
+export type GetDistinctsApiV2InfoHeadersArg = Record<string, string>;
 
 export type GetDistinctsApiV2Args = Omit<
     ApiV2RequestBody,

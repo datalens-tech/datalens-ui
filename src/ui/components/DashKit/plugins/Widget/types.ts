@@ -15,13 +15,17 @@ export type CurrentTab = {
     id: string;
     title: string;
     description: string;
+    displayedTitle?: string | React.ReactNode;
+    hint?: string;
+    enableHint?: boolean;
+    enableDescription?: boolean;
     chartId: string;
     isDefault: boolean;
     params: StringParams;
     autoHeight?: boolean;
     enableActionParams?: boolean;
     background?: {
-        enabled: boolean;
+        enabled?: boolean;
         color: string;
     };
 };

@@ -9,11 +9,13 @@ import type {
 } from '../../../../../../../shared';
 import {
     Feature,
+    MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
     getFakeTitleOrTitle,
     isMarkupDataType,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -335,10 +337,19 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
-                    if (tooltipField?.isMarkdown) {
-                        pointData[WRAPPED_MARKDOWN_KEY] = text;
-                    } else {
-                        pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                    switch (tooltipField?.markupType) {
+                        case MARKUP_TYPE.markdown: {
+                            pointData[WRAPPED_MARKDOWN_KEY] = text;
+                            break;
+                        }
+                        case MARKUP_TYPE.html: {
+                            pointData.text = wrapHtml(text);
+                            break;
+                        }
+                        default: {
+                            pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                            break;
+                        }
                     }
                 }
 
@@ -369,8 +380,12 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     });
 
-    if (tooltips.some((item) => item.isMarkdown)) {
+    if (tooltips.some((item) => item.markupType === MARKUP_TYPE.markdown)) {
         ChartEditor.updateConfig({useMarkdown: true});
+    }
+
+    if (tooltips.some((item) => item.markupType === MARKUP_TYPE.html)) {
+        ChartEditor.updateConfig({useHtml: true});
     }
 
     let mapOptions: GeopointMapOptions = {

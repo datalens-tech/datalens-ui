@@ -21,7 +21,6 @@ import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
-import * as actionTypes from '../../constants/dashActionTypes';
 import type {DashState} from '../../reducers/dashTypedReducer';
 import {getFakeDashEntry} from '../../utils';
 import {
@@ -84,7 +83,7 @@ export const setSelectStateMode = ({
                 } = getState();
 
                 const hashData = await getSdk()
-                    .us.getDashState({entryId, hash: stateHash})
+                    .sdk.us.getDashState({entryId, hash: stateHash})
                     .catch((error) => {
                         logger.logError('getDashState failed', error);
                         console.error('STATE_LOAD', error);
@@ -126,7 +125,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         }
 
         try {
-            const {savedId} = await getSdk().us.getEntryMeta({entryId});
+            const {savedId} = await getSdk().sdk.us.getEntryMeta({entryId});
 
             if (stateSavedId !== savedId) {
                 dispatch(
@@ -277,7 +276,7 @@ export const load = ({
                 }),
                 hash
                     ? getSdk()
-                          .us.getDashState({
+                          .sdk.us.getDashState({
                               entryId,
                               hash,
                           })
@@ -412,13 +411,15 @@ export const load = ({
     };
 };
 
+export const SAVE_DASH_SUCCESS = Symbol('dash/SAVE_DASH_SUCCESS');
 export type SaveDashSuccessAction = {
-    type: typeof actionTypes.SAVE_DASH_SUCCESS;
+    type: typeof SAVE_DASH_SUCCESS;
     payload: Partial<DashState>;
 };
 
+export const SAVE_DASH_ERROR = Symbol('dash/SAVE_DASH_ERROR');
 export type SaveDashErrorAction = {
-    type: typeof actionTypes.SAVE_DASH_ERROR;
+    type: typeof SAVE_DASH_ERROR;
 };
 
 export const save = (mode: EntryUpdateMode, isDraft = false) => {
@@ -459,7 +460,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             }
 
             dispatch({
-                type: actionTypes.SAVE_DASH_SUCCESS,
+                type: SAVE_DASH_SUCCESS,
                 payload: {
                     mode: Mode.View,
                     data: entry.data,
@@ -473,7 +474,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             });
         } catch (error) {
             logger.logError('save dash failed', error);
-            dispatch({type: actionTypes.SAVE_DASH_ERROR});
+            dispatch({type: SAVE_DASH_ERROR});
             throw error;
         }
     };

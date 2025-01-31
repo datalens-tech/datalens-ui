@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {ConnectionsDialogQA, DashTabItemControlSourceType, WidgetKind} from 'shared';
 
+import {addAlias, getNormalizedAliases} from '../../../../../components/DialogRelations/helpers';
 import {ITEM_TYPE} from '../../../../../constants/dialogs';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -23,7 +24,6 @@ import {
     selectCurrentTabConnectableItems,
     selectDashWorkbookId,
 } from '../../../store/selectors/dashTypedSelectors';
-import {addAlias, getNormalizedAliases} from '../DialogRelations/helpers';
 
 import ConnectByAlias from './ConnectByAlias/ConnectByAlias';
 import Context from './Context/Context';
@@ -200,7 +200,7 @@ class Connections extends React.PureComponent {
             const datasetsIds = Object.keys(datasets);
 
             if (!isEmpty(entriesIds) && (!isEmpty(datasetsIds) || !isEmpty(controlsIds))) {
-                entriesDatasetsFields = await getSdk().mix.getEntriesDatasetsFields({
+                entriesDatasetsFields = await getSdk().sdk.mix.getEntriesDatasetsFields({
                     entriesIds,
                     datasetsIds,
                     workbookId: this.props.workbookId,

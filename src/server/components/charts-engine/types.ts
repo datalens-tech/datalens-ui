@@ -1,7 +1,8 @@
-import type {OutgoingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 
-import type {AppMiddleware, AppRouteDescription, Request} from '@gravity-ui/expresskit';
+import type {AppMiddleware, AppRouteDescription, Request, Response} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {EDITOR_TYPE_CONFIG_TABS} from '../../../shared';
 import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
@@ -122,6 +123,23 @@ export type Source<T = string | Record<string, string>> = {
     hideInInspector?: boolean;
     ui?: boolean;
     sourceArgs?: SourcesArgs;
+    connectionId?: string;
+    body?: string;
+    path?: string;
+};
+
+export type AdapterContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        ['x-forwarded-for']: IncomingHttpHeaders['x-forwarded-for'];
+    };
+};
+
+export type HooksContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        authorization: IncomingHttpHeaders['authorization'];
+    };
 };
 
 export type SourceConfig = {
@@ -138,30 +156,26 @@ export type SourceConfig = {
     uiEndpointFormatter?: (url: string, sourceData?: Source['data']) => string | null;
     uiEndpoint?: string;
     passedCredentials?: Record<string, boolean>;
-    extraHeaders?: Record<string, string> | ((req: Request) => Record<string, string>);
+    extraHeaders?: Record<string, string | undefined> | (() => Record<string, string>);
     sourceType?: string;
     dataEndpoint?: string;
     preprocess?: (url: string) => string;
-    allowedMethods?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+    allowedMethods?: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
 
-    adapter?: ({
+    adapterWithContext?: ({
         targetUri,
         sourceName,
-        req,
+        adapterContext,
+        ctx,
     }: {
         targetUri: string;
         sourceName: string;
-        source: Source;
-        req: Request;
-        fetchingStartTime: number;
-    }) => Promise<unknown>;
+        adapterContext: AdapterContext;
+        ctx: AppContext;
+    }) => unknown;
 
     middlewareAdapter?: (args: MiddlewareSourceAdapterArgs) => Promise<any>;
-    check?: (
-        req: Request,
-        targetUri: string,
-        params: Request['body']['params'],
-    ) => Promise<boolean>;
+    check?: (targetUri: string, params?: Request['body']['params']) => Promise<boolean>;
 
     args?: Record<string, string | number | (string | number)[]>;
     maxRedirects?: number;
@@ -186,12 +200,16 @@ export interface PluginRoute {
         body?: Object;
     };
 }
+
+export type ChartEngineController = (req: Request, res: Response) => Promise<void> | unknown;
+
 export interface Plugin {
     middlewares?: Middleware[];
     sources?: Record<string, SourceConfig>;
     runners?: Runner[];
     processorHooks?: Record<string, any>[];
     routes?: PluginRoute[];
+    controllers?: Record<string, (chartsEngine: any) => ChartEngineController>;
 }
 
 export type ChartStorageType = keyof typeof EDITOR_TYPE_CONFIG_TABS;

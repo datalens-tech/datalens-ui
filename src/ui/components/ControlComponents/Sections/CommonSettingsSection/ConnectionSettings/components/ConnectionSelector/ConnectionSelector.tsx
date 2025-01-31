@@ -17,6 +17,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 export const ConnectionSelector = (props: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    className?: string;
 }) => {
     const dispatch = useDispatch();
     const {connectionId} = useSelector(selectSelectorDialog);
@@ -32,7 +33,7 @@ export const ConnectionSelector = (props: {
             setIsInvalid(false);
 
             return getSdk()
-                .bi.getConnection({
+                .sdk.bi.getConnection({
                     connectionId: updatedConnectionId,
                     workbookId,
                 })
@@ -85,6 +86,7 @@ export const ConnectionSelector = (props: {
 
     return (
         <EntrySelector
+            className={props.className}
             label={i18n('field_connection')}
             entryId={connectionId}
             scope={EntryScope.Connection}

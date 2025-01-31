@@ -229,7 +229,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             return;
         }
         return getSdk()
-            .us.extendLock({
+            .sdk.us.extendLock({
                 entryId: this.props.entry.entryId,
                 data: {lockToken: this.props.lockToken, duration: LOCK_DURATION},
             })

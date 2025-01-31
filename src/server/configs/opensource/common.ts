@@ -1,3 +1,5 @@
+import type {AppConfig} from '@gravity-ui/nodekit';
+
 import type {AppEnvironment} from '../../../shared';
 import {
     AppInstallation,
@@ -10,7 +12,9 @@ import {
 } from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
+import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
+import {getEnvCert} from '../../utils/env-utils';
 import controlDashChartTemplate from '../shared/control-dash-chart-template';
 import datalensChartTemplate from '../shared/datalens-chart-template';
 import qlChartTemplate from '../shared/ql-chart-template';
@@ -19,12 +23,9 @@ export default {
     // DATALENS MODE
     serviceName: SERVICE_NAME_DATALENS,
 
-    csrf: null,
-
     expressCookieSecret: process.env.COOKIE_SECRET,
 
     appAuthPolicy: 'redirect',
-    authMethods: [],
     runResponseWhitelist: [
         'sourceId',
         'sourceType',
@@ -40,10 +41,9 @@ export default {
     regionalEnvConfig: {
         defaultLang: Language.En,
         allowLanguages: [Language.En, Language.Ru],
-        langQueryParamName: '_lang',
     },
 
-    csp: 'disabled',
+    appLangQueryParamName: '_lang',
 
     expressBodyParserRawConfig: {
         type: 'multipart/form-data',
@@ -61,7 +61,7 @@ export default {
         control_dash: controlDashChartTemplate,
     },
 
-    getSourcesByEnv: (env: AppEnvironment) => {
+    getSourcesByEnv: (env: AppEnvironment): Record<string, SourceConfig> => {
         const sources = resolveSource(AppInstallation.Opensource, env);
 
         return {
@@ -129,14 +129,6 @@ export default {
     },
 
     redis: null,
-
-    axiosDefaults: {},
-
-    defaultTenantMode: {
-        foldersEnabled: true,
-        workbooksEnabled: false,
-        collectionsEnabled: false,
-    },
 
     iamResources: {
         collection: {
@@ -208,18 +200,15 @@ export default {
     appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
     appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
 
+    // zitadel
     isZitadelEnabled: isTrueArg(process.env.ZITADEL),
-
     clientId: process.env.CLIENT_ID || '',
     clientSecret: process.env.CLIENT_SECRET || '',
-
     zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
-
     zitadelUri: process.env.ZITADEL_URI || '',
     zitadelInternalUri: process.env.ZITADEL_INTERNAL_URI || process.env.ZITADEL_URI,
     appHostUri: process.env.APP_HOST_URI || '',
     zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
-
     serviceClientId: process.env.SERVICE_CLIENT_ID || '',
     serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
 
@@ -250,6 +239,10 @@ export default {
     oidc_client_id_4: process.env.OIDC_CLIENT_ID_4 || '',
     oidc_secret_4: process.env.OIDC_SECRET_4 || '',
     oidc_name_4: process.env.OIDC_NAME_4 || '',
-    runEndpoint: '/api/run',
+    //runEndpoint: '/api/run',
+    // auth
+    isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
+    authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
+
     apiPrefix: '/api',
-};
+} satisfies Partial<AppConfig>;

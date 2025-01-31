@@ -27,7 +27,7 @@ const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
-const InputTypeSelector = () => {
+const InputTypeSelector = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const controlType = useSelector(selectSelectorControlType);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -79,7 +79,7 @@ const InputTypeSelector = () => {
     );
 
     return (
-        <FormRow label={i18n('field_selector-type')}>
+        <FormRow label={i18n('field_selector-type')} className={className}>
             <Select
                 value={[controlType]}
                 disabled={isFieldDisabled}

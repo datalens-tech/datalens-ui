@@ -21,7 +21,7 @@ import {
     RPC_AUTHORIZATION
 } from '../../shared';
 
-import AuthPage from './pages/AuthPage/AuthPage';
+import CustomAuthPage from './pages/AuthPage/CustomAuthPage';
 import Utils from 'ui/utils';
 
 reducerRegistry.register(coreReducers);
@@ -53,6 +53,9 @@ const UsersPage = React.lazy(
 
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
+const AuthPage = React.lazy(
+    () => import(/* webpackChunkName: "connections-page" */ './pages/AuthPage/AuthPage'),
+);
 
 export const AuthContext = React.createContext({
     token: "",
@@ -84,6 +87,14 @@ const DatalensPageView = (props: any) => {
     }
 
     console.log("superUser.isMaster", superUser.isMaster)
+    if (DL.IS_AUTH_PAGE) {
+        return (
+            <React.Suspense fallback={<FallbackPage />}>
+                <AuthPage />
+            </React.Suspense>
+        );
+    }
+
     return (
         <AuthContext.Provider value={{token, setToken, superUser, setSuperUser}}>
             <React.Suspense fallback={<FallbackPage />}>
@@ -92,7 +103,7 @@ const DatalensPageView = (props: any) => {
                     {token && <Redirect from="/auth" to="/"/>}
                     <Route
                         path={'/auth'}
-                        component={()=><AuthPage setToken={setToken} />}
+                        component={()=><CustomAuthPage setToken={setToken} />}
                     />
                     <Route path={['/admin/users']} component={superUser.isMaster ? UsersPage : ()=><Redirect from="/admin/users" to="/"/>} />
                     <Route path={['/admin/roles']} component={superUser.isMaster ? RolesPage : ()=><Redirect from="/admin/roles" to="/"/>} />
@@ -129,6 +140,12 @@ const DatalensPageView = (props: any) => {
                         component={CollectionsNavigtaionPage}
                     />
 
+                    {DL.AUTH_ENABLED && <Route path="/auth" component={AuthPage} />}
+
+                    <Route path="/">
+                        <Redirect to={`/collections${location.search}`} />
+                    </Route>
+
                     <Route path="/">
                         <Redirect to={`/collections${location.search}`} />
                     </Route>  
@@ -163,7 +180,7 @@ const DatalensPage: React.FC = () => {
     
     function setToken(value: any) {
         localStorage.setItem('x-rpc-authorization', value);
-        getSdk().setDefaultHeader({
+        getSdk().sdk.setDefaultHeader({
             name: RPC_AUTHORIZATION,
             value: value,
         });
@@ -172,6 +189,8 @@ const DatalensPage: React.FC = () => {
         window.location.assign('/');
     }
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
+    // const showMobileHeader =
+    //     !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
 
     if (token && showMobileHeader && superUser) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;

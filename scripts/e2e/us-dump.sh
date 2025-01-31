@@ -40,8 +40,9 @@ if [ $CONNECTION_CHECK_RESULT_STATUS_CODE -ne 0 ]; then
     exit 1
 fi
 
-DUMP_CMD="pg_dump --dbname=$US_CONNECTION --column-inserts -a -t workbooks -t entries -t revisions -t links"
-docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" | grep -Ev "^(--|SET|SELECT pg_catalog.set_config)" >$DUMP_TMP
+DUMP_CMD="pg_dump --dbname=$US_CONNECTION --disable-triggers --column-inserts -a -t collections -t workbooks -t entries -t revisions -t links"
+docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" |
+tee >(grep -Ev "^(--|SET|SELECT pg_catalog.set_config|pg_dump:)" >$DUMP_TMP) | grep "pg_dump:"
 DUMP_RESULT_STATUS_CODE=$?
 
 if [ $DUMP_RESULT_STATUS_CODE -ne 0 ]; then

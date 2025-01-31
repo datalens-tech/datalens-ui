@@ -2,6 +2,11 @@ import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
+import {DL} from '../../constants/common';
+import {refreshAuthToken} from '../auth/refreshToken';
+
+import {initBeforeRequestInterceptor} from './interceptors';
+
 const NULL_HEADER = '__null__';
 
 const csrfMetaTag = document.querySelector<HTMLMetaElement>('meta[name=csrf-token]');
@@ -40,6 +45,10 @@ axiosRetry(client, {
     retryCondition: (error) =>
         axiosRetry.isNetworkError(error) || axiosRetry.isRetryableError(error),
 });
+
+if (DL.AUTH_ENABLED) {
+    initBeforeRequestInterceptor(client, refreshAuthToken);
+}
 
 export default client;
 

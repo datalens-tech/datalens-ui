@@ -107,6 +107,11 @@ export enum DialogConfirmQA {
     CancelButton = 'dialog-confirm-cancel-button',
 }
 
+export enum DialogInfoQA {
+    Dialog = 'dialog-info',
+    CloseButton = 'dialog-close-button',
+}
+
 export enum DialogWarningQA {
     Dialog = 'dialog-warning',
     ApplyButton = 'dialog-warning-apply-button',
@@ -178,4 +183,9 @@ export enum DatalensTabs {
     MobileItem = 'dash-mobile-tab-item',
     Item = 'dash-tab-item',
     SwitcherItem = 'dash-tab-switcher-item',
+}
+
+export enum DatalensHeaderQa {
+    DesktopContainer = 'datalens-header-desktop-container',
+    MobileContainer = 'datalens-header-mobile-container',
 }

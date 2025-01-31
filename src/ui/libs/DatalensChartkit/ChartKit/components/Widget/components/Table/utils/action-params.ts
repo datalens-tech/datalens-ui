@@ -15,7 +15,11 @@ import type {
 } from 'shared';
 import type {DataTableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
 
-import {addParams, subtractParameters} from '../../../../../helpers/action-params-handlers';
+import {
+    addParams,
+    getNormalizedParams,
+    subtractParameters,
+} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
 
 import {hasGroups} from './misc';
@@ -264,7 +268,7 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): Str
     const cellCustomData = get(cell, 'custom');
 
     if (cellCustomData && 'actionParams' in cellCustomData) {
-        return cellCustomData.actionParams;
+        return getNormalizedParams(cellCustomData.actionParams);
     }
 
     if (head?.id) {

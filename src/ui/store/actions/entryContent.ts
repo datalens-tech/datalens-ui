@@ -21,9 +21,9 @@ export function fetchEntryById(
         let entry;
 
         try {
-            entry = await getSdk().us.getEntry({entryId, includePermissionsInfo: true}, params);
+            entry = await getSdk().sdk.us.getEntry({entryId, includePermissionsInfo: true}, params);
         } catch (error: any) {
-            if (getSdk().isCancel(error)) {
+            if (getSdk().sdk.isCancel(error)) {
                 entry = null;
             }
         }
@@ -92,7 +92,7 @@ export function loadRevisions({
         let entries: GetRevisionsEntry[] = [];
 
         try {
-            const getRevisionsResponse = await getSdk().us.getRevisions(
+            const getRevisionsResponse = await getSdk().sdk.us.getRevisions(
                 {
                     entryId,
                     pageSize: REVISIONS_LIST_PART_SIZE,
@@ -103,7 +103,7 @@ export function loadRevisions({
             hasNextPage = getRevisionsResponse.hasNextPage;
             entries = getRevisionsResponse.entries;
         } catch (error) {
-            if (getSdk().isCancel(error)) {
+            if (getSdk().sdk.isCancel(error)) {
                 return;
             }
             throw error;
@@ -128,7 +128,7 @@ export function loadRevisions({
             if (revIdsSet.size > 0) {
                 let extraEntries: GetRevisionsEntry[] = [];
                 try {
-                    const getRevisionsResponse = await getSdk().us.getRevisions(
+                    const getRevisionsResponse = await getSdk().sdk.us.getRevisions(
                         {
                             entryId,
                             pageSize: REVISIONS_LIST_PART_SIZE,
@@ -139,7 +139,7 @@ export function loadRevisions({
                     );
                     extraEntries = getRevisionsResponse.entries;
                 } catch (error) {
-                    if (getSdk().isCancel(error)) {
+                    if (getSdk().sdk.isCancel(error)) {
                         return;
                     }
                     throw error;

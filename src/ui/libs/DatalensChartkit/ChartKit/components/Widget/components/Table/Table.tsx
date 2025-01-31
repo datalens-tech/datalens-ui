@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {DEFAULT_WIDGET_SIZE} from 'shared';
 import type {TableCommonCell, TableHead, TableRow, WidgetSizeType} from 'shared';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import type {ChartKitDataTable, DataTableData} from '../../../../../types';
 import {
@@ -28,7 +29,6 @@ import {
     getColumnsAndNames,
     getIdFromGeneratedName,
     hasGroups,
-    isWrappedHTML,
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';

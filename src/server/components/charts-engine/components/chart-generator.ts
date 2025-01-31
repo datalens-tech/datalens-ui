@@ -1,7 +1,7 @@
 import type {Request} from '@gravity-ui/expresskit';
-import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
-import type {StringParams} from '../../../../shared';
+import {type StringParams, isEnabledServerFeature} from '../../../../shared';
 
 const commonTemplateGraph = `
 const {buildHighchartsConfig, buildLibraryConfig} = require('#module');
@@ -122,10 +122,6 @@ module.exports = result;
 `,
 };
 
-type ConfigWithChartTemplates = AppConfig & {
-    chartTemplates: ChartTemplates;
-};
-
 export type ChartTemplates = {
     datalens: ChartTemplate;
     sql: ChartTemplate;
@@ -153,7 +149,16 @@ type Chart = {
     statface_metric?: string;
     graph?: string;
     statface_graph?: string;
+    meta?: string;
 };
+
+function createChartManifect(args: {links?: Record<string, string>}) {
+    const manifest = {
+        links: Object.values(args.links ?? {}),
+    };
+
+    return JSON.stringify(manifest, null, 4);
+}
 
 export const chartGenerator = {
     generateChart: ({
@@ -167,8 +172,8 @@ export const chartGenerator = {
         req: Request;
         ctx: AppContext;
     }) => {
-        const config = ctx.config as ConfigWithChartTemplates;
-        const chartTemplates = config.chartTemplates;
+        const config = ctx.config;
+        const chartTemplates = config.chartTemplates as ChartTemplates;
         const chart: Chart = {...commonTemplate};
 
         const chartOldType = data.type;
@@ -227,6 +232,10 @@ export const chartGenerator = {
 
         chart.js = chart.js.replace('#apiVersion', apiVersion);
         chart.url = chart.url.replace('#apiVersion', apiVersion);
+
+        if (isEnabledServerFeature(ctx, 'EnableChartEditorMetaTab')) {
+            chart.meta = createChartManifect({links});
+        }
 
         const {config: _, ...chartWithoutCOnfig} = chart;
 

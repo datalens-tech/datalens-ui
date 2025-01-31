@@ -1,5 +1,4 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
-import type {ActionPanelItem} from '@gravity-ui/dashkit';
 import type {CancellablePromise} from '@gravity-ui/sdk';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
@@ -10,6 +9,7 @@ import type {
     CollectDashStatsArgs,
     CollectDashStatsResponse,
     GetDistinctsApiV2Args,
+    GetDistinctsApiV2InfoHeadersArg,
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
 } from 'shared/schema';
@@ -38,6 +38,7 @@ import type {
     FetchDocumentationResponse,
 } from './types/functions/fetchDocumentation';
 import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
+import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
@@ -120,7 +121,10 @@ export const commonFunctionsMap = {
         >(),
     fetchDistinctsByApi:
         makeFunctionTemplate<
-            (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>
+            (
+                params: GetDistinctsApiV2Args,
+                headers?: GetDistinctsApiV2InfoHeadersArg,
+            ) => Promise<GetDistinctsApiV2TransformedResponse>
         >(),
     requestCollectDashStats:
         makeFunctionTemplate<
@@ -141,7 +145,7 @@ export const commonFunctionsMap = {
             }) => CopiedConfigData
         >(),
     checkCreateEntryButtonVisibility: makeFunctionTemplate<CheckCreateEntryButtonVisibility>(),
-    getBasicActionPanelItems: makeFunctionTemplate<() => ActionPanelItem[]>(),
+    getBasicActionPanelItems: makeFunctionTemplate<GetBasicActionPanelItems>(),
     getListMembersFilter:
         makeFunctionTemplate<({search, tabId}: {search: string; tabId: string}) => string | null>(),
     getTopLevelEntryScopes: makeFunctionTemplate<() => EntryScope[]>(),

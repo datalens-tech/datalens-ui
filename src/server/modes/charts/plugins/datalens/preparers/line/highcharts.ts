@@ -1,4 +1,5 @@
 import _isEmpty from 'lodash/isEmpty';
+import set from 'lodash/set';
 
 import type {Field, ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
@@ -16,6 +17,7 @@ import {
     isMeasureNameOrValue,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {isHtmlField} from '../../../../../../../shared/types/index';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
@@ -44,6 +46,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         shared,
         shapes,
         graphs,
+        segments,
         idToDataType,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -60,6 +63,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const mergedYSections = [...ySectionItems, ...y2SectionItems];
     const colorItem = colors[0];
     const shapeItem = shapes[0];
+    const segment = segments[0];
     const segmentsMap = getSegmentMap(args);
 
     const xField = x ? ({guid: x.guid, data_type: idToDataType[x.guid]} as Field) : x;
@@ -80,6 +84,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                     isDateField(x) && xAxisType === 'category'
                         ? ChartkitHandlers.WizardXAxisFormatter
                         : undefined,
+                useHTML: isHtmlField(x),
             },
         },
         axesFormatting: {
@@ -157,17 +162,23 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
                     ) && isLegendEnabled(shared.extraSettings),
             };
 
-            const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis(
+            const {yAxisFormattings, yAxisSettings} = getSegmentsYAxis({
+                segment,
                 segmentsMap,
-                {
+                placeholders: {
                     y: yPlaceholder,
                     y2: y2Placeholder,
                 },
                 visualizationId,
-            );
+            });
             customConfig.yAxis = yAxisSettings;
             customConfig.axesFormatting.yAxis = yAxisFormattings;
         }
+    }
+
+    const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
+    if (shouldUseHtmlForLegend) {
+        set(customConfig, 'legend.useHTML', true);
     }
 
     return customConfig;

@@ -170,7 +170,7 @@ export default class Utils {
     }
 
     static setSdk() {
-        window.sdk = getSdk();
+        window.sdk = getSdk().sdk;
     }
 
     static setRpcAuthorization() {

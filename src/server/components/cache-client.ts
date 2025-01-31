@@ -1,15 +1,25 @@
+import type {AppConfig} from '@gravity-ui/nodekit';
 import Redis from 'ioredis';
 
-export type RedisConfig = {
-    redis?: {
-        password: string;
-        role: 'master' | 'slave';
-        sentinels: {host: string; port: number}[];
-        family: number;
-        name: string;
-    };
-    appInstallation?: string;
+export type RedisSentinel = {
+    host: string;
+    port: number;
 };
+
+export type RedisSentinelsList = Array<RedisSentinel>;
+
+export type RedisDsnConfig = {
+    sentinels: RedisSentinelsList;
+    name: string;
+    password?: string;
+};
+
+export type RedisConfig = RedisDsnConfig & {
+    family: 4 | 6;
+    role: 'master' | 'slave';
+};
+
+export type RedisConfigParams = {sentinels?: RedisSentinelsList; name?: string};
 
 export type CacheStatus =
     | typeof CacheClient.OK
@@ -33,6 +43,48 @@ const timeout = <T>(prom: Promise<T>, time: number): Promise<T> => {
     ]).finally(() => clearTimeout(timer));
 };
 
+const getRedisDsnConfig = (params: RedisConfigParams = {}): RedisDsnConfig => {
+    if (!process.env.REDIS_DSN_LIST?.startsWith('redis://')) {
+        return {
+            name: params.name || '',
+            sentinels: params.sentinels || [],
+        };
+    }
+
+    const dnsListString = process.env.REDIS_DSN_LIST.slice('redis://'.length);
+
+    const [namePasswordString, redisSentinelsString] = dnsListString.split('@');
+
+    const [name, password] = namePasswordString.split(':');
+
+    const redisSentinels: Array<RedisSentinel> = redisSentinelsString
+        .trim()
+        .split(',')
+        .map((hostPort) => {
+            const [host, port] = hostPort.split(':');
+
+            return {host: host.trim(), port: port ? parseInt(port, 10) : 26379};
+        });
+
+    return {
+        sentinels: redisSentinels,
+        name,
+        password,
+    };
+};
+
+export const getRedisConfig = (params: RedisConfigParams = {}): RedisConfig => {
+    const dsnConfig = getRedisDsnConfig(params);
+
+    return {
+        sentinels: dsnConfig.sentinels,
+        name: dsnConfig.name,
+        family: 6,
+        password: dsnConfig.password,
+        role: 'master',
+    };
+};
+
 export class CacheClient {
     static OK = Symbol('CACHE_STATUS_OK');
     static NOT_OK = Symbol('CACHE_STATUS_NOT_OK');
@@ -41,7 +93,7 @@ export class CacheClient {
     _debug = false;
     client: Redis.Redis | null = null;
 
-    constructor({config}: {config: RedisConfig}) {
+    constructor({config}: {config: AppConfig}) {
         this._debug = config.appInstallation === 'development';
 
         if (config.redis && config.redis.password) {

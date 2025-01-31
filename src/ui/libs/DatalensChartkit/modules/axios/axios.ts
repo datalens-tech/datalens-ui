@@ -5,10 +5,16 @@ import isNumber from 'lodash/isNumber';
 import {sleep} from 'shared/modules';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
+import {DL} from '../../../../constants/common';
+import {refreshAuthToken} from '../../../auth/refreshToken';
+import {initBeforeRequestInterceptor} from '../../../axios/interceptors';
+
 import type {ConcurrencyManagerInstance} from './axiosConcurrency';
 import {concurrencyManager} from './axiosConcurrency';
 
 let concurrencyManagerInstance: ConcurrencyManagerInstance;
+let retryRequestInterceptorId: number;
+let retryResponseInterceptorId: number;
 
 const client = axios.create({
     withCredentials: true,
@@ -28,30 +34,22 @@ export function initConcurrencyManager(maxConcurrentRequests: number) {
     // should be added after the interseptors added by axios-concurrency, therefor below we remove earlier
     // added axios-retry interseptors and pass axiosInstance first to concurrencyManager then
     // in axiosRetry
-    // @ts-ignore
-    if (isNumber(client.retryRequestInterceptor)) {
-        // @ts-ignore
-        client.interceptors.request.eject(client.retryRequestInterceptor);
+    if (isNumber(retryRequestInterceptorId)) {
+        client.interceptors.request.eject(retryRequestInterceptorId);
     }
-    // @ts-ignore
-    if (isNumber(client.retryResponseInterceptor)) {
-        // @ts-ignore
-        client.interceptors.response.eject(client.retryResponseInterceptor);
+    if (isNumber(retryResponseInterceptorId)) {
+        client.interceptors.response.eject(retryResponseInterceptorId);
     }
 
     concurrencyManagerInstance = concurrencyManager(client, maxConcurrentRequests);
 
-    axiosRetry(client, {
+    const {requestInterceptorId, responseInterceptorId} = axiosRetry(client, {
         retries: 0,
         retryCondition: isRetryableError,
         retryDelay: () => 3000,
     });
-
-    // it is necessary to store the indexes of the positions of the interceptors added by axios-retry, to bring ability to delete them
-    // @ts-ignore
-    client.retryRequestInterceptor = client.interceptors.request.handlers.length - 1;
-    // @ts-ignore
-    client.retryResponseInterceptor = client.interceptors.response.handlers.length - 1;
+    retryRequestInterceptorId = requestInterceptorId;
+    retryResponseInterceptorId = responseInterceptorId;
 }
 
 client.interceptors.response.use(
@@ -79,6 +77,10 @@ client.interceptors.response.use(
         throw error;
     },
 );
+
+if (DL.AUTH_ENABLED) {
+    initBeforeRequestInterceptor(client, refreshAuthToken);
+}
 
 export default client;
 

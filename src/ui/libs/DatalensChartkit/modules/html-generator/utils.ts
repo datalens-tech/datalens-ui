@@ -1,3 +1,4 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import escape from 'lodash/escape';
 import isObject from 'lodash/isObject';
 import type {ChartKitHtmlItem} from 'shared';
@@ -7,7 +8,8 @@ import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/
 import {ALLOWED_REFERENCES, ATTR_DATA_CE_THEME, THEME_CSS_VARIABLE_PREFIX} from './constants';
 
 export function validateUrl(url: string, errorMsg?: string) {
-    if (!ALLOWED_REFERENCES.some((ref) => String(url).startsWith(ref))) {
+    const href = sanitizeUrl(url);
+    if (!ALLOWED_REFERENCES.some((ref) => href.startsWith(ref))) {
         const msg = errorMsg ?? `'${url}' is not valid url`;
         throw new ChartKitCustomError(undefined, {
             message: msg,
@@ -134,4 +136,40 @@ export function getThemeStyle(value: unknown, dataThemeId: string) {
     });
 
     return `<style>${themes.join('')}</style>`;
+}
+
+export async function getParseHtmlFn() {
+    const htmlparser2 = await import(/* webpackChunkName: "htmlparser2" */ 'htmlparser2');
+
+    return function (value: string) {
+        const root = htmlparser2.parseDocument(value);
+        return root.children.map(mapElementToJson);
+    };
+}
+
+function mapElementToJson(element: any): ChartKitHtmlItem | string {
+    if (element.type === 'tag') {
+        const {style: styleAttr = '', ...attributes} = element.attribs;
+        const style = String(styleAttr)
+            .split(';')
+            .reduce(
+                (acc, item) => {
+                    const [key, value] = item?.split(':').map((str) => str.trim()) || [];
+                    if (key && value) {
+                        acc[key] = value;
+                    }
+                    return acc;
+                },
+                {} as Record<string, string>,
+            );
+
+        return {
+            tag: element.name.toLowerCase(),
+            content: element.children.map(mapElementToJson),
+            attributes,
+            style,
+        };
+    }
+
+    return element.data ?? '';
 }

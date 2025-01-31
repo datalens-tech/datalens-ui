@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashTabItemControlSourceType} from '../../../../src/shared';
+import {DashTabItemControlSourceType, TitlePlacements} from '../../../../src/shared';
 import {
     SelectorElementType,
     type SelectorSettings,
@@ -26,7 +26,7 @@ const createDashWithSelector = async ({
             await dashboardPage.controlActions.addSelectorWithDefaultSettings({
                 ...{
                     appearance: {
-                        titleEnabled: true,
+                        titlePlacement: TitlePlacements.Left,
                         title: TITLE,
                         innerTitleEnabled: true,
                         innerTitle: INNER_TITLE,

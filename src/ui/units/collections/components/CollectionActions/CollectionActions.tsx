@@ -13,7 +13,7 @@ import {Feature} from '../../../../../shared';
 import {DL} from '../../../../constants';
 import {registry} from '../../../../registry';
 import Utils from '../../../../utils';
-import {selectCollection, selectRootCollectionPermissions} from '../../store/selectors';
+import {selectCollection} from '../../store/selectors';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
@@ -52,19 +52,14 @@ export const CollectionActions = React.memo<Props>(
         onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
-        const rootCollectionPermissions = useSelector(selectRootCollectionPermissions);
 
         const dispatch: AppDispatch = useDispatch();
 
         const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
-        const showCreateCollection = collection
-            ? collection.permissions?.createCollection
-            : rootCollectionPermissions?.createCollectionInRoot;
+        const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
-        const showCreateWorkbook = collection
-            ? collection.permissions?.createWorkbook
-            : rootCollectionPermissions?.createWorkbookInRoot;
+        const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
 
         const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
         const showAddLearningMaterialsWorkbook =

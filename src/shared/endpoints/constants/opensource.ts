@@ -10,6 +10,8 @@ export const opensourceEndpoints = {
 
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
+
+            auth: process.env.AUTH_ENDPOINT || 'http://localhost:8088',
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',
@@ -38,6 +40,8 @@ export const opensourceEndpoints = {
 
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
+
+            auth: process.env.AUTH_ENDPOINT || 'http://auth:8088',
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',

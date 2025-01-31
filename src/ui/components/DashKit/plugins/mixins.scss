@@ -1,0 +1,14 @@
+@mixin with-fade-effect() {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 44px;
+    right: 0;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--g-color-base-generic-ultralight) 50%,
+        var(--g-color-base-generic-ultralight)
+    );
+}

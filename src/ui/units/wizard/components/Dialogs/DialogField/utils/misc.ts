@@ -1,6 +1,7 @@
 import type {SelectOption} from '@gravity-ui/uikit';
 import type {Field as TField} from 'shared';
-import {DATASET_FIELD_TYPES, PlaceholderId, WizardVisualizationId} from 'shared';
+import {DATASET_FIELD_TYPES, Feature, PlaceholderId, WizardVisualizationId} from 'shared';
+import Utils from 'ui/utils';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -79,6 +80,33 @@ export function canUseStringAsMarkdown(
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
+        default:
+            return false;
+    }
+}
+
+export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
+    if (!Utils.isEnabledFeature(Feature.HtmlInWizard)) {
+        return false;
+    }
+
+    switch (visualizationId) {
+        case WizardVisualizationId.Scatter:
+        case WizardVisualizationId.Treemap:
+        case WizardVisualizationId.Geopoint:
+        case WizardVisualizationId.GeopointWithCluster:
+        case WizardVisualizationId.Geopolygon:
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p:
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p:
+        case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Donut:
+        case WizardVisualizationId.CombinedChart:
+            return true;
         default:
             return false;
     }

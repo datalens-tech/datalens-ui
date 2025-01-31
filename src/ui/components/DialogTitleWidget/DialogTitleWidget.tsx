@@ -1,234 +1,398 @@
 import React from 'react';
 
-import {Checkbox, Dialog, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
+import {ChevronDown, PencilToLine} from '@gravity-ui/icons';
+import type {RadioButtonOption} from '@gravity-ui/uikit';
+import {
+    Button,
+    Checkbox,
+    Dialog,
+    Icon,
+    RadioButton,
+    Select,
+    Text,
+    TextInput,
+} from '@gravity-ui/uikit';
+import {unstable_NumberInput as NumberInput} from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import type {DashTabItemTitle} from 'shared';
+import type {DashTabItemTitle, DashTabItemTitleSize} from 'shared';
 import {
-    DashTabItemTitleSize,
+    DashTabItemTitleSizes,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
-import HoverRadioButton from './HoverRadioButton/HoverRadioButton';
-
 import './DialogTitleWidget.scss';
 
-const SIZES = [
-    DashTabItemTitleSize.L,
-    DashTabItemTitleSize.M,
-    DashTabItemTitleSize.S,
-    DashTabItemTitleSize.XS,
+type RadioButtonFontSizeOption = DashTabItemTitleSize | 'custom';
+
+const FONT_SIZE_OPTIONS: RadioButtonOption<DashTabItemTitleSize>[] = [
+    {value: DashTabItemTitleSizes.XS, content: 'XS'},
+    {value: DashTabItemTitleSizes.S, content: 'S'},
+    {value: DashTabItemTitleSizes.M, content: 'M'},
+    {value: DashTabItemTitleSizes.L, content: 'L'},
+    {value: DashTabItemTitleSizes.XL, content: 'XL'},
 ];
-const RADIO_TEXT = ['Large', 'Medium', 'Small', 'XSmall'];
+
+const CUSTOM_FONT_SIZE_OPTION: RadioButtonOption<RadioButtonFontSizeOption> = {
+    value: 'custom',
+    content: <Icon data={PencilToLine} size={16} />,
+};
+
+const presetFontSizeOptions = ['40', '48', '56', '72', '96'].map((opt) => ({
+    value: opt,
+    content: opt,
+}));
+
+function isDashTabItemTitleSize(size: RadioButtonFontSizeOption): size is DashTabItemTitleSize {
+    return Object.values(DashTabItemTitleSizes).includes(size as DashTabItemTitleSize);
+}
+
+function getNumericFontSize(size: DashTabItemTitleSize) {
+    return Number(TITLE_DEFAULT_SIZES[size].fontSize.replace('px', ''));
+}
 
 const b = block('dialog-title');
 
 interface DialogTitleWidgetState {
-    prevVisible?: boolean;
     validation?: {text?: string};
     text?: string;
-    size?: DashTabItemTitleSize;
+    fontSize: RadioButtonFontSizeOption;
+    customFontSize?: number | null;
+    previousSelectedFontSize: number;
     showInTOC?: boolean;
     autoHeight?: boolean;
-    hasBackground?: boolean;
     backgroundColor?: string;
 }
 
 export interface DialogTitleWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableShowInTOC?: boolean;
+    enableCustomFontSize?: boolean;
+    enableCustomBgColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
     openedItemData: DashTabItemTitle['data'];
     dialogIsVisible: boolean;
 
-    enableAutoheight?: boolean;
-    enableShowInTOC?: boolean;
-
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
 }
 
-class DialogTitleWidget extends React.PureComponent<
-    DialogTitleWidgetProps,
-    DialogTitleWidgetState
-> {
-    static defaultProps = {
-        enableAutoheight: true,
-        enableShowInTOC: true,
-        openedItemData: {
-            text: i18n('dash.title-dialog.edit', 'value_default'),
-            size: SIZES[0],
-            showInTOC: true,
-            autoHeight: false,
-            hasBackground: false,
-            backgroundColor: 'transparent',
-        },
-    };
+const INPUT_TITLE_ID = 'widgetTitleField';
+const INPUT_SHOW_IN_TOC_ID = 'widgetShowInTOCField';
+const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
-    static getDerivedStateFromProps(
-        nextProps: DialogTitleWidgetProps,
-        prevState: DialogTitleWidgetState,
-    ) {
-        if (nextProps.dialogIsVisible === prevState.prevVisible) {
-            return null;
-        }
+const MIN_FONT_SIZE = 15;
+const MAX_FONT_SIZE = 950;
 
-        return {
-            prevVisible: nextProps.dialogIsVisible,
-            validation: {},
-            text: nextProps.openedItemData.text,
-            size: nextProps.openedItemData.size,
-            showInTOC: nextProps.openedItemData.showInTOC,
-            autoHeight: Boolean(nextProps.openedItemData.autoHeight),
-            hasBackground: Boolean(nextProps.openedItemData.background?.enabled),
-            backgroundColor: nextProps.openedItemData.background?.color || '',
-        };
-    }
+const defaultOpenedItemData: DashTabItemTitle['data'] = {
+    text: i18n('dash.title-dialog.edit', 'value_default'),
+    size: FONT_SIZE_OPTIONS[0].value,
+    showInTOC: true,
+    autoHeight: false,
+    background: {color: 'transparent'},
+};
 
-    state: DialogTitleWidgetState = {};
+function DialogTitleWidget(props: DialogTitleWidgetProps) {
+    const {
+        openedItemId,
+        dialogIsVisible,
+        enableAutoheight = true,
+        enableShowInTOC = true,
+        enableCustomBgColorSelector,
+        closeDialog,
+        setItemData,
+        openedItemData = defaultOpenedItemData,
+    } = props;
 
-    render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight, enableShowInTOC} = this.props;
-        const {text, size, showInTOC, validation, autoHeight, hasBackground, backgroundColor} =
-            this.state;
+    const [state, setState] = React.useState<DialogTitleWidgetState>({
+        validation: {},
+        text: openedItemData.text,
+        ...(typeof openedItemData.size === 'string'
+            ? {
+                  fontSize: openedItemData.size,
+                  customFontSize: null,
+                  previousSelectedFontSize: getNumericFontSize(openedItemData.size),
+              }
+            : {
+                  fontSize: 'custom',
+                  customFontSize: openedItemData.size.fontSize ?? null,
+                  previousSelectedFontSize:
+                      openedItemData.size.fontSize ?? getNumericFontSize('xl'),
+              }),
+        showInTOC: openedItemData.showInTOC,
+        autoHeight: Boolean(openedItemData.autoHeight),
+        backgroundColor: openedItemData.background?.color || '',
+    });
+    const {
+        text,
+        fontSize,
+        customFontSize,
+        showInTOC,
+        validation,
+        autoHeight,
+        backgroundColor,
+        previousSelectedFontSize,
+    } = state;
 
-        return (
-            <Dialog
-                open={dialogIsVisible}
-                onClose={this.props.closeDialog}
-                onEnterKeyDown={this.onApply}
-                qa={DialogDashWidgetItemQA.Title}
-            >
-                <Dialog.Header caption={i18n('dash.title-dialog.edit', 'label_title')} />
-                <Dialog.Body className={b()}>
-                    <FieldWrapper error={validation?.text}>
-                        <TextInput
-                            size="l"
-                            value={text}
-                            autoFocus
-                            placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
-                            onUpdate={this.onTextUpdate}
-                            className={b('input', {size: this.state.size})}
-                            qa={DialogDashTitleQA.Input}
-                        />
-                    </FieldWrapper>
-                    <HoverRadioButton
-                        value={size}
-                        values={SIZES}
-                        radioText={RADIO_TEXT}
-                        onChange={this.onSizeChange}
-                    />
-                    {enableShowInTOC && (
-                        <div className={b('setting-row')}>
-                            <Checkbox
-                                checked={showInTOC}
-                                onChange={() =>
-                                    this.setState((prevState) => ({
-                                        showInTOC: !prevState.showInTOC,
-                                    }))
-                                }
-                                className={b('checkbox')}
-                            >
-                                {i18n('dash.title-dialog.edit', 'field_show-in-toc')}
-                            </Checkbox>
-                        </div>
-                    )}
-                    {enableAutoheight && (
-                        <div className={b('setting-row')}>
-                            <Checkbox
-                                checked={Boolean(autoHeight)}
-                                onChange={this.handleAutoHeightChanged}
-                            >
-                                {i18n(
-                                    'dash.dashkit-plugin-common.view',
-                                    'label_autoheight-checkbox',
-                                )}
-                            </Checkbox>
-                        </div>
-                    )}
-                    <div className={b('setting-row')}>
-                        <Checkbox
-                            checked={Boolean(hasBackground)}
-                            onChange={this.handleHasBackgroundChanged}
-                        >
-                            {i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                        </Checkbox>
-                        {Boolean(hasBackground) && (
-                            <PaletteBackground
-                                color={backgroundColor}
-                                onSelect={this.handleHasBackgroundSelected}
-                            />
-                        )}
-                    </div>
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonApply={this.onApply}
-                    textButtonApply={
-                        openedItemId
-                            ? i18n('dash.title-dialog.edit', 'button_save')
-                            : i18n('dash.title-dialog.edit', 'button_add')
-                    }
-                    onClickButtonCancel={this.props.closeDialog}
-                    textButtonCancel={i18n('dash.title-dialog.edit', 'button_cancel')}
-                    propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
-                    propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
-                />
-            </Dialog>
-        );
-    }
+    const enableCustomFontSize =
+        props.enableCustomFontSize || typeof openedItemData?.size === 'object';
 
-    onTextUpdate = (text: string) =>
-        this.setState({
-            text,
-            validation: {},
+    const fontSizeOptions = React.useMemo<RadioButtonOption<RadioButtonFontSizeOption>[]>(
+        () =>
+            enableCustomFontSize
+                ? [...FONT_SIZE_OPTIONS, CUSTOM_FONT_SIZE_OPTION]
+                : FONT_SIZE_OPTIONS,
+        [enableCustomFontSize],
+    );
+
+    const onTextUpdate = React.useCallback(
+        (newText: string) =>
+            setState((prevState) => ({...prevState, text: newText, validation: {}})),
+        [],
+    );
+
+    const onSizeChange = React.useCallback((newSize: RadioButtonFontSizeOption) => {
+        setState((prevState) => {
+            const newNumericSize =
+                isDashTabItemTitleSize(newSize) &&
+                Object.keys(TITLE_DEFAULT_SIZES).includes(newSize)
+                    ? Number(TITLE_DEFAULT_SIZES[newSize].fontSize.replace('px', ''))
+                    : undefined;
+
+            return {
+                ...prevState,
+                fontSize: newSize,
+                ...(newSize === 'custom'
+                    ? {customFontSize: prevState.previousSelectedFontSize}
+                    : {
+                          previousSelectedFontSize:
+                              newNumericSize ?? prevState.previousSelectedFontSize,
+                      }),
+                validation: {},
+            };
         });
+    }, []);
 
-    onSizeChange = (size?: string) => this.setState({size: size as DashTabItemTitleSize});
+    const onCustomFontSizeChange = React.useCallback(
+        (newFontSize: number | null) =>
+            setState((prevState) => ({
+                ...prevState,
+                customFontSize: newFontSize,
+                validation: {},
+            })),
+        [],
+    );
 
-    onApply = () => {
-        const {text, size, showInTOC, autoHeight, hasBackground, backgroundColor} = this.state;
-        if (text?.trim()) {
-            this.props.setItemData({
+    const onCustomFontSizePresetSelectChange = React.useCallback(
+        (newFontSize: string[]) =>
+            setState((prevState) => ({
+                ...prevState,
+                customFontSize: newFontSize[0] ? Number(newFontSize[0]) : prevState.customFontSize,
+                validation: {},
+            })),
+        [],
+    );
+
+    const onApply = React.useCallback(() => {
+        const validationErrors: DialogTitleWidgetState['validation'] = {
+            text: text?.trim() ? undefined : i18n('dash.title-dialog.edit', 'toast_required-field'),
+        };
+        if (Object.values(validationErrors).filter(Boolean).length === 0) {
+            const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
+            setItemData({
                 data: {
                     text,
-                    size,
+                    size:
+                        fontSize === 'custom'
+                            ? {
+                                  fontSize: Math.min(
+                                      MAX_FONT_SIZE,
+                                      Math.max(MIN_FONT_SIZE, resultedCustomFontSize),
+                                  ),
+                              }
+                            : fontSize,
                     showInTOC,
                     autoHeight,
                     background: {
-                        enabled: hasBackground,
+                        enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                         color: backgroundColor,
                     },
                 },
             });
-            this.props.closeDialog();
+            closeDialog();
         } else {
-            this.setState({
-                validation: {
-                    text: i18n('dash.title-dialog.edit', 'toast_required-field'),
-                },
-            });
+            setState((prevState) => ({
+                ...prevState,
+                validation: validationErrors,
+            }));
         }
-    };
+    }, [
+        text,
+        setItemData,
+        fontSize,
+        customFontSize,
+        previousSelectedFontSize,
+        showInTOC,
+        autoHeight,
+        backgroundColor,
+        closeDialog,
+    ]);
 
-    handleAutoHeightChanged = () => {
-        this.setState({autoHeight: !this.state.autoHeight});
-    };
+    const handleAutoHeightChanged = React.useCallback(() => {
+        setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
+    }, []);
 
-    handleHasBackgroundChanged = () => {
-        this.setState({hasBackground: !this.state.hasBackground});
-    };
+    const handleHasBackgroundSelected = React.useCallback((color: string) => {
+        setState((prevState) => ({...prevState, backgroundColor: color}));
+    }, []);
 
-    handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color});
-    };
+    return (
+        <Dialog
+            open={dialogIsVisible}
+            onClose={closeDialog}
+            onEnterKeyDown={onApply}
+            qa={DialogDashWidgetItemQA.Title}
+        >
+            <Dialog.Header caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')} />
+            <Dialog.Body className={b()}>
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_TITLE_ID}
+                    label={i18n('dash.title-dialog.edit', 'label_title')}
+                >
+                    <FieldWrapper error={validation?.text}>
+                        <TextInput
+                            id={INPUT_TITLE_ID}
+                            value={text}
+                            autoFocus
+                            placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
+                            onUpdate={onTextUpdate}
+                            qa={DialogDashTitleQA.Input}
+                        />
+                    </FieldWrapper>
+                </FormRow>
+                <FormRow className={b('row')} label={i18n('dash.title-dialog.edit', 'label_size')}>
+                    <div className={b('controls-wrapper')}>
+                        <RadioButton
+                            className={b('radiobtn')}
+                            value={fontSize}
+                            options={fontSizeOptions}
+                            onUpdate={onSizeChange}
+                        />
+                        {enableCustomFontSize && fontSize === 'custom' && (
+                            <div>
+                                <NumberInput
+                                    className={b('number-input')}
+                                    value={customFontSize}
+                                    onUpdate={onCustomFontSizeChange}
+                                    onBlur={() => {
+                                        if (!customFontSize) {
+                                            setState((prevState) => ({
+                                                ...prevState,
+                                                customFontSize: prevState.previousSelectedFontSize,
+                                            }));
+                                        }
+                                    }}
+                                    min={MIN_FONT_SIZE}
+                                    max={MAX_FONT_SIZE}
+                                    hiddenControls
+                                    endContent={
+                                        <Select
+                                            className={b('unit-select')}
+                                            value={[customFontSize]
+                                                .filter(Number.isInteger)
+                                                .map(String)}
+                                            onUpdate={onCustomFontSizePresetSelectChange}
+                                            options={presetFontSizeOptions}
+                                            popupWidth={80} // equal to NumberInput width
+                                            popupPlacement={['bottom-end', 'top-end']}
+                                            renderControl={(selectControlProps) => (
+                                                <Button
+                                                    {...selectControlProps}
+                                                    view="flat"
+                                                    pin="brick-brick"
+                                                >
+                                                    <Icon data={ChevronDown} size={16} />
+                                                </Button>
+                                            )}
+                                        />
+                                    }
+                                />
+
+                                <Text className={b('unit')}>px</Text>
+                            </div>
+                        )}
+                    </div>
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                >
+                    <PaletteBackground
+                        color={backgroundColor}
+                        onSelect={handleHasBackgroundSelected}
+                        enableCustomBgColorSelector={enableCustomBgColorSelector}
+                    />
+                </FormRow>
+                {enableAutoheight && (
+                    <FormRow
+                        className={b('row')}
+                        fieldId={INPUT_AUTOHEIGHT_ID}
+                        label={i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
+                    >
+                        <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_AUTOHEIGHT_ID}
+                            checked={Boolean(autoHeight)}
+                            onChange={handleAutoHeightChanged}
+                        />
+                    </FormRow>
+                )}
+                {enableShowInTOC && (
+                    <FormRow
+                        className={b('row')}
+                        fieldId={INPUT_SHOW_IN_TOC_ID}
+                        label={i18n('dash.title-dialog.edit', 'field_show-in-toc')}
+                    >
+                        <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_SHOW_IN_TOC_ID}
+                            checked={showInTOC}
+                            onChange={() =>
+                                setState((prevState) => ({
+                                    ...prevState,
+                                    showInTOC: !prevState.showInTOC,
+                                }))
+                            }
+                        />
+                    </FormRow>
+                )}
+            </Dialog.Body>
+            <Dialog.Footer
+                onClickButtonApply={onApply}
+                textButtonApply={
+                    openedItemId
+                        ? i18n('dash.title-dialog.edit', 'button_save')
+                        : i18n('dash.title-dialog.edit', 'button_add')
+                }
+                onClickButtonCancel={closeDialog}
+                textButtonCancel={i18n('dash.title-dialog.edit', 'button_cancel')}
+                propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
+            />
+        </Dialog>
+    );
 }
 
 export default DialogTitleWidget;

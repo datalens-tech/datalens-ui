@@ -6,6 +6,7 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {DashTabItemType, DashboardAddWidgetQa} from 'shared';
+import type {GetBasicActionPanelItems} from 'ui/registry/units/common/types/functions/getBasicActionPanelItems';
 
 export const bEditPanelItem = block('edit-panel-item');
 
@@ -84,7 +85,7 @@ export const DASHKIT_BASIC_ACTION_PANEL_ITEM: DashkitBasicActionPanelItem = {
     },
 };
 
-export const getBasicActionPanelItems = (): ActionPanelItem[] => {
+export const getBasicActionPanelItems: GetBasicActionPanelItems = () => {
     return [
         DASHKIT_BASIC_ACTION_PANEL_ITEM[DashTabItemType.Widget],
         DASHKIT_BASIC_ACTION_PANEL_ITEM[DashTabItemType.GroupControl],
