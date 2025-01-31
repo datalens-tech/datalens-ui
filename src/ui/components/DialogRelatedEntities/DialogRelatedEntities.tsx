@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {Alert, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
-import {EDITOR_TYPE, EntryScope} from 'shared';
+import {EntryScope} from 'shared';
 import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
 import {getSdk} from 'ui/libs/schematic-sdk';
@@ -46,6 +46,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     );
     const [relationsCount, setRelationsCount] = React.useState<null | number>(null);
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
+    const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
     React.useEffect(() => {
         setIsLoading(true);
@@ -108,12 +109,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isEmpty(relations)) {
-            if (
-                entry.scope === EntryScope.Widget &&
-                Object.values(EDITOR_TYPE).includes(entry.type) &&
-                currentDirection === Direction.PARENT
-            ) {
-                return <Alert theme="warning" message={i18n('label_editor-hint')} />;
+            const alert = renderDialogRelatedEntitiesAlertHint?.({
+                direction: currentDirection,
+                entryType: entry.type,
+                entryScope: entry.scope,
+            });
+
+            if (alert) {
+                return alert;
             }
 
             return (
