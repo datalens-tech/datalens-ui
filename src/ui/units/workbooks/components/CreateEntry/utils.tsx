@@ -62,6 +62,7 @@ export const useCreateEntryOptions = ({
                         </div>
                     ),
                 },
+                // TODO: remove CHARTS-11016 (item)
                 {
                     action: () => handleAction(CreateEntryActionType.Editor),
                     text: (
@@ -110,6 +111,7 @@ export const useCreateEntryOptions = ({
                             </div>
                         ),
                     },
+                    // TODO: remove CHARTS-11016 (item)
                     {
                         action: () => handleAction(CreateEntryActionType.Editor),
                         text: (

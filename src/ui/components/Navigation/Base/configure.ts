@@ -147,6 +147,7 @@ export interface EntrySettings {
 
 export const getCreatableEntriesConfig = memoize(() => {
     return [
+        // TODO: remove CHARTS-11016 (item)
         {
             value: CreateMenuValue.Script,
             icon: CurlyBrackets,

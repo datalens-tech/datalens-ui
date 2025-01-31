@@ -38,6 +38,7 @@ import type {
     FetchDocumentationResponse,
 } from './types/functions/fetchDocumentation';
 import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
+import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
@@ -164,4 +165,5 @@ export const commonFunctionsMap = {
     getRestrictedParamNames: makeFunctionTemplate<() => string[]>(),
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
+    getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
 } as const;
