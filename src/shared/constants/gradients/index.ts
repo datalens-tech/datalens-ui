@@ -1,4 +1,4 @@
-import type {DatalensGlobalState} from '../../../ui/types';
+import type {DatalensGlobalState} from '../../../ui';
 import type {ColorPalette} from '../../types/color-palettes';
 import type {ValueOf} from '../../types/utility-types';
 
