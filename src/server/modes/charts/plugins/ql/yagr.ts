@@ -54,7 +54,7 @@ function getTitleForAxis(placeholders: ServerVisualization['placeholders'], axis
         return undefined;
     }
 
-    return getAxisTitle(placeholder.settings, placeholder.items[0]);
+    return getAxisTitle(placeholder.settings, placeholder.items[0]) ?? undefined;
 }
 
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
