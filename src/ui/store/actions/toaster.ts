@@ -5,10 +5,10 @@ import type {ToastTheme, ToastAction} from '@gravity-ui/uikit';
 import {Toaster} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from '../../';
-import {Utils} from '../../';
 import type {DataLensApiError} from '../../typings';
 import {openDialogErrorWithTabs} from './dialog';
 import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('component.toaster.view');
 const toaster = new Toaster();
@@ -25,7 +25,7 @@ export type ShowToastOptions = {
 
 export const showToast = (opt: ShowToastOptions) => {
     return (dispatch: ThunkDispatch<DatalensGlobalState, void, AnyAction>) => {
-        if (Utils.isEnabledFeature(Feature.ReadOnlyMode)) {
+        if (isEnabledFeature(Feature.ReadOnlyMode)) {
             return;
         }
 

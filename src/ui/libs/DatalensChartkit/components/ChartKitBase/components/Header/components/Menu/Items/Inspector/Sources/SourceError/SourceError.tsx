@@ -3,9 +3,9 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
-import Utils from '../../../../../../../../../../../../utils';
 import type {
     SourcesConfig,
     SourceError as TSourceError,
@@ -25,7 +25,7 @@ export const SourceError: React.FC<SourceErrorProps> = ({source, config, isColla
 
     const dataUrlObj = dataUrl ? new URL(dataUrl) : null;
     const dataUrlParams = dataUrlObj ? getParams(dataUrlObj.searchParams) : null;
-    const showData = data && Utils.isEnabledFeature(Feature.ShowInspectorDetails);
+    const showData = data && isEnabledFeature(Feature.ShowInspectorDetails);
     const showRequestQuery = dataUrlParams && Boolean(Object.keys(dataUrlParams).length);
 
     return (

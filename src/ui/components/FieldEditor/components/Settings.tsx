@@ -4,9 +4,9 @@ import {Button, Checkbox, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {DatasetField, DatasetFieldCalcMode} from 'shared';
 import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {I18n} from '../../../../i18n';
-import Utils from '../../../utils';
 import {DUPLICATE_TITLE, EMPTY_TITLE} from '../constants';
 import type {FieldEditorErrors, ModifyField} from '../typings';
 import {getErrorMessageKey} from '../utils';
@@ -42,7 +42,7 @@ class Settings extends React.Component<SettingsProps> {
 
         const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
         const showDocButton =
-            Utils.isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
+            isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
 
         return (
             <div className={b('settings')}>

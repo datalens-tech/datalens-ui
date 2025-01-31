@@ -4,9 +4,9 @@ import type {PopupPlacement} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../../../registry';
-import Utils from '../../../../utils';
 import {PLACE} from '../../constants';
 
 import {CreateEntrySwitcher} from './CreateEntrySwitcher';
@@ -52,10 +52,10 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
     const withMenu =
         place === PLACE.ROOT ||
         place === PLACE.FAVORITES ||
-        (Utils.isEnabledFeature(Feature.ShowCreateEntryWithMenu) && place === PLACE.WIDGETS) ||
-        (Utils.isEnabledFeature(Feature.ShowCreateEntryWithMenu) &&
+        (isEnabledFeature(Feature.ShowCreateEntryWithMenu) && place === PLACE.WIDGETS) ||
+        (isEnabledFeature(Feature.ShowCreateEntryWithMenu) &&
             place === PLACE.WIDGETS &&
-            Utils.isEnabledFeature(Feature.Ql));
+            isEnabledFeature(Feature.Ql));
 
     const items = React.useMemo(() => {
         if (!withMenu) {

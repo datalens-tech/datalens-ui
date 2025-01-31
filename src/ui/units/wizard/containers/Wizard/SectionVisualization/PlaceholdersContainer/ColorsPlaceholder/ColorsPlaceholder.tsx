@@ -9,6 +9,7 @@ import type {Field, Shared} from 'shared';
 import {Feature, PlaceholderActionQa, isFieldHierarchy, isMeasureField} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import type {DatalensGlobalState} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectColors,
@@ -16,7 +17,6 @@ import {
     selectFilters,
 } from 'units/wizard/selectors/visualization';
 
-import Utils from '../../../../../../../utils';
 import {getChartType} from '../../../../../../ql/store/reducers/ql';
 import {openDialogColors} from '../../../../../actions/dialog';
 import {updateColors} from '../../../../../actions/placeholder';
@@ -57,7 +57,7 @@ class ColorsPlaceholder extends React.Component<Props> {
             : undefined;
 
         const colorsCapacity =
-            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id)
                 ? undefined
                 : visualization.colorsCapacity || 1;
@@ -114,7 +114,7 @@ class ColorsPlaceholder extends React.Component<Props> {
                     visualization,
                     designItems: colors,
                     isMultipleColorsSupported:
-                        Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                        isEnabledFeature(Feature.MultipleColorsInVisualization) &&
                         isChartSupportMultipleColors(chartType ?? '', visualization.id),
                 }),
         );
@@ -125,7 +125,7 @@ class ColorsPlaceholder extends React.Component<Props> {
         const {placeholders} = visualization;
 
         const isMultipleColorsSupported =
-            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id);
 
         const item = getDialogItem(colors, placeholders);

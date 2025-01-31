@@ -25,10 +25,10 @@ import {
     getAxisModePlaceholderSettings,
     getFirstFieldInPlaceholder,
 } from 'ui/units/wizard/utils/placeholder';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SETTINGS} from '../../../constants/visualizations';
 import type {AppDispatch} from '../../../store';
-import Utils from '../../../utils';
 import {getChartType} from '../../ql/store/reducers/ql';
 import {
     selectDashboardParameters,
@@ -141,7 +141,7 @@ export function updateColors(args: CommonUpdatePlaceholderArgs) {
             if (onDesignItemsChange) {
                 const chartType = getChartType(getState()) ?? '';
                 const isMultipleColorsSupported =
-                    Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                    isEnabledFeature(Feature.MultipleColorsInVisualization) &&
                     isChartSupportMultipleColors(chartType, newVisualization.id);
                 const prevColors = getState().wizard.preview.colors;
                 updatedColors = onDesignItemsChange({

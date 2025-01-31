@@ -33,8 +33,8 @@ import {
     isTreeField,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {Utils} from 'ui';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {WidgetData} from 'units/wizard/actions/widget';
 import {selectHighchartsWidget, selectIsLoading} from 'units/wizard/selectors/preview';
 
@@ -867,7 +867,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 placeholderSettings?.axisModeMap[firstField.guid] !== SETTINGS.AXIS_MODE.DISCRETE,
         );
 
-        if (!isValidField || !Utils.isEnabledFeature(Feature.Comments)) {
+        if (!isValidField || !isEnabledFeature(Feature.Comments)) {
             return null;
         }
 
@@ -926,7 +926,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const hasOtherLibraryAnalog = isD3Visualization(visualizationId)
             ? getHighchartsAnalog(visualizationId)
             : getD3Analog(visualizationId);
-        const enabled = hasOtherLibraryAnalog && Utils.isEnabledFeature(Feature.D3Visualizations);
+        const enabled = hasOtherLibraryAnalog && isEnabledFeature(Feature.D3Visualizations);
 
         if (!enabled) {
             return null;

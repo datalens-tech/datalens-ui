@@ -10,7 +10,7 @@ import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {registry} from '../../../../registry';
@@ -19,7 +19,7 @@ import type {WorkbookEntry} from '../../types';
 const i18n = I18n.keyset('new-workbooks');
 const commonMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
-const copyEntriesToWorkbookEnabled = Utils.isEnabledFeature(Feature.CopyEntriesToWorkbook);
+const copyEntriesToWorkbookEnabled = isEnabledFeature(Feature.CopyEntriesToWorkbook);
 
 type EntryActionsProps = {
     workbook: WorkbookWithPermissions;

@@ -15,13 +15,13 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
-import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './WorkbookActions.scss';
@@ -63,7 +63,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         setIamAccessDialogIsOpen(false);
     }, [search, history]);
 
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+    const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const onApplyCopy = (workbookId: string | undefined) => {
         if (workbookId) {

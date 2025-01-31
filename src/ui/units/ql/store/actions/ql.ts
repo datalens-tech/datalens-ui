@@ -12,6 +12,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
 } from 'shared/types/config/ql';
 import {addEditHistoryPoint} from 'ui/store/actions/editHistory';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {
     CommonSharedExtraSettings,
@@ -1121,7 +1122,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                             }),
                         );
                     }
-                } else if (Utils.isEnabledFeature(Feature.QLPrometheus)) {
+                } else if (isEnabledFeature(Feature.QLPrometheus)) {
                     dispatch(setStatus(AppStatus.Unconfigured));
                 } else {
                     dispatch(setChartType(QLChartType.Sql));

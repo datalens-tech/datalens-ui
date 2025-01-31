@@ -5,10 +5,11 @@ import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ClientChartsConfigWithDataset, WizardType} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 
 import type {DatalensGlobalState} from '../../../../../';
-import {ActionPanel, Utils} from '../../../../../';
+import {ActionPanel} from '../../../../../';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../../registry';
@@ -112,7 +113,7 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
 
     const {WizardActionPanelExtension} = registry.wizard.components.getAll();
 
-    const enablePublish = Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
+    const enablePublish = isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
 
     return (
         <ActionPanel

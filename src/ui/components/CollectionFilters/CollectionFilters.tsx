@@ -11,7 +11,7 @@ import type {GetStructureItemsMode} from 'shared/schema/us/types/collections';
 import type {OrderBasicField, OrderDirection} from 'shared/schema/us/types/sort';
 import Tabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import GridIcon from 'assets/icons/collections/grid.svg';
@@ -187,7 +187,7 @@ export const CollectionFilters = React.memo<Props>(
 
             return (
                 <React.Fragment>
-                    {Utils.isEnabledFeature(Feature.HideMultitenant) ? null : (
+                    {isEnabledFeature(Feature.HideMultitenant) ? null : (
                         <Tabs
                             items={tabItems}
                             activeTab={onlyMy.toString()}
@@ -248,7 +248,7 @@ export const CollectionFilters = React.memo<Props>(
                         </Select.Option>
                     </Select>
 
-                    {Utils.isEnabledFeature(Feature.HideMultitenant) ? null : (
+                    {isEnabledFeature(Feature.HideMultitenant) ? null : (
                         <RadioButton
                             className={b('radio-button')}
                             value={onlyMy.toString()}

@@ -3,7 +3,7 @@ import {clone, get} from 'lodash';
 import {batch} from 'react-redux';
 import {ConnectorType, Feature} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {UpdateFileSourceArgs} from '../../../../../shared/schema';
 import logger from '../../../../libs/logger';
@@ -364,7 +364,7 @@ const uploadFileViaPresignedUrl = (file: File) => {
     };
 };
 
-export const uploadFile = Utils.isEnabledFeature(Feature.EnableFileUploadingByPresignedUrl)
+export const uploadFile = isEnabledFeature(Feature.EnableFileUploadingByPresignedUrl)
     ? uploadFileViaPresignedUrl
     : uploadFileViaUploader;
 

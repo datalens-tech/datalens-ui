@@ -1,6 +1,7 @@
 import type {AxiosRequestConfig} from 'axios';
 import {DL} from 'ui';
 import {isEmbeddedEntry, isIframe} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     ACCEPT_LANGUAGE_HEADER,
@@ -34,7 +35,7 @@ export const initChartKitSettings = () => {
         lang: DL.USER_LANG,
         isMobile: DL.IS_MOBILE,
         theme: 'common',
-        config: Utils.isEnabledFeature(Feature.UseConfigurableChartkit),
+        config: isEnabledFeature(Feature.UseConfigurableChartkit),
         requestIdPrefix: DL.REQUEST_ID_PREFIX,
         ErrorComponent: Error,
         menu: getChartkitMenu({chartsDataProvider: chartsDataProvider as ChartKitDataProvider}),
@@ -87,7 +88,7 @@ export const initChartKitSettings = () => {
             return request;
         },
         noJsonFn:
-            Utils.isEnabledFeature(Feature.NoJsonFn) ||
+            isEnabledFeature(Feature.NoJsonFn) ||
             Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE,
     });
 };

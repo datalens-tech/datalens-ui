@@ -10,7 +10,7 @@ import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {useMountedState} from 'ui/hooks/useMountedState';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared/types/feature';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -95,7 +95,7 @@ export function App({...routeProps}: RouteComponentProps) {
     }
 
     const {Footer} = registry.common.components.getAll();
-    const showFooter = Utils.isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
+    const showFooter = isEnabledFeature(Feature.EnableFooter) && !isEmbedded;
 
     return (
         <div

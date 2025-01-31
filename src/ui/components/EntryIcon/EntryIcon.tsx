@@ -3,7 +3,8 @@ import React from 'react';
 import {Icon} from '@gravity-ui/uikit';
 import type {EntryScope} from 'shared';
 import {ENTRY_TYPES, Feature} from 'shared';
-import Utils, {getConnectorIconData} from 'ui/utils';
+import {getConnectorIconData} from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../registry';
 import type {ConnectorIconViewProps} from '../ConnectorIcon/ConnectorIcon';
@@ -44,7 +45,7 @@ export const getEntryIconData = ({scope, type}: EntryData) => {
     let iconData: ConnectorIconViewProps['data'] | undefined;
     if (type) {
         let typeKey = type;
-        if (scope === 'widget' && !Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
+        if (scope === 'widget' && !isEnabledFeature(Feature.EntryMenuEditor)) {
             typeKey = '';
         }
         const icon = getConnectorIconData(typeKey, true);

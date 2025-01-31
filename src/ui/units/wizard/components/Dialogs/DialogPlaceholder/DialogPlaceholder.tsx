@@ -31,7 +31,7 @@ import {
     isPercentVisualization,
 } from 'shared';
 import {withHiddenUnmount} from 'ui/hoc';
-import Utils from 'ui/utils/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SETTINGS} from '../../../constants';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
@@ -241,7 +241,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const holidays = item.settings?.holidays;
 
         if (
-            !Utils.isEnabledFeature(Feature.HolidaysOnChart) ||
+            !isEnabledFeature(Feature.HolidaysOnChart) ||
             typeof holidays === 'undefined' ||
             typeof settings.holidays === 'undefined' ||
             !isHolidaysEnabled(visualizationId)

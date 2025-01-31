@@ -2,7 +2,7 @@ import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('editor.templates.view');
 
@@ -22,7 +22,7 @@ export type ChartEditorType = {
 };
 
 function getMetaTab() {
-    if (Utils.isEnabledFeature('EnableChartEditorMetaTab')) {
+    if (isEnabledFeature('EnableChartEditorMetaTab')) {
         return [
             {
                 name: 'Meta',
@@ -716,7 +716,7 @@ export function getChartEditorTypes(type: string) {
         },
     } as Record<string, ChartEditorType>;
 
-    if (Utils.isEnabledFeature(Feature.ChartActions)) {
+    if (isEnabledFeature(Feature.ChartActions)) {
         chartEditorTypes[EDITOR_TYPE.CONTROL_NODE].tabs.push({
             name: 'Actions',
             id: 'actions',

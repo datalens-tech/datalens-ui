@@ -11,8 +11,8 @@ import type {
 } from 'shared';
 import {DATASET_FIELD_TYPES, Feature} from 'shared';
 import type {Permissions} from 'shared/types/permissions';
-import Utils from 'ui/utils';
 import {getDatasetLabelValue} from 'ui/utils/helpers';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     getAggregationColumn,
@@ -144,7 +144,7 @@ export const getColumns = (args: GetColumnsArgs) => {
 
     const columns = [index, title, source, hidden, cast, aggregation, description, more];
 
-    if (Utils.isEnabledFeature(Feature.DatasetsRLS) && (permissions?.admin || permissions?.edit)) {
+    if (isEnabledFeature(Feature.DatasetsRLS) && (permissions?.admin || permissions?.edit)) {
         const rlsColumn = getRlsColumn({onUpdate: handleRlsUpdate, rls});
 
         columns.splice(4, 0, rlsColumn);

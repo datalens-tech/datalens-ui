@@ -14,6 +14,7 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     DL,
@@ -462,7 +463,7 @@ class Wizard extends React.Component<Props, State> {
             {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
-                hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
+                hidden: !isEnabledFeature(Feature.EnableSaveAsEditorScript),
                 qa: ChartSaveControlsQA.SaveAsEditorScript,
             },
         ];

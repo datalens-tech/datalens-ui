@@ -5,13 +5,14 @@ import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 
 import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from '../../../components/CollectionsStructure';
 import {URL_QUERY} from '../../../constants/common';
 import navigateHelper from '../../../libs/navigateHelper';
 import {registry} from '../../../registry';
 import {closeDialog, openDialog} from '../../../store/actions/dialog';
-import Utils from '../../../utils';
 import {ENTRY_CONTEXT_MENU_ACTION, getEntryContextMenuItems} from '../../EntryContextMenu';
 import {getGroupedMenu} from '../../EntryContextMenu/helpers';
 import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from '../../EntryDialogues';
@@ -474,7 +475,7 @@ class NavigationBase extends React.Component {
             const items = getEntryContextMenuItems(params);
             const menu = getGroupedMenu(items, {
                 type: 'entry',
-                isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
+                isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
             });
             return menu;
         };

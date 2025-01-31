@@ -9,13 +9,13 @@ import {Feature} from 'shared/types';
 import {DL} from 'ui/constants/common';
 import {getSdk} from 'ui/libs/schematic-sdk';
 
-import Utils from './utils';
+import {isEnabledFeature} from './isEnabledFeature';
 
 export const fetchDistinctsByApi = (
     params: GetDistinctsApiV2Args,
     headers?: GetDistinctsApiV2InfoHeadersArg,
 ): Promise<GetDistinctsApiV2TransformedResponse> => {
-    return Utils.isEnabledFeature(Feature.UsePublicDistincts)
+    return isEnabledFeature(Feature.UsePublicDistincts)
         ? getSdk().sdk.bi.getPublicDistinctsApiV2(params, {headers})
         : getSdk().sdk.bi.getDistinctsApiV2(params, {headers});
 };

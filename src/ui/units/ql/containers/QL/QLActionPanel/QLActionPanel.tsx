@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState, EntryDialogues} from '../../../../../';
 import {
@@ -91,8 +92,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
 
     const {QlActionPanelExtension} = registry.ql.components.getAll();
 
-    const enablePublish =
-        entry && Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
+    const enablePublish = entry && isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
 
     const dispatch = useDispatch();
 

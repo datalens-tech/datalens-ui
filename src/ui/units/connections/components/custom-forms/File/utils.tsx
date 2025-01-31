@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import {flow, get} from 'lodash';
 import {Feature} from 'shared';
 import type {DATASET_FIELD_TYPES, NonNullableBy} from 'shared';
-import Utils from 'utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DataLensApiError} from '../../../../../typings';
 import type {FileSourceItem, ListItemProps} from '../../../store';
@@ -253,7 +253,7 @@ export const getCreatingSourceItemDescription = (args: {
 export const getAcceptedExtensions = () => {
     let acceptedExtensions = ACCEPTED_EXTENTIONS;
 
-    if (Utils.isEnabledFeature(Feature.XlsxFilesEnabled)) {
+    if (isEnabledFeature(Feature.XlsxFilesEnabled)) {
         acceptedExtensions += ',.xlsx';
     }
 

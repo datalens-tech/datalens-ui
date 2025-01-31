@@ -8,7 +8,7 @@ import {i18n} from 'i18n';
 import type {Dataset, DatasetApiError} from 'shared';
 import {Feature, SectionDatasetQA} from 'shared';
 import type {DataLensApiError} from 'ui';
-import {Utils} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import DatasetSelectItem from './DatasetSelectItem';
 
@@ -134,7 +134,7 @@ class DatasetSelect extends React.Component<DatasetSelectProps, DatasetSelectSta
                         />
                     );
                 })}
-                {Utils.isEnabledFeature(Feature.HideMultiDatasets) ? null : (
+                {isEnabledFeature(Feature.HideMultiDatasets) ? null : (
                     <DatasetSelectItem
                         icon={<Icon data={Plus} className={b('icon')} size={20} />}
                         label={i18n('wizard', 'button_add-dataset')}

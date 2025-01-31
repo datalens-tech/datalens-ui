@@ -12,6 +12,7 @@ import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
@@ -351,12 +352,12 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) ||
-                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+                (isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
             if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
                 const ignoreInvalidValues = isWizardOrQl;
                 const allowHtml =
-                    isWizardOrQl && Utils.isEnabledFeature(Feature.EscapeStringInWizard)
+                    isWizardOrQl && isEnabledFeature(Feature.EscapeStringInWizard)
                         ? false
                         : enableJsAndHtml;
                 processHtmlFields(result.data, {

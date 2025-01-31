@@ -18,7 +18,7 @@ import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelec
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
-import Utils from 'ui/utils/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {FormSection} from '../../FormSection/FormSection';
 
@@ -49,7 +49,7 @@ export const GroupControlBody: React.FC<{
             </FormSection>
             <FormSection title={i18n('label_filtration')}>
                 <InputTypeSelector className={b('row')} />
-                {!Utils.isEnabledFeature(Feature.ConnectionBasedControl) && (
+                {!isEnabledFeature(Feature.ConnectionBasedControl) && (
                     <OperationSelector className={b('row')} />
                 )}
                 <ValueSelector rowClassName={b('row')} />
