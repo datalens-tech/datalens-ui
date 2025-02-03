@@ -31,11 +31,15 @@ export const useFilteredRelations = ({
 }) => {
     const [filteredRelations, setFilteredRelations] = React.useState<DashMetaData>([]);
 
-    React.useEffect(() => {
-        const showedRelations = changedWidgets
-            ? getChangedRelations(relations, changedWidgets, currentWidgetId)
-            : relations;
+    const showedRelations = React.useMemo(
+        () =>
+            changedWidgets
+                ? getChangedRelations(relations, changedWidgets, currentWidgetId)
+                : relations,
+        [relations, changedWidgets, currentWidgetId],
+    );
 
+    React.useEffect(() => {
         if (!showedRelations?.length) {
             setFilteredRelations([]);
             return;
@@ -52,7 +56,7 @@ export const useFilteredRelations = ({
         });
 
         setFilteredRelations(filteredItems);
-    }, [changedWidgets, currentWidgetId, relations, typeValues, searchValue]);
+    }, [showedRelations, typeValues, searchValue]);
 
     return {filteredRelations};
 };
