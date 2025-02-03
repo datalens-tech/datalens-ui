@@ -3,7 +3,6 @@ import {selectPaletteById} from '../../shared';
 
 const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 const CHARTS_API_BASE_URL = '/api/charts/v1/charts';
-const YAV_API_BASE_URL = '/api/yav';
 
 const DASH_DEFAULT_NAMESPACE = 'default';
 
@@ -62,7 +61,6 @@ const SERVICE_NAME_DATALENS = 'DataLens';
 export {
     DASH_API_BASE_URL,
     CHARTS_API_BASE_URL,
-    YAV_API_BASE_URL,
     DASH_DEFAULT_NAMESPACE,
     DASH_ENTRY_RELEVANT_FIELDS,
     BASE_PROJECT_NAME,
