@@ -15,7 +15,7 @@ export const editorActions = {
         method: 'POST',
         path: () => `${PATH_PREFIX}/entries`,
         params: (
-            {type, key, data, meta = {}, name, workbookId, mode = EntryUpdateMode.Publish},
+            {type, key, data, meta = {}, name, workbookId, mode = EntryUpdateMode.Publish, links},
             headers,
         ) => {
             return {
@@ -28,6 +28,7 @@ export const editorActions = {
                     name,
                     workbookId,
                     mode,
+                    links,
                 },
                 headers,
             };
@@ -36,7 +37,7 @@ export const editorActions = {
     _updateEditorChart: createAction<UpdateEditorChartResponse, UpdateEditorChartArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({data, mode, revId, meta = {}, links = {}}, headers) => {
+        params: ({data, mode, revId, meta = {}, links}, headers) => {
             return {
                 body: {
                     mode,
