@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, Shared} from 'shared';
-import {Feature, PlaceholderActionQa, isFieldHierarchy, isMeasureField} from 'shared';
+import {Feature, PlaceholderActionQa, isFieldHierarchy} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import type {DatalensGlobalState} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -101,11 +101,7 @@ class ColorsPlaceholder extends React.Component<Props> {
             return false;
         }
 
-        const {globalVisualization, visualization, colors, chartType} = this.props;
-
-        if (globalVisualization?.id === 'combined-chart' && isMeasureField(item)) {
-            return false;
-        }
+        const {visualization, colors, chartType} = this.props;
 
         return Boolean(
             visualization.checkAllowedDesignItems &&

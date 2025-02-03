@@ -55,6 +55,7 @@ class ErrorContent extends React.PureComponent {
         direction: PropTypes.oneOf(['row', 'column']),
         accessDescription: PropTypes.string,
         hideTitle: PropTypes.bool,
+        style: PropTypes.object,
     };
 
     static defaultProps = {
@@ -259,7 +260,7 @@ class ErrorContent extends React.PureComponent {
     };
 
     render() {
-        const {noControls, className, size, direction, showDebugInfo} = this.props;
+        const {noControls, className, size, direction, showDebugInfo, style} = this.props;
 
         const showDebugActions = showDebugInfo && DL.IS_MOBILE;
 
@@ -295,7 +296,10 @@ class ErrorContent extends React.PureComponent {
         }
 
         return (
-            <div className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}>
+            <div
+                className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}
+                style={style}
+            >
                 <div className={b('illustration-container')} data-qa={`type-${type}`}>
                     <PlaceholderIllustration
                         name={imageName}
