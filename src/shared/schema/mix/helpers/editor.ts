@@ -12,6 +12,21 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
     const {data} = args;
     const links: EntryFieldLinks = {};
 
+    if (typeof data?.meta === 'string') {
+        try {
+            const meta = JSON.parse(data.meta);
+            const metaLinks = get(meta, 'links');
+
+            if (Array.isArray(metaLinks)) {
+                metaLinks.forEach((metaLink) => {
+                    links[metaLink] = metaLink;
+                });
+            }
+
+            return links;
+        } catch (e) {}
+    }
+
     if (typeof data?.shared === 'string') {
         try {
             const shared = JSON.parse(data.shared);
@@ -24,19 +39,6 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
             const connectionEntryId = get(shared, 'connection.entryId');
             if (connectionEntryId) {
                 links.connection = connectionEntryId;
-            }
-        } catch (e) {}
-    }
-
-    if (typeof data?.meta === 'string') {
-        try {
-            const meta = JSON.parse(data.meta);
-            const metaLinks = get(meta, 'links');
-
-            if (Array.isArray(metaLinks)) {
-                metaLinks.forEach((metaLink) => {
-                    links[metaLink] = metaLink;
-                });
             }
         } catch (e) {}
     }
