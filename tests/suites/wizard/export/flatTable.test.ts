@@ -90,10 +90,10 @@ datalensTest.describe('Wizard - export. Table', () => {
 
         const expected =
             '"Region" "DATE" "Sales"\n' +
-            'Central 28.12.2017 260,60000348091125\n' +
-            'East 28.12.2017 134,5999994277954\n' +
-            'South 28.12.2017 64,80000305175781\n' +
-            'West 28.12.2017 1197,5999972820282';
+            'Central 28.12.2017 260.60000348091125\n' +
+            'East 28.12.2017 134.5999994277954\n' +
+            'South 28.12.2017 64.80000305175781\n' +
+            'West 28.12.2017 1197.5999972820282';
 
         await expect(content?.toString('utf8')).toEqual(expected);
     });
