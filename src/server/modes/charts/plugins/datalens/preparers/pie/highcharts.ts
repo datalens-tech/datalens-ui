@@ -1,7 +1,7 @@
 import set from 'lodash/set';
 
 import {getFakeTitleOrTitle, isHtmlField} from '../../../../../../../shared';
-import {getGradientStops} from '../../utils/color-helpers';
+import {getGradientStops} from '../../utils/get-gradient-stops';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -42,7 +42,7 @@ export function prepareHighchartsPie(args: PrepareFunctionArgs) {
                 endOnTick: false,
                 min: minColorValue,
                 max: maxColorValue,
-                stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
+                stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
             };
 
             customConfig.legend = {
