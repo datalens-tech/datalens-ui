@@ -21,7 +21,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             await wizardPage.setVisualization(WizardVisualizationId.Line);
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'DATE');
-            await wizardPage.filterEditor.selectRangeDate(['26.12.2017', '30.12.2017']);
+            await wizardPage.filterEditor.selectRangeDate(['26.12.2017', '28.12.2017']);
             await wizardPage.filterEditor.apply();
         });
 
@@ -45,7 +45,7 @@ datalensTest.describe('Wizard', () => {
                 ['27.12.2017', '177.5999937'],
                 ['28.12.2017', '1657.600003'],
                 ['29.12.2017', '2915.600031'],
-                ['30.12.2017', '713.7000103'],
+                ['28.12.2017', '713.7000103'],
             ];
             expect(xlsxContent).toEqual(expected);
         });

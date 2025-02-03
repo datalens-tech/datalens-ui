@@ -37,7 +37,7 @@ datalensTest.describe('Wizard - export. Table', () => {
         );
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'DATE');
         await wizardPage.filterEditor.selectFilterOperation(Operations.EQ);
-        await wizardPage.filterEditor.selectDate('30.12.2017');
+        await wizardPage.filterEditor.selectDate('28.12.2017');
         await wizardPage.filterEditor.apply();
         await (await apiRunRequest).response();
 
@@ -63,9 +63,9 @@ datalensTest.describe('Wizard - export. Table', () => {
 
         const expected =
             '"Region";"DATE";"Sales"\n' +
-            'Central;30.12.2017;209,3000030517578\n' +
-            'East;30.12.2017;466,8000068664551\n' +
-            'West;30.12.2017;37,60000038146973';
+            'Central;28.12.2017;209,3000030517578\n' +
+            'East;28.12.2017;466,8000068664551\n' +
+            'West;28.12.2017;37,60000038146973';
 
         await expect(content?.toString('utf8')).toEqual(expected);
     });
@@ -89,9 +89,9 @@ datalensTest.describe('Wizard - export. Table', () => {
 
         const expected =
             '"Region" "DATE" "Sales"\n' +
-            'Central 30.12.2017 209.3000030517578\n' +
-            'East 30.12.2017 466.8000068664551\n' +
-            'West 30.12.2017 37.60000038146973';
+            'Central 28.12.2017 209.3000030517578\n' +
+            'East 28.12.2017 466.8000068664551\n' +
+            'West 28.12.2017 37.60000038146973';
 
         await expect(content?.toString('utf8')).toEqual(expected);
     });

@@ -16,7 +16,7 @@ datalensTest.describe('Wizard - export. Summary table', () => {
 
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'DATE');
         await wizardPage.filterEditor.selectFilterOperation(Operations.EQ);
-        await wizardPage.filterEditor.selectDate('30.12.2017');
+        await wizardPage.filterEditor.selectDate('28.12.2017');
         await wizardPage.filterEditor.apply();
 
         await wizardPage.createNewFieldWithFormula('Field', '[Year]/2');
@@ -42,9 +42,9 @@ datalensTest.describe('Wizard - export. Summary table', () => {
 
         const expected =
             '"Region";"DATE";"Field";"Sales";"Profit"\n' +
-            'Central;30.12.2017;1008,5;209,3000030517578;56\n' +
-            'East;30.12.2017;1008,5;466,8000068664551;33\n' +
-            'West;30.12.2017;1008,5;37,60000038146973;9';
+            'Central;28.12.2017;1008,5;209,3000030517578;56\n' +
+            'East;28.12.2017;1008,5;466,8000068664551;33\n' +
+            'West;28.12.2017;1008,5;37,60000038146973;9';
 
         await expect(content).toEqual(expected);
     });
