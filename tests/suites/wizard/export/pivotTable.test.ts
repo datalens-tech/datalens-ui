@@ -42,9 +42,10 @@ datalensTest.describe('Wizard - export. Summary table', () => {
 
         const expected =
             '"Region";"DATE";"Field";"Sales";"Profit"\n' +
-            'Central;28.12.2017;1008,5;209,3000030517578;56\n' +
-            'East;28.12.2017;1008,5;466,8000068664551;33\n' +
-            'West;28.12.2017;1008,5;37,60000038146973;9';
+            'Central;28.12.2017;1008,5;260,60000348091125;-10\n' +
+            'East;28.12.2017;1008,5;134,5999994277954;55\n' +
+            'South;28.12.2017;1008,5;64,80000305175781;-13\n' +
+            'West;28.12.2017;1008,5;1197,5999972820282;212';
 
         await expect(content).toEqual(expected);
     });
