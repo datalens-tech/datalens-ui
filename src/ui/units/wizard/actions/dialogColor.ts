@@ -1,5 +1,3 @@
-import {selectAvailableClientGradients} from 'constants/common';
-
 import type {ColorsConfig, Field, GradientNullMode, GradientType, PartialBy} from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
@@ -12,6 +10,7 @@ import {
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
 } from '../selectors/dialogColor';
+import {selectAvailableClientGradients} from '../selectors/gradient';
 
 export interface PaletteState {
     mountedColors: Record<string, string>;

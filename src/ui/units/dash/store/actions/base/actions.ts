@@ -10,6 +10,7 @@ import type {DatalensGlobalState} from 'ui';
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
 import type {ConnectionsReduxDispatch} from 'ui/units/connections/store';
 import type {ManualError} from 'ui/utils/errors/manual';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import type {DashDispatch} from '..';
@@ -329,8 +330,7 @@ export const load = ({
             const isEmptyDash = data.tabs.length === 1 && !data.tabs[0].items.length;
             const hasEditPermissions = entry?.permissions?.admin || entry?.permissions?.edit;
             const isOpenedActualRevision = !revId;
-            const isAvailableEditMode =
-                !Utils.isEnabledFeature(Feature.ReadOnlyMode) && !DL.IS_MOBILE;
+            const isAvailableEditMode = !isEnabledFeature(Feature.ReadOnlyMode) && !DL.IS_MOBILE;
 
             const mode =
                 isEmptyDash && isOpenedActualRevision && hasEditPermissions && isAvailableEditMode

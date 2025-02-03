@@ -5,8 +5,10 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ErrorContentTypes, Feature} from 'shared';
-import {DL, Utils} from 'ui';
+import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 
 import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
@@ -89,7 +91,7 @@ class ErrorContent extends React.PureComponent {
     }
 
     getAccessDescription() {
-        if (!Utils.isEnabledFeature(Feature.DashBoardAccessDescription)) {
+        if (!isEnabledFeature(Feature.DashBoardAccessDescription)) {
             return '';
         }
 

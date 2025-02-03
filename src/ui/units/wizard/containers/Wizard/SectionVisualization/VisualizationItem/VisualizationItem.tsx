@@ -43,6 +43,8 @@ import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 import {
     createFieldFromVisualization,
     removeQuickFormula,
@@ -82,7 +84,6 @@ import {
     selectSort,
 } from 'units/wizard/selectors/visualization';
 import {getIconForDataType, prepareFieldForUpdate} from 'units/wizard/utils/helpers';
-import Utils from 'utils';
 import {v1 as uuidv1} from 'uuid';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
@@ -931,7 +932,7 @@ class VisualizationItem extends React.Component<Props, State> {
         } else if (
             filter?.value.length === 1 &&
             filter?.value?.[0] === '' &&
-            Utils.isEnabledFeature(Feature.EmptySelector)
+            isEnabledFeature(Feature.EmptySelector)
         ) {
             return {
                 rawValues: [],

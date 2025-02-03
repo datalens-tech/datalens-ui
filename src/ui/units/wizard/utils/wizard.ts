@@ -39,10 +39,10 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import history from '../../../utils/history';
-import Utils from '../../../utils/utils';
 import {getPlaceholdersWithMergedSettings} from '../reducers/utils';
 import type {ThresholdsValidationStatus} from '../typings';
 
@@ -348,11 +348,7 @@ export function getFiltersFields(
             isDateField(foundItem) && values.length === 1 ? Operations.EQ : undefined;
 
         values.forEach((urlValue) => {
-            if (
-                !urlValue &&
-                isFilterAlreadyInChart &&
-                Utils.isEnabledFeature(Feature.EmptySelector)
-            ) {
+            if (!urlValue && isFilterAlreadyInChart && isEnabledFeature(Feature.EmptySelector)) {
                 filtersFields.push({
                     ...foundItem,
                     unsaved: true,

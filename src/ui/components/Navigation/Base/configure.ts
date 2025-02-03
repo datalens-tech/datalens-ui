@@ -13,8 +13,8 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import memoize from 'lodash/memoize';
 import {Feature, NavigationMinimalPlaceSelectQa} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import Utils from '../../../utils';
 import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
 import {PLACE, QUICK_ITEMS} from '../constants';
 import type {PlaceParameterItem} from '../types';
@@ -155,7 +155,7 @@ export const getCreatableEntriesConfig = memoize(() => {
             text: i18n('value_create-editor'),
             place: PLACE.WIDGETS,
             submenu: 'charts',
-            condition: () => Utils.isEnabledFeature(Feature.EntryMenuEditor),
+            condition: () => isEnabledFeature(Feature.EntryMenuEditor),
         },
         {
             value: CreateMenuValue.Widget,

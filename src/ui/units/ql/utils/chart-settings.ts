@@ -1,10 +1,9 @@
 import type {CommonSharedExtraSettings, QLChartType} from 'shared';
 import {Feature, isMonitoringOrPrometheusChart} from 'shared';
-
-import Utils from '../../../utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const getDefaultQlAutoExecuteChartValue = () => {
-    return Utils.isEnabledFeature(Feature.QlAutoExecuteMonitoringChart) ? 'on' : 'off';
+    return isEnabledFeature(Feature.QlAutoExecuteMonitoringChart) ? 'on' : 'off';
 };
 
 export const getQlAutoExecuteChartValue = (

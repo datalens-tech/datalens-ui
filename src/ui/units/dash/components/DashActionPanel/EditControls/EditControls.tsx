@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import NavigationPrompt from '../../../../../components/NavigationPrompt/NavigationPrompt';
@@ -113,7 +113,7 @@ export const EditControls = (props: EditControlsProps) => {
                 entryDialoguesRef={entryDialoguesRef}
                 showOpenedDescription={false}
             />
-            {!Utils.isEnabledFeature(Feature.HideOldRelations) && (
+            {!isEnabledFeature(Feature.HideOldRelations) && (
                 <Button
                     view="normal"
                     size="m"

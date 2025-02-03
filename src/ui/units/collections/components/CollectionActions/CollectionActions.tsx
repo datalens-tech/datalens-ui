@@ -8,11 +8,11 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import {DL} from '../../../../constants';
 import {registry} from '../../../../registry';
-import Utils from '../../../../utils';
 import {selectCollection} from '../../store/selectors';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
@@ -131,7 +131,7 @@ export const CollectionActions = React.memo<Props>(
             }
         }
 
-        const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+        const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
         const dropdownActions = [];
 

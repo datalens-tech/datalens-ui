@@ -1,6 +1,7 @@
 import type {DatasetFieldCalcMode} from 'shared';
 import {Feature} from 'shared';
 import {Utils} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {MenuItem} from './types';
 
@@ -29,7 +30,7 @@ const RLS: MenuItem = {action: FieldAction.Rls, label: 'button_row-level-securit
 const COPY_GUID: MenuItem = {action: FieldAction.CopyGuid, label: 'button_copy-id'};
 
 export const getCommonMenuItemsData = () => {
-    if (Utils.isEnabledFeature(Feature.DatasetsRLS)) {
+    if (isEnabledFeature(Feature.DatasetsRLS)) {
         return [DUPLICATE, EDIT, RLS, COPY_GUID];
     }
 

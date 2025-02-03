@@ -5,7 +5,7 @@ import type {ActionsPanelProps} from '@gravity-ui/uikit';
 import {ActionsPanel, Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared/types/feature';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export type CollectionBatchAction = 'move' | 'delete';
 
@@ -51,7 +51,7 @@ export const CollectionBatchPanel = ({
         });
     }
 
-    const isMassRemoveEnabled = Utils.isEnabledFeature(Feature.MassRemoveCollectionsWorkbooks);
+    const isMassRemoveEnabled = isEnabledFeature(Feature.MassRemoveCollectionsWorkbooks);
 
     if (countForDelete && isMassRemoveEnabled) {
         actions.push({

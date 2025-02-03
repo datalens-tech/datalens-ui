@@ -9,15 +9,11 @@ import {
     THREE_POINT_DEFAULT_ID,
     TWO_POINT_DEFAULT_ID,
     getAvailablePalettesMap,
-    selectAvailableGradients,
     selectAvailablePalettes,
     selectGradient,
     selectPaletteById,
     selectShapes,
 } from '../../shared';
-import type {Gradient, GradientPalettes} from '../../shared/constants';
-import type {ColorPalette} from '../../shared/types/color-palettes';
-import type {DatalensGlobalState} from '../index';
 
 import blueGrayRedIcon from '../assets/icons/gradients/blue-gray-red.svg';
 import blueYellowRedIcon from '../assets/icons/gradients/blue-yellow-red.svg';
@@ -103,7 +99,7 @@ export const DL = {
     get REQUEST_ID_PREFIX() {
         return `dl.${this.REQUEST_ID.slice(0, 5)}`;
     },
-    // Utils.isEnabledFeature - check if the feature is enabled
+    // isEnabledFeature - check if the feature is enabled
     get FEATURES() {
         return window.DL.features;
     },
@@ -361,33 +357,6 @@ export const selectAvailableClientPalettes = () =>
 export const selectPalette = (paletteId: string) =>
     selectPaletteById(paletteId, getAvailableClientPalettesMap());
 
-export const selectAvailableClientGradients = (
-    state: DatalensGlobalState,
-    gradientType: GradientType,
-): GradientPalettes => {
-    const colorsLength = gradientType === GradientType.TWO_POINT ? 2 : 3;
-
-    const gradientPalletes = state.colorPaletteEditor.colorPalettes
-        .filter((colorPalette) => {
-            return colorPalette.isGradient && colorPalette.colors.length === colorsLength;
-        })
-        .reduce(
-            (acc: GradientPalettes, colorPalette: ColorPalette) => ({
-                ...acc,
-                [colorPalette.colorPaletteId]: {
-                    id: colorPalette.colorPaletteId,
-                    title: colorPalette.displayName,
-                    colors: colorPalette.colors,
-                } as Gradient,
-            }),
-            {},
-        );
-
-    return {
-        ...selectAvailableGradients(gradientType),
-        ...gradientPalletes,
-    };
-};
 export const selectDefaultClientGradient = (gradientType: GradientType) => {
     const gradientId =
         gradientType === GradientType.TWO_POINT ? TWO_POINT_DEFAULT_ID : THREE_POINT_DEFAULT_ID;

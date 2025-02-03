@@ -1,8 +1,7 @@
 import _get from 'lodash/get';
 import type {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
 import {DL} from 'ui';
-
-import Utils from '../../../utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export default class DatasetUtils {
     static sortObjectBy(sortParameter: string) {
@@ -80,7 +79,7 @@ export default class DatasetUtils {
     }
 
     static isEnabledFeature(featureName: Feature) {
-        return Utils.isEnabledFeature(featureName);
+        return isEnabledFeature(featureName);
     }
 
     static getSourceTitle(source: {group?: string[]; title?: string}) {

@@ -64,6 +64,7 @@ import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {selectUserSettings} from 'ui/store/selectors/user';
 import {isEmbeddedMode} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
@@ -1094,7 +1095,7 @@ class Body extends React.PureComponent<BodyProps> {
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
                             'with-edit-panel': showEditActionPanel,
-                            'with-footer': Utils.isEnabledFeature(Feature.EnableFooter),
+                            'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
                         {!settings.hideDashTitle && !DL.IS_MOBILE && (

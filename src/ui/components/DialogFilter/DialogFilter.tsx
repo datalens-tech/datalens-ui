@@ -22,10 +22,10 @@ import {
     getParametersApiV2RequestSection,
 } from 'shared';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {NO_SELECTED_VALUES_OPERATION} from '../../constants/operations';
 import {withHiddenUnmount} from '../../hoc';
-import {Utils} from '../../index';
 import {getFilterOperations, getWhereOperation} from '../../libs/datasetHelper';
 import logger from '../../libs/logger';
 import {getSdk} from '../../libs/schematic-sdk';
@@ -153,7 +153,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         let availableOperations = getAvailableOperations(field, filterOperations);
 
         if (
-            Utils.isEnabledFeature(Feature.EmptySelector) &&
+            isEnabledFeature(Feature.EmptySelector) &&
             'unsaved' in field &&
             field.unsaved &&
             filter?.operation === Operations.NO_SELECTED_VALUES
