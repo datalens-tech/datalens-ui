@@ -1,5 +1,6 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
+import {getAdditionalChartkitErrorContent} from 'ui/libs/DatalensChartkit/Error/getAdditionalChartkitErrorContent';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
@@ -100,5 +101,6 @@ export const registerCommonPlugins = () => {
         getRevisionsPanelEntryScopesTexts,
         getRestrictedParamNames,
         renderDialogRelatedEntitiesAlertHint,
+        getAdditionalChartkitErrorContent,
     });
 };

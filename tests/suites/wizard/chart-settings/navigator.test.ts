@@ -27,7 +27,7 @@ datalensTest.describe('Wizard - chartkit', () => {
         // thus, you can miss some error on certain types of visualization
         await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'DATE');
 
-        await wizardPage.filterEditor.selectRangeDate(['01.10.2017', '30.12.2017']);
+        await wizardPage.filterEditor.selectRangeDate(['01.10.2017', '28.12.2017']);
 
         await wizardPage.filterEditor.apply();
     });
