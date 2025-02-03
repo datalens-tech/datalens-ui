@@ -9,6 +9,7 @@ export function isEntryTypeWithFiltering(
         EditorType.TableNode,
         EditorType.GraphNode,
         EditorType.GravityChartsNode,
+        EditorType.BlankChartNode,
     ];
 
     const wizardEntryTypes = [
