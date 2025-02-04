@@ -656,7 +656,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest({
-                url: `${DL.API_PREFIX}/run-action`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-action`,
                 data: {
                     id,
                     key,
