@@ -75,6 +75,7 @@ import type {
     SourcesConfig,
 } from './types';
 import processWizard from './wizard';
+import Utils from 'ui/utils';
 
 // from export-data module
 declare module 'highcharts' {
