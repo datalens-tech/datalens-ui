@@ -32,11 +32,11 @@ import {
     WidgetKind,
 } from 'shared';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
-import Utils from '../../../../../utils';
 import {chartToTable} from '../../../ChartKit/helpers/gravity-charts/chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
@@ -863,7 +863,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             ...(contextHeaders ?? {}),
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
+        if (isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }
 

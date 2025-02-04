@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
@@ -244,7 +245,7 @@ export const CollectionPage = () => {
         ? false
         : hasPermissionToCreate || isRootCollection;
 
-    const isFiltersHidden = DL.IS_MOBILE && Utils.isEnabledFeature(Feature.HideMultitenant);
+    const isFiltersHidden = DL.IS_MOBILE && isEnabledFeature(Feature.HideMultitenant);
 
     useLayout({
         curCollectionId,

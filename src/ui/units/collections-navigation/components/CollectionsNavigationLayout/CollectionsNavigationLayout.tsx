@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {Layout, SkeletonsSettings} from '../../contexts/LayoutContext';
 
@@ -181,7 +181,7 @@ export const CollectionsNavigationLayout = React.memo<Props>(
 
                         {children && <div className={b('content')}>{children}</div>}
                     </div>
-                    {Utils.isEnabledFeature(Feature.EnableFooter) && <Footer />}
+                    {isEnabledFeature(Feature.EnableFooter) && <Footer />}
                 </div>
             </div>
         );

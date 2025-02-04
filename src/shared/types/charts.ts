@@ -51,7 +51,7 @@ export interface IChartEditor {
     ): string;
 
     /**
-     * Return added yav secrets {key: value, ...}
+     * Return added secrets {key: value, ...}
      */
     getSecrets(): {[key: string]: string};
 

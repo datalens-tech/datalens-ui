@@ -13,13 +13,18 @@ import {
 import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
-import Utils from '../../utils/utils';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
+
+const getCurrentPageFirstPathPart = () =>
+    window.location.pathname.split('/').filter((item) => item.trim())[0];
+
+const isChartsPage = (part: string) => part !== 'editor';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
@@ -45,7 +50,7 @@ const CONTEXT_MENU_COPY = {
     icon: Copy,
     qa: ActionPanelEntryContextMenuQa.Copy,
     text: 'value_duplicate',
-    enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemCopy),
+    enable: () => isEnabledFeature(Feature.EntryMenuItemCopy),
     permissions: (entry: ContextMenuParams['entry']) => {
         return entry?.workbookId
             ? {admin: true, edit: true, read: false, execute: false}
@@ -82,7 +87,7 @@ const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
 const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuParams): boolean =>
     entry?.scope === EntryScope.Dash &&
     showSpecificItems &&
-    Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
+    isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
     export const getEntryContextMenu = (): ContextMenuItem[] => {
         const {getTopLevelEntryScopes, getAllEntryScopes, getEntryScopesWithRevisionsList} =
@@ -102,7 +107,15 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
             permissions: () => ({admin: true, edit: true, read: false, execute: false}),
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
-                return getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope);
+
+                // TODO: remove temporary restriction of the new versioning for the editor
+                const currentPathPart = getCurrentPageFirstPathPart();
+                const isChartNotEditor = isChartsPage(currentPathPart);
+
+                return (
+                    isChartNotEditor &&
+                    getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope)
+                );
             },
         },
         {
@@ -183,7 +196,7 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
             action: ENTRY_CONTEXT_MENU_ACTION.MOVE,
             icon: FolderArrowDown,
             text: 'value_move',
-            enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemMove),
+            enable: () => isEnabledFeature(Feature.EntryMenuItemMove),
             permissions: {admin: true, edit: false, read: false, execute: false},
             scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {

@@ -71,8 +71,6 @@ function getProgressText(action: RevisionAction) {
             return i18n('label_progress-open');
         case RevisionAction.Publish:
             return i18n('label_progress-publishing');
-        case RevisionAction.Reset:
-            return i18n('label_progress-reset');
         default:
             return '';
     }

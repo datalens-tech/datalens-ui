@@ -1,4 +1,6 @@
 import {isEmbeddedEntry, isIframe} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 
 import {
     ACCEPT_LANGUAGE_HEADER,
@@ -13,7 +15,6 @@ import {
     TENANT_ID_HEADER,
 } from '../../../shared';
 import {DL} from '../../constants';
-import Utils from '../../utils';
 
 import Error from './Error/Error';
 import renderControl from './extensions/control';
@@ -31,7 +32,7 @@ ChartKit.setGeneralSettings({
     lang: DL.USER_LANG,
     isMobile: DL.IS_MOBILE,
     theme: 'common',
-    config: Utils.isEnabledFeature(Feature.UseConfigurableChartkit),
+    config: isEnabledFeature(Feature.UseConfigurableChartkit),
     requestIdPrefix: DL.REQUEST_ID_PREFIX,
     ErrorComponent: Error,
 });
@@ -83,7 +84,7 @@ ChartKit.setDataProviderSettings({
         return request;
     },
     noJsonFn:
-        Utils.isEnabledFeature(Feature.NoJsonFn) ||
+        isEnabledFeature(Feature.NoJsonFn) ||
         Utils.getCookie(DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME) === DISABLE,
 });
 

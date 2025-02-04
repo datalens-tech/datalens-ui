@@ -5,7 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {EntryScope, Feature} from 'shared';
 import {EntityIcon} from 'ui/components/EntityIcon/EntityIcon';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CreateEntryActionType} from '../../constants';
 
@@ -62,6 +62,7 @@ export const useCreateEntryOptions = ({
                         </div>
                     ),
                 },
+                // TODO: remove CHARTS-11016 (item)
                 {
                     action: () => handleAction(CreateEntryActionType.Editor),
                     text: (
@@ -70,7 +71,7 @@ export const useCreateEntryOptions = ({
                             <div className={b('dropdown-text')}>{i18n('menu_editor-chart')}</div>
                         </div>
                     ),
-                    hidden: !Utils.isEnabledFeature(Feature.EntryMenuEditor),
+                    hidden: !isEnabledFeature(Feature.EntryMenuEditor),
                 },
             ];
             break;
@@ -110,6 +111,7 @@ export const useCreateEntryOptions = ({
                             </div>
                         ),
                     },
+                    // TODO: remove CHARTS-11016 (item)
                     {
                         action: () => handleAction(CreateEntryActionType.Editor),
                         text: (
@@ -120,7 +122,7 @@ export const useCreateEntryOptions = ({
                                 </div>
                             </div>
                         ),
-                        hidden: !Utils.isEnabledFeature(Feature.EntryMenuEditor),
+                        hidden: !isEnabledFeature(Feature.EntryMenuEditor),
                     },
                 ],
                 [

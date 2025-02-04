@@ -38,6 +38,7 @@ import type {
     FetchDocumentationResponse,
 } from './types/functions/fetchDocumentation';
 import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchFunctionsDocumentation';
+import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
@@ -45,6 +46,7 @@ import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
+import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
 import type {ResolveUsersByIds} from './types/functions/resolveUsersByIds';
 import type {SetEntryKey} from './types/functions/setEntryKey';
 import type {UseSubjectsListId} from './types/functions/useSubjectsListId';
@@ -161,4 +163,7 @@ export const commonFunctionsMap = {
         }
     >(),
     getRestrictedParamNames: makeFunctionTemplate<() => string[]>(),
+    renderDialogRelatedEntitiesAlertHint:
+        makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
+    getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
 } as const;

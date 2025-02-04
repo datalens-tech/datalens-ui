@@ -17,9 +17,9 @@ import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetK
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
-import Utils from '../../../utils';
 import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
 import {getExportItem, getExportPDF} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
@@ -70,7 +70,7 @@ export const getAlertsMenuItem = ({
     chartsDataProvider: ChartKitDataProvider;
     customConfig?: Partial<MenuItemConfig>;
 }): MenuItemConfig | null => {
-    if (!Utils.isEnabledFeature(Feature.ChartkitAlerts)) {
+    if (!isEnabledFeature(Feature.ChartkitAlerts)) {
         return null;
     }
 
@@ -247,7 +247,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
         function action({loadedData, propsData}) {
             return function render(props: MenuItemModalProps) {
                 const {DialogShare} = registry.common.components.getAll();
-                const isEnabledEmbeds = Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare);
+                const isEnabledEmbeds = isEnabledFeature(Feature.EnableEmbedsInDialogShare);
                 let initialParams = {};
                 if (isEnabledEmbeds) {
                     initialParams = {

@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';
+import keyBy from 'lodash/keyBy';
 import type {
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -205,8 +206,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             return memo;
         }, {});
 
-        const selectedItems =
-            options.fields?.items.filter((item) => this.state.selectedRows[item.guid]) || [];
+        const selectedItems = options.fields?.items.filter((item) => selectedRows[item.guid]) || [];
 
         const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
         const allowedAggregations = intersection(...selectedItems.map((item) => item.aggregations));
@@ -223,13 +223,16 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
+        const filteredFields = keyBy(this.props.fields, 'guid');
         return getColumns({
             selectedRows,
             fieldsCount: this.props.fields.length,
             avatars: this.props.sourceAvatars,
             rls: this.props.rls,
             permissions: this.props.permissions,
-            fields: get(this.props, ['options', 'fields', 'items'], []),
+            fields: get(this.props, ['options', 'fields', 'items'], []).filter(
+                (f) => f.guid in filteredFields,
+            ),
             showFieldsId: this.props.itemsToDisplay.includes('fieldsId'),
             setActiveRow: this.setActiveRow,
             openDialogFieldEditor: this.openDialogFieldEditor,

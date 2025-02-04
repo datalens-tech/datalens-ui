@@ -7,5 +7,4 @@ export type KeyValueEntry = {
     value: string | null;
     error?: 'duplicated-key';
     initial?: boolean;
-    touched?: boolean;
 };

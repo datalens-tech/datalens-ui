@@ -5,11 +5,11 @@ import type {SelectProps} from '@gravity-ui/uikit';
 import {Button, Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DashLoadPriority} from '../../../../../../../shared';
 import {Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
-import Utils from '../../../../../../utils';
 
 import {LoadPriority} from './LoadPriority';
 import {MaxConnection} from './MaxConnection';
@@ -48,10 +48,8 @@ export const OtherSettings = ({
     loadOnlyVisibleCharts,
     onUpdateLoadOnlyVisibleCharts,
 }: OtherSettingsProps) => {
-    const showAccessDescriptionSetting = Utils.isEnabledFeature(Feature.DashBoardAccessDescription);
-    const showSupportDescriptionSetting = Utils.isEnabledFeature(
-        Feature.DashBoardSupportDescription,
-    );
+    const showAccessDescriptionSetting = isEnabledFeature(Feature.DashBoardAccessDescription);
+    const showSupportDescriptionSetting = isEnabledFeature(Feature.DashBoardSupportDescription);
     return (
         <SectionWrapper title={i18n('label_other-settings')} titleMods={b('section-title')}>
             <Row>

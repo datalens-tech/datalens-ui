@@ -5,6 +5,7 @@ import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -28,7 +29,6 @@ import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import Utils from '../../../../../utils';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
 import {DIALOG_ASSIGN_CLAIMS} from 'ui/components/OpenDialogAssignClaims/OpenDialogAssignClaims';
@@ -41,7 +41,7 @@ type UseActionsArgs = {
 };
 
 export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsArgs) => {
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+    const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();

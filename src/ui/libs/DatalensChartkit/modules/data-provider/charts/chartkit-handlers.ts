@@ -5,7 +5,7 @@ import type {
     HighchartsSeriesCustomObject,
 } from 'shared';
 import {ChartkitHandlers, Feature} from 'shared';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export const baseRenderFn = (value: unknown) => value;
 
@@ -52,7 +52,7 @@ function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
     return {
         ...config,
         lines: mappedLines,
-        unsafe: Utils.isEnabledFeature(Feature.HtmlInWizard),
+        unsafe: isEnabledFeature(Feature.HtmlInWizard),
     };
 }
 

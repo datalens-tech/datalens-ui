@@ -22,6 +22,7 @@ export const runController = (
     chartsEngine: ChartsEngine,
     extraSettings?: RunControllerExtraSettings,
 ) => {
+    // eslint-disable-next-line complexity
     return async function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
 

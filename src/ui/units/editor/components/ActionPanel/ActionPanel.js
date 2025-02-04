@@ -25,6 +25,7 @@ function ActionPanelService({
     onSelectGridScheme,
     isGridContainsPreview,
     history,
+    setActualVersion,
 }) {
     usePageTitle({entry});
 
@@ -83,6 +84,8 @@ function ActionPanelService({
                 leftItems={leftItems}
                 centerItems={centerItems}
                 rightItems={rightItems}
+                setActualVersion={setActualVersion}
+                hideOpenRevisionsButton={true}
             />
         </React.Fragment>
     );
@@ -105,6 +108,7 @@ ActionPanelService.propTypes = {
     onDrawPreview: PropTypes.func.isRequired,
     onSelectGridScheme: PropTypes.func.isRequired,
     isGridContainsPreview: PropTypes.bool.isRequired,
+    setActualVersion: PropTypes.func,
 
     history: PropTypes.object.isRequired,
 };

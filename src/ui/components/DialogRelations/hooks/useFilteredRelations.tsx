@@ -1,13 +1,20 @@
 import React from 'react';
 
-import {usePrevious} from 'hooks/usePrevious';
-import isEqual from 'lodash/isEqual';
-
 import {getRowTitle} from '../components/Content/helpers';
 import type {FiltersTypes} from '../components/Filters/Filters';
 import type {DashMetaData, RelationType} from '../types';
 
 import {getChangedRelations, getMappedFilters} from './helpers';
+
+const compareSearchValueGetter = (searchValue: string) => {
+    const trimmedSearchValue = searchValue.trim();
+
+    if (trimmedSearchValue) {
+        return (title: string) => title.toLocaleLowerCase().includes(searchValue.toLowerCase());
+    }
+
+    return () => true;
+};
 
 export const useFilteredRelations = ({
     relations,
@@ -23,61 +30,33 @@ export const useFilteredRelations = ({
     currentWidgetId: string;
 }) => {
     const [filteredRelations, setFilteredRelations] = React.useState<DashMetaData>([]);
-    const [showedRelations, setShowedRelations] = React.useState<DashMetaData>([]);
 
-    const prevSelectedFilters = usePrevious(typeValues);
-
-    React.useEffect(() => {
-        setShowedRelations(relations);
-    }, [relations]);
-
-    React.useEffect(() => {
-        if (changedWidgets && !isEqual(prevSelectedFilters, typeValues)) {
-            const newRelations = showedRelations.map((item) => {
-                const newItem = {
-                    ...item,
-                };
-                if (
-                    changedWidgets[currentWidgetId] &&
-                    changedWidgets[currentWidgetId][item.itemId || item.widgetId]
-                ) {
-                    newItem.relations = {
-                        ...item.relations,
-                        type: changedWidgets[currentWidgetId][item.widgetId],
-                    };
-                }
-                return newItem;
-            });
-
-            setShowedRelations(newRelations);
-        }
-    }, [typeValues, showedRelations, changedWidgets, currentWidgetId]);
+    const showedRelations = React.useMemo(
+        () =>
+            changedWidgets
+                ? getChangedRelations(relations, changedWidgets, currentWidgetId)
+                : relations,
+        [relations, changedWidgets, currentWidgetId],
+    );
 
     React.useEffect(() => {
         if (!showedRelations?.length) {
+            setFilteredRelations([]);
             return;
         }
 
-        const trimmedSearchValue = searchValue.trim();
-        let filteredItems = showedRelations;
-        if (trimmedSearchValue) {
-            filteredItems =
-                filteredItems.filter((item) =>
-                    getRowTitle(item.title, item.label)
-                        .toLowerCase()
-                        .includes(searchValue.toLowerCase()),
-                ) || [];
-        }
-
         const mappedFilters = getMappedFilters(typeValues);
-        filteredItems = filteredItems.filter((item) => mappedFilters[item.relations.type]);
+        const compareTitle = compareSearchValueGetter(searchValue);
 
-        if (changedWidgets) {
-            filteredItems = getChangedRelations(filteredItems, changedWidgets, currentWidgetId);
-        }
+        const filteredItems = showedRelations.filter((item) => {
+            const hasSearch = compareTitle(getRowTitle(item.title, item.label));
+            const hasFilteredType = mappedFilters[item.relations.type];
+
+            return hasSearch && hasFilteredType;
+        });
 
         setFilteredRelations(filteredItems);
-    }, [searchValue, showedRelations, typeValues, changedWidgets, currentWidgetId]);
+    }, [showedRelations, typeValues, searchValue]);
 
     return {filteredRelations};
 };

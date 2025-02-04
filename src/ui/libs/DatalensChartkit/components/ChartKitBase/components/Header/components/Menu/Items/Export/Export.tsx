@@ -12,7 +12,7 @@ import type {
     MenuItemModalProps,
 } from 'ui/libs/DatalensChartkit/menu/Menu';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     ICONS_MENU_DEFAULT_CLASSNAME,
@@ -200,7 +200,7 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_XLSX,
             title: i18n('format_xlsx'),
             isVisible: ({loadedData, error}: MenuItemArgs) =>
-                Utils.isEnabledFeature(Feature.XlsxChartExportEnabled) &&
+                isEnabledFeature(Feature.XlsxChartExportEnabled) &&
                 isExportVisible({loadedData, error}),
             action: directExportAction(EXPORT_FORMATS.XLSX, onExportLoading),
         },

@@ -31,8 +31,6 @@ export const DropdownActions: React.FC<DropdownActionsProps> = ({
                 return current;
             case RevisionAction.Publish:
                 return published || !editable;
-            case RevisionAction.Reset:
-                return latest || !editable;
             default:
                 return false;
         }
@@ -48,11 +46,6 @@ export const DropdownActions: React.FC<DropdownActionsProps> = ({
             action: () => onClick(RevisionAction.Publish),
             text: i18n('value_publish-revision'),
             hidden: isHidden(RevisionAction.Publish),
-        },
-        {
-            action: () => onClick(RevisionAction.Reset),
-            text: i18n('value_publish-reset'),
-            hidden: isHidden(RevisionAction.Reset),
         },
     ];
 

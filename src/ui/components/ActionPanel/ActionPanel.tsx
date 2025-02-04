@@ -21,7 +21,7 @@ import {selectEntryContent, selectIsRevisionsOpened} from 'store/selectors/entry
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {GetEntryResponse} from '../../../shared/schema';
 import type {DatalensGlobalState} from '../../index';
@@ -55,6 +55,7 @@ type OwnProps = {
         message: string;
         onConfirm?: () => void;
     };
+    hideOpenRevisionsButton?: boolean;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -151,6 +152,7 @@ class ActionPanel extends React.Component<Props, State> {
             setActualVersion,
             isEditing,
             deprecationWarning,
+            hideOpenRevisionsButton,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -189,11 +191,12 @@ class ActionPanel extends React.Component<Props, State> {
                             isEditing={isEditing || false}
                             deprecationMessage={deprecationWarning?.message}
                             onDeprecationConfirm={deprecationWarning?.onConfirm}
+                            hideOpenRevisionsButton={hideOpenRevisionsButton}
                         />
                         <ExpandablePanel
                             title={i18n('label_history-changes')}
                             description={
-                                Utils.isEnabledFeature(Feature.RevisionsListNoLimit)
+                                isEnabledFeature(Feature.RevisionsListNoLimit)
                                     ? undefined
                                     : i18n('label_history-changes-date-limit')
                             }

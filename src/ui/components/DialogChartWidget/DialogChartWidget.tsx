@@ -9,20 +9,20 @@ import update, {Context} from 'immutability-helper';
 import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
-    HierarchyField,
     StringParams,
     WidgetKind,
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
-import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
+import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../registry';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
@@ -38,7 +38,6 @@ import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
-import Utils from '../../utils';
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
 
 import './DialogChartWidget.scss';
@@ -105,7 +104,6 @@ type DialogChartWidgetState = {
 
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
-    hierarchies?: HierarchyField[];
 };
 
 const INPUT_FILTERING_ID = 'chartFilteringField';
@@ -234,7 +232,7 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     onApply = () => {
-        const isValidateParamTitle = Utils.isEnabledFeature(
+        const isValidateParamTitle = isEnabledFeature(
             Feature.DashBoardWidgetParamsStrictValidation,
         );
 
@@ -470,12 +468,10 @@ class DialogChartWidget extends React.PureComponent<
         entryMeta: {type: WidgetType};
     }) => {
         const visualizationType = getEntryVisualizationType(entryMeta);
-        const hierarchies = getEntryHierarchy(entryMeta);
         this.setState({
             selectedWidgetType,
             selectedEntryType: entryMeta.type,
             visualizationType,
-            hierarchies,
         });
 
         if (this.afterSettingSelectedWidgetTypeCallback) {
@@ -501,11 +497,8 @@ class DialogChartWidget extends React.PureComponent<
         );
     };
 
-    getHierarchyWarning = () => {
-        const {hierarchies} = this.state;
-        const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
-
-        if (!showFilterHierarchyWarning || !DL.ENDPOINTS.datalensDocs) {
+    getFiltrationDocsLink = () => {
+        if (!DL.ENDPOINTS.datalensDocs) {
             return null;
         }
 
@@ -540,7 +533,12 @@ class DialogChartWidget extends React.PureComponent<
         const helpPopover = (
             <HelpPopover
                 className={b('help-tooltip')}
-                content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                content={
+                    <React.Fragment>
+                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                        {this.getFiltrationDocsLink()}
+                    </React.Fragment>
+                }
             />
         );
 
@@ -560,7 +558,6 @@ class DialogChartWidget extends React.PureComponent<
                         checked={enableActionParams}
                         disabled={!canUseFiltration}
                     />
-                    {this.getHierarchyWarning()}
                 </div>
             </FormRow>
         );
@@ -783,7 +780,7 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     renderParams() {
-        const isValidateParamTitle = Utils.isEnabledFeature(
+        const isValidateParamTitle = isEnabledFeature(
             Feature.DashBoardWidgetParamsStrictValidation,
         );
 
