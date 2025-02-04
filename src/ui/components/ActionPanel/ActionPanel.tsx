@@ -55,7 +55,7 @@ type OwnProps = {
         message: string;
         onConfirm?: () => void;
     };
-    hideOpenRevisionsButton?: boolean;
+    expandablePanelActions?: React.ReactNode;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -152,7 +152,7 @@ class ActionPanel extends React.Component<Props, State> {
             setActualVersion,
             isEditing,
             deprecationWarning,
-            hideOpenRevisionsButton,
+            expandablePanelActions,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -160,8 +160,8 @@ class ActionPanel extends React.Component<Props, State> {
         const entry = this.getEntry();
 
         return (
-            <React.Fragment>
-                <div className={b()} data-qa={ActionPanelQA.ActionPanel}>
+            <div className={b()}>
+                <div className={b('wrapper')} data-qa={ActionPanelQA.ActionPanel}>
                     <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={leftStyle}>
                         {Array.isArray(leftItems)
                             ? leftItems.map((LeftItems) => LeftItems)
@@ -183,6 +183,7 @@ class ActionPanel extends React.Component<Props, State> {
                 {entry && entryContent && setActualVersion && (
                     <React.Fragment>
                         <RevisionsPanel
+                            className={b('revisions-panel')}
                             entry={entry}
                             leftStyle={leftStyle}
                             onSetActualRevision={setActualVersion}
@@ -191,9 +192,9 @@ class ActionPanel extends React.Component<Props, State> {
                             isEditing={isEditing || false}
                             deprecationMessage={deprecationWarning?.message}
                             onDeprecationConfirm={deprecationWarning?.onConfirm}
-                            hideOpenRevisionsButton={hideOpenRevisionsButton}
                         />
                         <ExpandablePanel
+                            className={b('expandable-panel')}
                             title={i18n('label_history-changes')}
                             description={
                                 isEnabledFeature(Feature.RevisionsListNoLimit)
@@ -203,11 +204,12 @@ class ActionPanel extends React.Component<Props, State> {
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >
+                            {expandablePanelActions}
                             <Revisions />
                         </ExpandablePanel>
                     </React.Fragment>
                 )}
-            </React.Fragment>
+            </div>
         );
     }
 

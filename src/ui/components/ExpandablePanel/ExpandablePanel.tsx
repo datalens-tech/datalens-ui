@@ -22,6 +22,7 @@ type ExpandablePanelProps = {
     title: string;
     onClose: () => void;
     description?: string;
+    className?: string;
 };
 
 const ExpandablePanel: React.FC<ExpandablePanelProps> = ({
@@ -30,6 +31,7 @@ const ExpandablePanel: React.FC<ExpandablePanelProps> = ({
     onClose,
     children,
     description,
+    className,
 }) => {
     const dispatch = useDispatch();
 
@@ -47,7 +49,7 @@ const ExpandablePanel: React.FC<ExpandablePanelProps> = ({
     }
 
     return (
-        <div className={b({collapsed: isCollapsed})} data-qa="expandable-panel">
+        <div className={b({collapsed: isCollapsed}, className)} data-qa="expandable-panel">
             <div className={b('container')}>
                 <div className={b('header')}>
                     <div className={b('title')}>

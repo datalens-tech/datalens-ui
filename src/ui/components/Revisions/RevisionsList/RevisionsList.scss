@@ -95,7 +95,7 @@ $labelMargin: 8px;
     &__row &__point-wrap {
         position: absolute;
         left: 30px;
-        top: $labelHeight;
+        top: 12px;
         z-index: 1;
     }
 
@@ -107,6 +107,7 @@ $labelMargin: 8px;
         background-color: var(--g-color-base-background);
         box-sizing: border-box;
         display: block;
+        position: relative;
     }
 
     &__row_draft &__point {

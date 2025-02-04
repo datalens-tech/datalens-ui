@@ -11,7 +11,7 @@ import {registry} from '../../../../registry';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
 import ButtonDrawPreview from '../ButtonDrawPreview/ButtonDrawPreview';
-import EntryLabel from '../EntryLabel/EntryLabel';
+import {ButtonRevisionsDiff} from '../ButtonRevisionsDiff/ButtonRevisionsDiff';
 import EntryTypeName from '../EntryTypeName/EntryTypeName';
 import {GridSchemeSelect} from '../GridSchemeSelect/GridSchemeSelect';
 
@@ -28,6 +28,9 @@ function ActionPanelService({
     isGridContainsPreview,
     history,
     setActualVersion,
+    tabsData,
+    scriptsValues,
+    isScriptsChanged,
 }) {
     usePageTitle({entry});
 
@@ -63,7 +66,6 @@ function ActionPanelService({
                 </Label>
             )}
             <ActionPanelButton entry={entry} className={b('custom-button')} />
-            <EntryLabel entry={entry} />
         </React.Fragment>,
     ];
 
@@ -93,6 +95,14 @@ function ActionPanelService({
                 rightItems={rightItems}
                 setActualVersion={setActualVersion}
                 hideOpenRevisionsButton={true}
+                expandablePanelActions={
+                    <ButtonRevisionsDiff
+                        tabsData={tabsData}
+                        scriptsValues={scriptsValues}
+                        isScriptsChanged={isScriptsChanged}
+                        entry={entry}
+                    />
+                }
             />
         </React.Fragment>
     );
@@ -118,6 +128,20 @@ ActionPanelService.propTypes = {
     setActualVersion: PropTypes.func,
 
     history: PropTypes.object.isRequired,
+
+    isScriptsChanged: PropTypes.bool,
+    scriptsValues: PropTypes.object,
+    tabsData: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            language: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            docs: PropTypes.shape({
+                path: PropTypes.string.isRequired,
+                title: PropTypes.string.isRequired,
+            }),
+        }),
+    ),
 };
 
 export default ActionPanelService;

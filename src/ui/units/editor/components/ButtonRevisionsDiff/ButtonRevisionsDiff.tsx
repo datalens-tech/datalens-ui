@@ -1,18 +1,15 @@
 import React, {useState} from 'react';
 
-import {Button} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
+import {Button, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 
-import type {EditorEntry} from '../../../types/common';
-import type {ScriptsValues, TabData} from '../../../types/store';
-import {RevisionsDiffDialog} from '../../RevisionsDiff/RevisionsDiff';
+import type {EditorEntry} from '../../types/common';
+import type {ScriptsValues, TabData} from '../../types/store';
+import {RevisionsDiffDialog} from '../RevisionsDiff/RevisionsDiff';
 
 const i18n = I18n.keyset('component.dialog-revisions.view');
-const b = block('btn-revisions-diff');
 
 interface ButtonRevisionsDiffProps {
-    className?: string;
     scriptsValues: ScriptsValues;
     isScriptsChanged: boolean;
     entry: EditorEntry;
@@ -20,7 +17,6 @@ interface ButtonRevisionsDiffProps {
 }
 
 export const ButtonRevisionsDiff: React.FC<ButtonRevisionsDiffProps> = ({
-    className,
     scriptsValues,
     isScriptsChanged,
     entry,
@@ -29,13 +25,8 @@ export const ButtonRevisionsDiff: React.FC<ButtonRevisionsDiffProps> = ({
     const [visible, toggleVisible] = useState<boolean>(false);
 
     return (
-        <React.Fragment>
-            <Button
-                view="outlined"
-                size="l"
-                className={b(null, className)}
-                onClick={() => toggleVisible(true)}
-            >
+        <div className={spacing({pt: 1, px: 2, pb: 2})}>
+            <Button view="outlined" size="l" width="auto" onClick={() => toggleVisible(true)}>
                 {i18n('button_show-revisions-diff')}
             </Button>
             <RevisionsDiffDialog
@@ -46,6 +37,6 @@ export const ButtonRevisionsDiff: React.FC<ButtonRevisionsDiffProps> = ({
                 entry={entry}
                 tabsData={tabsData}
             />
-        </React.Fragment>
+        </div>
     );
 };

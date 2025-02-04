@@ -34,7 +34,7 @@ export type RevisionsPanelProps = {
     onDeprecationConfirm?: () => void;
     deprecationMessage?: string | null;
     isEditing: boolean;
-    hideOpenRevisionsButton?: boolean;
+    className?: string;
 };
 
 const b = block('revisions-panel');
@@ -125,7 +125,7 @@ const RevisionsPanel = ({
     onDeprecationConfirm,
     deprecationMessage,
     isEditing,
-    hideOpenRevisionsButton,
+    className,
 }: RevisionsPanelProps) => {
     const dispatch = useDispatch();
     const storedEntryContent = useSelector(selectEntryContent);
@@ -238,7 +238,7 @@ const RevisionsPanel = ({
     }
 
     return (
-        <div className={b('wrap', null, 'active')}>
+        <div className={b(null, className)}>
             <div className={b('text-container')} style={leftStyle} data-qa="revisions-top-panel">
                 <div className={b('text')}>
                     <div className={b('text-info')}>{warningText}</div>
@@ -254,7 +254,6 @@ const RevisionsPanel = ({
                     isDraft={Boolean(showDraftWarningPanel)}
                     isDeprecated={Boolean(showDeprecationMessage)}
                     isLoading={revisionsLoadingStatus === 'loading'}
-                    hideOpenButton={hideOpenRevisionsButton}
                 />
             </div>
         </div>
