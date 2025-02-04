@@ -1000,8 +1000,8 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 includeLogs,
             });
 
-            if(headers[RPC_AUTHORIZATION]) {
-                responseData.rpcAuthorization = headers[RPC_AUTHORIZATION]
+            if(result.headers[RPC_AUTHORIZATION]) {
+                responseData.rpcAuthorization = result.headers[RPC_AUTHORIZATION]
             }
 
             if (this.settings.includeUnresolvedParams) {

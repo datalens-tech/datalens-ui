@@ -131,7 +131,9 @@ export const isExportPdfVisible = ({
     const data = loadedData?.data;
     const type = loadedData?.type as WidgetKind;
     return (
-        !isEmpty(data) && [WidgetKind.D3].includes(type)
+        !isEmpty(data) && ([WidgetKind.Graph, WidgetKind.Table, WidgetKind.GravityCharts] as WidgetKind[]).includes(
+            type,
+        )
     );
 };
 

@@ -291,7 +291,7 @@ export default class Utils {
     }
 
     static getAuthToken = async (propsData: any) => {
-        var result = await getSdk().us.getAuth({login: propsData.login, password: propsData.password});
+        var result = await getSdk().sdk.us.getAuth({login: propsData.login, password: propsData.password});
 
         return result;
     }
@@ -319,13 +319,13 @@ export default class Utils {
     }
 
     static encodeId = async (propsData: any) => {
-        var result = await getSdk().us.encodeId({ id: propsData.id});
+        var result = await getSdk().sdk.us.encodeId({ id: propsData.id});
 
         return result.id;
     }
 
     static decodeId = async (propsData: any) => {
-        var result = await getSdk().us.decodeId({ id: propsData.id});
+        var result = await getSdk().sdk.us.decodeId({ id: propsData.id});
 
         return result.id;
     }
@@ -390,7 +390,7 @@ export default class Utils {
      * @returns объект {err:any, data:any}, если err заполнен, то ошибка
      */
     static universalService = async (propsData: any) => {
-        var result = await getSdk().us.universalService(propsData);
+        var result = await getSdk().sdk.us.universalService(propsData);
 
         return result;
     }

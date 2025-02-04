@@ -33,6 +33,7 @@ export interface SharedAppConfig {
     enablePreloading?: boolean;
     fetchingTimeout: number;
     singleFetchingTimeout: number;
+    flatTableRowsLimit: number;
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
@@ -48,6 +49,7 @@ export interface SharedAppConfig {
     useIPV6?: boolean;
     workers?: number;
 
+    python?: string;
     requestIdHeaderName: string;
     gatewayProxyHeaders: string[];
     headersMap: Record<string, string>;

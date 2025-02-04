@@ -70,7 +70,7 @@ const CustomAuthPage = ({setToken}) => {
         alignItems: 'center'
     }}>
         <div style={{ 
-            displayAuthPage: 'flex',
+            display: 'flex',
             gap: '6px',
             flexDirection: 'column',
             minWidth: '240px',

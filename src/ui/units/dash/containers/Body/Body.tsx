@@ -1045,7 +1045,7 @@ class Body extends React.PureComponent<BodyProps> {
         const links = Object.keys(this.props.entry.links);
         const result = await Promise.allSettled(
             links.map((id) =>
-                getSdk().us.getEntry({
+                getSdk().sdk.us.getEntry({
                     entryId: id,
                     includePermissionsInfo: true,
                 }),

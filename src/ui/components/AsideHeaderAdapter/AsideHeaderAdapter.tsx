@@ -311,7 +311,7 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
                         current: visiblePanel === Panel.Settings,
                         onItemClick: () => {
                             localStorage.removeItem('x-rpc-authorization');
-                            getSdk().setDefaultHeader({
+                            getSdk().sdk.setDefaultHeader({
                                 name: RPC_AUTHORIZATION,
                                 value: "",
                             });
