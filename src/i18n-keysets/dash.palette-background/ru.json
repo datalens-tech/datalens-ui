@@ -1,7 +1,7 @@
 {
-  "button_custom_value": "Указать свое значение",
+  "button_custom_value": "Указать значение",
   "tooltip_click-to-select": "Выберите значение",
-  "value_base_gray": "Базовый серый",
-  "value_default": "Базовый",
+  "value_base_gray": "Базовый фон подложки",
+  "value_default": "Базовый фон чартов",
   "value_transparent": "Прозрачный"
 }
