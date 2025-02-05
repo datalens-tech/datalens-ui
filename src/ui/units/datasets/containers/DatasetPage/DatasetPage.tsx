@@ -4,8 +4,8 @@ import block from 'bem-cn-lite';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Feature} from 'shared';
 import type {SDK} from 'ui';
-import {Utils} from 'ui';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ActionQueryParam, QueryParam, mapYTClusterToConnId} from '../../constants/datasets';
 import DatasetUtils, {isCreationProcess} from '../../helpers/utils';
@@ -48,7 +48,7 @@ class DatasetPage extends React.Component<DatasetPageProps> {
     }
 
     get isAuto() {
-        if (Utils.isEnabledFeature(Feature.EnableAutocreateDataset) || this.datasetId) {
+        if (isEnabledFeature(Feature.EnableAutocreateDataset) || this.datasetId) {
             return false;
         }
 

@@ -27,15 +27,12 @@ const initialEntriesToKeyValues = (entries: KeyValueResult['entries'] = {}): Key
 };
 
 const keyValuesToEntries = (keyValues: KeyValueEntry[] = []): KeyValueResult['entries'] => {
-    return keyValues.reduce<KeyValueResult['entries']>(
-        (acc, {key, value, error, initial, touched}) => {
-            if (key && !error && (!initial || (initial && touched))) {
-                acc[key] = value;
-            }
-            return acc;
-        },
-        {},
-    );
+    return keyValues.reduce<KeyValueResult['entries']>((acc, {key, value, error}) => {
+        if (key && !error) {
+            acc[key] = value;
+        }
+        return acc;
+    }, {});
 };
 
 const getValidatedKeyValues = (keyValues: KeyValueEntry[]) => {
@@ -124,20 +121,15 @@ export function useKeyValueState(props: {
         nextKeyValues[index] = {
             ...updatedKeyValue,
             ...updates,
-            touched: true,
         };
         updateKeyValues(nextKeyValues);
     };
 
     const handleDeleteKeyValue = (index: number) => {
         const deletedItem = keyValues[index];
-        const nextKeyValues: KeyValueEntry[] = deletedItem.initial
-            ? [
-                  ...keyValues.slice(0, index),
-                  {key: deletedItem.key, value: null},
-                  ...keyValues.slice(index + 1),
-              ]
-            : [...keyValues.slice(0, index), ...keyValues.slice(index + 1)];
+        const nextKeyValues = keyValues.filter((entry) => {
+            return !(entry.key === deletedItem.key && entry.value === deletedItem.value);
+        });
         updateKeyValues(nextKeyValues);
     };
 

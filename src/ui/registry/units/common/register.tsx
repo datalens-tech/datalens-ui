@@ -1,11 +1,11 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
+import {getAdditionalChartkitErrorContent} from 'ui/libs/DatalensChartkit/Error/getAdditionalChartkitErrorContent';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
-import {renderDialogRelatedEntitiesAlertHint} from '../../../components/DialogRelatedEntities/DialogRelatedEntitiesAlertHint';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
 import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
 import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
@@ -99,6 +99,6 @@ export const registerCommonPlugins = () => {
         getEntryScopesWithRevisionsList,
         getRevisionsPanelEntryScopesTexts,
         getRestrictedParamNames,
-        renderDialogRelatedEntitiesAlertHint,
+        getAdditionalChartkitErrorContent,
     });
 };

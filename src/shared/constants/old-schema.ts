@@ -3,4 +3,3 @@
 export const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 export const PUBLIC_API_DASH_API_BASE_URL = '/private/api/dash/v1/dashboards';
 export const CHARTS_API_BASE_URL = '/api/charts/v1/charts';
-export const YAV_API_BASE_URL = '/api/yav';

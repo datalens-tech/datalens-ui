@@ -10,11 +10,26 @@ type GetEntryLinksArgs = {
 
 export function getEntryLinks(args: GetEntryLinksArgs) {
     const {data} = args;
+    const links: EntryFieldLinks = {};
 
-    if (data?.shared) {
+    if (typeof data?.meta === 'string') {
         try {
-            const shared = JSON.parse(data.shared as string);
-            const links: EntryFieldLinks = {};
+            const meta = JSON.parse(data.meta);
+            const metaLinks = get(meta, 'links');
+
+            if (Array.isArray(metaLinks)) {
+                metaLinks.forEach((metaLink) => {
+                    links[metaLink] = metaLink;
+                });
+            }
+
+            return links;
+        } catch (e) {}
+    }
+
+    if (typeof data?.shared === 'string') {
+        try {
+            const shared = JSON.parse(data.shared);
 
             const datasetIds = get(shared, 'datasetsIds');
             if (datasetIds) {
@@ -25,12 +40,8 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
             if (connectionEntryId) {
                 links.connection = connectionEntryId;
             }
-
-            return links;
-        } catch (e) {
-            return {};
-        }
+        } catch (e) {}
     }
 
-    return {};
+    return links;
 }

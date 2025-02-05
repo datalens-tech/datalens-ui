@@ -10,9 +10,11 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {DatalensGlobalState} from 'ui';
-import {DL, NavigationMinimal, Utils as UIUtils, sdk} from 'ui';
+import {NavigationMinimal, sdk} from 'ui';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
-import Utils from 'utils';
+import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 
 import {EntryScope, Feature, PLACE, QLChartType, ViewSetupQA} from '../../../../../../shared';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
@@ -78,7 +80,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
         if (
             initialChartType === QLChartType.Monitoringql &&
-            Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
+            isEnabledFeature(Feature.EnableCustomMonitoring)
         ) {
             const getDefaultMonitoringQLConnectionId = registry.ql.functions.get(
                 'getDefaultMonitoringQLConnectionId',
@@ -116,11 +118,11 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
         const chartTypesList = [{value: QLChartType.Sql, text: 'SQL', key: 'SQL'}];
 
-        if (UIUtils.isEnabledFeature(Feature.QLPrometheus)) {
+        if (isEnabledFeature(Feature.QLPrometheus)) {
             chartTypesList.push({value: QLChartType.Promql, text: 'Prometheus', key: 'Prometheus'});
         }
 
-        if (UIUtils.isEnabledFeature(Feature.QLMonitoring)) {
+        if (isEnabledFeature(Feature.QLMonitoring)) {
             chartTypesList.push({
                 value: QLChartType.Monitoringql,
                 text: 'Monitoring',
@@ -166,7 +168,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                     }}
                                     disabled={
                                         chartType === QLChartType.Monitoringql &&
-                                        Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
+                                        isEnabledFeature(Feature.EnableCustomMonitoring)
                                     }
                                 >
                                     <div className={b('connection-select-btn-content')}>
@@ -194,7 +196,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                     }}
                                     disabled={
                                         chartType === QLChartType.Monitoringql &&
-                                        Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
+                                        isEnabledFeature(Feature.EnableCustomMonitoring)
                                     }
                                     qa={ViewSetupQA.SelectConnection}
                                     className={b('connection-select-btn')}
@@ -281,7 +283,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
 
         if (
             newChartType === QLChartType.Monitoringql &&
-            Utils.isEnabledFeature(Feature.EnableCustomMonitoring)
+            isEnabledFeature(Feature.EnableCustomMonitoring)
         ) {
             if (this.defaultMonitoringQLConnection === null) {
                 const getDefaultMonitoringQLConnectionId = registry.ql.functions.get(

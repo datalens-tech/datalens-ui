@@ -11,7 +11,7 @@ import {
     isNumberField,
 } from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
-import {getGradientStops} from '../../utils/color-helpers';
+import {getGradientStops} from '../../utils/get-gradient-stops';
 import {isGradientMode} from '../../utils/misc-helpers';
 
 export function shouldUseGradientLegend(
@@ -58,7 +58,7 @@ export function getHighchartsColorAxis(
         endOnTick: false,
         min: minColorValue,
         max: maxColorValue,
-        stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
+        stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
     };
 }
 

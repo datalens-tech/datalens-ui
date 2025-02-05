@@ -19,7 +19,7 @@ export const editorActions = {
             if (checkResult === DeveloperModeCheckStatus.Allowed) {
                 const typedApi = getTypedApi(api);
 
-                return await typedApi.us._createEditorChart(args);
+                return await typedApi.us._createEditorChart({...args, links: getEntryLinks(args)});
             } else {
                 throw new Error('Access to ChartEditor developer mode was denied');
             }

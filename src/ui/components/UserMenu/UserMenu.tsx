@@ -36,7 +36,7 @@ export const UserMenu = () => {
                     <Button
                         className={b('entry-button')}
                         title={i18n('label_logout')}
-                        href="/logout"
+                        href={DL.AUTH_ENABLED ? '/auth/logout' : '/logout'}
                         view="flat-secondary"
                     >
                         <Icon data={ArrowRightFromSquare} size={18} />

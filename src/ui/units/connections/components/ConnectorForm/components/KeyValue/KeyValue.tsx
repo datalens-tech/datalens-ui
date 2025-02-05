@@ -30,10 +30,6 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
         placeholder = i18n('label_secret-value');
     }
 
-    if (entry.value === null) {
-        return null;
-    }
-
     return (
         <div className={b('entry')}>
             <Select
@@ -51,7 +47,7 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
                 <PasswordInput
                     {...valueInputProps}
                     className={b('value-input')}
-                    value={entry.value}
+                    value={entry.value || ''}
                     hideCopyButton={true}
                     placeholder={placeholder}
                     onUpdate={(value) => {
@@ -62,7 +58,7 @@ const KeyValueEntryView = (props: KeyValueEntryViewProps) => {
                 <TextInput
                     {...valueInputProps}
                     className={b('value-input')}
-                    value={entry.value}
+                    value={entry.value || ''}
                     onUpdate={(value) => {
                         onUpdate(index, {value});
                     }}

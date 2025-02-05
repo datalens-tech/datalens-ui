@@ -5,10 +5,10 @@ import {i18n} from 'i18n';
 import {get, isEmpty, omit} from 'lodash';
 import {Feature} from 'shared';
 import {formatBytes, formatDuration} from 'shared/modules/format-units/formatUnit';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {TemplateTextPaper} from '../../../../../../../../../../../../components/TemplateTextPaper/TemplateTextPaper';
 import {DL} from '../../../../../../../../../../../../constants/common';
-import Utils from '../../../../../../../../../../../../utils';
 import type {
     SourcesConfig,
     SourceSuccess as TSourceSuccess,
@@ -61,7 +61,7 @@ export const SourceSuccess: React.FC<SourceSuccessProps> = ({source, config, isC
     const queryInfo: string = get(info, 'query', '') || get(data, 'sql_query', '');
     const withoutQueryInfo = omit(info, 'query');
     const hasInfo = !isEmpty(queryInfo) || !isEmpty(withoutQueryInfo);
-    const showData = data && Utils.isEnabledFeature(Feature.ShowInspectorDetails);
+    const showData = data && isEnabledFeature(Feature.ShowInspectorDetails);
     const showRequestQuery = dataUrlParams && Boolean(Object.keys(dataUrlParams).length);
     const lang = DL.USER_LANG;
 

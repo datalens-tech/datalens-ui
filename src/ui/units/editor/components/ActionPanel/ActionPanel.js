@@ -1,8 +1,10 @@
 import React from 'react';
 
+import {Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {registry} from '../../../../registry';
@@ -55,6 +57,11 @@ function ActionPanelService({
 
     const centerItems = [
         <React.Fragment key="additionalEntryItems">
+            {isEnabledFeature('ShowEditorPreviewLabel') && (
+                <Label theme="info" className={b('preview-label')}>
+                    Preview
+                </Label>
+            )}
             <ActionPanelButton entry={entry} className={b('custom-button')} />
             <EntryLabel entry={entry} />
         </React.Fragment>,

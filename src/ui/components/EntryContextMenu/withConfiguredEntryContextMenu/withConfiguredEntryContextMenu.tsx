@@ -4,7 +4,7 @@ import {CopyToClipboard, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import navigateHelper from '../../../libs/navigateHelper';
 import type {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
@@ -83,7 +83,7 @@ export const withConfiguredEntryContextMenu = (
                 props.entry && props.entry.fake
                     ? getGroupedMenu(props.additionalItems, {
                           type: 'entry',
-                          isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
+                          isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
                       })
                     : getGroupedMenu(
                           getEntryContextMenuItems({
@@ -94,7 +94,7 @@ export const withConfiguredEntryContextMenu = (
                           }).concat(props.additionalItems),
                           {
                               type: 'entry',
-                              isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
+                              isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
                           },
                       ),
         };
