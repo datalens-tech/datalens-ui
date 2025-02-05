@@ -1,5 +1,9 @@
-import {authSimpleSchema} from './simple-schema';
+import {getServiceEndpoints} from '../../endpoints/schema';
 
-export const authSchema = {
-    ...authSimpleSchema,
+import {actions} from './actions';
+
+export default {
+    actions,
+    endpoints: getServiceEndpoints('auth'),
+    serviceName: 'auth',
 };

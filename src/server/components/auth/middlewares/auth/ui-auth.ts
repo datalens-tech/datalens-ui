@@ -109,17 +109,39 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
             },
         ) as AccessTokenPayload;
 
+        const {
+            responseData: {profile},
+        } = await gatewayApi.root.auth.getMyUserProfile({
+            ctx: req.ctx,
+            headers: {
+                [AuthHeader.Authorization]: 'Bearer ' + accessToken,
+            },
+            requestId: req.id,
+            authArgs: {},
+            args: undefined,
+        });
+
         req.originalContext.set('userId', userId);
         req.originalContext.set('user', {
             userId,
             sessionId,
             accessToken,
             roles,
+            profile: {
+                login: profile.login!,
+                email: profile.email ?? undefined,
+                formattedLogin: profile.login!,
+                displayName:
+                    `${profile.firstName || ''} ${profile.lastName || ''}`.trim() ||
+                    profile.login ||
+                    profile.email ||
+                    userId,
+            },
         });
 
         req.ctx.log('CHECK_ACCESS_TOKEN_SUCCESS');
     } catch (err) {
-        req.ctx.logError('CHECK_ACCESS_TOKEN_ERROR', err);
+        req.ctx.logError('CHECK_ACCESS_TOKEN_ERROR', isGatewayError(err) ? err.error : err);
         onFail(req, res);
         return;
     }

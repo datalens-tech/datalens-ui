@@ -1,6 +1,7 @@
 import {getTypedApiFactory} from '@gravity-ui/gateway';
 
-import type {authSimpleSchema} from './auth/simple-schema';
+import auth from './auth';
+import type {authSimpleSchema} from './auth-schema/simple-schema';
 import bi from './bi';
 import biConverter from './bi-converter';
 import extensions from './extensions';
@@ -12,6 +13,7 @@ export const simpleSchema = {
     bi,
     biConverter,
     extensions,
+    auth,
 };
 
 export const getTypedApi = getTypedApiFactory<{

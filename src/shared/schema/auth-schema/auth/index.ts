@@ -5,5 +5,5 @@ import {actions} from './actions';
 export default {
     actions,
     endpoints: getServiceEndpoints('auth'),
-    serviceName: 'auth',
+    serviceName: 'authNotAuthenticated',
 };
