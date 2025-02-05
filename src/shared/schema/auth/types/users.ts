@@ -38,15 +38,17 @@ export interface GetUserProfileArgs {
     userId: string;
 }
 
+interface UserProfile {
+    userId: string;
+    login: string | null;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    roles: `${UserRole}`[];
+}
+
 export interface GetUserProfileResponse {
-    profile: {
-        userId: string;
-        login: string | null;
-        email: string | null;
-        firstName: string | null;
-        lastName: string | null;
-        roles: `${UserRole}`[];
-    };
+    profile: UserProfile;
 }
 
 interface UpdateUserProfile {
@@ -78,15 +80,11 @@ export interface GetUsersListArgs {
     roles?: `${UserRole}`[];
 }
 
+interface GetUserList extends UserProfile {
+    providerId: string | null;
+}
+
 export interface GetUsersListResponse {
     nextPageToken?: string;
-    users: {
-        userId: string;
-        login: string | null;
-        email: string | null;
-        firstName: string | null;
-        lastName: string | null;
-        roles: `${UserRole}`[];
-        providerId: string | null;
-    }[];
+    users: GetUserList[];
 }
