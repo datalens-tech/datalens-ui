@@ -54,6 +54,18 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         user = {...user, ...userInfo};
     }
 
+    if (isAuthEnabled) {
+        const authUser = req.ctx.get('user');
+        iamUserId = authUser?.userId as string;
+        const profile = authUser?.profile;
+        user = {
+            ...user,
+            uid: iamUserId,
+            roles: authUser?.roles,
+            ...profile,
+        };
+    }
+
     const DL: DLGlobalData = {
         user,
         userSettings,

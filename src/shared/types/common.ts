@@ -1,6 +1,7 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
+import type {UserRole} from '../components/auth/constants/role';
 import type {AuthPageSettings} from '../components/auth/types/layout';
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
@@ -135,6 +136,7 @@ export interface DLUser extends DLUserAccount {
     isGlobalFederationUser?: boolean;
     isLocalFederationUser?: boolean;
     withNavigation?: boolean;
+    roles?: `${UserRole}`[];
 }
 
 export type MainLayoutConfigData = {
