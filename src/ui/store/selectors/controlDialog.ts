@@ -22,6 +22,17 @@ export const selectOpenedDialogType = (state: DatalensGlobalState) =>
 
 export const selectControlDialogState = (state: DatalensGlobalState) => state.controlDialog;
 
+export const selectControlDialogFeatures = (state: DatalensGlobalState) =>
+    selectControlDialogState(state).features;
+
+export const selectControlFeatureByType = createSelector(
+    [selectControlDialogFeatures],
+    (features) =>
+        <F extends typeof features, T extends keyof typeof features>(type: T) => {
+            return features[type] ?? ({} as Partial<Exclude<F[T], void>>);
+        },
+);
+
 export const selectSelectorsGroup = (state: DatalensGlobalState) =>
     selectControlDialogState(state).selectorsGroup;
 

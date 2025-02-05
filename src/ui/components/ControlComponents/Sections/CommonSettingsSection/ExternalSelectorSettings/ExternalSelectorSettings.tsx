@@ -10,7 +10,6 @@ import update, {Context} from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {ControlQA} from 'shared';
-import {useEffectOnce} from 'ui/hooks';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
@@ -93,12 +92,6 @@ const ExternalSelectorSettings: React.FC<{
     React.useEffect(() => {
         dispatch(setSelectorDialogItem({selectorParametersGroup: 0}));
     }, [dispatch]);
-
-    useEffectOnce(() => {
-        if (props.enableAutoheightDefault) {
-            handleAutoHeightUpdate(true);
-        }
-    });
 
     return (
         <React.Fragment>

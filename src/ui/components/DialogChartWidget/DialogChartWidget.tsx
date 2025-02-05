@@ -70,6 +70,7 @@ export interface DialogChartWidgetFeatureProps {
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
     enableFilteringSetting?: boolean;
+    theme?: string;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     openedItemId: string | null;

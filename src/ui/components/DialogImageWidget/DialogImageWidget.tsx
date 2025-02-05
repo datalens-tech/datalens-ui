@@ -28,6 +28,10 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     preserveAspectRatio: true,
 };
 
+export type DialogImageWidgetFeatureProps = {
+    theme?: string;
+};
+
 type Props = {
     openedItemId: string | null;
     openedItemData?: DashTabItemImage['data'];
@@ -35,7 +39,7 @@ type Props = {
     onClose: () => void;
     onApply: (newItemData: SetItemDataArgs) => void;
     scope: EntryScope;
-};
+} & DialogImageWidgetFeatureProps;
 
 const getValidationErrors = (data: DashTabItemImage['data']) => {
     const result: Record<string, string> = {};

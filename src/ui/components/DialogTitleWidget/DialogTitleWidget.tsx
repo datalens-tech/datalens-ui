@@ -78,6 +78,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
+    theme?: string;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;

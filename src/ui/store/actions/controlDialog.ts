@@ -5,7 +5,11 @@ import type {
     DashTabItemGroupControl,
     StringParams,
 } from 'shared';
-import type {SelectorsGroupDialogState, SetSelectorDialogItemArgs} from '../typings/controlDialog';
+import type {
+    DialogEditItemFeaturesProp,
+    SelectorsGroupDialogState,
+    SetSelectorDialogItemArgs,
+} from '../typings/controlDialog';
 import type {AppDispatch} from '..';
 import {
     getControlDefaultsForField,
@@ -51,6 +55,7 @@ export type InitDialogAction = {
         data: DashTabItem['data'];
         type: DashTabItemType;
         defaults?: StringParams | null;
+        features?: DialogEditItemFeaturesProp;
         openedItemMeta: ControlDialogStateItemMeta;
     };
 };

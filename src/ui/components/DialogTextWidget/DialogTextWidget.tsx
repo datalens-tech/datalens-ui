@@ -19,6 +19,7 @@ const b = block('dialog-text');
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableCustomBgColorSelector?: boolean;
+    theme?: string;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {

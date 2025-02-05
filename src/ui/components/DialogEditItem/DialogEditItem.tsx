@@ -17,17 +17,13 @@ import {ITEM_TYPE} from 'ui/constants/dialogs';
 import {useEffectOnce} from 'ui/hooks';
 import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog';
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
+import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
 
-import type {DialogChartWidgetFeatureProps} from '../DialogChartWidget/DialogChartWidget';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
-import type {DialogExternalControlFeaturesProps} from '../DialogExternalControl/DialogExternalControl';
 import DialogExternalControl from '../DialogExternalControl/DialogExternalControl';
-import type {DialogGroupControlFeaturesProps} from '../DialogGroupControl/DialogGroupControl';
 import {DialogGroupControl} from '../DialogGroupControl/DialogGroupControl';
 import {DialogImageWidget} from '../DialogImageWidget';
 import {DialogTextWidgetWrapper} from '../DialogTextWidget';
-import type {DialogTextWidgetFeatureProps} from '../DialogTextWidget/DialogTextWidget';
-import type {DialogTitleWidgetFeatureProps} from '../DialogTitleWidget/DialogTitleWidget';
 import DialogTitleWidget from '../DialogTitleWidget/DialogTitleWidget';
 
 type DialogEditTitleProps = {
@@ -86,14 +82,6 @@ type DialogEditImageProps = {
     openedItemDefaults: any;
 };
 
-export type DialogEditItemFeaturesProp = {
-    [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
-    [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
-    [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
-    [DashTabItemType.GroupControl]?: DialogGroupControlFeaturesProps;
-    [DashTabItemType.Control]?: DialogExternalControlFeaturesProps;
-};
-
 export type DialogEditItemProps = {
     entryId: string | null;
     scope: EntryScope;
@@ -150,6 +138,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                 id: openedItemId,
                 data: openedItemData,
                 defaults: openedItemDefaults,
+                features,
                 openedItemMeta: {
                     scope,
                     entryId,
@@ -243,6 +232,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     onClose={closeDialog}
                     onApply={setItemData}
+                    {...features?.[DashTabItemType.Image]}
                 />
             );
         default: {
