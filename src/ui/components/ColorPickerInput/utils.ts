@@ -2,6 +2,7 @@ import {color as d3Color} from 'd3-color';
 
 import {type ColorParts} from './ColorPickerInput';
 
+// Prevents browser warnings for empty\invalid values
 export function normalizeColor(color?: string) {
     return color?.toUpperCase() || '';
 }
@@ -16,11 +17,6 @@ export function colorMask(color?: string): string {
     } else {
         return normalizeColor(`${color?.startsWith('#') ? '' : '#'}${color}`);
     }
-}
-
-// Prevents browser warnings for empty\invalid values
-export function sanitizeColor(color: string) {
-    return normalizeColor(d3Color(color)?.formatHex8());
 }
 
 export function getMaskedColor(color: ColorParts) {
@@ -49,9 +45,10 @@ export function getResultColorFromParts(color: ColorParts): string {
         return '';
     }
 
-    return (
-        d3Color(color.solid)
-            ?.copy({opacity: color.opacity === null ? 1 : color.opacity / 100})
-            .formatHex8() ?? ''
-    );
+    const resultOpacity = color.opacity === null ? 1 : color.opacity / 100;
+    const resultColor = d3Color(color.solid)?.copy({opacity: resultOpacity});
+    const formattedColor =
+        resultOpacity === 1 ? resultColor?.formatHex() : resultColor?.formatHex8();
+
+    return formattedColor ?? '';
 }
