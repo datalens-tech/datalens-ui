@@ -31,6 +31,7 @@ import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 import type {DatalensGlobalState} from 'ui/index';
@@ -57,6 +58,7 @@ export type InitDialogAction = {
         type: DashTabItemType;
         defaults?: StringParams | null;
         features?: DialogEditItemFeaturesProp;
+        theme?: RealTheme;
         openedItemMeta: ControlDialogStateItemMeta;
     };
 };
@@ -257,12 +259,12 @@ export const applyGroupControlDialog = ({
                 : false;
 
         const data = {
+            autoHeight,
+            updateControlsOnChange,
             showGroupName: selectorsGroup.showGroupName,
             groupName: selectorsGroup.groupName,
-            autoHeight,
             buttonApply: selectorsGroup.buttonApply,
             buttonReset: selectorsGroup.buttonReset,
-            updateControlsOnChange,
             group: selectorsGroup.group.map((selector) => {
                 let hasChangedSourceType = false;
                 if (openedItemId) {

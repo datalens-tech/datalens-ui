@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -70,7 +71,6 @@ export interface DialogChartWidgetFeatureProps {
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
     enableFilteringSetting?: boolean;
-    theme?: string;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     openedItemId: string | null;
@@ -84,6 +84,8 @@ export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     widgetsCurrentTab: {
         [key: string]: string;
     };
+
+    theme?: RealTheme;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;

@@ -37,6 +37,7 @@ import type {
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
 import {ELEMENT_TYPE} from '../constants/controlDialog';
+import type {RealTheme} from '@gravity-ui/uikit';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -57,6 +58,7 @@ export interface ControlDialogState {
     openedItemMeta: ControlDialogStateItemMeta | null;
 
     features: DialogEditItemFeaturesProp;
+    theme?: RealTheme;
 
     lastUsedDatasetId?: string;
     lastUsedConnectionId?: string;
@@ -210,6 +212,7 @@ export function controlDialog(
                 defaults,
                 openedItemMeta,
                 features,
+                theme,
             } = payload;
 
             const newState = {
@@ -223,6 +226,10 @@ export function controlDialog(
 
             if (features) {
                 newState.features = features;
+            }
+
+            if (theme) {
+                newState.theme = theme;
             }
 
             if (

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -41,6 +42,8 @@ type OwnProps = {
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+
+    theme?: RealTheme;
 } & DialogExternalControlFeaturesProps;
 
 type Props = OwnProps & DispatchProps & StateProps;
