@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import debounce from 'lodash/debounce';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {getEditorDiffDefaultOptions} from '../../../libs/monaco/options';
 import MonacoDiffEditor from '../../MonacoEditor/MonacoDiffEditor';
@@ -61,9 +62,12 @@ export const EditorDiffRevisions: React.FC<EditorDiffRevisionsProps> = ({
                     </div>
                 </React.Fragment>
             ) : (
-                <div className={b('without-diff')}>
-                    {i18n('component.editor-diff.view', 'label_without-diff')}
-                </div>
+                <PlaceholderIllustration
+                    className={b('empty-state')}
+                    title={i18n('component.editor-diff.view', 'label_without-diff')}
+                    name="template"
+                    direction="column"
+                />
             )}
         </div>
     );

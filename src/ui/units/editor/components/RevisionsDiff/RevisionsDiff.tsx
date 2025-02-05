@@ -14,6 +14,7 @@ import {showToast} from 'store/actions/toaster';
 import {getResolveUsersByIdsAction} from 'store/actions/usersByIds';
 import type {RevisionEntry} from 'ui/components/Revisions/types';
 import {SelectAsync} from 'ui/components/Select/wrappers/SelectAsync';
+import {useSyncedValue} from 'ui/hooks/useSyncedState';
 import {registry} from 'ui/registry';
 
 import logger from '../../../../libs/logger';
@@ -30,6 +31,8 @@ import {CURRENT, PAGE_SIZE, b} from './constants';
 import './RevisionsDiff.scss';
 
 type UseRevisionsReqEnhancerProps = {
+    initialRevisionLeft?: string;
+    initialRevisionRight?: string;
     isScriptsChanged: boolean;
     entry: EditorEntry;
 };
@@ -77,8 +80,12 @@ export const useRevisionsReqEnhancer = (props: UseRevisionsReqEnhancerProps) => 
     const [hasNextPage, setHasNextPage] = React.useState(false);
     const [nextPageNumber, setNextPageNumber] = React.useState(0);
 
-    const [leftSelectVal, setLeftSelectVal] = React.useState<string | undefined>();
-    const [rightSelectVal, setRightSelectVal] = React.useState<string | undefined>();
+    const [leftSelectVal, setLeftSelectVal] = useSyncedValue<string | undefined>(
+        props.initialRevisionLeft,
+    );
+    const [rightSelectVal, setRightSelectVal] = useSyncedValue<string | undefined>(
+        props.initialRevisionRight,
+    );
 
     const resolveUsers = React.useCallback(
         (entries: GetRevisionsEntry[]) => {
@@ -110,7 +117,14 @@ export const useRevisionsReqEnhancer = (props: UseRevisionsReqEnhancerProps) => 
                 logger.logError('RevisionsDiff: getRevisions failed', error);
                 dispatch(showToast({...errorParams, error}));
             });
-    }, [props.entry, nextPageNumber, revisions, revisionByRevisionId, dispatch]);
+    }, [
+        props.entry.entryId,
+        nextPageNumber,
+        resolveUsers,
+        revisionByRevisionId,
+        revisions,
+        dispatch,
+    ]);
 
     React.useEffect(() => {
         mounted.current = true;

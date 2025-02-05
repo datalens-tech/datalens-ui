@@ -23,7 +23,7 @@ import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {GetEntryResponse} from '../../../shared/schema';
+import type {GetEntryResponse, GetRevisionsEntry} from '../../../shared/schema';
 import type {DatalensGlobalState} from '../../index';
 import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
@@ -55,7 +55,7 @@ type OwnProps = {
         message: string;
         onConfirm?: () => void;
     };
-    expandablePanelActions?: React.ReactNode;
+    renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -152,7 +152,7 @@ class ActionPanel extends React.Component<Props, State> {
             setActualVersion,
             isEditing,
             deprecationWarning,
-            expandablePanelActions,
+            renderRevisionItemActions,
         } = this.props;
 
         const leftStyle: React.CSSProperties = {left: sidebarSize};
@@ -204,8 +204,7 @@ class ActionPanel extends React.Component<Props, State> {
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >
-                            {expandablePanelActions}
-                            <Revisions />
+                            <Revisions renderItemActions={renderRevisionItemActions} />
                         </ExpandablePanel>
                     </React.Fragment>
                 )}

@@ -4,8 +4,6 @@
     .gc-adaptive-tabs {
         --gc-tabs-space-between: 12px;
         --gc-tabs-height: 24px;
-
-        @include dl-adaptive-tabs;
     }
 
     display: flex;
@@ -15,7 +13,7 @@
     margin-right: 4px;
     margin-left: 8px;
     padding-top: 4px;
-    height: 30px;
+    // height: 30px;
 
     &__tab {
         display: block;

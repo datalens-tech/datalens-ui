@@ -11,7 +11,7 @@
 
     &__panel {
         display: flex;
-        align-items: center;
+        align-items: baseline;
         min-height: 36px;
         flex-shrink: 0;
     }
@@ -33,7 +33,7 @@
     &__pane-tabs {
         flex: none;
         margin-right: 20px;
-        width: 450px;
+        width: 490px;
         margin-bottom: 5px;
     }
 

@@ -35,9 +35,15 @@ type RevisionRowProps = {
     item: GetRevisionsEntry;
     onItemClick: (param: string) => void;
     currentRevId: string;
+    renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
 };
 
-const RevisionRow: React.FC<RevisionRowProps> = ({item, onItemClick, currentRevId}) => {
+const RevisionRow: React.FC<RevisionRowProps> = ({
+    item,
+    onItemClick,
+    currentRevId,
+    renderItemActions,
+}) => {
     const handlerClick = () => onItemClick(item.revId);
     const {updatedAt, updatedBy} = item;
     const isPublished = isPublishedVersion(item);
@@ -45,6 +51,8 @@ const RevisionRow: React.FC<RevisionRowProps> = ({item, onItemClick, currentRevI
     const tooltipText = getRevisionStatus(item);
 
     const {UserAvatarById} = registry.common.components.getAll();
+
+    const customActions = renderItemActions?.(item, currentRevId);
 
     return (
         <li
@@ -74,6 +82,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({item, onItemClick, currentRevI
             )}
             <UserAvatarById loginOrId={updatedBy} size="s" className={b('avatar')} />
             <div className={b('text')}>{moment(updatedAt).format(TIME_FORMAT)}</div>
+            <div className={b('row-actions')}>{customActions}</div>
         </li>
     );
 };
@@ -83,6 +92,8 @@ type RevisionsListDayProps = {
     items: Array<GetRevisionsEntry>;
     onItemClick: (param: string) => void;
     currentRevId: string;
+
+    renderItemActions?: RevisionRowProps['renderItemActions'];
 };
 
 const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
@@ -90,6 +101,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
     items,
     onItemClick,
     currentRevId,
+    renderItemActions,
 }) => {
     const list = items.map((item) => (
         <RevisionRow
@@ -97,6 +109,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
             key={`rev-item-${date}-${item.revId}-${item.updatedAt}`}
             onItemClick={onItemClick}
             currentRevId={currentRevId}
+            renderItemActions={renderItemActions}
         />
     ));
     return (
@@ -115,9 +128,15 @@ type RevisionsListProps = {
     items: RevisionsListItems;
     onItemClick: (param: string) => void;
     currentRevId: string;
+    renderItemActions?: RevisionsListDayProps['renderItemActions'];
 };
 
-export const RevisionsList: React.FC<RevisionsListProps> = ({items, onItemClick, currentRevId}) => {
+export const RevisionsList: React.FC<RevisionsListProps> = ({
+    items,
+    onItemClick,
+    currentRevId,
+    renderItemActions,
+}) => {
     const preparedItems = React.useMemo(() => prepareRevisionListItems(items), [items]);
     const list = preparedItems.map((listItems, index) => (
         <RevisionsListDay
@@ -126,6 +145,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({items, onItemClick,
             items={listItems.dayItems}
             onItemClick={onItemClick}
             currentRevId={currentRevId}
+            renderItemActions={renderItemActions}
         />
     ));
 

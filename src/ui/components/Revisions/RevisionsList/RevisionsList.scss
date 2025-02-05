@@ -110,6 +110,10 @@ $labelMargin: 8px;
         position: relative;
     }
 
+    &__row-actions {
+        margin-inline: auto 0;
+    }
+
     &__row_draft &__point {
         background-color: transparent;
         border-color: transparent;

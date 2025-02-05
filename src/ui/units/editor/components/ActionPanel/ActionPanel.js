@@ -1,7 +1,9 @@
 import React from 'react';
 
-import {Label} from '@gravity-ui/uikit';
+import {CodeCompare} from '@gravity-ui/icons';
+import {Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -11,11 +13,13 @@ import {registry} from '../../../../registry';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
 import ButtonDrawPreview from '../ButtonDrawPreview/ButtonDrawPreview';
-import {ButtonRevisionsDiff} from '../ButtonRevisionsDiff/ButtonRevisionsDiff';
 import EntryTypeName from '../EntryTypeName/EntryTypeName';
 import {GridSchemeSelect} from '../GridSchemeSelect/GridSchemeSelect';
+import {RevisionsDiffDialog} from '../RevisionsDiff/RevisionsDiff';
 
 import './ActionPanel.scss';
+
+const i18n = I18n.keyset('component.dialog-revisions.view');
 
 const b = block('editor-action-panel');
 
@@ -33,6 +37,31 @@ function ActionPanelService({
     isScriptsChanged,
 }) {
     usePageTitle({entry});
+
+    const [selectedRevisionForDiff, setSelectedRevisionForDiff] =
+        React.useState(/* <string | undefined> */);
+
+    const renderRevisionItemActions = React.useCallback(
+        (item /* : GetRevisionsEntry */, currentRevId /* : string */) /* : React.ReactNode */ => {
+            if (item.revId === currentRevId) {
+                return null;
+            }
+
+            return (
+                <Button
+                    view="clear"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedRevisionForDiff(item.revId);
+                    }}
+                    title={i18n('button_show-revisions-diff')}
+                >
+                    <Icon size={16} data={CodeCompare} />
+                </Button>
+            );
+        },
+        [],
+    );
 
     if (!entry) {
         return null;
@@ -95,14 +124,17 @@ function ActionPanelService({
                 rightItems={rightItems}
                 setActualVersion={setActualVersion}
                 hideOpenRevisionsButton={true}
-                expandablePanelActions={
-                    <ButtonRevisionsDiff
-                        tabsData={tabsData}
-                        scriptsValues={scriptsValues}
-                        isScriptsChanged={isScriptsChanged}
-                        entry={entry}
-                    />
-                }
+                renderRevisionItemActions={renderRevisionItemActions}
+            />
+            <RevisionsDiffDialog
+                visible={Boolean(selectedRevisionForDiff)}
+                initialRevisionLeft={selectedRevisionForDiff}
+                initialRevisionRight={entry.revId}
+                onClose={() => setSelectedRevisionForDiff(undefined)}
+                scriptsValues={scriptsValues}
+                isScriptsChanged={isScriptsChanged}
+                entry={entry}
+                tabsData={tabsData}
             />
         </React.Fragment>
     );
