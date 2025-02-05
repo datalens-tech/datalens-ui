@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {CodeCompare} from '@gravity-ui/icons';
 import {Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -16,6 +15,8 @@ import ButtonDrawPreview from '../ButtonDrawPreview/ButtonDrawPreview';
 import EntryTypeName from '../EntryTypeName/EntryTypeName';
 import {GridSchemeSelect} from '../GridSchemeSelect/GridSchemeSelect';
 import {RevisionsDiffDialog} from '../RevisionsDiff/RevisionsDiff';
+
+import FileDiff from '../../../../assets/icons/file-diff.svg';
 
 import './ActionPanel.scss';
 
@@ -56,7 +57,7 @@ function ActionPanelService({
                     }}
                     title={i18n('button_show-revisions-diff')}
                 >
-                    <Icon size={16} data={CodeCompare} />
+                    <Icon size={16} data={FileDiff} />
                 </Button>
             );
         },
