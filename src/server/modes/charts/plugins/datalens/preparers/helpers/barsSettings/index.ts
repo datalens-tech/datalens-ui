@@ -20,7 +20,9 @@ import type {PrepareFunctionDataRow} from '../../types';
 import type {BarValueOptions} from './types';
 
 const getMinAndMaxValues = (columnValues: PrepareFunctionDataRow) => {
-    const parsedValues: number[] = columnValues.filter((v) => v !== null).map(Number);
+    const parsedValues: number[] = columnValues
+        .filter((v) => v !== null && v !== undefined)
+        .map(Number);
     const min = Math.min(...parsedValues);
     const max = Math.max(...parsedValues);
     return {
