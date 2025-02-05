@@ -42,6 +42,7 @@ import {
     selectOpenedItemMeta,
     selectSelectorDialog,
     selectSelectorsGroup,
+    selectControlDialogFeatureByType,
 } from '../selectors/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
@@ -180,6 +181,7 @@ export const applyGroupControlDialog = ({
         const activeSelectorIndex = selectActiveSelectorIndex(state);
         const openedItemData = selectOpenedItemData(state);
         const openedItemId = selectOpenedItemId(state);
+        const features = selectControlDialogFeatureByType(state)(DashTabItemType.GroupControl);
 
         let firstInvalidIndex: number | null = null;
         const groupFieldNames: Record<string, string[]> = {};
@@ -229,14 +231,26 @@ export const applyGroupControlDialog = ({
             return;
         }
 
+        const {enableAutoheightDefault} = features;
         const isSingleControl = selectorsGroup.group.length === 1;
-        const autoHeight =
-            !isSingleControl ||
-            selectorsGroup.buttonApply ||
-            selectorsGroup.buttonReset ||
-            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
-                ? selectorsGroup.autoHeight
-                : false;
+
+        let autoHeight;
+        if (enableAutoheightDefault) {
+            autoHeight = true;
+        } else {
+            const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+            const hasGroupName =
+                selectorsGroup.showGroupName && selectorsGroup.groupName
+                    ? selectorsGroup.autoHeight
+                    : false;
+            const hasTopPlacementTitle =
+                // skip isSingleControl check while it's checked on next line
+                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
+                    ? selectorsGroup.autoHeight
+                    : false;
+
+            autoHeight = !isSingleControl || hasButtons || hasTopPlacementTitle || hasGroupName;
+        }
         const updateControlsOnChange =
             !isSingleControl && selectorsGroup.buttonApply
                 ? selectorsGroup.updateControlsOnChange

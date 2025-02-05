@@ -270,17 +270,14 @@ export function controlDialog(
                 );
             }
 
+            const currentFeatures = features?.[newState.openedDialog] ?? {};
             if (
-                openedDialog === DashTabItemType.GroupControl ||
-                openedDialog === DashTabItemType.Control
+                'enableAutoheightDefault' in currentFeatures &&
+                currentFeatures.enableAutoheightDefault
             ) {
-                const {enableAutoheightDefault} = features?.[openedDialog] ?? {
-                    enableAutoheightDefault: false,
-                };
-
-                if (enableAutoheightDefault && openedDialog === DashTabItemType.GroupControl) {
+                if (openedDialog === DashTabItemType.GroupControl) {
                     newState.selectorsGroup.autoHeight = true;
-                } else if (enableAutoheightDefault && openedDialog === DashTabItemType.Control) {
+                } else if (openedDialog === DashTabItemType.Control) {
                     newState.selectorDialog.autoHeight = true;
                 }
             }
@@ -362,9 +359,7 @@ export function controlDialog(
                       }
                     : {},
             );
-            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {
-                enableAutoheightDefault: false,
-            };
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
             let autoHeight: boolean;
             if (enableAutoheightDefault) {
@@ -399,9 +394,7 @@ export function controlDialog(
                 groupName,
             } = action.payload;
 
-            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {
-                enableAutoheightDefault: false,
-            };
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
             let updatedAutoHeight;
             if (enableAutoheightDefault) {
