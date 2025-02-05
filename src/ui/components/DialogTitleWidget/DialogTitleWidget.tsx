@@ -3,7 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import {ChevronDown, PencilToLine} from '@gravity-ui/icons';
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {RadioButtonOption, RealTheme} from '@gravity-ui/uikit';
 import {
     Button,
     Checkbox,
@@ -86,6 +86,8 @@ interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
 
     closeDialog: () => void;
     setItemData: (newItemData: SetItemDataArgs) => void;
+
+    theme?: RealTheme;
 }
 
 const INPUT_TITLE_ID = 'widgetTitleField';

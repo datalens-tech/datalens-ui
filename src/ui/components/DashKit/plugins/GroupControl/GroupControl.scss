@@ -8,6 +8,11 @@
     background-color: var(--g-color-base-float);
     border-radius: 3px;
 
+    &__header {
+        margin-top: 8px;
+        width: 100%;
+    }
+
     &_static {
         display: flex;
         align-items: center;
