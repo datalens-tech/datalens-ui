@@ -4,7 +4,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import type {EntryScope} from 'shared';
+import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
@@ -239,7 +239,11 @@ const RevisionsPanel = ({
 
     return (
         <div className={b(null, className)}>
-            <div className={b('text-container')} style={leftStyle} data-qa="revisions-top-panel">
+            <div
+                className={b('text-container')}
+                style={leftStyle}
+                data-qa={RevisionsPanelQa.RevisionsPanel}
+            >
                 <div className={b('text')}>
                     <div className={b('text-info')}>{warningText}</div>
                     {loginText}
