@@ -169,10 +169,12 @@ ActionPanelService.propTypes = {
             id: PropTypes.string.isRequired,
             language: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
-            docs: PropTypes.shape({
-                path: PropTypes.string.isRequired,
-                title: PropTypes.string.isRequired,
-            }),
+            docs: PropTypes.arrayOf(
+                PropTypes.shape({
+                    path: PropTypes.string.isRequired,
+                    title: PropTypes.string.isRequired,
+                }),
+            ),
         }),
     ),
 };
