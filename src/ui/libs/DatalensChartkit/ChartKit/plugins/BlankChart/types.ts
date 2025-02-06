@@ -3,6 +3,8 @@ import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
 import type {OnChangeData, WidgetDashState} from '../../../types';
 
 export type WidgetDimensions = {
+    top: number;
+    left: number;
     width: number;
     height: number;
 };
@@ -15,6 +17,9 @@ export type BlankChartWidgetProps = {
             events?: {
                 click: (event: any) => void;
                 keydown: (event: any) => void;
+            };
+            tooltip?: {
+                renderer: (args: unknown) => any;
             };
         };
         config: any;
