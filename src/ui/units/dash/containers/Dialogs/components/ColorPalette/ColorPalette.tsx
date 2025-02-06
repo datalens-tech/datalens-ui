@@ -1,8 +1,17 @@
 import React from 'react';
 
 import {PencilToLine} from '@gravity-ui/icons';
-import type {PaletteOption} from '@gravity-ui/uikit';
-import {ActionTooltip, Button, Flex, Icon, Palette, Popup, Tooltip} from '@gravity-ui/uikit';
+import type {PaletteOption, RealTheme} from '@gravity-ui/uikit';
+import {
+    ActionTooltip,
+    Button,
+    Flex,
+    Icon,
+    Palette,
+    Popup,
+    ThemeProvider,
+    Tooltip,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
 import {i18n} from 'i18n';
@@ -28,12 +37,14 @@ const ColorItem = React.forwardRef(function ColorItemWithRef(
         color,
         isSelected,
         classNameMod,
+        theme,
         qa,
     }: {
         color: string;
         classNameMod?: string;
         isSelected?: boolean;
         isPreview?: boolean;
+        theme?: RealTheme;
         qa?: string;
     },
     ref: React.ForwardedRef<HTMLSpanElement>,
@@ -43,17 +54,19 @@ const ColorItem = React.forwardRef(function ColorItemWithRef(
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
 
     return (
-        <span
-            ref={ref}
-            style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
-            className={b('color-item', {
-                transparent: isTransparent,
-                selected: isSelected,
-                'widget-bg': isLikeChartBg,
-                ...mod,
-            })}
-            data-qa={qa}
-        ></span>
+        <ThemeProvider theme={theme} scoped rootClassName={b('theme')}>
+            <span
+                ref={ref}
+                style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
+                className={b('color-item', {
+                    transparent: isTransparent,
+                    selected: isSelected,
+                    'widget-bg': isLikeChartBg,
+                    ...mod,
+                })}
+                data-qa={qa}
+            ></span>
+        </ThemeProvider>
     );
 });
 
@@ -63,6 +76,7 @@ type PaleteListProps = {
     enableCustomBgColorSelector?: boolean;
     mainPresetOptions: string[];
     paletteOptions: string[];
+    theme?: RealTheme;
 };
 
 function PaletteList(props: PaleteListProps) {
@@ -72,6 +86,7 @@ function PaletteList(props: PaleteListProps) {
         enableCustomBgColorSelector,
         mainPresetOptions,
         paletteOptions,
+        theme,
     } = props;
 
     const [customColorInputEnabled, setCustomColorInputEnabled] = React.useState(
@@ -97,6 +112,7 @@ function PaletteList(props: PaleteListProps) {
                         color={colorItem}
                         isSelected={selected}
                         ref={selected ? previewRef : undefined}
+                        theme={theme}
                     />
                 </div>
             ),
@@ -121,7 +137,7 @@ function PaletteList(props: PaleteListProps) {
                         <div key={colorItem} className={b('highlight-wrapper', {selected})}>
                             <Button
                                 className={b('custom-palette-bg-btn', {
-                                    'with-border': isCustomPaletteBgColor(colorItem),
+                                    'with-border': true,
                                 })}
                                 onClick={() => {
                                     onSelect(colorItem);
@@ -133,6 +149,7 @@ function PaletteList(props: PaleteListProps) {
                                     color={colorItem}
                                     isSelected={selected}
                                     ref={selected ? previewRef : undefined}
+                                    theme={theme}
                                 />
                                 {isCustomPaletteBgColor(colorItem) && (
                                     <ActionTooltip title={PALETTE_HINTS[colorItem]}>
@@ -190,6 +207,7 @@ type ColorPaletteProps = {
     enableCustomBgColorSelector?: boolean;
     mainPresetOptions: string[];
     paletteOptions: string[];
+    theme?: RealTheme;
 };
 
 export function ColorPalette({
@@ -198,6 +216,7 @@ export function ColorPalette({
     enableCustomBgColorSelector,
     mainPresetOptions,
     paletteOptions,
+    theme,
 }: ColorPaletteProps) {
     const [selectedColor, setSelectedColor] = React.useState<string>(
         color || CustomPaletteBgColors.NONE,
@@ -225,6 +244,7 @@ export function ColorPalette({
                         color={selectedColor}
                         isPreview={true}
                         qa={DashCommonQa.WidgetSelectBackgroundButton}
+                        theme={theme}
                     />
                 </Button>
             </Tooltip>
@@ -241,6 +261,7 @@ export function ColorPalette({
                     enableCustomBgColorSelector={enableCustomBgColorSelector}
                     mainPresetOptions={mainPresetOptions}
                     paletteOptions={paletteOptions}
+                    theme={theme}
                 />
             </Popup>
         </div>
