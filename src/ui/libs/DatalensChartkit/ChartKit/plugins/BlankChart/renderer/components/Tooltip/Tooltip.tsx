@@ -9,8 +9,8 @@ const b = block('tooltip');
 
 type TooltipProps = {
     content?: string | null;
-    pointerPosition: PointPosition;
-    widgetContainer?: HTMLDivElement;
+    pointerPosition?: PointPosition;
+    widgetContainer?: HTMLDivElement | null;
 };
 
 export const Tooltip = (props: TooltipProps) => {
