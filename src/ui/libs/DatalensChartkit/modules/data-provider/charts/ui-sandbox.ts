@@ -8,7 +8,7 @@ import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
-import type {ChartKitHtmlItem} from '../../../../../../shared';
+import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
@@ -359,6 +359,9 @@ async function getUnwrappedFunction(args: {
                     },
                     setState: (update: any, options?: any) => {
                         chartContext?.setState(update, options);
+                    },
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
                     },
                 },
             });

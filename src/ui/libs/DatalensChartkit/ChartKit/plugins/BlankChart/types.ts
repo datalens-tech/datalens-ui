@@ -1,4 +1,5 @@
 import type {ChartKitOnLoadData} from '@gravity-ui/chartkit';
+import type {StringParams} from 'shared';
 
 import type {OnChangeData, WidgetDashState} from '../../../types';
 
@@ -23,6 +24,7 @@ export type BlankChartWidgetProps = {
             };
         };
         config: any;
+        unresolvedParams?: StringParams;
     };
     onChange?: (
         data: OnChangeData,
