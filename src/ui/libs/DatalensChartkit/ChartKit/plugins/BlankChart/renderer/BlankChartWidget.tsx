@@ -12,6 +12,7 @@ import {ChartQa} from '../../../../../../../shared';
 import {ATTR_DATA_ELEMENT_ID} from '../../../../modules/html-generator/constants';
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
+import {chartStorage} from '../../chart-storage';
 import type {BlankChartWidgetProps, WidgetDimensions} from '../types';
 
 import {Tooltip} from './components/Tooltip/Tooltip';
@@ -23,8 +24,6 @@ import './BlankChartWidget.scss';
 const b = block('chartkit-blank-chart-widget');
 
 const THROTTLE_DELAY = 50;
-
-export const chartStorage = new Map<string, any>();
 
 const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const {
