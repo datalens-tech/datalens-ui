@@ -53,20 +53,26 @@ const ColorItem = React.forwardRef(function ColorItemWithRef(
     const isLikeChartBg = color === CustomPaletteBgColors.LIKE_CHART;
     const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
 
-    return (
+    const itemContent = (
+        <span
+            ref={ref}
+            style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
+            className={b('color-item', {
+                transparent: isTransparent,
+                selected: isSelected,
+                'widget-bg': isLikeChartBg,
+                ...mod,
+            })}
+            data-qa={qa}
+        ></span>
+    );
+
+    return theme ? (
         <ThemeProvider theme={theme} scoped rootClassName={b('theme')}>
-            <span
-                ref={ref}
-                style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
-                className={b('color-item', {
-                    transparent: isTransparent,
-                    selected: isSelected,
-                    'widget-bg': isLikeChartBg,
-                    ...mod,
-                })}
-                data-qa={qa}
-            ></span>
+            {itemContent}
         </ThemeProvider>
+    ) : (
+        itemContent
     );
 });
 
