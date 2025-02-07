@@ -74,7 +74,7 @@
         --g-button-border-width: 1px;
 
         #{$colorItem} {
-            border: 1px solid var(--_--main-preset-color-item-border-color);
+            border: 1px solid var(--g-button-border-color);
         }
     }
 
@@ -119,5 +119,20 @@
         position: absolute;
         inset: 0;
         z-index: 1000;
+    }
+
+    &__theme {
+        background: transparent;
+        width: $color-item-size;
+        height: $color-item-size;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--g-color-base-float);
+            z-index: -3;
+            border-radius: 6px;
+        }
     }
 }

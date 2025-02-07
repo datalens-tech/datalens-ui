@@ -112,6 +112,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
+        theme,
         closeDialog,
         setItemData,
         openedItemData = defaultOpenedItemData,
@@ -343,6 +344,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                 >
                     <PaletteBackground
                         color={backgroundColor}
+                        theme={theme}
                         onSelect={handleHasBackgroundSelected}
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
