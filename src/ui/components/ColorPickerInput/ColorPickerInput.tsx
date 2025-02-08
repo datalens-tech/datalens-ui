@@ -25,9 +25,19 @@ const b = block('color-picker-input');
 
 const DEFAULT_COLOR = '#FFFFFF';
 
+const DEFAULT_PREVIEW_PARAMS = {
+    solidColorPart: DEFAULT_COLOR,
+    styles: {},
+};
+
+const generatePreviewGradient = (color = 'transparent', colorWithOpacity = 'transparent') => {
+    return `linear-gradient(90deg, ${color} 50%, ${colorWithOpacity} 50%)`;
+};
+
 interface ColorPickerInputProps {
     required?: boolean;
     placeholder?: string;
+    showPlaceholder?: boolean;
     value?: string;
     size?: InputControlSize;
     hasClear?: boolean;
@@ -47,6 +57,7 @@ export function ColorPickerInput({
     required,
     size,
     placeholder,
+    showPlaceholder,
     value,
     hasClear,
     hasOpacityInput,
@@ -55,10 +66,38 @@ export function ColorPickerInput({
     onValidChange,
     className,
 }: ColorPickerInputProps) {
-    const {solid: externalSolidColorPart} = getColorParts(value);
     const [stateValue, setStateValue] = React.useState<ColorParts>(getColorParts(colorMask(value)));
     const [isValid, setIsValid] = React.useState(true);
     const pickerRef = React.useRef(null);
+
+    const renderParams = React.useMemo(() => {
+        if (!isValid) {
+            return DEFAULT_PREVIEW_PARAMS;
+        }
+
+        const {solid: solidColorPart} = getColorParts(value);
+        if (!solidColorPart) {
+            if (showPlaceholder && placeholder) {
+                const {solid: placeholderSolidColorPart} = getColorParts(placeholder);
+
+                return {
+                    solidColorPart: placeholderSolidColorPart,
+                    styles: {
+                        background: generatePreviewGradient(placeholderSolidColorPart, placeholder),
+                    },
+                };
+            } else {
+                return DEFAULT_PREVIEW_PARAMS;
+            }
+        }
+
+        return {
+            solidColorPart,
+            styles: {
+                background: generatePreviewGradient(solidColorPart, value),
+            },
+        };
+    }, [value, isValid, placeholder, showPlaceholder]);
 
     React.useEffect(() => {
         setStateValue((prevValue) => {
@@ -74,28 +113,33 @@ export function ColorPickerInput({
 
     const setColor = React.useCallback(
         (color: string) => {
-            setStateValue((prevValue) => {
-                let isValidValue = false;
-                const maskedColor = colorMask(color);
-                const opacity = prevValue.opacity === null ? 100 : prevValue.opacity;
+            let isValidValue = false;
+            const maskedColor = colorMask(color);
+            const opacity = stateValue.opacity === null ? 100 : stateValue.opacity;
 
-                if (isEmptyColor(maskedColor)) {
-                    onUpdate(null);
-                    isValidValue = !required;
-                } else if (isValidColor(maskedColor)) {
+            if (isEmptyColor(maskedColor)) {
+                onUpdate(null);
+                isValidValue = !required;
+            } else if (isValidColor(maskedColor)) {
+                if (hasOpacityInput) {
                     const valueWithOpacity = d3Color(maskedColor)
                         ?.copy({opacity: opacity / 100})
-                        .formatHex8();
-                    onUpdate(valueWithOpacity ?? null);
-                    isValidValue = true;
-                }
-                setIsValid(isValidValue);
-                onValidChange?.(isValidValue);
+                        .formatHex8()
+                        .toLocaleUpperCase();
 
-                return {...prevValue, solid: maskedColor, opacity};
-            });
+                    onUpdate(valueWithOpacity ?? null);
+                } else {
+                    onUpdate(maskedColor?.toLocaleUpperCase() ?? null);
+                }
+
+                isValidValue = true;
+            }
+
+            setIsValid(isValidValue);
+            onValidChange?.(isValidValue);
+            setStateValue({...stateValue, solid: maskedColor, opacity});
         },
-        [onUpdate, onValidChange, required],
+        [onUpdate, onValidChange, stateValue, required, hasOpacityInput],
     );
 
     const handleOpacityChange = React.useCallback(
@@ -126,28 +170,18 @@ export function ColorPickerInput({
             hasClear={hasClear}
             autoFocus={autoFocus}
             startContent={
-                <div
-                    className={b('preview')}
-                    style={
-                        isValid
-                            ? {
-                                  background: `linear-gradient(90deg, ${externalSolidColorPart ?? 'transparent'} 50%, ${value ?? 'transparent'} 50%)`,
-                              }
-                            : {}
-                    }
-                    ref={pickerRef}
-                >
+                <div className={b('preview')} style={renderParams.styles} ref={pickerRef}>
                     <input
                         className={b('palette', {[`size-${size}`]: true})}
                         type="color"
-                        value={externalSolidColorPart || DEFAULT_COLOR}
+                        value={renderParams.solidColorPart}
                         onChange={(e) => {
                             setColor(e.target.value);
                         }}
                     />
                 </div>
             }
-            unstable_endContent={
+            endContent={
                 hasOpacityInput ? (
                     <OpacityInput value={stateValue.opacity} onUpdate={handleOpacityChange} />
                 ) : null
