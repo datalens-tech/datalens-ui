@@ -2,17 +2,18 @@ import React from 'react';
 
 import {Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import moment from 'moment';
+import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
 import {registry} from 'ui/registry';
-
-import type {GetRevisionsEntry} from '../../../../shared/schema';
 import {
     getRevisionStatus,
+    getRevisionStatusKey,
     isDraftVersion,
     isPublishedVersion,
-    prepareRevisionListItems,
-} from '../helpers';
+} from 'ui/utils/revisions';
+
+import type {GetRevisionsEntry} from '../../../../shared/schema';
+import {prepareRevisionListItems} from '../helpers';
 import type {RevisionsListItems} from '../types';
 
 import './RevisionsList.scss';
@@ -21,17 +22,9 @@ const DATE_FORMAT = 'DD MMMM YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 const TOOLTIP_DELAY_CLOSING = 100;
 
-const i18n = I18n.keyset('component.dialog-revisions.view');
 const b = block('revisions-list');
 
-export const REVISIONS_STATUSES_TEXTS = {
-    published: i18n('label_status-tooltip-published'),
-    draft: i18n('label_status-tooltip-draft'),
-    current: i18n('label_status-tooltip-current'),
-    notActual: i18n('label_status-tooltip-not-actual'),
-};
-
-type RevisionRowProps = {
+export type RevisionRowProps = {
     item: GetRevisionsEntry;
     onItemClick: (param: string) => void;
     currentRevId: string;
@@ -54,6 +47,8 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
 
     const customActions = renderItemActions?.(item, currentRevId);
 
+    const revisionStatusKey = getRevisionStatusKey(item);
+
     return (
         <li
             className={b('row', {
@@ -73,11 +68,11 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                     content={tooltipText}
                     className={b('point-wrap')}
                 >
-                    <span className={b('point')} />
+                    <RevisionStatusPoint status={revisionStatusKey} />
                 </Popover>
             ) : (
                 <div className={b('point-wrap')}>
-                    <span className={b('point')} />
+                    <RevisionStatusPoint status={revisionStatusKey} />
                 </div>
             )}
             <UserAvatarById loginOrId={updatedBy} size="s" className={b('avatar')} />

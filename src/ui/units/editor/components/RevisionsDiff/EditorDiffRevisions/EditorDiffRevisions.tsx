@@ -64,7 +64,7 @@ export const EditorDiffRevisions: React.FC<EditorDiffRevisionsProps> = ({
             ) : (
                 <PlaceholderIllustration
                     className={b('empty-state')}
-                    title={i18n('component.editor-diff.view', 'label_without-diff')}
+                    title={i18n('component.dialog-revisions-diff.view', 'label_without-diff')}
                     name="template"
                     direction="column"
                 />

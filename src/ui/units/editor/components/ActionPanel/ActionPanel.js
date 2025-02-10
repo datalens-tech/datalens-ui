@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Icon, Label} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
@@ -49,16 +49,17 @@ function ActionPanelService({
             }
 
             return (
-                <Button
-                    view="clear"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedRevisionForDiff(item.revId);
-                    }}
-                    title={i18n('button_show-revisions-diff')}
-                >
-                    <Icon size={16} data={FileDiff} />
-                </Button>
+                <ActionTooltip title={i18n('button_show-revisions-diff')}>
+                    <Button
+                        view="flat-secondary"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRevisionForDiff(item.revId);
+                        }}
+                    >
+                        <Icon size={16} data={FileDiff} />
+                    </Button>
+                </ActionTooltip>
             );
         },
         [],

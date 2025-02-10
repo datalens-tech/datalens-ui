@@ -3,7 +3,7 @@ import {DL} from 'constants/common';
 import React from 'react';
 
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Checkbox, Dialog} from '@gravity-ui/uikit';
+import {Dialog, Switch, Tabs} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import {keyBy} from 'lodash';
 import moment from 'moment';
@@ -15,17 +15,15 @@ import {getResolveUsersByIdsAction} from 'store/actions/usersByIds';
 import type {RevisionEntry} from 'ui/components/Revisions/types';
 import {SelectAsync} from 'ui/components/Select/wrappers/SelectAsync';
 import {useSyncedValue} from 'ui/hooks/useSyncedState';
-import {registry} from 'ui/registry';
 
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {DEFAULT_TAB_ID, TIMESTAMP_FORMAT} from '../../constants/common';
 import type {EditorEntry} from '../../types/common';
 import type {ScriptsValues, TabData} from '../../types/store';
-import PaneTabs from '../PaneTabs/PaneTabs';
 
-import {ButtonNewWindow} from './ButtonNewWindow/ButtonNewWindow';
 import Editor from './Editor';
+import {RevisionInfo} from './RevisionInfo/RevisionInfo';
 import {CURRENT, PAGE_SIZE, b} from './constants';
 
 import './RevisionsDiff.scss';
@@ -157,6 +155,7 @@ export const useRevisionsReqEnhancer = (props: UseRevisionsReqEnhancerProps) => 
         setRightSelectVal,
         selectItems,
         hasNextPage,
+        revisionByRevisionId,
         getRevisions,
         leftLogin,
         rightLogin,
@@ -171,7 +170,7 @@ const useTabsEnhancer = ({tabsData}: UseTabsEnhancerProps) => {
     );
 
     const handleTabSelection = React.useCallback(
-        ({tabId}) => {
+        (tabId) => {
             setCurrentTabId(tabId);
         },
         [setCurrentTabId],
@@ -201,6 +200,7 @@ export const RevisionsDiff = (props: RevisionsDiffProps) => {
         setRightSelectVal,
         selectItems,
         hasNextPage,
+        revisionByRevisionId,
         getRevisions,
         leftLogin,
         rightLogin,
@@ -210,69 +210,57 @@ export const RevisionsDiff = (props: RevisionsDiffProps) => {
     const {currentTabId, setCurrentTabId} = useTabsEnhancer(props);
     const {renderSideBySide, toggleRenderSideBySide} = useRenderSideBySideEnhander();
 
-    const {getLoginById} = registry.common.functions.getAll();
-    const LoginById = getLoginById();
-
     return (
         <div className={b()}>
             <div className={b('panel')}>
                 <div className={b('selectors-place')}>
                     <div className={b('diff-selects')}>
                         <SelectAsync
+                            pin="round-brick"
                             value={[leftVal]}
                             onUpdate={(vals) => setLeftSelectVal(vals[0])}
                             options={selectItems}
                             onFetch={hasNextPage ? getRevisions : undefined}
                         />
-                        <ButtonNewWindow
-                            className={b('btn-new-window')}
+                        <RevisionInfo
+                            className={b('btn-revision-info')}
                             revId={leftLinkRevId}
+                            revData={revisionByRevisionId[leftVal]}
                             disabled={leftVal === CURRENT}
+                            login={leftLogin}
                         />
-                        <span className={b('mdash')}>&mdash;</span>
+                        <span className={b('diff-separator')}>
+                            {i18n('component.dialog-revisions-diff.view', 'label_compare-with')}
+                        </span>
                         <SelectAsync
+                            pin="round-brick"
                             value={[rightVal]}
                             onUpdate={(vals) => setRightSelectVal(vals[0])}
                             options={selectItems}
                             onFetch={hasNextPage ? getRevisions : undefined}
                         />
-                        <ButtonNewWindow
-                            className={b('btn-new-window')}
+                        <RevisionInfo
+                            className={b('btn-revision-info')}
                             revId={rightLinkRevId}
+                            revData={revisionByRevisionId[rightVal]}
                             disabled={rightVal === CURRENT}
+                            login={rightLogin}
                         />
                     </div>
-                    {LoginById && (
-                        <div className={b('users')}>
-                            <div className={b('user')}>
-                                <LoginById
-                                    loginOrId={leftLogin}
-                                    className={b('staff-user')}
-                                    view="secondary"
-                                />
-                            </div>
-                            <span className={b('mdash', {hidden: true})}>&mdash;</span>
-                            <div className={b('user')}>
-                                <LoginById
-                                    loginOrId={rightLogin}
-                                    className={b('staff-user')}
-                                    view="secondary"
-                                />
-                            </div>
-                        </div>
-                    )}
                 </div>
-                <PaneTabs
-                    paneId="mock"
-                    tabs={props.tabsData}
-                    currentTabId={currentTabId}
-                    onSelectTab={setCurrentTabId}
-                    className={b('pane-tabs')}
-                />
-                <Checkbox size="m" onChange={toggleRenderSideBySide} checked={renderSideBySide}>
-                    {i18n('component.editor-diff.view', 'field_split-diff')}
-                </Checkbox>
+                <Switch size="m" onChange={toggleRenderSideBySide} checked={renderSideBySide}>
+                    {i18n('component.dialog-revisions-diff.view', 'field_split-diff')}
+                </Switch>
             </div>
+            <Tabs
+                items={props.tabsData.map(({id, name}) => ({
+                    id,
+                    title: name,
+                }))}
+                activeTab={currentTabId}
+                onSelectTab={setCurrentTabId}
+                className={b('pane-tabs')}
+            />
             {leftVal && rightVal && (
                 <Editor
                     entry={props.entry}
@@ -291,6 +279,7 @@ export const RevisionsDiff = (props: RevisionsDiffProps) => {
 export const RevisionsDiffDialog = (props: RevisionDiffDialogProps) => {
     return (
         <Dialog open={props.visible} onClose={props.onClose}>
+            <Dialog.Header caption={i18n('component.dialog-revisions.view', 'section_title')} />
             <Dialog.Body>
                 <RevisionsDiff {...props} />
             </Dialog.Body>

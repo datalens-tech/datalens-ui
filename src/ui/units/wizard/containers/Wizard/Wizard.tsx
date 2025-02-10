@@ -15,6 +15,7 @@ import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 
 import {
     DL,
@@ -35,7 +36,6 @@ import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
 import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';

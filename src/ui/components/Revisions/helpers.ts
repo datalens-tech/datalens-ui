@@ -2,7 +2,6 @@ import moment from 'moment';
 
 import type {GetRevisionsEntry} from '../../../shared/schema';
 
-import {REVISIONS_STATUSES_TEXTS} from './RevisionsList/RevisionsList';
 import type {RevisionEntry, RevisionsGroupedDates, RevisionsListItems} from './types';
 
 export const REVISIONS_LIST_PART_SIZE = 100;
@@ -52,16 +51,5 @@ export const prepareRevisionListItems = (items: RevisionsListItems) => {
     return list.sort(sortByDay);
 };
 
-export const isPublishedVersion = (entry: RevisionEntry) => entry.revId === entry.publishedId;
-
-export const isDraftVersion = (entry: RevisionEntry) => entry.revId === entry.savedId;
-
-export const getRevisionStatus = (entry: RevisionEntry) => {
-    if (isPublishedVersion(entry)) {
-        return REVISIONS_STATUSES_TEXTS.published;
-    }
-    if (isDraftVersion(entry)) {
-        return REVISIONS_STATUSES_TEXTS.draft;
-    }
-    return REVISIONS_STATUSES_TEXTS.notActual;
-};
+// TODO: remove reexport after CHARTS-11009
+export {isPublishedVersion, isDraftVersion, getRevisionStatus} from 'ui/utils/revisions';
