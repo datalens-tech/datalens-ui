@@ -48,7 +48,7 @@ const applyPlaceholderSettingsToYAxis = ({
 };
 
 function getTitleForAxis(placeholders: ServerVisualization['placeholders'], axis: PlaceholderId) {
-    const placeholder = placeholders.find((p) => p.id === axis);
+    const placeholder = placeholders?.find((p) => p.id === axis);
 
     if (!placeholder?.settings) {
         return undefined;
