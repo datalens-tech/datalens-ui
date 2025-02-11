@@ -79,7 +79,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
             <div className={b('text')}>
                 {dateTimeParse(updatedAt)?.format(TIME_FORMAT) || updatedAt}
             </div>
-            <div className={b('row-actions')}>{customActions}</div>
+            {customActions && <div className={b('row-actions')}>{customActions}</div>}
         </li>
     );
 };
