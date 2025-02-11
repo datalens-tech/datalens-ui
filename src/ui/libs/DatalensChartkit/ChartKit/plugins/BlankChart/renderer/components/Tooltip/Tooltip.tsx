@@ -5,7 +5,9 @@ import block from 'bem-cn-lite';
 
 import type {PointPosition} from '../../types';
 
-const b = block('tooltip');
+import './Tooltip.scss';
+
+const b = block('blank-chart-tooltip');
 
 type TooltipProps = {
     content?: string | null;
