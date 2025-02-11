@@ -5,6 +5,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import pick from 'lodash/pick';
+import {DL} from 'ui/constants/common';
 import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 
 import type {StringParams} from '../../../../../../../shared';
@@ -36,7 +37,8 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const [dimensions, setDimensions] = React.useState<WidgetDimensions | undefined>();
     const handleResize = React.useCallback(() => {
         if (ref.current) {
-            const {clientWidth: width, clientHeight: height} = ref.current;
+            const {clientWidth: width, clientHeight} = ref.current;
+            const height = !clientHeight && DL.IS_MOBILE ? 400 : clientHeight;
 
             setDimensions({width, height});
         }
