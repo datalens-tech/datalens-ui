@@ -572,6 +572,7 @@ export function getChartEditorTypes(type: string) {
                         },
                     ],
                 },
+                ...getMetaTab(),
             ],
         },
         [EDITOR_TYPE.MARKUP_NODE]: {
