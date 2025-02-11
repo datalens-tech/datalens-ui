@@ -186,6 +186,10 @@ async function getUiSandboxLibs(libs: string[]) {
             case 'd3-chord': {
                 return getModule('d3-chord/v3.0.1');
             }
+            case 'd3-sankey@0.12.3':
+            case 'd3-sankey': {
+                return getModule('d3-sankey/v0.12.3');
+            }
             default: {
                 throw new ChartKitCustomError(null, {
                     details: `The library '${lib}' is not available`,
