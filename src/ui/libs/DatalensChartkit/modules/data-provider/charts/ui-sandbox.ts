@@ -6,7 +6,7 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
-import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/BlankChart/renderer/BlankChartWidget';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
 import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
