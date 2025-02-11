@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {RealTheme} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import type {
     DashTabItem,
@@ -17,17 +18,13 @@ import {ITEM_TYPE} from 'ui/constants/dialogs';
 import {useEffectOnce} from 'ui/hooks';
 import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog';
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
+import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
 
-import type {DialogChartWidgetFeatureProps} from '../DialogChartWidget/DialogChartWidget';
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
-import type {DialogExternalControlFeaturesProps} from '../DialogExternalControl/DialogExternalControl';
 import DialogExternalControl from '../DialogExternalControl/DialogExternalControl';
-import type {DialogGroupControlFeaturesProps} from '../DialogGroupControl/DialogGroupControl';
 import {DialogGroupControl} from '../DialogGroupControl/DialogGroupControl';
 import {DialogImageWidget} from '../DialogImageWidget';
 import {DialogTextWidgetWrapper} from '../DialogTextWidget';
-import type {DialogTextWidgetFeatureProps} from '../DialogTextWidget/DialogTextWidget';
-import type {DialogTitleWidgetFeatureProps} from '../DialogTitleWidget/DialogTitleWidget';
 import DialogTitleWidget from '../DialogTitleWidget/DialogTitleWidget';
 
 type DialogEditTitleProps = {
@@ -86,14 +83,6 @@ type DialogEditImageProps = {
     openedItemDefaults: any;
 };
 
-export type DialogEditItemFeaturesProp = {
-    [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
-    [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
-    [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
-    [DashTabItemType.GroupControl]?: DialogGroupControlFeaturesProps;
-    [DashTabItemType.Control]?: DialogExternalControlFeaturesProps;
-};
-
 export type DialogEditItemProps = {
     entryId: string | null;
     scope: EntryScope;
@@ -104,8 +93,9 @@ export type DialogEditItemProps = {
     navigationPath: string | null;
     openedItemNamespace: string;
     changeNavigationPath: (newNavigationPath: string) => void;
-    features?: DialogEditItemFeaturesProp;
     openedItemData: DashTabItem['data'];
+    features?: DialogEditItemFeaturesProp;
+    theme?: RealTheme;
 } & (
     | DialogEditTitleProps
     | DialogEditTextProps
@@ -121,6 +111,7 @@ export const isDialogEditItemType = (type: string): type is DashTabItemType =>
 export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
     const {
         features,
+        theme,
         scope,
         entryId,
         type,
@@ -150,6 +141,8 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                 id: openedItemId,
                 data: openedItemData,
                 defaults: openedItemDefaults,
+                features,
+                theme,
                 openedItemMeta: {
                     scope,
                     entryId,
@@ -178,6 +171,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
+                    theme={theme}
                     {...features?.[DashTabItemType.Title]}
                 />
             );
@@ -189,6 +183,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     closeDialog={closeDialog}
                     setItemData={setItemData}
+                    theme={theme}
                     {...features?.[DashTabItemType.Text]}
                 />
             );
@@ -207,6 +202,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     setItemData={setItemData}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    theme={theme}
                     {...features?.[DashTabItemType.Widget]}
                 />
             );
@@ -218,6 +214,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     setItemData={setItemData}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    theme={theme}
                     {...features?.[DashTabItemType.Control]}
                 />
             );
@@ -230,6 +227,7 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     setItemData={setItemData}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    theme={theme}
                     {...features?.[DashTabItemType.GroupControl]}
                 />
             );
@@ -243,6 +241,8 @@ export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
                     dialogIsVisible={isOpenedDialog}
                     onClose={closeDialog}
                     onApply={setItemData}
+                    theme={theme}
+                    {...features?.[DashTabItemType.Image]}
                 />
             );
         default: {

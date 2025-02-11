@@ -1,11 +1,13 @@
 import React from 'react';
 
 import {CHARTKIT_ERROR_CODE, ChartKitError} from '@gravity-ui/chartkit';
+import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import pick from 'lodash/pick';
 import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 
+import type {StringParams} from '../../../../../../../shared';
 import {ChartQa} from '../../../../../../../shared';
 import {ATTR_DATA_ELEMENT_ID} from '../../../../modules/html-generator/constants';
 import Performance from '../../../../modules/perfomance';
@@ -22,10 +24,11 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const {
         id,
         onLoad,
-        data: {data: originalData, config},
+        onChange,
+        data: {data: originalData},
     } = props;
 
-    const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [originalData, config, id]);
+    const generatedId = React.useMemo(() => `${id}_${getRandomCKId()}`, [id]);
     Performance.mark(generatedId);
 
     const ref = React.useRef<HTMLDivElement | null>(null);
@@ -52,12 +55,22 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
                     render();
                 }
             },
+            updateActionParams: (params: StringParams) => {
+                if (onChange) {
+                    const actionParams = transformParamsToActionParams(params);
+                    onChange(
+                        {type: 'PARAMS_CHANGED', data: {params: actionParams}},
+                        {forceUpdate: true},
+                        true,
+                    );
+                }
+            },
         });
 
         return () => {
             chartStorage.delete(generatedId);
         };
-    }, [generatedId, dimensions]);
+    }, [generatedId, dimensions, onChange]);
 
     const render = () => {
         if (!originalData?.render) {
@@ -84,13 +97,15 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
     const handleClick = React.useCallback((event) => {
         if (originalData?.events?.click) {
             const context = chartStorage.get(generatedId);
-            context.__innerHTML = ref.current?.innerHTML;
-            const target = {
-                [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
-            };
-            originalData.events.click.call(context, {
-                target,
-            });
+            if (context) {
+                context.__innerHTML = ref.current?.innerHTML;
+                const target = {
+                    [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
+                };
+                originalData.events.click.call(context, {
+                    target,
+                });
+            }
         }
     }, []);
 

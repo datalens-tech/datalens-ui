@@ -5,7 +5,7 @@
 
 ALTER TABLE public.collections DISABLE TRIGGER ALL;
 
-INSERT INTO public.collections (collection_id, title, description, parent_id, tenant_id, project_id, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at, meta, title_lower, sort_title) VALUES (1827727570586567681, 'E2E Collection', 'A collection for running E2E tests', NULL, 'common', NULL, 'systemId', '2024-11-26 15:48:25.152559+00', 'systemId', '2024-11-26 15:48:25.152559+00', NULL, NULL, '{}', 'e2e collection', '\x4500313132004520436f6c6c656374696f6e');
+INSERT INTO public.collections (collection_id, title, description, parent_id, tenant_id, created_by, created_at, updated_by, updated_at, deleted_by, deleted_at, meta, title_lower, sort_title) VALUES (1827727570586567681, 'E2E Collection', 'A collection for running E2E tests', NULL, 'common', 'systemId', '2024-11-26 15:48:25.152559+00', 'systemId', '2024-11-26 15:48:25.152559+00', NULL, NULL, '{}', 'e2e collection', '\x4500313132004520436f6c6c656374696f6e');
 
 
 ALTER TABLE public.collections ENABLE TRIGGER ALL;
@@ -13,7 +13,7 @@ ALTER TABLE public.collections ENABLE TRIGGER ALL;
 
 ALTER TABLE public.workbooks DISABLE TRIGGER ALL;
 
-INSERT INTO public.workbooks (workbook_id, title, description, project_id, tenant_id, meta, created_by, created_at, deleted_at, is_template, collection_id, deleted_by, updated_by, updated_at, title_lower, sort_title) VALUES (1540491943966934028, 'E2E Workbook', 'A workbook for running E2E tests', NULL, 'common', '{}', 'systemId', '2023-10-27 08:22:30.193066+00', NULL, false, NULL, NULL, 'systemId', '2023-10-27 08:22:30.193066+00', 'e2e workbook', '\x4500313132004520576f726b626f6f6b');
+INSERT INTO public.workbooks (workbook_id, title, description, tenant_id, meta, created_by, created_at, deleted_at, is_template, collection_id, deleted_by, updated_by, updated_at, title_lower, sort_title) VALUES (1540491943966934028, 'E2E Workbook', 'A workbook for running E2E tests', 'common', '{}', 'systemId', '2023-10-27 08:22:30.193066+00', NULL, false, NULL, NULL, 'systemId', '2023-10-27 08:22:30.193066+00', 'e2e workbook', '\x4500313132004520576f726b626f6f6b');
 
 
 ALTER TABLE public.workbooks ENABLE TRIGGER ALL;

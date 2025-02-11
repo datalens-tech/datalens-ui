@@ -29,6 +29,7 @@ export enum EditorType {
     MarkdownNode = 'markdown_node',
     MarkupNode = 'markup_node',
     GravityChartsNode = 'd3_node',
+    BlankChartNode = 'blank-chart_node',
 }
 
 export enum WidgetKind {

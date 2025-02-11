@@ -1,7 +1,5 @@
 {
   "label_current-object": "Current object",
-  "label_dataset-hint": "The list will not display charts created in ChartEditor without a clearly defined relation with a dataset on the \"Shared\" tab.",
-  "label_editor-hint": "\"Contains objects\" relations are unavailable for ChartEditor charts without a dataset clearly specified on the \"Shared\" tab.",
   "label_entities-count": "Number of related objects:",
   "label_no-relatives": "There are no related objects",
   "label_request-error": "Data request error",

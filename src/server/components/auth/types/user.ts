@@ -5,4 +5,10 @@ export interface CtxUser {
     sessionId: string;
     accessToken: string;
     roles: `${UserRole}`[];
+    profile?: {
+        login: string;
+        email?: string;
+        formattedLogin: string;
+        displayName: string;
+    };
 }

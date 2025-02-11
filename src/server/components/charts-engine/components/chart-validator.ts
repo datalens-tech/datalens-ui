@@ -53,9 +53,13 @@ const MODEL_TABS = {
 
     [EDITOR_TYPE.MODULE]: new Set([
         'documentation_en,documentation_ru,js',
+        'documentation_en,documentation_ru,js,meta',
         'documentation_ru,js',
+        'documentation_ru,js,meta',
         'documentation_en,js',
+        'documentation_en,js,meta',
         'js',
+        'js,meta',
     ]),
 
     [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: new Set([

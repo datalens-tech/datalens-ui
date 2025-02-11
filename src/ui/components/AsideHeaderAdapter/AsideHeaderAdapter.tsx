@@ -17,6 +17,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import type {AsideHeaderData} from '../../store/typings/asideHeader';
+import {UserAvatar} from '../UserMenu/UserAvatar';
+import {UserMenu} from '../UserMenu/UserMenu';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
@@ -319,6 +321,30 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
                         }
                     }}
                 />
+                {(DL.ZITADEL_ENABLED || DL.AUTH_ENABLED) && (
+                    <FooterItem
+                        compact={isCompact}
+                        item={{
+                            id: PopupName.Account,
+                            itemWrapper: (params, makeItem) =>
+                                makeItem({...params, icon: <UserAvatar size="m" />}),
+                            title: i18n('label_account'),
+                            tooltipText: i18n('label_account'),
+                            current: currentPopup === PopupName.Account,
+                            onItemClick: () => {
+                                setVisiblePanel(undefined);
+                                setCurrentPopup(
+                                    currentPopup === PopupName.Account ? null : PopupName.Account,
+                                );
+                            },
+                        }}
+                        enableTooltip={false}
+                        popupVisible={currentPopup === PopupName.Account}
+                        popupOffset={[0, 8]}
+                        onClosePopup={() => setCurrentPopup(null)}
+                        renderPopupContent={() => <UserMenu />}
+                    />
+                )}
             </React.Fragment>
         );
     };
