@@ -2,11 +2,11 @@ import {DL} from 'constants/common';
 
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import type {SelectOption} from '@gravity-ui/uikit';
 import {Dialog, Switch, Tabs} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import {keyBy} from 'lodash';
-import moment from 'moment';
 import {useDispatch} from 'react-redux';
 import {filterUsersIds} from 'shared';
 import type {GetRevisionsEntry} from 'shared/schema';
@@ -63,7 +63,7 @@ const currentItem = {
 
 const prepareRevisionsForSelect = (revisions: RevisionEntry[]) => {
     return revisions.map(({updatedAt, revId}) => ({
-        content: moment(updatedAt).format(TIMESTAMP_FORMAT),
+        content: dateTimeParse(updatedAt)?.format(TIMESTAMP_FORMAT) || updatedAt,
         value: String(revId),
     }));
 };

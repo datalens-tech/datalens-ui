@@ -1,4 +1,4 @@
-import moment from 'moment';
+import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 
 import type {GetRevisionsEntry} from '../../../shared/schema';
 
@@ -11,11 +11,15 @@ export const DATE_GROUPPED_FORMAT = 'YYYY-MM-DD';
 const getDateKey = (str: string) => str?.split('T').shift() || '';
 
 const sortByUpdatedDate = (a: GetRevisionsEntry, b: GetRevisionsEntry) => {
-    return moment(a.updatedAt).isAfter(b.updatedAt) ? -1 : 1;
+    return dateTimeParse(a.updatedAt)?.isAfter(dateTimeParse(b.updatedAt)) ? -1 : 1;
 };
 
 const sortByDay = (a: RevisionsGroupedDates, b: RevisionsGroupedDates) =>
-    moment(a.date, DATE_GROUPPED_FORMAT).isAfter(moment(b.date, DATE_GROUPPED_FORMAT)) ? -1 : 1;
+    dateTime({input: a.date, format: DATE_GROUPPED_FORMAT}).isAfter(
+        dateTime({input: b.date, format: DATE_GROUPPED_FORMAT}),
+    )
+        ? -1
+        : 1;
 
 export const groupRevisionsByDate = (items: Array<RevisionEntry>): RevisionsListItems => {
     const group: RevisionsListItems = {};

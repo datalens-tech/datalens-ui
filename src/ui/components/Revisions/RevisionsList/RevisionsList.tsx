@@ -1,8 +1,8 @@
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import moment from 'moment';
 import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
 import {registry} from 'ui/registry';
 import {
@@ -76,7 +76,9 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                 </div>
             )}
             <UserAvatarById loginOrId={updatedBy} size="s" className={b('avatar')} />
-            <div className={b('text')}>{moment(updatedAt).format(TIME_FORMAT)}</div>
+            <div className={b('text')}>
+                {dateTimeParse(updatedAt)?.format(TIME_FORMAT) || updatedAt}
+            </div>
             <div className={b('row-actions')}>{customActions}</div>
         </li>
     );
@@ -109,7 +111,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
     ));
     return (
         <div className={b('block')}>
-            <div className={b('label')}>{moment(date).format(DATE_FORMAT)}</div>
+            <div className={b('label')}>{dateTimeParse(date)?.format(DATE_FORMAT) || date}</div>
             {list.length && (
                 <ul className={b('content')} data-qa="revisions-list">
                     {list}

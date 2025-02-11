@@ -1,8 +1,8 @@
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
 import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
@@ -207,7 +207,7 @@ const RevisionsPanel = ({
     const scopeTexts = getRevisionsPanelEntryScopesTexts();
 
     const scopeText = scopeTexts[scope]?.panelText || '';
-    const date = moment(updatedAt).format(TIMESTAMP_FORMAT);
+    const date = dateTimeParse(updatedAt)?.format(TIMESTAMP_FORMAT) || updatedAt;
 
     const {getLoginById} = registry.common.functions.getAll();
     const LoginById = getLoginById();
