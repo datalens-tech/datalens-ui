@@ -7,6 +7,7 @@ import {pointer} from 'd3';
 import debounce from 'lodash/debounce';
 import pick from 'lodash/pick';
 import throttle from 'lodash/throttle';
+import {DL} from 'ui/constants/common';
 import {Loader} from 'ui/libs/DatalensChartkit/ChartKit/components';
 
 import type {StringParams} from '../../../../../../../shared';
@@ -47,8 +48,9 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
                 offsetTop: top,
                 offsetLeft: left,
                 clientWidth: width,
-                clientHeight: height,
+                clientHeight,
             } = ref.current;
+            const height = !clientHeight && DL.IS_MOBILE ? 400 : clientHeight;
 
             setDimensions({top, left, width, height});
         }
