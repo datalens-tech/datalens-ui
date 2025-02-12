@@ -296,7 +296,12 @@ export function controlDialog(
                 }
             }
 
-            if (openedDialog === DashTabItemType.GroupControl && titlePlaceholder) {
+            // Enable show group control title for new group control
+            if (
+                openedItemId === null &&
+                openedDialog === DashTabItemType.GroupControl &&
+                titlePlaceholder
+            ) {
                 newState.selectorsGroup.showGroupName = true;
             }
 
