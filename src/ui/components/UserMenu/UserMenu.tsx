@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRightFromSquare} from '@gravity-ui/icons';
+import {ArrowRightFromSquare, Gear} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -13,6 +13,7 @@ import './UserMenu.scss';
 
 const b = block('dl-user-menu');
 const i18n = I18n.keyset('component.user-menu.view');
+const i18nAsideHeader = I18n.keyset('component.aside-header.view');
 
 export const UserMenu = () => {
     const user = DL.USER;
@@ -33,6 +34,16 @@ export const UserMenu = () => {
                     </div>
                 </div>
                 <div className={b('entry-actions')}>
+                    {DL.AUTH_ENABLED && (
+                        <Button
+                            className={b('entry-button')}
+                            title={i18nAsideHeader('label_profile-settings')}
+                            href="/profile"
+                            view="flat-secondary"
+                        >
+                            <Icon data={Gear} size={18} />
+                        </Button>
+                    )}
                     <Button
                         className={b('entry-button')}
                         title={i18n('label_logout')}
