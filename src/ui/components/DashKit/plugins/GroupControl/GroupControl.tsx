@@ -808,21 +808,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     };
 
     private renderSubHeader() {
-        const controlData = this.propsControlData;
+        const {showGroupName, groupName} = this.propsControlData;
+        const headerText = groupName || this.context?.selectorsGroupTitlePlaceholder;
 
-        if (controlData.showGroupName && controlData.groupName) {
+        if (showGroupName && headerText) {
             return (
                 <div className={b('header')}>
                     <Text variant="subheader-2" className={b('controls-title')}>
-                        {controlData.groupName}
-                    </Text>
-                </div>
-            );
-        } else if (controlData.showGroupName && this.context?.selectorsGroupTitlePlaceholder) {
-            return (
-                <div className={b('header')}>
-                    <Text variant="subheader-2" className={b('controls-title')}>
-                        {this.context?.selectorsGroupTitlePlaceholder}
+                        {headerText}
                     </Text>
                 </div>
             );
