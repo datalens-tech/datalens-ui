@@ -4,7 +4,37 @@ import type {Language} from 'shared';
 import type {OnChangeData} from '../../../types';
 import {StringParams} from '@gravity-ui/chartkit/highcharts';
 
-export type YandexMapWidgetDataItem = Record<string, unknown>;
+type GeometryCircle = {
+    type: 'Circle';
+    coordinates: [number, number];
+    radius: number;
+};
+
+type GeometryPolyline = {
+    type: 'LineString';
+    coordinates: [number, number][];
+};
+
+type GeometryPolygon = {
+    type: 'Polygon';
+    coordinates: [number, number][][];
+};
+
+type Point = {
+    type: 'Point';
+    coordinates: [number, number];
+};
+
+export type YandexMapWidgetDataItem = {
+    feature: {
+        geometry: GeometryCircle | GeometryPolygon | GeometryPolyline | Point;
+    };
+    options: {
+        fillColor?: string;
+        opacity?: number;
+        strokeWidth?: number;
+    };
+}[];
 
 export type YandexMapWidgetData = {
     data?: YandexMapWidgetDataItem;
