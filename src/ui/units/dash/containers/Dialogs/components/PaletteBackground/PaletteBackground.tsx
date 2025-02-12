@@ -10,9 +10,6 @@ import {
 
 import {ColorPalette} from '../ColorPalette/ColorPalette';
 
-/** @deprecated  */
-export const CustomPaletteColors = CustomPaletteBgColors;
-
 type PaletteBackgroundProps = {
     color?: string;
     onSelect: (color: string) => void;
