@@ -58,6 +58,7 @@ export interface ControlDialogState {
     openedItemMeta: ControlDialogStateItemMeta | null;
 
     features: DialogEditItemFeaturesProp;
+    titlePlaceholder: string | null;
     theme?: RealTheme;
 
     lastUsedDatasetId?: string;
@@ -185,6 +186,7 @@ const getInitialState = (): ControlDialogState => ({
     openedItemId: null,
     openedItemData: null,
     openedItemMeta: null,
+    titlePlaceholder: null,
     features: {},
 });
 
@@ -212,6 +214,7 @@ export function controlDialog(
                 defaults,
                 openedItemMeta,
                 features,
+                titlePlaceholder,
                 theme,
             } = payload;
 
@@ -230,6 +233,10 @@ export function controlDialog(
 
             if (theme) {
                 newState.theme = theme;
+            }
+
+            if (titlePlaceholder) {
+                newState.titlePlaceholder = titlePlaceholder;
             }
 
             if (
@@ -287,6 +294,10 @@ export function controlDialog(
                 } else if (openedDialog === DashTabItemType.Control) {
                     newState.selectorDialog.autoHeight = true;
                 }
+            }
+
+            if (openedDialog === DashTabItemType.GroupControl && titlePlaceholder) {
+                newState.selectorsGroup.showGroupName = true;
             }
 
             return newState;

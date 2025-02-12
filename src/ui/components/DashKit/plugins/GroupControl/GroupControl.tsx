@@ -818,11 +818,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                     </Text>
                 </div>
             );
-        } else if (this.context?.groupSelectorHeaderPlaceholder) {
+        } else if (controlData.showGroupName && this.context?.selectorsGroupTitlePlaceholder) {
             return (
                 <div className={b('header')}>
                     <Text variant="subheader-2" className={b('controls-title')}>
-                        {this.context?.groupSelectorHeaderPlaceholder}
+                        {this.context?.selectorsGroupTitlePlaceholder}
                     </Text>
                 </div>
             );
