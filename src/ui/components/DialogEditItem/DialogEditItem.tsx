@@ -1,12 +1,13 @@
 import React from 'react';
 
 import type {RealTheme} from '@gravity-ui/uikit';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import type {EntryScope, StringParams, WidgetType} from 'shared';
 import {DashTabItemType} from 'shared';
 import {ITEM_TYPE} from 'ui/constants/dialogs';
 import {useEffectOnce} from 'ui/hooks';
 import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog';
+import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
 
 import DialogChartWidget from '../DialogChartWidget/DialogChartWidget';
@@ -100,30 +101,57 @@ export type DialogEditItemProps = {
 export const isDialogEditItemType = (type: string): type is DashTabItemType =>
     Object.values(ITEM_TYPE).includes(type as DashTabItemType);
 
+// TypeGuard hook
+function useNormalizedOpenedDialogData(props: DialogEditItemProps): DialogEditSpecificProps {
+    const openedDialog = useSelector(selectOpenedDialogType);
+
+    const {
+        type,
+        openedItemData,
+        setItemData,
+        widgetType,
+        widgetsCurrentTab,
+        openedItemDefaults,
+        selectorsGroupTitlePlaceholder,
+    } = props;
+
+    return {
+        type: openedDialog || type,
+        openedItemData,
+        setItemData,
+        widgetType,
+        widgetsCurrentTab,
+        openedItemDefaults,
+        selectorsGroupTitlePlaceholder,
+    };
+}
+
 export const DialogEditItem: React.FC<DialogEditItemProps> = (props) => {
     const {
         features,
         theme,
         scope,
         entryId,
-        type: openedDialog,
         openedItemId,
         openedItemNamespace,
-        openedItemDefaults,
         currentTabId,
-        openedItemData,
-        widgetType,
-        widgetsCurrentTab,
         workbookId,
         navigationPath,
-        selectorsGroupTitlePlaceholder,
         changeNavigationPath,
         closeDialog,
-        setItemData,
     } = props;
 
     const dispatch = useDispatch();
     const [isOpenedDialog, setOpenedDialog] = React.useState(false);
+    const {
+        type: openedDialog,
+        openedItemData,
+        setItemData,
+        widgetType,
+        widgetsCurrentTab,
+        openedItemDefaults,
+        selectorsGroupTitlePlaceholder,
+    } = useNormalizedOpenedDialogData(props);
 
     useEffectOnce(() => {
         dispatch(
