@@ -719,10 +719,8 @@ export class DataFetcher {
             ctx.getMetadata(),
         );
 
-        var _ctx:any = ctx;
-
-        if(_ctx.get('x-rpc-authorization')) {
-            headers['x-request-id'] = '{{' + _ctx.get('x-rpc-authorization') + '}}.' + headers['x-request-id'];
+        if(subrequestHeaders['x-rpc-authorization']) {
+            headers['x-request-id'] = '{{' + subrequestHeaders['x-rpc-authorization'] + '}}.' + headers['x-request-id'];
         }
 
         if (sourceType === 'charts') {
