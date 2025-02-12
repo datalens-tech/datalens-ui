@@ -23,8 +23,11 @@
     }
 
     &__entry-actions {
-        margin-left: var(--g-spacing-1);
         white-space: nowrap;
+    }
+
+    &__entry-button {
+        margin-inline-start: var(--g-spacing-1);
     }
 
     &__user {
