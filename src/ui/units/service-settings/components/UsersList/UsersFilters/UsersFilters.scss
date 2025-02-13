@@ -1,0 +1,9 @@
+$filterBaseWidth: 220px;
+
+.service-settings-users-list-filters {
+    padding-right: var(--g-spacing-2);
+
+    &__filter {
+        width: $filterBaseWidth;
+    }
+}

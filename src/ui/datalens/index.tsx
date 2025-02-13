@@ -59,6 +59,8 @@ const DatalensPageView = () => {
     return (
         <React.Suspense fallback={<FallbackPage />}>
             <Switch>
+                {DL.AUTH_ENABLED && <Route path="/auth" component={AuthPage} />}
+
                 <Route
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
@@ -83,8 +85,6 @@ const DatalensPageView = () => {
                     path={['/collections/:collectionId', '/workbooks/:workbookId']}
                     component={CollectionsNavigtaionPage}
                 />
-
-                {DL.AUTH_ENABLED && <Route path="/auth" component={AuthPage} />}
 
                 <Route path="/">
                     <Redirect to={`/collections${location.search}`} />
