@@ -1,12 +1,26 @@
 import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 
-import {getDatasetLinks} from '../../../modules';
-import type {ChartsConfig} from '../../../types';
-import type {EntryFieldData, EntryFieldLinks} from '../../us/types';
+import {getDatasetLinks} from '../../../../modules';
+import type {ChartsConfig} from '../../../../types';
+import type {EntryFieldData, EntryFieldLinks} from '../../../us/types';
+
+export * from './validation';
 
 type GetEntryLinksArgs = {
     data: EntryFieldData;
 };
+
+function extractLinks(obj: object, links: NonNullable<EntryFieldLinks>) {
+    Object.values(obj).forEach((value) => {
+        if (isPlainObject(value)) {
+            extractLinks(value, links);
+        } else if (typeof value === 'string') {
+            // eslint-disable-next-line no-param-reassign
+            links[value] = value;
+        }
+    });
+}
 
 export function getEntryLinks(args: GetEntryLinksArgs) {
     const {data} = args;
@@ -17,10 +31,8 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
             const meta = JSON.parse(data.meta);
             const metaLinks = get(meta, 'links');
 
-            if (Array.isArray(metaLinks)) {
-                metaLinks.forEach((metaLink) => {
-                    links[metaLink] = metaLink;
-                });
+            if (isPlainObject(metaLinks)) {
+                extractLinks(metaLinks, links);
             }
 
             return links;
