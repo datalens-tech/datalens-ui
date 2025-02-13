@@ -10,6 +10,11 @@ type GeometryCircle = {
     radius: number;
 };
 
+type GeometryRectangle = {
+    type: 'Rectangle';
+    coordinates: [number, number][];
+};
+
 type GeometryPolyline = {
     type: 'LineString';
     coordinates: [number, number][];
@@ -25,19 +30,38 @@ type Point = {
     coordinates: [number, number];
 };
 
-export type YandexMapWidgetDataItem = {
+type YmapItemOptions = {
+    fillColor?: string;
+    opacity?: number;
+    strokeWidth?: number;
+};
+
+type GeometryType = GeometryCircle | GeometryRectangle | GeometryPolygon | GeometryPolyline | Point;
+
+export type SingleItem = {
     feature: {
-        geometry: GeometryCircle | GeometryPolygon | GeometryPolyline | Point;
+        geometry: GeometryType;
+        properties?: Record<string, unknown>;
     };
-    options: {
-        fillColor?: string;
-        opacity?: number;
-        strokeWidth?: number;
+    options: YmapItemOptions;
+};
+
+type ItemCollection = {
+    collection: {
+        children: SingleItem[];
     };
-}[];
+    options: YmapItemOptions;
+};
+
+type ItemClusterer = {
+    clusterer: SingleItem[];
+    options: YmapItemOptions;
+}
+
+export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer;
 
 export type YandexMapWidgetData = {
-    data?: YandexMapWidgetDataItem;
+    data?: YandexMapWidgetDataItem[];
     config?: Record<string, unknown>;
     libraryConfig?: {
         apiKey?: string;

@@ -1,0 +1,11 @@
+.ymap-cluster-marker {
+	background-color: var(--g-color-base-background);
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 46px;
+    width: 46px;
+    border-radius: 50%;
+    border: 6px solid var(--g-color-base-brand);
+}
