@@ -205,7 +205,7 @@ const UsersList = () => {
                 <Flex justifyContent="space-between">
                     <UsersFilter onChange={handleFilterChange} />
                     <Link to="/settings/users/new">
-                        <Button onClick={handleAddUserClick} view="action">
+                        <Button view="action">
                             <Icon data={Plus} />
                             {'Add user'}
                         </Button>
