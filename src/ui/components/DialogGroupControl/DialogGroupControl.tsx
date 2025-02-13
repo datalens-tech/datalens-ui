@@ -33,6 +33,7 @@ export type DialogGroupControlProps = {
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    selectorsGroupTitlePlaceholder?: string;
 } & DialogGroupControlFeaturesProps;
 
 export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
@@ -43,6 +44,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     changeNavigationPath,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    selectorsGroupTitlePlaceholder,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -75,6 +77,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             sidebarHeader={i18n('label_selectors-list')}
             sidebar={
                 <GroupControlSidebar
+                    selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
                     enableAutoheightDefault={enableAutoheightDefault}
                     showSelectorsGroupTitle={showSelectorsGroupTitle}
                     handleCopyItem={handleCopyItem}

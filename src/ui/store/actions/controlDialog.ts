@@ -44,6 +44,7 @@ import {
     selectSelectorDialog,
     selectSelectorsGroup,
     selectControlDialogFeatureByType,
+    selectControlDialogState,
 } from '../selectors/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
@@ -59,6 +60,7 @@ export type InitDialogAction = {
         defaults?: StringParams | null;
         features?: DialogEditItemFeaturesProp;
         theme?: RealTheme;
+        titlePlaceholder?: string;
         openedItemMeta: ControlDialogStateItemMeta;
     };
 };
@@ -183,6 +185,7 @@ export const applyGroupControlDialog = ({
         const activeSelectorIndex = selectActiveSelectorIndex(state);
         const openedItemData = selectOpenedItemData(state);
         const openedItemId = selectOpenedItemId(state);
+        const controlState = selectControlDialogState(state);
         const features = selectControlDialogFeatureByType(state)(DashTabItemType.GroupControl);
 
         let firstInvalidIndex: number | null = null;
@@ -242,7 +245,8 @@ export const applyGroupControlDialog = ({
         } else {
             const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
             const hasGroupName =
-                selectorsGroup.showGroupName && selectorsGroup.groupName
+                selectorsGroup.showGroupName &&
+                (selectorsGroup.groupName || controlState.titlePlaceholder)
                     ? selectorsGroup.autoHeight
                     : false;
             const hasTopPlacementTitle =

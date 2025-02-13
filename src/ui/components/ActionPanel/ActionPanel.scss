@@ -1,9 +1,13 @@
 @import '../../styles/variables';
 
+$topExpandablePanelMargin: var(--g-spacing-2);
+
 .action-panel {
-    position: relative;
-    height: $actionPanelHeight;
-    min-height: $actionPanelHeight;
+    &__wrapper {
+        position: relative;
+        height: $actionPanelHeight;
+        min-height: $actionPanelHeight;
+    }
 
     &__container {
         position: fixed;
@@ -32,5 +36,19 @@
     &__action-btn {
         width: 132px;
         flex: 0 0 132px;
+    }
+
+    &__expandable-panel {
+        position: fixed;
+        right: var(--g-spacing-2);
+        top: calc(#{$actionPanelHeight} + #{$topExpandablePanelMargin});
+        height: calc(100vh - #{$actionPanelHeight} - 2 * #{$topExpandablePanelMargin});
+    }
+
+    &__revisions-panel + &__expandable-panel {
+        top: calc(#{$actionPanelHeight} + #{$topExpandablePanelMargin} + #{$revisionPanelHeight});
+        height: calc(
+            100vh - #{$actionPanelHeight} - 2 * #{$topExpandablePanelMargin} - #{$revisionPanelHeight}
+        );
     }
 }

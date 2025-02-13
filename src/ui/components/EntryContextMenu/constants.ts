@@ -20,11 +20,6 @@ import {registry} from '../../registry';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
 
-const getCurrentPageFirstPathPart = () =>
-    window.location.pathname.split('/').filter((item) => item.trim())[0];
-
-const isChartsPage = (part: string) => part !== 'editor';
-
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
     ADD_FAVORITES_ALIAS: 'add-favorites-alias',
@@ -105,14 +100,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 
-                // TODO: remove temporary restriction of the new versioning for the editor
-                const currentPathPart = getCurrentPageFirstPathPart();
-                const isChartNotEditor = isChartsPage(currentPathPart);
-
-                return (
-                    isChartNotEditor &&
-                    getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope)
-                );
+                return getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope);
             },
         },
         {

@@ -15,6 +15,7 @@ import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 import Utils from 'ui/utils/utils';
 import type {ValuesType} from 'utility-types';
 
@@ -23,7 +24,6 @@ import type {
     EntryContextMenuItem,
     EntryContextMenuItems,
 } from '../../../../components/EntryContextMenu/helpers';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';

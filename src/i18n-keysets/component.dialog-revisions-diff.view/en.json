@@ -1,5 +1,10 @@
 {
   "button_open-revision-in-new-window": "Open in a new window",
+  "field_split-diff": "Divide",
+  "label_author": "Author",
+  "label_compare-with": "compare with",
+  "label_status": "Status",
+  "label_without-diff": "No changes",
   "toast_fetch-initial-diff-failed": "Failed to load diff changes",
   "toast_get-revisions-failed": "Failed to load change history",
   "toast_get-script-failed": "Failed to load script"

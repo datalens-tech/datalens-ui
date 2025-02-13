@@ -7,7 +7,7 @@ export interface TabData {
     docs?: {
         path: string;
         title: string;
-    };
+    }[];
 }
 
 export type ScriptsValues = EditorEntryData;

@@ -1,8 +1,10 @@
 export enum ActionPanelQA {
     MoreBtn = 'entry-panel-more-btn',
     ActionPanel = 'entry-action-panel',
-    EntryMenuTop = 'entry-menu-top',
-    EntryMenuTopRevisions = 'entry-menu-top-revisions',
+}
+
+export enum RevisionsPanelQa {
+    RevisionsPanel = 'revisions-top-panel',
 }
 
 export enum SaveChartControlsQa {
