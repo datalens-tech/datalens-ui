@@ -1,3 +1,5 @@
+import {UserRole} from 'shared/components/auth/constants/role';
+
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
@@ -241,6 +243,9 @@ export const DL = {
     },
     get RELEASE_VERSION() {
         return window.DL.releaseVersion;
+    },
+    get IS_NATIVE_AUTH_ADMIN() {
+        return window.DL.user.roles?.includes(UserRole.Admin);
     },
 };
 

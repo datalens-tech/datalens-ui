@@ -34,7 +34,7 @@ const CollectionsNavigtaionPage = React.lazy(
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 const AuthPage = React.lazy(
-    () => import(/* webpackChunkName: "connections-page" */ './pages/AuthPage/AuthPage'),
+    () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
 );
 
 const DatalensPageView = () => {
