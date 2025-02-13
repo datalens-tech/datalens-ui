@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {i18n} from 'i18n';
+// import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useParams} from 'react-router-dom';
 import type {UserProfile as UserProfileType} from 'shared/schema/auth/types/users';
@@ -15,6 +15,11 @@ import {
     selectUserProfileError,
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
+
+/* TODO: add title translations */
+const i18n = (_: string, _key: string) => {
+    return 'Failed to load user';
+};
 
 export function UserProfile() {
     const {userId} = useParams<{userId?: string}>();
@@ -45,8 +50,6 @@ export function UserProfile() {
         return (
             <PlaceholderIllustration
                 name="badRequest"
-                /* TODO: add title translations */
-                /* @ts-ignore */
                 title={i18n('auth.user-profile.view', 'label_failed-to-load-user')}
                 direction="column"
             />
