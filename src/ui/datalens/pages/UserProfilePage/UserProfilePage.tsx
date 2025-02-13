@@ -1,5 +1,5 @@
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-import {I18n} from 'i18n';
+// import {I18n} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
 import {ActionPanel, DL, PageTitle} from 'ui';
@@ -15,7 +15,19 @@ reducerRegistry.register({auth: reducer});
 
 const b = block('dl-user-profile-page');
 
-const i18n = I18n.keyset('auth.user-profile.view');
+// TODO: add title to translations
+// const i18n = I18n.keyset('auth.user-profile.view');
+const i18n = (key: string) => {
+    switch (key) {
+        case 'title_profile':
+            return 'Profile';
+        case 'title_users':
+            return 'Users';
+
+        default:
+            return key;
+    }
+};
 
 const staticPageParams = {
     self: {
@@ -27,8 +39,6 @@ const staticPageParams = {
         breadCrumbs: [
             {
                 href: '/setings/users',
-                // TODO: add title to translations
-                /* @ts-ignore */
                 text: i18n('title_users'),
             },
             {text: i18n('title_profile')},
