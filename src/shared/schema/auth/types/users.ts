@@ -80,11 +80,11 @@ export interface GetUsersListArgs {
     roles?: `${UserRole}`[];
 }
 
-interface GetUserList extends UserProfile {
+export interface ListUser extends UserProfile {
     providerId: string | null;
 }
 
 export interface GetUsersListResponse {
     nextPageToken?: string;
-    users: GetUserList[];
+    users: ListUser[];
 }

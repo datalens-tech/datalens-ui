@@ -1,0 +1,37 @@
+.users-list-labels-list {
+    $class: &;
+
+    display: flex;
+    align-items: center;
+
+    gap: var(--g-spacing-2);
+
+    &__item {
+        margin-right: 8px;
+    }
+
+    &__button {
+        flex-shrink: 0;
+        margin-right: 8px;
+    }
+
+    &__popup {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--g-spacing-2) var(--g-spacing-1) var(--g-spacing-2) var(--g-spacing-2);
+
+        #{$class}__item {
+            margin: var(--g-spacing-2) 0;
+        }
+    }
+
+    &__popup-content {
+        max-height: 200px;
+        overflow-y: auto;
+        display: flex;
+        gap: var(--g-spacing-2);
+        flex-direction: column;
+        padding-right: var(--g-spacing-1);
+    }
+}

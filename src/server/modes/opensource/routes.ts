@@ -83,6 +83,7 @@ function getDataLensRoutes({
         getDashboards: getConfiguredRoute('navigation', {...ui, route: 'GET /dashboards'}),
         getDatasetsAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /datasets/*'}),
         getConnectionsAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /connections/*'}),
+        getSettings: getConfiguredRoute('dl-main', {...ui, route: 'GET /settings/*'}),
         getDashboardsAll: {
             route: 'GET /dashboards/*',
             beforeAuth,

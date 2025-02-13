@@ -1,0 +1,20 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.service-settings-color-palettes {
+    &__header {
+        @include text-subheader-2;
+        margin: 0;
+    }
+
+    &__content {
+        flex-direction: column;
+
+        &_tab {
+            margin-top: var(--g-spacing-6);
+        }
+    }
+
+    &__description {
+        margin: 10px 0 20px;
+    }
+}
