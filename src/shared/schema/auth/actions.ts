@@ -9,6 +9,8 @@ import type {
     DeleteUserArgs,
     GetUserProfileArgs,
     GetUserProfileResponse,
+    GetUsersByIdsArgs,
+    GetUsersByIdsResponse,
     GetUsersListArgs,
     GetUsersListResponse,
     RemoveUsersRolesArgs,
@@ -98,5 +100,13 @@ export const actions = {
             headers,
         }),
         paramsSerializer: defaultParamsSerializer,
+    }),
+    getUsersByIds: createAction<GetUsersByIdsResponse, GetUsersByIdsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/users/get-by-ids`,
+        params: ({subjectIds}, headers) => ({
+            body: {subjectIds},
+            headers,
+        }),
     }),
 };
