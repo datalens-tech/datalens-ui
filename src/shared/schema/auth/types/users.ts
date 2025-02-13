@@ -38,12 +38,23 @@ export interface GetUserProfileArgs {
     userId: string;
 }
 
-interface UserProfile {
+export interface UserSubject {
     userId: string;
     login: string | null;
     email: string | null;
     firstName: string | null;
     lastName: string | null;
+}
+
+export interface GetUsersByIdsArgs {
+    subjectIds: string[];
+}
+
+export interface GetUsersByIdsResponse {
+    users: UserSubject[];
+}
+
+export interface UserProfile extends UserSubject {
     roles: `${UserRole}`[];
 }
 

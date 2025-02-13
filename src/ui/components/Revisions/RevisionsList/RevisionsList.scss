@@ -1,34 +1,9 @@
 $labelHeight: 20px;
 $labelMargin: 8px;
 
-@mixin point($type: small) {
-    content: '';
-    box-sizing: border-box;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 7px;
-    height: 7px;
-    z-index: 1;
-
-    @if $type == 'medium' {
-        top: -3px;
-        left: -3px;
-        width: 13px;
-        height: 13px;
-        z-index: 0;
-    }
-    @if $type == 'mediumL' {
-        top: -4px;
-        left: -4px;
-        width: 15px;
-        height: 15px;
-        z-index: 0;
-    }
-}
-
 .revisions-list {
+    $class: &;
+
     &__label {
         display: inline-block;
         vertical-align: top;
@@ -92,55 +67,20 @@ $labelMargin: 8px;
         }
     }
 
+    &__row-actions {
+        margin-inline: auto 0;
+        visibility: hidden;
+    }
+
+    &__row:hover &__row-actions {
+        visibility: visible;
+    }
+
     &__row &__point-wrap {
         position: absolute;
-        left: 30px;
-        top: $labelHeight;
+        left: 26px;
+        top: 14px;
         z-index: 1;
-    }
-
-    &__row &__point {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        border: 1px solid var(--g-color-line-generic-accent);
-        background-color: var(--g-color-base-background);
-        box-sizing: border-box;
-        display: block;
-    }
-
-    &__row_draft &__point {
-        background-color: transparent;
-        border-color: transparent;
-
-        &:before {
-            @include point(medium);
-            background-color: var(--g-color-base-background);
-            border: 1px solid var(--g-color-line-generic-accent);
-        }
-
-        &:after {
-            @include point();
-            background-color: var(--g-color-base-neutral-heavy);
-            border: 1px solid var(--g-color-base-background);
-        }
-    }
-
-    &__row_published &__point {
-        background-color: transparent;
-        border-color: transparent;
-
-        &:before {
-            @include point(mediumL);
-            background-color: var(--g-color-base-selection-hover);
-            border: 1px solid var(--g-color-base-selection-hover);
-        }
-
-        &:after {
-            @include point();
-            background-color: var(--g-color-base-brand);
-            border: 1px solid var(--g-color-base-brand);
-        }
     }
 
     &__text {

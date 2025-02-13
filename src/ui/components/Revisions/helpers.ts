@@ -1,8 +1,7 @@
-import moment from 'moment';
+import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 
 import type {GetRevisionsEntry} from '../../../shared/schema';
 
-import {REVISIONS_STATUSES_TEXTS} from './RevisionsList/RevisionsList';
 import type {RevisionEntry, RevisionsGroupedDates, RevisionsListItems} from './types';
 
 export const REVISIONS_LIST_PART_SIZE = 100;
@@ -12,11 +11,15 @@ export const DATE_GROUPPED_FORMAT = 'YYYY-MM-DD';
 const getDateKey = (str: string) => str?.split('T').shift() || '';
 
 const sortByUpdatedDate = (a: GetRevisionsEntry, b: GetRevisionsEntry) => {
-    return moment(a.updatedAt).isAfter(b.updatedAt) ? -1 : 1;
+    return dateTimeParse(a.updatedAt)?.isAfter(dateTimeParse(b.updatedAt)) ? -1 : 1;
 };
 
 const sortByDay = (a: RevisionsGroupedDates, b: RevisionsGroupedDates) =>
-    moment(a.date, DATE_GROUPPED_FORMAT).isAfter(moment(b.date, DATE_GROUPPED_FORMAT)) ? -1 : 1;
+    dateTime({input: a.date, format: DATE_GROUPPED_FORMAT}).isAfter(
+        dateTime({input: b.date, format: DATE_GROUPPED_FORMAT}),
+    )
+        ? -1
+        : 1;
 
 export const groupRevisionsByDate = (items: Array<RevisionEntry>): RevisionsListItems => {
     const group: RevisionsListItems = {};
@@ -52,16 +55,5 @@ export const prepareRevisionListItems = (items: RevisionsListItems) => {
     return list.sort(sortByDay);
 };
 
-export const isPublishedVersion = (entry: RevisionEntry) => entry.revId === entry.publishedId;
-
-export const isDraftVersion = (entry: RevisionEntry) => entry.revId === entry.savedId;
-
-export const getRevisionStatus = (entry: RevisionEntry) => {
-    if (isPublishedVersion(entry)) {
-        return REVISIONS_STATUSES_TEXTS.published;
-    }
-    if (isDraftVersion(entry)) {
-        return REVISIONS_STATUSES_TEXTS.draft;
-    }
-    return REVISIONS_STATUSES_TEXTS.notActual;
-};
+// TODO: remove reexport after CHARTS-11009
+export {isPublishedVersion, isDraftVersion, getRevisionStatus} from 'ui/utils/revisions';

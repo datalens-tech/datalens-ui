@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import {clickDropDownOption, cssSlct, slct, waitForCondition} from '../../utils';
 import {COMMON_SELECTORS} from '../../utils/constants';
 import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
-import {DashRevisions, DialogConfirmQA} from '../../../src/shared';
+import {DashRevisions, DialogConfirmQA, RevisionsPanelQa} from '../../../src/shared';
 
 const REVISIONS_LOAD_TIMEOUT = 2000;
 
@@ -106,7 +106,7 @@ export default class Revisions {
 
     async waitUntilRevisionPanelDisappear() {
         return await waitForCondition(async () => {
-            return !(await this.page.$('.revisions-panel__wrap.active'));
+            return !(await this.page.$(slct(RevisionsPanelQa.RevisionsPanel)));
         });
     }
 
