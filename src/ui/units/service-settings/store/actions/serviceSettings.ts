@@ -7,7 +7,7 @@ import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {
-    RESET_DISPLAYED_USERS,
+    RESET_SERVICE_USERS_LIST,
     SET_SERVICE_USERS_LIST_FAILED,
     SET_SERVICE_USERS_LIST_LOADING,
     SET_SERVICE_USERS_LIST_SUCCESS,
@@ -37,15 +37,12 @@ type SetServiceUsersListFailedAction = {
     error: Error;
 };
 type ResetDisplayedUsersListAction = {
-    type: typeof RESET_DISPLAYED_USERS;
+    type: typeof RESET_SERVICE_USERS_LIST;
 };
 
-export const resetDisplayedUsersList = () => {
-    return (dispatch: ServiceSettingsDispatch) =>
-        dispatch({
-            type: RESET_DISPLAYED_USERS,
-        });
-};
+export const resetDisplayedUsersList = (): ResetDisplayedUsersListAction => ({
+    type: RESET_SERVICE_USERS_LIST,
+});
 
 export const getUsersList = ({
     nextPageToken,
@@ -54,7 +51,7 @@ export const getUsersList = ({
     roles,
     isLoadMore,
 }: {
-    nextPageToken?: string;
+    nextPageToken?: string | null;
     filterString?: string;
     roles?: `${UserRole}`[];
     isLoadMore?: boolean;

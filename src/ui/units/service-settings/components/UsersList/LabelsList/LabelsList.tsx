@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {LabelProps} from '@gravity-ui/uikit';
-import {Label, Popup} from '@gravity-ui/uikit';
+import {Flex, Label, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
@@ -74,10 +74,10 @@ export const LabelsList = ({
     };
 
     return (
-        <div className={b()}>
+        <Flex className={b()} alignItems="center" gap={2}>
             {items.length > countVisibleElements
                 ? renderList()
                 : items.map((item) => <UserRoleLabel key={item} role={item} />)}
-        </div>
+        </Flex>
     );
 };

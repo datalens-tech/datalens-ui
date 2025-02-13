@@ -1,11 +1,6 @@
 .users-list-labels-list {
     $class: &;
 
-    display: flex;
-    align-items: center;
-
-    gap: var(--g-spacing-2);
-
     &__item {
         margin-right: 8px;
     }

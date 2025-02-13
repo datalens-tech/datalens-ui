@@ -33,7 +33,7 @@ const MainPage = () => {
     if (!DL.AUTH_ENABLED || !DL.IS_NATIVE_AUTH_ADMIN) {
         return (
             <div className={b()}>
-                <Text as={'h3' as React.ElementType} variant="subheader-3" className={b('header')}>
+                <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
                     {i18n('label_header')}
                 </Text>
                 <main className={b('sections')}>
@@ -56,7 +56,7 @@ const MainPage = () => {
 
     return (
         <div className={b()}>
-            <Text as={'h3' as React.ElementType} variant="subheader-3" className={b('header')}>
+            <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
                 {i18n('label_header')}
             </Text>
             <div role="tablist" className={b('tabs')}>

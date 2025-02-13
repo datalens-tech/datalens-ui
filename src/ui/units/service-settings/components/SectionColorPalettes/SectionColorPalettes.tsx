@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ColorPaletteEditorContainer from 'components/ColorPaletteEditorContainer/ColorPaletteEditorContainer';
 import {I18n} from 'i18n';
@@ -16,7 +17,11 @@ const SectionColorPalettes = () => {
 
     return (
         <section className={b()}>
-            {!isTabContent && <h4 className={b('header')}>{i18n('section_color-palettes')}</h4>}
+            {!isTabContent && (
+                <Text as={'h4' as const} className={b('header')} variant="subheader-2">
+                    {i18n('section_color-palettes')}
+                </Text>
+            )}
             <div className={b('content', {tab: isTabContent})}>
                 <div className={b('description')}>
                     <ColorPaletteEditorContainer />

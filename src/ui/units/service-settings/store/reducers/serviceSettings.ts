@@ -1,6 +1,6 @@
-import type {ServiceSettingsActions} from '../actions/serviceSettings';
+import {type ServiceSettingsActions} from '../actions/serviceSettings';
 import {
-    RESET_DISPLAYED_USERS,
+    RESET_SERVICE_USERS_LIST,
     SET_SERVICE_USERS_LIST_FAILED,
     SET_SERVICE_USERS_LIST_LOADING,
     SET_SERVICE_USERS_LIST_SUCCESS,
@@ -10,10 +10,10 @@ import type {ServiceSettingsState} from '../typings/serviceSettings';
 const initialState: ServiceSettingsState = {
     getUsersList: {
         isLoading: false,
-        data: null,
         error: null,
+        users: [],
+        nextPageToken: null,
     },
-    displayedUsers: [],
 };
 
 export const serviceSettings = (state = initialState, action: ServiceSettingsActions) => {
@@ -34,11 +34,11 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 getUsersList: {
                     ...state.getUsersList,
                     isLoading: false,
-                    data: action.payload.data,
+                    users: action.payload.isLoadMore
+                        ? [...state.getUsersList.users, ...action.payload.data.users]
+                        : action.payload.data.users,
+                    nextPageToken: action.payload.data.nextPageToken,
                 },
-                displayedUsers: action.payload.isLoadMore
-                    ? [...state.displayedUsers, ...action.payload.data.users]
-                    : action.payload.data.users,
             };
         }
         case SET_SERVICE_USERS_LIST_FAILED: {
@@ -51,10 +51,12 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 },
             };
         }
-        case RESET_DISPLAYED_USERS: {
+        case RESET_SERVICE_USERS_LIST: {
             return {
                 ...state,
-                displayedUsers: [],
+                getUsersList: {
+                    ...initialState.getUsersList,
+                },
             };
         }
         default:

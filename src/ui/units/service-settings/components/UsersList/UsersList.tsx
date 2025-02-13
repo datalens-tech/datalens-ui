@@ -4,6 +4,7 @@ import {Plus} from '@gravity-ui/icons';
 import type {TableAction, TableColumnConfig} from '@gravity-ui/uikit';
 import {
     Button,
+    Flex,
     Icon,
     Loader,
     Table,
@@ -20,8 +21,8 @@ import type {ListUser} from 'shared/schema/auth/types/users';
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
 import {getUsersList, resetDisplayedUsersList} from '../../store/actions/serviceSettings';
 import {
-    selectDisplayedUsers,
-    selectServiceUsersListData,
+    selectServiceUsersListPageToken,
+    selectServiceUsersListUsers,
     selectServiceUsersisLoading,
 } from '../../store/selectors/serviceSettings';
 
@@ -35,7 +36,7 @@ const b = block('service-settings-users-list');
 // const i18nMain = I18n.keyset('service-settings.main.view');
 // const i18n = I18n.keyset('service-settings.users-list.view');
 
-const USERS_PAGE_SIZE = 10;
+const USERS_PAGE_SIZE = 3;
 
 const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
 
@@ -87,8 +88,8 @@ const UsersList = () => {
     >({});
 
     const isDataLoading = useSelector(selectServiceUsersisLoading);
-    const userListData = useSelector(selectServiceUsersListData);
-    const displayedUsers = useSelector(selectDisplayedUsers);
+    const nextPageToken = useSelector(selectServiceUsersListPageToken);
+    const displayedUsers = useSelector(selectServiceUsersListUsers);
 
     const dispatch = useDispatch<ServiceSettingsDispatch>();
 
@@ -126,15 +127,20 @@ const UsersList = () => {
         dispatch(
             getUsersList({
                 pageSize: USERS_PAGE_SIZE,
-                nextPageToken: userListData?.nextPageToken,
+                nextPageToken,
                 isLoadMore: true,
                 ...filters,
             }),
         );
-    }, [dispatch, filters, userListData?.nextPageToken]);
+    }, [dispatch, filters, nextPageToken]);
 
     const handleRowClick = React.useCallback(
         (item: ListUser) => {
+            // prevent row click when text is selected
+            if (!getSelection()?.isCollapsed) {
+                return;
+            }
+
             history.push(`/settings/users/${item.userId}`);
         },
         [history],
@@ -182,7 +188,7 @@ const UsersList = () => {
                     onRowClick={handleRowClick}
                 />
 
-                {userListData?.nextPageToken && (
+                {nextPageToken && (
                     <Button
                         className={b('load-button')}
                         loading={isDataLoading}
@@ -199,13 +205,13 @@ const UsersList = () => {
         <div className={b()}>
             <Text variant="subheader-3">{'Users'}</Text>
             <div className={b('content')}>
-                <div className={b('filters')}>
+                <Flex justifyContent="space-between">
                     <UsersFilter onChange={handleFilterChange} />
                     <Button onClick={handleAddUserClick} view="action">
                         <Icon data={Plus} />
                         {'Add user'}
                     </Button>
-                </div>
+                </Flex>
 
                 {renderTable()}
             </div>

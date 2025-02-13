@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Select, TextInput} from '@gravity-ui/uikit';
+import {Flex, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 // import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -43,7 +43,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
     };
 
     return (
-        <div className={b()}>
+        <Flex gap={2} className={b()}>
             <TextInput
                 value={search}
                 onUpdate={handleSearchChange}
@@ -59,6 +59,6 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 label={'Role'}
                 className={b('filter')}
             />
-        </div>
+        </Flex>
     );
 };

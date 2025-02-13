@@ -1,10 +1,10 @@
-import type {GetUsersListResponse, ListUser} from 'shared/schema/auth/types/users';
+import type {ListUser} from 'shared/schema/auth/types/users';
 
 export type ServiceSettingsState = {
     getUsersList: {
         isLoading: boolean;
-        data: GetUsersListResponse | null;
+        users: ListUser[];
+        nextPageToken: string | null;
         error: Error | null;
     };
-    displayedUsers: ListUser[];
 };
