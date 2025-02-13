@@ -41,6 +41,9 @@ jobs:
       - uses: docker/setup-qemu-action@v3
         with:
           platforms: 'arm64'
+          # fix QEMU build for arm64
+          # https://github.com/docker/setup-qemu-action/issues/198
+          image: tonistiigi/binfmt:qemu-v7.0.0-28
       - uses: docker/setup-buildx-action@v3
       - name: 'Get release build version'
         run: |
