@@ -35,6 +35,26 @@ function getMetaTab() {
     return [];
 }
 
+type DocsLink = {
+    title: string;
+    path: string;
+}[];
+
+function getSharedTab({docs}: {docs: DocsLink}) {
+    if (isEnabledFeature('EnableChartEditorSharedTab')) {
+        return [
+            {
+                name: 'Shared',
+                id: 'shared',
+                language: 'json',
+                docs,
+            },
+        ];
+    }
+
+    return [];
+}
+
 // TODO: https://github.com/datalens-tech/datalens-ui/issues/762
 export function getChartEditorTypes(type: string) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
@@ -152,12 +172,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -211,12 +226,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -267,12 +277,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -301,12 +306,7 @@ export function getChartEditorTypes(type: string) {
                     id: 'statface_text',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
         [EDITOR_TYPE.MARKDOWN_NODE]: {
@@ -338,12 +338,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -379,12 +374,7 @@ export function getChartEditorTypes(type: string) {
                     id: 'statface_metric',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -439,12 +429,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -487,12 +472,7 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -513,24 +493,23 @@ export function getChartEditorTypes(type: string) {
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
-                    docs: docsControls,
-                },
+                ...(isEnabledFeature('EnableChartEditorControlsJSTab')
+                    ? [
+                          {
+                              name: 'JavaScript',
+                              id: 'js',
+                              language: 'javascript',
+                              docs: docsControls,
+                          },
+                      ]
+                    : []),
                 {
                     name: 'Controls',
                     id: 'ui',
                     language: 'javascript',
                     docs: docsControls,
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -607,12 +586,7 @@ export function getChartEditorTypes(type: string) {
                     id: 'config',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -656,12 +630,7 @@ export function getChartEditorTypes(type: string) {
                     id: 'config',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
@@ -706,12 +675,7 @@ export function getChartEditorTypes(type: string) {
                     id: 'config',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
