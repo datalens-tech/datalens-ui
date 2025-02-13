@@ -32,6 +32,8 @@ const CollectionsNavigtaionPage = React.lazy(
     () => import('./pages/CollectionsNavigationPage/CollectionsNavigationPage'),
 );
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
+const UserProfile = React.lazy(() => import('./pages/UserProfilePage/UserProfilePage'));
+
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 const AuthPage = React.lazy(
     () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
@@ -72,6 +74,8 @@ const DatalensPageView = () => {
                     ]}
                     component={ConnectionsPage}
                 />
+
+                {DL.AUTH_ENABLED && <Route path="/profile" component={UserProfile} />}
 
                 <Route path="/settings" component={ServiceSettings} />
 
