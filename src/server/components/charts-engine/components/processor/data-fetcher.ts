@@ -91,7 +91,6 @@ type DataFetcherOptions = {
     telemetryCallbacks?: TelemetryCallbacks;
     cacheClient?: CacheClient;
     sourcesConfig?: ChartsEngine['sources'];
-    disableUrlInSource: boolean;
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -233,7 +232,6 @@ export class DataFetcher {
         telemetryCallbacks,
         cacheClient,
         sourcesConfig,
-        disableUrlInSource,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
         // TODO remove after migration
         if ((!telemetryCallbacks || !cacheClient) && chartsEngine) {
@@ -295,7 +293,6 @@ export class DataFetcher {
                               telemetryCallbacks,
                               cacheClient,
                               sourcesConfig,
-                              disableUrlInSource,
                           })
                         : {
                               sourceId: sourceName,
@@ -522,7 +519,6 @@ export class DataFetcher {
         telemetryCallbacks,
         cacheClient,
         sourcesConfig,
-        disableUrlInSource,
     }: {
         sourceName: string;
         source: Source;
@@ -543,7 +539,6 @@ export class DataFetcher {
         adapterContext: AdapterContext;
         cacheClient: CacheClient;
         sourcesConfig: ChartsEngine['sources'];
-        disableUrlInSource: boolean;
     }) {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
@@ -557,8 +552,16 @@ export class DataFetcher {
 
         const hideInInspector = source.hideInInspector;
 
-        if (!disableUrlInSource) {
-            if (source.url) {
+        let apiConnectorParams: APIConnectorParams | undefined;
+        if (isString(source.apiConnectionId)) {
+            if (isAPIConnectorSource(source)) {
+                apiConnectorParams = getApiConnectorParamsFromSource(source);
+                source = prepareSourceWithAPIConnector(source, apiConnectorParams);
+            } else {
+                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', null, {
+                    apiConnectionId: source.apiConnectionId,
+                });
+
                 return {
                     sourceId: sourceName,
                     sourceType: 'Unresolved',
@@ -567,56 +570,36 @@ export class DataFetcher {
             }
         }
 
-        let apiConnectorParams: APIConnectorParams | undefined;
-        switch (true) {
-            case isString(source.apiConnectionId):
-                if (isAPIConnectorSource(source)) {
-                    apiConnectorParams = getApiConnectorParamsFromSource(source);
-                    source = prepareSourceWithAPIConnector(source, apiConnectorParams);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', {
-                        connectionId: source.apiConnectionId,
-                    });
+        if (isString(source.qlConnectionId)) {
+            if (isQLConnectionSource(source)) {
+                source = prepareSourceWithQLConnection(source);
+            } else {
+                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+                    qlConnectionId: source.qlConnectionId,
+                });
 
-                    return {
-                        sourceId: sourceName,
-                        sourceType: 'Unresolved',
-                        code: UNKNOWN_SOURCE,
-                    };
-                }
-                break;
+                return {
+                    sourceId: sourceName,
+                    sourceType: 'Unresolved',
+                    code: UNKNOWN_SOURCE,
+                };
+            }
+        }
 
-            case isString(source.qlConnectionId):
-                if (isQLConnectionSource(source)) {
-                    source = prepareSourceWithQLConnection(source);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', {
-                        datasetId: source.datasetId,
-                    });
+        if (isString(source.datasetId)) {
+            if (isDatasetSource(source)) {
+                source = prepareSourceWithDataset(source);
+            } else {
+                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+                    datasetId: source.datasetId,
+                });
 
-                    return {
-                        sourceId: sourceName,
-                        sourceType: 'Unresolved',
-                        code: UNKNOWN_SOURCE,
-                    };
-                }
-                break;
-
-            case isString(source.datasetId):
-                if (isDatasetSource(source)) {
-                    source = prepareSourceWithDataset(source);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', {
-                        datasetId: source.datasetId,
-                    });
-
-                    return {
-                        sourceId: sourceName,
-                        sourceType: 'Unresolved',
-                        code: UNKNOWN_SOURCE,
-                    };
-                }
-                break;
+                return {
+                    sourceId: sourceName,
+                    sourceType: 'Unresolved',
+                    code: UNKNOWN_SOURCE,
+                };
+            }
         }
 
         let targetUri = source.url;
@@ -642,7 +625,7 @@ export class DataFetcher {
         ctx.log('FETCHER_REQUEST', loggedInfo);
 
         if (typeof targetUri !== 'string' || !targetUri) {
-            ctx.logError('FETCHER_UNKNOWN_SOURCE', {targetUri});
+            ctx.logError('FETCHER_UNKNOWN_SOURCE', null, {targetUri});
 
             return {
                 sourceId: sourceName,
