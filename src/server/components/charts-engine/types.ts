@@ -113,7 +113,7 @@ export type TelemetryCallbacks = {
 
 export type Source<T = string | Record<string, string>> = {
     url: string;
-    method?: string;
+    method?: 'GET' | 'POST';
     headers?: OutgoingHttpHeaders;
     cache?: string;
     statFormat?: string;
@@ -123,13 +123,21 @@ export type Source<T = string | Record<string, string>> = {
     hideInInspector?: boolean;
     ui?: boolean;
     sourceArgs?: SourcesArgs;
-    connectionId?: string;
+    apiConnectionId?: string;
+    qlConnectionId?: string;
+    datasetId?: string;
     body?: Record<string, unknown>;
     path?: string;
 };
 
 export type SourceWithAPIConnector = Source &
-    Required<Pick<Source, 'connectionId' | 'method' | 'body' | 'path'>>;
+    Required<Pick<Source, 'apiConnectionId' | 'method' | 'body' | 'path'>>;
+
+export type SourceWithQLConnector = Source &
+    Required<Pick<Source, 'qlConnectionId' | 'method' | 'body' | 'path'>>;
+
+export type SourceWithDatasetId = Source &
+    Required<Pick<Source, 'datasetId' | 'method' | 'body' | 'path'>>;
 
 export type AdapterContext = {
     headers: {
