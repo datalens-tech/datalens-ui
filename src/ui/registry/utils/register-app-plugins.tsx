@@ -1,4 +1,5 @@
 import {registryLibsPlugins} from '../libs/registryLibsPlugins';
+import {registerAuthPlugins} from '../units/auth/register';
 import {registerChartPlugins} from '../units/chart/register';
 import {registerCollectionsPlugins} from '../units/collections/register';
 import {registerCommonPlugins} from '../units/common/register';
@@ -25,6 +26,7 @@ export const registerAppPlugins = () => {
     registerMainPlugins();
     registerDocsPlugins();
     registerCollectionsPlugins();
+    registerAuthPlugins();
     //libs
     registryLibsPlugins();
 };
