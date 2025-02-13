@@ -69,5 +69,5 @@ export function UserProfile() {
 
 function getDisplayName(user: UserProfileType) {
     const firstAndLastName = [user.firstName, user.lastName].filter(Boolean).join(' ');
-    return firstAndLastName || user.login || user.userId;
+    return firstAndLastName;
 }
