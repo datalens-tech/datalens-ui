@@ -1,0 +1,14 @@
+{
+  "action_assign-role": "Добавить роль",
+  "action_change-password": "Изменить пароль",
+  "action_delete-user": "Удалить пользователя",
+  "action_edit-profile": "Редактировать профиль",
+  "label_email": "Email",
+  "label_login": "Логин",
+  "label_name": "Имя",
+  "label_role": "Роль",
+  "label_user-id": "ID пользователя",
+  "title_administration": "Администрирование",
+  "title_permissions": "Доступы",
+  "title_profile": "Профиль"
+}

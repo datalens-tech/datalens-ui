@@ -6,7 +6,7 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
-import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/BlankChart/renderer/BlankChartWidget';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
 import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
@@ -185,6 +185,10 @@ async function getUiSandboxLibs(libs: string[]) {
             case 'd3-chord@3.0.1':
             case 'd3-chord': {
                 return getModule('d3-chord/v3.0.1');
+            }
+            case 'd3-sankey@0.12.3':
+            case 'd3-sankey': {
+                return getModule('d3-sankey/v0.12.3');
             }
             default: {
                 throw new ChartKitCustomError(null, {

@@ -49,7 +49,6 @@ export function MarkupTooltip(props: Props) {
                     anchorRef={ref}
                     className={b()}
                     contentClassName={b('content')}
-                    disablePortal={true}
                     hasArrow={true}
                     open={open}
                     onMouseEnter={handleMouseEnter}

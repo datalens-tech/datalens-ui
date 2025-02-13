@@ -118,7 +118,7 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
-    "@datalens-tech/ui-sandbox-modules": "^0.33.0",
+    "@datalens-tech/ui-sandbox-modules": "^0.34.0",
     "@gravity-ui/app-builder": "^0.13.1",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",
