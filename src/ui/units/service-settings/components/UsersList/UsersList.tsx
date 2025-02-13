@@ -16,6 +16,7 @@ import block from 'bem-cn-lite';
 // import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router';
+import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
 
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
@@ -146,10 +147,6 @@ const UsersList = () => {
         [history],
     );
 
-    const handleAddUserClick = () => {
-        history.push('/settings/users/new');
-    };
-
     const getRowActions = React.useCallback((_item: ListUser): TableAction<ListUser>[] => {
         return [
             {
@@ -207,10 +204,12 @@ const UsersList = () => {
             <div className={b('content')}>
                 <Flex justifyContent="space-between">
                     <UsersFilter onChange={handleFilterChange} />
-                    <Button onClick={handleAddUserClick} view="action">
-                        <Icon data={Plus} />
-                        {'Add user'}
-                    </Button>
+                    <Link to="/settings/users/new">
+                        <Button onClick={handleAddUserClick} view="action">
+                            <Icon data={Plus} />
+                            {'Add user'}
+                        </Button>
+                    </Link>
                 </Flex>
 
                 {renderTable()}
