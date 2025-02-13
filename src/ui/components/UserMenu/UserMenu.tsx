@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {ArrowRightFromSquare, Gear} from '@gravity-ui/icons';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Link} from 'react-router-dom';
 
 import {DL} from '../../constants/common';
 
@@ -15,7 +17,26 @@ const b = block('dl-user-menu');
 const i18n = I18n.keyset('component.user-menu.view');
 const i18nAsideHeader = I18n.keyset('component.aside-header.view');
 
-export const UserMenu = () => {
+const ButtonWithGear = React.forwardRef<
+    HTMLElement,
+    Partial<ButtonProps> & {navigate: VoidFunction}
+>(function ButtonWithGearWithRef({navigate, ...props}, ref) {
+    return (
+        <Button
+            ref={ref}
+            view="flat-secondary"
+            onClick={(e) => {
+                e.preventDefault();
+                navigate();
+            }}
+            {...props}
+        >
+            <Icon data={Gear} size={18} />
+        </Button>
+    );
+});
+
+export function UserMenu() {
     const user = DL.USER;
     return (
         <div className={b()}>
@@ -35,14 +56,12 @@ export const UserMenu = () => {
                 </div>
                 <div className={b('entry-actions')}>
                     {DL.AUTH_ENABLED && (
-                        <Button
+                        <Link
                             className={b('entry-button')}
                             title={i18nAsideHeader('label_profile-settings')}
-                            href="/profile"
-                            view="flat-secondary"
-                        >
-                            <Icon data={Gear} size={18} />
-                        </Button>
+                            to="/profile"
+                            component={ButtonWithGear}
+                        />
                     )}
                     <Button
                         className={b('entry-button')}
@@ -56,4 +75,4 @@ export const UserMenu = () => {
             </div>
         </div>
     );
-};
+}

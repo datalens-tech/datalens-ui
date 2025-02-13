@@ -17,7 +17,7 @@ interface UserProfileProps {
 }
 
 export function UserProfile({displayName, login, email, id, roles}: UserProfileProps) {
-    const canChangeUserData = DL.IS_ADMIN;
+    const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
     return (
         <Flex direction="column" gap={10} width={490}>
             <Section title={i18n('title_profile')}>
