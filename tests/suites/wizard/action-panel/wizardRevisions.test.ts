@@ -3,9 +3,10 @@ import {ElementHandle} from '@playwright/test';
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {RevisionsPanelQa} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - saving when versioning charts', () => {
     datalensTest.beforeEach(async ({page}) => {
@@ -85,7 +86,9 @@ datalensTest.describe('Wizard - saving when versioning charts', () => {
                     PlaceholderName.FlatTableColumns,
                 );
 
-                const revisionPanel = await wizardPage.page.$('.revisions-panel__wrap.active');
+                const revisionPanel = await wizardPage.page.$(
+                    slct(RevisionsPanelQa.RevisionsPanel),
+                );
 
                 return columnItems.length === 2 && revisionPanel;
             }).catch(() => {

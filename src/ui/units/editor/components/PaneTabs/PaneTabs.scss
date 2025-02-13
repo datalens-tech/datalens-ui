@@ -4,8 +4,6 @@
     .gc-adaptive-tabs {
         --gc-tabs-space-between: 12px;
         --gc-tabs-height: 24px;
-
-        @include dl-adaptive-tabs;
     }
 
     display: flex;
