@@ -1,0 +1,14 @@
+{
+  "action_assign-role": "Assign role",
+  "action_change-password": "Change password",
+  "action_delete-user": "Delete user",
+  "action_edit-profile": "Edit profile",
+  "label_email": "Email",
+  "label_login": "Login",
+  "label_name": "Name",
+  "label_role": "Role",
+  "label_user-id": "User ID",
+  "title_administration": "Administration",
+  "title_permissions": "Permissions",
+  "title_profile": "Profile"
+}

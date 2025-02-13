@@ -74,9 +74,15 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
 
 export const GroupControlSidebar: React.FC<{
     handleCopyItem: (itemIndex: number) => void;
+    selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
-}> = ({enableAutoheightDefault, handleCopyItem, showSelectorsGroupTitle}) => {
+}> = ({
+    handleCopyItem,
+    selectorsGroupTitlePlaceholder,
+    enableAutoheightDefault,
+    showSelectorsGroupTitle,
+}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
@@ -127,12 +133,19 @@ export const GroupControlSidebar: React.FC<{
                 id: DIALOG_EXTENDED_SETTINGS,
                 props: {
                     onClose: handleClosePlacementDialog,
+                    selectorsGroupTitlePlaceholder,
                     enableAutoheightDefault,
                     showSelectorsGroupTitle,
                 },
             }),
         );
-    }, [dispatch, handleClosePlacementDialog, enableAutoheightDefault, showSelectorsGroupTitle]);
+    }, [
+        dispatch,
+        handleClosePlacementDialog,
+        selectorsGroupTitlePlaceholder,
+        enableAutoheightDefault,
+        showSelectorsGroupTitle,
+    ]);
 
     const handleUpdateItem = React.useCallback(
         (title: string) => {

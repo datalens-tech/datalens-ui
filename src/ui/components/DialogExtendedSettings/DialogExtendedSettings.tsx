@@ -24,6 +24,7 @@ export const DIALOG_EXTENDED_SETTINGS = Symbol('DIALOG_EXTENDED_SETTINGS');
 export type ExtendedSettingsDialogProps = {
     onClose: () => void;
 
+    selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
 };
@@ -42,11 +43,12 @@ const resetAutoValues = (group: SelectorDialogState[]) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
     );
 
-const DialogExtendedSettings = ({
+const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     onClose,
+    selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
-}: ExtendedSettingsDialogProps) => {
+}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
@@ -219,13 +221,13 @@ const DialogExtendedSettings = ({
     );
 
     const showAutoHeight =
+        !enableAutoheightDefault &&
         (isMultipleSelectors ||
             selectorsGroup.buttonApply ||
             selectorsGroup.buttonReset ||
             // until we have supported automatic height adjustment for case with top title placement,
             // we allow to enable autoheight
-            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top) &&
-        !enableAutoheightDefault;
+            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top);
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
@@ -250,6 +252,7 @@ const DialogExtendedSettings = ({
                                     disabled={!selectorsGroup.showGroupName}
                                     value={selectorsGroup.groupName}
                                     onUpdate={handleChangeGroupName}
+                                    placeholder={selectorsGroupTitlePlaceholder}
                                 />
                             </Flex>
                         </FormRow>
