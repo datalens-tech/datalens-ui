@@ -8,3 +8,9 @@ export const selectUserProfileIsLoading = (state: DatalensGlobalState) =>
 
 export const selectUserProfileError = (state: DatalensGlobalState) =>
     state.auth.userProfile.getProfile.error;
+
+export const selectDeleteUserProfileIsLoading = (state: DatalensGlobalState) =>
+    state.auth.userProfile.deleteProfile.isLoading;
+
+export const selectDeleteUserProfileError = (state: DatalensGlobalState) =>
+    state.auth.userProfile.deleteProfile.error;
