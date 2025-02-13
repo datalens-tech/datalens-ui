@@ -211,7 +211,7 @@ export const RevisionsDiff = (props: RevisionsDiffProps) => {
     const {renderSideBySide, toggleRenderSideBySide} = useRenderSideBySideEnhander();
 
     return (
-        <div className={b()}>
+        <div className={b('content')}>
             <div className={b('panel')}>
                 <div className={b('selectors-place')}>
                     <div className={b('diff-selects')}>
@@ -278,7 +278,7 @@ export const RevisionsDiff = (props: RevisionsDiffProps) => {
 
 export const RevisionsDiffDialog = (props: RevisionDiffDialogProps) => {
     return (
-        <Dialog open={props.visible} onClose={props.onClose}>
+        <Dialog open={props.visible} onClose={props.onClose} className={b()}>
             <Dialog.Header caption={i18n('component.dialog-revisions.view', 'section_title')} />
             <Dialog.Body>
                 <RevisionsDiff {...props} />

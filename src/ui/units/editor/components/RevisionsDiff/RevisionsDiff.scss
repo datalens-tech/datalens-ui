@@ -4,9 +4,13 @@
     max-width: 90vw;
     height: 90vh;
     max-height: 90vh;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
+
+    &__content {
+        height: 100%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+    }
 
     &__panel {
         display: flex;
