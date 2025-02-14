@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {ArrowRightFromSquare, Gear} from '@gravity-ui/icons';
-import type {ButtonProps} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -16,25 +15,6 @@ import './UserMenu.scss';
 const b = block('dl-user-menu');
 const i18n = I18n.keyset('component.user-menu.view');
 const i18nAsideHeader = I18n.keyset('component.aside-header.view');
-
-const ButtonWithGear = React.forwardRef<
-    HTMLElement,
-    Partial<ButtonProps> & {navigate: VoidFunction}
->(function ButtonWithGearWithRef({navigate, ...props}, ref) {
-    return (
-        <Button
-            ref={ref}
-            view="flat-secondary"
-            onClick={(e) => {
-                e.preventDefault();
-                navigate();
-            }}
-            {...props}
-        >
-            <Icon data={Gear} size={18} />
-        </Button>
-    );
-});
 
 export function UserMenu() {
     const user = DL.USER;
@@ -56,12 +36,15 @@ export function UserMenu() {
                 </div>
                 <div className={b('entry-actions')}>
                     {DL.AUTH_ENABLED && (
-                        <Link
-                            className={b('entry-button')}
-                            title={i18nAsideHeader('label_profile-settings')}
-                            to="/profile"
-                            component={ButtonWithGear}
-                        />
+                        <Link to="/profile">
+                            <Button
+                                view="flat-secondary"
+                                className={b('entry-button')}
+                                title={i18nAsideHeader('label_profile-settings')}
+                            >
+                                <Icon data={Gear} size={18} />
+                            </Button>
+                        </Link>
                     )}
                     <Button
                         className={b('entry-button')}
