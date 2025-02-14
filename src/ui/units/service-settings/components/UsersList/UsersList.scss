@@ -1,0 +1,27 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.service-settings-users-list {
+    margin-top: var(--g-spacing-6);
+
+    &__content {
+        margin-top: var(--g-spacing-4);
+    }
+
+    &__table {
+        margin-top: var(--g-spacing-3);
+        table {
+            min-width: 100%;
+        }
+    }
+
+    &__data-loader {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: var(--g-spacing-6);
+    }
+
+    &__load-button {
+        margin-top: var(--g-spacing-5);
+    }
+}

@@ -1,0 +1,8 @@
+.service-settings-containers {
+    &__loader {
+        width: 100%;
+        margin-top: var(--g-spacing-6);
+        display: flex;
+        justify-content: center;
+    }
+}
