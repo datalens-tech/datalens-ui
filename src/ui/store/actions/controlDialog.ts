@@ -246,16 +246,15 @@ export const applyGroupControlDialog = ({
             const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
             const hasGroupName =
                 selectorsGroup.showGroupName &&
-                (selectorsGroup.groupName || controlState.titlePlaceholder)
-                    ? selectorsGroup.autoHeight
-                    : false;
+                (selectorsGroup.groupName || controlState.titlePlaceholder);
             const hasTopPlacementTitle =
-                // skip isSingleControl check while it's checked on next line
-                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
-                    ? selectorsGroup.autoHeight
-                    : false;
+                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
 
-            autoHeight = !isSingleControl || hasButtons || hasTopPlacementTitle || hasGroupName;
+            if (!isSingleControl || hasButtons || hasGroupName || hasTopPlacementTitle) {
+                autoHeight = selectorsGroup.autoHeight;
+            } else {
+                autoHeight = false;
+            }
         }
         const updateControlsOnChange =
             !isSingleControl && selectorsGroup.buttonApply
