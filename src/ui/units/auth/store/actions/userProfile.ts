@@ -55,7 +55,7 @@ export function getUserProfile({userId}: {userId: string}) {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
-                    logger.logError('collections/getUserProfile failed', error);
+                    logger.logError('auth/getUserProfile failed', error);
                 }
 
                 dispatch({
