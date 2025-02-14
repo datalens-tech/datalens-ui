@@ -19,12 +19,14 @@ const UserProfilePage = React.lazy(() => import('../UserProfilePage/UserProfileP
 const CreateProfilePage = React.lazy(() => import('../CreateProfilePage/CreateProfilePage'));
 
 export const App = () => (
-    <React.Suspense fallback={<Loader size="m" className={b('loader')} />}>
+    <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
         <Switch>
             {DL.AUTH_ENABLED && (
                 <Route exact path={'/settings/users/new'} component={CreateProfilePage} />
             )}
-            {DL.AUTH_ENABLED && <Route path={'/settings/users/:id'} component={UserProfilePage} />}
+            {DL.AUTH_ENABLED && (
+                <Route path={'/settings/users/:userId'} component={UserProfilePage} />
+            )}
             <Route path={'/settings/:tab?'} component={MainPage} />
             <Redirect to="/settings" />
         </Switch>

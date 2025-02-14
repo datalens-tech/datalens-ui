@@ -34,6 +34,10 @@ export function UserProfile() {
         if (userId) {
             dispatch(getUserProfile({userId}));
         }
+
+        return () => {
+            dispatch(resetUserProfileState());
+        };
     }, [dispatch, userId]);
 
     React.useEffect(() => {
@@ -43,10 +47,10 @@ export function UserProfile() {
     }, [dispatch, userId, userProfile]);
 
     if (isUserProfileLoading) {
-        return <SmartLoader />;
+        return <SmartLoader size="l" disableStretch />;
     }
 
-    if (error) {
+    if (error || !userProfile) {
         return (
             <PlaceholderIllustration
                 name="badRequest"
@@ -55,19 +59,15 @@ export function UserProfile() {
             />
         );
     }
-    if (userProfile) {
-        return (
-            <Profile
-                displayName={getDisplayName(userProfile)}
-                login={userProfile.login}
-                email={userProfile.email}
-                id={userProfile.userId}
-                roles={userProfile.roles}
-            />
-        );
-    }
-
-    return null;
+    return (
+        <Profile
+            displayName={getDisplayName(userProfile)}
+            login={userProfile.login}
+            email={userProfile.email}
+            id={userProfile.userId}
+            roles={userProfile.roles}
+        />
+    );
 }
 
 function getDisplayName(user: UserProfileType) {
