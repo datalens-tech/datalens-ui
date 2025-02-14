@@ -11,17 +11,6 @@ type GetEntryLinksArgs = {
     data: EntryFieldData;
 };
 
-function extractLinks(obj: object, links: NonNullable<EntryFieldLinks>) {
-    Object.values(obj).forEach((value) => {
-        if (isPlainObject(value)) {
-            extractLinks(value, links);
-        } else if (typeof value === 'string') {
-            // eslint-disable-next-line no-param-reassign
-            links[value] = value;
-        }
-    });
-}
-
 export function getEntryLinks(args: GetEntryLinksArgs) {
     const {data} = args;
     const links: EntryFieldLinks = {};
@@ -29,10 +18,12 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
     if (typeof data?.meta === 'string') {
         try {
             const meta = JSON.parse(data.meta);
-            const metaLinks = get(meta, 'links');
+            const metaLinks = get(meta, 'links') as Record<string, string>;
 
             if (isPlainObject(metaLinks)) {
-                extractLinks(metaLinks, links);
+                Object.values(metaLinks).forEach((value) => {
+                    links[value] = value;
+                });
             }
 
             return links;

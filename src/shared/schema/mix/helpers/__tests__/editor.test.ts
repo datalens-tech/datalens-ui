@@ -6,7 +6,7 @@ describe('shared/schema/mix/helpers/validateData', () => {
             name: 'valid meta with links',
             data: {
                 meta: JSON.stringify({
-                    links: {a: 'id1', b: {c: 'id2'}},
+                    links: {a: 'id1', b: 'id2'},
                 }),
             },
         },
@@ -45,6 +45,20 @@ describe('shared/schema/mix/helpers/validateData', () => {
             data: {meta: JSON.stringify({unknownKey: 'value'})},
             error: 'Unknown keys in tab "meta": unknownKey',
         },
+        {
+            name: 'links contain non-string values',
+            data: {
+                meta: JSON.stringify({
+                    links: {
+                        validLink: 'id1',
+                        number: 42,
+                        boolean: true,
+                        object: {id: 'test'},
+                    },
+                }),
+            },
+            error: 'Next keys has unsupported types: number, boolean, object. They must have a "string" type',
+        },
     ])('should throw error: $name', ({data, error}) => {
         expect(() => validateData(data)).toThrow(error);
     });
@@ -73,7 +87,7 @@ describe('shared/schema/mix/helpers/getEntryLinks', () => {
                     meta: JSON.stringify({
                         links: {
                             a: 'id1',
-                            b: {c: 'id2'},
+                            b: 'id2',
                         },
                     }),
                 },

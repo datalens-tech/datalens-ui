@@ -2,24 +2,21 @@ import isPlainObject from 'lodash/isPlainObject';
 
 import type {EntryFieldData} from '../../../us/types';
 
-type MetaTabLinks = {
-    [key: string]: MetaTabLinks | string;
-};
 type MetaTab = {
-    links?: MetaTabLinks;
+    links?: Record<string, string>;
 };
 
 const AVAILABLE_META_TAB_KEYS: Array<keyof MetaTab> = ['links'];
 
-function validateMetaTab(value?: unknown) {
-    if (!value || typeof value !== 'string') {
+function validateMetaTab(tabContent?: unknown) {
+    if (!tabContent || typeof tabContent !== 'string') {
         return;
     }
 
     let metaTab: MetaTab;
 
     try {
-        metaTab = JSON.parse(value);
+        metaTab = JSON.parse(tabContent);
     } catch {
         throw new Error('Meta must be a valid JSON\n');
     }
@@ -30,6 +27,21 @@ function validateMetaTab(value?: unknown) {
 
     if ('links' in metaTab && !isPlainObject(metaTab.links)) {
         throw new Error('"links" property must be an object\n');
+    }
+
+    if (metaTab.links) {
+        const unsupportedTypeKys: string[] = [];
+        Object.entries(metaTab.links).forEach(([key, value]) => {
+            if (typeof value !== 'string') {
+                unsupportedTypeKys.push(key);
+            }
+        });
+
+        if (unsupportedTypeKys.length) {
+            throw new Error(
+                `Next keys in "linlk" property has unsupported types: ${unsupportedTypeKys.join(', ')}. They must have a "string" type\n`,
+            );
+        }
     }
 
     const unknownKeys: string[] = [];
