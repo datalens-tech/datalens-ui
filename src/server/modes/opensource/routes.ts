@@ -4,6 +4,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
+import {getAuthArgs} from '../../../shared/schema/gateway-utils';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
@@ -67,7 +68,14 @@ function getDataLensRoutes({
 }) {
     const ui: Omit<ExtendedAppRouteDescription, 'handler' | 'route'> = {
         beforeAuth,
-        afterAuth: [...afterAuth, getConnectorIconsMiddleware()],
+        afterAuth: [
+            ...afterAuth,
+            getConnectorIconsMiddleware({
+                getAdditionalArgs: (req, res) => ({
+                    authArgs: getAuthArgs(req, res),
+                }),
+            }),
+        ],
         ui: true,
     };
 
