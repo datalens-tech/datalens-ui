@@ -1163,7 +1163,7 @@ class Body extends React.PureComponent<BodyProps> {
                         {!settings.hideDashTitle && !DL.IS_MOBILE && (
                             <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                                {showEditActionPanel ? null : <Button
+                                {(!DL.EXPORT_DASH_EXCEL || showEditActionPanel) ? null : <Button
                                     className={b('export-button')}
                                     onClick={this.exportDashboard}
                                     loading={this.state.isExportLoading}

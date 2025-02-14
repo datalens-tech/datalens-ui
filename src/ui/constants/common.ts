@@ -283,6 +283,9 @@ export const DL = {
     get RELEASE_VERSION() {
         return window.DL.releaseVersion;
     },
+    get EXPORT_DASH_EXCEL() {
+        return window.DL.exportDashExcel === true;
+    },
 };
 
 // monaco-editor common themes:

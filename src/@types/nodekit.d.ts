@@ -121,6 +121,8 @@ export interface SharedAppConfig {
     apiPrefix: string;
     preloadList?: string[];
     releaseVersion?: string;
+
+    exportDashExcel?: boolean;
 }
 
 export interface SharedAppDynamicConfig {

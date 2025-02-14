@@ -245,4 +245,6 @@ export default {
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
 
     apiPrefix: '/api',
+
+    exportDashExcel: isTrueArg(process.env.EXPORT_DASH_EXCEL)
 } satisfies Partial<AppConfig>;

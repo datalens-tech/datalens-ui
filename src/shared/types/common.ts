@@ -229,6 +229,7 @@ export type DLGlobalData = {
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
     isAuthEnabled?: boolean;
+    exportDashExcel?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

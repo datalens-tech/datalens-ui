@@ -99,6 +99,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
+        exportDashExcel: req.ctx.config.exportDashExcel,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {
@@ -114,7 +115,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         scripts: [addTranslationsScript({allowLanguages, lang}), ...chartkitScripts],
         links: [
             {
-                href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+                href: 'fonts.css',
                 rel: 'stylesheet',
             }
         ],
