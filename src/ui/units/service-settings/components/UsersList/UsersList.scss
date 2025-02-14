@@ -4,7 +4,7 @@
     margin-top: var(--g-spacing-6);
 
     &__content {
-        margin-top: 16px;
+        margin-top: var(--g-spacing-4);
     }
 
     &__table {
@@ -22,6 +22,6 @@
     }
 
     &__load-button {
-        margin-top: 20px;
+        margin-top: var(--g-spacing-5);
     }
 }

@@ -2,12 +2,12 @@
     $class: &;
 
     &__item {
-        margin-right: 8px;
+        margin-right: var(--g-spacing-2);
     }
 
     &__button {
         flex-shrink: 0;
-        margin-right: 8px;
+        margin-right: var(--g-spacing-2);
     }
 
     &__popup {

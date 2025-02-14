@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {AdaptiveTabs} from '@gravity-ui/components';
-import {Loader, Text} from '@gravity-ui/uikit';
+import {Loader, Tabs, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Redirect, Route, Switch, useHistory, useParams} from 'react-router-dom';
@@ -36,7 +35,7 @@ const MainPage = () => {
                 <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
                     {i18n('label_header')}
                 </Text>
-                <main className={b('sections')}>
+                <main className={b('section')}>
                     <ColorPaintsPage />
                 </main>
             </div>
@@ -44,8 +43,8 @@ const MainPage = () => {
     }
 
     const handleSelectTab = (tabId: string, event?: React.MouseEvent) => {
-        // clicking on the tab with the meta-key pressed - opening the tab in a new window, and not switching to it
-        if (event && event.metaKey) {
+        // clicking on the tab with the meta-key or ctrl pressed - opening the tab in a new window, and not switching to it
+        if (event && (event.metaKey || event.ctrlKey)) {
             return;
         }
 
@@ -60,7 +59,7 @@ const MainPage = () => {
                 {i18n('label_header')}
             </Text>
             <div role="tablist" className={b('tabs')}>
-                <AdaptiveTabs
+                <Tabs
                     items={[
                         {
                             id: 'palettes',
@@ -68,7 +67,7 @@ const MainPage = () => {
                         },
                         {id: 'users', title: 'Users'},
                     ]}
-                    size="l"
+                    size="m"
                     onSelectTab={handleSelectTab}
                     activeTab={activeTab}
                 />

@@ -20,7 +20,7 @@ import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
 
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
-import {getUsersList, resetDisplayedUsersList} from '../../store/actions/serviceSettings';
+import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
 import {
     selectServiceUsersListPageToken,
     selectServiceUsersListUsers,
@@ -83,7 +83,6 @@ const prepareFilterValue = (filterValue: string | string[]) => {
 const UsersList = () => {
     const history = useHistory();
 
-    const [isTableResetting, setIsTableResetting] = React.useState(true);
     const [filters, setFilters] = React.useState<
         Record<BaseFiltersNames | string, string | string[]>
     >({});
@@ -95,19 +94,13 @@ const UsersList = () => {
     const dispatch = useDispatch<ServiceSettingsDispatch>();
 
     React.useEffect(() => {
-        setIsTableResetting(true);
-        dispatch(getUsersList({pageSize: USERS_PAGE_SIZE})).finally(() =>
-            setIsTableResetting(false),
-        );
-    }, [dispatch]);
-
-    React.useEffect(() => {
-        dispatch(resetDisplayedUsersList());
+        dispatch(resetServiceUsersList());
+        dispatch(getUsersList({pageSize: USERS_PAGE_SIZE}));
     }, [dispatch]);
 
     const handleFilterChange = React.useCallback(
         (filternName, filterValue) => {
-            setIsTableResetting(true);
+            dispatch(resetServiceUsersList());
             setFilters((oldFilters) => {
                 const validatedFilterValue = prepareFilterValue(filterValue);
                 const updatedFilters = {...oldFilters, [filternName]: validatedFilterValue};
@@ -116,7 +109,7 @@ const UsersList = () => {
                         pageSize: USERS_PAGE_SIZE,
                         ...updatedFilters,
                     }),
-                ).finally(() => setIsTableResetting(false));
+                );
 
                 return updatedFilters;
             });
@@ -170,7 +163,7 @@ const UsersList = () => {
     }, []);
 
     const renderTable = () => {
-        if (isTableResetting) {
+        if (isDataLoading && !displayedUsers.length) {
             return <Loader className={b('data-loader')} size="m" />;
         }
 

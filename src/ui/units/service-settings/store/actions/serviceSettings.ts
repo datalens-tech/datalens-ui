@@ -17,7 +17,7 @@ export type ServiceSettingsActions =
     | SetServiceUsersListLoadingAction
     | SetServiceUsersListSuccessAction
     | SetServiceUsersListFailedAction
-    | ResetDisplayedUsersListAction;
+    | ResetServiceUsersList;
 
 export type ServiceSettingsDispatch = ThunkDispatch<
     DatalensGlobalState,
@@ -36,11 +36,11 @@ type SetServiceUsersListFailedAction = {
     type: typeof SET_SERVICE_USERS_LIST_FAILED;
     error: Error;
 };
-type ResetDisplayedUsersListAction = {
+type ResetServiceUsersList = {
     type: typeof RESET_SERVICE_USERS_LIST;
 };
 
-export const resetDisplayedUsersList = (): ResetDisplayedUsersListAction => ({
+export const resetServiceUsersList = (): ResetServiceUsersList => ({
     type: RESET_SERVICE_USERS_LIST,
 });
 
