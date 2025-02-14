@@ -30,16 +30,16 @@ function validateMetaTab(tabContent?: unknown) {
     }
 
     if (metaTab.links) {
-        const unsupportedTypeKys: string[] = [];
+        const unsupportedTypeKeys: string[] = [];
         Object.entries(metaTab.links).forEach(([key, value]) => {
             if (typeof value !== 'string') {
-                unsupportedTypeKys.push(key);
+                unsupportedTypeKeys.push(key);
             }
         });
 
-        if (unsupportedTypeKys.length) {
+        if (unsupportedTypeKeys.length) {
             throw new Error(
-                `Next keys in "linlk" property has unsupported types: ${unsupportedTypeKys.join(', ')}. They must have a "string" type\n`,
+                `Next keys in "links" property has unsupported types: ${unsupportedTypeKeys.join(', ')}. They must have a "string" type\n`,
             );
         }
     }

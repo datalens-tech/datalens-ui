@@ -57,7 +57,7 @@ describe('shared/schema/mix/helpers/validateData', () => {
                     },
                 }),
             },
-            error: 'Next keys in "linlk" property has unsupported types: number, boolean, object. They must have a "string" type',
+            error: 'Next keys in "links" property has unsupported types: number, boolean, object. They must have a "string" type',
         },
     ])('should throw error: $name', ({data, error}) => {
         expect(() => validateData(data)).toThrow(error);
