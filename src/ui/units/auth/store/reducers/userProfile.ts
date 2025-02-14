@@ -9,7 +9,7 @@ import {
 } from '../constants/userProfile';
 
 interface UserProfileState {
-    profile: {
+    getProfile: {
         isLoading: boolean;
         data: {profile: UserProfile} | null;
         error: Error | null;
@@ -17,7 +17,7 @@ interface UserProfileState {
 }
 
 const initialState: UserProfileState = {
-    profile: {
+    getProfile: {
         isLoading: false,
         data: null,
         error: null,
@@ -32,14 +32,17 @@ export const userProfileReducer = (
         case GET_USER_PROFILE_LOADING: {
             return {
                 ...state,
-                isLoading: true,
-                error: null,
+                getProfile: {
+                    ...state.getProfile,
+                    isLoading: true,
+                    error: null,
+                },
             };
         }
         case GET_USER_PROFILE_SUCCESS: {
             return {
                 ...state,
-                profile: {
+                getProfile: {
                     isLoading: false,
                     data: action.data,
                     error: null,
@@ -49,8 +52,8 @@ export const userProfileReducer = (
         case GET_USER_PROFILE_FAILED: {
             return {
                 ...state,
-                profile: {
-                    ...state.profile,
+                getProfile: {
+                    ...state.getProfile,
                     isLoading: false,
                     error: action.error,
                 },
@@ -59,8 +62,8 @@ export const userProfileReducer = (
         case RESET_USER_PROFILE_STATE: {
             return {
                 ...state,
-                profile: {
-                    ...initialState.profile,
+                getProfile: {
+                    ...initialState.getProfile,
                 },
             };
         }
