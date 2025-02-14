@@ -2,13 +2,10 @@ import React from 'react';
 
 import {ConfirmDialog} from '@gravity-ui/components';
 import {useDispatch, useSelector} from 'react-redux';
-import {showToast} from 'ui/store/actions/toaster';
+import type {AppDispatch} from 'ui/store';
 
 import {deleteUserProfile} from '../../store/actions/userProfile';
-import {
-    selectDeleteUserProfileError,
-    selectDeleteUserProfileIsLoading,
-} from '../../store/selectors/userProfile';
+import {selectDeleteUserProfileIsLoading} from '../../store/selectors/userProfile';
 // import {I18n, i18n} from 'i18n';
 
 // TODO: add translations
@@ -39,22 +36,13 @@ interface DeleteUserDialogProps {
 }
 
 export function DeleteUserDialog({userId, open, onClose}: DeleteUserDialogProps) {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     const isDeleteLoading = useSelector(selectDeleteUserProfileIsLoading);
-    const deleteUserError = useSelector(selectDeleteUserProfileError);
 
     const handleDeleteUser = React.useCallback(() => {
         dispatch(deleteUserProfile({userId}));
     }, [dispatch, userId]);
-
-    React.useEffect(() => {
-        if (deleteUserError) {
-            dispatch(
-                showToast({error: deleteUserError, title: i18n('label_failed-to-delete-user')}),
-            );
-        }
-    }, [dispatch, deleteUserError]);
 
     return (
         <ConfirmDialog

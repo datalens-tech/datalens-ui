@@ -3,6 +3,7 @@ import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
 import {getSdk} from 'ui/libs/schematic-sdk';
+import {showToast} from 'ui/store/actions/toaster';
 
 import {
     DELETE_USER_PROFILE_FAILED,
@@ -73,6 +74,13 @@ export function getUserProfile({userId}: {userId: string}) {
 
                 if (!isCanceled) {
                     logger.logError('auth/getUserProfile failed', error);
+
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
                 }
 
                 dispatch({
@@ -100,7 +108,14 @@ export function deleteUserProfile({userId}: {userId: string}) {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
-                    logger.logError('collections/deleteUserProfile failed', error);
+                    logger.logError('auth/deleteUserProfile failed', error);
+
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
                 }
 
                 dispatch({
