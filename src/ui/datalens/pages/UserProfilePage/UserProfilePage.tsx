@@ -2,7 +2,6 @@ import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 // import {I18n} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
-import {ActionPanel, DL, PageTitle} from 'ui';
 import {UserProfile as SelfProfile} from 'ui/units/auth/components/UserProfile/UserProfile';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
 import {reducer} from '../../../units/auth/store/reducers';
@@ -10,6 +9,9 @@ import {reducer} from '../../../units/auth/store/reducers';
 import {reducerRegistry} from 'ui/store';
 import './UserProfilePage.scss';
 import {Flex} from '@gravity-ui/uikit';
+import {DL} from 'ui/constants';
+import {PageTitle} from 'ui/components/PageTitle';
+import {ActionPanel} from 'ui/components/ActionPanel';
 
 reducerRegistry.register({auth: reducer});
 
