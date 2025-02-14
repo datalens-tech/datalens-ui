@@ -84,6 +84,8 @@ export enum Feature {
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
     EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
+    /** Enable 'use strict' for chart editor */
+    ChartEditorStrictMode = 'ChartEditorStrictMode',
 }
 
 export type FeatureConfig = Record<string, boolean>;
