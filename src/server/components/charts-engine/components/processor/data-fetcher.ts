@@ -31,10 +31,10 @@ import type {APIConnectorParams} from './sources';
 import {
     getApiConnectorParamsFromSource,
     isAPIConnectorSource,
-    isDatasetSource,
+    // isDatasetSource,
     isQLConnectionSource,
     prepareSourceWithAPIConnector,
-    prepareSourceWithDataset,
+    // prepareSourceWithDataset,
     prepareSourceWithQLConnection,
 } from './sources';
 
@@ -574,7 +574,7 @@ export class DataFetcher {
             if (isQLConnectionSource(source)) {
                 source = prepareSourceWithQLConnection(source);
             } else {
-                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+                ctx.logError('FETCHER_INCORRECT_QL_CONNECTION_SPECIFICATION', null, {
                     qlConnectionId: source.qlConnectionId,
                 });
 
@@ -586,21 +586,21 @@ export class DataFetcher {
             }
         }
 
-        if (isString(source.datasetId)) {
-            if (isDatasetSource(source)) {
-                source = prepareSourceWithDataset(source);
-            } else {
-                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
-                    datasetId: source.datasetId,
-                });
+        // if (isString(source.datasetId)) {
+        //     if (isDatasetSource(source)) {
+        //         source = prepareSourceWithDataset(source);
+        //     } else {
+        //         ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+        //             datasetId: source.datasetId,
+        //         });
 
-                return {
-                    sourceId: sourceName,
-                    sourceType: 'Unresolved',
-                    code: UNKNOWN_SOURCE,
-                };
-            }
-        }
+        //         return {
+        //             sourceId: sourceName,
+        //             sourceType: 'Unresolved',
+        //             code: UNKNOWN_SOURCE,
+        //         };
+        //     }
+        // }
 
         let targetUri = source.url;
 
