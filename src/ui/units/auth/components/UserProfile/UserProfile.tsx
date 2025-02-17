@@ -6,6 +6,7 @@ import type {UserRole} from 'shared/components/auth/constants/role';
 import {DL} from 'ui/constants';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
 
+import {ChangePasswordDialog} from '../ChangePasswordDialog/ChangePasswordDialog';
 import {DeleteUserDialog} from '../DeleteUserDialog/DeleteUserDialog';
 
 const i18n = I18n.keyset('auth.user-profile.view');
@@ -23,6 +24,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
     const isCurrentUserProfile = DL.USER_ID === id;
 
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
+    const [updateUserPasswordOpen, setUpdateUserPasswordOpen] = React.useState(false);
 
     return (
         <Flex direction="column" gap={10} width={490}>
@@ -32,7 +34,9 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                     canChangeUserData && (
                         <React.Fragment>
                             <Button>{i18n('action_edit-profile')}</Button>
-                            <Button>{i18n('action_change-password')}</Button>
+                            <Button onClick={() => setUpdateUserPasswordOpen(true)}>
+                                {i18n('action_change-password')}
+                            </Button>
                         </React.Fragment>
                     )
                 }
@@ -45,6 +49,13 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                     <DefinitionList.Item name={i18n('label_email')}>{email}</DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_user-id')}>{id}</DefinitionList.Item>
                 </DefinitionList>
+
+                <ChangePasswordDialog
+                    open={updateUserPasswordOpen}
+                    onClose={() => setUpdateUserPasswordOpen(false)}
+                    userId={id}
+                    isOwnProfile={isCurrentUserProfile}
+                />
             </Section>
             <Section
                 title={i18n('title_permissions')}
