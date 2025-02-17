@@ -20,6 +20,7 @@ interface UserProfileProps {
 
 export function UserProfile({displayName, login, email, id, roles}: UserProfileProps) {
     const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
+    const isCurrentUserProfile = DL.USER_ID === id;
 
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
 
@@ -60,7 +61,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                 </DefinitionList>
             </Section>
 
-            {canChangeUserData && (
+            {canChangeUserData && !isCurrentUserProfile && (
                 <Section
                     title={i18n('title_administration')}
                     actions={
