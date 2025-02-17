@@ -12,24 +12,23 @@ const SET_COOKIE_ON_ANOTHER_BROWSER_TAB_WAIT_TIME = 2000;
 export const Reload = () => {
     const rethPath = useSelector(selectRethPath);
 
-    const autoReload = React.useMemo(() => {
+    const reloadValue = React.useMemo(() => {
         const url = new URL(rethPath || window.location.href);
         const currentReloadValue = Number(url.searchParams.get(RELOADED_URL_QUERY) || '0');
-        return currentReloadValue === 0;
+        return currentReloadValue;
     }, [rethPath]);
 
     const reloadPage = React.useCallback(() => {
-        const baseUrl = autoReload ? rethPath || window.location.origin : window.location.origin;
+        const baseUrl = rethPath || window.location.origin;
         const redirectUrl = new URL(baseUrl);
-        const currentReloadValue = Number(redirectUrl.searchParams.get(RELOADED_URL_QUERY) || '0');
         redirectUrl.searchParams.delete(RELOADED_URL_QUERY);
-        redirectUrl.searchParams.set(RELOADED_URL_QUERY, String(currentReloadValue + 1));
+        redirectUrl.searchParams.set(RELOADED_URL_QUERY, String(reloadValue + 1));
         window.location.href = redirectUrl.toString();
-    }, [rethPath, autoReload]);
+    }, [rethPath, reloadValue]);
 
     React.useEffect(() => {
         const timerId = window.setTimeout(() => {
-            if (autoReload) {
+            if (reloadValue === 0) {
                 reloadPage();
             }
         }, SET_COOKIE_ON_ANOTHER_BROWSER_TAB_WAIT_TIME);
@@ -37,11 +36,11 @@ export const Reload = () => {
         return () => {
             window.clearTimeout(timerId);
         };
-    }, [reloadPage, autoReload]);
+    }, [reloadPage, reloadValue]);
 
     return (
         <Flex justifyContent="center" alignItems="center" height="100%">
-            {autoReload ? (
+            {reloadValue === 0 ? (
                 <Loader size="l" />
             ) : (
                 <PlaceholderIllustration
