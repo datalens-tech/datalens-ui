@@ -31,7 +31,11 @@ import type {APIConnectorParams} from './sources';
 import {
     getApiConnectorParamsFromSource,
     isAPIConnectorSource,
+    isDatasetSource,
+    isQLConnectionSource,
     prepareSourceWithAPIConnector,
+    prepareSourceWithDataset,
+    prepareSourceWithQLConnection,
 } from './sources';
 
 const {
@@ -549,13 +553,45 @@ export class DataFetcher {
         const hideInInspector = source.hideInInspector;
 
         let apiConnectorParams: APIConnectorParams | undefined;
-        if (source.connectionId) {
+        if (isString(source.apiConnectionId)) {
             if (isAPIConnectorSource(source)) {
                 apiConnectorParams = getApiConnectorParamsFromSource(source);
                 source = prepareSourceWithAPIConnector(source, apiConnectorParams);
             } else {
-                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', {
-                    connectionId: source.connectionId,
+                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', null, {
+                    apiConnectionId: source.apiConnectionId,
+                });
+
+                return {
+                    sourceId: sourceName,
+                    sourceType: 'Unresolved',
+                    code: UNKNOWN_SOURCE,
+                };
+            }
+        }
+
+        if (isString(source.qlConnectionId)) {
+            if (isQLConnectionSource(source)) {
+                source = prepareSourceWithQLConnection(source);
+            } else {
+                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+                    qlConnectionId: source.qlConnectionId,
+                });
+
+                return {
+                    sourceId: sourceName,
+                    sourceType: 'Unresolved',
+                    code: UNKNOWN_SOURCE,
+                };
+            }
+        }
+
+        if (isString(source.datasetId)) {
+            if (isDatasetSource(source)) {
+                source = prepareSourceWithDataset(source);
+            } else {
+                ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
+                    datasetId: source.datasetId,
                 });
 
                 return {
@@ -589,7 +625,7 @@ export class DataFetcher {
         ctx.log('FETCHER_REQUEST', loggedInfo);
 
         if (typeof targetUri !== 'string' || !targetUri) {
-            ctx.logError('FETCHER_UNKNOWN_SOURCE', {targetUri});
+            ctx.logError('FETCHER_UNKNOWN_SOURCE', null, {targetUri});
 
             return {
                 sourceId: sourceName,
