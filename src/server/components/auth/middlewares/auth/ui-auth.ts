@@ -14,7 +14,6 @@ import {
     FORWARDED_FOR_HEADER,
     SET_COOKIE_HEADER,
 } from '../../../../../shared/constants/header';
-import {isTrueArg} from '../../../../../shared/modules/url';
 import {onFail} from '../../../../callbacks';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
@@ -88,7 +87,7 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                 });
         } catch (err) {
             req.ctx.logError('REFRESH_TOKEN_ERROR', isGatewayError(err) ? err.error : err);
-            if (isTrueArg(req.query[RELOADED_URL_QUERY])) {
+            if (req.query[RELOADED_URL_QUERY]) {
                 onAuthLogout(req, res);
             } else {
                 onAuthReload(req, res);
