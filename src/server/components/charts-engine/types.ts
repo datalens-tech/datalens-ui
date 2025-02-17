@@ -128,6 +128,7 @@ export type Source<T = string | Record<string, string>> = {
     datasetId?: string;
     body?: Record<string, unknown>;
     path?: string;
+    _original?: unknown;
 };
 
 export type SourceWithAPIConnector = Source &

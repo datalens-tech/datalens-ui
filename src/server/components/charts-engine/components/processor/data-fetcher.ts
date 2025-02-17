@@ -27,16 +27,7 @@ import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
-import type {APIConnectorParams} from './sources';
-import {
-    getApiConnectorParamsFromSource,
-    isAPIConnectorSource,
-    // isDatasetSource,
-    isQLConnectionSource,
-    prepareSourceWithAPIConnector,
-    // prepareSourceWithDataset,
-    prepareSourceWithQLConnection,
-} from './sources';
+import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -543,6 +534,16 @@ export class DataFetcher {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
+        try {
+            source = prepareSource(source, ctx);
+        } catch {
+            return {
+                sourceId: sourceName,
+                sourceType: 'Unresolved',
+                code: 'UNKNOWN_SOURCE',
+            };
+        }
+
         const onDataFetched = telemetryCallbacks.onDataFetched || (() => {});
         const onDataFetchingFailed = telemetryCallbacks.onDataFetchingFailed || (() => {});
 
@@ -551,56 +552,6 @@ export class DataFetcher {
         };
 
         const hideInInspector = source.hideInInspector;
-
-        let apiConnectorParams: APIConnectorParams | undefined;
-        if (isString(source.apiConnectionId)) {
-            if (isAPIConnectorSource(source)) {
-                apiConnectorParams = getApiConnectorParamsFromSource(source);
-                source = prepareSourceWithAPIConnector(source, apiConnectorParams);
-            } else {
-                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', null, {
-                    apiConnectionId: source.apiConnectionId,
-                });
-
-                return {
-                    sourceId: sourceName,
-                    sourceType: 'Unresolved',
-                    code: UNKNOWN_SOURCE,
-                };
-            }
-        }
-
-        if (isString(source.qlConnectionId)) {
-            if (isQLConnectionSource(source)) {
-                source = prepareSourceWithQLConnection(source);
-            } else {
-                ctx.logError('FETCHER_INCORRECT_QL_CONNECTION_SPECIFICATION', null, {
-                    qlConnectionId: source.qlConnectionId,
-                });
-
-                return {
-                    sourceId: sourceName,
-                    sourceType: 'Unresolved',
-                    code: UNKNOWN_SOURCE,
-                };
-            }
-        }
-
-        // if (isString(source.datasetId)) {
-        //     if (isDatasetSource(source)) {
-        //         source = prepareSourceWithDataset(source);
-        //     } else {
-        //         ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
-        //             datasetId: source.datasetId,
-        //         });
-
-        //         return {
-        //             sourceId: sourceName,
-        //             sourceType: 'Unresolved',
-        //             code: UNKNOWN_SOURCE,
-        //         };
-        //     }
-        // }
 
         let targetUri = source.url;
 
@@ -909,10 +860,9 @@ export class DataFetcher {
             }
         }
 
-        const sourceData =
-            isAPIConnectorSource(source) && apiConnectorParams
-                ? {parameters: apiConnectorParams}
-                : (!isString(source) && source.data) || null;
+        const sourceData = isAPIConnectorSource(source)
+            ? {parameters: getApiConnectorParamsFromSource(source)}
+            : (!isString(source) && source.data) || null;
 
         if (sourceData) {
             if (sourceFormat === 'form') {
