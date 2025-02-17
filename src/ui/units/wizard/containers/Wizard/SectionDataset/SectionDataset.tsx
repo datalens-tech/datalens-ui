@@ -579,6 +579,7 @@ class SectionDataset extends React.Component<Props, State> {
                 onCancel: this.closeDialogField,
                 formattingEnabled: false,
                 onApply: this.onDialogFieldApply.bind(null, item),
+                markupTypeEnabled: false,
             },
         });
     };

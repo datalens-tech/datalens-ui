@@ -123,7 +123,7 @@ export function renderCellContent(args: {
     }
 
     if (!header) {
-        if (cellView === 'bar') {
+        if (cellView === 'bar' || cellType === 'bar') {
             return <BarCell cell={cell as BarTableCell} column={column as BarViewOptions} />;
         }
 
