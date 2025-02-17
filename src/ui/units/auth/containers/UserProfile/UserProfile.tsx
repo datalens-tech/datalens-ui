@@ -2,8 +2,6 @@ import React from 'react';
 
 // import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {useParams} from 'react-router-dom';
-import type {UserProfile as UserProfileType} from 'shared/schema/auth/types/users';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import type {AppDispatch} from 'ui/store';
@@ -15,15 +13,14 @@ import {
     selectUserProfileError,
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
+import {getUserDisplayName} from '../../utils/userProfile';
 
 /* TODO: add title translations */
 const i18n = (_: string, _key: string) => {
     return 'Failed to load user';
 };
 
-export function UserProfile() {
-    const {userId} = useParams<{userId?: string}>();
-
+export function UserProfile({userId}: {userId: string}) {
     const dispatch = useDispatch<AppDispatch>();
 
     const userProfile = useSelector(selectUserProfile);
@@ -61,15 +58,11 @@ export function UserProfile() {
     }
     return (
         <Profile
-            displayName={getDisplayName(userProfile)}
+            displayName={getUserDisplayName(userProfile, false)}
             login={userProfile.login}
             email={userProfile.email}
             id={userProfile.userId}
             roles={userProfile.roles}
         />
     );
-}
-
-function getDisplayName(user: UserProfileType) {
-    return [user.firstName, user.lastName].filter(Boolean).join(' ');
 }
