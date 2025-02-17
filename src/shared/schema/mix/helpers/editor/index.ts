@@ -1,8 +1,11 @@
 import get from 'lodash/get';
+import isPlainObject from 'lodash/isPlainObject';
 
-import {getDatasetLinks} from '../../../modules';
-import type {ChartsConfig} from '../../../types';
-import type {EntryFieldData, EntryFieldLinks} from '../../us/types';
+import {getDatasetLinks} from '../../../../modules';
+import type {ChartsConfig} from '../../../../types';
+import type {EntryFieldData, EntryFieldLinks} from '../../../us/types';
+
+export * from './validation';
 
 type GetEntryLinksArgs = {
     data: EntryFieldData;
@@ -15,11 +18,11 @@ export function getEntryLinks(args: GetEntryLinksArgs) {
     if (typeof data?.meta === 'string') {
         try {
             const meta = JSON.parse(data.meta);
-            const metaLinks = get(meta, 'links');
+            const metaLinks = get(meta, 'links') as Record<string, string>;
 
-            if (Array.isArray(metaLinks)) {
-                metaLinks.forEach((metaLink) => {
-                    links[metaLink] = metaLink;
+            if (isPlainObject(metaLinks)) {
+                Object.values(metaLinks).forEach((value) => {
+                    links[value] = value;
                 });
             }
 
