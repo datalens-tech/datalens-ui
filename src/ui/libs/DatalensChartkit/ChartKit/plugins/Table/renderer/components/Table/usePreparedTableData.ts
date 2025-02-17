@@ -107,9 +107,15 @@ function getFooterRows(args: {
     }, []);
 }
 
-function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
-    const current = currentRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
-    const prev = prevRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+function shouldGroupRow(args: {
+    currentRow: TData;
+    prevRow: TData;
+    cellIndex: number;
+    startIndex?: number;
+}) {
+    const {currentRow, prevRow, cellIndex, startIndex = 0} = args;
+    const current = currentRow.slice(startIndex, cellIndex + 1).map((cell) => cell?.value ?? '');
+    const prev = prevRow.slice(startIndex, cellIndex + 1).map((cell) => cell?.value ?? '');
 
     return isEqual(prev, current);
 }
@@ -398,30 +404,36 @@ export const usePreparedTableData = (props: {
             const row = tableRows[virtualRow.index] as Row<TData>;
             const rowMeasuredHeight = rowMeasures[row.id];
             const visibleCells = row.getVisibleCells();
+            let groupingStartIndex = 0;
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
                 const enableRowGrouping = get(originalHeadData, 'group', false);
                 const originalCellData = cell.row.original[index] ?? {value: ''};
                 const pinned = Boolean(originalHeadData?.pinned);
 
-                if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
-                    const prevCellRow = rowsAcc[prevCells[index]];
-                    const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
-                    if (
-                        typeof prevCell?.rowSpan !== 'undefined' &&
-                        shouldGroupRow(
-                            cell.row.original,
-                            tableRows[prevCellRow?.index]?.original,
-                            index,
-                        )
-                    ) {
-                        prevCell.rowSpan += 1;
-                        if (prevCell.maxHeight && rowMeasuredHeight) {
-                            prevCell.maxHeight += rowMeasuredHeight;
-                        }
+                if (enableRowGrouping) {
+                    if (typeof prevCells[index] !== 'undefined') {
+                        const prevCellRow = rowsAcc[prevCells[index]];
+                        const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
+                        if (
+                            typeof prevCell?.rowSpan !== 'undefined' &&
+                            shouldGroupRow({
+                                currentRow: cell.row.original,
+                                prevRow: tableRows[prevCellRow?.index]?.original,
+                                cellIndex: index,
+                                startIndex: groupingStartIndex,
+                            })
+                        ) {
+                            prevCell.rowSpan += 1;
+                            if (prevCell.maxHeight && rowMeasuredHeight) {
+                                prevCell.maxHeight += rowMeasuredHeight;
+                            }
 
-                        return acc;
+                            return acc;
+                        }
                     }
+                } else {
+                    groupingStartIndex = index + 1;
                 }
 
                 const additionalStyles = getCellAdditionStyles
