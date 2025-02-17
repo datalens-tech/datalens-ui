@@ -17,7 +17,6 @@ export const useClearReloadedQuery = () => {
             const searchParams = new URLSearchParams(search);
             if (searchParams.has(RELOADED_URL_QUERY)) {
                 searchParams.delete(RELOADED_URL_QUERY);
-                // pathname: location.pathname
                 history.replace({search: searchParams.toString()});
             }
         }
