@@ -26,7 +26,7 @@ interface UserProfileState {
         error: Error | null;
     };
     updatePassword: {
-        isLoading: false;
+        isLoading: boolean;
         error: Error | null;
     };
 }
@@ -147,7 +147,7 @@ export const userProfileReducer = (
             return {
                 ...state,
                 updatePassword: {
-                    ...state.updatePassword,
+                    // ...state.updatePassword,
                     isLoading: false,
                     error: action.error,
                 },
