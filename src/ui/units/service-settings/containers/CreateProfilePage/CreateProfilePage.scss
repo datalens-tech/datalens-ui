@@ -1,0 +1,7 @@
+.create-user-page {
+    min-height: 100vh;
+
+    &__content {
+        padding: var(--g-spacing-8) var(--g-spacing-5) var(--g-spacing-5) 82px;
+    }
+}

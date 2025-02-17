@@ -1,6 +1,10 @@
 import {type ServiceSettingsActions} from '../actions/serviceSettings';
 import {
+    RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    SET_CREATE_USER_FAILED,
+    SET_CREATE_USER_LOADING,
+    SET_CREATE_USER_SUCCESS,
     SET_SERVICE_USERS_LIST_FAILED,
     SET_SERVICE_USERS_LIST_LOADING,
     SET_SERVICE_USERS_LIST_SUCCESS,
@@ -13,6 +17,11 @@ const initialState: ServiceSettingsState = {
         error: null,
         users: [],
         nextPageToken: null,
+    },
+    createUser: {
+        isLoading: false,
+        error: null,
+        data: null,
     },
 };
 
@@ -56,6 +65,44 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
                 ...state,
                 getUsersList: {
                     ...initialState.getUsersList,
+                },
+            };
+        }
+        case SET_CREATE_USER_LOADING: {
+            return {
+                ...state,
+                getUsersList: {
+                    ...state.getUsersList,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case SET_CREATE_USER_SUCCESS: {
+            return {
+                ...state,
+                createUser: {
+                    ...state.getUsersList,
+                    isLoading: false,
+                    data: action.payload,
+                },
+            };
+        }
+        case SET_CREATE_USER_FAILED: {
+            return {
+                ...state,
+                createUser: {
+                    ...state.createUser,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_CREATE_USER: {
+            return {
+                ...state,
+                createUser: {
+                    ...initialState.createUser,
                 },
             };
         }
