@@ -1,5 +1,5 @@
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-// import {I18n} from 'i18n';
+import {/* I18n, */ i18n as i18nGlobal} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
 import {UserProfile as SelfProfile} from 'ui/units/auth/components/UserProfile/UserProfile';
@@ -12,6 +12,7 @@ import {Flex} from '@gravity-ui/uikit';
 import {DL} from 'ui/constants';
 import {PageTitle} from 'ui/components/PageTitle';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {useHistory} from 'react-router-dom';
 
 reducerRegistry.register({auth: reducer});
 
@@ -40,7 +41,11 @@ const staticPageParams = {
         pageTitle: i18n('title_profile'),
         breadCrumbs: [
             {
-                href: '/setings/users',
+                href: '/settings',
+                text: i18nGlobal('main.service-settings.view', 'label_header'),
+            },
+            {
+                href: '/settings/users',
                 text: i18n('title_users'),
             },
             {text: i18n('title_profile')},
@@ -50,13 +55,18 @@ const staticPageParams = {
 
 function UserProfilePage({context = 'self'}: {context?: 'self' | 'another'}) {
     const {pageTitle, breadCrumbs} = staticPageParams[context];
+    const history = useHistory();
 
     return (
         <main className={b()}>
             <PageTitle entry={{key: pageTitle}} />
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs>
+                    <Breadcrumbs
+                        navigate={(href) => {
+                            history.push(href);
+                        }}
+                    >
                         {breadCrumbs.map(({text, href}) => (
                             <Breadcrumbs.Item key={text} href={href} disabled={!href}>
                                 {text}
