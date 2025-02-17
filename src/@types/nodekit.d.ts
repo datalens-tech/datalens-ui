@@ -42,6 +42,7 @@ export interface SharedAppConfig {
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
         dataFetcherProxiedHeaders?: string[];
+        maxWorkers?: number;
     };
     // CHARTS ENGINE -- FINISH
 
