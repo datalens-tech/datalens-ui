@@ -39,7 +39,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
             >
                 <DefinitionList>
                     <DefinitionList.Item name={i18n('label_name')}>
-                        {displayName}
+                        {displayName || undefined}
                     </DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_login')}>{login}</DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_email')}>{email}</DefinitionList.Item>
