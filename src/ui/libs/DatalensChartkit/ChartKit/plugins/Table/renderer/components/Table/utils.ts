@@ -1,3 +1,5 @@
+import type * as React from 'react';
+
 import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
@@ -277,7 +279,7 @@ export function getElementBackgroundColor(el?: HTMLElement | null): string {
 }
 
 export function getCellCustomStyle(cellData: unknown, tableBgColor?: string) {
-    const css = {...camelCaseCss(get(cellData, 'css', {}))};
+    const css = {...camelCaseCss(get(cellData, 'css', {}))} as React.CSSProperties;
 
     // Since the table is created with flex/grid instead of standard table layout,
     // some of styles will not work as expected - we replace them here
@@ -289,6 +291,23 @@ export function getCellCustomStyle(cellData: unknown, tableBgColor?: string) {
             }
             case 'bottom': {
                 css.alignItems = 'end';
+                break;
+            }
+        }
+    }
+
+    if (css.textAlign && !css.justifyContent) {
+        switch (css.textAlign) {
+            case 'left': {
+                css.justifyContent = 'flex-start';
+                break;
+            }
+            case 'center': {
+                css.justifyContent = 'center';
+                break;
+            }
+            case 'right': {
+                css.justifyContent = 'flex-end';
                 break;
             }
         }
