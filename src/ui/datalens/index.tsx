@@ -15,6 +15,7 @@ import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
+import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 
 reducerRegistry.register(coreReducers);
 
@@ -40,6 +41,8 @@ const AuthPage = React.lazy(
 );
 
 const DatalensPageView = () => {
+    useClearReloadedQuery();
+
     const isLanding = useSelector(selectIsLanding);
 
     if (isLanding) {

@@ -2,6 +2,7 @@ import type {DatalensGlobalState} from 'index';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {Unionize} from 'utility-types';
 
+import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
@@ -30,7 +31,9 @@ export const submitSigninForm = () => {
             })
             .then(() => {
                 const {rethPath} = getState().auth.common;
-                window.location.href = rethPath ? rethPath : '/';
+                const url = new URL(rethPath || window.location.origin);
+                url.searchParams.delete(RELOADED_URL_QUERY);
+                window.location.href = url.toString();
             })
             .catch((error) => {
                 if (!sdk.isCancel(error)) {
