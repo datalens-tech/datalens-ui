@@ -4,6 +4,7 @@
   "action_delete-user": "Delete user",
   "action_edit-profile": "Edit profile",
   "label_email": "Email",
+  "label_failed-to-load-user": "Failed to load user",
   "label_login": "Login",
   "label_name": "Name",
   "label_role": "Role",

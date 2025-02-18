@@ -4,6 +4,7 @@
   "action_delete-user": "Удалить пользователя",
   "action_edit-profile": "Редактировать профиль",
   "label_email": "Email",
+  "label_failed-to-load-user": "Не удалось загрузить пользователя",
   "label_login": "Логин",
   "label_name": "Имя",
   "label_role": "Роль",
