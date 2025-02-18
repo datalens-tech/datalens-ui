@@ -1,0 +1,10 @@
+{
+  "button_sign-in": "Войти",
+  "label_error-incorrect-fields": "Неверный логин или пароль. Проверьте правильность ввода и попробуйте еще раз",
+  "label_error-required-fields": "Обязательные поля должны быть заполнены",
+  "label_login-placeholder": "Логин",
+  "label_password-placeholder": "Пароль",
+  "label_sign-up-hint": "У вас нет учётной записи?",
+  "label_sing-up-link": "Зарегистрироваться",
+  "title_product": "DataLens"
+}

@@ -4,7 +4,8 @@ import type {Unionize} from 'utility-types';
 
 import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
 import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
+import type {SdkError} from '../../../../libs/schematic-sdk';
+import {getSdk, isSdkError} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
 import {UPDATE_FORM_VALUES} from '../constants/signin';
 
@@ -19,7 +20,7 @@ export const updateFormValues = (
     payload,
 });
 
-export const submitSigninForm = () => {
+export const submitSigninForm = ({onError}: {onError?: (error: SdkError) => void}) => {
     return (dispatch: SigninDispatch, getState: () => DatalensGlobalState) => {
         const {sdk} = getSdk();
         const {login, password} = getState().auth.signin;
@@ -41,10 +42,14 @@ export const submitSigninForm = () => {
 
                     dispatch(
                         showToast({
-                            title: 'Failed to login',
+                            title: error.message,
                             error,
                         }),
                     );
+
+                    if (isSdkError(error)) {
+                        onError?.(error);
+                    }
                 }
             });
     };
