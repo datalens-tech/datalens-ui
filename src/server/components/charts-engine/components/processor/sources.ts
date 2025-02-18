@@ -51,11 +51,8 @@ export const getApiConnectorParamsFromSource = (
 
 export const prepareSourceWithAPIConnector = (source: SourceWithAPIConnector) => {
     source._original = {...source};
-    source.url = path.join(
-        '/_bi_connections',
-        encodeURIComponent(source.apiConnectionId),
-        'typed_query_raw',
-    );
+    const basePath = '/_bi_connections';
+    source.url = path.join(basePath, encodeURIComponent(source.apiConnectionId), 'typed_query_raw');
     source.method = 'POST';
     return source;
 };
@@ -80,7 +77,18 @@ export const isDatasetSource = (source: Source): source is SourceWithDatasetId =
 };
 
 export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
-    source.url = path.join('/_bi_datasets', encodeURIComponent(source.datasetId), 'result');
+    const originalSource = source._original;
+    const urlPath =
+        isObject(originalSource) && 'path' in originalSource && isString(originalSource.path)
+            ? originalSource.path
+            : 'result';
+    const basePath = '/_bi_datasets';
+
+    source.url = path.join(
+        basePath,
+        encodeURIComponent(source.datasetId),
+        encodeURIComponent(urlPath),
+    );
     source.method = 'POST';
     return source;
 };
@@ -112,7 +120,7 @@ export const prepareSource = (source: Source, ctx: AppContext): Source => {
                 }
                 break;
 
-            case isString(source.datasetId):
+            case isString(source.datasetId) && !source.url:
                 if (isDatasetSource(source)) {
                     source = prepareSourceWithDataset(source);
                 } else {
