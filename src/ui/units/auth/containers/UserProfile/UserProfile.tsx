@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import {i18n} from 'i18n';
+import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
@@ -13,11 +13,6 @@ import {
     selectUserProfileError,
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
-
-/* TODO: add title translations */
-const i18n = (_: string, _key: string) => {
-    return 'Failed to load user';
-};
 
 export function UserProfile({userId}: {userId: string}) {
     const dispatch = useDispatch<AppDispatch>();
