@@ -16,7 +16,7 @@ import {getRoleByKey} from '../../utils/userProfile';
 
 const i18n = (key: string) => {
     switch (key) {
-        case 'title_assign-role':
+        case 'title_update-role':
             return 'Assign role';
         case 'label_select-role':
             return 'Select role';
