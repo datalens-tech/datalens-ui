@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import type {SdkError} from 'ui/libs/schematic-sdk';
+import {showToast} from 'ui/store/actions/toaster';
 
 import {AUTH_ROUTE} from '../../constants/routes';
 import {submitSigninForm} from '../../store/actions/signin';
@@ -31,7 +32,10 @@ export const Signin = () => {
         // TODO: use code
         if (error.status === 403) {
             setErrorMessage(i18n('label_error-incorrect-fields'));
+            return;
         }
+
+        dispatch(showToast({title: error.message, error}));
     };
 
     const handleSubmit = () => {

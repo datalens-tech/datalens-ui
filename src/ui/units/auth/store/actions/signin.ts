@@ -40,16 +40,17 @@ export const submitSigninForm = ({onError}: {onError?: (error: SdkError) => void
                 if (!sdk.isCancel(error)) {
                     logger.logError('auth/signin failed', error);
 
+                    if (isSdkError(error)) {
+                        onError?.(error);
+                        return;
+                    }
+
                     dispatch(
                         showToast({
                             title: error.message,
                             error,
                         }),
                     );
-
-                    if (isSdkError(error)) {
-                        onError?.(error);
-                    }
                 }
             });
     };
