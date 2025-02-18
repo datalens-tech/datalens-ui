@@ -1,8 +1,15 @@
-import path from 'node:path';
-
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
 
+import {
+    CONNECTIONS_DASHSQL,
+    CONNECTIONS_TYPED_QUERY_RAW_URL,
+    CONNECTION_ID_PLACEHOLDER,
+    DATASET_DISTINCTS_URL,
+    DATASET_FIELDS_URL,
+    DATASET_ID_PLACEHOLDER,
+    DATASET_RESULT_URL,
+} from '../../../../modes/charts/plugins/control/url/constants';
 import type {
     Source,
     SourceWithAPIConnector,
@@ -51,8 +58,11 @@ export const getApiConnectorParamsFromSource = (
 
 export const prepareSourceWithAPIConnector = (source: SourceWithAPIConnector) => {
     source._original = {...source};
-    const basePath = '/_bi_connections';
-    source.url = path.join(basePath, encodeURIComponent(source.apiConnectionId), 'typed_query_raw');
+    const sourceUrl = CONNECTIONS_TYPED_QUERY_RAW_URL.replace(
+        CONNECTION_ID_PLACEHOLDER,
+        encodeURIComponent(source.apiConnectionId),
+    );
+    source.url = sourceUrl;
     source.method = 'POST';
     return source;
 };
@@ -62,12 +72,11 @@ export const isQLConnectionSource = (source: Source): source is SourceWithQLConn
 };
 
 export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => {
-    source._original = {...source};
-    source.url = path.join(
-        '/_bi_connections',
+    const sourceUrl = CONNECTIONS_DASHSQL.replace(
+        CONNECTION_ID_PLACEHOLDER,
         encodeURIComponent(source.qlConnectionId),
-        'dashsql',
     );
+    source.url = sourceUrl;
     source.method = 'POST';
     return source;
 };
@@ -77,18 +86,34 @@ export const isDatasetSource = (source: Source): source is SourceWithDatasetId =
 };
 
 export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
-    const originalSource = source._original;
     const urlPath =
-        isObject(originalSource) && 'path' in originalSource && isString(originalSource.path)
-            ? originalSource.path
-            : 'result';
-    const basePath = '/_bi_datasets';
+        isObject(source) && 'path' in source && isString(source.path) ? source.path : 'result';
 
-    source.url = path.join(
-        basePath,
+    let template: string;
+    switch (urlPath) {
+        case 'result': {
+            template = DATASET_RESULT_URL;
+            break;
+        }
+        case 'values/distinct': {
+            template = DATASET_DISTINCTS_URL;
+            break;
+        }
+        case 'fields': {
+            template = DATASET_FIELDS_URL;
+            break;
+        }
+        default: {
+            throw Error('Wrong path');
+        }
+    }
+
+    const sourceUrl = template.replace(
+        DATASET_ID_PLACEHOLDER,
         encodeURIComponent(source.datasetId),
-        encodeURIComponent(urlPath),
     );
+
+    source.url = sourceUrl;
     source.method = 'POST';
     return source;
 };
