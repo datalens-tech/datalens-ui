@@ -147,7 +147,7 @@ export const userProfileReducer = (
             return {
                 ...state,
                 updatePassword: {
-                    // ...state.updatePassword,
+                    ...state.updatePassword,
                     isLoading: false,
                     error: action.error,
                 },

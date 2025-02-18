@@ -77,7 +77,7 @@ export function ChangePasswordDialog({
 
     const infoMessage = isOwnProfile ? '' : i18n('label_admin-notification');
 
-    const [alertMessage, setAlertMessage] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState('');
 
     const [validationsStates, setValidationsStates] =
         React.useState<Record<string, undefined | 'invalid'>>(INITIAL_VALIDATION_STATE);
@@ -86,7 +86,7 @@ export function ChangePasswordDialog({
 
     React.useLayoutEffect(() => {
         if (open) {
-            setAlertMessage('');
+            setErrorMessage('');
             setValidationsStates(INITIAL_VALIDATION_STATE);
             dispatch(resetUpdateUserPasswordState());
         }
@@ -110,10 +110,10 @@ export function ChangePasswordDialog({
     };
 
     const handleApplyChangePassword = () => {
-        setAlertMessage('');
+        setErrorMessage('');
         setValidationsStates(INITIAL_VALIDATION_STATE);
         if (isOwnProfile && newPassword !== repeatPassword) {
-            setAlertMessage(i18n('label_error-passwords-not-match'));
+            setErrorMessage(i18n('label_error-passwords-not-match'));
             setValidationsStates({
                 ...validationsStates,
                 newPassword: 'invalid',
@@ -139,22 +139,21 @@ export function ChangePasswordDialog({
                         ...validationsStates,
                         oldPassword: 'invalid',
                     });
-                    setAlertMessage(i18n('label_error-incorrect-old-password'));
+                    setErrorMessage(i18n('label_error-incorrect-old-password'));
                 }
-                return;
             });
     };
 
     const handleFormChange = () => {
-        if (alertMessage) {
-            setAlertMessage('');
+        if (errorMessage) {
+            setErrorMessage('');
             setValidationsStates(INITIAL_VALIDATION_STATE);
         }
     };
 
     const alertTheme = isOwnProfile ? 'danger' : 'info';
     const newPasswordLabel = isOwnProfile ? i18n('label_new-password') : i18n('label_password');
-    const message = alertMessage || infoMessage;
+    const message = errorMessage || infoMessage;
 
     return (
         <Dialog size="m" open={open} onClose={handleClose} onEnterKeyDown={handleClose}>
