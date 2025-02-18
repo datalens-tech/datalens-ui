@@ -2,8 +2,9 @@
   "action_user-roles-change-apply": "Save",
   "action_user-roles-change-cancel": "Cancel",
   "label_base-role": "Base role",
-  "label_failed-to-change-roles": "Failed to change user roles",
   "label_includes-permissions-from": "Extends permissions of",
+  "label_roles-change-failure": "Failed to change user roles",
+  "label_roles-change-success": "Role changed successfully",
   "label_select-role": "Select role",
   "title_update-role": "Update role"
 }

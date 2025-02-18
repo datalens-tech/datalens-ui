@@ -2,6 +2,7 @@
   "action_user-profile-deletion-cancel": "Cancel",
   "action_user-profile-deletion-confirm": "Delete user",
   "label_delete-user-confirmation": "The user will be deleted and will no longer be able to use DataLens. Are you sure?",
-  "label_failed-to-delete-user": "Failed to delete user",
+  "label_delete-user-failure": "Failed to delete user",
+  "label_delete-user-success": "User deleted successfully",
   "title_delete-user": "Delete user"
 }
