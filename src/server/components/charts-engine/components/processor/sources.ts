@@ -82,7 +82,7 @@ export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => 
 };
 
 export const isDatasetSource = (source: Source): source is SourceWithDatasetId => {
-    return isString(source.datasetId) && isObject(source.data);
+    return isString(source.datasetId);
 };
 
 export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
@@ -90,17 +90,21 @@ export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
         isObject(source) && 'path' in source && isString(source.path) ? source.path : 'result';
 
     let template: string;
+    let method: 'POST' | 'GET';
     switch (urlPath) {
         case 'result': {
             template = DATASET_RESULT_URL;
+            method = 'POST';
             break;
         }
         case 'values/distinct': {
             template = DATASET_DISTINCTS_URL;
+            method = 'POST';
             break;
         }
         case 'fields': {
             template = DATASET_FIELDS_URL;
+            method = 'GET';
             break;
         }
         default: {
@@ -114,7 +118,7 @@ export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
     );
 
     source.url = sourceUrl;
-    source.method = 'POST';
+    source.method = method;
     return source;
 };
 
@@ -145,7 +149,7 @@ export const prepareSource = (source: Source, ctx: AppContext): Source => {
                 }
                 break;
 
-            case isString(source.datasetId) && !source.url:
+            case isString(source.datasetId):
                 if (isDatasetSource(source)) {
                     source = prepareSourceWithDataset(source);
                 } else {
