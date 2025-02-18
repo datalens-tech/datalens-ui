@@ -138,20 +138,12 @@ export const createUser = ({
                 type: SET_CREATE_USER_LOADING,
             });
             // clean empty fields
-            const preparedData: CreateUserArgs = {
-                login: userData.login,
-                password: userData.password,
-            };
-            Object.keys(userData).reduce((acc, key) => {
-                const fieldValue = userData[key as keyof CreateUserArgs];
-                if (fieldValue === undefined) {
-                    return acc;
+            const preparedData: CreateUserArgs = {...userData};
+            Object.entries(preparedData).forEach(([key, value]) => {
+                if (!value) {
+                    delete preparedData[key as keyof CreateUserArgs];
                 }
-                return {
-                    ...acc,
-                    [key]: fieldValue,
-                };
-            }, preparedData);
+            });
             const data = await getSdk().sdk.auth.createUser(preparedData, {
                 concurrentId: 'serviceSettings/createUser',
             });
