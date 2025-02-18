@@ -1,15 +1,15 @@
 import React from 'react';
 
-import {Dialog, Flex, Select, Text} from '@gravity-ui/uikit';
+import {Dialog, Flex, Select, Text, spacing} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
 import type {AppDispatch} from 'ui/store';
 
 import {updateUserRoles} from '../../store/actions/userProfile';
-import {selectAssignUserRoleIsLoading} from '../../store/selectors/userProfile';
+import {selectUpdateUserRoleIsLoading} from '../../store/selectors/userProfile';
 import {getRoleByKey} from '../../utils/userProfile';
-// import {I18n, i18n} from 'i18n';
+// import {I18n} from 'i18n';
 
 // TODO: add translations
 // const i18n = I18n.keyset('auth.dialog-change-user-role');
@@ -51,8 +51,10 @@ const ROLES_OPTIONS_WITH_META = EXISITING_ROLES.map((key, i, rolesList) => {
             i18n('label_base-role')
         ) : (
             <React.Fragment>
-                {i18n('label_includes-permissions-from')}{' '}
-                <Text variant="code-inline-1">{getRoleByKey(rolesList[i - 1])}</Text>
+                {i18n('label_includes-permissions-from')}
+                <Text variant="code-inline-1" className={spacing({ml: 1})}>
+                    {getRoleByKey(rolesList[i - 1])}
+                </Text>
             </React.Fragment>
         );
     return {
@@ -99,13 +101,13 @@ export function ChangeUserRoleDialog({
 }: ChangeUserRoleDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
 
-    const isAssignUserRoleLoading = useSelector(selectAssignUserRoleIsLoading);
+    const isUpdateUserRoleLoading = useSelector(selectUpdateUserRoleIsLoading);
 
     const initialRole = getMaxRoleOfSelected(userRoles);
     const [roles, setRoles] = React.useState(initialRole ? [initialRole] : []);
 
-    const handleAssignUserRoles = () => {
-        dispatch(updateUserRoles({userId, oldRoles: userRoles, newRoles: roles}));
+    const handleUpdateUserRoles = () => {
+        dispatch(updateUserRoles({userId, oldRoles: userRoles, newRole: roles[0]}));
     };
 
     const handleUserRolesChange = React.useCallback((value: string[]) => {
@@ -116,7 +118,7 @@ export function ChangeUserRoleDialog({
 
     return (
         <Dialog open={open} onClose={onClose} size="s">
-            <Dialog.Header caption={i18n('title_assign-role')} />
+            <Dialog.Header caption={i18n('title_update-role')} />
             <Dialog.Body>
                 <Select
                     placeholder={i18n('label_select-role')}
@@ -142,12 +144,12 @@ export function ChangeUserRoleDialog({
                 textButtonCancel={i18n('action_user-roles-change-cancel')}
                 textButtonApply={i18n('action_user-roles-change-apply')}
                 onClickButtonCancel={onClose}
-                onClickButtonApply={handleAssignUserRoles}
+                onClickButtonApply={handleUpdateUserRoles}
                 propsButtonCancel={{
-                    disabled: isAssignUserRoleLoading,
+                    disabled: isUpdateUserRoleLoading,
                 }}
                 propsButtonApply={{
-                    loading: isAssignUserRoleLoading,
+                    loading: isUpdateUserRoleLoading,
                     disabled:
                         (userRoles?.length || 0) === roles.length &&
                         roles.every((role) => userRoles?.includes(role)),

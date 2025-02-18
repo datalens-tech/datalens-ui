@@ -7,11 +7,6 @@ import type {SdkError} from 'ui/libs/schematic-sdk';
 import {getSdk, isSdkError} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
-import type {
-    UPDATE_USER_ROLE_FAILED,
-    UPDATE_USER_ROLE_LOADING,
-    UPDATE_USER_ROLE_SUCCESS,
-} from '../constants/userProfile';
 import {
     DELETE_USER_PROFILE_FAILED,
     DELETE_USER_PROFILE_LOADING,
@@ -24,6 +19,9 @@ import {
     UPDATE_USER_PASSWORD_FAILED,
     UPDATE_USER_PASSWORD_LOADING,
     UPDATE_USER_PASSWORD_SUCCESS,
+    UPDATE_USER_ROLE_FAILED,
+    UPDATE_USER_ROLE_LOADING,
+    UPDATE_USER_ROLE_SUCCESS,
 } from '../constants/userProfile';
 
 type ResetUserProfileStateAction = {
@@ -70,6 +68,7 @@ type ResetUpdateUserPasswordStateAction = {
 export const resetUpdateUserPasswordState = (): ResetUpdateUserPasswordStateAction => ({
     type: RESET_UPDATE_USER_PASSWORD_STATE,
 });
+
 type UpdateUserRoleLoadingAction = {
     type: typeof UPDATE_USER_ROLE_LOADING;
 };
@@ -109,7 +108,7 @@ export function getUserProfile({userId}: {userId: string}) {
         dispatch({type: GET_USER_PROFILE_LOADING});
 
         return getSdk()
-            .sdk.auth.getUserProfile({userId})
+            .sdk.auth.getUserProfile({userId}, {concurrentId: 'auth/userProfile/getUserProfile'})
             .then((data) => {
                 dispatch({
                     type: GET_USER_PROFILE_SUCCESS,
@@ -217,42 +216,56 @@ export function updateUserPassword({
     };
 }
 
-export function updateUserRoles(_ /* {
-         userId,
-         oldRoles = [],
-         newRoles = [],
-    } */ : {
+export function updateUserRoles({
+    userId,
+    oldRoles = [],
+    newRole,
+}: {
     userId: string;
     oldRoles: `${UserRole}`[] | undefined;
-    newRoles: `${UserRole}`[] | undefined;
+    newRole: `${UserRole}` | undefined;
 }) {
-    return async (_dispatch: UserProfileDispatch) => {
-        //     dispatch({type: DELETE_USER_PROFILE_LOADING});
-        //     if (newRoles.length === 0 && !oldRoles.length) {
-        //     }
-        //     try {
-        //         await getSdk().sdk.auth.addUsersRoles({
-        //             deltas: [{role: newRoles[0], subjectId: userId}],
-        //         });
-        //         dispatch({
-        //             type: DELETE_USER_PROFILE_SUCCESS,
-        //         });
-        //     } catch (error) {
-        //         const isCanceled = getSdk().sdk.isCancel(error);
-        //         if (!isCanceled) {
-        //             logger.logError('auth/updateUserRoles failed', error);
-        //             dispatch(
-        //                 showToast({
-        //                     title: error.message,
-        //                     error,
-        //                 }),
-        //             );
-        //         }
-        //         dispatch({
-        //             type: DELETE_USER_PROFILE_FAILED,
-        //             error: isCanceled ? null : error,
-        //         });
-        //         return null;
-        //     }
+    return async (dispatch: UserProfileDispatch) => {
+        dispatch({type: UPDATE_USER_ROLE_LOADING});
+        try {
+            const newRoleIsInList = newRole && oldRoles.includes(newRole);
+            const rolesToDelete = oldRoles.filter((role) => role !== newRole);
+
+            if (newRole && !newRoleIsInList) {
+                await getSdk().sdk.auth.addUsersRoles({
+                    deltas: [{role: newRole, subjectId: userId}],
+                });
+            }
+
+            if (rolesToDelete.length > 0) {
+                await getSdk().sdk.auth.removeUsersRoles({
+                    deltas: rolesToDelete.map((role) => ({role, subjectId: userId})),
+                });
+            }
+
+            dispatch({
+                type: UPDATE_USER_ROLE_SUCCESS,
+            });
+
+            dispatch({
+                type: RESET_USER_PROFILE_STATE,
+            });
+        } catch (error) {
+            const isCanceled = getSdk().sdk.isCancel(error);
+            if (!isCanceled) {
+                logger.logError('auth/updateUserRoles failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
+            }
+            dispatch({
+                type: UPDATE_USER_ROLE_FAILED,
+                error: isCanceled ? null : error,
+            });
+        }
+        return null;
     };
 }
