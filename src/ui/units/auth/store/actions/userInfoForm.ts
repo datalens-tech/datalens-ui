@@ -1,23 +1,16 @@
 import type {DatalensGlobalState} from 'index';
 import type {ThunkDispatch} from 'redux-thunk';
-import type {Unionize} from 'utility-types';
 
 import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {UPDATE_FORM_VALUES} from '../constants/signup';
+import {RESET_FORM_VALUES, UPDATE_FORM_VALUES} from '../constants/userInfoForm';
+import type {UserInfoFormFormValues} from '../typings/userInfoForm';
 
 type UpdateFormValuesAction = {
     type: typeof UPDATE_FORM_VALUES;
-    payload: Unionize<{
-        login: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        password: string;
-        repeatPassword: string;
-    }>;
+    payload: Partial<UserInfoFormFormValues>;
 };
 export const updateFormValues = (
     payload: UpdateFormValuesAction['payload'],
@@ -26,10 +19,18 @@ export const updateFormValues = (
     payload,
 });
 
+type ResetFormValuesAction = {
+    type: typeof RESET_FORM_VALUES;
+};
+
+export const resetUserInfoForm = (): ResetFormValuesAction => ({
+    type: RESET_FORM_VALUES,
+});
+
 export const submitSignupForm = () => {
-    return (dispatch: SignupDispatch, getState: () => DatalensGlobalState) => {
+    return (dispatch: UserInfoFormDispatch, getState: () => DatalensGlobalState) => {
         const {sdk} = getSdk();
-        const {login, password, lastName, firstName, email} = getState().auth.signup;
+        const {login, password, lastName, firstName, email} = getState().auth.userInfoForm;
 
         // TODO: add validation
         return sdk.auth.auth
@@ -61,6 +62,6 @@ export const submitSignupForm = () => {
     };
 };
 
-type SignupDispatch = ThunkDispatch<DatalensGlobalState, void, SignupAction>;
+export type UserInfoFormDispatch = ThunkDispatch<DatalensGlobalState, void, UserInfoFormAction>;
 
-export type SignupAction = UpdateFormValuesAction;
+export type UserInfoFormAction = UpdateFormValuesAction | ResetFormValuesAction;

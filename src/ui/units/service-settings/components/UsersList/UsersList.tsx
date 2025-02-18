@@ -15,16 +15,16 @@ import {
 import block from 'bem-cn-lite';
 // import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {useHistory} from 'react-router';
+import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
 
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
 import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
 import {
+    selectServiceUsersListIsLoading,
     selectServiceUsersListPageToken,
     selectServiceUsersListUsers,
-    selectServiceUsersisLoading,
 } from '../../store/selectors/serviceSettings';
 
 import {LabelsList} from './LabelsList/LabelsList';
@@ -82,12 +82,13 @@ const prepareFilterValue = (filterValue: string | string[]) => {
 
 const UsersList = () => {
     const history = useHistory();
+    const location = useLocation();
 
     const [filters, setFilters] = React.useState<
         Record<BaseFiltersNames | string, string | string[]>
     >({});
 
-    const isDataLoading = useSelector(selectServiceUsersisLoading);
+    const isDataLoading = useSelector(selectServiceUsersListIsLoading);
     const nextPageToken = useSelector(selectServiceUsersListPageToken);
     const displayedUsers = useSelector(selectServiceUsersListUsers);
 
@@ -197,7 +198,7 @@ const UsersList = () => {
             <div className={b('content')}>
                 <Flex justifyContent="space-between">
                     <UsersFilter onChange={handleFilterChange} />
-                    <Link to="/settings/users/new">
+                    <Link to={{pathname: '/settings/users/new', state: {from: location.pathname}}}>
                         <Button view="action">
                             <Icon data={Plus} />
                             {'Add user'}

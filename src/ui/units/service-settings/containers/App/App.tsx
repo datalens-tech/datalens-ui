@@ -2,7 +2,9 @@ import React from 'react';
 
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+// import {i18n} from 'i18n';
 import {Redirect, Route, Switch} from 'react-router-dom';
+import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants';
 import {reducerRegistry} from 'ui/store/reducer-registry';
 
@@ -12,6 +14,16 @@ import './App.scss';
 
 reducerRegistry.register({serviceSettings});
 
+// const i18n = I18n.keyset('service-settings.main.view');
+const i18n = (key: string) => {
+    switch (key) {
+        case 'label_header':
+            return 'Service Settings';
+        default:
+            return key;
+    }
+};
+
 const b = block('service-settings-container');
 
 const MainPage = React.lazy(() => import('../MainPage/MainPage'));
@@ -20,6 +32,7 @@ const CreateProfilePage = React.lazy(() => import('../CreateProfilePage/CreatePr
 
 export const App = () => (
     <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
+        <PageTitle entry={{key: i18n('title_service-settings')}} />
         <Switch>
             {DL.AUTH_ENABLED && (
                 <Route exact path={'/settings/users/new'} component={CreateProfilePage} />
