@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import type {GatewayError} from '@gravity-ui/gateway';
@@ -71,7 +71,6 @@ export function ChangePasswordDialog({
     isOwnProfile,
 }: ChangeUserPasswordDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
-    const formRef = useRef<HTMLFormElement>(null);
     const [oldPassword, setOldPassword] = React.useState('');
     const [newPassword, setNewPassword] = React.useState('');
     const [repeatPassword, setRepeatPassword] = React.useState('');
@@ -106,7 +105,9 @@ export function ChangePasswordDialog({
     };
 
     const handleClose = () => {
-        formRef.current?.reset();
+        setOldPassword('');
+        setNewPassword('');
+        setRepeatPassword('');
         onClose();
     };
 
@@ -174,7 +175,6 @@ export function ChangePasswordDialog({
                         as="form"
                         direction="column"
                         onChange={handleFormChange}
-                        ref={formRef}
                     >
                         {isOwnProfile && (
                             <FormRow label={i18n('label_old-password')} className={b('row')}>
