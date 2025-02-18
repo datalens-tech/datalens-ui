@@ -1,8 +1,22 @@
+import {UserRole} from 'shared/components/auth/constants/role';
+import {registry} from 'ui/registry';
+
 import type {UserInfoFormAction} from '../actions/userInfoForm';
 import {RESET_FORM_VALUES, UPDATE_FORM_VALUES} from '../constants/userInfoForm';
 import type {UserInfoFormFormValues} from '../typings/userInfoForm';
 
 interface UserInfoFormState extends UserInfoFormFormValues {}
+
+const getInitialRoles = () => {
+    const {getUsersRoles} = registry.auth.functions.getAll();
+
+    // TODO: Add sort by access level
+    const defaultRole = getUsersRoles().includes(UserRole.Viewer)
+        ? UserRole.Viewer
+        : UserRole.Visitor;
+
+    return [defaultRole];
+};
 
 const initialState: UserInfoFormState = {
     login: '',
@@ -11,7 +25,7 @@ const initialState: UserInfoFormState = {
     lastName: '',
     password: '',
     repeatPassword: '',
-    roles: [],
+    roles: getInitialRoles(),
 };
 
 export const userInfoFormReducer = (

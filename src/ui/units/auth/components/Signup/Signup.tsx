@@ -34,7 +34,7 @@ export const Signup = () => {
                         <Email autoComplete={true} size="l" />
                         <FirstName autoComplete={true} size="l" />
                         <LastName autoComplete={true} size="l" />
-                        <Password autoComplete={true} size="l" />
+                        <Password size="l" />
                         <RepeatPassword size="l" />
                     </Flex>
                     <FormRow>

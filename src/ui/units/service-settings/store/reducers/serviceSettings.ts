@@ -71,7 +71,7 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
         case SET_CREATE_USER_LOADING: {
             return {
                 ...state,
-                getUsersList: {
+                createUser: {
                     ...state.getUsersList,
                     isLoading: true,
                     error: null,

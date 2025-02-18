@@ -14,11 +14,10 @@ import './App.scss';
 
 reducerRegistry.register({serviceSettings});
 
-// TODO: add title to translations
 // const i18n = I18n.keyset('service-settings.main.view');
 const i18n = (key: string) => {
     switch (key) {
-        case 'title_service-settings':
+        case 'label_header':
             return 'Service Settings';
         default:
             return key;

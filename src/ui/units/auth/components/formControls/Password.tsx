@@ -25,7 +25,9 @@ const i18n = (key: string) => {
     }
 };
 
-export const Password = ({autoComplete, ...props}: UserFormInputProps) => {
+type PasswordProps = Omit<UserFormInputProps, 'autocomplete'> & {isCurrentPassword?: boolean};
+
+export const Password = ({isCurrentPassword, ...props}: PasswordProps) => {
     const dispatch = useDispatch();
 
     const password = useSelector(selectPassword);
@@ -35,7 +37,7 @@ export const Password = ({autoComplete, ...props}: UserFormInputProps) => {
     return (
         <FormRow label={i18n('label_password')} className={b('row', props.rowClassName)}>
             <PasswordInput
-                autoComplete={autoComplete ? 'password' : 'disable'}
+                autoComplete={isCurrentPassword ? 'current-password' : 'new-password'}
                 value={password}
                 onUpdate={handleUpdate}
                 {...props}

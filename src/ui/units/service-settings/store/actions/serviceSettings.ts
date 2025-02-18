@@ -125,7 +125,13 @@ export const resetCreateUser = (): ResetCreateUserAction => ({
     type: RESET_CREATE_USER,
 });
 
-export const createUser = (userData: CreateUserArgs) => {
+export const createUser = ({
+    onSuccess,
+    userData,
+}: {
+    userData: CreateUserArgs;
+    onSuccess?: () => void;
+}) => {
     return async (dispatch: ServiceSettingsDispatch) => {
         try {
             dispatch({
@@ -149,24 +155,27 @@ export const createUser = (userData: CreateUserArgs) => {
             const data = await getSdk().sdk.auth.createUser(preparedData, {
                 concurrentId: 'serviceSettings/createUser',
             });
+            onSuccess?.();
             dispatch({
                 type: SET_CREATE_USER_SUCCESS,
                 payload: data,
             });
         } catch (error) {
-            if (getSdk().sdk.isCancel(error)) {
-                return;
+            const isCanceled = getSdk().sdk.isCancel(error);
+
+            if (!isCanceled) {
+                logger.logError('serviceSettings/createUser failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
             }
-            logger.logError('serviceSettings/createUser failed', error);
-            dispatch(
-                showToast({
-                    title: error.message,
-                    error,
-                }),
-            );
+
             dispatch({
                 type: SET_CREATE_USER_FAILED,
-                error,
+                error: isCanceled ? null : error,
             });
         }
     };

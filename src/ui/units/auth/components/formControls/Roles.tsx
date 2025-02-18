@@ -4,8 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {UserRole} from 'shared/components/auth/constants/role';
-import {useEffectOnce} from 'ui/hooks';
+import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
@@ -35,21 +34,11 @@ export const Roles = (props: UserFormSelectProps) => {
     const rolesOptions = React.useMemo(() => {
         const {getUsersRoles} = registry.auth.functions.getAll();
         const availableRoles = getUsersRoles();
-        return {
-            items: Object.values(availableRoles).map((key) => ({
-                value: key,
-                content: getRoleByKey(key),
-            })),
-            defaultValue: availableRoles.includes(UserRole.Viewer)
-                ? UserRole.Viewer
-                : UserRole.Visitor,
-        };
+        return Object.values(availableRoles).map((key) => ({
+            value: key,
+            content: getRoleByKey(key),
+        }));
     }, []);
-
-    useEffectOnce(() => {
-        // need to be dynamically calculated by using registry
-        dispatch(updateFormValues({roles: [rolesOptions.defaultValue]}));
-    });
 
     const roles = useSelector(selectRoles);
 
@@ -61,7 +50,7 @@ export const Roles = (props: UserFormSelectProps) => {
             <Select
                 value={roles}
                 onUpdate={handleUpdate}
-                options={rolesOptions.items}
+                options={rolesOptions}
                 width="max"
                 {...props}
             />

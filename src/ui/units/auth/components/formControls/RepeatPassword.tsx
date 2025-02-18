@@ -25,7 +25,7 @@ const i18n = (key: string) => {
     }
 };
 
-export const RepeatPassword = (props: UserFormInputProps) => {
+export const RepeatPassword = (props: Omit<UserFormInputProps, 'autocomplete'>) => {
     const dispatch = useDispatch();
 
     const repeatPassword = useSelector(selectRepeatPassword);

@@ -49,7 +49,7 @@ export const submitSignupForm = () => {
             })
             .catch((error) => {
                 if (!sdk.isCancel(error)) {
-                    logger.logError('auth/userInfoForm failed', error);
+                    logger.logError('auth/signup failed', error);
 
                     dispatch(
                         showToast({

@@ -17,11 +17,7 @@ import {reducer} from 'ui/units/auth/store/reducers';
 import {selectUserInfoForm} from 'ui/units/auth/store/selectors/userInfoForm';
 
 import {createUser, resetCreateUser} from '../../store/actions/serviceSettings';
-import {
-    selecCreateUserIsLoading,
-    selectCreateUserData,
-    selectCreateUserError,
-} from '../../store/selectors/serviceSettings';
+import {selecCreateUserIsLoading} from '../../store/selectors/serviceSettings';
 
 reducerRegistry.register({auth: reducer});
 
@@ -49,24 +45,21 @@ export const CreateUserForm = () => {
 
     const userInfo = useSelector(selectUserInfoForm);
 
-    const successData = useSelector(selectCreateUserData);
     const isLoading = useSelector(selecCreateUserIsLoading);
-    const error = useSelector(selectCreateUserError);
+
+    const handleSuccessCreate = () => {
+        dispatch(showToast({title: i18n('label_success-user-creation'), type: 'success'}));
+
+        if (location.state.from === '/settings/users') {
+            history.goBack();
+            return;
+        }
+        dispatch(resetCreateUser());
+    };
 
     const handleUserCreate = () => {
-        dispatch(createUser(userInfo));
+        dispatch(createUser({onSuccess: handleSuccessCreate, userData: userInfo}));
     };
-    React.useEffect(() => {
-        if (successData && !error) {
-            dispatch(showToast({title: i18n('label_success-user-creation'), type: 'success'}));
-
-            if (location.state.from === '/settings/users') {
-                history.goBack();
-                return;
-            }
-            dispatch(resetCreateUser());
-        }
-    }, [successData, error, dispatch, history, location]);
 
     React.useEffect(() => {
         return () => {
