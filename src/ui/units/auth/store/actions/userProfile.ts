@@ -1,3 +1,4 @@
+// import {i18n} from 'i18n';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
@@ -23,6 +24,11 @@ import {
     UPDATE_USER_ROLE_LOADING,
     UPDATE_USER_ROLE_SUCCESS,
 } from '../constants/userProfile';
+
+// TODO: add translations
+const i18n = (_0: string, _1: string) => {
+    return 'Operation completed successfully';
+};
 
 type ResetUserProfileStateAction = {
     type: typeof RESET_USER_PROFILE_STATE;
@@ -139,7 +145,7 @@ export function getUserProfile({userId}: {userId: string}) {
     };
 }
 
-export function deleteUserProfile({userId}: {userId: string}) {
+export function deleteUserProfile({userId}: {userId: string}, onSuccess: VoidFunction) {
     return (dispatch: UserProfileDispatch) => {
         dispatch({type: DELETE_USER_PROFILE_LOADING});
 
@@ -149,6 +155,15 @@ export function deleteUserProfile({userId}: {userId: string}) {
                 dispatch({
                     type: DELETE_USER_PROFILE_SUCCESS,
                 });
+
+                dispatch(
+                    showToast({
+                        title: i18n('auth.dialog-delete-user', 'label_delete-user-success'),
+                        type: 'success',
+                    }),
+                );
+
+                onSuccess?.();
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
@@ -216,15 +231,18 @@ export function updateUserPassword({
     };
 }
 
-export function updateUserRoles({
-    userId,
-    oldRoles = [],
-    newRole,
-}: {
-    userId: string;
-    oldRoles: `${UserRole}`[] | undefined;
-    newRole: `${UserRole}` | undefined;
-}) {
+export function updateUserRoles(
+    {
+        userId,
+        oldRoles = [],
+        newRole,
+    }: {
+        userId: string;
+        oldRoles: `${UserRole}`[] | undefined;
+        newRole: `${UserRole}` | undefined;
+    },
+    onSuccess: VoidFunction,
+) {
     return async (dispatch: UserProfileDispatch) => {
         dispatch({type: UPDATE_USER_ROLE_LOADING});
         try {
@@ -246,6 +264,15 @@ export function updateUserRoles({
             dispatch({
                 type: UPDATE_USER_ROLE_SUCCESS,
             });
+
+            dispatch(
+                showToast({
+                    title: i18n('auth.dialog-change-user-role', 'label_roles-change-success'),
+                    type: 'success',
+                }),
+            );
+
+            onSuccess?.();
 
             dispatch({
                 type: RESET_USER_PROFILE_STATE,

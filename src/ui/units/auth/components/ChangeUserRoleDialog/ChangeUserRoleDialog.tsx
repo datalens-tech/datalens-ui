@@ -91,6 +91,7 @@ interface ChangeUserRoleDialogProps {
 
     open: boolean;
     onClose: VoidFunction;
+    onSuccess?: VoidFunction;
 }
 
 export function ChangeUserRoleDialog({
@@ -98,6 +99,7 @@ export function ChangeUserRoleDialog({
     userRoles,
     open,
     onClose,
+    onSuccess,
 }: ChangeUserRoleDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
 
@@ -107,7 +109,11 @@ export function ChangeUserRoleDialog({
     const [roles, setRoles] = React.useState(initialRole ? [initialRole] : []);
 
     const handleUpdateUserRoles = () => {
-        dispatch(updateUserRoles({userId, oldRoles: userRoles, newRole: roles[0]}));
+        const handleSuccess = () => {
+            onClose();
+            onSuccess?.();
+        };
+        dispatch(updateUserRoles({userId, oldRoles: userRoles, newRole: roles[0]}, handleSuccess));
     };
 
     const handleUserRolesChange = React.useCallback((value: string[]) => {

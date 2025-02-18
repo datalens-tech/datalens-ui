@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import {Button, DefinitionList, Flex, Text, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {useHistory} from 'react-router';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {DL} from 'ui/constants';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
@@ -24,9 +25,15 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
     const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
     const isCurrentUserProfile = DL.USER_ID === id;
 
+    const history = useHistory();
+
     const [assignRoleDialogOpen, setAssignRoleDialogOpen] = React.useState(false);
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
     const [updateUserPasswordOpen, setUpdateUserPasswordOpen] = React.useState(false);
+
+    const handleUserDeleteSuccess = React.useCallback(() => {
+        history.push('/settings/users');
+    }, [history]);
 
     return (
         <Flex direction="column" gap={10} width={490}>
@@ -101,6 +108,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                     <DeleteUserDialog
                         open={deleteUserDialogOpen}
                         onClose={() => setDeleteUserDialogOpen(false)}
+                        onSuccess={handleUserDeleteSuccess}
                         userId={id}
                     />
                 </Section>
