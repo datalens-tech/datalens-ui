@@ -4,6 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
+import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
 
@@ -109,6 +110,21 @@ export function ChangePasswordDialog({
         onClose();
     };
 
+    const handleSuccessUpdate = () => {
+        dispatch(showToast({title: i18n('label_success-change'), type: 'success'}));
+        handleClose();
+    };
+
+    const handleErrorUpdate = (error: SdkError) => {
+        if (error.code === AuthErrorCode.IncorrectOldPassword) {
+            setValidationsStates({
+                ...validationsStates,
+                oldPassword: 'invalid',
+            });
+            setErrorMessage(i18n('label_error-incorrect-old-password'));
+        }
+    };
+
     const handleApplyChangePassword = () => {
         setErrorMessage('');
         setValidationsStates(INITIAL_VALIDATION_STATE);
@@ -124,24 +140,15 @@ export function ChangePasswordDialog({
 
         dispatch(
             updateUserPassword({
-                userId,
-                newPassword,
-                oldPassword: isOwnProfile ? oldPassword : undefined,
+                data: {
+                    userId,
+                    newPassword,
+                    oldPassword: isOwnProfile ? oldPassword : undefined,
+                },
+                onSuccess: handleSuccessUpdate,
+                onError: handleErrorUpdate,
             }),
-        )
-            .then(() => {
-                dispatch(showToast({title: i18n('label_success-change'), type: 'success'}));
-                handleClose();
-            })
-            .catch((error) => {
-                if (error.code === AuthErrorCode.IncorrectOldPassword) {
-                    setValidationsStates({
-                        ...validationsStates,
-                        oldPassword: 'invalid',
-                    });
-                    setErrorMessage(i18n('label_error-incorrect-old-password'));
-                }
-            });
+        );
     };
 
     const handleFormChange = () => {

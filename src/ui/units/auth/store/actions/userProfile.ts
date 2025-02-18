@@ -2,6 +2,7 @@ import type {ThunkDispatch} from 'redux-thunk';
 import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
+import type {SdkError} from 'ui/libs/schematic-sdk';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
@@ -155,13 +156,13 @@ export function deleteUserProfile({userId}: {userId: string}) {
 }
 
 export function updateUserPassword({
-    userId,
-    newPassword,
-    oldPassword,
+    data: {userId, newPassword, oldPassword},
+    onSuccess,
+    onError,
 }: {
-    userId: string;
-    newPassword: string;
-    oldPassword?: string;
+    data: {userId: string; newPassword: string; oldPassword?: string};
+    onSuccess?: () => void;
+    onError?: (error: SdkError) => void;
 }) {
     return (dispatch: UserProfileDispatch) => {
         dispatch({type: UPDATE_USER_PASSWORD_LOADING});
@@ -175,30 +176,29 @@ export function updateUserPassword({
                 dispatch({
                     type: UPDATE_USER_PASSWORD_SUCCESS,
                 });
+                onSuccess?.();
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
-                if (isCanceled) {
-                    return;
+                if (!isCanceled) {
+                    logger.logError('auth/updateUserPassword failed', error);
+
+                    dispatch(
+                        showToast({
+                            title: error.message,
+                            error,
+                        }),
+                    );
                 }
-
-                logger.logError('auth/updateUserPassword failed', error);
-
-                dispatch(
-                    showToast({
-                        title: error.message,
-                        error,
-                    }),
-                );
 
                 dispatch({
                     type: UPDATE_USER_PASSWORD_FAILED,
                     error: isCanceled ? null : error,
                 });
 
-                // validation in component
-                throw error;
+                // TODO: fix types for error
+                onError?.(error as unknown as SdkError);
             });
     };
 }
