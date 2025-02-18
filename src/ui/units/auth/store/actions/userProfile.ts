@@ -2,7 +2,8 @@ import type {ThunkDispatch} from 'redux-thunk';
 import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
-import {getSdk} from 'ui/libs/schematic-sdk';
+import type {SdkError} from 'ui/libs/schematic-sdk';
+import {getSdk, isSdkError} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {
@@ -161,7 +162,7 @@ export function updateUserPassword({
 }: {
     data: {userId: string; newPassword: string; oldPassword?: string};
     onSuccess?: () => void;
-    onError?: (error: Error) => void;
+    onError?: (error: SdkError) => void;
 }) {
     return (dispatch: UserProfileDispatch) => {
         dispatch({type: UPDATE_USER_PASSWORD_LOADING});
@@ -183,20 +184,15 @@ export function updateUserPassword({
                 if (!isCanceled) {
                     logger.logError('auth/updateUserPassword failed', error);
 
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
+                    if (isSdkError(error)) {
+                        onError?.(error);
+                    }
                 }
 
                 dispatch({
                     type: UPDATE_USER_PASSWORD_FAILED,
                     error: isCanceled ? null : error,
                 });
-
-                onError?.(error);
             });
     };
 }

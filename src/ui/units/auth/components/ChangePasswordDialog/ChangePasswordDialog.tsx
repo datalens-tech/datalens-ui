@@ -4,15 +4,13 @@ import {FormRow} from '@gravity-ui/components';
 import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
+import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {AuthErrorCode} from '../../constants/errors';
 import {resetUpdateUserPasswordState, updateUserPassword} from '../../store/actions/userProfile';
-import {
-    selectUpdateUserPasswordError,
-    selectUpdateUserPasswordIsLoading,
-} from '../../store/selectors/userProfile';
+import {selectUpdateUserPasswordIsLoading} from '../../store/selectors/userProfile';
 
 // import {I18n, i18n} from 'i18n';
 import './ChangePasswordDialog.scss';
@@ -36,6 +34,8 @@ const i18n = (key: string) => {
             return 'Password';
         case 'label_error-passwords-not-match':
             return "Passwords don't match";
+        case 'label_error-required-fields':
+            return 'Required fields must be filled';
         case 'label_error-incorrect-old-password':
             return 'Incorrect old password';
         case 'label_admin-notification':
@@ -64,6 +64,7 @@ interface ChangeUserPasswordDialogProps {
 const INITIAL_VALIDATION_STATE = {
     oldPassword: undefined,
     newPassword: undefined,
+    repeatPassword: undefined,
 };
 
 export function ChangePasswordDialog({
@@ -86,7 +87,6 @@ export function ChangePasswordDialog({
         React.useState<Record<string, undefined | 'invalid'>>(INITIAL_VALIDATION_STATE);
 
     const isLoading = useSelector(selectUpdateUserPasswordIsLoading);
-    const error = useSelector(selectUpdateUserPasswordError);
 
     React.useLayoutEffect(() => {
         if (open) {
@@ -121,24 +121,40 @@ export function ChangePasswordDialog({
         handleClose();
     };
 
-    const handleErrorUpdate = () => {
-        if (error && 'code' in error && error.code === AuthErrorCode.IncorrectOldPassword) {
+    const handleErrorUpdate = (error: SdkError) => {
+        if (error.code === AuthErrorCode.IncorrectOldPassword) {
             setValidationsStates({
                 ...validationsStates,
                 oldPassword: 'invalid',
             });
             setErrorMessage(i18n('label_error-incorrect-old-password'));
+
+            return;
         }
+
+        dispatch(showToast({title: error.message, error}));
     };
 
     const handleApplyChangePassword = () => {
         setErrorMessage(null);
         setValidationsStates(INITIAL_VALIDATION_STATE);
+
+        if (!newPassword || (isOwnProfile && (!repeatPassword || !oldPassword))) {
+            setErrorMessage(i18n('label_error-required-fields'));
+            setValidationsStates({
+                newPassword: newPassword ? undefined : 'invalid',
+                oldPassword: oldPassword || !isOwnProfile ? undefined : 'invalid',
+                repeatPassword: repeatPassword || !isOwnProfile ? undefined : 'invalid',
+            });
+            return;
+        }
+
         if (isOwnProfile && newPassword !== repeatPassword) {
             setErrorMessage(i18n('label_error-passwords-not-match'));
             setValidationsStates({
                 ...validationsStates,
                 newPassword: 'invalid',
+                repeatPassword: 'invalid',
             });
             return;
         }
@@ -163,7 +179,7 @@ export function ChangePasswordDialog({
         }
     };
 
-    const alertTheme = isOwnProfile ? 'danger' : 'info';
+    const alertTheme = isOwnProfile || errorMessage ? 'danger' : 'info';
     const newPasswordLabel = isOwnProfile ? i18n('label_new-password') : i18n('label_password');
     const message = errorMessage || infoMessage;
 
@@ -205,7 +221,7 @@ export function ChangePasswordDialog({
                                 <PasswordInput
                                     value={repeatPassword}
                                     onUpdate={handleRepeatPasswordChange}
-                                    validationState={validationsStates.newPassword}
+                                    validationState={validationsStates.repeatPassword}
                                     hideCopyButton={true}
                                     autoComplete="new-password"
                                 />
