@@ -3,7 +3,7 @@ import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
 import type {SdkError} from 'ui/libs/schematic-sdk';
-import {getSdk} from 'ui/libs/schematic-sdk';
+import {getSdk, isSdkError} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {
@@ -197,8 +197,9 @@ export function updateUserPassword({
                     error: isCanceled ? null : error,
                 });
 
-                // TODO: fix types for error
-                onError?.(error as unknown as SdkError);
+                if (isSdkError(error)) {
+                    onError?.(error);
+                }
             });
     };
 }
