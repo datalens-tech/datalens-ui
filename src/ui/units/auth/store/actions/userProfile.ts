@@ -1,4 +1,5 @@
 import type {ThunkDispatch} from 'redux-thunk';
+import type {UserRole} from 'shared/components/auth/constants/role';
 import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
@@ -6,6 +7,11 @@ import type {SdkError} from 'ui/libs/schematic-sdk';
 import {getSdk, isSdkError} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
+import type {
+    UPDATE_USER_ROLE_FAILED,
+    UPDATE_USER_ROLE_LOADING,
+    UPDATE_USER_ROLE_SUCCESS,
+} from '../constants/userProfile';
 import {
     DELETE_USER_PROFILE_FAILED,
     DELETE_USER_PROFILE_LOADING,
@@ -64,12 +70,23 @@ type ResetUpdateUserPasswordStateAction = {
 export const resetUpdateUserPasswordState = (): ResetUpdateUserPasswordStateAction => ({
     type: RESET_UPDATE_USER_PASSWORD_STATE,
 });
+type UpdateUserRoleLoadingAction = {
+    type: typeof UPDATE_USER_ROLE_LOADING;
+};
+type UpdateUserRoleSuccessAction = {
+    type: typeof UPDATE_USER_ROLE_SUCCESS;
+};
+type UpdateUserRoleFailedAction = {
+    type: typeof UPDATE_USER_ROLE_FAILED;
+    error: Error | null;
+};
 
 export const resetUserProfileState = (): ResetUserProfileStateAction => ({
     type: RESET_USER_PROFILE_STATE,
 });
 
 export type UserProfileAction =
+    | ResetUserProfileStateAction
     | GetUserProfileLoadingAction
     | GetUserProfileSuccessAction
     | GetUserProfileFailedAction
@@ -80,7 +97,10 @@ export type UserProfileAction =
     | UpdateUserPasswordLoadingAction
     | UpdateUserPasswordSuccessAction
     | UpdateUserPasswordFailedAction
-    | ResetUpdateUserPasswordStateAction;
+    | ResetUpdateUserPasswordStateAction
+    | UpdateUserRoleLoadingAction
+    | UpdateUserRoleSuccessAction
+    | UpdateUserRoleFailedAction;
 
 export type UserProfileDispatch = ThunkDispatch<DatalensGlobalState, void, UserProfileAction>;
 
@@ -194,5 +214,45 @@ export function updateUserPassword({
                     error: isCanceled ? null : error,
                 });
             });
+    };
+}
+
+export function updateUserRoles(_ /* {
+         userId,
+         oldRoles = [],
+         newRoles = [],
+    } */ : {
+    userId: string;
+    oldRoles: `${UserRole}`[] | undefined;
+    newRoles: `${UserRole}`[] | undefined;
+}) {
+    return async (_dispatch: UserProfileDispatch) => {
+        //     dispatch({type: DELETE_USER_PROFILE_LOADING});
+        //     if (newRoles.length === 0 && !oldRoles.length) {
+        //     }
+        //     try {
+        //         await getSdk().sdk.auth.addUsersRoles({
+        //             deltas: [{role: newRoles[0], subjectId: userId}],
+        //         });
+        //         dispatch({
+        //             type: DELETE_USER_PROFILE_SUCCESS,
+        //         });
+        //     } catch (error) {
+        //         const isCanceled = getSdk().sdk.isCancel(error);
+        //         if (!isCanceled) {
+        //             logger.logError('auth/updateUserRoles failed', error);
+        //             dispatch(
+        //                 showToast({
+        //                     title: error.message,
+        //                     error,
+        //                 }),
+        //             );
+        //         }
+        //         dispatch({
+        //             type: DELETE_USER_PROFILE_FAILED,
+        //             error: isCanceled ? null : error,
+        //         });
+        //         return null;
+        //     }
     };
 }

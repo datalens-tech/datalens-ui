@@ -7,6 +7,7 @@ import {DL} from 'ui/constants';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
 
 import {ChangePasswordDialog} from '../ChangePasswordDialog/ChangePasswordDialog';
+import {ChangeUserRoleDialog} from '../ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from '../DeleteUserDialog/DeleteUserDialog';
 
 const i18n = I18n.keyset('auth.user-profile.view');
@@ -23,6 +24,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
     const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
     const isCurrentUserProfile = DL.USER_ID === id;
 
+    const [assignRoleDialogOpen, setAssignRoleDialogOpen] = React.useState(false);
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
     const [updateUserPasswordOpen, setUpdateUserPasswordOpen] = React.useState(false);
 
@@ -59,7 +61,13 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
             </Section>
             <Section
                 title={i18n('title_permissions')}
-                actions={canChangeUserData && <Button>{i18n('action_assign-role')}</Button>}
+                actions={
+                    canChangeUserData && (
+                        <Button onClick={() => setAssignRoleDialogOpen(true)}>
+                            {i18n('action_assign-role')}
+                        </Button>
+                    )
+                }
             >
                 <DefinitionList>
                     <DefinitionList.Item name={i18n('label_role')}>
@@ -70,6 +78,12 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                         ) : null}
                     </DefinitionList.Item>
                 </DefinitionList>
+                <ChangeUserRoleDialog
+                    open={assignRoleDialogOpen}
+                    onClose={() => setAssignRoleDialogOpen(false)}
+                    userId={id}
+                    userRoles={roles}
+                />
             </Section>
 
             {canChangeUserData && !isCurrentUserProfile && (
