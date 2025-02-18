@@ -68,7 +68,7 @@ export const prepareSourceWithAPIConnector = (source: SourceWithAPIConnector) =>
 };
 
 export const isQLConnectionSource = (source: Source): source is SourceWithQLConnector => {
-    return isString(source.datasetId) && isObject(source.data);
+    return isString(source.qlConnectionId) && isObject(source.data);
 };
 
 export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => {
