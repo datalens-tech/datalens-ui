@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {GatewayError} from '@gravity-ui/gateway';
 import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
@@ -10,7 +9,10 @@ import {showToast} from 'ui/store/actions/toaster';
 
 import {AuthErrorCode} from '../../constants/errors';
 import {resetUpdateUserPasswordState, updateUserPassword} from '../../store/actions/userProfile';
-import {selectUpdateUserPasswordIsLoading} from '../../store/selectors/userProfile';
+import {
+    selectUpdateUserPasswordError,
+    selectUpdateUserPasswordIsLoading,
+} from '../../store/selectors/userProfile';
 
 // import {I18n, i18n} from 'i18n';
 import './ChangePasswordDialog.scss';
@@ -54,6 +56,7 @@ interface ChangeUserPasswordDialogProps {
 
     open: boolean;
     onClose: VoidFunction;
+    onSuccess?: VoidFunction;
 
     isOwnProfile: boolean;
 }
@@ -61,13 +64,13 @@ interface ChangeUserPasswordDialogProps {
 const INITIAL_VALIDATION_STATE = {
     oldPassword: undefined,
     newPassword: undefined,
-    repeatPassword: undefined,
 };
 
 export function ChangePasswordDialog({
     userId,
     open,
     onClose,
+    onSuccess,
     isOwnProfile,
 }: ChangeUserPasswordDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
@@ -77,16 +80,17 @@ export function ChangePasswordDialog({
 
     const infoMessage = isOwnProfile ? '' : i18n('label_admin-notification');
 
-    const [errorMessage, setErrorMessage] = React.useState('');
+    const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
 
     const [validationsStates, setValidationsStates] =
         React.useState<Record<string, undefined | 'invalid'>>(INITIAL_VALIDATION_STATE);
 
     const isLoading = useSelector(selectUpdateUserPasswordIsLoading);
+    const error = useSelector(selectUpdateUserPasswordError);
 
     React.useLayoutEffect(() => {
         if (open) {
-            setErrorMessage('');
+            setErrorMessage(null);
             setValidationsStates(INITIAL_VALIDATION_STATE);
             dispatch(resetUpdateUserPasswordState());
         }
@@ -113,11 +117,12 @@ export function ChangePasswordDialog({
 
     const handleSuccessUpdate = () => {
         dispatch(showToast({title: i18n('label_success-change'), type: 'success'}));
+        onSuccess?.();
         handleClose();
     };
 
-    const handleErrorUpdate = (error: GatewayError) => {
-        if (error.code === AuthErrorCode.IncorrectOldPassword) {
+    const handleErrorUpdate = () => {
+        if (error && 'code' in error && error.code === AuthErrorCode.IncorrectOldPassword) {
             setValidationsStates({
                 ...validationsStates,
                 oldPassword: 'invalid',
@@ -127,14 +132,13 @@ export function ChangePasswordDialog({
     };
 
     const handleApplyChangePassword = () => {
-        setErrorMessage('');
+        setErrorMessage(null);
         setValidationsStates(INITIAL_VALIDATION_STATE);
         if (isOwnProfile && newPassword !== repeatPassword) {
             setErrorMessage(i18n('label_error-passwords-not-match'));
             setValidationsStates({
                 ...validationsStates,
                 newPassword: 'invalid',
-                repeatPassword: 'invalid',
             });
             return;
         }
@@ -154,7 +158,7 @@ export function ChangePasswordDialog({
 
     const handleFormChange = () => {
         if (errorMessage) {
-            setErrorMessage('');
+            setErrorMessage(null);
             setValidationsStates(INITIAL_VALIDATION_STATE);
         }
     };
@@ -183,6 +187,7 @@ export function ChangePasswordDialog({
                                     onUpdate={handleOldPasswordChange}
                                     validationState={validationsStates.oldPassword}
                                     hideCopyButton={true}
+                                    autoComplete="current-password"
                                 />
                             </FormRow>
                         )}
@@ -192,6 +197,7 @@ export function ChangePasswordDialog({
                                 onUpdate={handleNewPasswordChange}
                                 validationState={validationsStates.newPassword}
                                 hideCopyButton={true}
+                                autoComplete="new-password"
                             />
                         </FormRow>
                         {isOwnProfile && (
@@ -199,8 +205,9 @@ export function ChangePasswordDialog({
                                 <PasswordInput
                                     value={repeatPassword}
                                     onUpdate={handleRepeatPasswordChange}
-                                    validationState={validationsStates.repeatPassword}
+                                    validationState={validationsStates.newPassword}
                                     hideCopyButton={true}
+                                    autoComplete="new-password"
                                 />
                             </FormRow>
                         )}
