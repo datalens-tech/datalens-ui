@@ -1,0 +1,9 @@
+{
+  "action_user-roles-change-apply": "Сохранить",
+  "action_user-roles-change-cancel": "Отменить",
+  "label_base-role": "Базовая роль",
+  "label_failed-to-change-roles": "Не удалось изменить роли пользователя",
+  "label_includes-permissions-from": "Включает в себя права",
+  "label_select-role": "Выберите роль",
+  "title_update-role": "Изменить роль"
+}
