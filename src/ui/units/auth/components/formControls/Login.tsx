@@ -3,6 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
@@ -14,16 +15,7 @@ import './formControls.scss';
 
 const b = block('user-info-form-controls');
 
-// TODO: add title to translations
-// const i18n = I18n.keyset('auth.user-form-controls.view');
-const i18n = (key: string) => {
-    switch (key) {
-        case 'label_login':
-            return 'Login';
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.form-controls');
 
 export const Login = ({autoComplete, ...props}: UserFormInputProps) => {
     const dispatch = useDispatch();
