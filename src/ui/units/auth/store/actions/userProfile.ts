@@ -1,11 +1,12 @@
+import type {GatewayError} from '@gravity-ui/gateway';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
-import type {SdkError} from 'ui/libs/schematic-sdk';
-import {getSdk, isSdkError} from 'ui/libs/schematic-sdk';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
+import {isGatewayError} from '../../../../../server/utils/gateway';
 import {
     DELETE_USER_PROFILE_FAILED,
     DELETE_USER_PROFILE_LOADING,
@@ -162,7 +163,7 @@ export function updateUserPassword({
 }: {
     data: {userId: string; newPassword: string; oldPassword?: string};
     onSuccess?: () => void;
-    onError?: (error: SdkError) => void;
+    onError?: (error: GatewayError) => void;
 }) {
     return (dispatch: UserProfileDispatch) => {
         dispatch({type: UPDATE_USER_PASSWORD_LOADING});
@@ -197,8 +198,8 @@ export function updateUserPassword({
                     error: isCanceled ? null : error,
                 });
 
-                if (isSdkError(error)) {
-                    onError?.(error);
+                if (isGatewayError(error)) {
+                    onError?.(error.error);
                 }
             });
     };

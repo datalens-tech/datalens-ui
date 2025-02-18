@@ -1,10 +1,10 @@
 import React, {useRef} from 'react';
 
 import {FormRow} from '@gravity-ui/components';
+import type {GatewayError} from '@gravity-ui/gateway';
 import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
 
@@ -115,7 +115,7 @@ export function ChangePasswordDialog({
         handleClose();
     };
 
-    const handleErrorUpdate = (error: SdkError) => {
+    const handleErrorUpdate = (error: GatewayError) => {
         if (error.code === AuthErrorCode.IncorrectOldPassword) {
             setValidationsStates({
                 ...validationsStates,
