@@ -37,7 +37,7 @@ const b = block('service-settings-users-list');
 // const i18nMain = I18n.keyset('service-settings.main.view');
 // const i18n = I18n.keyset('service-settings.users-list.view');
 
-const USERS_PAGE_SIZE = 3;
+const USERS_PAGE_SIZE = 15;
 
 const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
 
