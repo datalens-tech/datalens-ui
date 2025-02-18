@@ -72,7 +72,7 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
             return {
                 ...state,
                 createUser: {
-                    ...state.getUsersList,
+                    ...state.createUser,
                     isLoading: true,
                     error: null,
                 },
@@ -82,7 +82,7 @@ export const serviceSettings = (state = initialState, action: ServiceSettingsAct
             return {
                 ...state,
                 createUser: {
-                    ...state.getUsersList,
+                    ...state.createUser,
                     isLoading: false,
                     data: action.payload,
                 },
