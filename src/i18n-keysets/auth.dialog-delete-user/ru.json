@@ -1,0 +1,8 @@
+{
+  "action_user-profile-deletion-cancel": "Отменить",
+  "action_user-profile-deletion-confirm": "Удалить пользователя",
+  "label_delete-user-confirmation": "Пользователь будет удален, и не сможет больше пользоваться сервисом Datalens. Вы уверены?",
+  "label_delete-user-failure": "Не удалось далить пользователя",
+  "label_delete-user-success": "Пользователь успешно удален",
+  "title_delete-user": "Удалить пользователя"
+}
