@@ -21,12 +21,14 @@ export type SourceControlDistinctsRequestWithDataset = {
     sourceArgs: SourceControlArgs;
     middlewareUrl: MiddlewareUrl;
     datasetId: string;
-} & Omit<ApiV2Request, 'data'>;
+    path: string;
+} & Omit<ApiV2Request, 'data' | 'url'>;
 
 export type SourceControlDistinctsOldRequest = ApiV2Request;
 
 export type SourceControlFieldsRequest = {
-    url: string;
+    path: string;
+    datasetId: string;
 };
 
 export type SourceControlTypedQueryRequest = Optional<Source<ConnectionTypedQueryApiRequest>, 'ui'>;
