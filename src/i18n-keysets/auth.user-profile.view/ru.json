@@ -1,15 +1,16 @@
 {
-  "action_assign-role": "Добавить роль",
-  "action_change-password": "Изменить пароль",
-  "action_delete-user": "Удалить пользователя",
-  "action_edit-profile": "Редактировать профиль",
-  "label_email": "Email",
-  "label_failed-to-load-user": "Не удалось загрузить пользователя",
+  "action_assign-role": "Изменить роль",
+  "action_change-password": "Поменять пароль",
+  "action_delete-user": "Удалить пользователя ",
+  "action_edit-profile": "Редактировать аккаунт",
+  "label_email": "Почта",
+  "label_failed-to-load-user": "Не удалось загрузить аккаунт пользователя",
+  "label_first-name": "Имя",
+  "label_last-name": "Фамилия",
   "label_login": "Логин",
-  "label_name": "Имя",
   "label_role": "Роль",
-  "label_user-id": "ID пользователя",
-  "title_administration": "Администрирование",
-  "title_permissions": "Доступы",
-  "title_profile": "Профиль"
+  "label_user-id": "id пользователя",
+  "title_administration": "Администрирование ",
+  "title_permissions": "Доступы ",
+  "title_profile": "Аккаунт"
 }

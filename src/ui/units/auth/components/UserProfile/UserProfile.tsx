@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {Button, DefinitionList, Flex, Text, spacing} from '@gravity-ui/uikit';
-import {I18n, i18n as i18nInitial} from 'i18n';
+import {I18n} from 'i18n';
 import {useHistory} from 'react-router';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {DL} from 'ui/constants';
@@ -52,16 +52,10 @@ export function UserProfile({firstName, lastName, login, email, id, roles}: User
                 }
             >
                 <DefinitionList>
-                    <DefinitionList.Item
-                        // TODO: @darialari - replace keyset
-                        name={i18nInitial('auth.form-controls', 'label_first-name')}
-                    >
+                    <DefinitionList.Item name={i18n('label_first-name')}>
                         {firstName}
                     </DefinitionList.Item>
-                    <DefinitionList.Item
-                        // TODO: @darialari - replace keyset
-                        name={i18nInitial('auth.form-controls', 'label_last-name')}
-                    >
+                    <DefinitionList.Item name={i18n('label_last-name')}>
                         {lastName}
                     </DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_login')}>{login}</DefinitionList.Item>

@@ -1,15 +1,16 @@
 {
-  "action_assign-role": "Assign role",
-  "action_change-password": "Change password",
-  "action_delete-user": "Delete user",
-  "action_edit-profile": "Edit profile",
+  "action_assign-role": "Change role",
+  "action_change-password": "Change password ",
+  "action_delete-user": "Delete user ",
+  "action_edit-profile": "Edit account",
   "label_email": "Email",
-  "label_failed-to-load-user": "Failed to load user",
+  "label_failed-to-load-user": "Failed to load user account",
+  "label_first-name": "First name",
+  "label_last-name": "Last name",
   "label_login": "Login",
-  "label_name": "Name",
   "label_role": "Role",
-  "label_user-id": "User ID",
-  "title_administration": "Administration",
-  "title_permissions": "Permissions",
-  "title_profile": "Profile"
+  "label_user-id": "User id",
+  "title_administration": "Administration ",
+  "title_permissions": "Permissions ",
+  "title_profile": "Account"
 }
