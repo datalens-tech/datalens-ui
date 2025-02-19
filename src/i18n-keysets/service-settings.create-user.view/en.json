@@ -1,6 +1,6 @@
 {
   "button_cancel": "Cancel",
-  "button_create": "Create",
-  "label_success-user-creation": "User created successfully",
-  "title_create-user": "Create User"
+  "button_create": "Add",
+  "label_success-user-creation": "User added successfully",
+  "title_create-user": "Create user"
 }

@@ -1,8 +1,8 @@
 {
   "label_email": "Email",
-  "label_first-name": "First Name",
-  "label_last-name": "Last Name",
-  "label_login": "Login",
+  "label_first-name": "First name",
+  "label_last-name": "Last name",
+  "label_login": "Username",
   "label_password": "Password",
   "label_repeat-password": "Repeat password",
   "label_roles": "Role"
