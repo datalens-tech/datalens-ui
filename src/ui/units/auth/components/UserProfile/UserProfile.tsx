@@ -2,11 +2,13 @@ import * as React from 'react';
 
 import {Button, DefinitionList, Flex, Text, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import {useHistory} from 'react-router';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {DL} from 'ui/constants';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
 
 import {ChangePasswordDialog} from '../ChangePasswordDialog/ChangePasswordDialog';
+import {ChangeUserRoleDialog} from '../ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from '../DeleteUserDialog/DeleteUserDialog';
 
 const i18n = I18n.keyset('auth.user-profile.view');
@@ -23,8 +25,15 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
     const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
     const isCurrentUserProfile = DL.USER_ID === id;
 
+    const history = useHistory();
+
+    const [assignRoleDialogOpen, setAssignRoleDialogOpen] = React.useState(false);
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
     const [updateUserPasswordOpen, setUpdateUserPasswordOpen] = React.useState(false);
+
+    const handleUserDeleteSuccess = React.useCallback(() => {
+        history.push('/settings/users');
+    }, [history]);
 
     return (
         <Flex direction="column" gap={10} width={490}>
@@ -59,7 +68,13 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
             </Section>
             <Section
                 title={i18n('title_permissions')}
-                actions={canChangeUserData && <Button>{i18n('action_assign-role')}</Button>}
+                actions={
+                    canChangeUserData && (
+                        <Button onClick={() => setAssignRoleDialogOpen(true)}>
+                            {i18n('action_assign-role')}
+                        </Button>
+                    )
+                }
             >
                 <DefinitionList>
                     <DefinitionList.Item name={i18n('label_role')}>
@@ -70,6 +85,12 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                         ) : null}
                     </DefinitionList.Item>
                 </DefinitionList>
+                <ChangeUserRoleDialog
+                    open={assignRoleDialogOpen}
+                    onClose={() => setAssignRoleDialogOpen(false)}
+                    userId={id}
+                    userRoles={roles}
+                />
             </Section>
 
             {canChangeUserData && !isCurrentUserProfile && (
@@ -87,6 +108,7 @@ export function UserProfile({displayName, login, email, id, roles}: UserProfileP
                     <DeleteUserDialog
                         open={deleteUserDialogOpen}
                         onClose={() => setDeleteUserDialogOpen(false)}
+                        onSuccess={handleUserDeleteSuccess}
                         userId={id}
                     />
                 </Section>

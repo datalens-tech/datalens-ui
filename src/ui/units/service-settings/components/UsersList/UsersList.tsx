@@ -18,7 +18,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
+import {reducerRegistry} from 'ui/store';
+import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
+import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/DeleteUserDialog';
 
+import {reducer} from '../../../../units/auth/store/reducers';
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
 import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
 import {
@@ -33,6 +37,7 @@ import type {BaseFiltersNames} from './constants';
 
 import './UsersList.scss';
 
+reducerRegistry.register({auth: reducer});
 const b = block('service-settings-users-list');
 // const i18nMain = I18n.keyset('service-settings.main.view');
 // const i18n = I18n.keyset('service-settings.users-list.view');
@@ -94,9 +99,19 @@ const UsersList = () => {
 
     const dispatch = useDispatch<ServiceSettingsDispatch>();
 
+    const [assignRoleDialogOpenForUser, setAssignRoleDialogOpenForUser] = React.useState<
+        ListUser | undefined
+    >();
+    const [deleteUserDialogOpenForUser, setDeleteUserDialogOpenForUser] = React.useState<
+        ListUser | undefined
+    >();
+
     React.useEffect(() => {
-        dispatch(resetServiceUsersList());
         dispatch(getUsersList({pageSize: USERS_PAGE_SIZE}));
+
+        return () => {
+            dispatch(resetServiceUsersList());
+        };
     }, [dispatch]);
 
     const handleFilterChange = React.useCallback(
@@ -141,7 +156,17 @@ const UsersList = () => {
         [history],
     );
 
-    const getRowActions = React.useCallback((_item: ListUser): TableAction<ListUser>[] => {
+    const resetTable = React.useCallback(() => {
+        dispatch(resetServiceUsersList());
+        dispatch(
+            getUsersList({
+                pageSize: USERS_PAGE_SIZE,
+                ...filters,
+            }),
+        );
+    }, [dispatch, filters]);
+
+    const getRowActions = React.useCallback((item: ListUser): TableAction<ListUser>[] => {
         return [
             {
                 text: 'Edit profile',
@@ -149,7 +174,7 @@ const UsersList = () => {
             },
             {
                 text: 'Assign role',
-                handler: () => null,
+                handler: () => setAssignRoleDialogOpenForUser(item),
             },
             {
                 text: 'Change password',
@@ -157,7 +182,7 @@ const UsersList = () => {
             },
             {
                 text: 'Delete',
-                handler: () => null,
+                handler: () => setDeleteUserDialogOpenForUser(item),
                 theme: 'danger',
             },
         ];
@@ -170,6 +195,23 @@ const UsersList = () => {
 
         return (
             <React.Fragment>
+                {assignRoleDialogOpenForUser && (
+                    <ChangeUserRoleDialog
+                        open
+                        onClose={() => setAssignRoleDialogOpenForUser(undefined)}
+                        userId={assignRoleDialogOpenForUser.userId}
+                        userRoles={assignRoleDialogOpenForUser.roles}
+                        onSuccess={resetTable}
+                    />
+                )}
+                {deleteUserDialogOpenForUser && (
+                    <DeleteUserDialog
+                        open
+                        onClose={() => setDeleteUserDialogOpenForUser(undefined)}
+                        onSuccess={resetTable}
+                        userId={deleteUserDialogOpenForUser.userId}
+                    />
+                )}
                 <TableWithActions
                     className={b('table')}
                     data={displayedUsers}

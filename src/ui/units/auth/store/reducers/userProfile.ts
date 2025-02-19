@@ -13,6 +13,9 @@ import {
     UPDATE_USER_PASSWORD_FAILED,
     UPDATE_USER_PASSWORD_LOADING,
     UPDATE_USER_PASSWORD_SUCCESS,
+    UPDATE_USER_ROLE_FAILED,
+    UPDATE_USER_ROLE_LOADING,
+    UPDATE_USER_ROLE_SUCCESS,
 } from '../constants/userProfile';
 
 interface UserProfileState {
@@ -29,6 +32,10 @@ interface UserProfileState {
         isLoading: boolean;
         error: Error | null;
     };
+    updateRole: {
+        isLoading: boolean;
+        error: Error | null;
+    };
 }
 
 const initialState: UserProfileState = {
@@ -42,6 +49,10 @@ const initialState: UserProfileState = {
         error: null,
     },
     updatePassword: {
+        isLoading: false,
+        error: null,
+    },
+    updateRole: {
         isLoading: false,
         error: null,
     },
@@ -158,6 +169,37 @@ export const userProfileReducer = (
             return {
                 ...state,
                 updatePassword: {...initialState.updatePassword},
+            };
+        }
+
+        case UPDATE_USER_ROLE_LOADING: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_ROLE_SUCCESS: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
+                    isLoading: false,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_ROLE_FAILED: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
+                    isLoading: false,
+                    error: action.error,
+                },
             };
         }
 
