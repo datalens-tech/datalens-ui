@@ -1,10 +1,10 @@
 {
-  "button_sign-in": "Sign In",
-  "label_error-incorrect-fields": "Incorrect Login or Password. Check if everything is correct and try again",
-  "label_error-required-fields": "The required fields must be filled in",
-  "label_login-placeholder": "Login",
+  "button_sign-in": "Sign in",
+  "label_error-incorrect-fields": "Incorrect username or password. Check that everything is correct and try again.",
+  "label_error-required-fields": "Enter username and password",
+  "label_login-placeholder": "Username",
   "label_password-placeholder": "Password",
   "label_sign-up-hint": "Don't have an account?",
-  "label_sing-up-link": "Sign Up",
+  "label_sing-up-link": "Sign up",
   "title_product": "DataLens"
 }
