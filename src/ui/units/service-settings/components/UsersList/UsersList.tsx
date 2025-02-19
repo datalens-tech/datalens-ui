@@ -107,7 +107,6 @@ const UsersList = () => {
     >();
 
     React.useEffect(() => {
-        dispatch(resetServiceUsersList());
         dispatch(getUsersList({pageSize: USERS_PAGE_SIZE}));
 
         return () => {
