@@ -15,6 +15,7 @@ import {resolveChartConfig} from './utils';
 type RunControllerExtraSettings = {
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
+    includeServicePlan?: boolean;
 };
 
 export const runController = (
@@ -104,18 +105,6 @@ export const runController = (
                 ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
                 res.status(400).send({
                     error: `Unknown config type ${configType}`,
-                });
-                return;
-            }
-
-            // TODO: remove this condition and corresponded code block after ChartEditor unit migrating
-            if (
-                !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
-                runnerFound.name === 'editor'
-            ) {
-                ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
-                res.status(400).send({
-                    error: 'ChartEditor is disabled',
                 });
                 return;
             }
