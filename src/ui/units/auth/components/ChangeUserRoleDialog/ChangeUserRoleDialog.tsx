@@ -108,6 +108,12 @@ export function ChangeUserRoleDialog({
     const initialRole = getMaxRoleOfSelected(userRoles);
     const [roles, setRoles] = React.useState(initialRole ? [initialRole] : []);
 
+    React.useEffect(() => {
+        if (open) {
+            setRoles(initialRole ? [initialRole] : []);
+        }
+    }, [open, initialRole]);
+
     const handleUpdateUserRoles = () => {
         const handleSuccess = () => {
             onClose();

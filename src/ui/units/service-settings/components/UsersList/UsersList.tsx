@@ -157,17 +157,7 @@ const UsersList = () => {
         [history],
     );
 
-    const handleUserDeleteSuccess = React.useCallback(() => {
-        dispatch(resetServiceUsersList());
-        dispatch(
-            getUsersList({
-                pageSize: USERS_PAGE_SIZE,
-                ...filters,
-            }),
-        );
-    }, [dispatch, filters]);
-
-    const handleUserRoleChangeSuccess = React.useCallback(() => {
+    const resetTable = React.useCallback(() => {
         dispatch(resetServiceUsersList());
         dispatch(
             getUsersList({
@@ -208,18 +198,18 @@ const UsersList = () => {
             <React.Fragment>
                 {assignRoleDialogOpenForUser && (
                     <ChangeUserRoleDialog
-                        open={Boolean(assignRoleDialogOpenForUser)}
+                        open
                         onClose={() => setAssignRoleDialogOpenForUser(undefined)}
                         userId={assignRoleDialogOpenForUser.userId}
                         userRoles={assignRoleDialogOpenForUser.roles}
-                        onSuccess={handleUserRoleChangeSuccess}
+                        onSuccess={resetTable}
                     />
                 )}
                 {deleteUserDialogOpenForUser && (
                     <DeleteUserDialog
                         open
                         onClose={() => setDeleteUserDialogOpenForUser(undefined)}
-                        onSuccess={handleUserDeleteSuccess}
+                        onSuccess={resetTable}
                         userId={deleteUserDialogOpenForUser.userId}
                     />
                 )}
