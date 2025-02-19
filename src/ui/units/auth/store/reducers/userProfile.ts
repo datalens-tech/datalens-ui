@@ -8,7 +8,14 @@ import {
     GET_USER_PROFILE_FAILED,
     GET_USER_PROFILE_LOADING,
     GET_USER_PROFILE_SUCCESS,
+    RESET_UPDATE_USER_PASSWORD_STATE,
     RESET_USER_PROFILE_STATE,
+    UPDATE_USER_PASSWORD_FAILED,
+    UPDATE_USER_PASSWORD_LOADING,
+    UPDATE_USER_PASSWORD_SUCCESS,
+    UPDATE_USER_ROLE_FAILED,
+    UPDATE_USER_ROLE_LOADING,
+    UPDATE_USER_ROLE_SUCCESS,
 } from '../constants/userProfile';
 
 interface UserProfileState {
@@ -21,6 +28,14 @@ interface UserProfileState {
         isLoading: boolean;
         error: Error | null;
     };
+    updatePassword: {
+        isLoading: boolean;
+        error: Error | null;
+    };
+    updateRole: {
+        isLoading: boolean;
+        error: Error | null;
+    };
 }
 
 const initialState: UserProfileState = {
@@ -30,6 +45,14 @@ const initialState: UserProfileState = {
         error: null,
     },
     deleteProfile: {
+        isLoading: false,
+        error: null,
+    },
+    updatePassword: {
+        isLoading: false,
+        error: null,
+    },
+    updateRole: {
         isLoading: false,
         error: null,
     },
@@ -105,6 +128,75 @@ export const userProfileReducer = (
                 ...state,
                 deleteProfile: {
                     ...state.deleteProfile,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case UPDATE_USER_PASSWORD_LOADING: {
+            return {
+                ...state,
+                updatePassword: {
+                    ...state.updatePassword,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_PASSWORD_SUCCESS: {
+            return {
+                ...state,
+                updatePassword: {
+                    ...state.updatePassword,
+                    isLoading: false,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_PASSWORD_FAILED: {
+            return {
+                ...state,
+                updatePassword: {
+                    ...state.updatePassword,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case RESET_UPDATE_USER_PASSWORD_STATE: {
+            return {
+                ...state,
+                updatePassword: {...initialState.updatePassword},
+            };
+        }
+
+        case UPDATE_USER_ROLE_LOADING: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_ROLE_SUCCESS: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
+                    isLoading: false,
+                    error: null,
+                },
+            };
+        }
+        case UPDATE_USER_ROLE_FAILED: {
+            return {
+                ...state,
+                updateRole: {
+                    ...state.updateRole,
                     isLoading: false,
                     error: action.error,
                 },

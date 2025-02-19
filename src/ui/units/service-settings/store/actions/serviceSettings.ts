@@ -1,13 +1,21 @@
 import logger from 'libs/logger';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {UserRole} from 'shared/components/auth/constants/role';
-import type {GetUsersListResponse} from 'shared/schema/auth/types/users';
+import type {
+    CreateUserArgs,
+    CreateUserResponse,
+    GetUsersListResponse,
+} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {
+    RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    SET_CREATE_USER_FAILED,
+    SET_CREATE_USER_LOADING,
+    SET_CREATE_USER_SUCCESS,
     SET_SERVICE_USERS_LIST_FAILED,
     SET_SERVICE_USERS_LIST_LOADING,
     SET_SERVICE_USERS_LIST_SUCCESS,
@@ -17,7 +25,11 @@ export type ServiceSettingsActions =
     | SetServiceUsersListLoadingAction
     | SetServiceUsersListSuccessAction
     | SetServiceUsersListFailedAction
-    | ResetServiceUsersListAction;
+    | ResetServiceUsersListAction
+    | SetCreateUserLoadingAction
+    | SetCreateUserSuccessAction
+    | SetCreateUserFailedAction
+    | ResetCreateUserAction;
 
 export type ServiceSettingsDispatch = ThunkDispatch<
     DatalensGlobalState,
@@ -89,6 +101,73 @@ export const getUsersList = ({
             dispatch({
                 type: SET_SERVICE_USERS_LIST_FAILED,
                 error,
+            });
+        }
+    };
+};
+
+type SetCreateUserLoadingAction = {
+    type: typeof SET_CREATE_USER_LOADING;
+};
+type SetCreateUserSuccessAction = {
+    type: typeof SET_CREATE_USER_SUCCESS;
+    payload: CreateUserResponse;
+};
+type SetCreateUserFailedAction = {
+    type: typeof SET_CREATE_USER_FAILED;
+    error: Error;
+};
+type ResetCreateUserAction = {
+    type: typeof RESET_CREATE_USER;
+};
+
+export const resetCreateUser = (): ResetCreateUserAction => ({
+    type: RESET_CREATE_USER,
+});
+
+export const createUser = ({
+    onSuccess,
+    userData,
+}: {
+    userData: CreateUserArgs;
+    onSuccess?: () => void;
+}) => {
+    return async (dispatch: ServiceSettingsDispatch) => {
+        try {
+            dispatch({
+                type: SET_CREATE_USER_LOADING,
+            });
+            // clean empty fields
+            const preparedData: CreateUserArgs = {...userData};
+            Object.entries(preparedData).forEach(([key, value]) => {
+                if (!value) {
+                    delete preparedData[key as keyof CreateUserArgs];
+                }
+            });
+            const data = await getSdk().sdk.auth.createUser(preparedData, {
+                concurrentId: 'serviceSettings/createUser',
+            });
+            onSuccess?.();
+            dispatch({
+                type: SET_CREATE_USER_SUCCESS,
+                payload: data,
+            });
+        } catch (error) {
+            const isCanceled = getSdk().sdk.isCancel(error);
+
+            if (!isCanceled) {
+                logger.logError('serviceSettings/createUser failed', error);
+                dispatch(
+                    showToast({
+                        title: error.message,
+                        error,
+                    }),
+                );
+            }
+
+            dispatch({
+                type: SET_CREATE_USER_FAILED,
+                error: isCanceled ? null : error,
             });
         }
     };

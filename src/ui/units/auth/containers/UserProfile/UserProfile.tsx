@@ -13,7 +13,6 @@ import {
     selectUserProfileError,
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
-import {getUserDisplayName} from '../../utils/userProfile';
 
 /* TODO: add title translations */
 const i18n = (_: string, _key: string) => {
@@ -27,27 +26,26 @@ export function UserProfile({userId}: {userId: string}) {
     const isUserProfileLoading = useSelector(selectUserProfileIsLoading);
     const error = useSelector(selectUserProfileError);
 
-    React.useEffect(() => {
-        if (userId) {
-            dispatch(getUserProfile({userId}));
-        }
+    const shouldReloadUser =
+        userId && userProfile?.userId !== userId && !isUserProfileLoading && !error;
 
+    React.useEffect(() => {
         return () => {
             dispatch(resetUserProfileState());
         };
     }, [dispatch, userId]);
 
     React.useEffect(() => {
-        if (!userId || userId !== userProfile?.userId) {
-            dispatch(resetUserProfileState);
+        if (shouldReloadUser) {
+            dispatch(getUserProfile({userId}));
         }
-    }, [dispatch, userId, userProfile]);
+    }, [dispatch, userId, shouldReloadUser]);
 
     if (isUserProfileLoading) {
         return <SmartLoader size="l" disableStretch />;
     }
 
-    if (error || !userProfile) {
+    if (error) {
         return (
             <PlaceholderIllustration
                 name="badRequest"
@@ -56,9 +54,14 @@ export function UserProfile({userId}: {userId: string}) {
             />
         );
     }
+    if (!userProfile) {
+        return null;
+    }
+
     return (
         <Profile
-            displayName={getUserDisplayName(userProfile, false)}
+            firstName={userProfile.firstName || undefined}
+            lastName={userProfile.lastName || undefined}
             login={userProfile.login}
             email={userProfile.email}
             id={userProfile.userId}

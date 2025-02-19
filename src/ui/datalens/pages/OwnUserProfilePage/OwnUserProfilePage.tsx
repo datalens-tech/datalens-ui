@@ -2,7 +2,7 @@ import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 /* import {I18n} from 'i18n'; */
 import React from 'react';
 import block from 'bem-cn-lite';
-import {UserProfile} from 'ui/units/auth/components/UserProfile/UserProfile';
+import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
 import {reducer} from '../../../units/auth/store/reducers';
 
 import {reducerRegistry} from 'ui/store';
@@ -30,7 +30,7 @@ const i18n = (key: string) => {
 
 function OwnUserProfilePage() {
     const pageTitle = i18n('title_profile');
-    const {displayName, login, email, uid, roles} = DL.USER;
+    const {uid} = DL.USER;
 
     return (
         <main className={b()}>
@@ -43,13 +43,7 @@ function OwnUserProfilePage() {
                 }
             />
             <Flex justifyContent="center" className={b('content')}>
-                <UserProfile
-                    displayName={displayName}
-                    login={login}
-                    email={email}
-                    id={uid}
-                    roles={roles}
-                />
+                <UserProfile userId={uid} />
             </Flex>
         </main>
     );
