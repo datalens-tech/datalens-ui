@@ -9,8 +9,7 @@ import {DL} from 'ui/constants';
 import './MainPage.scss';
 
 const b = block('service-settings');
-// const i18n = I18n.keyset('service-settings.main.view');
-const i18n = I18n.keyset('main.service-settings.view');
+const i18n = I18n.keyset('service-settings.main.view');
 
 const ColorPaintsPage = React.lazy(
     () => import('../../components/SectionColorPalettes/SectionColorPalettes'),
