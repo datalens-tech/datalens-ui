@@ -13,7 +13,6 @@ import {
     selectUserProfileError,
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
-import {getUserDisplayName} from '../../utils/userProfile';
 
 /* TODO: add title translations */
 const i18n = (_: string, _key: string) => {
@@ -58,7 +57,8 @@ export function UserProfile({userId}: {userId: string}) {
     }
     return (
         <Profile
-            displayName={getUserDisplayName(userProfile, false)}
+            firstName={userProfile.firstName || undefined}
+            lastName={userProfile.lastName || undefined}
             login={userProfile.login}
             email={userProfile.email}
             id={userProfile.userId}
