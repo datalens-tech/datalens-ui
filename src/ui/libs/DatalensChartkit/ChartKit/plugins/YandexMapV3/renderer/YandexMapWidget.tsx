@@ -45,6 +45,9 @@ function getMapObject(item: SingleItem) {
                     fill: item.options?.fillColor,
                     fillOpacity: item.options?.opacity,
                 },
+                properties: {
+                    hint: item.feature.properties,
+                },
             };
         }
         case 'Rectangle': {
@@ -59,6 +62,9 @@ function getMapObject(item: SingleItem) {
                     fill: item.options?.fillColor,
                     fillOpacity: item.options?.opacity,
                 },
+                properties: {
+                    hint: item.feature.properties,
+                },
             };
         }
         case 'LineString':
@@ -72,6 +78,9 @@ function getMapObject(item: SingleItem) {
                     stroke: [{
                         width: item.options?.strokeWidth,
                     }],
+                },
+                properties: {
+                    hint: item.feature.properties,
                 },
             };
         }
@@ -147,10 +156,9 @@ export const YandexMapWidget = React.forwardRef<ChartKitWidgetRef | undefined, Y
     function getPointObject(item: SingleItem) {
         return {
             coordinates: reverseCoordinates(item.feature.geometry.coordinates),
-            properties: item.feature.properties,
-            popup: {
-                content: '123'
-            }
+            properties: {
+                hint: item.feature.properties,
+            },
         };
     }
 

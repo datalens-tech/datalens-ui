@@ -1,3 +1,29 @@
-.ymap-tooltip {
-	background-color: var(--g-color-base-background);
+.yandex-map-tooltip {
+	border-radius: 3px;
+	background-color: var(--g-color-infographics-tooltip-bg);
+	padding: 10px 14px;
+	font-size: 12px;
+	box-sizing: border-box;
+	box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+
+	margin: 12px;
+
+	&__title {
+		white-space: nowrap;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	&__row {
+        display: table-row;
+    }
+
+    &__cell {
+		white-space: nowrap;
+        display: table-cell;
+        padding: 2px 7px 2px 0;
+        max-width: 370px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
 }
