@@ -1,6 +1,6 @@
 {
-  "button_cancel": "Отмена",
-  "button_create": "Создать",
-  "label_success-user-creation": "Пользователь создан успешно",
-  "title_create-user": "Создать пользователя"
+  "button_cancel": "Отменить",
+  "button_create": "Добавить",
+  "label_success-user-creation": "Пользователь успешно добавлен",
+  "title_create-user": "Добавление пользователя"
 }
