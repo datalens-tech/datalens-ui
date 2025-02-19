@@ -3,6 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
@@ -17,16 +18,7 @@ import './formControls.scss';
 
 const b = block('user-info-form-controls');
 
-// TODO: add title to translations
-// const i18n = I18n.keyset('auth.user-form-controls.view');
-const i18n = (key: string) => {
-    switch (key) {
-        case 'label_roles':
-            return 'Role';
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.form-controls');
 
 export const Roles = (props: UserFormSelectProps) => {
     const dispatch = useDispatch();
