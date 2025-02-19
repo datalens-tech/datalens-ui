@@ -184,7 +184,7 @@ export function ChangePasswordDialog({
     const message = errorMessage || infoMessage;
 
     return (
-        <Dialog size="m" open={open} onClose={handleClose} onEnterKeyDown={handleClose}>
+        <Dialog size="m" open={open} onClose={handleClose} onEscapeKeyDown={handleClose}>
             <Dialog.Header caption={i18n('title_change-password')} />
             <Dialog.Body>
                 <Flex gap={4} direction="column">
