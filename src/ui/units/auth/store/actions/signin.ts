@@ -25,9 +25,11 @@ export const submitSigninForm = ({onError}: {onError?: (error: SdkError) => void
         const {sdk} = getSdk();
         const {login, password} = getState().auth.signin;
 
+        const preparedLogin = login.trim();
+
         return sdk.auth.auth
             .signin({
-                login,
+                login: preparedLogin,
                 password,
             })
             .then(() => {
