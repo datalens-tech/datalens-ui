@@ -15,7 +15,7 @@ import {Signup} from '../Signup/Signup';
 
 import {useAuthPageInit} from './useAuthPageInit';
 
-export function AuthPage() {
+export function AuthPage({additionalSigninRoutes}: {additionalSigninRoutes?: React.ReactNode[]}) {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
 
@@ -38,6 +38,7 @@ export function AuthPage() {
             <Switch>
                 {needToSign && <Route path={AUTH_ROUTE.SIGNIN} component={Signin} />}
                 {needToSign && <Route path={AUTH_ROUTE.SIGNUP} component={Signup} />}
+                {additionalSigninRoutes?.map((route) => needToSign && route)}
                 <Route path={AUTH_ROUTE.RELOAD} component={Reload} />
                 <Route path={AUTH_ROUTE.LOGOUT} component={Logout} />
                 <Redirect to="/" />
