@@ -3,6 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
@@ -12,44 +13,11 @@ import {AuthErrorCode} from '../../constants/errors';
 import {resetUpdateUserPasswordState, updateUserPassword} from '../../store/actions/userProfile';
 import {selectUpdateUserPasswordIsLoading} from '../../store/selectors/userProfile';
 
-// import {I18n, i18n} from 'i18n';
 import './ChangePasswordDialog.scss';
 
 const b = block('change-user-password-dialog');
 
-// TODO: add translations
-// const i18n = I18n.keyset('auth.dialog-change-password.view');
-
-const i18n = (key: string) => {
-    switch (key) {
-        case 'title_change-password':
-            return 'Change password';
-        case 'label_old-password':
-            return 'Old password';
-        case 'label_new-password':
-            return 'New password';
-        case 'label_repeat-password':
-            return 'Repeat';
-        case 'label_password':
-            return 'Password';
-        case 'label_error-passwords-not-match':
-            return "Passwords don't match";
-        case 'label_error-required-fields':
-            return 'Required fields must be filled';
-        case 'label_error-incorrect-old-password':
-            return 'Incorrect old password';
-        case 'label_admin-notification':
-            return 'Since this is a temporary password ask the employee to change it';
-        case 'label_success-change':
-            return 'Password has been successfully changed';
-        case 'button_save':
-            return 'Save';
-        case 'button_cancel':
-            return 'Cancel';
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.dialog-change-password');
 
 interface ChangeUserPasswordDialogProps {
     userId: string;
