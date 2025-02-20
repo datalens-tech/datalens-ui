@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {Button, Flex, Text, spacing} from '@gravity-ui/uikit';
-import {I18n} from 'i18n';
+// import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {showToast} from 'ui/store/actions/toaster';
@@ -22,7 +22,22 @@ import {selecCreateUserIsLoading} from '../../store/selectors/serviceSettings';
 
 reducerRegistry.register({auth: reducer});
 
-const i18n = I18n.keyset('service-settings.create-user.view');
+// const i18n = I18n.keyset('service-settings.create-user.view');
+
+const i18n = (key: string) => {
+    switch (key) {
+        case 'title_create-user':
+            return 'Create	User';
+        case 'button_create':
+            return 'Create';
+        case 'button_cancel':
+            return 'Cancel';
+        case 'label_success-user-creation':
+            return 'User	created	successfully';
+        default:
+            return key;
+    }
+};
 
 export const CreateUserForm = () => {
     const dispatch = useDispatch();
