@@ -5,6 +5,9 @@ import {
     DELETE_USER_PROFILE_FAILED,
     DELETE_USER_PROFILE_LOADING,
     DELETE_USER_PROFILE_SUCCESS,
+    EDIT_USER_PROFILE_FAILED,
+    EDIT_USER_PROFILE_LOADING,
+    EDIT_USER_PROFILE_SUCCESS,
     GET_USER_PROFILE_FAILED,
     GET_USER_PROFILE_LOADING,
     GET_USER_PROFILE_SUCCESS,
@@ -36,6 +39,10 @@ interface UserProfileState {
         isLoading: boolean;
         error: Error | null;
     };
+    editProfile: {
+        isLoading: boolean;
+        error: null | Error;
+    };
 }
 
 const initialState: UserProfileState = {
@@ -53,6 +60,10 @@ const initialState: UserProfileState = {
         error: null,
     },
     updateRole: {
+        isLoading: false,
+        error: null,
+    },
+    editProfile: {
         isLoading: false,
         error: null,
     },
@@ -128,6 +139,37 @@ export const userProfileReducer = (
                 ...state,
                 deleteProfile: {
                     ...state.deleteProfile,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case EDIT_USER_PROFILE_LOADING: {
+            return {
+                ...state,
+                editProfile: {
+                    ...state.editProfile,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case EDIT_USER_PROFILE_SUCCESS: {
+            return {
+                ...state,
+                editProfile: {
+                    ...state.editProfile,
+                    isLoading: false,
+                    error: null,
+                },
+            };
+        }
+        case EDIT_USER_PROFILE_FAILED: {
+            return {
+                ...state,
+                editProfile: {
+                    ...state.editProfile,
                     isLoading: false,
                     error: action.error,
                 },

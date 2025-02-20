@@ -17,3 +17,6 @@ export const selectUpdateUserPasswordIsLoading = (state: DatalensGlobalState) =>
 
 export const selectUpdateUserRoleIsLoading = (state: DatalensGlobalState) =>
     state.auth.userProfile.updateRole.isLoading;
+
+export const selectEditUserProfileIsLoading = (state: DatalensGlobalState) =>
+    state.auth.userProfile.editProfile.isLoading;

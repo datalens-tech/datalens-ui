@@ -1,7 +1,7 @@
 // import {i18n} from 'i18n';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {UserRole} from 'shared/components/auth/constants/role';
-import type {GetUserProfileResponse} from 'shared/schema/auth/types/users';
+import type {GetUserProfileResponse, UpdateUserProfileArgs} from 'shared/schema/auth/types/users';
 import type {DatalensGlobalState} from 'ui/index';
 import logger from 'ui/libs/logger';
 import type {SdkError} from 'ui/libs/schematic-sdk';
@@ -12,6 +12,9 @@ import {
     DELETE_USER_PROFILE_FAILED,
     DELETE_USER_PROFILE_LOADING,
     DELETE_USER_PROFILE_SUCCESS,
+    EDIT_USER_PROFILE_FAILED,
+    EDIT_USER_PROFILE_LOADING,
+    EDIT_USER_PROFILE_SUCCESS,
     GET_USER_PROFILE_FAILED,
     GET_USER_PROFILE_LOADING,
     GET_USER_PROFILE_SUCCESS,
@@ -86,6 +89,17 @@ type UpdateUserRoleFailedAction = {
     error: Error | null;
 };
 
+type EditUserProfileLoadingAction = {
+    type: typeof EDIT_USER_PROFILE_LOADING;
+};
+type EditUserProfileSuccessAction = {
+    type: typeof EDIT_USER_PROFILE_SUCCESS;
+};
+type EditUserProfileFailedAction = {
+    type: typeof EDIT_USER_PROFILE_FAILED;
+    error: Error | null;
+};
+
 export const resetUserProfileState = (): ResetUserProfileStateAction => ({
     type: RESET_USER_PROFILE_STATE,
 });
@@ -98,6 +112,9 @@ export type UserProfileAction =
     | DeleteUserProfileLoadingAction
     | DeleteUserProfileSuccessAction
     | DeleteUserProfileFailedAction
+    | EditUserProfileLoadingAction
+    | EditUserProfileSuccessAction
+    | EditUserProfileFailedAction
     | ResetUserProfileStateAction
     | UpdateUserPasswordLoadingAction
     | UpdateUserPasswordSuccessAction
@@ -294,5 +311,48 @@ export function updateUserRoles(
             });
         }
         return null;
+    };
+}
+
+export function updateUserProfile({
+    data,
+    onSuccess,
+    onError,
+}: {
+    data: UpdateUserProfileArgs;
+    onSuccess?: VoidFunction;
+    onError?: (error: SdkError) => void;
+}) {
+    return async (dispatch: UserProfileDispatch) => {
+        dispatch({type: EDIT_USER_PROFILE_LOADING});
+        return getSdk()
+            .sdk.auth.updateUserProfile(data)
+            .then(() => {
+                dispatch({
+                    type: EDIT_USER_PROFILE_SUCCESS,
+                });
+                onSuccess?.();
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+                if (!isCanceled) {
+                    logger.logError('auth/updateUserProfile failed', error);
+                    if (isSdkError(error)) {
+                        onError?.(error);
+                    } else {
+                        dispatch(
+                            showToast({
+                                title: error.message,
+                                error,
+                            }),
+                        );
+                    }
+                }
+                dispatch({
+                    type: EDIT_USER_PROFILE_FAILED,
+                    error: isCanceled ? null : error,
+                });
+                return null;
+            });
     };
 }

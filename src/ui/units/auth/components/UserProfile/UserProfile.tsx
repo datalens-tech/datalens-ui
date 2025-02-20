@@ -10,6 +10,7 @@ import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabe
 import {ChangePasswordDialog} from '../ChangePasswordDialog/ChangePasswordDialog';
 import {ChangeUserRoleDialog} from '../ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from '../DeleteUserDialog/DeleteUserDialog';
+import {EditUserProfileDialog} from '../EditUserProfileDialog/EditUserProfileDialog';
 
 const i18n = I18n.keyset('auth.user-profile.view');
 
@@ -20,9 +21,18 @@ interface UserProfileProps {
     email: string | null;
     id: string;
     roles?: `${UserRole}`[];
+    onUserDataChange: () => void;
 }
 
-export function UserProfile({firstName, lastName, login, email, id, roles}: UserProfileProps) {
+export function UserProfile({
+    firstName,
+    lastName,
+    login,
+    email,
+    id,
+    roles,
+    onUserDataChange,
+}: UserProfileProps) {
     const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
     const isCurrentUserProfile = DL.USER_ID === id;
 
@@ -31,6 +41,7 @@ export function UserProfile({firstName, lastName, login, email, id, roles}: User
     const [assignRoleDialogOpen, setAssignRoleDialogOpen] = React.useState(false);
     const [deleteUserDialogOpen, setDeleteUserDialogOpen] = React.useState(false);
     const [updateUserPasswordOpen, setUpdateUserPasswordOpen] = React.useState(false);
+    const [editUserProfileDialogOpen, setEditUserProfileDialogOpen] = React.useState(false);
 
     const handleUserDeleteSuccess = React.useCallback(() => {
         history.push('/settings/users');
@@ -43,7 +54,9 @@ export function UserProfile({firstName, lastName, login, email, id, roles}: User
                 actions={
                     canChangeUserData && (
                         <React.Fragment>
-                            <Button>{i18n('action_edit-profile')}</Button>
+                            <Button onClick={() => setEditUserProfileDialogOpen(true)}>
+                                {i18n('action_edit-profile')}
+                            </Button>
                             <Button onClick={() => setUpdateUserPasswordOpen(true)}>
                                 {i18n('action_change-password')}
                             </Button>
@@ -74,6 +87,16 @@ export function UserProfile({firstName, lastName, login, email, id, roles}: User
                     onClose={() => setUpdateUserPasswordOpen(false)}
                     userId={id}
                     isOwnProfile={isCurrentUserProfile}
+                    onSuccess={onUserDataChange}
+                />
+                <EditUserProfileDialog
+                    open={editUserProfileDialogOpen}
+                    onClose={() => setEditUserProfileDialogOpen(false)}
+                    userId={id}
+                    email={email}
+                    firstName={firstName}
+                    lastName={lastName}
+                    onSuccess={onUserDataChange}
                 />
             </Section>
             <Section

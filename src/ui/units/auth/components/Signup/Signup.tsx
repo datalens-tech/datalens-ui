@@ -1,11 +1,16 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {Button, Flex, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Flex, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
+import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 
-import {submitSignupForm} from '../../store/actions/userInfoForm';
+import {
+    resetUserInfoFormValidation,
+    submitSignupForm,
+    validateFormValues,
+} from '../../store/actions/userInfoForm';
 import {Email} from '../formControls/Email';
 import {FirstName} from '../formControls/FirstName';
 import {LastName} from '../formControls/LastName';
@@ -22,13 +27,41 @@ const b = block('dl-signup');
 export const Signup = () => {
     const dispatch = useDispatch();
 
-    const handleSubmit = () => dispatch(submitSignupForm());
+    const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
+
+    const handleSubmit = () => {
+        dispatch(
+            validateFormValues({
+                onSuccess: () => {
+                    dispatch(submitSignupForm());
+                },
+                onError: setErrorMessage,
+            }),
+        );
+    };
+
+    const handleFormChange = () => {
+        setErrorMessage(null);
+        dispatch(resetUserInfoFormValidation());
+    };
 
     return (
         <Flex className={b()} justifyContent="center" alignItems="center">
-            <Flex className={b('form-container')} direction="column" gap="6" as="form">
+            <Flex
+                className={b('form-container')}
+                direction="column"
+                gap="6"
+                as="form"
+                onChange={handleFormChange}
+            >
                 <Text variant="subheader-3">Sign Up</Text>
                 <Flex direction="column" gap="4">
+                    {errorMessage && (
+                        <Alert
+                            theme="danger"
+                            message={<InterpolatedText text={errorMessage} br />}
+                        />
+                    )}
                     <Flex direction="column" gap="4">
                         <Login autoComplete={true} size="l" />
                         <Email autoComplete={true} size="l" />
