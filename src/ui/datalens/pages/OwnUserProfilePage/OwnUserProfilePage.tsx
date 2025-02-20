@@ -1,5 +1,5 @@
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-/* import {I18n} from 'i18n'; */
+import {I18n} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
@@ -17,16 +17,7 @@ reducerRegistry.register({auth: reducer});
 
 const b = block('dl-own-user-profile-page');
 
-// TODO: add title to translations
-// const i18n = I18n.keyset('auth.user-profile.view');
-const i18n = (key: string) => {
-    switch (key) {
-        case 'title_profile':
-            return 'Profile';
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.user-profile.view');
 
 function OwnUserProfilePage() {
     const pageTitle = i18n('title_profile');
