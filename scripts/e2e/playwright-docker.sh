@@ -5,7 +5,7 @@ set -euo pipefail
 PW_VERSION=$(npm list --depth=0 | grep '@playwright/test' | sed -E 's|.+@||')
 
 IMAGE_NAME="mcr.microsoft.com/playwright"
-IMAGE_TAG="v${PW_VERSION}-jammy" # this version have to be synchronized with playwright version from package.json
+IMAGE_TAG="v${PW_VERSION}-noble" # this version have to be synchronized with playwright version from package.json
 
 NODE_MODULES_CACHE_DIR="$HOME/.cache/datalens-playwright-docker-node-modules"
 

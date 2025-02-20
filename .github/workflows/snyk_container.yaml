@@ -13,27 +13,27 @@ jobs:
     permissions:
       contents: read
       security-events: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v3
-    - name: Build a Docker image
-      run: docker build -t your/image-to-test .
-    - name: Run Snyk to check Docker image for vulnerabilities
-      continue-on-error: true
-      uses: snyk/actions/docker@master
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        image: your/image-to-test
-        args: --file=Dockerfile --org=${{ vars.SNYK_ORG }} --sarif-file-output=snyk.sarif
+      - uses: actions/checkout@v3
+      - name: Build a Docker image
+        run: docker build -t your/image-to-test .
+      - name: Run Snyk to check Docker image for vulnerabilities
+        continue-on-error: true
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: your/image-to-test
+          args: --file=Dockerfile --org=${{ vars.SNYK_ORG }} --sarif-file-output=snyk.sarif
 
-      # Replace any "null" security severity values with 0. The null value is used in the case
-      # of license-related findings, which do not do not indicate a security vulnerability.
-      # See https://github.com/github/codeql-action/issues/2187 for more context.
-    - name: Post-process sarif output
-      run: |
-        sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
-    - name: Upload result to GitHub Code Scanning
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: snyk.sarif
+        # Replace any "null" security severity values with 0. The null value is used in the case
+        # of license-related findings, which do not do not indicate a security vulnerability.
+        # See https://github.com/github/codeql-action/issues/2187 for more context.
+      - name: Post-process sarif output
+        run: |
+          sed -i 's/"security-severity": "null"/"security-severity": "0"/g' snyk.sarif
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: snyk.sarif
