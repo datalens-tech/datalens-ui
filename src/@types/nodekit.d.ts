@@ -43,6 +43,7 @@ export interface SharedAppConfig {
         usEndpointPostfix: string;
         dataFetcherProxiedHeaders?: string[];
         maxWorkers?: number;
+        includeServicePlan?: boolean;
     };
     // CHARTS ENGINE -- FINISH
 

@@ -20,6 +20,7 @@ export type ResolveConfigProps = {
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
     workbookId?: WorkbookId;
+    includeServicePlan?: boolean;
 };
 
 export type EmbedResolveConfigProps = ResolveConfigProps & {embedToken: string; embedId: string};
@@ -135,7 +136,14 @@ export class BaseStorage {
         ctx: AppContext,
         params: (ResolveConfigProps | EmbedResolveConfigProps) & {unreleased: boolean},
     ): Promise<ResolvedConfig | EmbeddingInfo> {
-        const {headers, unreleased, storageApiPath, extraAllowedHeaders, workbookId} = params;
+        const {
+            headers,
+            unreleased,
+            storageApiPath,
+            extraAllowedHeaders,
+            workbookId,
+            includeServicePlan,
+        } = params;
         const requestId = ctx.get(REQUEST_ID_PARAM_NAME);
         if (requestId) {
             headers[this.requestIdHeaderName] = requestId;
@@ -145,6 +153,7 @@ export class BaseStorage {
             headers,
             unreleased: this.flags.alwaysUnreleased ? true : unreleased,
             includePermissionsInfo: true,
+            includeServicePlan,
             storageApiPath,
             extraAllowedHeaders,
         };

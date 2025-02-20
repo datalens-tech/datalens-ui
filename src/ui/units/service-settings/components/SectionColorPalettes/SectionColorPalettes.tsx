@@ -9,8 +9,7 @@ import {DL} from 'ui/constants';
 import './SectionColorPalettes.scss';
 
 const b = block('service-settings-color-palettes');
-// const i18n = I18n.keyset('service-settings.main.view');
-const i18n = I18n.keyset('main.service-settings.view');
+const i18n = I18n.keyset('service-settings.main.view');
 
 const SectionColorPalettes = () => {
     const isTabContent = DL.AUTH_ENABLED && DL.IS_NATIVE_AUTH_ADMIN;

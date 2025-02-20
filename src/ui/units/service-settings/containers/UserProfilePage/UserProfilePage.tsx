@@ -58,7 +58,7 @@ const UserProfilePage = () => {
                         }}
                     >
                         <Breadcrumbs.Item href="/settings">
-                            {i18nGlobal('main.service-settings.view', 'label_header')}
+                            {i18nGlobal('service-settings.main.view', 'label_header')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item href="/settings/users">
                             {i18n('title_users')}

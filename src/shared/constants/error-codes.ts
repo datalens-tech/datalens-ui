@@ -42,6 +42,7 @@ export enum ErrorCode {
     IncorrectEntryIdForEmbed = 'ERR.DS_API.US.BAD_REQUEST.INCORRECT_ENTRY_ID_FOR_EMBED',
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
+    InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
 }
 
 export const ErrorContentTypes = {
