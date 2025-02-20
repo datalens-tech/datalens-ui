@@ -1,0 +1,15 @@
+{
+  "button_add-user": "Add user",
+  "button_load-more": "Load more",
+  "label_field-email": "Email",
+  "label_field-id": "ID",
+  "label_field-login": "Username",
+  "label_field-name": "Name",
+  "label_field-roles": "Role",
+  "label_menu-change-password": "Change password",
+  "label_menu-change-role": "Change role",
+  "label_menu-delete": "Delete user",
+  "label_menu-edit-profile": "Edit profile",
+  "label_search-placeholder": "Search",
+  "label_users-empty-message": "Users not found"
+}

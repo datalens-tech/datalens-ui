@@ -33,16 +33,21 @@ interface DeleteUserDialogProps {
 
     open: boolean;
     onClose: VoidFunction;
+    onSuccess?: VoidFunction;
 }
 
-export function DeleteUserDialog({userId, open, onClose}: DeleteUserDialogProps) {
+export function DeleteUserDialog({userId, open, onClose, onSuccess}: DeleteUserDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
 
     const isDeleteLoading = useSelector(selectDeleteUserProfileIsLoading);
 
-    const handleDeleteUser = React.useCallback(() => {
-        dispatch(deleteUserProfile({userId}));
-    }, [dispatch, userId]);
+    const handleDeleteUser = () => {
+        const handleSuccess = () => {
+            onClose();
+            onSuccess?.();
+        };
+        dispatch(deleteUserProfile({userId}, handleSuccess));
+    };
 
     return (
         <ConfirmDialog
