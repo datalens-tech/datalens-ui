@@ -90,6 +90,7 @@ export type Entry = {
     updatedAt?: string;
     updatedBy?: string;
     workbookId?: WorkbookId;
+    servicePlan?: string;
 };
 
 const PASSED_HEADERS = [
@@ -184,6 +185,10 @@ function formatPassedProperties(entry: Entry = {}) {
         formattedData.publicAuthor = publicAuthor;
     }
 
+    if (entry.servicePlan) {
+        formattedData.servicePlan = entry.servicePlan;
+    }
+
     return formattedData as DashEntryData | ChartEntryData;
 }
 
@@ -240,6 +245,7 @@ export class USProvider {
             unreleased,
             includeLinks,
             includePermissionsInfo,
+            includeServicePlan,
             headers,
             storageApiPath,
             extraAllowedHeaders,
@@ -254,6 +260,7 @@ export class USProvider {
             revId?: string;
             headers: Request['headers'];
             workbookId?: WorkbookId;
+            includeServicePlan?: boolean;
         },
     ) {
         const hrStart = process.hrtime();
@@ -263,9 +270,14 @@ export class USProvider {
             includeLinks?: boolean;
             includePermissionsInfo?: boolean;
             revId?: string;
+            includeServicePlan?: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
         };
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
 
         if (includeLinks) {
             params.includeLinks = true;
