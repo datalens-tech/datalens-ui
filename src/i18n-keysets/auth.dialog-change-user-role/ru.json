@@ -1,10 +1,10 @@
 {
   "action_user-roles-change-apply": "Сохранить",
   "action_user-roles-change-cancel": "Отменить",
-  "label_base-role": "Базовая роль",
-  "label_includes-permissions-from": "Включает в себя права",
-  "label_roles-change-failure": "Не удалось изменить роли пользователя",
-  "label_roles-change-success": "Роль успешно изменена",
+  "label_base-role": "Базовая роль для доступа к сервису",
+  "label_includes-permissions-from": "Включает разрешения, предоставляемые ролью",
+  "label_roles-change-failure": "При редактировании прав доступа пользователя произошла ошибка",
+  "label_roles-change-success": "Роль успешно назначена",
   "label_select-role": "Выберите роль",
-  "title_update-role": "Изменить роль"
+  "title_update-role": "Настройка прав доступа"
 }
