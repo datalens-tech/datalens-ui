@@ -18,9 +18,12 @@ import {useDispatch, useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
+import {DL} from 'ui/constants';
 import {reducerRegistry} from 'ui/store';
+import {ChangePasswordDialog} from 'ui/units/auth/components/ChangePasswordDialog/ChangePasswordDialog';
 import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/DeleteUserDialog';
+import {EditUserProfileDialog} from 'ui/units/auth/components/EditUserProfileDialog/EditUserProfileDialog';
 
 import {reducer} from '../../../../units/auth/store/reducers';
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
@@ -105,6 +108,11 @@ const UsersList = () => {
     const [deleteUserDialogOpenForUser, setDeleteUserDialogOpenForUser] = React.useState<
         ListUser | undefined
     >();
+    const [editProfileDialogOpenForUser, setEditProfileeDialogOpenForUser] = React.useState<
+        ListUser | undefined
+    >();
+    const [changePasswordDialogOpenForUser, setChangePasswordUserDialogOpenForUser] =
+        React.useState<ListUser | undefined>();
 
     React.useEffect(() => {
         dispatch(getUsersList({pageSize: USERS_PAGE_SIZE}));
@@ -170,7 +178,7 @@ const UsersList = () => {
         return [
             {
                 text: i18n('label_menu-edit-profile'),
-                handler: () => null,
+                handler: () => setEditProfileeDialogOpenForUser(item),
             },
             {
                 text: i18n('label_menu-change-role'),
@@ -178,7 +186,7 @@ const UsersList = () => {
             },
             {
                 text: i18n('label_menu-change-password'),
-                handler: () => null,
+                handler: () => setChangePasswordUserDialogOpenForUser(item),
             },
             {
                 text: i18n('label_menu-delete'),
@@ -210,6 +218,26 @@ const UsersList = () => {
                         onClose={() => setDeleteUserDialogOpenForUser(undefined)}
                         onSuccess={resetTable}
                         userId={deleteUserDialogOpenForUser.userId}
+                    />
+                )}
+                {changePasswordDialogOpenForUser && (
+                    <ChangePasswordDialog
+                        open
+                        onClose={() => setChangePasswordUserDialogOpenForUser(undefined)}
+                        userId={changePasswordDialogOpenForUser.userId}
+                        onSuccess={resetTable}
+                        isOwnProfile={changePasswordDialogOpenForUser.userId === DL.USER.uid}
+                    />
+                )}
+                {editProfileDialogOpenForUser && (
+                    <EditUserProfileDialog
+                        open
+                        onClose={() => setEditProfileeDialogOpenForUser(undefined)}
+                        userId={editProfileDialogOpenForUser.userId}
+                        email={editProfileDialogOpenForUser.email}
+                        firstName={editProfileDialogOpenForUser.firstName}
+                        lastName={editProfileDialogOpenForUser.lastName}
+                        onSuccess={resetTable}
                     />
                 )}
                 <TableWithActions

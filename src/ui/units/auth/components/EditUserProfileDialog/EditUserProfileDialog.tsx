@@ -38,9 +38,9 @@ const i18n = (key: string) => {
 interface EditUserProfileDialogProps {
     userId: string;
 
-    email: string | null;
-    firstName?: string;
-    lastName?: string;
+    email?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
 
     open: boolean;
     onClose: VoidFunction;
