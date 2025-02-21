@@ -116,7 +116,7 @@ export type GetClaimsResponse = {
 export type BatchListMembersArgs = {
     id: string | undefined;
     search: string;
-    subType?: string;
+    tabId?: string;
     pageToken?: string;
     pageSize: number;
     filter?: string;
