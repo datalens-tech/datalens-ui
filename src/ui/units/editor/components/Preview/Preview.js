@@ -1,4 +1,5 @@
 import React from 'react';
+import {useDispatch} from 'react-redux';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
@@ -9,6 +10,7 @@ import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWith
 import {URL_QUERY} from '../../../../constants';
 import Utils, {UrlSearch} from '../../../../utils';
 import {Status} from '../../constants/common';
+import {drawPreview} from '../../store/actions';
 
 import './Preview.scss';
 
@@ -73,12 +75,19 @@ function PreviewWrap(props) {
         return new UrlSearch(search).delete(Object.values(URL_QUERY)).toObject();
     }, [search]);
     const {actionParamsEnabled} = Utils.getOptionsFromSearch(search);
+    
+    const dispatch = useDispatch();
 
     React.useEffect(() => {
         if (widgetRef.current && typeof widgetRef.current.reflow === 'function') {
             widgetRef.current.reflow();
         }
     }, [paneSize]);
+
+    React.useEffect(() => {
+        dispatch(drawPreview());
+        // dependance from chartData?.id for loading chart preview after opening other chart from navigation
+    }, [chartData?.id]);
 
     if (chartData === null) {
         return null;
