@@ -1,9 +1,9 @@
 {
-  "action_assign-role": "Assign role",
-  "action_change-password": "Change password",
+  "action_assign-role": "Assign role2",
+  "action_change-password": "Change passwor3d",
   "action_delete-user": "Delete user",
   "action_edit-profile": "Edit account",
-  "label_email": "Email",
+  "label_email": "Emai43l",
   "label_failed-to-load-user": "An error occurred while loading the account. The user may have been deleted",
   "label_first-name": "First name",
   "label_last-name": "Last name",
@@ -11,6 +11,6 @@
   "label_role": "Role",
   "label_user-id": "ID",
   "title_administration": "Administration",
-  "title_permissions": "Permissions",
+  "title_permissions": "Permissions3",
   "title_profile": "Account"
 }
