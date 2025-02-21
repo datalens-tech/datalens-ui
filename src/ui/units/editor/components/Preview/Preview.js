@@ -1,8 +1,8 @@
 import React from 'react';
-import {useDispatch} from 'react-redux';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
+import {useDispatch} from 'react-redux';
 import {useLocation} from 'react-router-dom';
 import {MenuType} from 'ui/libs/DatalensChartkit/menu/constants';
 
@@ -75,7 +75,7 @@ function PreviewWrap(props) {
         return new UrlSearch(search).delete(Object.values(URL_QUERY)).toObject();
     }, [search]);
     const {actionParamsEnabled} = Utils.getOptionsFromSearch(search);
-    
+
     const dispatch = useDispatch();
 
     React.useEffect(() => {
