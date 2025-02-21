@@ -1,3 +1,4 @@
+// import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import type {ThunkDispatch} from 'redux-thunk';
 
@@ -5,8 +6,25 @@ import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constant
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {RESET_FORM_VALUES, UPDATE_FORM_VALUES} from '../constants/userInfoForm';
-import type {UserInfoFormFormValues} from '../typings/userInfoForm';
+import {baseFieldsValidSchema, requiredBaseFieldsSchema} from '../../utils/validation';
+import {
+    RESET_FORM,
+    RESET_FORM_VALIDATION,
+    UPDATE_FORM_VALIDATION,
+    UPDATE_FORM_VALUES,
+} from '../constants/userInfoForm';
+import type {UserInfoFormFormValues, ValidationFormState} from '../typings/userInfoForm';
+
+// const validationI18n = I18n.keyset('auth.user-form-validation');
+
+const validationI18n = (key: string) => {
+    const keys: Record<string, string> = {
+        'label_error-required-fields': 'Please fill in all required fields',
+        'label_error-password-not-match': 'Passwords do not match',
+    };
+
+    return keys[key] || '';
+};
 
 type UpdateFormValuesAction = {
     type: typeof UPDATE_FORM_VALUES;
@@ -19,18 +37,37 @@ export const updateFormValues = (
     payload,
 });
 
-type ResetFormValuesAction = {
-    type: typeof RESET_FORM_VALUES;
+type UpdateFormValidationAction = {
+    type: typeof UPDATE_FORM_VALIDATION;
+    payload: Partial<ValidationFormState>;
+};
+export const updateFormValidation = (
+    payload: UpdateFormValidationAction['payload'],
+): UpdateFormValidationAction => ({
+    type: UPDATE_FORM_VALIDATION,
+    payload,
+});
+
+type ResetFormValidationAction = {
+    type: typeof RESET_FORM_VALIDATION;
 };
 
-export const resetUserInfoForm = (): ResetFormValuesAction => ({
-    type: RESET_FORM_VALUES,
+export const resetUserInfoFormValidation = (): ResetFormValidationAction => ({
+    type: RESET_FORM_VALIDATION,
+});
+
+type ResetFormAction = {
+    type: typeof RESET_FORM;
+};
+
+export const resetUserInfoForm = (): ResetFormAction => ({
+    type: RESET_FORM,
 });
 
 export const submitSignupForm = () => {
     return (dispatch: UserInfoFormDispatch, getState: () => DatalensGlobalState) => {
         const {sdk} = getSdk();
-        const {login, password, lastName, firstName, email} = getState().auth.userInfoForm;
+        const {login, password, lastName, firstName, email} = getState().auth.userInfoForm.values;
 
         // TODO: add validation
         return sdk.auth.auth
@@ -62,6 +99,55 @@ export const submitSignupForm = () => {
     };
 };
 
+export const validateFormValues = ({
+    onError,
+    onSuccess,
+}: {
+    onError: (errorMessage: string) => void;
+    onSuccess: () => void;
+}) => {
+    return (dispatch: UserInfoFormDispatch, getState: () => DatalensGlobalState) => {
+        const userInfo = getState().auth.userInfoForm.values;
+
+        try {
+            requiredBaseFieldsSchema.validateSync(userInfo, {abortEarly: false});
+        } catch (error) {
+            if ('errors' in error) {
+                const validationState = error.errors.reduce(
+                    (acc: Record<string, 'invalid'>, fieldName: string) => {
+                        acc[fieldName] = 'invalid';
+                        return acc;
+                    },
+                    {},
+                );
+                onError(validationI18n('label_error-required-fields'));
+                dispatch(updateFormValidation(validationState));
+                return;
+            }
+        }
+
+        try {
+            baseFieldsValidSchema.validateSync(userInfo);
+        } catch (error) {
+            onError(error.message);
+            dispatch(updateFormValidation({[error.path]: 'invalid'}));
+            return;
+        }
+
+        if (userInfo.password !== userInfo.repeatPassword) {
+            onError(validationI18n('label_error-password-not-match'));
+            dispatch(updateFormValidation({password: 'invalid', repeatPassword: 'invalid'}));
+            return;
+        }
+
+        onSuccess();
+    };
+};
+
 export type UserInfoFormDispatch = ThunkDispatch<DatalensGlobalState, void, UserInfoFormAction>;
 
-export type UserInfoFormAction = UpdateFormValuesAction | ResetFormValuesAction;
+export type UserInfoFormAction =
+    | UpdateFormValuesAction
+    | ResetFormAction
+    | UpdateFormValidationAction
+    | ResetFormValidationAction;

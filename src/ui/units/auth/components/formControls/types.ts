@@ -5,7 +5,10 @@ type FormOwnProps = {
     autoComplete?: boolean;
 };
 
-export type UserFormInputProps = Omit<TextInputProps, 'value' | 'onUpdate' | 'autoComplete'> &
+export type UserFormInputProps = Omit<
+    TextInputProps,
+    'value' | 'onUpdate' | 'autoComplete' | 'validationState'
+> &
     FormOwnProps;
 export type UserFormSelectProps = Omit<SelectProps, 'value' | 'onUpdate' | 'options' | 'width'> &
     FormOwnProps;

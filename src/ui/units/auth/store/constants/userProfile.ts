@@ -18,3 +18,7 @@ export const RESET_UPDATE_USER_PASSWORD_STATE = Symbol(
 export const UPDATE_USER_ROLE_LOADING = Symbol('auth/userProfile/UPDATE_USER_ROLE_LOADING');
 export const UPDATE_USER_ROLE_SUCCESS = Symbol('auth/userProfile/UPDATE_USER_ROLE_SUCCESS');
 export const UPDATE_USER_ROLE_FAILED = Symbol('auth/userProfile/UPDATE_USER_ROLE_FAILED');
+
+export const EDIT_USER_PROFILE_LOADING = Symbol('auth/userProfile/EDIT_USER_PROFILE_LOADING');
+export const EDIT_USER_PROFILE_SUCCESS = Symbol('auth/userProfile/EDIT_USER_PROFILE_SUCCESS');
+export const EDIT_USER_PROFILE_FAILED = Symbol('auth/userProfile/EDIT_USER_PROFILE_FAILED');

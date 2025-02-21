@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
-import {selectLogin} from '../../store/selectors/userInfoForm';
+import {selectLogin, selectLoginValidation} from '../../store/selectors/userInfoForm';
 
 import type {UserFormInputProps} from './types';
 
@@ -21,6 +21,7 @@ export const Login = ({autoComplete, ...props}: UserFormInputProps) => {
     const dispatch = useDispatch();
 
     const login = useSelector(selectLogin);
+    const validation = useSelector(selectLoginValidation);
 
     const handleUpdate = (value: string) => dispatch(updateFormValues({login: value}));
 
@@ -30,6 +31,7 @@ export const Login = ({autoComplete, ...props}: UserFormInputProps) => {
                 autoComplete={autoComplete ? 'nickname' : 'disable'}
                 value={login}
                 onUpdate={handleUpdate}
+                validationState={validation}
                 {...props}
             />
         </FormRow>

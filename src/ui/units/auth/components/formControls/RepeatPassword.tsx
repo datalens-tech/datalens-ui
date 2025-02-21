@@ -7,7 +7,10 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
-import {selectRepeatPassword} from '../../store/selectors/userInfoForm';
+import {
+    selectRepeatPassword,
+    selectRepeatPasswordValidation,
+} from '../../store/selectors/userInfoForm';
 
 import type {UserFormInputProps} from './types';
 
@@ -21,6 +24,7 @@ export const RepeatPassword = (props: Omit<UserFormInputProps, 'autocomplete'>) 
     const dispatch = useDispatch();
 
     const repeatPassword = useSelector(selectRepeatPassword);
+    const validation = useSelector(selectRepeatPasswordValidation);
 
     const handleUpdate = (value: string) => dispatch(updateFormValues({repeatPassword: value}));
 
@@ -31,6 +35,7 @@ export const RepeatPassword = (props: Omit<UserFormInputProps, 'autocomplete'>) 
                 value={repeatPassword}
                 onUpdate={handleUpdate}
                 hideCopyButton={true}
+                validationState={validation}
                 {...props}
             />
         </FormRow>

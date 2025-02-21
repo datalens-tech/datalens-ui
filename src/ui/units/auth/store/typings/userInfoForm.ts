@@ -9,3 +9,8 @@ export interface UserInfoFormFormValues {
     repeatPassword: string;
     roles: `${UserRole}`[];
 }
+
+export type ValidationFormState = Record<
+    keyof Omit<UserInfoFormFormValues, 'roles'>,
+    undefined | 'invalid'
+>;

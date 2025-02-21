@@ -30,11 +30,15 @@ export function UserProfile({userId}: {userId: string}) {
         };
     }, [dispatch, userId]);
 
+    const reloadUserProfile = React.useCallback(() => {
+        dispatch(getUserProfile({userId}));
+    }, [dispatch, userId]);
+
     React.useEffect(() => {
         if (shouldReloadUser) {
-            dispatch(getUserProfile({userId}));
+            reloadUserProfile();
         }
-    }, [dispatch, userId, shouldReloadUser]);
+    }, [dispatch, shouldReloadUser, reloadUserProfile]);
 
     if (isUserProfileLoading) {
         return <SmartLoader size="l" disableStretch />;
@@ -61,6 +65,7 @@ export function UserProfile({userId}: {userId: string}) {
             email={userProfile.email}
             id={userProfile.userId}
             roles={userProfile.roles}
+            onUserDataChange={reloadUserProfile}
         />
     );
 }

@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
-import {selectPassword} from '../../store/selectors/userInfoForm';
+import {selectPassword, selectPasswordValidation} from '../../store/selectors/userInfoForm';
 
 import type {UserFormInputProps} from './types';
 
@@ -23,6 +23,7 @@ export const Password = ({isCurrentPassword, ...props}: PasswordProps) => {
     const dispatch = useDispatch();
 
     const password = useSelector(selectPassword);
+    const validation = useSelector(selectPasswordValidation);
 
     const handleUpdate = (value: string) => dispatch(updateFormValues({password: value}));
 
@@ -32,6 +33,7 @@ export const Password = ({isCurrentPassword, ...props}: PasswordProps) => {
                 autoComplete={isCurrentPassword ? 'current-password' : 'new-password'}
                 value={password}
                 onUpdate={handleUpdate}
+                validationState={validation}
                 {...props}
             />
         </FormRow>

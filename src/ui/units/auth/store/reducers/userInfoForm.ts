@@ -2,10 +2,18 @@ import {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
 
 import type {UserInfoFormAction} from '../actions/userInfoForm';
-import {RESET_FORM_VALUES, UPDATE_FORM_VALUES} from '../constants/userInfoForm';
-import type {UserInfoFormFormValues} from '../typings/userInfoForm';
+import {
+    RESET_FORM,
+    RESET_FORM_VALIDATION,
+    UPDATE_FORM_VALIDATION,
+    UPDATE_FORM_VALUES,
+} from '../constants/userInfoForm';
+import type {UserInfoFormFormValues, ValidationFormState} from '../typings/userInfoForm';
 
-interface UserInfoFormState extends UserInfoFormFormValues {}
+type UserInfoFormState = {
+    validation: ValidationFormState;
+    values: UserInfoFormFormValues;
+};
 
 const getInitialRoles = () => {
     const {getUsersRoles} = registry.auth.functions.getAll();
@@ -19,13 +27,23 @@ const getInitialRoles = () => {
 };
 
 const initialState: UserInfoFormState = {
-    login: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    repeatPassword: '',
-    roles: getInitialRoles(),
+    values: {
+        login: '',
+        email: '',
+        firstName: '',
+        lastName: '',
+        password: '',
+        repeatPassword: '',
+        roles: getInitialRoles(),
+    },
+    validation: {
+        login: undefined,
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        password: undefined,
+        repeatPassword: undefined,
+    },
 };
 
 export const userInfoFormReducer = (
@@ -36,10 +54,28 @@ export const userInfoFormReducer = (
         case UPDATE_FORM_VALUES: {
             return {
                 ...state,
-                ...action.payload,
+                values: {
+                    ...state.values,
+                    ...action.payload,
+                },
             };
         }
-        case RESET_FORM_VALUES: {
+        case UPDATE_FORM_VALIDATION: {
+            return {
+                ...state,
+                validation: {
+                    ...state.validation,
+                    ...action.payload,
+                },
+            };
+        }
+        case RESET_FORM_VALIDATION: {
+            return {
+                ...state,
+                validation: initialState.validation,
+            };
+        }
+        case RESET_FORM: {
             return initialState;
         }
         default: {

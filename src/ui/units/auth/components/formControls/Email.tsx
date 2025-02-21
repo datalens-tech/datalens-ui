@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
-import {selectEmail} from '../../store/selectors/userInfoForm';
+import {selectEmail, selectEmailValidation} from '../../store/selectors/userInfoForm';
 
 import type {UserFormInputProps} from './types';
 
@@ -21,6 +21,7 @@ export const Email = ({autoComplete = false, ...props}: UserFormInputProps) => {
     const dispatch = useDispatch();
 
     const email = useSelector(selectEmail);
+    const validation = useSelector(selectEmailValidation);
 
     const handleUpdate = (value: string) => dispatch(updateFormValues({email: value}));
 
@@ -30,6 +31,7 @@ export const Email = ({autoComplete = false, ...props}: UserFormInputProps) => {
                 autoComplete={autoComplete ? 'email' : 'disable'}
                 value={email}
                 onUpdate={handleUpdate}
+                validationState={validation}
                 {...props}
             />
         </FormRow>
