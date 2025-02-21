@@ -1,14 +1,14 @@
 {
-	"button_cancel":	"Cancel",
-	"button_save": "Save",
-	"label_admin-notification": "Since this is a temporary password ask the employee to change it",
-	"label_error-passwords-not-match": "Passwords don't match",
-	"label_error-required-fields": "Required fields must be filled",
-	"label_error-incorrect-old-password": "Incorrect old password",
-	"label_new-password": "New password",
-	"label_old-password": "Old password",
-	"label_password": "Password",
-	"label_repeat-password": "Repeat password",
-	"label_success-change": "Password has been successfully changed",
-	"title_change-password": "Change password"
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "label_admin-notification": "Set a temporary password and ask the user to change it in the account settings",
+  "label_error-incorrect-old-password": "Incorrect current password",
+  "label_error-passwords-not-match": "These passwords don't match",
+  "label_error-required-fields": "You must fill out the required fields",
+  "label_new-password": "New password",
+  "label_old-password": "Current password",
+  "label_password": "Password",
+  "label_repeat-password": "Repeat password",
+  "label_success-change": "Password successfully changed",
+  "title_change-password": "Change password"
 }
