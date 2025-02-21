@@ -1,7 +1,5 @@
-import {makeDefaultEmpty} from '../../components/DefaultEmpty';
-
-import type {AlternativeLoginOptionsProps} from './types/components/AlternativeLoginOptions';
+import {Signin} from 'ui/units/auth/components/Signin/Signin';
 
 export const authComponentsMap = {
-    AlternativeLoginOptions: makeDefaultEmpty<AlternativeLoginOptionsProps>(),
+    Signin: Signin,
 } as const;

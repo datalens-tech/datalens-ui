@@ -6,7 +6,6 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import type {SdkError} from 'ui/libs/schematic-sdk';
-import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {AUTH_ROUTE} from '../../constants/routes';
@@ -22,9 +21,7 @@ const i18n = I18n.keyset('auth.sign-in');
 
 const b = block('dl-signin');
 
-const {AlternativeLoginOptions} = registry.auth.components.getAll();
-
-export const Signin = () => {
+export const Signin = ({alternativeAuthOptions}: {alternativeAuthOptions?: React.ReactNode}) => {
     const dispatch = useDispatch();
 
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
@@ -81,7 +78,7 @@ export const Signin = () => {
                         <Link to={AUTH_ROUTE.SIGNUP}>{i18n('label_sing-up-link')}</Link>
                     </Flex>
                 </Flex>
-                <AlternativeLoginOptions />
+                {alternativeAuthOptions}
             </Flex>
         </Flex>
     );
