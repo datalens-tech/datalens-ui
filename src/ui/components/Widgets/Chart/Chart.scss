@@ -30,7 +30,7 @@ $fullscreenZIndex: 999;
     border-radius: 3px;
     border: none;
     // fix for cases of chart with display: fixed style
-    transform: perspective(0);
+    filter: opacity(1);
 
     &_fullscreen {
         position: fixed;
