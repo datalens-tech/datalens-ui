@@ -64,7 +64,7 @@ const MainPage = () => {
                             id: 'palettes',
                             title: i18n('section_color-palettes'),
                         },
-                        {id: 'users', title: 'Users'},
+                        {id: 'users', title: i18n('section_users')},
                     ]}
                     size="m"
                     onSelectTab={handleSelectTab}

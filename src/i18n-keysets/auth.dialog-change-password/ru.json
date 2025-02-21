@@ -1,0 +1,14 @@
+{
+  "button_cancel": "Отменить",
+  "button_save": "Сохранить",
+  "label_admin-notification": "Задайте временный пароль и попросите пользователя сменить его в настройках учётной записи",
+  "label_error-incorrect-old-password": "Текущий пароль указан неверно",
+  "label_error-passwords-not-match": "Пароли не совпадают",
+  "label_error-required-fields": "Поле обязательно для заполнения",
+  "label_new-password": "Новый пароль",
+  "label_old-password": "Текущий пароль",
+  "label_password": "Пароль",
+  "label_repeat-password": "Новый пароль ещё раз",
+  "label_success-change": "Пароль успешно изменён",
+  "title_change-password": "Смена пароля"
+}

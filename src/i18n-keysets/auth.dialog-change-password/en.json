@@ -1,0 +1,14 @@
+{
+  "button_cancel": "Cancel",
+  "button_save": "Save",
+  "label_admin-notification": "Set a temporary password and ask the user to change it in the account settings",
+  "label_error-incorrect-old-password": "Incorrect current password",
+  "label_error-passwords-not-match": "These passwords don't match",
+  "label_error-required-fields": "You must fill out the required fields",
+  "label_new-password": "New password",
+  "label_old-password": "Current password",
+  "label_password": "Password",
+  "label_repeat-password": "Repeat password",
+  "label_success-change": "Password successfully changed",
+  "title_change-password": "Change password"
+}
