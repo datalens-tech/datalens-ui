@@ -378,7 +378,7 @@ type SuggestBatchListMembersAction =
 export const suggestBatchListMembers = ({
     id,
     search,
-    subType,
+    tabId,
     pageToken,
     filter,
 }: SuggestBatchListMembersArgs) => {
@@ -391,7 +391,7 @@ export const suggestBatchListMembers = ({
             .sdk.extensions.batchListMembers({
                 id,
                 search: search.toLowerCase(),
-                subType,
+                tabId,
                 pageSize: BATCH_LIST_MEMBERS_PAGE_SIZE,
                 pageToken,
                 filter,
