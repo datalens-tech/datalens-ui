@@ -34,7 +34,7 @@ function OwnUserProfilePage() {
                 }
             />
             <Flex justifyContent="center" className={b('content')}>
-                <UserProfile userId={uid} />
+                <UserProfile userId={uid} currentUserProfile />
             </Flex>
         </main>
     );

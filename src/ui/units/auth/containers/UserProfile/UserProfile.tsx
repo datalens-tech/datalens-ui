@@ -14,7 +14,13 @@ import {
     selectUserProfileIsLoading,
 } from '../../store/selectors/userProfile';
 
-export function UserProfile({userId}: {userId: string}) {
+export function UserProfile({
+    userId,
+    currentUserProfile,
+}: {
+    userId: string;
+    currentUserProfile?: boolean;
+}) {
     const dispatch = useDispatch<AppDispatch>();
 
     const userProfile = useSelector(selectUserProfile);
@@ -31,8 +37,8 @@ export function UserProfile({userId}: {userId: string}) {
     }, [dispatch, userId]);
 
     const reloadUserProfile = React.useCallback(() => {
-        dispatch(getUserProfile({userId}));
-    }, [dispatch, userId]);
+        dispatch(getUserProfile({userId, currentUserProfile}));
+    }, [dispatch, userId, currentUserProfile]);
 
     React.useEffect(() => {
         if (shouldReloadUser) {
