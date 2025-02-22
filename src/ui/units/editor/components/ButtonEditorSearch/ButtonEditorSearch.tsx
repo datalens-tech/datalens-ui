@@ -17,7 +17,7 @@ type ButtonSearchProps = {
     onClick: () => void;
     active: boolean;
     className?: string;
-}
+};
 
 export function ButtonEditorSearch({onClick, className, active}: ButtonSearchProps) {
     return (

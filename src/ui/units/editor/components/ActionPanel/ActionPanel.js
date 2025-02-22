@@ -47,7 +47,9 @@ function ActionPanelService({
             }
 
             return (
-                <ActionTooltip title={i18n('component.dialog-revisions.view', 'button_show-revisions-diff')}>
+                <ActionTooltip
+                    title={i18n('component.dialog-revisions.view', 'button_show-revisions-diff')}
+                >
                     <Button
                         view="flat-secondary"
                         onClick={(e) => {
@@ -75,7 +77,10 @@ function ActionPanelService({
                 onChange={(newSchemeId) => onSelectGridScheme({schemeId: newSchemeId})}
             />
             {entry.type !== MODULE_TYPE && (
-                <ActionTooltip hotkey={'cmd + Enter'} title={i18n('component.editor-action-panel', 'button_preview')}>
+                <ActionTooltip
+                    hotkey={'cmd + Enter'}
+                    title={i18n('component.editor-action-panel', 'button_preview')}
+                >
                     {/* ActionTooltip can't work with functional component on children */}
                     <div>
                         <ButtonDrawPreview
