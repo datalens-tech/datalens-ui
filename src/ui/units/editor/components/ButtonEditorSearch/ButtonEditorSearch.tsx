@@ -3,7 +3,7 @@ import React from 'react';
 import {Magnifier} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import PropTypes from 'prop-types';
+import {I18n} from 'i18n';
 
 import {ICON_PANE_DEFAULT_SIZE} from '../PaneView/PaneView';
 
@@ -11,24 +11,24 @@ import './ButtonEditorSearch.scss';
 
 const b = block('btn-editor-search');
 
-function ButtonEditorSearch({onClick, className, active}) {
+const i18n = I18n.keyset('component.editor-controls');
+
+type ButtonSearchProps = {
+    onClick: () => void;
+    active: boolean;
+    className?: string;
+}
+
+export function ButtonEditorSearch({onClick, className, active}: ButtonSearchProps) {
     return (
         <Button
             view="flat-secondary"
             size="s"
             className={b({active}, className)}
             onClick={onClick}
-            title="Search"
+            title={i18n('button_search')}
         >
             <Icon data={Magnifier} size={ICON_PANE_DEFAULT_SIZE} className={b('icon')} />
         </Button>
     );
 }
-
-ButtonEditorSearch.propTypes = {
-    onClick: PropTypes.func,
-    className: PropTypes.string,
-    active: PropTypes.bool,
-};
-
-export default ButtonEditorSearch;

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ActionTooltip, Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
+import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -19,8 +19,6 @@ import {RevisionsDiffDialog} from '../RevisionsDiff/RevisionsDiff';
 import FileDiff from '../../../../assets/icons/file-diff.svg';
 
 import './ActionPanel.scss';
-
-const i18n = I18n.keyset('component.dialog-revisions.view');
 
 const b = block('editor-action-panel');
 
@@ -49,7 +47,7 @@ function ActionPanelService({
             }
 
             return (
-                <ActionTooltip title={i18n('button_show-revisions-diff')}>
+                <ActionTooltip title={i18n('component.dialog-revisions.view', 'button_show-revisions-diff')}>
                     <Button
                         view="flat-secondary"
                         onClick={(e) => {
@@ -77,11 +75,16 @@ function ActionPanelService({
                 onChange={(newSchemeId) => onSelectGridScheme({schemeId: newSchemeId})}
             />
             {entry.type !== MODULE_TYPE && (
-                <ButtonDrawPreview
-                    className={b('btn-draw-preview')}
-                    onDrawPreview={onDrawPreview}
-                    disabled={!isGridContainsPreview}
-                />
+                <ActionTooltip hotkey={'cmd + Enter'} title={i18n('component.editor-action-panel', 'button_preview')}>
+                    {/* ActionTooltip can't work with functional component on children */}
+                    <div>
+                        <ButtonDrawPreview
+                            className={b('btn-draw-preview')}
+                            onDrawPreview={onDrawPreview}
+                            disabled={!isGridContainsPreview}
+                        />
+                    </div>
+                </ActionTooltip>
             )}
             <ButtonSave workbookId={workbookId} />
         </React.Fragment>,
