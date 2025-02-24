@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Flex, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
@@ -13,7 +13,7 @@ import {BASE_USER_FILTERS} from '../constants';
 import './UsersFilters.scss';
 
 const b = block('service-settings-users-list-filters');
-// const i18n = I18n.keyset('service-settings.users-list.view');
+const i18n = I18n.keyset('service-settings.users-list.view');
 
 const {getUsersRoles} = registry.auth.functions.getAll();
 
@@ -51,7 +51,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 value={search}
                 onUpdate={handleSearchChange}
                 hasClear={true}
-                placeholder={'Search'}
+                placeholder={i18n('label_search-placeholder')}
                 className={b('filter')}
             />
             <Select
@@ -59,7 +59,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 value={roles}
                 hasClear={true}
                 onUpdate={handleRoleChange}
-                label={'Role'}
+                label={i18n('label_field-roles')}
                 className={b('filter')}
             />
         </Flex>

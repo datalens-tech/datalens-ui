@@ -15,20 +15,8 @@ import './CreateProfilePage.scss';
 
 const b = block('create-user-page');
 
-// TODO: add title to translations
-const i18nMain = I18n.keyset('main.service-settings.view');
-// const i18n = I18n.keyset('service-settings.create-user.view');
-
-const i18n = (key: string) => {
-    switch (key) {
-        case 'title_create-user':
-            return 'Create User';
-        case 'title_users':
-            return 'Users';
-        default:
-            return key;
-    }
-};
+const i18nMain = I18n.keyset('service-settings.main.view');
+const i18n = I18n.keyset('service-settings.create-user.view');
 
 const CreateProfilePage = () => {
     const history = useHistory();
@@ -46,7 +34,7 @@ const CreateProfilePage = () => {
                             {i18nMain('label_header')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item href="/settings/users">
-                            {i18n('title_users')}
+                            {i18nMain('section_users')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item disabled={true}>
                             {i18n('title_create-user')}

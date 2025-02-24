@@ -89,10 +89,12 @@ export interface GetUsersListArgs {
     pageSize?: number;
     filterString?: string;
     roles?: `${UserRole}`[];
+    idpType?: string;
 }
 
 export interface ListUser extends UserProfile {
-    providerId: string | null;
+    idpType: string | null;
+    idpSlug: string | null;
 }
 
 export interface GetUsersListResponse {
