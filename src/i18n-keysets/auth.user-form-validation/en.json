@@ -6,7 +6,7 @@
   "label_error-login-invalid": "The login must start with letters and end only with letters or numbers",
   "label_error-login-max": "Login must be less than {{max}} characters",
   "label_error-login-min": "Login must be at least {{min}} characters",
-  "label_error-password-invalid": "Create strong password<br></br>– min 12 characters<br></br>– make sure you mix uppercase letters, lowercase letters, special characters and numbers",
+  "label_error-password-invalid": "Create strong password<br></br>– min {{min}} characters<br></br>– make sure you mix uppercase letters, lowercase letters, special characters and numbers",
   "label_error-password-max": "Password must be less than {{max}} characters",
   "label_error-password-not-match": "Passwords do not match",
   "label_error-required-fields": "Please fill in all required fields"
