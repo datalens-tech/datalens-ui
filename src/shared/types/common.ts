@@ -177,6 +177,7 @@ export type DLGlobalData = {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
         collectionsEnabled: boolean;
+        features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
