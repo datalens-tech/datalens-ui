@@ -19,6 +19,7 @@ import {useHistory, useLocation} from 'react-router';
 import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
+import {registry} from 'ui/registry';
 import {reducerRegistry} from 'ui/store';
 import {ChangePasswordDialog} from 'ui/units/auth/components/ChangePasswordDialog/ChangePasswordDialog';
 import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
@@ -34,7 +35,6 @@ import {
     selectServiceUsersListUsers,
 } from '../../store/selectors/serviceSettings';
 
-import {LabelsList} from './LabelsList/LabelsList';
 import {UsersFilter} from './UsersFilters/UsersFilters';
 import type {BaseFiltersNames} from './constants';
 
@@ -49,39 +49,12 @@ const USERS_PAGE_SIZE = 15;
 
 const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
 
-const columns: TableColumnConfig<ListUser>[] = [
-    {
-        id: 'name',
-        name: i18n('label_field-name'),
-        template: ({firstName, lastName}) => `${firstName || ''} ${lastName || ''}`.trim() || '—',
-    },
-    {
-        id: 'userId',
-        name: i18n('label_field-id'),
-        template: ({userId}) => userId,
-        meta: {copy: ({userId}: ListUser) => userId},
-    },
-    {
-        id: 'email',
-        name: i18n('label_field-email'),
-        template: ({email}) => email,
-        meta: {copy: ({email}: ListUser) => email},
-    },
-    {
-        id: 'role',
-        name: i18n('label_field-roles'),
-        template: ({roles}) => <LabelsList items={roles} countVisibleElements={1} />,
-    },
-    {
-        id: 'login',
-        name: i18n('label_field-login'),
-        template: ({login}) => login,
-        meta: {copy: ({login}: ListUser) => login},
-    },
-];
+const {getUsersListColumns} = registry.auth.functions.getAll();
+
+const columns: TableColumnConfig<ListUser>[] = getUsersListColumns();
 
 const prepareFilterValue = (filterValue: string | string[]) => {
-    if (typeof filterValue === 'string') {
+    if (typeof filterValue === 'string' || filterValue === undefined) {
         return filterValue || undefined;
     }
 
