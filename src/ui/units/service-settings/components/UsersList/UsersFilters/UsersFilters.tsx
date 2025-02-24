@@ -32,7 +32,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
     const [search, setSearch] = React.useState('');
     const [roles, setRole] = React.useState<UserRole[]>([]);
 
-    const {AdditionalFilters} = registry.auth.components.getAll();
+    const {AdditionalUsersFilters} = registry.auth.components.getAll();
 
     const sendUpdatedFilters = React.useMemo(
         () => debounce((name, value) => onChange(name, value), UPDATE_FILTERS_TIMEOUT),
@@ -66,7 +66,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 label={i18n('label_field-roles')}
                 className={b('filter')}
             />
-            <IdpUsersFilter onChange={onChange} className={b('filter')} />
+            <AdditionalUsersFilters onChange={onChange} className={b('filter')} />
         </Flex>
     );
 };

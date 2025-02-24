@@ -43,7 +43,7 @@ export const CreateUserForm = () => {
     const handleSuccessCreate = () => {
         dispatch(showToast({title: i18n('label_success-user-creation'), type: 'success'}));
 
-        if (location.state.from === '/settings/users') {
+        if (location?.state?.from === '/settings/users') {
             history.goBack();
             return;
         }

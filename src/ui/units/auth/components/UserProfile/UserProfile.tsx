@@ -52,16 +52,16 @@ export function UserProfile({
             <Section
                 title={i18n('title_profile')}
                 actions={
-                    canChangeUserData && (
-                        <React.Fragment>
+                    <React.Fragment>
+                        {canChangeUserData && (
                             <Button onClick={() => setEditUserProfileDialogOpen(true)}>
                                 {i18n('action_edit-profile')}
                             </Button>
-                            <Button onClick={() => setUpdateUserPasswordOpen(true)}>
-                                {i18n('action_change-password')}
-                            </Button>
-                        </React.Fragment>
-                    )
+                        )}
+                        <Button onClick={() => setUpdateUserPasswordOpen(true)}>
+                            {i18n('action_change-password')}
+                        </Button>
+                    </React.Fragment>
                 }
             >
                 <DefinitionList>

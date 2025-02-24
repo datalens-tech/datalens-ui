@@ -126,12 +126,25 @@ export type UserProfileAction =
 
 export type UserProfileDispatch = ThunkDispatch<DatalensGlobalState, void, UserProfileAction>;
 
-export function getUserProfile({userId}: {userId: string}) {
+export function getUserProfile({
+    userId,
+    currentUserProfile,
+}: {
+    userId: string;
+    currentUserProfile?: boolean;
+}) {
+    const {sdk} = getSdk();
+
     return (dispatch: UserProfileDispatch) => {
         dispatch({type: GET_USER_PROFILE_LOADING});
 
-        return getSdk()
-            .sdk.auth.getUserProfile({userId}, {concurrentId: 'auth/userProfile/getUserProfile'})
+        const getUserProfilePromise = currentUserProfile
+            ? sdk.auth.getMyUserProfile(undefined, {
+                  concurrentId: 'auth/userProfile/getMyUserProfile',
+              })
+            : sdk.auth.getUserProfile({userId}, {concurrentId: 'auth/userProfile/getUserProfile'});
+
+        return getUserProfilePromise
             .then((data) => {
                 dispatch({
                     type: GET_USER_PROFILE_SUCCESS,
@@ -139,7 +152,7 @@ export function getUserProfile({userId}: {userId: string}) {
                 });
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().sdk.isCancel(error);
+                const isCanceled = sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('auth/getUserProfile failed', error);
