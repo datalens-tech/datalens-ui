@@ -14,7 +14,7 @@ import {UrlSearch} from '../../../../../utils';
 import {EditorUrls, Status, TOASTER_TYPE, UPDATE_ENTRY_MODE} from '../../../constants/common';
 import {RevisionAction} from '../../../types/revisions';
 import {isEntryLatest} from '../../../utils/utils';
-import {ComponentName, componentStateChange} from '../../actions';
+import {ComponentName, componentStateChange, drawPreview} from '../../actions';
 import {imm} from '../../update';
 
 import {editorTypedReducer} from './editorTypedReducer';
@@ -96,6 +96,7 @@ export const fetchInitialLoad = ({id, template, location, workbookId}) => {
                     chart: null,
                 },
             });
+            dispatch(drawPreview());
         } catch (error) {
             logger.logError('editor: fetchInitialLoad failed', error);
             dispatch({
