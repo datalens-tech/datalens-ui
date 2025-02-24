@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Alert, Dialog, Flex} from '@gravity-ui/uikit';
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
@@ -20,20 +20,7 @@ import {Email} from '../formControls/Email';
 import {FirstName} from '../formControls/FirstName';
 import {LastName} from '../formControls/LastName';
 
-// const i18n = I18n.keyset('auth.dialog-edit-profile');
-
-const i18n = (key: string) => {
-    const keys: Record<string, string> = {
-        button_cancel: 'Cancel',
-        button_save: 'Save',
-        'label_success-edit': 'Profile edited successfully',
-        'label_error-email-not-valid': 'Email is not valid',
-        'label_error-out-of-range': 'The maximum number of characters has been exceeded',
-        'title_edit-profile': 'Edit Profile',
-    };
-
-    return keys[key] || '';
-};
+const i18n = I18n.keyset('auth.dialog-edit-profile');
 
 interface EditUserProfileDialogProps {
     userId: string;
