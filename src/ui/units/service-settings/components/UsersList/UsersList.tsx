@@ -51,14 +51,9 @@ const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
 
 const columns: TableColumnConfig<ListUser>[] = [
     {
-        id: 'firstName',
-        name: i18n('label_field-first-name'),
-        template: ({firstName}) => firstName || '—',
-    },
-    {
-        id: 'lastName',
-        name: i18n('label_field-last-name'),
-        template: ({lastName}) => lastName || '—',
+        id: 'name',
+        name: i18n('label_field-name'),
+        template: ({firstName, lastName}) => `${firstName || ''} ${lastName || ''}`.trim() || '—',
     },
     {
         id: 'userId',
