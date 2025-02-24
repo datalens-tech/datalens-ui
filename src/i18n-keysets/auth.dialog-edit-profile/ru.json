@@ -1,8 +1,6 @@
 {
   "button_cancel": "Отменить",
   "button_save": "Сохранить",
-  "label_error-email-not-valid": "Почта некорректна",
-  "label_error-out-of-range": "Превышено максимальное количество символов",
   "label_success-edit": "Профиль успешно отредактирован",
   "title_edit-profile": "Редактировать профиль"
 }

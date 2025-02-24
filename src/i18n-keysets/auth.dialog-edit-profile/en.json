@@ -1,8 +1,6 @@
 {
   "button_cancel": "Cancel",
   "button_save": "Save",
-  "label_error-email-not-valid": "Email is not valid",
-  "label_error-out-of-range": "The maximum number of characters has been exceeded",
   "label_success-edit": "Profile edited successfully",
   "title_edit-profile": "Edit Profile"
 }
