@@ -2,7 +2,6 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
-import {useDispatch} from 'react-redux';
 import {useLocation} from 'react-router-dom';
 import {MenuType} from 'ui/libs/DatalensChartkit/menu/constants';
 
@@ -10,7 +9,6 @@ import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWith
 import {URL_QUERY} from '../../../../constants';
 import Utils, {UrlSearch} from '../../../../utils';
 import {Status} from '../../constants/common';
-import {drawPreview} from '../../store/actions';
 
 import './Preview.scss';
 
@@ -76,18 +74,11 @@ function PreviewWrap(props) {
     }, [search]);
     const {actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
-    const dispatch = useDispatch();
-
     React.useEffect(() => {
         if (widgetRef.current && typeof widgetRef.current.reflow === 'function') {
             widgetRef.current.reflow();
         }
     }, [paneSize]);
-
-    React.useEffect(() => {
-        dispatch(drawPreview());
-        // dependance from chartData?.id for loading chart preview after opening other chart from navigation
-    }, [chartData?.id]);
 
     if (chartData === null) {
         return null;
