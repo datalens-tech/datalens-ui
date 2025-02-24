@@ -3,7 +3,7 @@ export enum Feature {
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
-    // Show new relations button
+    // Show new relations button in navigation action panel
     ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
