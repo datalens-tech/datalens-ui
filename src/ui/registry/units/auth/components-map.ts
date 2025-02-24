@@ -1,5 +1,7 @@
-import {Signin} from 'ui/units/auth/components/Signin/Signin';
+import {makeDefaultEmpty} from 'ui/registry/components/DefaultEmpty';
+
+import type {SigninProps} from './types/components/Signin';
 
 export const authComponentsMap = {
-    Signin: Signin,
+    Signin: makeDefaultEmpty<SigninProps>(),
 } as const;

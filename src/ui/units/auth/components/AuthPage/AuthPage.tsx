@@ -15,11 +15,11 @@ import {Signup} from '../Signup/Signup';
 
 import {useAuthPageInit} from './useAuthPageInit';
 
-const {Signin} = registry.auth.components.getAll();
-
 export function AuthPage() {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
+
+    const {Signin} = registry.auth.components.getAll();
 
     useAuthPageInit();
 

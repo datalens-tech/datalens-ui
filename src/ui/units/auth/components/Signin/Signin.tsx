@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import type {SdkError} from 'ui/libs/schematic-sdk';
+import type {SigninProps} from 'ui/registry/units/auth/types/components/Signin';
 import {showToast} from 'ui/store/actions/toaster';
 
 import {AUTH_ROUTE} from '../../constants/routes';
@@ -21,7 +22,7 @@ const i18n = I18n.keyset('auth.sign-in');
 
 const b = block('dl-signin');
 
-export const Signin = ({alternativeAuthOptions}: {alternativeAuthOptions?: React.ReactNode}) => {
+export const Signin = ({alternativeAuthOptions}: SigninProps) => {
     const dispatch = useDispatch();
 
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
