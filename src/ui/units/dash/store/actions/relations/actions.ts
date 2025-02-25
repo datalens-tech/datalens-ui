@@ -1,3 +1,4 @@
+import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {AliasClickHandlerArgs} from 'ui/components/DialogRelations/types';
 import type {DatalensGlobalState} from 'ui/index';
@@ -111,12 +112,14 @@ export const openEmptyDialogRelations = () => {
             return;
         }
 
-        dispatch(setNewRelations(true));
-        openDialogRelations({
-            dashKitRef,
-            onClose: () => {
-                dispatch(setNewRelations(false));
-            },
-        })(dispatch, getState);
+        batch(() => {
+            dispatch(setNewRelations(true));
+            openDialogRelations({
+                dashKitRef,
+                onClose: () => {
+                    dispatch(setNewRelations(false));
+                },
+            })(dispatch, getState);
+        });
     };
 };
