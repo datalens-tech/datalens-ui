@@ -1,13 +1,13 @@
 {
   "label_error-email-invalid": "Incorrect email format",
-  "label_error-first-name-max": "First name must be less than {{max}} characters",
-  "label_error-last-name-max": "Last name must be less than {{max}} characters",
-  "label_error-login-email-invalid": "The email in the login is in the wrong format",
-  "label_error-login-invalid": "The login must start with letters and end only with letters or numbers",
-  "label_error-login-max": "Login must be less than {{max}} characters",
-  "label_error-login-min": "Login must be at least {{min}} characters",
-  "label_error-password-invalid": "Create strong password<br></br>– min {{min}} characters<br></br>– make sure you mix uppercase letters, lowercase letters, special characters and numbers",
-  "label_error-password-max": "Password must be less than {{max}} characters",
+  "label_error-first-name-max": "First name can be up to {{max}} characters in length",
+  "label_error-last-name-max": "Last name can be up to {{max}} characters in length",
+  "label_error-login-email-invalid": "Incorrect email address format in login",
+  "label_error-login-invalid": "The login can consist of Latin letters, numbers, and the symbols - and _. It must start with a letter and end with a letter or a number. It can also be in the correct email format.",
+  "label_error-login-max": "Login can be up to {{max}} characters in length",
+  "label_error-login-min": "Login must be at least {{min}} characters in length",
+  "label_error-password-invalid": "Create a strong password:<br></br>– minimum length: {{min}} characters<br></br>– contains at least one upper and lowercase letter, a number, and a special character.",
+  "label_error-password-max": "Password can be up to {{max}} characters in length",
   "label_error-password-not-match": "Passwords do not match",
   "label_error-required-fields": "Please fill in all required fields"
 }
