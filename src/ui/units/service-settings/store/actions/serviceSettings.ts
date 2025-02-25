@@ -61,11 +61,13 @@ export const getUsersList = ({
     pageSize = 10,
     filterString,
     roles,
+    idpType,
     isLoadMore,
 }: {
     nextPageToken?: string | null;
     filterString?: string;
     roles?: `${UserRole}`[];
+    idpType?: string;
     isLoadMore?: boolean;
     pageSize?: number;
 }) => {
@@ -80,6 +82,7 @@ export const getUsersList = ({
                     pageSize,
                     filterString,
                     roles,
+                    idpType,
                 },
                 {concurrentId: 'serviceSettings/getUsersList'},
             );
