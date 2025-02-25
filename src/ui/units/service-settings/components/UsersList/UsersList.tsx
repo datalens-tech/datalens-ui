@@ -47,7 +47,10 @@ const i18n = I18n.keyset('service-settings.users-list.view');
 
 const USERS_PAGE_SIZE = 15;
 
-const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
+const TableWithCopy = withTableCopy<ListUser>(Table);
+const TableWithActions = withTableActions<ListUser>(TableWithCopy);
+
+const TableComponent = DL.AUTH_MANAGE_LOCAL_USERS_DISABLED ? TableWithCopy : TableWithActions;
 
 const prepareFilterValue = (filterValue: string | string[]) => {
     if (typeof filterValue === 'string' || filterValue === undefined) {
@@ -151,6 +154,10 @@ const UsersList = () => {
     }, [dispatch, filters]);
 
     const getRowActions = React.useCallback((item: ListUser): TableAction<ListUser>[] => {
+        if (item.idpType) {
+            return [];
+        }
+
         return [
             {
                 text: i18n('label_menu-edit-profile'),
@@ -202,7 +209,7 @@ const UsersList = () => {
                         onClose={() => setChangePasswordUserDialogOpenForUser(undefined)}
                         userId={changePasswordDialogOpenForUser.userId}
                         onSuccess={resetTable}
-                        isOwnProfile={changePasswordDialogOpenForUser.userId === DL.USER.uid}
+                        isOwnProfile={changePasswordDialogOpenForUser.userId === DL.USER_ID}
                     />
                 )}
                 {editProfileDialogOpenForUser && (
@@ -216,7 +223,7 @@ const UsersList = () => {
                         onSuccess={resetTable}
                     />
                 )}
-                <TableWithActions
+                <TableComponent
                     className={b('table')}
                     data={displayedUsers}
                     columns={columns}
@@ -238,18 +245,24 @@ const UsersList = () => {
         );
     };
 
+    const showAddUser = !DL.AUTH_MANAGE_LOCAL_USERS_DISABLED;
+
     return (
         <div className={b()}>
             <Text variant="subheader-3">{i18nMain('section_users')}</Text>
             <div className={b('content')}>
-                <Flex justifyContent="space-between">
+                <Flex justifyContent="space-between" wrap gap={2}>
                     <UsersFilter onChange={handleFilterChange} />
-                    <Link to={{pathname: '/settings/users/new', state: {from: location.pathname}}}>
-                        <Button view="action">
-                            <Icon data={Plus} />
-                            {i18n('button_add-user')}
-                        </Button>
-                    </Link>
+                    {showAddUser && (
+                        <Link
+                            to={{pathname: '/settings/users/new', state: {from: location.pathname}}}
+                        >
+                            <Button view="action">
+                                <Icon data={Plus} />
+                                {i18n('button_add-user')}
+                            </Button>
+                        </Link>
+                    )}
                 </Flex>
 
                 {renderTable()}

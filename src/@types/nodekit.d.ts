@@ -88,6 +88,7 @@ export interface SharedAppConfig {
     // auth
     isAuthEnabled: boolean;
     authTokenPublicKey?: string;
+    authManageLocalUsersDisabled?: boolean;
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
