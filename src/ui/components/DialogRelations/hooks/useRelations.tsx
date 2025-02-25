@@ -34,7 +34,7 @@ export const useRelations = ({
     widgetsCurrentTab,
 }: {
     dashKitRef: React.RefObject<DashKit>;
-    widget: DashTabItem;
+    widget: DashTabItem | null;
     dialogAliases: Record<string, string[][]>;
     workbookId: WorkbookId;
     itemId: string | null;
@@ -54,7 +54,7 @@ export const useRelations = ({
     const [datasets, setDatasets] = React.useState<DatasetsListData | null>(null);
 
     const [prevItemId, setPrevItemId] = React.useState(itemId);
-    const [prevWidgetId, setPrevWidgetId] = React.useState(widget.id);
+    const [prevWidgetId, setPrevWidgetId] = React.useState(widget?.id ?? null);
 
     const getCurrentWidgetInfo = React.useCallback(
         (
@@ -94,12 +94,12 @@ export const useRelations = ({
     // the current item is changed in the modal
     if (
         isInited &&
-        (itemId !== prevItemId || widget.id !== prevWidgetId) &&
+        (itemId !== prevItemId || widget?.id !== prevWidgetId) &&
         dashWidgetsMeta &&
         datasets
     ) {
         getCurrentWidgetInfo(dashWidgetsMeta, datasets);
-        setPrevWidgetId(widget.id);
+        setPrevWidgetId(widget?.id ?? null);
         setPrevItemId(itemId);
     }
 

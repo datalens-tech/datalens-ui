@@ -11,6 +11,7 @@ import {
     selectCurrentTabAliases,
     selectCurrentTabRelationDataItems,
     selectDashWorkbookId,
+    selectDashkitRef,
     selectWidgetsCurrentTab,
 } from '../../selectors/dashTypedSelectors';
 import {updateCurrentTabData} from '../dashTyped';
@@ -100,3 +101,22 @@ export const setNewRelations = (data: SetNewRelationsAction['payload']) => ({
     type: SET_NEW_RELATIONS,
     payload: data,
 });
+
+export const openEmptyDialogRelations = () => {
+    return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
+        const state = getState();
+        const dashKitRef = selectDashkitRef(state);
+
+        if (dashKitRef === null) {
+            return;
+        }
+
+        dispatch(setNewRelations(true));
+        openDialogRelations({
+            dashKitRef,
+            onClose: () => {
+                dispatch(setNewRelations(false));
+            },
+        })(dispatch, getState);
+    };
+};

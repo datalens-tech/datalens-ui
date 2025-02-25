@@ -18,6 +18,7 @@ import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
+import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -54,7 +55,7 @@ export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 export type DialogRelationsProps = {
     onClose: () => void;
     onApply: (item: {aliases?: DashTab['aliases']; connections?: Config['connections']}) => void;
-    widget: DashTabItem;
+    widget?: DashTabItem;
     allWidgets?: DashTabItem[];
     dashKitRef: React.RefObject<DashKit>;
     dashTabAliases: DashTabAliases | null;
@@ -69,8 +70,21 @@ export type OpenDialogRelationsArgs = {
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
+const EmptyState: React.FC = () => {
+    return (
+        <PlaceholderIllustration
+            className={b('empty-state')}
+            size={'m'}
+            direction={'column'}
+            name={'emptyDirectory'}
+        />
+    );
+};
+
 const DialogRelations = (props: DialogRelationsProps) => {
-    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
+    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem | null>(
+        props.widget ?? null,
+    );
     const {
         dashKitRef,
         dashTabAliases,
@@ -93,7 +107,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
     const [itemId, setItemId] = React.useState(
-        currentWidget.type === DashTabItemType.GroupControl ? currentWidget.data.group[0].id : null,
+        currentWidget?.type === DashTabItemType.GroupControl
+            ? currentWidget.data.group[0].id
+            : null,
     );
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
@@ -502,9 +518,10 @@ const DialogRelations = (props: DialogRelationsProps) => {
             <Dialog.Header caption={i18n('title_links')} />
             <Dialog.Body className={b('container')}>
                 <Select
+                    placeholder={i18n('label_empty-state')}
                     className={b('item-select')}
                     popupClassName={b('item-select-popup')}
-                    value={[currentWidgetId]}
+                    value={currentWidgetId ? [currentWidgetId] : undefined}
                     options={widgetOptions}
                     onUpdate={handleItemChange}
                     filterable={true}
@@ -513,20 +530,25 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     renderSelectedOption={renderOptions}
                     popupWidth="fit"
                 />
-
-                <Filters
-                    onChangeInput={handleFilterInputChange}
-                    onChangeButtons={handleFilterTypesChange}
-                />
-                <Content
-                    relations={filteredRelations}
-                    widgetMeta={currentWidgetMeta}
-                    isLoading={isLoading}
-                    onChange={handleRelationTypeChange}
-                    onAliasClick={handleAliasesClick}
-                    showDebugInfo={showDebugInfo}
-                    widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
-                />
+                {currentWidget ? (
+                    <React.Fragment>
+                        <Filters
+                            onChangeInput={handleFilterInputChange}
+                            onChangeButtons={handleFilterTypesChange}
+                        />
+                        <Content
+                            relations={filteredRelations}
+                            widgetMeta={currentWidgetMeta}
+                            isLoading={isLoading}
+                            onChange={handleRelationTypeChange}
+                            onAliasClick={handleAliasesClick}
+                            showDebugInfo={showDebugInfo}
+                            widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
+                        />
+                    </React.Fragment>
+                ) : (
+                    <EmptyState />
+                )}
             </Dialog.Body>
             <Dialog.Footer
                 preset="default"
